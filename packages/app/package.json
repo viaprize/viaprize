@@ -1,5 +1,5 @@
 {
-  "name": "soul-wallet-www",
+  "name": "@pact/app",
   "version": "0.1.0",
   "private": true,
   "scripts": {

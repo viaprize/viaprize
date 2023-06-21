@@ -304,7 +304,7 @@ const Home: NextPage = () => {
                     <>
                       {historyList.map((item: any, index) => (
                         <HistoryItem
-                          // onRefresh={() => getHistoryList(true)}
+                        pictureVisible={false}
                           key={index}
                           item={item}
                           address={item.address}

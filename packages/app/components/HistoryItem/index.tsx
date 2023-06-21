@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Contribute from "../Contribute";
+import Link from "next/link";
 import usePactContract from "contract/usePactContract";
 import config from "@/config";
 
-export default function HistoryItem({ item, address }: any) {
+export default function HistoryItem({ item, address, pictureVisible }: any) {
   const [loaded, setLoaded] = useState(false);
   const [detail, setDetail] = useState<any>({});
   const pactContract = usePactContract();
@@ -15,9 +16,9 @@ export default function HistoryItem({ item, address }: any) {
       setLoaded(true);
     } catch (err) {
       // if error, recall
-      setTimeout(()=>{
+      setTimeout(() => {
         getDetail();
-      }, 1000)
+      }, 1000);
     }
   };
 
@@ -37,7 +38,17 @@ export default function HistoryItem({ item, address }: any) {
   return (
     <div className="card bg-base-100 shadow-xl mb-4">
       <div className="card-body break-words">
-        <div className="card-title break-words">{item.name}</div>
+        {pictureVisible && config.pictures[item.address] && (
+          <img
+            src={config.pictures[item.address]}
+            className="rounded-xl mb-3"
+          />
+        )}
+        <Link href={`/pact/${item.address}`}>
+          <a className="card-title break-words inline-block hover:underline">
+            {item.name}
+          </a>
+        </Link>
         <div className="mt-1">Terms: {item.terms}</div>
         <div className="mt-1">Balance: {detail.balance} ETH</div>
         <div>
