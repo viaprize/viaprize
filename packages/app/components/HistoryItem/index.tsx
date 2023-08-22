@@ -9,6 +9,14 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
   const [detail, setDetail] = useState<any>({});
   const pactContract = usePactContract();
 
+  const inputDate = new Date(detail.end * 1000);
+  const outputDateString = inputDate.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+  
+
   const getDetail = async () => {
     try {
       const res = await pactContract.getPactInfo(address);
@@ -35,8 +43,9 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
     getDetail();
   }, [address]);
 
+
   return (
-    <div className="card bg-base-100 shadow-xl mb-4">
+    <div className="card bg-base-100 shadow-xl mb-4 dark:text-gray-300">
       <div className="card-body break-words">
         {pictureVisible && config.pictures[item.address] && (
           <img
@@ -61,6 +70,8 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
           >
             <h2>{item.address}</h2>
           </a>
+          <p>Deadline: {outputDateString.toString()}</p>
+          <p>Funding Goal: {detail.sum} ETH</p>
         </div>
 
         {detail.resolved && detail.safe && (
@@ -73,7 +84,7 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
               target="_blank"
             >
               {detail.safe}
-            </a>{" "}
+            </a>
           </div>
         )}
 

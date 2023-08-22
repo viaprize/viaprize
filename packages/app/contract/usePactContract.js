@@ -37,6 +37,11 @@ export default function usePactContract() {
       const pactContract = new eth.Contract(PactABI, pactAddress);
       return await pactContract.methods.commitment().call({ from: account });
     },
+    
+    // async sum(pactAddress) {
+    //   const pactContract = new eth.Contract(PactABI, pactAddress);
+    //   return await pactContract.methods.sum().call({ from: account });
+    // },
 
     async safeAddress(pactAddress) {
       const pactContract = new eth.Contract(PactABI, pactAddress);
@@ -57,11 +62,15 @@ export default function usePactContract() {
       );
 
       const pactContract = new web3.eth.Contract(PactABI, pactAddress);
+      // const sum = await this.sum(pactAddress)
+      // console.log('sum', sum)
+      const sum = await pactContract.methods.sum().call({ from: account });
 
       const calls = [
         [pactAddress, pactContract.methods.safe().encodeABI()],
         [pactAddress, pactContract.methods.resolved().encodeABI()],
         [pactAddress, pactContract.methods.resolvable().encodeABI()],
+        [pactAddress, pactContract.methods.end().encodeABI()]
       ];
 
       const res = await multicall.methods.aggregate(calls).call();
@@ -71,6 +80,8 @@ export default function usePactContract() {
         safe: web3.eth.abi.decodeParameter("address", res['returnData'][0]),
         resolved: web3.eth.abi.decodeParameter("bool", res['returnData'][1]),
         resolvable: web3.eth.abi.decodeParameter("bool", res['returnData'][2]),
+        end: web3.eth.abi.decodeParameter("uint256", res['returnData'][3]),
+        sum:sum
       }
     },
   };
