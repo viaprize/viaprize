@@ -4,6 +4,25 @@ import Link from "next/link";
 import usePactContract from "contract/usePactContract";
 import config from "@/config";
 
+function formatEtherValue(weiAmount: number): string {
+  const etherAmount = weiAmount / 10**18;
+
+  if (etherAmount >= 0.001) {
+      return etherAmount.toFixed(3).replace(/\.?0+$/, '') + " ETH";
+  } else if (etherAmount >= 1e-6) {
+      const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
+      return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, '') + " ETH";
+  } 
+  else if (etherAmount >= 1e-18) {
+      const decimalPlaces = Math.max(0, 18 - Math.ceil(Math.log10(etherAmount)));
+      return etherAmount.toFixed(10).replace(/\.?0+$/, '') + " ETH";
+  }
+   else {
+      return etherAmount.toExponential(6).replace(/\.?0+e/, 'e') + " ETH";
+  }
+}
+
+
 export default function HistoryItem({ item, address, pictureVisible }: any) {
   const [loaded, setLoaded] = useState(false);
   const [detail, setDetail] = useState<any>({});
@@ -71,7 +90,7 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
             <h2>{item.address}</h2>
           </a>
           <p>Deadline: {outputDateString.toString()}</p>
-          <p>Funding Goal: {detail.sum} ETH</p>
+          <p>Funding Goal: {formatEtherValue(detail.sum)}</p>
         </div>
 
         {detail.resolved && detail.safe && (
