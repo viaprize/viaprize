@@ -195,7 +195,7 @@ const Home: NextPage = () => {
                     </h1>
                     <div className="flex items-center gap-4">
                       <input
-                        type="text"
+                        type="number"
                         placeholder="Funding Goal"
                         className="input input-bordered"
                         value={amount}
