@@ -64,6 +64,7 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
   }, [address]);
 
 
+
   return (
     <div className="card bg-base-100 shadow-xl mb-4 dark:text-gray-300">
       <div className="card-body break-words">
@@ -95,6 +96,15 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
           >
             <h2>{item.address}</h2>
           </a>
+
+          <div className="font-bold mt-4 mb-1">Admin Addresses:</div>
+          {detail.leads && detail.leads.map((lead: any) => (
+            <div key={lead}>
+              <p className="my-1">
+                {lead}
+              </p>
+            </div>
+          ))}
           <p className="text-yellow-700 font-bold dark:text-yellow-400 text-md mt-8">Funding Goal: {formatEtherValue(detail.sum)}</p>
           <p className="text-red-700 font-bold dark:text-red-400 text-lg leading-[0px]">Deadline: {outputDateString.toString()}</p>
         </div>

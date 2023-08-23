@@ -65,6 +65,7 @@ export default function usePactContract() {
       // const sum = await this.sum(pactAddress)
       // console.log('sum', sum)
       const sum = await pactContract.methods.sum().call({ from: account });
+      const leads = await pactContract.methods.leads().call({ from: account });
 
       const calls = [
         [pactAddress, pactContract.methods.safe().encodeABI()],
@@ -81,7 +82,8 @@ export default function usePactContract() {
         resolved: web3.eth.abi.decodeParameter("bool", res['returnData'][1]),
         resolvable: web3.eth.abi.decodeParameter("bool", res['returnData'][2]),
         end: web3.eth.abi.decodeParameter("uint256", res['returnData'][3]),
-        sum:sum
+        sum:sum,
+        leads:leads
       }
     },
   };
