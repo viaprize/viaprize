@@ -63,7 +63,7 @@ export default function usePactFactory() {
       );
 
       // TODO, this is fixed
-      const amountInWei = new BN(sum).shiftedBy(18).toString();
+      const amountInWei = new BN().shiftedBy(18).toString();
 
       const func = pactFactoryContract.methods.create(
         await pactFactoryContract.methods.commit(commitment).call({
