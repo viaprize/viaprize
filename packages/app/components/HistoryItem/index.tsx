@@ -8,6 +8,19 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
   const [loaded, setLoaded] = useState(false);
   const [detail, setDetail] = useState<any>({});
   const pactContract = usePactContract();
+  const copyToClipboard = async (address: string) => {
+    navigator.clipboard.writeText(
+      `<iframe
+        width="290"
+        height="650px"
+        
+        src="https://${window.location.host}/pact/preview/${address}"
+        frameborder="0"
+        scrolling="no"
+      ></iframe>`
+    )
+    alert("Copied to clipboard")
+  }
 
   const getDetail = async () => {
     try {
@@ -92,6 +105,7 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
             <Contribute address={item.address} onContributed={getDetail} />
           </div>
         )}
+        <button className="btn btn-info w-1/2 float-right btn-sm" onClick={() => copyToClipboard(item.address)}>Share Using Iframe</button>
       </div>
     </div>
   );

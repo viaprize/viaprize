@@ -13,8 +13,6 @@ import { AbiItem } from "ethereum-multicall/dist/esm/models";
 import { GetServerSidePropsContext } from "next";
 interface PackPreviewProp {
     item: PactDetail;
-
-
 }
 const getPactInfo = async (pactAddress: string) => {
     const web3 = new Web3(
