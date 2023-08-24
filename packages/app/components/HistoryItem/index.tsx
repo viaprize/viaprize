@@ -6,20 +6,20 @@ import config from "@/config";
 import { FaEthereum } from "react-icons/fa";
 
 function formatEtherValue(weiAmount: number): string {
-  const etherAmount = weiAmount / 10**18;
+  const etherAmount = weiAmount / 10 ** 18;
 
   if (etherAmount >= 0.001) {
-      return etherAmount.toFixed(3).replace(/\.?0+$/, '') + " ETH";
+    return etherAmount.toFixed(3).replace(/\.?0+$/, '') + " ETH";
   } else if (etherAmount >= 1e-6) {
-      const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
-      return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, '') + " ETH";
-  } 
-  else if (etherAmount >= 1e-18) {
-      const decimalPlaces = Math.max(0, 18 - Math.ceil(Math.log10(etherAmount)));
-      return etherAmount.toFixed(10).replace(/\.?0+$/, '') + " ETH";
+    const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
+    return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, '') + " ETH";
   }
-   else {
-      return etherAmount.toExponential(6).replace(/\.?0+e/, 'e') + " ETH";
+  else if (etherAmount >= 1e-18) {
+    const decimalPlaces = Math.max(0, 18 - Math.ceil(Math.log10(etherAmount)));
+    return etherAmount.toFixed(10).replace(/\.?0+$/, '') + " ETH";
+  }
+  else {
+    return etherAmount.toExponential(6).replace(/\.?0+e/, 'e') + " ETH";
   }
 }
 
@@ -28,6 +28,19 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
   const [loaded, setLoaded] = useState(false);
   const [detail, setDetail] = useState<any>({});
   const pactContract = usePactContract();
+  const copyToClipboard = async (address: string) => {
+    navigator.clipboard.writeText(
+      `<iframe
+        width="290"
+        height="680px"
+        
+        src="https://${window.location.host}/pact/preview/${address}"
+        frameborder="0"
+        scrolling="no"
+      ></iframe>`
+    )
+    alert("Copied to clipboard")
+  }
 
   const inputDate = new Date(detail.end * 1000);
   const outputDateString = inputDate.toLocaleDateString('en-US', {
@@ -35,7 +48,7 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
     month: 'short',
     day: 'numeric'
   });
-  
+
 
   const getDetail = async () => {
     try {
@@ -82,9 +95,9 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
         <h3 className="mt-1 mb-0 text-xl font-bold dark:text-white">Terms</h3>
         <span className="mt-0">{item.terms}</span>
         <div className="flex gap-2 text-lg items-center dark:text-green-400 text-green-500">
-        <span >Balance</span>
-        <span>{detail.balance} ETH</span>
-        <FaEthereum />
+          <span >Balance</span>
+          <span>{detail.balance} ETH</span>
+          <FaEthereum />
         </div>
         <div>
           <div className="font-bold mb-1">Pact Address:</div>
@@ -138,6 +151,7 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
             <Contribute address={item.address} onContributed={getDetail} />
           </div>
         )}
+        <button className="btn btn-info w-1/2 float-right btn-sm" onClick={() => copyToClipboard(item.address)}>Share Using Iframe</button>
       </div>
     </div>
   );
