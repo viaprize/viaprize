@@ -1,4 +1,6 @@
 export interface PactDetail {
+  end: number;
+  sum: any;
   address: string;
   balance: number;
   blockHash: string;
