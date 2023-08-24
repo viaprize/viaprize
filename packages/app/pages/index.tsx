@@ -164,14 +164,14 @@ const Home: NextPage = () => {
 
           {activeTab === tabs[1] && (
             <>
-              <div className="flex flex-col gap-4 mb-4">
+              <div className="flex flex-col gap-4 mb-4 dark:text-white">
                 <div className="mb-4">
-                  <h1 className="text-xl mb-2 font-medium">Name</h1>
+                  <h1 className="text-xl mb-2 font-medium dark:text-gray-900">Name</h1>
                   <div className="flex">
                     <input
                       type="text"
                       placeholder="Name"
-                      className="input input-bordered w-full"
+                      className="input input-bordered w-full "
                       value={projectName}
                       onChange={(e) => setProjectName(e.target.value)}
                     />
@@ -179,7 +179,7 @@ const Home: NextPage = () => {
                 </div>
 
                 <div className="mb-4">
-                  <h1 className="text-xl mb-1 font-medium">Terms</h1>
+                  <h1 className="text-xl mb-1 font-medium dark:text-gray-900">Terms</h1>
                   <textarea
                     className="textarea w-full input-bordered"
                     value={terms}
@@ -188,14 +188,14 @@ const Home: NextPage = () => {
                   />
                 </div>
 
-                <div className="mb-4 flex gap-3">
+                <div className="mb-4 flex gap-3 ">
                   <div>
-                    <h1 className="text-xl mb-2 font-medium">
+                    <h1 className="text-xl mb-2 font-medium dark:text-gray-900">
                       Funding Goal (in ETH)
                     </h1>
                     <div className="flex items-center gap-4">
                       <input
-                        type="text"
+                        type="number"
                         placeholder="Funding Goal"
                         className="input input-bordered"
                         value={amount}
@@ -204,12 +204,12 @@ const Home: NextPage = () => {
                     </div>
                   </div>
                   <div>
-                    <h1 className="text-xl mb-2 font-medium">Deadline</h1>
+                    <h1 className="text-xl mb-2 font-medium dark:text-gray-900">Deadline</h1>
                     <div className="flex items-center gap-4">
                       <DatePicker
                         value={rawEndDate}
                         showTime
-                        style={{ height: "48px" }}
+                        style={{ height: "48px", }}
                         onChange={(val: any) => dateChange(val)}
                       />
                     </div>
@@ -217,7 +217,7 @@ const Home: NextPage = () => {
                 </div>
 
                 <div>
-                  <h1 className="text-xl mb-2 font-medium">Admin Addresses</h1>
+                  <h1 className="text-xl mb-2 font-medium dark:text-gray-900">Admin Addresses</h1>
 
                   <div className="flex items-center gap-4 flex-col">
                     {address.map((item, index) => (
