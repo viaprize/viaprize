@@ -1,52 +1,137 @@
-import React, { useState, createContext, useCallback, useEffect } from "react";
+/**
+ * Web3ContextProvider component.
+ * This component provides a React context with Web3-related utilities.
+ * 
+ * @module components/Web3ContextProvider
+ */
+import React, {
+  useState,
+  createContext,
+  useCallback,
+  useEffect,
+  ReactNode,
+} from "react";
 import { toast } from "react-toastify";
 import Web3 from "web3";
 import BN from "bignumber.js";
 import useWeb3Modal from "./hooks/useWeb3Modal";
 import { LoadingOutlined } from "@ant-design/icons";
 import config from "@/config";
+/**
+ * ProviderError is an interface for Ethereum provider errors.
+ * It extends the built-in Error object with a `code` property.
+ * 
+ * @interface ProviderError
+ * @extends {Error}
+ */
+interface ProviderError extends Error {
+  message: string;
+  code: number;
+}
 
-const scanMapping = {
+/**
+ * scanMapping is an object mapping chain IDs to BlockExporer URLs.
+ * 
+ * @constant
+ * @type {Object}
+ */
+
+const scanMapping: { [key: number]: string } = {
   56: "https://bscscan.com",
 };
+
+
+/**
+ * actionMapping is an array of status messages for transaction actions.
+ * 
+ * @constant
+ * @type {Array}
+ */
 
 const actionMapping = [
   "Transaction being processed",
   "Transaction Success",
   "Transaction Failed",
 ];
+/**
+ * Web3ContextType is an interface for the Web3 context.
+ * It includes the Web3 instance, the current chain ID, account, and block number,
+ * as well as methods for interacting with the Ethereum blockchain.
+ * 
+ * @interface Web3ContextType
+ */
+export interface Web3ContextType {
+  web3?: Web3;
+  chainId?: number;
+  account?: string;
+  networkId?: number;
+  blockNumber?: number;
+  connectWallet: () => Promise<void>;
+  connectSoul: () => Promise<void>;
+  getEthBalance: () => Promise<string>;
+  resetWallet: () => Promise<void>;
+  estimateGas: (func: any, value?: number) => Promise<number | undefined>;
+  sendTx: (func: any, value?: number) => Promise<any>;
+  signMessage: (val: string) => Promise<string>;
+}
 
-export const Web3Context = createContext({
-  web3: null,
-  chainId: null,
-  networkId: null,
-  blockNumber: null,
-  account: null,
-  connectWallet: async () => {},
-  connectSoul: async () => {},
+/**
+ * Web3Context is a React context for Web3.
+ * It provides a Web3 instance, the current chain ID, account, and block number,
+ * as well as methods for interacting with the Ethereum blockchain.
+ * 
+ * @constant
+ * @type {React.Context}
+ */
+export const Web3Context = createContext<Web3ContextType>({
+  web3: undefined,
+  chainId: undefined,
+  networkId: undefined,
+  blockNumber: undefined,
+  account: undefined,
+  connectWallet: async () => { },
+  connectSoul: async () => { },
   getEthBalance: async () => {
     return "";
   },
-  resetWallet: async () => {},
-  estimateGas: async () => {},
-  sendTx: async () => {},
+  resetWallet: async () => { },
+  estimateGas: async () => {
+    return 0;
+  },
+  sendTx: async () => { },
   signMessage: async (val) => {
     return "";
   },
 });
 
+/**
+ * Web3ContextProviderProp is an interface for the props of the Web3ContextProvider component.
+ * 
+ * @interface Web3ContextProviderProp
+ */
+
+type Web3ContextProviderProp = {
+  children: ReactNode;
+};
+
+/**
+ * Web3ContextProvider is a React component that provides a Web3 context to its children.
+ * It uses the useWeb3Modal hook to connect to an Ethereum provider and provides methods for interacting with the Ethereum blockchain.
+ * 
+ * @component
+ * @param {Web3ContextProviderProp} props
+ */
 export const Web3ContextProvider = ({
   // chainId,
   // endpoint,
   children,
-}) => {
+}: Web3ContextProviderProp) => {
   const web3Modal = useWeb3Modal();
-  const [web3, setWeb3] = useState("");
+  const [web3, setWeb3] = useState<Web3>();
   const [account, setAccount] = useState("");
-  const [chainId, setChainId] = useState("");
-  const [networkId, setnetworkId] = useState("");
-  const [blockNumber, setBlockNumber] = useState("");
-
+  const [chainId, setChainId] = useState<number>(0);
+  const [networkId, setnetworkId] = useState(0);
+  const [blockNumber, setBlockNumber] = useState(0);
   const listenProvider = () => {
     window.ethereum.on("connect", (data) => {
       console.log("event connect", data);
@@ -68,6 +153,9 @@ export const Web3ContextProvider = ({
   };
 
   const connectWallet = useCallback(async () => {
+    if (!web3Modal) {
+      throw new Error("Web3 Modal is Undefined");
+    }
     try {
       const provider = await web3Modal.connect();
 
@@ -90,18 +178,20 @@ export const Web3ContextProvider = ({
 
       if (foo != config.chainId) {
         try {
-          await ethereum.request({
+          await window.ethereum.request({
             method: "wallet_switchEthereumChain",
             params: [{ chainId: Web3.utils.toHex(config.chainId) }],
           });
           console.log(`switched to chainid : ${chainId} succesfully`);
-        } catch (err) {
+        } catch (err: any) {
+
           console.log(
             `error occured while switching chain to chainId ${chainId}, err: ${err.message} code: ${err.code}`
           );
+
           if (err.code === 4902) {
             try {
-              await ethereum.request({
+              await window.ethereum.request({
                 method: "wallet_addEthereumChain",
                 params: [
                   {
@@ -117,9 +207,9 @@ export const Web3ContextProvider = ({
                   },
                 ],
               });
-            } catch (err) {
+            } catch (err: any) {
               console.log(
-                `error ocuured while adding new chain with chainId:${networkDetails.chainId}, err: ${err.message}`
+                `error ocuured while adding new chain with chainId:${chainId}, err: ${err.message}`
               );
             }
           }
@@ -143,50 +233,60 @@ export const Web3ContextProvider = ({
   }, [web3Modal]);
 
   const getEthBalance = async () => {
+    if (!web3) throw new Error("Web3 is undefined");
     const res = await web3.eth.getBalance(account);
     return new BN(res).shiftedBy(-18).toString();
   };
 
   const resetWallet = useCallback(async () => {
-    if (web3 && web3.currentProvider && web3.currentProvider.close) {
-      await web3.currentProvider.close();
+    if (!web3Modal) {
+      throw new Error("Web3 Modal is Undefined");
+    }
+    if (web3 && web3.currentProvider && web3.currentProvider) {
+      // Reset the wallet
+      await web3.eth.accounts.wallet.clear();
     }
     setAccount("");
     await web3Modal.clearCachedProvider();
   }, [web3Modal]);
 
-  const estimateGas = async (func, value = 0) => {
+  const estimateGas = async (func: any, value = 0) => {
     try {
       const gas = await func.estimateGas({
         from: account,
         value,
       });
       return Math.floor(gas * 1.2);
-    } catch (error) {
+    } catch (error: any) {
       console.log("errr", error);
       const objStartIndex = error.message.indexOf("{");
       toast.error(error.message.slice(0, objStartIndex));
     }
   };
 
-  const signMessage = async (message) => {
-    return await web3.eth.personal.sign(message, account);
+  const signMessage = async (message: string) => {
+    if (!web3) {
+      throw new Error("No Web3 Found");
+    }
+    return await web3.eth.personal.sign(message, account, "");
   };
 
-  const goScan = (txnHash) => {
-    window.open(`${scanMapping[chainId]}/tx/${txnHash}`);
+  const goScan = (txnHash: string) => {
+    const chainIdMapping = scanMapping[chainId]
+    window.open(`${chainIdMapping}/tx/${txnHash}`);
   };
 
   /**
    *
-   * @param {*} func , required
+   * @param {*} func , required this is the contract method function
    * @param {*} actionType , required
    * @param {*} value , default 0
    * @returns
    */
 
-  const sendTx = async (func, value = 0) => {
+  const sendTx = async (func: any, value = 0) => {
     const gasLimit = await estimateGas(func, value);
+    if (!gasLimit) throw new Error("Gas Limit is undefined");
     if (!isNaN(gasLimit)) {
       return func
         .send({
@@ -194,7 +294,7 @@ export const Web3ContextProvider = ({
           from: account,
           value,
         })
-        .on("transactionHash", (txnHash) => {
+        .on("transactionHash", (txnHash: string) => {
           toast.info(actionMapping[0], {
             toastId: txnHash,
             icon: <LoadingOutlined />,
@@ -202,7 +302,7 @@ export const Web3ContextProvider = ({
             onClick: () => goScan(txnHash),
           });
         })
-        .on("receipt", async (receipt) => {
+        .on("receipt", async (receipt: { transactionHash: any; }) => {
           console.log("receipt is", receipt);
           const txnHash = receipt?.transactionHash;
           toast.dismiss(txnHash);
@@ -211,7 +311,7 @@ export const Web3ContextProvider = ({
             onClick: () => goScan(txnHash),
           });
         })
-        .on("error", async (err, txn) => {
+        .on("error", async (err: { code: number; }, txn: { transactionHash: any; }) => {
           const txnHash = txn?.transactionHash;
           await toast.dismiss(txnHash);
 
@@ -248,11 +348,20 @@ export const Web3ContextProvider = ({
         estimateGas,
         sendTx,
         signMessage,
+        connectSoul: connectWallet,
       }}
     >
       {children}
     </Web3Context.Provider>
   );
 };
+
+
+/**
+ * Web3ContextConsumer is a React context consumer for the Web3 context.
+ * 
+ * @constant
+ * @type {React.Context.Consumer}
+ */
 
 export const Web3ContextConsumer = Web3Context.Consumer;

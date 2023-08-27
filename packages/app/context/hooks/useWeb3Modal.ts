@@ -1,9 +1,19 @@
 import { useState, useEffect } from "react";
 import { infuraId } from "@/config";
 import WalletConnect from "@walletconnect/web3-provider";
+import Web3Modal from "web3modal";
 
-export default function useWeb3Modal() {
-  const [web3Modal, setWeb3Modal] = useState(null);
+interface ProviderOptions {
+  walletconnect: {
+    package: typeof WalletConnect;
+    options: {
+      infuraId: string;
+    };
+  };
+}
+
+export default function useWeb3Modal(): Web3Modal | undefined {
+  const [web3Modal, setWeb3Modal] = useState<Web3Modal | undefined>();
 
   useEffect(() => {
     if (!web3Modal) {

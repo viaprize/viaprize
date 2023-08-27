@@ -1,12 +1,16 @@
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import WalletAbi from "./abi/Wallet.json";
+import { AbiItem } from "web3-utils";
 
 export default function useWaletContract() {
-  const { web3, account} = useWeb3Context();
+  const { web3, account } = useWeb3Context();
+  if (!web3) {
+    throw new Error("Web3 not found");
+  }
 
   return {
-    async isValidSignature(hash, signature) {
-      const contract = new web3.eth.Contract(WalletAbi, account);
+    async isValidSignature(hash: string, signature: string) {
+      const contract = new web3.eth.Contract(WalletAbi as AbiItem[], account);
 
       return await contract.methods
         .isValidSignature(hash, signature)
