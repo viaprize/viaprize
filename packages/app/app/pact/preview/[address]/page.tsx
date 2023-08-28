@@ -8,8 +8,10 @@ import PactABI from "@/contract/abi/Pact.json"
 import { AbiItem } from "ethereum-multicall/dist/esm/models";
 import { FaEthereum } from "react-icons/fa";
 import Link from "next/link";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+
 interface PackPreviewProp {
-    params: { address: string }
+    item: PactDetail;
 }
 function formatEtherValue(weiAmount: number): string {
     const etherAmount = weiAmount / 10 ** 18;
@@ -83,10 +85,8 @@ async function getPactItem(address: string) {
         ...await getPactInfo(address as string),
     } as unknown as PactDetail
 }
-export default async function Page({ params: { address } }: PackPreviewProp) {
-    const item = await getPactItem(address)
-
-
+export default async function Page({ params }: { params: { address: string } }) {
+    const item = await getPactItem(params.address)
     const inputDate = new Date(item.end * 1000);
     console.log({ item })
     const outputDateString = inputDate.toLocaleDateString('en-US', {
@@ -94,10 +94,6 @@ export default async function Page({ params: { address } }: PackPreviewProp) {
         month: 'short',
         day: 'numeric'
     });
-
-
-
-
     return (
         <div className="card bg-base-100 w-72 h-[700px]  shadow-xl dark:text-gray-300">
             <img src={"https://picsum.photos/200"} style={{
@@ -172,5 +168,42 @@ export default async function Page({ params: { address } }: PackPreviewProp) {
         </div >
     )
 }
+// export const getServerSideProps: GetServerSideProps<{props:{item:PactDetail}}> = async (context) => {
+//     const address = context.params?.address;
+//     if (!address) {
+//         throw new Error("Pact not found");
+//     }
+//     // const res = await axios.get("/pact", {
+//     //     params: {
+//     //         address,
+//     //     },
+//     // });
+//     const res = {
+//         name: 'test-name',
+//         terms: 'these are my terms',
+//         address: '0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c',
+//         transactionHash: '0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992',
+//         blockHash: '0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7',
+//     }
+
+//     const provider = new Web3.providers.HttpProvider(config.provider)
+//     const web3 = new Web3(provider)
+//     const eth = new Eth(
+//         provider
+//     );
+
+
+
+//     return {
+//         props: {
+//             item: {
+//                 ...res,
+//                 //@ts-ignore
+//                 balance: web3.utils.fromWei(await eth.getBalance(address)),
+//                 ...await getPactInfo(address as string),
+//             } as unknown as PactDetail
+//         }
+//     }
+// }
 
 

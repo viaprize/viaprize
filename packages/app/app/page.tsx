@@ -207,6 +207,7 @@ const Home: NextPage = () => {
                   <div>
                     <h1 className="text-xl mb-2 font-medium dark:text-gray-900">Deadline</h1>
                     <div className="flex items-center gap-4">
+                      {/*@ts-ignore */}
                       <DatePicker
                         value={rawEndDate}
                         showTime
