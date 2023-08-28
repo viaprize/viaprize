@@ -1,3 +1,4 @@
+"use client"
 /**
  * Web3ContextProvider component.
  * This component provides a React context with Web3-related utilities.

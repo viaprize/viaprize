@@ -3,13 +3,13 @@
  * @description Provides utilities for interacting with a Pact contract.
  */
 
-import useWeb3Context from "@/context/hooks/useWeb3Context";
-import PactABI from "./abi/Pact.json";
-import MulticallABI from "./abi/Multicall.json";
-import config from "@/config";
-import Eth from "web3-eth";
-import Web3 from "web3";
-import { AbiItem } from "web3-utils";
+import useWeb3Context from '@/context/hooks/useWeb3Context';
+import PactABI from './abi/Pact.json';
+import MulticallABI from './abi/Multicall.json';
+import config from '@/config';
+import Eth from 'web3-eth';
+import Web3 from 'web3';
+import { AbiItem } from 'web3-utils';
 interface PactContractInfo {
   balance: string;
   safe: string;
@@ -38,10 +38,12 @@ interface PactContract {
 export default function usePactContract(): PactContract {
   const { web3, account, sendTx } = useWeb3Context();
   const eth = new Eth(new Web3.providers.HttpProvider(config.provider));
+  // if (!web3) {
+  //   throw new Error('Web3 not found');
+  // }
   if (!web3) {
-    throw new Error("error not found");
+    return {} as PactContract;
   }
-
   return {
     /**
      * @method resolved
@@ -73,7 +75,7 @@ export default function usePactContract(): PactContract {
      */
     async balance(pactAddress: string): Promise<string> {
       const balance = await eth.getBalance(pactAddress);
-      return web3.utils.fromWei(balance, "ether");
+      return web3.utils.fromWei(balance, 'ether');
     },
 
     /**
@@ -123,10 +125,7 @@ export default function usePactContract(): PactContract {
         config.contracts.multicall3
       );
 
-      const pactContract = new web3.eth.Contract(
-        PactABI as AbiItem[],
-        pactAddress
-      );
+      const pactContract = new web3.eth.Contract(PactABI as AbiItem[], pactAddress);
       const sum = await pactContract.methods.sum().call({ from: account });
       const leads = await pactContract.methods.leads().call({ from: account });
 
@@ -141,10 +140,10 @@ export default function usePactContract(): PactContract {
 
       return {
         balance: web3.utils.fromWei(await web3.eth.getBalance(pactAddress)),
-        safe: web3.eth.abi.decodeParameter("address", res["returnData"][0]),
-        resolved: web3.eth.abi.decodeParameter("bool", res["returnData"][1]),
-        resolvable: web3.eth.abi.decodeParameter("bool", res["returnData"][2]),
-        end: web3.eth.abi.decodeParameter("uint256", res["returnData"][3]),
+        safe: web3.eth.abi.decodeParameter('address', res['returnData'][0]),
+        resolved: web3.eth.abi.decodeParameter('bool', res['returnData'][1]),
+        resolvable: web3.eth.abi.decodeParameter('bool', res['returnData'][2]),
+        end: web3.eth.abi.decodeParameter('uint256', res['returnData'][3]),
         sum: sum,
         leads: leads,
       } as unknown as PactContractInfo;

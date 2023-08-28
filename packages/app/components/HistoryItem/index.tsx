@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Contribute from "../Contribute";
 import Link from "next/link";
-import usePactContract from "contract/usePactContract";
+import usePactContract from "@/contract/usePactContract";
 import config from "@/config";
 import { FaEthereum } from "react-icons/fa";
 
@@ -87,10 +87,10 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
             className="rounded-xl mb-3"
           />
         )}
-        <Link href={`/pact/${item.address}`}>
-          <a className="card-title text-3xl break-words dark:text-white inline-block hover:underline">
-            {item.name}
-          </a>
+        <Link href={`/pact/${item.address}`} className="card-title text-3xl break-words dark:text-white inline-block hover:underline">
+
+          {item.name}
+
         </Link>
         <h3 className="mt-1 mb-0 text-xl font-bold dark:text-white">Terms</h3>
         <span className="mt-0">{item.terms}</span>

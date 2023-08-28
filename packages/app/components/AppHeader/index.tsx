@@ -8,8 +8,8 @@ export default function AppHeader() {
   return (
     <header className="py-8">
       <div className="container mx-auto flex items-center justify-between">
-        <Link href="/">
-          <a className="font-bold text-3xl cursor-pointer">PACT: </a>
+        <Link href="/" className="font-bold text-3xl cursor-pointer">
+          PACT:
         </Link>
         {account ? (
           <div className="dropdown dropdown-end">
