@@ -6,7 +6,6 @@ import Web3 from "web3";
 import MulticallABI from "@/contract/abi/Multicall.json";
 import PactABI from "@/contract/abi/Pact.json"
 import { AbiItem } from "ethereum-multicall/dist/esm/models";
-import { GetServerSidePropsContext } from "next";
 import { FaEthereum } from "react-icons/fa";
 import Link from "next/link";
 interface PackPreviewProp {
