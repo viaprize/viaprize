@@ -5,7 +5,7 @@ import { AbiItem } from "web3-utils";
 export default function useWaletContract() {
   const { web3, account } = useWeb3Context();
   if (!web3) {
-    throw new Error("Web3 not found");
+    return;
   }
 
   return {

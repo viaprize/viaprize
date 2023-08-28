@@ -39,7 +39,7 @@ export default function usePactContract(): PactContract {
   const { web3, account, sendTx } = useWeb3Context();
   const eth = new Eth(new Web3.providers.HttpProvider(config.provider));
   if (!web3) {
-    throw new Error("Web3 not found");
+    throw new Error("error not found");
   }
 
   return {

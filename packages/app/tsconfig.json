@@ -17,7 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@/components/*": ["components/*"],
-      "@/config": ["config/index.js"],
+      "@/config": ["config/index.ts"],
       "@/context/*": ["context/*"],
       "@/lib/*": ["lib/*"]
     }

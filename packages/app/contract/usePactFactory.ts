@@ -42,7 +42,7 @@ export default function usePactFactory(): PactFactory {
 
   const eth = new Eth(new Web3.providers.HttpProvider(config.provider));
   if (!web3) {
-    throw new Error("Web3 not found");
+    return {} as PactFactory;
   }
 
   return {

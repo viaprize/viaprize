@@ -1,10 +1,5 @@
-import Contribute from "@/components/Contribute";
 import config from "@/config";
 import { PactDetail } from "@/lib/types"
-import axios from "../../../lib/axios";
-import usePactContract from "contract/usePactContract";
-import { useState } from "react";
-import web3 from "web3";
 import Eth from "web3-eth";
 import Web3 from "web3";
 import MulticallABI from "../../../contract/abi/Multicall.json";
@@ -77,9 +72,6 @@ export default function PackPreview({ item }: PackPreviewProp) {
 
     return (
         <div className="card bg-base-100   w-72 h-[680px]  shadow-xl dark:text-gray-300">
-
-
-
             <img src={"https://picsum.photos/200"} style={{
                 borderRadius: "5px",
 
@@ -148,10 +140,6 @@ export default function PackPreview({ item }: PackPreviewProp) {
                     </div>
 
                 )}
-
-
-
-
             </div>
         </div >
     )
@@ -164,11 +152,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             notFound: true,
         }
     }
-    // const res = await axios.get("/pact", {
-    //     params: {
-    //         address,
-    //     },
-    // });
     const res = {
         name: 'test-name',
         terms: 'these are my terms',
@@ -182,9 +165,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const eth = new Eth(
         provider
     );
-
-
-
     return {
         props: {
             item: {

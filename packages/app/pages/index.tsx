@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   const [rawEndDate, setRawEndDate] = useState();
   const [historyList, setHistoryList] = useState([]);
   const [activeTab, setActiveTab] = useState(tabs[0]);
-  const [endDate, setEndDate] = useState("");
+  const [endDate, setEndDate] = useState<number>(0);
   const { account, connectWallet, web3 }: any = useWeb3Context();
   const pactFactory = usePactFactory();
   const pactContract = usePactContract();
@@ -304,7 +304,7 @@ const Home: NextPage = () => {
                     <>
                       {historyList.map((item: any, index) => (
                         <HistoryItem
-                        pictureVisible={false}
+                          pictureVisible={false}
                           key={index}
                           item={item}
                           address={item.address}

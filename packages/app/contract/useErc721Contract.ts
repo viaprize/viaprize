@@ -35,7 +35,7 @@ const formatIPFS = (val: string): string => {
 export default function useERC721Contract() {
   const { account, sendTx, web3 } = useWeb3Context();
   if (!web3) {
-    throw new Error("Web3 not found");
+    return;
   }
 
   return {

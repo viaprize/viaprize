@@ -18,7 +18,7 @@ import { AbiItem } from "web3-utils";
 export default function useErc20Contract() {
   const { web3, account, sendTx } = useWeb3Context();
   if (!web3) {
-    throw new Error("Web3 not found");
+    return;
   }
 
   return {

@@ -32,7 +32,6 @@ export default {
   socials,
   officialURL,
   openseaApi,
-  officialURL,
   chainIdMapping,
   zeroAddress,
   backendURL,
