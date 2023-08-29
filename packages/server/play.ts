@@ -42,8 +42,8 @@ const pacts = [
   for(let i=0; i<pacts.length ; i++){
     const pactAddress = pacts[i].address;
     console.log('ready ', pactAddress)
-    const ethersProvider = new ethers.JsonRpcProvider('https://optimism.meowrpc.com')
-    // const ethersProvider = new ethers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/224qz7e8XHRyAkY6AXLYHhGB9cPxeuYG')
+    // const ethersProvider = new ethers.JsonRpcProvider('https://optimism.meowrpc.com')
+    const ethersProvider = new ethers.JsonRpcProvider('https://opt-mainnet.g.alchemy.com/v2/224qz7e8XHRyAkY6AXLYHhGB9cPxeuYG')
     const pact = new ethers.Contract(pactAddress, PactAbi, ethersProvider);
     const safe = await pact.safe();
     const resolved = await pact.resolved();
