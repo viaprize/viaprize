@@ -11,8 +11,25 @@ import { AppModule } from './app.module';
 import validationOptions from './utils/validation-options';
 import { AllConfigType } from './config/config.type';
 
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
+import { join } from 'path';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const adapter = new FastifyAdapter({
+    logger: true,
+  });
+  adapter.useStaticAssets({
+    root: join(__dirname, '..', 'public'), // Specify the directory where your static assets are located
+    prefix: '/public/', // Spe
+  });
+
+  adapter.enableCors({
+    origin: '*',
+  });
+  const app = await NestFactory.create(AppModule, adapter);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
 
