@@ -8,5 +8,12 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^18.2.21",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@types/react-dom": "^18.2.7"
+  }
 }
