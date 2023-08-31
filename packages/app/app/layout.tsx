@@ -2,13 +2,14 @@ import "../styles/globals.css";
 import "../styles/index.css";
 import Head from "next/head";
 import "react-toastify/dist/ReactToastify.css";
-import 'antd/dist/reset.css'
 import '@mantine/core/styles.css';
 import React from 'react';
 import { MantineProvider, ColorSchemeScript } from '@mantine/core';
 
 import { Web3ContextProvider } from "@/context/Web3Context";
 import { ToastContainer } from "react-toastify";
+import Providers from "../components/_providers/providers";
+
 export const metadata = {
   title: 'Mantine Next.js template',
   description: 'I am using Mantine with Next.js!',
@@ -24,8 +25,9 @@ export default function RootLayout({ children }: { children: any }) {
       <body>
         <Web3ContextProvider>
           <MantineProvider>
-            {children}
-
+            <Providers>
+              {children}
+            </Providers>
           </MantineProvider>
           <ToastContainer />
         </Web3ContextProvider>

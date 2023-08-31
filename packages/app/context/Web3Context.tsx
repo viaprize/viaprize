@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import Web3 from "web3";
 import BN from "bignumber.js";
 import useWeb3Modal from "./hooks/useWeb3Modal";
-import { LoadingOutlined } from "@ant-design/icons";
+import { Loader } from "@mantine/core";
 import config from "@/config";
 /**
  * ProviderError is an interface for Ethereum provider errors.
@@ -298,7 +298,7 @@ export const Web3ContextProvider = ({
         .on("transactionHash", (txnHash: string) => {
           toast.info(actionMapping[0], {
             toastId: txnHash,
-            icon: <LoadingOutlined />,
+            icon: <Loader color="cyan" />,
             autoClose: false,
             onClick: () => goScan(txnHash),
           });
