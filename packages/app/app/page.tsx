@@ -3,14 +3,14 @@
 import type { NextPage } from "next";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import AppHeader from "@/components/AppHeader";
-import { Multicall } from 'ethereum-multicall'
 import axios from "../lib/axios";
-import { LoadingOutlined } from "@ant-design/icons";
 import usePactFactory from "../contract/usePactFactory";
-import { DatePicker } from "antd";
+
 import cn from "classnames";
 import { useEffect, useState } from "react";
 import HistoryItem from "@/components/HistoryItem";
+import { Loader } from "@mantine/core";
+import { DatePicker } from '@mantine/dates';
 
 const tabs = ["about", "create", "preview"];
 
@@ -208,12 +208,8 @@ const Home: NextPage = () => {
                     <h1 className="text-xl mb-2 font-medium dark:text-gray-900">Deadline</h1>
                     <div className="flex items-center gap-4">
                       {/*@ts-ignore */}
-                      <DatePicker
-                        value={rawEndDate}
-                        showTime
-                        style={{ height: "48px", }}
-                        onChange={(val: any) => dateChange(val)}
-                      />
+                      
+                       <DatePicker defaultDate={new Date(2015, 1)} value={rawEndDate} onChange={(val: any) => dateChange(val)} />
                     </div>
                   </div>
                 </div>
@@ -300,7 +296,7 @@ const Home: NextPage = () => {
                 <>
                   {loading ? (
                     <div className="text-4xl mt-8">
-                      <LoadingOutlined />
+                    <Loader color="cyan" />
                     </div>
                   ) : historyList.length > 0 ? (
                     <>

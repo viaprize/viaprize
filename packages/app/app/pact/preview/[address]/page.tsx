@@ -5,7 +5,7 @@ import Eth from "web3-eth";
 import Web3 from "web3";
 import MulticallABI from "@/contract/abi/Multicall.json";
 import PactABI from "@/contract/abi/Pact.json"
-import { AbiItem } from "ethereum-multicall/dist/esm/models";
+import { AbiItem } from "web3-utils";
 import { FaEthereum } from "react-icons/fa";
 import Link from "next/link";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
