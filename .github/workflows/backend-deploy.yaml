@@ -18,7 +18,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
 
-      - name: Copy .env secrets file to server
+      - name: Copy .env secrets file to serverr
         run: |
           echo -n ${{ secrets.BACKEND_ENV }} > secrets.env
           sudo scp -o StrictHostKeyChecking=no -r secrets.env ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }}:~/viaprize/packages/backend/.env
