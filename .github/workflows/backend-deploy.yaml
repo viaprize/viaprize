@@ -1,25 +1,28 @@
-name: Build on Pull Request
+name: Deploy to server
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
         with:
-          node-version: 18
+          ssh-private-key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Copy secrets file to server
+        run: |
+          echo -n ${{ secrets.BACKEND_ENV }} > secrets.env
+          scp -o StrictHostKeyChecking=no -r secrets.env ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }}:~/viaprize/packages/backend/.env
 
-      - name: Build
-        run: npm run build
+      - name: Deploy to server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }} "cd ~/viaprize/packages/backend/  && git pull origin main && yarn --frozen-lockfile &&  yarn build  && pm2 restart backend"
