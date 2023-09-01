@@ -21,6 +21,8 @@ jobs:
       - name: Write .env to project
         run: |
           echo -n ${{ secrets.BACKEND_ENV }} > .env
+          ls -a
+          pwd
 
       - uses: actions/checkout@v3
       - name: copy file via ssh password
