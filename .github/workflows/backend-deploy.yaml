@@ -21,7 +21,7 @@ jobs:
       - name: Copy secrets file to server
         run: |
           echo -n ${{ secrets.BACKEND_ENV }} > secrets.env
-          scp -o StrictHostKeyChecking=no -r secrets.env ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }}:~/viaprize/packages/backend/.env
+          sudo scp -o StrictHostKeyChecking=no -r secrets.env ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }}:~/viaprize/packages/backend/.env
 
       - name: Deploy to server
         run: |
