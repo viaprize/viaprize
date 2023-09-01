@@ -1,8 +1,6 @@
-"use client"
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { LoadingOutlined } from "@ant-design/icons";
+import { Loader } from "@mantine/core";
 import AppHeader from "@/components/AppHeader";
 import axio from "@/lib/axios";
 import HistoryItem from "@/components/HistoryItem";
@@ -38,7 +36,7 @@ export default function PactDetail() {
             <div className="max-w-[50%] mx-auto">
                 {loading ? (
                     <div className="text-4xl text-center mt-8">
-                        <LoadingOutlined />
+                        <Loader color="cyan" />;
                     </div>
                 ) : (
                     <HistoryItem item={item} address={address} pictureVisible={true} />

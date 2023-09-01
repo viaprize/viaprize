@@ -5,7 +5,7 @@ import Eth from "web3-eth";
 import Web3 from "web3";
 import MulticallABI from "@/contract/abi/Multicall.json";
 import PactABI from "@/contract/abi/Pact.json"
-import { AbiItem } from "ethereum-multicall/dist/esm/models";
+import { AbiItem } from "web3-utils";
 import { FaEthereum } from "react-icons/fa";
 import Link from "next/link";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
@@ -85,8 +85,9 @@ async function getPactItem(address: string) {
         ...await getPactInfo(address as string),
     } as unknown as PactDetail
 }
-export default async function Page({ params }: { params: { address: string } }) {
-    const item = await getPactItem(params.address)
+export default async function Page({ item }: PackPreviewProp) {
+    // const item = await getPactItem(params.address)
+
     const inputDate = new Date(item.end * 1000);
     console.log({ item })
     const outputDateString = inputDate.toLocaleDateString('en-US', {
@@ -168,42 +169,42 @@ export default async function Page({ params }: { params: { address: string } }) 
         </div >
     )
 }
-// export const getServerSideProps: GetServerSideProps<{props:{item:PactDetail}}> = async (context) => {
-//     const address = context.params?.address;
-//     if (!address) {
-//         throw new Error("Pact not found");
-//     }
-//     // const res = await axios.get("/pact", {
-//     //     params: {
-//     //         address,
-//     //     },
-//     // });
-//     const res = {
-//         name: 'test-name',
-//         terms: 'these are my terms',
-//         address: '0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c',
-//         transactionHash: '0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992',
-//         blockHash: '0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7',
-//     }
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const address = context.params?.address;
+    if (!address) {
+        throw new Error("Pact not found");
+    }
+    // const res = await axios.get("/pact", {
+    //     params: {
+    //         address,
+    //     },
+    // });
+    const res = {
+        name: 'test-name',
+        terms: 'these are my terms',
+        address: '0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c',
+        transactionHash: '0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992',
+        blockHash: '0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7',
+    }
 
-//     const provider = new Web3.providers.HttpProvider(config.provider)
-//     const web3 = new Web3(provider)
-//     const eth = new Eth(
-//         provider
-//     );
+    const provider = new Web3.providers.HttpProvider(config.provider)
+    const web3 = new Web3(provider)
+    const eth = new Eth(
+        provider
+    );
 
 
 
-//     return {
-//         props: {
-//             item: {
-//                 ...res,
-//                 //@ts-ignore
-//                 balance: web3.utils.fromWei(await eth.getBalance(address)),
-//                 ...await getPactInfo(address as string),
-//             } as unknown as PactDetail
-//         }
-//     }
-// }
+    return {
+        props: {
+            item: {
+                ...res,
+                //@ts-ignore
+                balance: web3.utils.fromWei(await eth.getBalance(address)),
+                ...await getPactInfo(address as string),
+            } as unknown as PactDetail
+        }
+    }
+}
 
 
