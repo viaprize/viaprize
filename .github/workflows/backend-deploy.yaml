@@ -18,11 +18,20 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
 
-      - name: Copy .env secrets file to serverr
+      - name: Write .env to project
         run: |
-          echo -n ${{ secrets.BACKEND_ENV }} > secrets.env
+          echo -n ${{ secrets.BACKEND_ENV }} > .env
           sudo scp -o StrictHostKeyChecking=no -r secrets.env ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }}:~/viaprize/packages/backend/.env
-
+      - uses: actions/checkout@v3
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.BACKEND_SERVER_HOST }}
+          username: ${{ secrets.BACKEND_SERVER_USERNAME }}
+          password: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
+          port: 22
+          source: ".env"
+          target: ~/viaprize/packages/backend
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }} "cd ~/viaprize/packages/backend/  && git pull origin main && npm ci &&  npm run  build  && pm2 restart backend"
