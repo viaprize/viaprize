@@ -21,7 +21,7 @@ jobs:
       - name: Write .env to project
         run: |
           echo -n ${{ secrets.BACKEND_ENV }} > .env
-          sudo scp -o StrictHostKeyChecking=no -r secrets.env ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }}:~/viaprize/packages/backend/.env
+
       - uses: actions/checkout@v3
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
