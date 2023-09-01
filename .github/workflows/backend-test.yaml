@@ -17,6 +17,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18
+      - name: go to backend folder
+        run: cd packages/backend
       - name: Copy env # copy in your env file
         run: 'echo -e "${{secrets.BACKEND_ENV}}" > .env'
 
