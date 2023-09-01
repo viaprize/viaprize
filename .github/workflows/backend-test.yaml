@@ -23,9 +23,9 @@ jobs:
         working-directory: ./packages/backend
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: npm ci
         working-directory: ./packages/backend
 
       - name: Build
-        run: yarn build
+        run: npm run build
         working-directory: ./packages/backend
