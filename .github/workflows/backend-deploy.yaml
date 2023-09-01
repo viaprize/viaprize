@@ -25,4 +25,4 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }} "cd ~/viaprize/packages/backend/  && git pull origin main && yarn --frozen-lockfile &&  yarn build  && pm2 restart backend"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }} "cd ~/viaprize/packages/backend/  && git pull origin main && npm ci &&  npm run  build  && pm2 restart backend"
