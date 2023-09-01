@@ -32,8 +32,8 @@ jobs:
           username: ${{ secrets.BACKEND_SERVER_USERNAME }}
           password: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
           port: 22
-          source: ".env"
-          target: ~/viaprize/packages/backend
+          source: /home/runner/work/viaprize/viaprize/.env
+          target: /home/anonymousbhai/viaprize/packages/backend
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }} "cd ~/viaprize/packages/backend/  && git pull origin main && npm ci &&  npm run  build  && pm2 restart backend"
