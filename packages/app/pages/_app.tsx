@@ -1,24 +1,47 @@
 import "../styles/globals.css";
 import "../styles/index.css";
-import { Web3ContextProvider } from "@/context/Web3Context";
-import { ToastContainer } from "react-toastify";
-import Head from "next/head";
 import "react-toastify/dist/ReactToastify.css";
-import type { AppProps } from "next/app";
+import { useState } from 'react';
+import NextApp, { AppProps, AppContext } from 'next/app';
+import { getCookie, setCookie } from 'cookies-next';
+import Head from 'next/head';
+import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
+import { Web3ContextProvider } from "@/context/Web3Context";
 
-function MyApp({ Component, pageProps }: AppProps) {
+export default function App(props: AppProps & { colorScheme: ColorScheme }) {
+  const { Component, pageProps } = props;
+  const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
+
+  const toggleColorScheme = (value?: ColorScheme) => {
+    const nextColorScheme = value || (colorScheme === 'dark' ? 'light' : 'dark');
+    setColorScheme(nextColorScheme);
+    setCookie('mantine-color-scheme', nextColorScheme, { maxAge: 60 * 60 * 24 * 30 });
+  };
+
   return (
     <>
       <Head>
-        <title>Pact</title>
+        <title>Mantine next example</title>
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
 
-      <Web3ContextProvider>
-        <Component {...pageProps} />
-        <ToastContainer />
-      </Web3ContextProvider>
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <Web3ContextProvider>
+          <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+            <Component {...pageProps} />
+
+          </MantineProvider>
+        </Web3ContextProvider>
+      </ColorSchemeProvider>
     </>
   );
 }
 
-export default MyApp;
+App.getInitialProps = async (appContext: AppContext) => {
+  const appProps = await NextApp.getInitialProps(appContext);
+  return {
+    ...appProps,
+    colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
+  };
+};

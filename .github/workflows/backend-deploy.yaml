@@ -1,0 +1,29 @@
+name: Deploy to server
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH and SCP
+        uses: appleboy/ssh-action@master
+        with:
+          host: ec2-13-235-42-195.ap-south-1.compute.amazonaws.com
+          username: ubuntu
+          key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/viaprize/packages/backend
+            ls -a
+            sudo chown -R ubuntu .
+            git stash
+            git pull origin main
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh   
+            npm ci
+            pm2 restart backend
