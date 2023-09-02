@@ -25,6 +25,6 @@ jobs:
             git pull origin main
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh   
-            npm ci --prefer-offline --no-audit --production --cache .npm
+            npm ci --prefer-offline --no-audit --production
             npm run build
             pm2 restart backend
