@@ -18,6 +18,7 @@ jobs:
           username: ${{ secrets.BACKEND_SERVER_USERNAME }}
           key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
           script: |
+            cd ~/viaprize/packages/backend
             echo "${{ secrets.BACKEND_ENV }}" > .env
             git pull origin main
             pm2 restart backend
