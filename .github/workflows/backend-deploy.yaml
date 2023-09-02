@@ -25,14 +25,13 @@ jobs:
           pwd
 
       - name: Publish .env
-        uses: nogsantos/scp-deploy@master
+        uses: garygrossgarten/github-action-scp@release
         with:
+          local: .env
+          remote: /home/anonymousbhai/viaprize/packages/backend/.env
           host: ${{ secrets.BACKEND_SERVER_HOST }}
           username: ${{ secrets.BACKEND_SERVER_USERNAME }}
-          password: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
-          port: 22
-          source: /home/runner/work/viaprize/viaprize/.env
-          target: /home/anonymousbhai/viaprize/packages/backend/.env
+          privateKey: ${{  secrets.BACKEND_SSH_PRIVATE_KEY  }}
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }} "cd ~/viaprize/packages/backend/  && git pull origin main && npm ci &&  npm run  build  && pm2 restart backend"
