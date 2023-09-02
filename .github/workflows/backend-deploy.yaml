@@ -23,7 +23,6 @@ jobs:
             sudo chown -R ubuntu .
             sudo chmod -R 777 .
             echo -n "kslls" > .env
-            sudo rm -r node_modules
             git pull origin main
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh   
