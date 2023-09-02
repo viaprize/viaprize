@@ -14,11 +14,18 @@ jobs:
       - name: Setup SSH and SCP
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.BACKEND_SERVER_HOST }}
-          username: ${{ secrets.BACKEND_SERVER_USERNAME }}
+          host: ec2-43-204-25-73.ap-south-1.compute.amazonaws.com
+          username: ubuntu
           key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
           script: |
             cd ~/viaprize/packages/backend
-            sudo echo "${{ secrets.BACKEND_ENV }}" > .env
+            ls -a
+            sudo chown -R ubuntu .
+            sudo chmod -R 777 .
+            echo -n "kslls" > .env
+            sudo rm -r node_modules
             git pull origin main
-            pm2 restart backend
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh   
+            npm ci
+            whoami
