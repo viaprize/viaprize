@@ -1,5 +1,4 @@
 name: Deploy to server
-
 on:
   push:
     branches:
@@ -8,30 +7,17 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
+      - name: Setup SSH and SCP
+        uses: appleboy/ssh-action@master
         with:
-          ssh-private-key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
-
-      - name: Write .env to project
-        run: |
-          echo -n ${{ secrets.BACKEND_ENV }} > .env
-          ls -a
-          pwd
-
-      - name: Publish .env
-        uses: garygrossgarten/github-action-scp@release
-        with:
-          local: .env
-          remote: /home/anonymousbhai/viaprize/packages/backend/.env
           host: ${{ secrets.BACKEND_SERVER_HOST }}
           username: ${{ secrets.BACKEND_SERVER_USERNAME }}
-          privateKey: ${{  secrets.BACKEND_SSH_PRIVATE_KEY  }}
-      - name: Deploy to server
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }} "cd ~/viaprize/packages/backend/  && git pull origin main && npm ci &&  npm run  build  && pm2 restart backend"
+          key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
+          script: |
+            echo "${{ secrets.BACKEND_ENV }}" > .env
+            git pull origin main
+            pm2 restart backend
