@@ -26,6 +26,7 @@ jobs:
             echo "${{secrets.BACKEND_ENV}}" > .env
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh   
-            npm ci --cache .npm --prefer-offline
+            yarn install --frozen-lockfile
             npm run build
             pm2 restart backend
+            exit
