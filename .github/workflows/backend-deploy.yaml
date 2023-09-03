@@ -47,7 +47,7 @@ jobs:
             sudo chown -R ubuntu .
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh  
-            yarn install
+            yarn install --prefer-offline --frozen-lockfile --cache-folder ./.yarn-cache
             exit
       - name: Build and Run
         uses: appleboy/ssh-action@master
@@ -61,5 +61,5 @@ jobs:
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh  
             yarn build
-            pm2 restart backend
+            pm2 restart backend 
             exit
