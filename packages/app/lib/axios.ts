@@ -1,11 +1,19 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 /**
  * Axios instance with base URL configured.
  */
 
+//Check if NETWORK_TYPE is set to "testnet" or "mainnet" in Env
+const NETWORK_TYPE = process.env.NEXT_PUBLIC_NETWORK_TYPE;
+if (!NETWORK_TYPE) {
+  throw new Error('NETWORK_TYPE is not set in .env');
+}
 const myAxios: AxiosInstance = axios.create({
-  baseURL: "https://api.pactsmith.com/api",
+  baseURL: 'https://api.pactsmith.com/api',
+  headers: {
+    'Network-Type': NETWORK_TYPE,
+  },
 });
 
 /**

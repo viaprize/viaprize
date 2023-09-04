@@ -20,7 +20,8 @@
       "@/config": ["config/index.ts"],
       "@/context/*": ["context/*"],
       "@/lib/*": ["lib/*"],
-      "@/contract/*": ["contract/*"]
+      "@/contract/*": ["contract/*"],
+      "@env": ["env.mjs"]
     },
     "plugins": [
       {

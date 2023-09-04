@@ -252,6 +252,7 @@ export const Web3ContextProvider = ({
   }, [web3Modal]);
 
   const estimateGas = async (func: any, value = 0) => {
+    console.log(value, "this is the value")
     try {
       const gas = await func.estimateGas({
         from: account,
