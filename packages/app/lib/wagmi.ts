@@ -6,11 +6,9 @@ const getChain = (chainName: string): Chain => {
   switch (chainName) {
     case 'op': {
       return optimism;
-      break;
     }
     case 'op-goerli': {
       return optimismGoerli;
-      break;
     }
     default: {
       throw new Error('Chain Id is not defined in the app');

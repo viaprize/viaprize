@@ -13,6 +13,7 @@ const myAxios: AxiosInstance = axios.create({
   baseURL: 'https://api.pactsmith.com/api',
   headers: {
     'Network-Type': NETWORK_TYPE,
+    'Access-Control-Allow-Origin': '*',
   },
 });
 
