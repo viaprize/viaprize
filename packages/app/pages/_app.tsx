@@ -8,6 +8,13 @@ import Head from 'next/head';
 import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
 import { Web3ContextProvider } from "@/context/Web3Context";
 
+
+import { WagmiConfig, configureChains, mainnet } from 'wagmi'
+import { publicProvider } from 'wagmi/providers/public'
+import wagmiConfig from "@/lib/wagmi";
+
+
+
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
   const { Component, pageProps } = props;
   const [colorScheme, setColorScheme] = useState<ColorScheme>(props.colorScheme);
@@ -27,12 +34,14 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
       </Head>
 
       <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-        <Web3ContextProvider>
-          <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-            <Component {...pageProps} />
+        <WagmiConfig config={wagmiConfig}>
+          <Web3ContextProvider>
+            <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+              <Component {...pageProps} />
 
-          </MantineProvider>
-        </Web3ContextProvider>
+            </MantineProvider>
+          </Web3ContextProvider>
+        </WagmiConfig>
       </ColorSchemeProvider>
     </>
   );

@@ -28,6 +28,7 @@ const Home: NextPage = () => {
 
 
     const doCreate = async () => {
+        console.log("creating...................")
         setCreating(true);
         try {
             const res: any = await pactFactory.createPact(

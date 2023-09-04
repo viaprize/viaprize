@@ -87,14 +87,25 @@ export default function usePactFactory(): PactFactory {
       const duration = endTime - Math.floor(new Date().valueOf() / 1000);
 
       console.log('end time', endTime, 'now', Math.floor(new Date().valueOf() / 1000));
+      const amountInWei = new BN(sum).shiftedBy(18).toString();
 
       const pactFactoryContract = new web3.eth.Contract(
         PactFactoryAbi as AbiItem[],
         config.contracts.pactFactory
       );
+      console.log(pactFactoryContract, 'pactFactoryContract');
 
-      // TODO, this is fixed
-      const amountInWei = new BN(sum).shiftedBy(18).toString();
+      const estimatedGas = await pactFactoryContract.methods
+        .create(
+          await pactFactoryContract.methods.commit(commitment).call({
+            from: account,
+          }),
+          new BN(duration),
+          amountInWei,
+          leads
+        )
+        .estimateGas({ from: account });
+      console.log(estimatedGas, 'estimatedGas');
 
       const func = pactFactoryContract.methods.create(
         await pactFactoryContract.methods.commit(commitment).call({
@@ -104,6 +115,7 @@ export default function usePactFactory(): PactFactory {
         amountInWei,
         leads
       );
+
       return await sendTx(func);
     },
   };
