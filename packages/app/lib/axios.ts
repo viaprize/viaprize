@@ -1,3 +1,4 @@
+import { env } from '@env';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 /**
@@ -5,7 +6,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
  */
 
 //Check if NETWORK_TYPE is set to "testnet" or "mainnet" in Env
-const NETWORK_TYPE = process.env.NEXT_PUBLIC_NETWORK_TYPE;
+const NETWORK_TYPE = env.NEXT_PUBLIC_NETWORK_TYPE;
 if (!NETWORK_TYPE) {
   throw new Error('NETWORK_TYPE is not set in .env');
 }
