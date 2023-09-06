@@ -14,7 +14,7 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_CHAIN: z.string(),
-    NEXT_PUBLIC_NETWORK_TYPE: z.enum(['mainnet', 'testnet']),
+    NEXT_PUBLIC_NETWORK_TYPE: z.enum(['mainnet', 'testnet']).default('mainnet').optional(),
   },
   /*
    * Due to how Next.js bundles environment variables on Edge and Client,
