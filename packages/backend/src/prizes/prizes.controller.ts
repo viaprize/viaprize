@@ -22,6 +22,7 @@ import {
   ApiResponse,
   getSchemaPath,
   ApiParam,
+  ApiTags,
 } from '@nestjs/swagger';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { PrizeProposals } from './entities/prize-proposals.entity';
@@ -47,6 +48,7 @@ class PrizeProposalsPaginationResult
   limit: number;
 }
 
+@ApiTags('prizes')
 @Controller('prizes')
 export class PrizesController {
   constructor(private readonly prizeProposalsService: PrizeProposalsService) {}

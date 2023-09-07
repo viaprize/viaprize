@@ -12,6 +12,7 @@ import { AllConfigType } from './config/config.type';
 
 import { PactsModule } from './pacts/pacts.module';
 import { PrizesModule } from './prizes/prizes.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { PrizesModule } from './prizes/prizes.module';
     }),
     PactsModule,
     PrizesModule,
+    UsersModule,
   ],
   providers: [],
   controllers: [],

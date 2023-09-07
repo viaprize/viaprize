@@ -13,7 +13,7 @@ export class PrizesService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} prize`;
+    return `This action returns a ${id} prize`;
   }
 
   update(id: number, updatePrizeDto: UpdatePrizeDto) {
