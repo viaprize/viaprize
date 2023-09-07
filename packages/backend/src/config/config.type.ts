@@ -8,6 +8,7 @@ export type AppConfig = {
   apiPrefix: string;
   fallbackLanguage: string;
   headerLanguage: string;
+  platformSharePercentage: number;
 };
 
 export type DatabaseConfig = {

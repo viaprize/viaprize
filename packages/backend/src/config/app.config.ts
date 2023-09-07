@@ -66,5 +66,8 @@ export default registerAs<AppConfig>('app', () => {
     apiPrefix: process.env.API_PREFIX || 'api',
     fallbackLanguage: process.env.APP_FALLBACK_LANGUAGE || 'en',
     headerLanguage: process.env.APP_HEADER_LANGUAGE || 'x-custom-lang',
+    platformSharePercentage: parseInt(
+      process.env.PLATFORM_SHARE_PERCENTAGE || '5',
+    ),
   };
 });
