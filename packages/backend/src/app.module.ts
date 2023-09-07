@@ -11,6 +11,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { AllConfigType } from './config/config.type';
 
 import { PactsModule } from './pacts/pacts.module';
+import { PrizesModule } from './prizes/prizes.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { PactsModule } from './pacts/pacts.module';
       inject: [ConfigService],
     }),
     PactsModule,
+    PrizesModule,
   ],
   providers: [],
   controllers: [],
