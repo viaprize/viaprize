@@ -59,7 +59,8 @@ jobs:
             cd ~/viaprize/packages/backend
             sudo chown -R ubuntu .
             export NVM_DIR=~/.nvm
-            source ~/.nvm/nvm.sh  
+            source ~/.nvm/nvm.sh
+            yarn migration:run  
             yarn build
             pm2 restart backend 
             exit
