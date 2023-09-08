@@ -96,4 +96,17 @@ export class PrizesController {
       { page, limit },
     );
   }
+  @Get('/proposals/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'The proposals were returned successfully',
+    type: PrizeProposalsPaginationResult,
+  })
+  @ApiParam({
+    name: 'id',
+    type: String,
+  })
+  async getProposal(@Param('id') id: string) {
+    return await this.prizeProposalsService.findOne(id);
+  }
 }

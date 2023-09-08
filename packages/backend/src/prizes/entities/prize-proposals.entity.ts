@@ -46,10 +46,12 @@ export class PrizeProposals {
 
   @ApiProperty()
   @IsDate()
+  @Column({ nullable: true })
   startVotingDate: Date;
 
   @ApiProperty()
   @IsDate()
+  @Column({ nullable: true })
   startSubmissionDate: Date;
 
   @ApiProperty()

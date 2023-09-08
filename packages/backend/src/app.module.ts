@@ -19,6 +19,7 @@ import { MailModule } from 'src/mail/mail.module';
 import { MailerModule } from 'src/mailer/mailer.module';
 import { JobsModule } from './jobs/jobs.module';
 import mailConfig from './config/mail.config';
+import { EthersModule } from 'nestjs-ethers';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import mailConfig from './config/mail.config';
       imports: [ConfigModule],
       inject: [ConfigService],
     }),
+
     PactsModule,
     PrizesModule,
     UsersModule,
