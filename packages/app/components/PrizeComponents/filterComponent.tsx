@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { MultiSelect } from '@mantine/core';
+import { MultiSelect, Select } from '@mantine/core';
+
 
 const Filter = () => {
   const [proficiencydata, setProficiencyData] = useState([
@@ -26,6 +27,8 @@ const Filter = () => {
     { value: '5', label: 'Health' },
     { value: '6', label: 'Education' },
   ]);
+
+  const [searchValue, onSearchChange] = useState('');
 
   return (
     <>
@@ -56,7 +59,17 @@ const Filter = () => {
         setPrioritiesData((current) => [...current, item]);
         return item;
       }}
-    /></>
+    />
+    <Select
+      label="Sort By:"
+      placeholder="sort by"
+      searchable
+      onSearchChange={onSearchChange}
+      searchValue={searchValue}
+      nothingFound="No options"
+      data={['Data', 'Price']}
+    />
+    </>
   );
 }
 

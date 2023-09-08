@@ -15,13 +15,7 @@ export const SearchFilters = () => {
       icon={<IconSearch size="1rem" />}
     />
     <Flex  gap='md'>
-    {/* <Button color='dark'>
-        filter
-    </Button> */}
     <Filter />
-    <Button color="dark" >
-        sort by <IconChevronDown/>
-    </Button>
     </Flex>
     </Group>
 
