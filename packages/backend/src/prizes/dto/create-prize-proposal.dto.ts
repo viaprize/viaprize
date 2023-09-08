@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Priority, Proficiency } from '../entities/types';
+import { IsArray } from 'class-validator';
 
 export class CreatePrizeProposalDto {
   @ApiProperty({
@@ -56,4 +58,12 @@ export class CreatePrizeProposalDto {
     example: '2023-09-07',
   })
   startSubmissionDate: Date;
+
+  @ApiProperty({ type: [String] })
+  @IsArray()
+  proficiencies: Proficiency[];
+
+  @ApiProperty({ type: [String] })
+  @IsArray()
+  priorities: Priority[];
 }
