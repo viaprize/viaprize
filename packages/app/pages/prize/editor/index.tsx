@@ -7,7 +7,6 @@ import { PrizeSubmissionTemplate } from '@/components/Prize/prizepage/defaultcon
 
 function EditorsPage() {
   const [content,setContent] = useState<JSONContent | undefined>(PrizeSubmissionTemplate)
-  console.log(content);
 
   return (
     <div className='w-full grid place-content-center my-3'>
