@@ -11,6 +11,7 @@ import {PrivyProvider} from '@privy-io/react-auth';
 
 import { WagmiConfig, configureChains, mainnet } from 'wagmi'
 import wagmiConfig from "@/lib/wagmi";
+import Header from "@/components/layout/headerLayout";
 
 
 
@@ -48,16 +49,17 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
 
   return (
     <>
+    <Header/>
       <Head>
         <title>Mantine next example</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
 
-      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <WagmiConfig config={wagmiConfig}>
           <Web3ContextProvider>
-            <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+            <MantineProvider theme={{
+            }} withGlobalStyles withNormalizeCSS>
             <PrivyProvider
               appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' ' }
               onSuccess={handleLogin}
@@ -77,7 +79,6 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
             </MantineProvider>
           </Web3ContextProvider>
         </WagmiConfig>
-      </ColorSchemeProvider>
     </>
   );
 }
