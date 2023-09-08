@@ -11,6 +11,8 @@ import {
   ParseIntPipe,
   DefaultValuePipe,
   HttpStatus,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
@@ -29,6 +31,7 @@ import { PrizeProposals } from './entities/prize-proposals.entity';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 
 import { ApiProperty } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth.guard';
 
 class PrizeProposalsPaginationResult
   implements InfinityPaginationResultType<PrizeProposals>
@@ -54,6 +57,7 @@ export class PrizesController {
   constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
 
   @Post('/proposals')
+  @UseGuards(AuthGuard)
   @ApiOperation({
     summary: 'Proposal of a Prize  by passing Prize data ',
   })
@@ -61,8 +65,14 @@ export class PrizesController {
     description: 'Request body to create a prize',
     type: CreatePrizeProposalDto,
   })
-  create(@Body() createPrizeProposalDto: CreatePrizeProposalDto) {
-    return this.prizeProposalsService.create(createPrizeProposalDto);
+  create(
+    @Body() createPrizeProposalDto: CreatePrizeProposalDto,
+    @Request() req,
+  ) {
+    return this.prizeProposalsService.create(
+      createPrizeProposalDto,
+      req.user.userId,
+    );
   }
 
   @Get('/proposals/proposer_address/:address')
@@ -108,5 +118,19 @@ export class PrizesController {
   })
   async getProposal(@Param('id') id: string) {
     return await this.prizeProposalsService.findOne(id);
+  }
+
+  @Post('/proposals/accept/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'The Proposals was Approved',
+  })
+  @UseGuards(AuthGuard)
+  @ApiParam({
+    name: 'id',
+    type: String,
+  })
+  async approveProposal(@Param('id') id: string) {
+    return await this.prizeProposalsService.approve(id);
   }
 }

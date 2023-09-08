@@ -7,4 +7,18 @@ export class CreateUserDto {
     example: '0x',
   })
   address: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The user wallet',
+    example: 'sex@gmail.com',
+  })
+  email: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'This is gotten from privy',
+    example: 'jsldj3lkj',
+  })
+  userId: string;
 }

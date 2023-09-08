@@ -7,6 +7,8 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { AllConfigType, AppConfig } from 'src/config/config.type';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
+import { MailService } from 'src/mail/mail.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PrizeProposalsService {
@@ -14,11 +16,19 @@ export class PrizeProposalsService {
     @InjectRepository(PrizeProposals)
     private prizeProposalsRepository: Repository<PrizeProposals>,
     private configService: ConfigService<AppConfig>,
+    private mailService: MailService,
+    private userService: UsersService,
   ) {}
-  async create(createPrizeDto: CreatePrizeProposalDto) {
+  async create(createPrizeDto: CreatePrizeProposalDto, userId: string) {
+    const user = await this.userService.findOneByUserId(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     await this.prizeProposalsRepository.save({
       ...createPrizeDto,
     });
+    await this.mailService.proposalSent(user.email);
   }
 
   async findAll() {
@@ -50,6 +60,24 @@ export class PrizeProposalsService {
         id,
       },
     });
+  }
+  async approve(id: string) {
+    const prizeProposal = await this.findOne(id);
+    if (!prizeProposal?.proposer_address) {
+      throw new Error('Proposal not found');
+    }
+    await this.prizeProposalsRepository.update(id, {
+      isApproved: true,
+    });
+
+    const user = await this.userService.findOneByAddress(
+      prizeProposal?.proposer_address,
+    );
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    await this.mailService.approved(user?.email);
   }
 
   async update(id: string, updatePrizeDto: UpdatePrizeDto) {
