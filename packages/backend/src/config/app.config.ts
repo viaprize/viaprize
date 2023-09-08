@@ -69,5 +69,6 @@ export default registerAs<AppConfig>('app', () => {
     platformSharePercentage: parseInt(
       process.env.PLATFORM_SHARE_PERCENTAGE || '5',
     ),
+    scheduleDatabaseUrL: process.env.SCHEDULE_DATABASE_URL || 'default',
   };
 });

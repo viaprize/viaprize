@@ -9,16 +9,22 @@ import { HeaderResolver } from 'nestjs-i18n';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { AllConfigType } from './config/config.type';
+import { AgendaModule } from 'agenda-nest';
+import { AgendaModuleConfig } from 'agenda-nest/dist/interfaces';
 
 import { PactsModule } from './pacts/pacts.module';
 import { PrizesModule } from './prizes/prizes.module';
 import { UsersModule } from './users/users.module';
+import { MailModule } from 'src/mail/mail.module';
+import { MailerModule } from 'src/mailer/mailer.module';
+import { JobsModule } from './jobs/jobs.module';
+import mailConfig from './config/mail.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, appConfig],
+      load: [databaseConfig, appConfig, mailConfig],
       envFilePath: ['.env'],
     }),
     TypeOrmModule.forRootAsync({
@@ -26,6 +32,16 @@ import { UsersModule } from './users/users.module';
       dataSourceFactory: async (options: DataSourceOptions) => {
         return new DataSource(options).initialize();
       },
+    }),
+    AgendaModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) =>
+        ({
+          db: {
+            address: config.get<string>('SCHEDULE_DATABASE_URL'),
+          },
+        }) as AgendaModuleConfig,
+      inject: [ConfigService],
     }),
     I18nModule.forRootAsync({
       useFactory: (configService: ConfigService<AllConfigType>) => ({
@@ -53,6 +69,9 @@ import { UsersModule } from './users/users.module';
     PactsModule,
     PrizesModule,
     UsersModule,
+    MailModule,
+    MailerModule,
+    JobsModule,
   ],
   providers: [],
   controllers: [],
