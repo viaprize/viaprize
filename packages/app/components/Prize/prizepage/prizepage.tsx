@@ -11,7 +11,7 @@ export default function PrizePageComponent() {
       <Title order={2}>
       A simple Title for the prizes page
       </Title>
-      <Group position='right' spacing="0">
+      <Group position='right' spacing="0" noWrap>
         <Button color='black' mx="5px">
           Upvote
         </Button>
@@ -21,11 +21,11 @@ export default function PrizePageComponent() {
 
       </Group>
       </Flex>
-      <Image
-        className="aspect-video object-cover max-h-[430px] max-w-[720px] rounded-md"
+      <img
+        className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md"
         src="/placeholder.jpg"
-        width="1280"
-        height="768"
+        width={1280}
+        height={768}
         alt="image"
         // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
