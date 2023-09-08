@@ -1,27 +1,43 @@
-import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
+import { Card, Image, Text, Badge, Button, Group, ScrollArea } from '@mantine/core';
+import { useState } from 'react';
 
-const ExplorePrize = () => {
+interface ExploreCardProps {
+  imageUrl: string;
+  title: string;
+  profileName: string;
+  description: string;
+  money: string;
+  deadline: string;
+}
+
+const ExploreCard: React.FC<ExploreCardProps> = ({ imageUrl, profileName,title, description, money, deadline }) => {
+  const [scrollPosition, onScrollPositionChange] = useState({ x: 0, y: 0 });
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Card.Section>
         <Image
-          src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          src={imageUrl}
           height={160}
-          alt="Norway"
+          alt="Image"
         />
       </Card.Section>
-
       <Group position="apart" mt="md" mb="xs">
-        <Text weight={500}>Title Here</Text>
+        <Text weight={500}>{title}</Text>
         <Badge color="gray" variant="light">
-          Profile Name
+          {profileName}
         </Badge>
       </Group>
-
-      <Text size="sm" color="dimmed">
-        Short Description goes here.........
-      </Text>
-
+      <ScrollArea
+        w={420}
+        h={90}
+        onScrollPositionChange={onScrollPositionChange}
+      >
+        {description}
+      </ScrollArea>
+      <Group position="apart" mt="md" mb="xs">
+        <Text weight={500} color='green'>{money}</Text>
+       <Text weight={500} color='red'>{deadline}</Text>
+      </Group>
       <Button variant="light" color="blue" fullWidth mt="md" radius="md">
         Details
       </Button>
@@ -29,5 +45,4 @@ const ExplorePrize = () => {
   );
 }
 
-
-export default ExplorePrize;
+export default ExploreCard;

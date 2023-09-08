@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsDate } from 'class-validator';
 import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { Priority, Proficiency } from './types';
 
 @Entity()
 export class PrizeProposals {
@@ -54,4 +55,10 @@ export class PrizeProposals {
   @ApiProperty()
   @Column()
   proposer_address: string;
+
+  @Column({ type: 'enum', enum: Proficiency, array: true, default: [] })
+  proficiencies: Proficiency[];
+
+  @Column({ type: 'enum', enum: Priority, array: true, default: [] })
+  priorities: Priority[];
 }

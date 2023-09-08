@@ -4,15 +4,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import NextApp, { AppProps, AppContext } from 'next/app';
 import { getCookie, setCookie } from 'cookies-next';
 import Head from 'next/head';
-import { MantineProvider, ColorScheme } from '@mantine/core';
-import { PrivyProvider } from '@privy-io/react-auth';
-
-import { WagmiConfig } from 'wagmi';
+import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
 import { Web3ContextProvider } from '@/context/Web3Context';
+import { PrivyProvider } from '@privy-io/react-auth';
+import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
+import { WagmiConfig, configureChains } from 'wagmi';
 import wagmiConfig from '@/lib/wagmi';
 import Header from '@/components/layout/headerLayout';
+import { mainnet, goerli, optimism } from '@wagmi/chains';
+
+import { publicProvider } from 'wagmi/providers/public';
+import { infuraProvider } from 'wagmi/providers/infura';
 import { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
+
+const configureChainsConfig = configureChains([mainnet, goerli], [publicProvider()]);
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -53,7 +59,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
 
-      <WagmiConfig config={wagmiConfig}>
+      <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
         <Web3ContextProvider>
           <MantineProvider theme={{}} withGlobalStyles withNormalizeCSS>
             <PrivyProvider
@@ -74,7 +80,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
             </PrivyProvider>
           </MantineProvider>
         </Web3ContextProvider>
-      </WagmiConfig>
+      </PrivyWagmiConnector>
     </>
   );
 }
