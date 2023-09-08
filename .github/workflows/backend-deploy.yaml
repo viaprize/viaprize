@@ -21,7 +21,8 @@ jobs:
             cd ~/viaprize/packages/backend
             ls -a
             sudo chown -R ubuntu .
-            git stash
+            git add -A 
+            git stash 
             git pull origin main
             exit
       - name: Copy Env
@@ -47,6 +48,7 @@ jobs:
             sudo chown -R ubuntu .
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh  
+
             yarn install --prefer-offline --frozen-lockfile --cache-folder ./.yarn-cache
             exit
       - name: Build and Run
