@@ -2,6 +2,7 @@ import { Chain, configureChains, createConfig } from 'wagmi';
 import { optimism, optimismGoerli } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { env } from '@env';
+
 const getChain = (chainName: string): Chain => {
   switch (chainName) {
     case 'op': {
@@ -36,7 +37,7 @@ const getProvider = (chainName: string) => {
 
 const chain = getChain(env.NEXT_PUBLIC_CHAIN);
 const provider = getProvider(env.NEXT_PUBLIC_CHAIN);
-const { chains, publicClient, webSocketPublicClient } = configureChains([chain], [provider]);
+const { publicClient, webSocketPublicClient } = configureChains([chain], [provider]);
 const config = createConfig({
   autoConnect: true,
   publicClient,
