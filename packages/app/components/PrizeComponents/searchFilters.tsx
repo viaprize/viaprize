@@ -1,5 +1,6 @@
 import { TextInput ,Text, Button, Group, Flex} from "@mantine/core"
 import { IconChevronDown, IconSearch } from "@tabler/icons-react"
+import Filter from "./filterComponent"
 
 
 export const SearchFilters = () => {
@@ -14,9 +15,10 @@ export const SearchFilters = () => {
       icon={<IconSearch size="1rem" />}
     />
     <Flex  gap='md'>
-    <Button color='dark'>
+    {/* <Button color='dark'>
         filter
-    </Button>
+    </Button> */}
+    <Filter />
     <Button color="dark" >
         sort by <IconChevronDown/>
     </Button>
