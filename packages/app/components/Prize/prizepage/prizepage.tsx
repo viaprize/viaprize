@@ -18,7 +18,6 @@ export default function PrizePageComponent() {
         <ActionIcon variant="filled" size="lg" color='blue'><Text>
           20</Text></ActionIcon>
 
-
       </Group>
       </Flex>
       <img
