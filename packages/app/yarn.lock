@@ -2636,10 +2636,10 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.21.tgz#5de5a2385a35309427f6011992b544514d559aa1"
   integrity sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==
 
-"@privy-io/react-auth@^1.36.1":
-  version "1.36.1"
-  resolved "https://registry.yarnpkg.com/@privy-io/react-auth/-/react-auth-1.36.1.tgz#7c807fb20ca7eac601a21c97b8b000394a36c362"
-  integrity sha512-vbZv1Gctb5HuYcBKkBopvBpHh/RY6yiraswBphgZ14WfqNcv1JMMgoDGsj6LaK/azR758H1Q9EhSuaDjHNsJBQ==
+"@privy-io/react-auth@^1.37.0":
+  version "1.37.0"
+  resolved "https://registry.yarnpkg.com/@privy-io/react-auth/-/react-auth-1.37.0.tgz#fcf99e77012124ff1fac12c2ba412cbe591c419a"
+  integrity sha512-hZmABeWDbxO4ibKp8prdLDhNTljN4I5bGQ6TnzXjBORHalboWX7nQOiCFOiQkr1iMomaXEiJWRL072SZzICGFw==
   dependencies:
     "@coinbase/wallet-sdk" "^3.8.0-beta.3"
     "@ethersproject/abstract-signer" "^5.7.0"
