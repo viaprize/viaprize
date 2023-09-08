@@ -56,9 +56,11 @@ export class PrizeProposals {
   @Column()
   proposer_address: string;
 
-  @Column({ type: 'enum', enum: Proficiency, array: true, default: [] })
-  proficiencies: Proficiency[];
+  @ApiProperty({ type: 'array', items: { type: 'string' } })
+  @Column('simple-array')
+  proficiencies: string[];
 
-  @Column({ type: 'enum', enum: Priority, array: true, default: [] })
-  priorities: Priority[];
+  @ApiProperty({ type: 'array', items: { type: 'string' } })
+  @Column('simple-array')
+  priorities: string[];
 }
