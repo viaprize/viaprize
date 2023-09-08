@@ -3,10 +3,11 @@ import Image from 'next/image';
 import PrizePageTabs from './prizepagetabs';
 import { ActionIcon, Button, Center,Flex,Group,Text, Title } from '@mantine/core';
 import { IconSettings } from '@tabler/icons-react';
+import Submissions from './submissions';
 
 export default function PrizePageComponent() {
   return (
-    <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md">
+    <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Flex justify="space-between"  my="lg">
       <Title order={2}>
       A simple Title for the prizes page
@@ -31,6 +32,8 @@ export default function PrizePageComponent() {
       <Center my="xl">
       <PrizePageTabs />
       </Center>
+      <Submissions/>
+      
     </div>
   );
 }

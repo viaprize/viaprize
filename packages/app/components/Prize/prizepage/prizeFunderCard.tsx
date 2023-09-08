@@ -4,7 +4,7 @@ import Image from 'next/image'
 
 export default function PrizeFunderCard() {
   return (
-    <Card shadow="sm" padding="lg" my="md" radius="md" withBorder className='flex justify-between items-center'>
+    <Card shadow="xs" padding="lg" my="md" radius="md" withBorder className='flex justify-between items-center'>
         <Group>
         <Avatar color="blue" radius="md"
             src="/placeholder.jpg"
