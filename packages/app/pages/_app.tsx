@@ -8,12 +8,16 @@ import Head from 'next/head';
 import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
 import { Web3ContextProvider } from "@/context/Web3Context";
 import {PrivyProvider} from '@privy-io/react-auth';
-
-import { WagmiConfig, configureChains, mainnet } from 'wagmi'
+import {PrivyWagmiConnector} from '@privy-io/wagmi-connector';
+import { WagmiConfig, configureChains } from 'wagmi'
 import wagmiConfig from "@/lib/wagmi";
 import Header from "@/components/layout/headerLayout";
+import {mainnet, goerli, optimism} from '@wagmi/chains';
 
+import {publicProvider} from 'wagmi/providers/public';
+import { infuraProvider } from 'wagmi/providers/infura'
 
+const configureChainsConfig = configureChains([mainnet, goerli], [publicProvider()]);
 
 
 export default function App(props: AppProps & { colorScheme: ColorScheme }) {
@@ -56,14 +60,15 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
 
-        <WagmiConfig config={wagmiConfig}>
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+        <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
           <Web3ContextProvider>
             <MantineProvider theme={{
             }} withGlobalStyles withNormalizeCSS>
             <PrivyProvider
               appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' ' }
               onSuccess={handleLogin}
-              config={{
+              config={{ 
                 loginMethods: ['email', 'wallet'],
                 appearance: {
                   theme: 'light',
@@ -78,7 +83,8 @@ export default function App(props: AppProps & { colorScheme: ColorScheme }) {
               </PrivyProvider>
             </MantineProvider>
           </Web3ContextProvider>
-        </WagmiConfig>
+        </PrivyWagmiConnector>
+      </ColorSchemeProvider>
     </>
   );
 }
