@@ -1,4 +1,5 @@
-import { Badge, Group,Text } from '@mantine/core'
+import { TextEditor } from '@/components/popupComponents/textEditor'
+import { Badge, Group,Text, Title } from '@mantine/core'
 import React from 'react'
 
 export default function AboutPrize() {
@@ -10,6 +11,12 @@ export default function AboutPrize() {
         </Text>
         <Badge color="green" className='h-8 font-bold'>$500</Badge>
       </Group>
+      <div className='py-4'>
+        <Title order={4} className='mb-2'>
+          About the prize
+        </Title>
+      <TextEditor disabled />
+      </div>
     </div>
   )
 }
