@@ -1,9 +1,9 @@
-import PrizePageComponent from '@/components/Prize/prizepage'
+import PrizePageComponent from '@/components/Prize/prizepage/prizepage'
 import React from 'react'
 
 export default function PrizePage() {
   return (
-    <div>
+    <div className='flex justify-center w-full'>
       <PrizePageComponent />
     </div>
   )
