@@ -37,11 +37,6 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-:root {
-  background: #f3f3f3;
-}
-
-
 .ant-btn,
 .tab-active {
   background: #3d4451 !important;
