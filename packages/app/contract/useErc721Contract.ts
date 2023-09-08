@@ -5,9 +5,9 @@
  * @module hooks/useERC721Contract
  */
 
-import useWeb3Context from '@/context/hooks/useWeb3Context';
 import { AbiItem } from 'web3-utils';
 import axios from 'axios';
+import useWeb3Context from '@/context/hooks/useWeb3Context';
 import Erc721Abi from './abi/ERC721.json';
 
 /**

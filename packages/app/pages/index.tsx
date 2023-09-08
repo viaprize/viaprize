@@ -13,6 +13,7 @@ import { DatePicker, DateValue } from '@mantine/dates';
 const tabs = ["about", "create", "preview"];
 
 const Home: NextPage = () => {
+    
     const [amount, setAmount] = useState("");
     const [terms, setTerms] = useState("");
     const [projectName, setProjectName] = useState("");
