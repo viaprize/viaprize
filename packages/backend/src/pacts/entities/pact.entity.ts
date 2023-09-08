@@ -21,10 +21,9 @@ export class PactEntity {
   @Column({ type: 'varchar', length: 66, nullable: true })
   blockHash: string;
   @Column({
-    type: 'varchar',
-    length: 255,
-    nullable: true,
+    type: 'enum',
     enum: ['testnet', 'mainnet'],
+    nullable: true,
   })
   networkType: string;
 }
