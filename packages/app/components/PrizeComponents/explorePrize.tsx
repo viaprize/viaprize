@@ -1,6 +1,8 @@
-import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
+import { Card, Image, Text, Badge, Button, Group, ScrollArea } from '@mantine/core';
+import { useState } from 'react';
 
-const ExplorePrize = () => {
+const ExploreCard = () => {
+  const [scrollPosition, onScrollPositionChange] = useState({ x: 0, y: 0 });
   return (
     <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Card.Section>
@@ -17,11 +19,17 @@ const ExplorePrize = () => {
           Profile Name
         </Badge>
       </Group>
-
-      <Text size="sm" color="dimmed">
-        Short Description goes here.........
-      </Text>
-
+      <ScrollArea
+        w={420}
+        h={100}
+        onScrollPositionChange={onScrollPositionChange}
+      >
+        short description goes here short description goes here short description goes here short description goes here short description goes here short description goes here short description goes here short description goes here short description goes here 
+      </ScrollArea>
+      <Group position="apart" mt="md" mb="xs">
+        <Text weight={500} color='green'>$500</Text>
+       <Text weight={500} color='red'>Deadline:12/12/22</Text>
+      </Group>
       <Button variant="light" color="blue" fullWidth mt="md" radius="md">
         Details
       </Button>
@@ -30,4 +38,4 @@ const ExplorePrize = () => {
 }
 
 
-export default ExplorePrize;
+export default ExploreCard;
