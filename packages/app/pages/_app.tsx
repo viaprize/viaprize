@@ -11,7 +11,6 @@ import {PrivyProvider} from '@privy-io/react-auth';
 
 import { WagmiConfig, configureChains, mainnet } from 'wagmi'
 import wagmiConfig from "@/lib/wagmi";
-import { usePrivy } from '@privy-io/react-auth';
 
 
 
