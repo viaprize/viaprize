@@ -9,6 +9,7 @@ export type AppConfig = {
   fallbackLanguage: string;
   headerLanguage: string;
   platformSharePercentage: number;
+  alchemy: string;
 };
 
 export type DatabaseConfig = {
