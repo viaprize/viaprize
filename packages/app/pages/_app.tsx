@@ -17,8 +17,11 @@ import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 
 const configureChainsConfig = configureChains([mainnet, goerli], [publicProvider()]);
+const queryClient = new QueryClient();
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -61,6 +64,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
       <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
         <Web3ContextProvider>
+        <QueryClientProvider client={queryClient}>
           <MantineProvider theme={{}} withGlobalStyles withNormalizeCSS>
             <PrivyProvider
               appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
@@ -79,6 +83,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
               {getLayout(<Component {...pageProps} />)}
             </PrivyProvider>
           </MantineProvider>
+          </QueryClientProvider>
         </Web3ContextProvider>
       </PrivyWagmiConnector>
     </>
