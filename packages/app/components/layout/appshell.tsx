@@ -13,7 +13,8 @@ import {
 import { ReactNode } from 'react';
 import HeaderLayout from './headerLayout';
 
-export default function AppShellLayout({ children }:{children:ReactNode}) {
+export default function AppShellLayout({ children }: { children: ReactNode }) {
+  console.log('reloading');
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   return (
@@ -37,12 +38,12 @@ export default function AppShellLayout({ children }:{children:ReactNode}) {
                 mr="xl"
               />
             </MediaQuery>
-            <HeaderLayout/>
+            <HeaderLayout />
           </div>
         </Header>
       }
     >
-        {children}
+      {children}
     </AppShell>
   );
 }
