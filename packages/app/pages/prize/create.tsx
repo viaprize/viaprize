@@ -15,7 +15,7 @@ const Prize = () => {
   const { mutateAsync: SubmitProposal, isLoading: submittingProposal } = useAddProposal();
   const [address, setAddress] = useState(['']);
   const [name, setName] = useState('');
-  const [richtext, setRichtext] = useState('[]');
+  const [richtext, setRichtext] = useState('');
   const [isAutomatic, setIsAutomatic] = useState(false);
   const [votingTime, setVotingTime] = useState(0);
   const [proposalTime, setProposalTime] = useState(0);
@@ -61,11 +61,9 @@ const Prize = () => {
     }
   };
 
-  const handleRichText = (value: JSONContent | undefined) => {
-    setRichtext(JSON.stringify(value));
-  };
+
   const useTemplateForDescription = () => {
-    setRichtext(JSON.stringify(PrizeCreationTemplate));
+    setRichtext(PrizeCreationTemplate);
   };
 
   const addAddress = () => {
@@ -82,7 +80,6 @@ const Prize = () => {
     });
   };
   return (
-    <div className="w-full grid place-content-center my-3">
       <div className="shadow-md max-w-screen-lg p-8 m-6">
         <ImageComponent 
         files={files}
@@ -94,10 +91,8 @@ const Prize = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <TextEditor richtext={richtext} setRichtext={setRichtext} />
-        <Button className="my-2" color="dark" onClick={useTemplateForDescription}>
-          Use Template for Prize Description
-        </Button>
+        <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
+       
         <SimpleGrid cols={2} className="my-3">
           <div className="">
             <NumberInput
@@ -165,7 +160,6 @@ const Prize = () => {
           Request for Approval
         </Button>
       </div>
-    </div>
   );
 };
 

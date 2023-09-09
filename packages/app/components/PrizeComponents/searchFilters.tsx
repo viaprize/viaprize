@@ -14,9 +14,9 @@ export const SearchFilters = () => {
       placeholder="Search"
       icon={<IconSearch size="1rem" />}
     />
-    <Flex  gap='md'>
+    {/* <Flex  gap='md'>
     <Filter />
-    </Flex>
+    </Flex> */}
     </Group>
 
     </div>

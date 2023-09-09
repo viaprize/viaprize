@@ -1,51 +1,51 @@
 import React, { forwardRef } from 'react';
 import {
   Avatar,
-  Popover,
-  Button,
-  Paper,
   Text,
   Group,
   Menu,
-  UnstyledButton,
   Badge,
+  useMantineColorScheme,
+  Flex,
+  ActionIcon,
 } from '@mantine/core';
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
 import {
-  IconArrowsLeftRight,
-  IconChevronRight,
-  IconMessageCircle,
-  IconPhoto,
+  IconMoonStars,
   IconSearch,
-  IconSettings,
-  IconTrash,
+  IconSun,
   IconUser,
 } from '@tabler/icons-react';
-import { IoMdContact } from 'react-icons/io';
 import { toast } from 'sonner';
 import { useRouter } from 'next/router';
+import { IoExit } from 'react-icons/io5';
 
 export default function HeaderLayout() {
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
+
   return (
-    <div className="bg-black h-[70px]">
-      <div className="absolute right-0 m-4">
-        {/* <Popover width={200} position="bottom" withArrow shadow="md">
-          <Popover.Target>
-            <Avatar color="cyan" radius="xl">
-              MK
-            </Avatar>
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Link href="/profile">view Profile</Link>
-            <Button variant="link" color="red" onClick={logout}>
-              Logout
-            </Button>
-          </Popover.Dropdown>
-        </Popover> */}
+    <Flex
+      justify="space-between"
+      align="center"
+      sx={{
+        width: '100%',
+      }}
+    >
+      <div>Image</div>
+      <Flex align="center" gap="md">
+        <ActionIcon
+          variant="outline"
+          color={dark ? 'yellow.7' : 'blue.8'}
+          onClick={() => toggleColorScheme()}
+          title="Toggle color scheme"
+        >
+          {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
+        </ActionIcon>
         <ProfileMenu />
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 }
 
@@ -69,12 +69,7 @@ function ProfileMenu() {
       <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
         <Menu.Target>
           {user ? (
-            <Badge
-              color="dark"
-              variant="filled"
-              size="xl"
-              className="absolute top-0 right-0 cursor-pointer"
-            >
+            <Badge color="dark" variant="filled" size="xl" radius="sm" className="cursor-pointer">
               {user?.wallet?.address?.slice(0, 4) + '...' + user?.wallet?.address?.slice(-4)}
             </Badge>
           ) : (
@@ -111,7 +106,7 @@ function ProfileMenu() {
           {/* <Menu.Label>Danger zone</Menu.Label> */}
           {/* <Menu.Item icon={<IconArrowsLeftRight size={14} />}>Transfer my data</Menu.Item> */}
           {user ? (
-            <Menu.Item color="red" icon={<IconTrash size={14} />} onClick={handleLogout}>
+            <Menu.Item color="red" icon={<IoExit size={14} />} onClick={handleLogout}>
               Logout
             </Menu.Item>
           ) : (
