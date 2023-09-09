@@ -47,7 +47,7 @@ export default function HeaderLayout() {
       <Flex align="center" gap="md">
         <ActionIcon
           variant="outline"
-          color={dark ? 'yellow' : 'blue'}
+          color={dark ? 'yellow.7' : 'blue.8'}
           onClick={() => toggleColorScheme()}
           title="Toggle color scheme"
         >
