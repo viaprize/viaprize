@@ -13,7 +13,7 @@ if (!NETWORK_TYPE) {
 const myAxios: AxiosInstance = axios.create({
   baseURL: 'https://api.pactsmith.com/api',
   headers: {
-    'Network-Type': NETWORK_TYPE,
+    'Network-Type': 'mainnet',
     'Access-Control-Allow-Origin': '*',
   },
 });

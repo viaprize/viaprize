@@ -1,6 +1,8 @@
 import {
   CanActivate,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -18,6 +20,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
+
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -35,9 +38,14 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
+    console.log(request.headers, 'header');
     if (!request?.headers?.authorization) {
-      throw new Exception('No authorization header found');
+      throw new HttpException(
+        'No authorization header found',
+        HttpStatus.FORBIDDEN,
+      );
     }
+
     const authToken = request?.headers?.authorization.replace('Bearer ', '');
     if (!authToken) {
       throw new Exception('No auth token found');

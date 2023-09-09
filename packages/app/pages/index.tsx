@@ -15,14 +15,16 @@ export default function MyComponent() {
         async onComplete(user, isNewUser, wasAlreadyAuthenticated) {
             console.log(user.wallet, "wallets ")
             const authToken = await getAccessToken();
-
+            console.log(authToken, "asdfg")
             myAxios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
+
             const walletAddress = user.wallet?.address
             if (!walletAddress) {
 
                 toast(<h1>Wallet address is not given</h1>)
                 return
             }
+            console.log(wallets)
             wallets.forEach((wallet) => {
                 setActiveWallet(wallet)
             })
@@ -35,8 +37,6 @@ export default function MyComponent() {
             else {
                 router.push('/prize/explorePrize')
             }
-
-
         },
     })
 

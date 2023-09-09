@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,11 +14,13 @@ export class UsersService {
     private mailService: MailService,
   ) {}
   async create(createUserDto: CreateUserDto) {
-    const user = await this.userRepository.create(createUserDto);
-    await this.userRepository.save(user);
-    await this.mailService.welcome(user.email);
-
-    return;
+    try {
+      const user = await this.userRepository.create(createUserDto);
+      await this.userRepository.save(user);
+      await this.mailService.welcome(user.email);
+    } catch (error) {
+      throw new HttpException('User Already Exists', HttpStatus.FORBIDDEN);
+    }
   }
 
   findAll() {

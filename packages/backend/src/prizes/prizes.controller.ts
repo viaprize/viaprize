@@ -25,6 +25,7 @@ import {
   getSchemaPath,
   ApiParam,
   ApiTags,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { PrizeProposals } from './entities/prize-proposals.entity';
@@ -65,6 +66,7 @@ export class PrizesController {
     description: 'Request body to create a prize',
     type: CreatePrizeProposalDto,
   })
+  @ApiBearerAuth('access-token')
   create(
     @Body() createPrizeProposalDto: CreatePrizeProposalDto,
     @Request() req,
