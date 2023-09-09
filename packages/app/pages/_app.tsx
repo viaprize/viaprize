@@ -8,11 +8,10 @@ import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core
 import { Web3ContextProvider } from '@/context/Web3Context';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
-import { WagmiConfig, configureChain } from 'wagmi';
+import { WagmiConfig, configureChains } from 'wagmi';
 import wagmiConfig from '@/lib/wagmi';
 import Header from '@/components/layout/headerLayout';
 import { mainnet, goerli, optimism } from '@wagmi/chains';
-
 import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { ReactElement, ReactNode } from 'react';
