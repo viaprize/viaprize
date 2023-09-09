@@ -4,6 +4,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/router';
 import React, { useRef, useState } from 'react';
 import { useMutation } from 'react-query';
+import { toast } from 'sonner';
 
 export default function Details() {
   const timeoutRef = useRef<number>(-1);
@@ -11,12 +12,19 @@ export default function Details() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState('');
-  const { user } = usePrivy()
-  const { mutateAsync: uploadProfile, isLoading } = useMutation(async ({ name, email }: { name: string, email: string }) => {
-    return await myAxios.post('/users', { name, email, address: user?.wallet?.address, userId: user?.id })
+  const { user } = usePrivy();
+  const router = useRouter();
 
-  })
-  const router = useRouter()
+  const { mutateAsync: uploadProfile, isLoading } = useMutation(
+    async ({ name, email }: { name: string; email: string }) => {
+      return await myAxios.post('/users', {
+        name,
+        email,
+        address: user?.wallet?.address,
+        userId: user?.id,
+      });
+    }
+  );
 
   const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
@@ -31,6 +39,25 @@ export default function Details() {
         setLoading(false);
         setData(['gmail.com', 'outlook.com', 'yahoo.com'].map((provider) => `${val}@${provider}`));
       }, 1000);
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      toast.promise(
+        uploadProfile({
+          email,
+          name,
+        }),
+        {
+          loading: 'Logging In',
+          success: 'Logged In Successfully',
+          error: 'Error Logging In',
+        }
+      );
+      router.push('/prize/explore-prizes');
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -54,14 +81,7 @@ export default function Details() {
           my="sm"
         />
         <Button
-          onClick={async () => {
-            await uploadProfile({
-              email,
-              name
-            }).then((res) => {
-              router.push('/prize/explorePrize')
-            })
-          }}
+          onClick={handleLogin}
           loading={loading || isLoading}
           disabled={loading || isLoading}
           color="blue"
