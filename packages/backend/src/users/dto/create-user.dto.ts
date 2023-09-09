@@ -21,4 +21,11 @@ export class CreateUserDto {
     example: 'jsldj3lkj',
   })
   userId: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'The name gotten from on boarding',
+    example: 'johnsmith',
+  })
+  name: string;
 }

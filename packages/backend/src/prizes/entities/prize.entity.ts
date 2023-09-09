@@ -1,7 +1,10 @@
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsDate } from 'class-validator';
 import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Submission } from './submission.entity';
+
+@Entity()
 export class Prize {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
@@ -44,19 +47,18 @@ export class Prize {
   @Column('simple-array')
   priorities: string[];
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
+  @UpdateDateColumn()
   updated_at: Date;
 
+  @OneToMany(() => Submission, (submission) => submission.prize)
+  submissions: Submission[];
+
   /* On Chain Data */
-  total_funds: number;
-  total_rewards: number;
-  platform_reward: number;
-  distributed: boolean;
+  // total_funds: number;
+  // total_rewards: number;
+  // platform_reward: number;
+  // distributed: boolean;
 }
