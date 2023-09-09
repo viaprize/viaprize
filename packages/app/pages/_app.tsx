@@ -8,7 +8,7 @@ import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core
 import { Web3ContextProvider } from '@/context/Web3Context';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
-import { WagmiConfig, configureChain } from 'wagmi';
+import { WagmiConfig, configureChains } from 'wagmi';
 import wagmiConfig from '@/lib/wagmi';
 import Header from '@/components/layout/headerLayout';
 import { mainnet, goerli, optimism } from '@wagmi/chains';
@@ -18,7 +18,6 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
 import { QueryClient, QueryClientProvider } from 'react-query';
-
 
 const configureChainsConfig = configureChains([mainnet, goerli], [publicProvider()]);
 const queryClient = new QueryClient();
@@ -38,19 +37,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     // console.log(`User ${user.id} logged in!`);
   };
 
-  // const {open} = usePrivy();
-  // const opening = open()
-
-  // // Call the open function inside a useEffect hook
-  // // to open the login popup when the component mounts
-  // useEffect(() => {
-  //   opening();
-  // }, [open]);
-
-  // useEffect(() => {
-  //   usePrivy()
-  // })
-
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
@@ -62,30 +48,27 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <PrivyProvider
-              appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
-              onSuccess={handleLogin}
-              config={{
-                loginMethods: ['email', 'wallet'],
-                appearance: {
-                  theme: 'light',
-                  accentColor: '#676FFF',
-                  // This configures your login modal to show wallet login options above other options.
-                  showWalletLoginFirst: true,
-                  // logo: 'https://your-logo-url',
-                },
-              }}
-            >
-      <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-        <Web3ContextProvider>
-        <QueryClientProvider client={queryClient}>
-          <MantineProvider theme={{}} withGlobalStyles withNormalizeCSS>
-            
-              {getLayout(<Component {...pageProps} />)}
-            
-          </MantineProvider>
-          </QueryClientProvider>
-        </Web3ContextProvider>
-      </PrivyWagmiConnector>
+        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
+        onSuccess={handleLogin}
+        config={{
+          loginMethods: ['email', 'wallet'],
+          appearance: {
+            theme: 'light',
+            accentColor: '#676FFF',
+            showWalletLoginFirst: true,
+            // logo: 'https://your-logo-url',
+          },
+        }}
+      >
+        <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
+          <Web3ContextProvider>
+            <QueryClientProvider client={queryClient}>
+              <MantineProvider theme={{}} withGlobalStyles withNormalizeCSS>
+                {getLayout(<Component {...pageProps} />)}
+              </MantineProvider>
+            </QueryClientProvider>
+          </Web3ContextProvider>
+        </PrivyWagmiConnector>
       </PrivyProvider>
     </>
   );
