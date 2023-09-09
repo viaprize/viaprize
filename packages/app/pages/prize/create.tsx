@@ -5,14 +5,51 @@ import React, { useState } from 'react';
 import { IconNewSection, IconPlus } from '@tabler/icons-react';
 import { JSONContent } from '@tiptap/react';
 import { PrizeCreationTemplate } from '@/components/Prize/prizepage/defaultcontent';
+import { useAddProposal } from '@/components/Prize/hooks/usePrizeForm';
+import { toast } from 'sonner';
+import { usePrivy } from '@privy-io/react-auth';
 
 const Prize = () => {
+  const { mutateAsync: SubmitProposal,isLoading:submittingProposal } = useAddProposal();
   const [address, setAddress] = useState(['']);
+  const [name, setName] = useState('');
   const [richtext, setRichtext] = useState('[]');
+  const [isAutomatic, setIsAutomatic] = useState(false);
+  const [votingTime, setVotingTime] = useState(0);
+  const [proposalTime, setProposalTime] = useState(0);
+  const { user } = usePrivy();
   const onAddressChange = (index: number, value: string) => {
     setAddress((prev: any) => {
       prev[index] = value;
       return [...prev];
+    });
+  };
+
+  const handleSubmit = () => {
+    console.log("clicked")
+    if (!user?.wallet?.address) {
+      console.log("here")
+      toast.error('Wallet not connected');
+      return;
+    }
+    toast.promise(
+      SubmitProposal({
+        admins: address,
+        description: richtext,
+        isAutomatic: isAutomatic,
+        voting_time: votingTime,
+        proposer_address: user?.wallet?.address,
+        priorities: [],
+        proficiencies: [],
+        submission_time: proposalTime,
+      }),
+      {
+        pending: 'Submitting Proposal',
+        success: 'Proposal Submitted',
+        error: 'Error Submitting Proposal',
+      }
+    ).catch((e)=>{
+      console.log(e)
     });
   };
 
@@ -40,7 +77,12 @@ const Prize = () => {
     <div className="w-full grid place-content-center my-3">
       <div className="shadow-md max-w-screen-lg p-8 m-6">
         <ImageComponent />
-        <TextInput className="my-2" placeholder="Name" />
+        <TextInput
+          className="my-2"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <TextEditor richtext={richtext} setRichtext={handleRichText} />
         <Button className="my-2" color="dark" onClick={useTemplateForDescription}>
           Use Template for Prize Description
@@ -51,8 +93,15 @@ const Prize = () => {
               placeholder="Proposal Time (in days)"
               stepHoldDelay={500}
               stepHoldInterval={100}
+              value={proposalTime}
+              defaultValue={0}
+              onChange={(e) => {
+                setProposalTime(e || 0);
+              }}
             />
             <Checkbox
+              checked={isAutomatic}
+              onChange={(e) => setIsAutomatic(e.currentTarget.checked)}
               className="my-2 cursor-pointer"
               label="Automatically start accepting funds after getting approval from the admin"
             />
@@ -61,6 +110,9 @@ const Prize = () => {
             placeholder="voting Time (in days)"
             stepHoldDelay={500}
             stepHoldInterval={100}
+            value={votingTime}
+            defaultValue={0}
+            onChange={(e) => setVotingTime(e || 0)}
           />
 
           {address.map((item, index) => (
@@ -92,7 +144,9 @@ const Prize = () => {
             <IconPlus />
           </ActionIcon>
         </SimpleGrid>
-        <Button className="mt-3 " color="dark" fullWidth>
+        <Button className="mt-3 " color="dark" fullWidth loading={submittingProposal}
+        onClick={handleSubmit}
+        >
           Request for Approval
         </Button>
       </div>

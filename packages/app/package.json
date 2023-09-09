@@ -60,6 +60,7 @@
     "react-icons": "^4.10.1",
     "react-query": "^3.39.3",
     "react-toastify": "^9.0.8",
+    "sonner": "^0.7.1",
     "viem": "^1.10.1",
     "wagmi": "^1.4.1",
     "web3": "^1.7.5",
