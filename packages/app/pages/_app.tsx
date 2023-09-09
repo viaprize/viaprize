@@ -12,7 +12,6 @@ import { WagmiConfig, configureChains } from 'wagmi';
 import wagmiConfig from '@/lib/wagmi';
 import Header from '@/components/layout/headerLayout';
 import { mainnet, goerli, optimism } from '@wagmi/chains';
-
 import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { ReactElement, ReactNode } from 'react';
@@ -31,7 +30,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
-  console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
+  // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
 
   const handleLogin = (user: any) => {
     // console.log(`User ${user.id} logged in!`);
@@ -41,7 +40,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <>
-      <Header />
+
       <Head>
         <title>Mantine next example</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
@@ -64,7 +63,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           <Web3ContextProvider>
             <QueryClientProvider client={queryClient}>
               <MantineProvider theme={{}} withGlobalStyles withNormalizeCSS>
+
                 {getLayout(<Component {...pageProps} />)}
+
               </MantineProvider>
             </QueryClientProvider>
           </Web3ContextProvider>

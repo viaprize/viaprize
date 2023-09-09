@@ -1,3 +1,4 @@
+
 import { useContractWrite } from 'wagmi';
 import { getContract } from '@wagmi/core';
 import { Contract } from 'ethers';
@@ -45,3 +46,4 @@ export const usePrize = () => {
     error: submissionTimeError,
   } = useContractRead(contract, 'get_submission_time');
 };
+

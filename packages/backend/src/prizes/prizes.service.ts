@@ -12,11 +12,14 @@ import {
 import { Prize } from './entities/prize.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { MailService } from 'src/mail/mail.service';
+import { CreateSubmissionDto } from './dto/create-submission.dto';
 @Injectable()
 export class PrizesService {
   constructor(
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
+    private mailService: MailService,
   ) {}
   create(createPrizeDto: CreatePrizeProposalDto) {
     return 'This action adds a new prize';
@@ -61,6 +64,8 @@ export class PrizesService {
   update(id: number, updatePrizeDto: UpdatePrizeDto) {
     return `This action updates a #${id} prize`;
   }
+
+  async addSummission(id: string, createSubmissionDto: CreateSubmissionDto) {}
 
   remove(id: number) {
     return `This action removes a #${id} prize`;
