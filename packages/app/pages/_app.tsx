@@ -18,7 +18,6 @@ import { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-
 const configureChainsConfig = configureChains([mainnet, goerli], [publicProvider()]);
 const queryClient = new QueryClient();
 
@@ -36,19 +35,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const handleLogin = (user: any) => {
     // console.log(`User ${user.id} logged in!`);
   };
-
-  // const {open} = usePrivy();
-  // const opening = open()
-
-  // // Call the open function inside a useEffect hook
-  // // to open the login popup when the component mounts
-  // useEffect(() => {
-  //   opening();
-  // }, [open]);
-
-  // useEffect(() => {
-  //   usePrivy()
-  // })
 
   const getLayout = Component.getLayout ?? ((page) => page);
 
@@ -68,7 +54,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           appearance: {
             theme: 'light',
             accentColor: '#676FFF',
-            // This configures your login modal to show wallet login options above other options.
             showWalletLoginFirst: true,
             // logo: 'https://your-logo-url',
           },
