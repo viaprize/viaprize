@@ -1,13 +1,9 @@
 import React, { forwardRef } from 'react';
 import {
   Avatar,
-  Popover,
-  Button,
-  Paper,
   Text,
   Group,
   Menu,
-  UnstyledButton,
   Badge,
   useMantineColorScheme,
   Flex,
@@ -16,20 +12,14 @@ import {
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
 import {
-  IconArrowsLeftRight,
-  IconChevronRight,
-  IconMessageCircle,
   IconMoonStars,
-  IconPhoto,
   IconSearch,
-  IconSettings,
   IconSun,
-  IconTrash,
   IconUser,
 } from '@tabler/icons-react';
-import { IoMdContact } from 'react-icons/io';
 import { toast } from 'sonner';
 import { useRouter } from 'next/router';
+import { IoExit } from 'react-icons/io5';
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -116,7 +106,7 @@ function ProfileMenu() {
           {/* <Menu.Label>Danger zone</Menu.Label> */}
           {/* <Menu.Item icon={<IconArrowsLeftRight size={14} />}>Transfer my data</Menu.Item> */}
           {user ? (
-            <Menu.Item color="red" icon={<IconTrash size={14} />} onClick={handleLogout}>
+            <Menu.Item color="red" icon={<IoExit size={14} />} onClick={handleLogout}>
               Logout
             </Menu.Item>
           ) : (
