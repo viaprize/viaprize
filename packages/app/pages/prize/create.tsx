@@ -1,7 +1,7 @@
 import { ActionIcon, Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
 import ImageComponent from '../../components/Prize/dropzone';
 import { TextEditor } from '../../components/popupComponents/textEditor';
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { IconNewSection, IconPlus } from '@tabler/icons-react';
 import { JSONContent } from '@tiptap/react';
 import { PrizeCreationTemplate } from '@/components/Prize/prizepage/defaultcontent';
@@ -9,6 +9,7 @@ import { useAddProposal } from '@/components/Prize/hooks/usePrizeForm';
 import { toast } from 'sonner';
 import { usePrivy } from '@privy-io/react-auth';
 import { FileWithPath } from '@mantine/dropzone';
+import AppShellLayout from '@/components/layout/appshell';
 
 const Prize = () => {
   const { mutateAsync: SubmitProposal, isLoading: submittingProposal } = useAddProposal();
@@ -166,6 +167,10 @@ const Prize = () => {
       </div>
     </div>
   );
+};
+
+Prize.getLayout = function getLayout(page: ReactElement) {
+  return <AppShellLayout>{page}</AppShellLayout>;
 };
 
 export default Prize;

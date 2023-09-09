@@ -74,52 +74,6 @@ export const PrizeSubmissionTemplate = [
                     type: 'bold',
                   },
                 ],
-                text: 'Participant Name:',
-              },
-              {
-                type: 'text',
-                text: ' [Your Name]',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'listItem',
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                marks: [
-                  {
-                    type: 'bold',
-                  },
-                ],
-                text: 'Email Address:',
-              },
-              {
-                type: 'text',
-                text: ' [Your Email Address]',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'listItem',
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                marks: [
-                  {
-                    type: 'bold',
-                  },
-                ],
                 text: 'Task/Project Title:',
               },
               {
@@ -192,11 +146,11 @@ export const PrizeSubmissionTemplate = [
                     type: 'bold',
                   },
                 ],
-                text: 'GitHub Repository URL:',
+                text: 'Repository URL:',
               },
               {
                 type: 'text',
-                text: ' [Link to Your GitHub Repository]',
+                text: ' [Link to Your Repository]',
               },
             ],
           },
