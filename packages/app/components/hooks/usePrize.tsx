@@ -25,7 +25,6 @@ export const startSubmissionPeriod = async (submissionTime: number) => {
     console.log('Submission period started.');
   } catch (error) {
     console.error('Error starting submission period:', error);
-    throw error;
   }
 };
 
@@ -41,10 +40,30 @@ export const getSubmissionPeriod = async() => {
 
 export const getVotingTime = async() => {
   const votingTime = await contract.get_voting_time();
-  console.log("here is voting time: ", votingTime)
+  console.log(`here is voting time: ${votingTime}`)
 }
 
 export const endSubmissionPeriod = async() => {
   await contract.end_submission_period();
   console.log("Great, Submission Period has ended...");
+}
+
+export const startVotingPeriod = async(votingTime: number) => {
+  try {
+    const transaction = await contract.start_voting_period(votingTime);
+    transaction.wait();
+    console.log("voting period has started successfully...")
+  } catch (error) {
+    console.log(`Error while setting Voting Period ${error}`)
+  }
+}
+
+export const addSubmission = async(submitter: string, submissionText: string, threshold: number) => {
+  try {
+     const submitProposal = await contract.addSubmission(submitter, submissionText, threshold);
+     submitProposal.await();
+     console.log("Congrats, you have successfully submitted Proposal...")
+  } catch (error) {
+    console.log(`you got this error ${error} while submitting proposal...`)
+  }
 }
