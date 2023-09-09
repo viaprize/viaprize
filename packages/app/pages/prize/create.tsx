@@ -94,7 +94,7 @@ const Prize = () => {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <TextEditor richtext={richtext} setRichtext={handleRichText} />
+        <TextEditor richtext={richtext} setRichtext={setRichtext} />
         <Button className="my-2" color="dark" onClick={useTemplateForDescription}>
           Use Template for Prize Description
         </Button>

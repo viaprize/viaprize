@@ -15,7 +15,7 @@ import React from 'react';
 interface TextEditorProps {
   disabled?: boolean;
   richtext?: string;
-  setRichtext?: (richtext:JSONContent| undefined)=>void;
+  setRichtext?: (richtext:string)=>void;
 }
 
 export const TextEditor = ({ disabled,richtext,setRichtext }: TextEditorProps) => {
@@ -30,11 +30,11 @@ export const TextEditor = ({ disabled,richtext,setRichtext }: TextEditorProps) =
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: richtext ? JSON.parse(richtext) as JSONContent : undefined ,
+    content: richtext,
     onUpdate: (e) => {
       if (setRichtext)
-      setRichtext(e.editor.getJSON());
-    console.log(e.editor.getJSON());
+      setRichtext(e.editor.getHTML().toString());
+    console.log(richtext,"richtext");
     }
   }
   );
