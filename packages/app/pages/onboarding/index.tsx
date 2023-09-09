@@ -1,6 +1,7 @@
 import myAxios from '@/lib/axios';
 import { Autocomplete, Button, Card, Center, Text, TextInput } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
+import { useRouter } from 'next/router';
 import React, { useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 
@@ -15,6 +16,7 @@ export default function Details() {
     return await myAxios.post('/users', { name, email, address: user?.wallet?.address, userId: user?.id })
 
   })
+  const router = useRouter()
 
   const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
@@ -56,6 +58,8 @@ export default function Details() {
             await uploadProfile({
               email,
               name
+            }).then((res) => {
+              router.push('/prize/explorePrize')
             })
           }}
           loading={loading || isLoading}
