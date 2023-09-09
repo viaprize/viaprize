@@ -6,12 +6,12 @@ import { getCookie, setCookie } from 'cookies-next';
 import Head from 'next/head';
 import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
 import { Web3ContextProvider } from '@/context/Web3Context';
-import { PrivyProvider } from '@privy-io/react-auth';
+import { PrivyProvider, User } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import { WagmiConfig, configureChains } from 'wagmi';
-import wagmiConfig from '@/lib/wagmi';
+import wagmiConfig, { configureChainsConfig } from '@/lib/wagmi';
 import Header from '@/components/layout/headerLayout';
-import { mainnet, goerli, optimism } from '@wagmi/chains';
+import { mainnet, goerli } from '@wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { ReactElement, ReactNode } from 'react';
@@ -19,8 +19,11 @@ import { NextPage } from 'next';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ToastContainer } from 'react-toastify';
 import { Toaster } from 'sonner';
+import { optimism, optimismGoerli } from 'wagmi/chains'
 
-const configureChainsConfig = configureChains([mainnet, goerli], [publicProvider()]);
+import config from '@/config';
+
+
 const queryClient = new QueryClient();
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
@@ -34,7 +37,7 @@ type AppPropsWithLayout = AppProps & {
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
 
-  const handleLogin = (user: any) => {
+  const handleLogin = (user: User, isNewUser: boolean) => {
     // console.log(`User ${user.id} logged in!`);
   };
 
@@ -49,15 +52,19 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       </Head>
       <PrivyProvider
         appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
-        onSuccess={handleLogin}
+
+
+
         config={{
           loginMethods: ['email', 'wallet'],
+          additionalChains: [optimism, optimismGoerli],
           appearance: {
             theme: 'light',
             accentColor: '#676FFF',
             showWalletLoginFirst: true,
             // logo: 'https://your-logo-url',
           },
+
         }}
       >
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>

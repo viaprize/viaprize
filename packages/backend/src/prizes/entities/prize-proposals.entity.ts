@@ -42,6 +42,7 @@ export class PrizeProposals {
 
   @ApiProperty()
   @IsBoolean()
+  @Column({ nullable: true })
   isAutomatic: boolean;
 
   @ApiProperty()
