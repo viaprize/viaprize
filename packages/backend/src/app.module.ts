@@ -20,6 +20,7 @@ import { MailerModule } from 'src/mailer/mailer.module';
 import { JobsModule } from './jobs/jobs.module';
 import mailConfig from './config/mail.config';
 import { EthersModule } from 'nestjs-ethers';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { EthersModule } from 'nestjs-ethers';
     MailModule,
     MailerModule,
     JobsModule,
+    AuthModule,
   ],
   providers: [],
   controllers: [],

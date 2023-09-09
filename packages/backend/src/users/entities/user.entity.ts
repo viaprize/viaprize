@@ -6,4 +6,10 @@ export class User {
   id: string;
   @Column({ unique: true })
   address: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column({ unique: true })
+  userId!: string;
 }
