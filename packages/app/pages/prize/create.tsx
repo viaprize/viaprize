@@ -31,11 +31,11 @@ const Prize = () => {
 
   const handleSubmit = () => {
     console.log(user);
-    if (!user?.wallet?.address) {
-      console.log('here');
-      toast.error('Wallet not connected');
-      return;
-    }
+    // if (!user?.wallet?.address) {
+    //   console.log('here');
+    //   toast.error('Wallet not connected');
+    //   return;
+    // }
     try {
       toast.promise(
         SubmitProposal({
@@ -43,7 +43,7 @@ const Prize = () => {
           description: richtext,
           isAutomatic: isAutomatic,
           voting_time: votingTime,
-          proposer_address: user?.wallet?.address,
+          proposer_address: '',
           priorities: [],
           proficiencies: [],
           submission_time: proposalTime,

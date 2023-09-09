@@ -16,7 +16,8 @@ const addProsposal = async (data: Proposal) => {
     
   const finalData = {
       ...data,
-      files: await storeFiles(data.files),
+      // files: await storeFiles(data.files),
+      files: ''
       };
   const response = await myAxios.post('/prizes/proposals', finalData);
   
@@ -24,7 +25,7 @@ const addProsposal = async (data: Proposal) => {
 
   // const files = await storeFiles(data.files);
   // return files;
-  
+
 };
 
 export const useAddProposal = () => {
