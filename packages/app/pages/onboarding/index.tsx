@@ -1,5 +1,8 @@
+import myAxios from '@/lib/axios';
 import { Autocomplete, Button, Card, Center, Text, TextInput } from '@mantine/core';
+import { usePrivy } from '@privy-io/react-auth';
 import React, { useRef, useState } from 'react';
+import { useMutation } from 'react-query';
 
 export default function Details() {
   const timeoutRef = useRef<number>(-1);
@@ -7,6 +10,11 @@ export default function Details() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState('');
+  const { user } = usePrivy()
+  const { mutateAsync: uploadProfile, isLoading } = useMutation(async ({ name, email }: { name: string, email: string }) => {
+    return await myAxios.post('/users', { name, email, address: user?.wallet?.address, userId: user?.id })
+
+  })
 
   const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
@@ -44,16 +52,19 @@ export default function Details() {
           my="sm"
         />
         <Button
-            onClick={() => {
-                console.log('clicked');
-            }}
-            loading={loading}
-            disabled={loading}
-            color="blue"
-            fullWidth
-            my="sm"
+          onClick={async () => {
+            await uploadProfile({
+              email,
+              name
+            })
+          }}
+          loading={loading || isLoading}
+          disabled={loading || isLoading}
+          color="blue"
+          fullWidth
+          my="sm"
         >
-            Get Started
+          Get Started
         </Button>
       </Card>
     </Center>

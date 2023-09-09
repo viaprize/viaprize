@@ -49,15 +49,17 @@ export class CreatePrizeProposalDto {
     type: Date,
     description: 'The start date of the voting period.',
     example: '2023-09-08',
+    nullable: true,
   })
-  startVotingDate: Date;
+  startVotingDate?: Date;
 
   @ApiProperty({
     type: Date,
     description: 'The start date of the submission period.',
     example: '2023-09-07',
+    nullable: true,
   })
-  startSubmissionDate: Date;
+  startSubmissionDate?: Date;
 
   @ApiProperty({ type: [String] })
   @IsArray()
