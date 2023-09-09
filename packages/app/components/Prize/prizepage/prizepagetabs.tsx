@@ -9,7 +9,7 @@ import PrizeFunderCard from './prizeFunderCard';
 
 export default function PrizePageTabs() {
   return (
-    <Tabs className='w-full' variant='pills' defaultValue="about">
+    <Tabs className='w-full' variant='pills' defaultValue="about" color='dark'>
       <Tabs.List position="center" grow>
         <Tabs.Tab value="about" icon={<BsInfoLg size="1rem" />}>
           About

@@ -4,10 +4,14 @@ import { Dropzone, DropzoneProps, FileWithPath, IMAGE_MIME_TYPE } from '@mantine
 import { useState } from 'react';
 import Image from 'next/image';
 
-export default function ImageComponent(props: Partial<DropzoneProps>) {
-  const [files, setFiles] = useState<FileWithPath[]>([]);
+interface ImageComponentProps extends Partial<DropzoneProps> {
+  files: FileWithPath[];
+  setFiles: (files: FileWithPath[]) => void;
+}
 
-  const previews = files.map((file, index) => {
+export default function ImageComponent(props: ImageComponentProps) {
+
+  const previews = props.files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
     return (
       <Image
@@ -25,9 +29,9 @@ export default function ImageComponent(props: Partial<DropzoneProps>) {
   const theme = useMantineTheme();
   return (
     <div className='overflow-hidden'>
-      {files.length == 0 ? (
+      {props.files.length == 0 ? (
         <Dropzone
-          onDrop={setFiles}
+          onDrop={props.setFiles}
           onReject={(files) => console.log('rejected files', files)}
           maxSize={3 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
@@ -70,7 +74,7 @@ export default function ImageComponent(props: Partial<DropzoneProps>) {
       ) : (
         <div className="aspect-video">{previews}
         <Button fullWidth onClick={()=>{
-            setFiles([])
+            props.setFiles([])
         }}
         my="md"
         >

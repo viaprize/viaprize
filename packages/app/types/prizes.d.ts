@@ -5,9 +5,10 @@ interface Proposal {
     description: string;
     proposer_address: string;
     isAutomatic: boolean;
-    startVotingDate: string;
-    startSubmissionDate: string;
+    startVotingDate?: string;
+    startSubmissionDate?: string;
     proficiencies: string[];
     priorities: string[];
+    files: File[];
   }
   
