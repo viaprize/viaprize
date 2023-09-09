@@ -9,5 +9,6 @@ interface Proposal {
     startSubmissionDate?: string;
     proficiencies: string[];
     priorities: string[];
+    files: File[];
   }
   

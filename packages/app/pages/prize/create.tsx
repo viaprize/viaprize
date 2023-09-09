@@ -8,9 +8,10 @@ import { PrizeCreationTemplate } from '@/components/Prize/prizepage/defaultconte
 import { useAddProposal } from '@/components/Prize/hooks/usePrizeForm';
 import { toast } from 'sonner';
 import { usePrivy } from '@privy-io/react-auth';
+import { FileWithPath } from '@mantine/dropzone';
 
 const Prize = () => {
-  const { mutateAsync: SubmitProposal,isLoading:submittingProposal } = useAddProposal();
+  const { mutateAsync: SubmitProposal, isLoading: submittingProposal } = useAddProposal();
   const [address, setAddress] = useState(['']);
   const [name, setName] = useState('');
   const [richtext, setRichtext] = useState('[]');
@@ -18,6 +19,9 @@ const Prize = () => {
   const [votingTime, setVotingTime] = useState(0);
   const [proposalTime, setProposalTime] = useState(0);
   const { user } = usePrivy();
+  const [files, setFiles] = useState<FileWithPath[]>([]);
+
+
   const onAddressChange = (index: number, value: string) => {
     setAddress((prev: any) => {
       prev[index] = value;
@@ -26,31 +30,34 @@ const Prize = () => {
   };
 
   const handleSubmit = () => {
-    console.log("clicked")
+    console.log(user);
     if (!user?.wallet?.address) {
-      console.log("here")
+      console.log('here');
       toast.error('Wallet not connected');
       return;
     }
-    toast.promise(
-      SubmitProposal({
-        admins: address,
-        description: richtext,
-        isAutomatic: isAutomatic,
-        voting_time: votingTime,
-        proposer_address: user?.wallet?.address,
-        priorities: [],
-        proficiencies: [],
-        submission_time: proposalTime,
-      }),
-      {
-        pending: 'Submitting Proposal',
-        success: 'Proposal Submitted',
-        error: 'Error Submitting Proposal',
-      }
-    ).catch((e)=>{
-      console.log(e)
-    });
+    try {
+      toast.promise(
+        SubmitProposal({
+          admins: address,
+          description: richtext,
+          isAutomatic: isAutomatic,
+          voting_time: votingTime,
+          proposer_address: user?.wallet?.address,
+          priorities: [],
+          proficiencies: [],
+          submission_time: proposalTime,
+          files: files,
+        }),
+        {
+          loading: 'Submitting Proposal',
+          success: 'Proposal Submitted',
+          error: 'Error Submitting Proposal',
+        }
+      );
+    } catch {
+      toast.error('Error Submitting Proposal');
+    }
   };
 
   const handleRichText = (value: JSONContent | undefined) => {
@@ -76,7 +83,10 @@ const Prize = () => {
   return (
     <div className="w-full grid place-content-center my-3">
       <div className="shadow-md max-w-screen-lg p-8 m-6">
-        <ImageComponent />
+        <ImageComponent 
+        files={files}
+        setFiles={setFiles}
+        />
         <TextInput
           className="my-2"
           placeholder="Name"
@@ -144,8 +154,12 @@ const Prize = () => {
             <IconPlus />
           </ActionIcon>
         </SimpleGrid>
-        <Button className="mt-3 " color="dark" fullWidth loading={submittingProposal}
-        onClick={handleSubmit}
+        <Button
+          className="mt-3 "
+          color="dark"
+          fullWidth
+          loading={submittingProposal}
+          onClick={handleSubmit}
         >
           Request for Approval
         </Button>

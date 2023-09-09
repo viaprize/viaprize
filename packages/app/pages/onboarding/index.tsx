@@ -43,19 +43,22 @@ export default function Details() {
   };
 
   const handleLogin = async () => {
-
-    toast.promise(
-      uploadProfile({
-        email,
-        name,
-      }),
-      {
-        loading: 'Submitting Proposal',
-        success: 'Proposal Submitted',
-        error: 'Error Submitting Proposal',
-      }
-    )
-    router.push('/prize/explore-prizes');
+    try {
+      toast.promise(
+        uploadProfile({
+          email,
+          name,
+        }),
+        {
+          loading: 'Logging In',
+          success: 'Logged In Successfully',
+          error: 'Error Logging In',
+        }
+      );
+      router.push('/prize/explore-prizes');
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
