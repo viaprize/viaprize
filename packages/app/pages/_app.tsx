@@ -39,19 +39,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     // console.log(`User ${user.id} logged in!`);
   };
 
-  // const {open} = usePrivy();
-  // const opening = open()
-
-  // // Call the open function inside a useEffect hook
-  // // to open the login popup when the component mounts
-  // useEffect(() => {
-  //   opening();
-  // }, [open]);
-
-  // useEffect(() => {
-  //   usePrivy()
-  // })
-
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
@@ -73,7 +60,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           appearance: {
             theme: 'light',
             accentColor: '#676FFF',
-            // This configures your login modal to show wallet login options above other options.
             showWalletLoginFirst: true,
             // logo: 'https://your-logo-url',
           },
