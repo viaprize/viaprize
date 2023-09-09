@@ -23,7 +23,9 @@ export default function MyComponent() {
                 toast(<h1>Wallet address is not given</h1>)
                 return
             }
-            setActiveWallet(wallets[0])
+            wallets.forEach((wallet) => {
+                setActiveWallet(wallet)
+            })
 
             // Handle login completion
             if (isNewUser) {
