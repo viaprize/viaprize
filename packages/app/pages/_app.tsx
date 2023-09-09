@@ -32,7 +32,7 @@ type AppPropsWithLayout = AppProps & {
 };
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
-  console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
+  // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
 
   const handleLogin = (user: any) => {
     // console.log(`User ${user.id} logged in!`);
@@ -55,7 +55,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <>
-      <Header />
+
       <Head>
         <title>Mantine next example</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
@@ -64,25 +64,25 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
       <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
         <Web3ContextProvider>
-        <QueryClientProvider client={queryClient}>
-          <MantineProvider theme={{}} withGlobalStyles withNormalizeCSS>
-            <PrivyProvider
-              appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
-              onSuccess={handleLogin}
-              config={{
-                loginMethods: ['email', 'wallet'],
-                appearance: {
-                  theme: 'light',
-                  accentColor: '#676FFF',
-                  // This configures your login modal to show wallet login options above other options.
-                  showWalletLoginFirst: true,
-                  // logo: 'https://your-logo-url',
-                },
-              }}
-            >
-              {getLayout(<Component {...pageProps} />)}
-            </PrivyProvider>
-          </MantineProvider>
+          <QueryClientProvider client={queryClient}>
+            <MantineProvider theme={{}} withGlobalStyles withNormalizeCSS>
+              <PrivyProvider
+                appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
+                onSuccess={handleLogin}
+                config={{
+                  loginMethods: ['email', 'wallet'],
+                  appearance: {
+                    theme: 'light',
+                    accentColor: '#676FFF',
+                    // This configures your login modal to show wallet login options above other options.
+                    showWalletLoginFirst: true,
+                    // logo: 'https://your-logo-url',
+                  },
+                }}
+              >
+                {getLayout(<Component {...pageProps} />)}
+              </PrivyProvider>
+            </MantineProvider>
           </QueryClientProvider>
         </Web3ContextProvider>
       </PrivyWagmiConnector>
