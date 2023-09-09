@@ -3,15 +3,24 @@ import ImageComponent from '../../components/Prize/dropzone';
 import { TextEditor } from '../../components/popupComponents/textEditor';
 import React, { useState } from 'react';
 import { IconNewSection, IconPlus } from '@tabler/icons-react';
-
+import { JSONContent } from '@tiptap/react';
+import { PrizeCreationTemplate } from '@/components/Prize/prizepage/defaultcontent';
 
 const Prize = () => {
   const [address, setAddress] = useState(['']);
+  const [richtext, setRichtext] = useState('[]');
   const onAddressChange = (index: number, value: string) => {
     setAddress((prev: any) => {
       prev[index] = value;
       return [...prev];
     });
+  };
+
+  const handleRichText = (value: JSONContent | undefined) => {
+    setRichtext(JSON.stringify(value));
+  };
+  const useTemplateForDescription = () => {
+    setRichtext(JSON.stringify(PrizeCreationTemplate));
   };
 
   const addAddress = () => {
@@ -28,27 +37,31 @@ const Prize = () => {
     });
   };
   return (
-  
     <div className="w-full grid place-content-center my-3">
       <div className="shadow-md max-w-screen-lg p-8 m-6">
         <ImageComponent />
         <TextInput className="my-2" placeholder="Name" />
-        <TextEditor />
+        <TextEditor richtext={richtext} setRichtext={handleRichText} />
+        <Button className="my-2" color="dark" onClick={useTemplateForDescription}>
+          Use Template for Prize Description
+        </Button>
         <SimpleGrid cols={2} className="my-3">
-            <div className="">
-          <NumberInput
-            placeholder="Proposal Time (in days)"
-            stepHoldDelay={500}
-            stepHoldInterval={100}
-          />
-          <Checkbox className='my-2' label="Automatically start accepting funds after getting approval from the admin" />
+          <div className="">
+            <NumberInput
+              placeholder="Proposal Time (in days)"
+              stepHoldDelay={500}
+              stepHoldInterval={100}
+            />
+            <Checkbox
+              className="my-2 cursor-pointer"
+              label="Automatically start accepting funds after getting approval from the admin"
+            />
           </div>
           <NumberInput
             placeholder="voting Time (in days)"
             stepHoldDelay={500}
             stepHoldInterval={100}
           />
-          
 
           {address.map((item, index) => (
             <div className="" key={index}>
@@ -75,7 +88,7 @@ const Prize = () => {
               )}
             </div>
           ))}
-          <ActionIcon variant="filled" color="blue" onClick={addAddress}>
+          <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
             <IconPlus />
           </ActionIcon>
         </SimpleGrid>
@@ -84,7 +97,6 @@ const Prize = () => {
         </Button>
       </div>
     </div>
-   
   );
 };
 
