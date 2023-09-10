@@ -91,19 +91,19 @@ export class PrizesController {
   async getProposalsBy(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Param('address') address,
+    @Param('userId') userId,
   ): Promise<InfinityPaginationResultType<PrizeProposals>> {
     if (limit > 50) {
       limit = 50;
     }
 
     return infinityPagination(
-      await this.prizeProposalsService.findByProposerAddressWithPagination(
+      await this.prizeProposalsService.findByUserWithPagination(
         {
           limit,
           page,
         },
-        address,
+        userId,
       ),
       { page, limit },
     );
