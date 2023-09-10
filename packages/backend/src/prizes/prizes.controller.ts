@@ -71,6 +71,8 @@ export class PrizesController {
     @Body() createPrizeProposalDto: CreatePrizeProposalDto,
     @Request() req,
   ) {
+    console.log({ createPrizeProposalDto });
+    console.log(req.user, 'user');
     return this.prizeProposalsService.create(
       createPrizeProposalDto,
       req.user.userId,

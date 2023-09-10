@@ -1,4 +1,4 @@
-import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
+import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
@@ -18,8 +18,11 @@ export default function useAppUser() {
   const { setActiveWallet } = usePrivyWagmi();
 
   const { user, logout } = usePrivy();
+  console.log({ user }, 'user');
   const { login } = useLogin({
     async onComplete(user, isNewUser, wasAlreadyAuthenticated) {
+      const token = await getAccessToken();
+      console.log({ token });
       if (wasAlreadyAuthenticated || isNewUser) {
         const walletAddress = user.wallet?.address;
         if (!walletAddress) {
@@ -29,7 +32,10 @@ export default function useAppUser() {
         wallets.forEach((wallet) => {
           setActiveWallet(wallet);
         });
-        await refreshUser();
+        console.log({ user });
+        if (user) {
+          await refreshUser();
+        }
       }
 
       if (isNewUser && !wasAlreadyAuthenticated) {
@@ -62,10 +68,9 @@ export default function useAppUser() {
   };
 
   const refreshUser = async (): Promise<void> => {
-    if (!user) {
-      throw new Error('User is not logged in');
+    if (user) {
+      await refresh(user.id);
     }
-    await refresh(user.id);
   };
 
   return {

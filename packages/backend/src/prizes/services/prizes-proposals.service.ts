@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePrizeProposalDto } from '../dto/create-prize-proposal.dto';
 import { UpdatePrizeDto } from '../dto/update-prize-proposal.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,7 +22,7 @@ export class PrizeProposalsService {
   async create(createPrizeDto: CreatePrizeProposalDto, userId: string) {
     const user = await this.userService.findOneByUserId(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new HttpException('User not found', HttpStatus.NOT_ACCEPTABLE);
     }
 
     await this.prizeProposalsRepository.save({
