@@ -35,22 +35,26 @@ export class PrizeProposalsService {
     return await this.prizeProposalsRepository.find();
   }
 
-  async findByProposerAddressWithPagination(
+  async findByUserWithPagination(
     paginationOptions: IPaginationOptions,
-    propserAddress: string,
+    userId: string,
   ) {
     return this.prizeProposalsRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: {
-        proposer_address: propserAddress,
+        user: {
+          user_id: userId,
+        },
       },
     });
   }
 
-  async findByProposerAddress(propserAddress: string) {
+  async findByUser(userId: string) {
     return await this.prizeProposalsRepository.findBy({
-      proposer_address: propserAddress,
+      user: {
+        user_id: userId,
+      },
     });
   }
 
@@ -63,21 +67,14 @@ export class PrizeProposalsService {
   }
   async approve(id: string) {
     const prizeProposal = await this.findOne(id);
-    if (!prizeProposal?.proposer_address) {
-      throw new Error('Proposal not found');
+    if (!prizeProposal?.user) {
+      throw new Error('User not found');
     }
     await this.prizeProposalsRepository.update(id, {
       isApproved: true,
     });
 
-    const user = await this.userService.findOneByAddress(
-      prizeProposal?.proposer_address,
-    );
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    await this.mailService.approved(user?.email);
+    await this.mailService.approved(prizeProposal.user.email);
   }
 
   async update(id: string, updatePrizeDto: UpdatePrizeDto) {
