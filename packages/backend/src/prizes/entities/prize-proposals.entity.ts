@@ -1,7 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsDate } from 'class-validator';
-import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+} from 'typeorm';
 import { Priority, Proficiency } from './types';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 export class PrizeProposals {
@@ -55,10 +62,6 @@ export class PrizeProposals {
   @Column({ nullable: true })
   startSubmissionDate: Date;
 
-  @ApiProperty()
-  @Column()
-  proposer_address: string;
-
   @ApiProperty({ type: 'array', items: { type: 'string' } })
   @Column('simple-array')
   proficiencies: string[];
@@ -66,4 +69,12 @@ export class PrizeProposals {
   @ApiProperty({ type: 'array', items: { type: 'string' } })
   @Column('simple-array')
   priorities: string[];
+
+  @ApiProperty({ type: 'array', items: { type: 'string' } })
+  @Column('simple-array')
+  images: string[];
+
+  @ApiProperty({ type: 'string' })
+  @ManyToOne(() => User, (user) => user.prizeProposals)
+  user: User;
 }
