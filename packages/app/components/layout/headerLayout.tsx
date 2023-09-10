@@ -20,6 +20,14 @@ import {
 import { toast } from 'sonner';
 import { useRouter } from 'next/router';
 import { IoExit } from 'react-icons/io5';
+import useAppUser from '@/context/hooks/useAppUser';
+
+function getEmailInitials(email: string) {
+  const [username, domain] = email.split('@');
+  const usernameInitial = username.slice(0, 5)
+  const domainInitial = domain.charAt(0);
+  return usernameInitial + domainInitial;
+}
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -50,7 +58,13 @@ export default function HeaderLayout() {
 }
 
 function ProfileMenu() {
-  const { logout, user } = usePrivy();
+  const { user } = usePrivy();
+  const {
+    logoutMutation: { mutateAsync: logout },
+    appUser
+
+  } = useAppUser()
+
   const router = useRouter();
 
   const handleLogout = () => {
@@ -70,7 +84,7 @@ function ProfileMenu() {
         <Menu.Target>
           {user ? (
             <Badge color="dark" variant="filled" size="xl" radius="sm" className="cursor-pointer">
-              {user?.wallet?.address?.slice(0, 4) + '...' + user?.wallet?.address?.slice(-4)}
+              {getEmailInitials(appUser.email)}
             </Badge>
           ) : (
             <Avatar color="cyan" radius="xl" className="cursor-pointer" />

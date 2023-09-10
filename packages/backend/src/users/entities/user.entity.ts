@@ -5,8 +5,6 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ unique: true })
-  address: string;
 
   @Column({ unique: true })
   email: string;

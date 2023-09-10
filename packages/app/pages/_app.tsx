@@ -22,6 +22,7 @@ import { Toaster } from 'sonner';
 import { optimism, optimismGoerli } from 'wagmi/chains';
 
 import config from '@/config';
+import { env } from '@env';
 
 const queryClient = new QueryClient();
 
@@ -53,7 +54,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <PrivyProvider
-        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
+        appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
         config={{
           loginMethods: ['email', 'wallet'],
           additionalChains: [optimism, optimismGoerli],
@@ -69,7 +70,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           <Web3ContextProvider>
             <QueryClientProvider client={queryClient}>
               <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-                <MantineProvider theme={{colorScheme}} withGlobalStyles withNormalizeCSS>
+                <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
                   <Toaster />
                   {getLayout(<Component {...pageProps} />)}
                 </MantineProvider>

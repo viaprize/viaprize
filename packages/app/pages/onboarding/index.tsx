@@ -1,3 +1,4 @@
+import useAppUser from '@/context/hooks/useAppUser';
 import myAxios from '@/lib/axios';
 import { Autocomplete, Button, Card, Center, Text, TextInput } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
@@ -12,20 +13,8 @@ export default function Details() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState('');
-  const { user } = usePrivy();
+  const { uploadUserMutation } = useAppUser()
   const router = useRouter();
-
-  const { mutateAsync: uploadProfile, isLoading } = useMutation(
-    async ({ name, email }: { name: string; email: string }) => {
-      return await myAxios.post('/users', {
-        name,
-        email,
-        address: user?.wallet?.address,
-        userId: user?.id,
-      });
-    }
-  );
-
   const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
     setEmail(val);
@@ -45,9 +34,9 @@ export default function Details() {
   const handleLogin = async () => {
     try {
       toast.promise(
-        uploadProfile({
+        uploadUserMutation.mutateAsync({
           email,
-          name,
+          name
         }),
         {
           loading: 'Logging In',
@@ -82,8 +71,8 @@ export default function Details() {
         />
         <Button
           onClick={handleLogin}
-          loading={loading || isLoading}
-          disabled={loading || isLoading}
+          loading={loading || uploadUserMutation.isLoading}
+          disabled={loading || uploadUserMutation.isLoading}
           color="blue"
           fullWidth
           my="sm"

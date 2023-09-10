@@ -33,9 +33,9 @@ export class UsersController {
   //   return this.usersService.findAll();
   // }
 
-  @Get(':address')
-  findOne(@Param('address') address: string) {
-    return this.usersService.findOneByAddress(address);
+  @Get(':userId')
+  findOne(@Param('userId') userId: string) {
+    return this.usersService.findOneByUserId(userId);
   }
 
   // @Patch(':id')

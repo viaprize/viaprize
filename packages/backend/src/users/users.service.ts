@@ -34,18 +34,6 @@ export class UsersService {
     });
   }
 
-  findOneByAddress(address: string) {
-    const user = this.userRepository.findOne({
-      where: {
-        address,
-      },
-    });
-    if (!user) {
-      throw new Error('User not found');
-    }
-    return user;
-  }
-
   // update(id: number, updateUserDto: UpdateUserDto) {
   //   return `This action updates a #${id} user`;
   // }
