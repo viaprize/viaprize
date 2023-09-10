@@ -29,7 +29,7 @@ export class UsersService {
   findOneByUserId(userId: string) {
     return this.userRepository.findOne({
       where: {
-        userId,
+        user_id: userId,
       },
     });
   }
