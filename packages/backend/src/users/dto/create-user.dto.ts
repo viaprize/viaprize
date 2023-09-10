@@ -16,7 +16,7 @@ export class CreateUserDto {
     example: 'jsldj3lkj',
   })
   @IsString()
-  userId: string;
+  user_id: string;
 
   @ApiProperty({
     type: String,
