@@ -5,37 +5,16 @@ import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
+import useAppUser from '@/context/hooks/useAppUser';
 
 export default function MyComponent() {
   // const { login, ready, authenticated, } = usePrivy();
-  const { wallets } = useWallets();
+
   const router = useRouter();
-  const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
+
   const { user } = usePrivy();
 
-  const { login } = useLogin({
-    async onComplete(user, isNewUser, wasAlreadyAuthenticated) {
-      console.log(user.wallet, 'wallets ');
-      const authToken = await getAccessToken();
-
-      myAxios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
-      const walletAddress = user.wallet?.address;
-      if (!walletAddress) {
-        toast(<h1>Wallet address is not given</h1>);
-        return;
-      }
-      wallets.forEach((wallet) => {
-        setActiveWallet(wallet);
-      });
-
-      // Handle login completion
-      if (isNewUser) {
-        router.push('/onboarding');
-      } else {
-        router.push('/prize/explore-prizes');
-      }
-    },
-  });
+  const { loginUser } = useAppUser()
 
   return (
     <div>
@@ -69,7 +48,7 @@ export default function MyComponent() {
               </Button>
             </div>
           ) : (
-            <Button color="dark" onClick={() => login()}>
+            <Button color="dark" onClick={loginUser}>
               login
             </Button>
           )}

@@ -67,16 +67,16 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         }}
       >
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-          <Web3ContextProvider>
-            <QueryClientProvider client={queryClient}>
-              <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-                <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-                  <Toaster />
-                  {getLayout(<Component {...pageProps} />)}
-                </MantineProvider>
-              </ColorSchemeProvider>
-            </QueryClientProvider>
-          </Web3ContextProvider>
+
+          <QueryClientProvider client={queryClient}>
+            <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+              <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+                <Toaster />
+                {getLayout(<Component {...pageProps} />)}
+              </MantineProvider>
+            </ColorSchemeProvider>
+          </QueryClientProvider>
+
         </PrivyWagmiConnector>
       </PrivyProvider>
     </>

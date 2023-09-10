@@ -58,9 +58,9 @@ export default function HeaderLayout() {
 }
 
 function ProfileMenu() {
-  const { user } = usePrivy();
+  const { authenticated } = usePrivy();
   const {
-    logoutMutation: { mutateAsync: logout },
+    logoutUser,
     appUser
 
   } = useAppUser()
@@ -69,7 +69,7 @@ function ProfileMenu() {
 
   const handleLogout = () => {
     try {
-      toast.promise(logout(), {
+      toast.promise(logoutUser(), {
         loading: 'Logging out',
         success: 'Logged out',
         error: 'Error logging out',
@@ -82,7 +82,7 @@ function ProfileMenu() {
     <Group position="center">
       <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
         <Menu.Target>
-          {user ? (
+          {appUser ? (
             <Badge color="dark" variant="filled" size="xl" radius="sm" className="cursor-pointer">
               {getEmailInitials(appUser.email)}
             </Badge>
@@ -92,7 +92,7 @@ function ProfileMenu() {
         </Menu.Target>
         <Menu.Dropdown p="md" mr="sm">
           <Menu.Label>Profile</Menu.Label>
-          {user ? (
+          {authenticated ? (
             <Menu.Item
               icon={<IconUser size={14} />}
               onClick={() => {
@@ -119,7 +119,7 @@ function ProfileMenu() {
 
           {/* <Menu.Label>Danger zone</Menu.Label> */}
           {/* <Menu.Item icon={<IconArrowsLeftRight size={14} />}>Transfer my data</Menu.Item> */}
-          {user ? (
+          {authenticated ? (
             <Menu.Item color="red" icon={<IoExit size={14} />} onClick={handleLogout}>
               Logout
             </Menu.Item>

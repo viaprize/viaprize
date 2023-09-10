@@ -13,7 +13,17 @@ export default function Details() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState('');
-  const { uploadUserMutation } = useAppUser()
+  const { createNewUser } = useAppUser()
+  /**
+   * Mutation for logging in the user.
+   * @type {import('react-query').UseMutationResult<any, unknown>}
+   */
+  const uploadUserMutation = useMutation(createNewUser,{
+    onSuccess: (data) => {
+      router.push('/prize/explore-prizes');
+    }
+  });
+  
   const router = useRouter();
   const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
@@ -42,9 +52,9 @@ export default function Details() {
           loading: 'Logging In',
           success: 'Logged In Successfully',
           error: 'Error Logging In',
-        }
+        },
       );
-      router.push('/prize/explore-prizes');
+      
     } catch (e) {
       console.log(e);
     }
