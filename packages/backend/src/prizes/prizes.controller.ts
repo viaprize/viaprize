@@ -79,7 +79,7 @@ export class PrizesController {
     );
   }
 
-  @Get('/proposals/proposer_address/:address')
+  @Get('/proposals/user/:userId')
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: 200,
@@ -87,7 +87,7 @@ export class PrizesController {
     type: PrizeProposalsPaginationResult,
   })
   @ApiParam({
-    name: 'address',
+    name: 'userId',
     type: String,
   })
   async getProposalsBy(
