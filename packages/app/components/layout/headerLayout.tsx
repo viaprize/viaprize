@@ -8,12 +8,14 @@ import {
   useMantineColorScheme,
   Flex,
   ActionIcon,
+  Button,
 } from '@mantine/core';
 import Link from 'next/link';
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import {
   IconMoonStars,
   IconSearch,
+  IconSignRight,
   IconSun,
   IconUser,
 } from '@tabler/icons-react';
@@ -78,6 +80,7 @@ function ProfileMenu() {
       toast.error('Error logging out');
     }
   };
+  const { wallets } = useWallets()
   return (
     <Group position="center">
       <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
@@ -114,9 +117,6 @@ function ProfileMenu() {
           >
             Search
           </Menu.Item>
-
-          <Menu.Divider />
-
           {/* <Menu.Label>Danger zone</Menu.Label> */}
           {/* <Menu.Item icon={<IconArrowsLeftRight size={14} />}>Transfer my data</Menu.Item> */}
           {authenticated ? (

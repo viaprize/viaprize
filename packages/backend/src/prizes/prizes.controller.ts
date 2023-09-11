@@ -26,6 +26,7 @@ import {
   ApiParam,
   ApiTags,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { PrizeProposals } from './entities/prize-proposals.entity';
@@ -71,21 +72,33 @@ export class PrizesController {
     @Body() createPrizeProposalDto: CreatePrizeProposalDto,
     @Request() req,
   ) {
+    console.log({ createPrizeProposalDto });
+    console.log(req.user, 'user');
     return this.prizeProposalsService.create(
       createPrizeProposalDto,
       req.user.userId,
     );
   }
 
-  @Get('/proposals/proposer_address/:address')
+  @Get('/proposals/user/:userId')
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: 200,
     description: 'The proposals were returned successfully',
     type: PrizeProposalsPaginationResult,
   })
+  @ApiQuery({
+    name: 'page',
+    example: 1,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    example: 10,
+    type: Number,
+  })
   @ApiParam({
-    name: 'address',
+    name: 'userId',
     type: String,
   })
   async getProposalsBy(
