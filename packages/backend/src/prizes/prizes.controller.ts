@@ -26,6 +26,7 @@ import {
   ApiParam,
   ApiTags,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { PrizeProposals } from './entities/prize-proposals.entity';
@@ -85,6 +86,16 @@ export class PrizesController {
     status: 200,
     description: 'The proposals were returned successfully',
     type: PrizeProposalsPaginationResult,
+  })
+  @ApiQuery({
+    name: 'page',
+    example: 1,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    example: 10,
+    type: Number,
   })
   @ApiParam({
     name: 'userId',
