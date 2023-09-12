@@ -1,6 +1,6 @@
 import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
-import ExploreCard from '@/components/PrizeComponents/explorePrize';
-import { SearchFilters } from '@/components/PrizeComponents/searchFilters';
+import ExploreCard from '@/components/ExplorePrize/explorePrize';
+import { SearchFilters } from '@/components/ExplorePrize/searchFilters';
 import AppShellLayout from '@/components/layout/appshell';
 import { usePrivy } from '@privy-io/react-auth';
 import { ReactElement, useEffect } from 'react';
@@ -12,7 +12,7 @@ const ExplorePage = () => {
     console.log("hiiii")
 
     getProposalsOfUser().then((res) => {
-      console.log(res,"Res");
+      console.log(res, "Res");
     })
 
   }, [])
