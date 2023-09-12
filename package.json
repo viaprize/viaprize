@@ -1,8 +1,20 @@
 {
-  "name": "viaprize-monorepo",
-  "private": true,
-  "workspaces": [
-    "packages/app",
-    "packages/backend"
-  ]
+  "name": "pact-packages",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^18.2.21",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@types/react-dom": "^18.2.7",
+    "nestjs-ethers": "0.2.0"
+  }
 }
