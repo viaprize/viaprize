@@ -36,12 +36,15 @@ let UsersService = class UsersService {
     findAll() {
         return `This action returns all users`;
     }
-    findOneByUserId(userId) {
-        return this.userRepository.findOne({
+    async findOneByUserId(userId) {
+        const user = await this.userRepository.findOne({
             where: {
                 user_id: userId,
             },
         });
+        if (!user)
+            throw new common_1.HttpException(`User not found with user id ${userId}`, common_1.HttpStatus.BAD_REQUEST);
+        return user;
     }
 };
 exports.UsersService = UsersService;

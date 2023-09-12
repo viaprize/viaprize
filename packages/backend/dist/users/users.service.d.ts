@@ -8,5 +8,5 @@ export declare class UsersService {
     constructor(userRepository: Repository<User>, mailService: MailService);
     create(createUserDto: CreateUserDto): Promise<void>;
     findAll(): string;
-    findOneByUserId(userId: string): Promise<User | null>;
+    findOneByUserId(userId: string): Promise<User>;
 }

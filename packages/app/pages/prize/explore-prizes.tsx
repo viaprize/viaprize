@@ -8,6 +8,7 @@ import { ReactElement, useEffect } from 'react';
 const ExplorePage = () => {
   const { getProposalsOfUser } = usePrizeProposal()
   const { user } = usePrivy()
+
   useEffect(() => {
     console.log("hiiii")
 
@@ -16,6 +17,9 @@ const ExplorePage = () => {
     })
 
   }, [])
+  if (!user) {
+    return null
+  }
   return (
     <div className="max-w-screen-xl">
       <SearchFilters />

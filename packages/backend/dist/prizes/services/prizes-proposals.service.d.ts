@@ -15,6 +15,7 @@ export declare class PrizeProposalsService {
     constructor(prizeProposalsRepository: Repository<PrizeProposals>, configService: ConfigService<AppConfig>, mailService: MailService, userService: UsersService);
     create(createPrizeDto: CreatePrizeProposalDto, userId: string): Promise<void>;
     findAll(): Promise<PrizeProposals[]>;
+    findAllWithPagination(paginationOptions: IPaginationOptions): Promise<PrizeProposals[]>;
     findByUserWithPagination(paginationOptions: IPaginationOptions, userId: string): Promise<PrizeProposals[]>;
     findByUser(userId: string): Promise<PrizeProposals[]>;
     findOne(id: string): Promise<PrizeProposals | null>;

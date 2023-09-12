@@ -20,7 +20,8 @@ const swagger_1 = require("@nestjs/swagger");
 const prize_proposals_entity_1 = require("./entities/prize-proposals.entity");
 const infinity_pagination_1 = require("../utils/infinity-pagination");
 const swagger_2 = require("@nestjs/swagger");
-const auth_guard_1 = require("../auth.guard");
+const auth_guard_1 = require("../auth/auth.guard");
+const admin_auth_guard_1 = require("../auth/admin-auth.guard");
 class PrizeProposalsPaginationResult {
 }
 __decorate([
@@ -42,6 +43,12 @@ __decorate([
 let PrizesController = class PrizesController {
     constructor(prizeProposalsService) {
         this.prizeProposalsService = prizeProposalsService;
+    }
+    getPendingProposals(page, limit) {
+        return this.prizeProposalsService.findAllWithPagination({
+            page,
+            limit,
+        });
     }
     create(createPrizeProposalDto, req) {
         console.log({ createPrizeProposalDto });
@@ -65,6 +72,34 @@ let PrizesController = class PrizesController {
     }
 };
 exports.PrizesController = PrizesController;
+__decorate([
+    (0, common_1.Get)('/proposals'),
+    (0, common_1.UseGuards)(admin_auth_guard_1.AdminAuthGuard),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get all Pending proposals',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'The proposals were returned successfully',
+        type: PrizeProposalsPaginationResult,
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'page',
+        example: 1,
+        type: Number,
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'limit',
+        example: 10,
+        type: Number,
+    }),
+    (0, swagger_1.ApiBearerAuth)('access-token'),
+    __param(0, (0, common_1.Query)('page', new common_1.DefaultValuePipe(1), common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(10), common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", void 0)
+], PrizesController.prototype, "getPendingProposals", null);
 __decorate([
     (0, common_1.Post)('/proposals'),
     (0, common_1.UseGuards)(auth_guard_1.AuthGuard),

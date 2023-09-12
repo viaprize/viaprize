@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsDateString,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -64,6 +65,7 @@ export class CreatePrizeProposalDto {
     nullable: true,
   })
   @IsDateString()
+  @IsOptional()
   startVotingDate?: Date;
 
   @ApiProperty({
@@ -73,6 +75,7 @@ export class CreatePrizeProposalDto {
     nullable: true,
   })
   @IsDateString()
+  @IsOptional()
   startSubmissionDate?: Date;
 
   @ApiProperty({ type: [String], example: ['Programming'] })

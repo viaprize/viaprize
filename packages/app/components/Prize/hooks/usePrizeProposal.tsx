@@ -66,7 +66,8 @@ export default function usePrizeProposal() {
         const record: Record<string, string> = objectToRecord(queryParams);
         const queryString = new URLSearchParams(record)
         if (!user) {
-            throw new Error('Privy User not available')
+            // throw new Error('Privy User not available')
+            return
         }
         const res = await myAxios.get(`/prizes/proposals/user/${user?.id}${queryString.toString()}`)
         console.log("res", "acxi0", res)

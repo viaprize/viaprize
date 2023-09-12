@@ -16,6 +16,9 @@ export class User {
   @Column()
   name: string;
 
+  @Column({ default: false })
+  isAdmin: boolean;
+
   @OneToMany(() => Submission, (submission) => submission.user)
   submissions: Submission[];
 

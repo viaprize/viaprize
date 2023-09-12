@@ -38,6 +38,12 @@ let PrizeProposalsService = class PrizeProposalsService {
     async findAll() {
         return await this.prizeProposalsRepository.find();
     }
+    async findAllWithPagination(paginationOptions) {
+        return this.prizeProposalsRepository.find({
+            skip: (paginationOptions.page - 1) * paginationOptions.limit,
+            take: paginationOptions.limit,
+        });
+    }
     async findByUserWithPagination(paginationOptions, userId) {
         return this.prizeProposalsRepository.find({
             skip: (paginationOptions.page - 1) * paginationOptions.limit,

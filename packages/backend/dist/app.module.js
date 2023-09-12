@@ -28,7 +28,6 @@ const mail_module_1 = require("./mail/mail.module");
 const mailer_module_1 = require("./mailer/mailer.module");
 const jobs_module_1 = require("./jobs/jobs.module");
 const mail_config_1 = __importDefault(require("./config/mail.config"));
-const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -84,7 +83,6 @@ exports.AppModule = AppModule = __decorate([
             mail_module_1.MailModule,
             mailer_module_1.MailerModule,
             jobs_module_1.JobsModule,
-            auth_module_1.AuthModule,
         ],
         providers: [],
         controllers: [],

@@ -35,6 +35,13 @@ export class PrizeProposalsService {
     return await this.prizeProposalsRepository.find();
   }
 
+  async findAllWithPagination(paginationOptions: IPaginationOptions) {
+    return this.prizeProposalsRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+    });
+  }
+
   async findByUserWithPagination(
     paginationOptions: IPaginationOptions,
     userId: string,

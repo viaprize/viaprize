@@ -77,6 +77,7 @@ __decorate([
         nullable: true,
     }),
     (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Date)
 ], CreatePrizeProposalDto.prototype, "startVotingDate", void 0);
 __decorate([
@@ -87,6 +88,7 @@ __decorate([
         nullable: true,
     }),
     (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Date)
 ], CreatePrizeProposalDto.prototype, "startSubmissionDate", void 0);
 __decorate([
