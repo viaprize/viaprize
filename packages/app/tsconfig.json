@@ -22,8 +22,9 @@
       "@/lib/*": ["lib/*"],
       "@/contract/*": ["contract/*"],
       "@env": ["env.mjs"],
-      "@/backend/*": ["../backend/*"]
+      "@/backend/*": ["../backend/dist/*"]
     },
+
     "plugins": [
       {
         "name": "next"
@@ -36,7 +37,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "env.mjs"
+    "env.mjs",
+    "../backend/*"
   ],
   "exclude": ["node_modules"]
 }

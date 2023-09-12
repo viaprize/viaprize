@@ -34,35 +34,30 @@ const Prize = () => {
     const newImages = await uploadImages(files)
     setImages(newImages)
   }
+  const submit = async () => {
+    await handleUploadImages()
+    await addProposalsMutation(
+      {
+        admins: address,
+        description: richtext,
+        isAutomatic: isAutomatic,
+        voting_time: votingTime,
+        proposer_address: '',
+        priorities: [],
+        proficiencies: [],
+        submission_time: proposalTime,
+        images: images ? [images] : []
+      }
+    )
+  }
 
   const handleSubmit = () => {
     console.log(user);
     try {
+      console.log(images, "images")
       toast.promise(
-        handleUploadImages,
-        {
-          loading: 'Submitting Images',
-          success: 'Images Uploaded',
-          error: 'Error Submitting Image',
-        }
-      )
-      if (!images) {
-        return
-      }
-      toast.promise(
-        addProposalsMutation(
-          {
-            admins: address,
-            description: richtext,
-            isAutomatic: isAutomatic,
-            voting_time: votingTime,
-            proposer_address: '',
-            priorities: [],
-            proficiencies: [],
-            submission_time: proposalTime,
-            images: [images]
-          }
-        ),
+        submit()
+        ,
         {
           loading: 'Submitting Proposal',
           success: 'Proposal Submitted',

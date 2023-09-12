@@ -1,7 +1,7 @@
 // import { useQuery, useMutation } from 'react-query';
 // import axios from 'axios';
 // import myAxios from '@/lib/axios';
-import { CreatePrizeProposalDto } from '@/backend/src/prizes/dto/create-prize-proposal.dto';
+import { CreatePrizeProposalDto } from '@/backend/prizes/dto/create-prize-proposal.dto';
 import { makeStorageClient } from '@/components/_providers/web3client';
 import myAxios from '@/lib/axios';
 import { usePrivy } from '@privy-io/react-auth';
@@ -69,6 +69,7 @@ export default function usePrizeProposal() {
             throw new Error('Privy User not available')
         }
         const res = await myAxios.get(`/prizes/proposals/user/${user?.id}${queryString.toString()}`)
+        console.log("res", "acxi0", res)
         return res.data as PrizeProposalsList
     }
 
