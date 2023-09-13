@@ -4,12 +4,16 @@ import { OpenAI } from 'openai';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    let { prompt } = await req.body;
+    const { prompt } =  JSON.parse(req.body) as { prompt: string };
+  
 
-    console.log(prompt)
+    const openaiKey = process.env.OPENAI_API_KEY;
+    if (!openaiKey) {
+      res.status(500).send('This feature is currently under progress. Please check back later.');
+    }
 
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY || '',
+      apiKey: openaiKey,
     });
 
     const response = await openai.chat.completions.create({
