@@ -5,7 +5,7 @@ import { PrizeCreationTemplate } from './defaultcontent'
 
 export default function AboutPrize() {
   return (
-    <div className='w-full my-4'>
+    <div className='w-full mt-4'>
       <Group position='apart' grow>
         <Text weight={600}>
             Deadline: 30 March 2023
