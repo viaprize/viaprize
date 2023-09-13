@@ -80,6 +80,7 @@ const AdminCard: React.FC<AdminCardProps> = ({ id, images, admins, description, 
           </Button>
           <Button color="green" onClick={async () => {
             await acceptProposalMutation.mutateAsync(id)
+            window.location.reload()
           }}>Accept</Button>
         </Group>
       </Card>
@@ -105,6 +106,7 @@ const AdminCard: React.FC<AdminCardProps> = ({ id, images, admins, description, 
               proposalId: id,
               comment: comment
             })
+            window.location.reload()
             setRejectOpen(false)
           }}>Cancel</Button>
           <Button color="red">Reject</Button>
