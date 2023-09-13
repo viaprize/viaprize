@@ -1,3 +1,4 @@
+import ExploreCard from '@/components/ExplorePrize/explorePrize';
 import AppShellLayout from '@/components/layout/appshell';
 import { Tabs } from '@mantine/core';
 import { IconPhoto, IconMessageCircle, IconSettings } from '@tabler/icons-react';
@@ -5,29 +6,113 @@ import { ReactElement } from 'react';
 
 export default function Profile() {
   return (
-    <Tabs variant="pills" defaultValue="gallery">
-      <Tabs.List>
-        <Tabs.Tab value="gallery" icon={<IconPhoto size="0.8rem" />}>
-          Gallery
+    <Tabs variant="pills" defaultValue="pending" >
+      <Tabs.List position='center'>
+        <Tabs.Tab value="pending" >
+         Pending
         </Tabs.Tab>
-        <Tabs.Tab value="messages" icon={<IconMessageCircle size="0.8rem" />}>
-          Messages
+        <Tabs.Tab value="rejected" >
+        Rejected
         </Tabs.Tab>
-        <Tabs.Tab value="settings" icon={<IconSettings size="0.8rem" />}>
-          Settings
+        <Tabs.Tab value="accepted" >
+         Accepted
         </Tabs.Tab>
       </Tabs.List>
 
-      <Tabs.Panel value="gallery" pt="xs">
-        Gallery tab content
+      <Tabs.Panel value="pending" pt="xs">
+      <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
+        <ExploreCard
+          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          title="yourTitle"
+          profileName="yourProfileName"
+          description="shortDescription goes here shortDescription goes
+           here short Description goes here shortDescription goes here
+            short Description goes here shortDescription goes here shortDescription goes here "
+          money="$500"
+          deadline="yourDeadline"
+        />
+        <ExploreCard
+          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          title="yourTitle"
+          profileName="yourProfileName"
+          description="yourDescription"
+          money="$500"
+          deadline="yourDeadline"
+        />
+        <ExploreCard
+          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          title="yourTitle"
+          profileName="yourProfileName"
+          description="yourDescription"
+          money="$500"
+          deadline="yourDeadline"
+        />
+        <ExploreCard
+          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          title="yourTitle"
+          profileName="yourProfileName"
+          description="yourDescription"
+          money="$500"
+          deadline="yourDeadline"
+        />
+        {/* Add as many ExploreCard components as you need */}
+      </div>
       </Tabs.Panel>
 
-      <Tabs.Panel value="messages" pt="xs">
-        Messages tab content
+      <Tabs.Panel value="accepted" pt="xs">
+      <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
+        <ExploreCard
+          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          title="yourTitle"
+          profileName="yourProfileName"
+          description="shortDescription goes here shortDescription goes
+           here short Description goes here shortDescription goes here
+            short Description goes here shortDescription goes here shortDescription goes here "
+          money="$500"
+          deadline="yourDeadline"
+        />
+        <ExploreCard
+          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          title="yourTitle"
+          profileName="yourProfileName"
+          description="yourDescription"
+          money="$500"
+          deadline="yourDeadline"
+        />
+        <ExploreCard
+          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          title="yourTitle"
+          profileName="yourProfileName"
+          description="yourDescription"
+          money="$500"
+          deadline="yourDeadline"
+        />
+       
+      </div>
       </Tabs.Panel>
 
-      <Tabs.Panel value="settings" pt="xs">
-        Settings tab content
+      <Tabs.Panel value="rejected" pt="xs">
+      <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
+        <ExploreCard
+          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          title="yourTitle"
+          profileName="yourProfileName"
+          description="shortDescription goes here shortDescription goes
+           here short Description goes here shortDescription goes here
+            short Description goes here shortDescription goes here shortDescription goes here "
+          money="$500"
+          deadline="yourDeadline"
+        />
+        <ExploreCard
+          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
+          title="yourTitle"
+          profileName="yourProfileName"
+          description="yourDescription"
+          money="$500"
+          deadline="yourDeadline"
+        />
+       
+      </div>
       </Tabs.Panel>
     </Tabs>
   );
