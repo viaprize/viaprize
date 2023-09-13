@@ -5,8 +5,10 @@ import {
   IsBoolean,
   IsDateString,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
+import { User } from 'src/users/entities/user.entity';
 
 export class CreatePrizeProposalDto {
   @ApiProperty({
@@ -32,6 +34,14 @@ export class CreatePrizeProposalDto {
   })
   @IsArray()
   admins: string[];
+
+  @ApiProperty({
+    type: String,
+    description: 'TItle of the proposal',
+    example: 'Hackzuzalu',
+  })
+  @IsString()
+  title: string;
 
   @ApiProperty({
     type: String,
@@ -64,6 +74,7 @@ export class CreatePrizeProposalDto {
     nullable: true,
   })
   @IsDateString()
+  @IsOptional()
   startVotingDate?: Date;
 
   @ApiProperty({
@@ -73,6 +84,7 @@ export class CreatePrizeProposalDto {
     nullable: true,
   })
   @IsDateString()
+  @IsOptional()
   startSubmissionDate?: Date;
 
   @ApiProperty({ type: [String], example: ['Programming'] })
@@ -91,4 +103,8 @@ export class CreatePrizeProposalDto {
   })
   @IsArray()
   images: string[];
+
+  // @ApiProperty({ type: 'string' })
+  // @IsString()
+  // user: User;
 }

@@ -33,7 +33,8 @@ import { PrizeProposals } from './entities/prize-proposals.entity';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 
 import { ApiProperty } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
 
 class PrizeProposalsPaginationResult
   implements InfinityPaginationResultType<PrizeProposals>
@@ -57,6 +58,43 @@ class PrizeProposalsPaginationResult
 @Controller('prizes')
 export class PrizesController {
   constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
+
+  @Get('/proposals')
+  @UseGuards(AdminAuthGuard)
+  @ApiOperation({
+    summary: 'Get all Pending proposals',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The proposals were returned successfully',
+    type: PrizeProposalsPaginationResult,
+  })
+  @ApiQuery({
+    name: 'page',
+    example: 1,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    example: 10,
+    type: Number,
+  })
+  @ApiBearerAuth('access-token')
+  async getPendingProposals(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    return infinityPagination(
+      await this.prizeProposalsService.findAllWithPagination({
+        page,
+        limit,
+      }),
+      {
+        limit,
+        page,
+      },
+    );
+  }
 
   @Post('/proposals')
   @UseGuards(AuthGuard)
@@ -121,18 +159,18 @@ export class PrizesController {
       { page, limit },
     );
   }
-  @Get('/proposals/:id')
+  @Get('/proposals/:userId')
   @ApiResponse({
     status: 200,
     description: 'The proposals were returned successfully',
     type: PrizeProposalsPaginationResult,
   })
   @ApiParam({
-    name: 'id',
+    name: 'userId',
     type: String,
   })
-  async getProposal(@Param('id') id: string) {
-    return await this.prizeProposalsService.findOne(id);
+  async getProposal(@Param('userId') userId: string) {
+    return await this.prizeProposalsService.findByUser(userId);
   }
 
   @Post('/proposals/accept/:id')

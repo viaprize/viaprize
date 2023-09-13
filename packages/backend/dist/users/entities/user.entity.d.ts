@@ -5,6 +5,7 @@ export declare class User {
     email: string;
     user_id: string;
     name: string;
+    isAdmin: boolean;
     submissions: Submission[];
     prizeProposals: PrizeProposals[];
 }

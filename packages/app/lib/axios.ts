@@ -29,7 +29,7 @@ const getAccessTokenWithFallback = async (): Promise<string | null> => {
 };
 
 const myAxios: AxiosInstance = axios.create({
-  baseURL: 'https://api.pactsmith.com/api',
+  baseURL: 'http://localhost:3001/api',
   headers: {
     'Network-Type': 'mainnet',
     'Access-Control-Allow-Origin': '*',

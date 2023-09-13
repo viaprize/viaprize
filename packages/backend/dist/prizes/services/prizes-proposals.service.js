@@ -32,11 +32,18 @@ let PrizeProposalsService = class PrizeProposalsService {
         if (!user) {
             throw new common_1.HttpException('User not found', common_1.HttpStatus.NOT_ACCEPTABLE);
         }
-        await this.prizeProposalsRepository.save(Object.assign({}, createPrizeDto));
+        await this.prizeProposalsRepository.save(Object.assign(Object.assign({}, createPrizeDto), { user: user }));
         await this.mailService.proposalSent(user.email);
     }
     async findAll() {
         return await this.prizeProposalsRepository.find();
+    }
+    async findAllWithPagination(paginationOptions) {
+        return this.prizeProposalsRepository.find({
+            skip: (paginationOptions.page - 1) * paginationOptions.limit,
+            take: paginationOptions.limit,
+            relations: ['user'],
+        });
     }
     async findByUserWithPagination(paginationOptions, userId) {
         return this.prizeProposalsRepository.find({
@@ -47,6 +54,7 @@ let PrizeProposalsService = class PrizeProposalsService {
                     user_id: userId,
                 },
             },
+            relations: ['user'],
         });
     }
     async findByUser(userId) {
@@ -61,6 +69,7 @@ let PrizeProposalsService = class PrizeProposalsService {
             where: {
                 id,
             },
+            relations: ['user'],
         });
     }
     async approve(id) {

@@ -1,37 +1,58 @@
 import React from 'react';
-import Image from 'next/image';
-import { Card, Flex, Group } from '@mantine/core';
+import { Card, Flex, Group, Image } from '@mantine/core';
 import { TextEditor } from '../popupComponents/textEditor';
 import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
 import PrizeFunderCard from '../Prize/prizepage/prizeFunderCard';
+import { AppUser } from 'types/app-user';
 
-export default function ViewDetails() {
+export default function ViewDetails({ admins, user, description, images, submission, title, voting }: {
+  images: string[],
+  title: string,
+  description: string,
+  admins: string[],
+  voting: number,
+  submission: number
+  user: AppUser
+}) {
   return (
-    <Flex direction="column" gap="sm">
-      <Image
-        src="/placeholder.jpg"
-        height={160}
-        width={300}
-        alt="Image"
-        className="object-cover w-full"
-      />
+    <Flex direction="column" gap="sm" my="xl">
+      {
+        images.length > 0 ? (
+
+          images.map((image) => (
+            <Image
+              src={image}
+              height={160}
+              alt="Image"
+              key={image}
+
+
+            />
+          )
+          ))
+          : null
+      }
       <div>
-        <h2>Title is here</h2>
-        <TextEditor disabled richtext={PrizeCreationTemplate} />
+        <h2>{title}</h2>
+        <TextEditor disabled richtext={description} />
       </div>
-      <PrizeFunderCard />
+      <PrizeFunderCard name={user.name} email={user.email} />
       <div>
         Admin wallets
-        <Card shadow="sm" padding="lg" radius="md" withBorder mt="sm">
-            1. sdajklfhkjhsakfjhsdakjhfkljdshakljfgl
-        </Card>
-        <Group grow  my='sm'>
-        <Card>
-            Voting days: 10
-        </Card>
-        <Card>
-            Submission days: 10
-        </Card>
+        {
+          admins.map((admin, index) => (
+            <Card shadow="sm" padding="lg" radius="md" key={admin} withBorder mt="sm">
+              {index + 1}. {admin}
+            </Card>
+          ))
+        }
+        <Group grow my='sm'>
+          <Card>
+            Voting days: {voting}
+          </Card>
+          <Card>
+            Submission days: {submission}
+          </Card>
         </Group>
       </div>
     </Flex>

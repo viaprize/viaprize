@@ -27,12 +27,21 @@ export class PrizeProposalsService {
 
     await this.prizeProposalsRepository.save({
       ...createPrizeDto,
+      user: user,
     });
     await this.mailService.proposalSent(user.email);
   }
 
   async findAll() {
     return await this.prizeProposalsRepository.find();
+  }
+
+  async findAllWithPagination(paginationOptions: IPaginationOptions) {
+    return this.prizeProposalsRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      relations: ['user'],
+    });
   }
 
   async findByUserWithPagination(
@@ -47,6 +56,7 @@ export class PrizeProposalsService {
           user_id: userId,
         },
       },
+      relations: ['user'],
     });
   }
 
@@ -63,6 +73,7 @@ export class PrizeProposalsService {
       where: {
         id,
       },
+      relations: ['user'],
     });
   }
   async approve(id: string) {

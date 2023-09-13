@@ -49,6 +49,7 @@ export default function usePrizeProposal() {
     const [proposals, setProposals] = useState<PrizeProposals[]>()
     const { user } = usePrivy()
     const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
+
         const res = await myAxios.post('/prizes/proposals', { ...proposalDto },)
         return res
     }
@@ -66,10 +67,22 @@ export default function usePrizeProposal() {
         const record: Record<string, string> = objectToRecord(queryParams);
         const queryString = new URLSearchParams(record)
         if (!user) {
-            throw new Error('Privy User not available')
+            // throw new Error('Privy User not available')
+            return
         }
         const res = await myAxios.get(`/prizes/proposals/user/${user?.id}${queryString.toString()}`)
         console.log("res", "acxi0", res)
+        return res.data as PrizeProposalsList
+    }
+
+    const getAllProposals = async (queryParam: PrizeProposalQueryParams = {
+        limit: 10,
+        page: 1
+    }) => {
+        const record: Record<string, string> = objectToRecord(queryParam);
+        const queryString = new URLSearchParams(record)
+        const res = await myAxios.get(`/prizes/proposals?${queryString.toString()}`)
+        console.log({ res }, "proposals")
         return res.data as PrizeProposalsList
     }
 
@@ -77,7 +90,8 @@ export default function usePrizeProposal() {
         addProposals,
         uploadImages,
         proposals,
-        getProposalsOfUser
+        getProposalsOfUser,
+        getAllProposals
     }
 
 

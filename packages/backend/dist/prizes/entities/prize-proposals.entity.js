@@ -23,16 +23,6 @@ __decorate([
     __metadata("design:type", String)
 ], PrizeProposals.prototype, "id", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ nullable: true }),
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", Number)
-], PrizeProposals.prototype, "platform_reward", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, typeorm_1.Column)({ default: false }),
-    __metadata("design:type", Boolean)
-], PrizeProposals.prototype, "distributed", void 0);
-__decorate([
     (0, swagger_1.ApiProperty)(),
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
@@ -52,6 +42,11 @@ __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], PrizeProposals.prototype, "isApproved", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: 'string' }),
+    (0, typeorm_1.Column)({ default: '' }),
+    __metadata("design:type", String)
+], PrizeProposals.prototype, "title", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, typeorm_1.Column)('text'),
@@ -93,6 +88,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({ type: 'string' }),
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.prizeProposals),
+    (0, typeorm_1.JoinColumn)({ name: 'user', referencedColumnName: 'user_id' }),
     __metadata("design:type", user_entity_1.User)
 ], PrizeProposals.prototype, "user", void 0);
 exports.PrizeProposals = PrizeProposals = __decorate([

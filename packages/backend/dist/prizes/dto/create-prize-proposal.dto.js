@@ -45,6 +45,15 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({
         type: String,
+        description: 'TItle of the proposal',
+        example: 'Hackzuzalu',
+    }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreatePrizeProposalDto.prototype, "title", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        type: String,
         description: 'The description of the proposal.',
         example: 'This is a proposal for a new prize.',
     }),
@@ -77,6 +86,7 @@ __decorate([
         nullable: true,
     }),
     (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Date)
 ], CreatePrizeProposalDto.prototype, "startVotingDate", void 0);
 __decorate([
@@ -87,6 +97,7 @@ __decorate([
         nullable: true,
     }),
     (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Date)
 ], CreatePrizeProposalDto.prototype, "startSubmissionDate", void 0);
 __decorate([

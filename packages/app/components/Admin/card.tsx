@@ -12,38 +12,56 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import ViewDetails from './details';
+import { PrizeProposals } from 'types/prizes';
+import { AppUser } from 'types/app-user';
 
 interface AdminCardProps {
-  id: string;
+  images: string[]
+  user: AppUser,
+  title: string,
+  description: string,
+  admins: string[],
+  voting: number,
+  submission: number
+
 }
 
-const AdminCard: React.FC<AdminCardProps> = ({ id }) => {
+const AdminCard: React.FC<AdminCardProps> = ({ images, admins, description, submission, title, user, voting }) => {
   const [scrollPosition, onScrollPositionChange] = useState({ x: 0, y: 0 });
   const [rejectOpen, setRejectOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  console.log({ images }, "in admin card")
   return (
     <>
-      <Card shadow="sm" padding="lg" radius="md" withBorder>
+      <Card shadow="sm" padding="lg" radius="md" withBorder my="md">
         <Card.Section>
-          <Image
-            src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-            height={160}
-            alt="Image"
-          />
+          {
+            images.length > 0 ? (
+
+              images.map((image) => (
+                <Image
+                  src={image}
+                  height={160}
+                  alt="Image"
+                  key={image}
+                  width={346}
+                />
+              )
+              ))
+              : null
+          }
         </Card.Section>
         <Group position="apart" mt="md" mb="xs">
-          <Text weight={500}>Title</Text>
+          <Text weight={500}>{title}</Text>
           <Badge color="gray" variant="light">
-            Profile Name
+            {user.name}
           </Badge>
         </Group>
-        <p className="text-md text-gray-500 max-h-14 overflow-y-auto">Description</p>
+        <p className="text-md text-gray-500 max-h-14 overflow-y-auto">Click on View Details to See Description</p>
         <Group position="apart" mt="md" mb="xs">
-          <Text weight={500} color="green">
-            Money
-          </Text>
+
           <Text weight={500} color="red">
-            Deadline
+            Submission Days is {submission} Days
           </Text>
         </Group>
         <Group>
@@ -73,12 +91,12 @@ const AdminCard: React.FC<AdminCardProps> = ({ id }) => {
         </Group>
       </Modal>
       <Modal
-      size='xl'
+        size='xl'
         opened={detailsOpen}
         onClose={() => setDetailsOpen(false)}
         title="Prize details"
       >
-        <ViewDetails />
+        <ViewDetails user={user} admins={admins} images={images} description={description} title={title} submission={submission} voting={voting} />
       </Modal>
     </>
   );
