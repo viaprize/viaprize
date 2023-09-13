@@ -44,10 +44,13 @@ let PrizesController = class PrizesController {
     constructor(prizeProposalsService) {
         this.prizeProposalsService = prizeProposalsService;
     }
-    getPendingProposals(page, limit) {
-        return this.prizeProposalsService.findAllWithPagination({
+    async getPendingProposals(page, limit) {
+        return (0, infinity_pagination_1.infinityPagination)(await this.prizeProposalsService.findAllWithPagination({
             page,
             limit,
+        }), {
+            limit,
+            page,
         });
     }
     create(createPrizeProposalDto, req) {
@@ -64,8 +67,8 @@ let PrizesController = class PrizesController {
             page,
         }, userId), { page, limit });
     }
-    async getProposal(id) {
-        return await this.prizeProposalsService.findOne(id);
+    async getProposal(userId) {
+        return await this.prizeProposalsService.findByUser(userId);
     }
     async approveProposal(id) {
         return await this.prizeProposalsService.approve(id);
@@ -98,7 +101,7 @@ __decorate([
     __param(1, (0, common_1.Query)('limit', new common_1.DefaultValuePipe(10), common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Number]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], PrizesController.prototype, "getPendingProposals", null);
 __decorate([
     (0, common_1.Post)('/proposals'),
@@ -147,17 +150,17 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PrizesController.prototype, "getProposalsBy", null);
 __decorate([
-    (0, common_1.Get)('/proposals/:id'),
+    (0, common_1.Get)('/proposals/:userId'),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'The proposals were returned successfully',
         type: PrizeProposalsPaginationResult,
     }),
     (0, swagger_1.ApiParam)({
-        name: 'id',
+        name: 'userId',
         type: String,
     }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('userId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)

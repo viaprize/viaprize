@@ -49,6 +49,7 @@ export default function usePrizeProposal() {
     const [proposals, setProposals] = useState<PrizeProposals[]>()
     const { user } = usePrivy()
     const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
+
         const res = await myAxios.post('/prizes/proposals', { ...proposalDto },)
         return res
     }
@@ -74,11 +75,23 @@ export default function usePrizeProposal() {
         return res.data as PrizeProposalsList
     }
 
+    const getAllProposals = async (queryParam: PrizeProposalQueryParams = {
+        limit: 10,
+        page: 1
+    }) => {
+        const record: Record<string, string> = objectToRecord(queryParam);
+        const queryString = new URLSearchParams(record)
+        const res = await myAxios.get(`/prizes/proposals?${queryString.toString()}`)
+        console.log({ res }, "proposals")
+        return res.data as PrizeProposalsList
+    }
+
     return {
         addProposals,
         uploadImages,
         proposals,
-        getProposalsOfUser
+        getProposalsOfUser,
+        getAllProposals
     }
 
 

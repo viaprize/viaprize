@@ -5,9 +5,12 @@ import { PrizeProposals } from './entities/prize-proposals.entity';
 export declare class PrizesController {
     private readonly prizeProposalsService;
     constructor(prizeProposalsService: PrizeProposalsService);
-    getPendingProposals(page: number, limit: number): Promise<PrizeProposals[]>;
+    getPendingProposals(page: number, limit: number): Promise<Readonly<{
+        data: PrizeProposals[];
+        hasNextPage: boolean;
+    }>>;
     create(createPrizeProposalDto: CreatePrizeProposalDto, req: any): Promise<void>;
     getProposalsBy(page: number, limit: number, userId: any): Promise<InfinityPaginationResultType<PrizeProposals>>;
-    getProposal(id: string): Promise<PrizeProposals | null>;
+    getProposal(userId: string): Promise<PrizeProposals[]>;
     approveProposal(id: string): Promise<void>;
 }

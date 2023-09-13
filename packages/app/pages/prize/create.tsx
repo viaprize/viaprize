@@ -14,7 +14,7 @@ import { useMutation } from 'wagmi';
 
 const Prize = () => {
   const [address, setAddress] = useState(['']);
-  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');
   const [isAutomatic, setIsAutomatic] = useState(false);
   const [votingTime, setVotingTime] = useState(0);
@@ -46,7 +46,9 @@ const Prize = () => {
         priorities: [],
         proficiencies: [],
         submission_time: proposalTime,
-        images: images ? [images] : []
+        images: images ? [images] : [],
+        title: title
+
       }
     )
   }
@@ -95,9 +97,9 @@ const Prize = () => {
       />
       <TextInput
         className="my-2"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        placeholder="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
       />
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
 

@@ -1,6 +1,12 @@
 import { PrizeProposals } from 'src/prizes/entities/prize-proposals.entity';
 import { Submission } from 'src/prizes/entities/submission.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -11,6 +17,7 @@ export class User {
   email: string;
 
   @Column({ unique: true })
+  @Index({ unique: true })
   user_id!: string;
 
   @Column()

@@ -3,6 +3,7 @@ export declare class CreatePrizeProposalDto {
     voting_time: number;
     submission_time: number;
     admins: string[];
+    title: string;
     description: string;
     proposer_address: string;
     isAutomatic: boolean;

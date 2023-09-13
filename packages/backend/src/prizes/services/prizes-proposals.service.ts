@@ -27,6 +27,7 @@ export class PrizeProposalsService {
 
     await this.prizeProposalsRepository.save({
       ...createPrizeDto,
+      user: user,
     });
     await this.mailService.proposalSent(user.email);
   }
@@ -39,6 +40,7 @@ export class PrizeProposalsService {
     return this.prizeProposalsRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
+      relations: ['user'],
     });
   }
 
@@ -54,6 +56,7 @@ export class PrizeProposalsService {
           user_id: userId,
         },
       },
+      relations: ['user'],
     });
   }
 
@@ -70,6 +73,7 @@ export class PrizeProposalsService {
       where: {
         id,
       },
+      relations: ['user'],
     });
   }
   async approve(id: string) {

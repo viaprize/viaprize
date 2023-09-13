@@ -80,14 +80,20 @@ export class PrizesController {
     type: Number,
   })
   @ApiBearerAuth('access-token')
-  getPendingProposals(
+  async getPendingProposals(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
   ) {
-    return this.prizeProposalsService.findAllWithPagination({
-      page,
-      limit,
-    });
+    return infinityPagination(
+      await this.prizeProposalsService.findAllWithPagination({
+        page,
+        limit,
+      }),
+      {
+        limit,
+        page,
+      },
+    );
   }
 
   @Post('/proposals')
@@ -153,18 +159,18 @@ export class PrizesController {
       { page, limit },
     );
   }
-  @Get('/proposals/:id')
+  @Get('/proposals/:userId')
   @ApiResponse({
     status: 200,
     description: 'The proposals were returned successfully',
     type: PrizeProposalsPaginationResult,
   })
   @ApiParam({
-    name: 'id',
+    name: 'userId',
     type: String,
   })
-  async getProposal(@Param('id') id: string) {
-    return await this.prizeProposalsService.findOne(id);
+  async getProposal(@Param('userId') userId: string) {
+    return await this.prizeProposalsService.findByUser(userId);
   }
 
   @Post('/proposals/accept/:id')
