@@ -1,5 +1,5 @@
 {
-  "name": "mantine-next-template",
+  "name": "@viaprize/web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
