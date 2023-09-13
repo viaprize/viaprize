@@ -14,6 +14,8 @@ import { useState } from 'react';
 import ViewDetails from './details';
 import { PrizeProposals } from 'types/prizes';
 import { AppUser } from 'types/app-user';
+import usePrizeProposal from '../Prize/hooks/usePrizeProposal';
+import { useMutation } from 'react-query';
 
 interface AdminCardProps {
   images: string[]
@@ -22,14 +24,20 @@ interface AdminCardProps {
   description: string,
   admins: string[],
   voting: number,
-  submission: number
+  submission: number,
+  id: string
 
 }
 
-const AdminCard: React.FC<AdminCardProps> = ({ images, admins, description, submission, title, user, voting }) => {
+const AdminCard: React.FC<AdminCardProps> = ({ id, images, admins, description, submission, title, user, voting }) => {
   const [scrollPosition, onScrollPositionChange] = useState({ x: 0, y: 0 });
   const [rejectOpen, setRejectOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [comment, setComment] = useState('')
+  const { getAllProposals, acceptProposal, rejectProposal } = usePrizeProposal()
+  const acceptProposalMutation = useMutation(acceptProposal)
+  const rejectProposalMutation = useMutation(rejectProposal)
+
   console.log({ images }, "in admin card")
   return (
     <>
@@ -70,7 +78,9 @@ const AdminCard: React.FC<AdminCardProps> = ({ images, admins, description, subm
           <Button color="red" onClick={() => setRejectOpen(true)}>
             Reject
           </Button>
-          <Button color="green">Accept</Button>
+          <Button color="green" onClick={async () => {
+            await acceptProposalMutation.mutateAsync(id)
+          }}>Accept</Button>
         </Group>
       </Card>
       <Modal
@@ -84,9 +94,19 @@ const AdminCard: React.FC<AdminCardProps> = ({ images, admins, description, subm
           variant="filled"
           radius="md"
           withAsterisk
+          value={comment}
+          onChange={(event) => setComment(event.currentTarget.value)}
         />
         <Group position="right" my="md">
-          <Button onClick={() => setRejectOpen(false)}>Cancel</Button>
+          <Button loading={
+            rejectProposalMutation.isLoading
+          } onClick={async () => {
+            await rejectProposalMutation.mutateAsync({
+              proposalId: id,
+              comment: comment
+            })
+            setRejectOpen(false)
+          }}>Cancel</Button>
           <Button color="red">Reject</Button>
         </Group>
       </Modal>

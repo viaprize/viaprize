@@ -39,6 +39,13 @@ let MailService = class MailService {
             text: 'Hi your proposal is approved',
         });
     }
+    async rejected(to, comment) {
+        await this.mailerService.sendSimpleMail({
+            to,
+            subject: `Hi your proposal was rejected `,
+            text: `${comment} \n This is why your proposal was rejected`,
+        });
+    }
     async proposalSent(to) {
         await this.mailerService.sendSimpleMail({
             to,

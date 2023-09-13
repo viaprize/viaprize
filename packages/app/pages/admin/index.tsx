@@ -9,10 +9,14 @@ import { AppUser } from 'types/app-user';
 import { useMutation } from 'wagmi';
 
 export default function AdminPage() {
-  const { getAllProposals } = usePrizeProposal()
+  const { getAllProposals, acceptProposal, rejectProposal } = usePrizeProposal()
   const getAllProposalsMutation = useQuery(['all-proposals', undefined], () => {
     return getAllProposals()
   })
+  const acceptProposalMutation = useMutation(acceptProposal)
+  const rejectProposalMutation = useMutation(rejectProposal)
+
+
   return (
     <Tabs variant="pills" defaultValue="pending">
       <Tabs.List>
@@ -30,8 +34,8 @@ export default function AdminPage() {
 
           getAllProposalsMutation.isLoading ? (<Loader size="xl" variant="bars" />) : (
             getAllProposalsMutation.isSuccess ? (
-              getAllProposalsMutation.data.data.map((proposal: { admins: string[]; description: string; images: string[]; submission_time: number; title: string; user: AppUser; voting_time: number; }) => (
-                <AdminCard admins={proposal.admins} description={proposal.description} images={proposal.images} submission={proposal.submission_time}
+              getAllProposalsMutation.data.data.map((proposal: { id: string, admins: string[]; description: string; images: string[]; submission_time: number; title: string; user: AppUser; voting_time: number; }) => (
+                <AdminCard id={proposal.id} admins={proposal.admins} description={proposal.description} images={proposal.images} submission={proposal.submission_time}
                   title={proposal.title} user={proposal.user} voting={proposal.voting_time}
                 />
               ))
