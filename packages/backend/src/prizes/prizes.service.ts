@@ -14,12 +14,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MailService } from 'src/mail/mail.service';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
+import { PrizeContract } from './contracts/prize.contract';
+
 @Injectable()
 export class PrizesService {
   constructor(
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
     private mailService: MailService,
+    private prizeContract: PrizeContract,
   ) {}
   create(createPrizeDto: CreatePrizeProposalDto) {
     return 'This action adds a new prize';
@@ -51,7 +54,15 @@ export class PrizesService {
     return paginations;
   }
 
-  getSmartContractDetails() {}
+  async getSmartContractDetails() {
+    const contractAddress = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+    const admins = await this.prizeContract.getAdmins(contractAddress);
+    const funders = await this.prizeContract.getFunders(contractAddress);
+    return {
+      admins,
+      funders,
+    };
+  }
 
   async findOne(id: string) {
     return await this.prizeRepository.findOne({

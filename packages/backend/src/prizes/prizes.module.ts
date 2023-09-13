@@ -9,6 +9,7 @@ import { UsersModule } from 'src/users/users.module';
 import { MailerModule } from 'src/mailer/mailer.module';
 import { MailModule } from 'src/mail/mail.module';
 import { Submission } from './entities/submission.entity';
+import { PrizeContract } from './contracts/prize.contract';
 
 @Module({
   controllers: [PrizesController],
@@ -17,6 +18,6 @@ import { Submission } from './entities/submission.entity';
     UsersModule,
     MailModule,
   ],
-  providers: [PrizesService, PrizeProposalsService],
+  providers: [PrizesService, PrizeProposalsService, PrizeContract],
 })
 export class PrizesModule {}
