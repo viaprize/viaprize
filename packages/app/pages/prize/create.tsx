@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
 import ImageComponent from '../../components/Prize/dropzone';
-import { TextEditor } from '../../components/popupComponents/textEditor';
+import { TextEditor } from '../../components/richtexteditor/textEditor';
 import React, { ReactElement, useState } from 'react';
 import { IconNewSection, IconPlus } from '@tabler/icons-react';
 import { JSONContent } from '@tiptap/react';
@@ -162,7 +162,6 @@ const Prize = () => {
       </SimpleGrid>
       <Button
         className="mt-3 "
-        color="dark"
         fullWidth
         loading={submittingProposal}
         onClick={handleSubmit}

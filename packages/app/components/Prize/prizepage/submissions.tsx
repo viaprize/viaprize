@@ -6,7 +6,6 @@ export default function Submissions() {
     <div>
       <Button className='absolute bottom-6 right-6'
       component='a'
-      color='dark'
       href='/prize/editor'
       >
         Submit your work

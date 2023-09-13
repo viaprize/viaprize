@@ -43,12 +43,12 @@ export default function MyComponent() {
               <p className="text-xl font-semibold">
                 Your Wallet Address is {user?.wallet?.address}
               </p>
-              <Button className='z-50' color="dark" onClick={() => router.push('/prize/explorePrize')}>
+              <Button className='z-50' onClick={() => router.push('/prize/explore-prizes')}>
                 Explore Prizes
               </Button>
             </div>
           ) : (
-            <Button color="dark" onClick={loginUser}>
+            <Button  onClick={loginUser}>
               login
             </Button>
           )}

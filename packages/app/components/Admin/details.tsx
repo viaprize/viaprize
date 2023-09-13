@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Flex, Group, Image } from '@mantine/core';
-import { TextEditor } from '../popupComponents/textEditor';
+import { TextEditor } from '../richtexteditor/textEditor';
 import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
 import PrizeFunderCard from '../Prize/prizepage/prizeFunderCard';
 import { AppUser } from 'types/app-user';

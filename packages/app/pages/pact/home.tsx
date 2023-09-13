@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import useWeb3Context from "@/context/hooks/useWeb3Context";
-import AppHeader from "@/components/AppHeader";
+import AppHeader from "@/components/layout/switchWallet";
 import axios from "../../lib/axios";
 import usePactFactory from "../../contract/usePactFactory";
 

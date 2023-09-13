@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Loader } from "@mantine/core";
-import AppHeader from "@/components/AppHeader";
+import AppHeader from "@/components/layout/switchWallet";
 import axio from "@/lib/axios";
 import HistoryItem from "@/components/HistoryItem";
 export default function PactDetail() {
