@@ -52,11 +52,9 @@ let MailerService = class MailerService {
         }
         await this.transporter.sendMail(Object.assign(Object.assign({}, mailOptions), { from: mailOptions.from
                 ? mailOptions.from
-                : `"${this.configService.get('mail.defaultName', {
+                : `"${this.configService.get('mail.user', {
                     infer: true,
-                })}" <${this.configService.get('mail.defaultEmail', {
-                    infer: true,
-                })}>`, html: mailOptions.html ? mailOptions.html : html }));
+                })}"`, html: mailOptions.html ? mailOptions.html : html }));
     }
     async sendSimpleMail(options) {
         await this.transporter.sendMail(Object.assign(Object.assign({}, options), { from: 'noahcremean@gmail.com' }));

@@ -71,5 +71,6 @@ export default registerAs<AppConfig>('app', () => {
     ),
     scheduleDatabaseUrL: process.env.SCHEDULE_DATABASE_URL || 'default',
     alchemy: process.env.ALCHEMY || 'no-api',
+    telegramLink: process.env.TELEGRAM_LINK || '',
   };
 });

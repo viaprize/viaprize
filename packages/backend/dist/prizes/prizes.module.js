@@ -17,6 +17,8 @@ const prize_entity_1 = require("./entities/prize.entity");
 const users_module_1 = require("../users/users.module");
 const mail_module_1 = require("../mail/mail.module");
 const submission_entity_1 = require("./entities/submission.entity");
+const prize_contract_1 = require("./contracts/prize.contract");
+const blockchain_module_1 = require("../blockchain/blockchain.module");
 let PrizesModule = class PrizesModule {
 };
 exports.PrizesModule = PrizesModule;
@@ -27,8 +29,9 @@ exports.PrizesModule = PrizesModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([prize_proposals_entity_1.PrizeProposals, prize_entity_1.Prize, submission_entity_1.Submission]),
             users_module_1.UsersModule,
             mail_module_1.MailModule,
+            blockchain_module_1.BlockchainModule,
         ],
-        providers: [prizes_service_1.PrizesService, prizes_proposals_service_1.PrizeProposalsService],
+        providers: [prizes_service_1.PrizesService, prizes_proposals_service_1.PrizeProposalsService, prize_contract_1.PrizeContract],
     })
 ], PrizesModule);
 //# sourceMappingURL=prizes.module.js.map

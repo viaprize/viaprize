@@ -14,17 +14,18 @@ export default function Details() {
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState('');
   const { createNewUser } = useAppUser()
+  const router = useRouter();
+
   /**
    * Mutation for logging in the user.
    * @type {import('react-query').UseMutationResult<any, unknown>}
    */
-  const uploadUserMutation = useMutation(createNewUser,{
+  const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: (data) => {
       router.push('/prize/explore-prizes');
     }
   });
-  
-  const router = useRouter();
+
   const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
     setEmail(val);
@@ -54,7 +55,7 @@ export default function Details() {
           error: 'Error Logging In',
         },
       );
-      
+
     } catch (e) {
       console.log(e);
     }

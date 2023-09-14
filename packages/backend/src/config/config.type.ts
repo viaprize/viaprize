@@ -27,6 +27,7 @@ export type DatabaseConfig = {
   ca?: string;
   key?: string;
   cert?: string;
+  telegramLink?: string;
 };
 export type MailConfig = {
   port: number;

@@ -14,13 +14,11 @@ export class UsersService {
     private mailService: MailService,
   ) {}
   async create(createUserDto: CreateUserDto) {
-    try {
-      const user = await this.userRepository.create(createUserDto);
-      await this.userRepository.save(user);
-      await this.mailService.welcome(user.email);
-    } catch (error) {
+    const user = await this.userRepository.create(createUserDto);
+    await this.mailService.welcome(user.email, user.name);
+    await this.userRepository.save(user).catch(() => {
       throw new HttpException('User Already Exists', HttpStatus.FORBIDDEN);
-    }
+    });
   }
 
   findAll() {

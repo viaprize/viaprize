@@ -1,5 +1,6 @@
 import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { Axios, AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useMutation, useQueries, useQuery } from 'react-query';
@@ -22,6 +23,9 @@ export default function useAppUser() {
   const { login } = useLogin({
     async onComplete(user, isNewUser, wasAlreadyAuthenticated) {
       const token = await getAccessToken();
+
+      console.log({ isNewUser }, 'is new user');
+      console.log({ wasAlreadyAuthenticated }, 'user was already authenticated');
       console.log({ token });
       if (wasAlreadyAuthenticated || isNewUser) {
         const walletAddress = user.wallet?.address;
@@ -33,8 +37,16 @@ export default function useAppUser() {
           setActiveWallet(wallet);
         });
         console.log({ user });
-        if (user) {
-          await refreshUser();
+        if (user && wasAlreadyAuthenticated) {
+          try {
+            await refreshUser();
+          } catch (e: any) {
+            if (e instanceof AxiosError) {
+              if (e.response?.status === 400) {
+                router.push('/onboarding');
+              }
+            }
+          }
         }
       }
 

@@ -10,6 +10,7 @@ import { MailerModule } from 'src/mailer/mailer.module';
 import { MailModule } from 'src/mail/mail.module';
 import { Submission } from './entities/submission.entity';
 import { PrizeContract } from './contracts/prize.contract';
+import { BlockchainModule } from 'src/blockchain/blockchain.module';
 
 @Module({
   controllers: [PrizesController],
@@ -17,6 +18,7 @@ import { PrizeContract } from './contracts/prize.contract';
     TypeOrmModule.forFeature([PrizeProposals, Prize, Submission]),
     UsersModule,
     MailModule,
+    BlockchainModule,
   ],
   providers: [PrizesService, PrizeProposalsService, PrizeContract],
 })
