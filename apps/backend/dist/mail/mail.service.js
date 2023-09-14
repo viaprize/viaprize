@@ -8,21 +8,33 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MailService = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const mailer_service_1 = require("../mailer/mailer.service");
+const path_1 = __importDefault(require("path"));
 let MailService = class MailService {
     constructor(mailerService, configService) {
         this.mailerService = mailerService;
         this.configService = configService;
     }
-    welcome(email) {
-        this.mailerService.sendSimpleMail({
+    async welcome(email, name) {
+        const telegramLink = this.configService.getOrThrow('TELEGRAM_LINK', {
+            infer: true,
+        });
+        await this.mailerService.sendMail({
             to: email,
-            subject: 'Welcome to the app',
-            text: 'Welcome to the app',
+            subject: 'Welcome to the Viaprize',
+            text: `Viaprize`,
+            templatePath: path_1.default.join(__dirname, './templates/welcome.hbs'),
+            context: {
+                name,
+                telegramLink,
+            },
         });
     }
     async test() {
@@ -32,18 +44,41 @@ let MailService = class MailService {
             text: 'testing',
         });
     }
-    async approved(to) {
-        await this.mailerService.sendSimpleMail({
-            to,
-            subject: 'Hi your proposal is approved',
-            text: 'Hi your proposal is approved',
+    async approved(to, name, proposalTitle, proposalDescription, proposalLink) {
+        const telegramLink = this.configService.getOrThrow('TELEGRAM_LINK', {
+            infer: true,
+        });
+        await this.mailerService.sendMail({
+            to: to,
+            subject: 'Hi your proposal was approved',
+            text: `Viaprize `,
+            templatePath: path_1.default.join(__dirname, '../../templates/approved.hbs'),
+            context: {
+                name,
+                proposalTitle,
+                proposalDescription,
+                proposalLink,
+                telegramLink,
+            },
         });
     }
-    async proposalSent(to) {
-        await this.mailerService.sendSimpleMail({
-            to,
+    async rejected(to, comment) {
+    }
+    async proposalSent(to, name, proposalTitle, proposalDescription, submissionDate) {
+        const telegramLink = this.configService.getOrThrow('TELEGRAM_LINK', {
+            infer: true,
+        });
+        await this.mailerService.sendMail({
+            to: to,
             subject: 'Hi your proposal is sent',
-            text: 'Hi your proposal is sent , you will be notified once approved or rejected',
+            context: {
+                name,
+                proposalTitle,
+                proposalDescription,
+                submissionDate,
+                telegramLink,
+            },
+            templatePath: path_1.default.join(__dirname, '../../templates/proposalSent.hbs'),
         });
     }
 };

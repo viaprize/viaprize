@@ -40,11 +40,9 @@ export class MailerService {
       ...mailOptions,
       from: mailOptions.from
         ? mailOptions.from
-        : `"${this.configService.get('mail.defaultName', {
+        : `"${this.configService.get('mail.user', {
             infer: true,
-          })}" <${this.configService.get('mail.defaultEmail', {
-            infer: true,
-          })}>`,
+          })}"`,
       html: mailOptions.html ? mailOptions.html : html,
     });
   }

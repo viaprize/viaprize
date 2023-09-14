@@ -33,7 +33,7 @@ let PrizeProposalsService = class PrizeProposalsService {
             throw new common_1.HttpException('User not found', common_1.HttpStatus.NOT_ACCEPTABLE);
         }
         await this.prizeProposalsRepository.save(Object.assign(Object.assign({}, createPrizeDto), { user: user }));
-        await this.mailService.proposalSent(user.email);
+        await this.mailService.proposalSent(user.email, user.name, createPrizeDto.title, createPrizeDto.description, createPrizeDto.submission_time.toString());
     }
     async findAll() {
         return await this.prizeProposalsRepository.find();
@@ -80,7 +80,17 @@ let PrizeProposalsService = class PrizeProposalsService {
         await this.prizeProposalsRepository.update(id, {
             isApproved: true,
         });
-        await this.mailService.approved(prizeProposal.user.email);
+        await this.mailService.approved(prizeProposal.user.email, prizeProposal.user.name, prizeProposal.title, prizeProposal.description, prizeProposal.submission_time.toString());
+    }
+    async reject(id, comment) {
+        const prizeProposal = await this.findOne(id);
+        if (!(prizeProposal === null || prizeProposal === void 0 ? void 0 : prizeProposal.user)) {
+            throw new Error('User not found');
+        }
+        await this.prizeProposalsRepository.update(id, {
+            isApproved: false,
+        });
+        await this.mailService.rejected(prizeProposal.user.email, comment);
     }
     async update(id, updatePrizeDto) {
         await this.prizeProposalsRepository.update(id, updatePrizeDto);

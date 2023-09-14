@@ -80,6 +80,7 @@ exports.default = (0, config_1.registerAs)('app', () => {
         platformSharePercentage: parseInt(process.env.PLATFORM_SHARE_PERCENTAGE || '5'),
         scheduleDatabaseUrL: process.env.SCHEDULE_DATABASE_URL || 'default',
         alchemy: process.env.ALCHEMY || 'no-api',
+        telegramLink: process.env.TELEGRAM_LINK || '',
     };
 });
 //# sourceMappingURL=app.config.js.map

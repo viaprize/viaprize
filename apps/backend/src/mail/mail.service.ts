@@ -13,11 +13,27 @@ export class MailService {
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService<AllConfigType>,
   ) {}
-  welcome(email: string) {
-    this.mailerService.sendSimpleMail({
+  async welcome(email: string, name: string) {
+    // this.mailerService.sendSimpleMail({
+    //   to: email,
+    //   subject: 'Welcome to the app',
+    //   text: 'Welcome to the app',
+    // });
+    const telegramLink = this.configService.getOrThrow<AllConfigType>(
+      'TELEGRAM_LINK',
+      {
+        infer: true,
+      },
+    );
+    await this.mailerService.sendMail({
       to: email,
-      subject: 'Welcome to the app',
-      text: 'Welcome to the app',
+      subject: 'Welcome to the Viaprize',
+      text: `Viaprize`,
+      templatePath: path.join(__dirname, './templates/welcome.hbs'),
+      context: {
+        name,
+        telegramLink,
+      },
     });
   }
 
@@ -28,18 +44,71 @@ export class MailService {
       text: 'testing',
     });
   }
-  async approved(to: string) {
-    await this.mailerService.sendSimpleMail({
-      to,
-      subject: 'Hi your proposal is approved',
-      text: 'Hi your proposal is approved',
+  async approved(
+    to: string,
+    name: string,
+    proposalTitle: string,
+    proposalDescription: string,
+    proposalLink: string,
+  ) {
+    const telegramLink = this.configService.getOrThrow<AllConfigType>(
+      'TELEGRAM_LINK',
+      {
+        infer: true,
+      },
+    );
+    await this.mailerService.sendMail({
+      to: to,
+      subject: 'Hi your proposal was approved',
+      text: `Viaprize `,
+      templatePath: path.join(__dirname, '../../templates/approved.hbs'),
+      context: {
+        name,
+        proposalTitle,
+        proposalDescription,
+        proposalLink,
+        telegramLink,
+      },
     });
   }
-  async proposalSent(to: string) {
-    await this.mailerService.sendSimpleMail({
-      to,
+
+  async rejected(to: string, comment: string) {
+    // await this.mailerService.sendSimpleMail({
+    //   to,
+    //   subject: `Hi your proposal was rejected `,
+    //   text: `${comment} \n This is why your proposal was rejected`,
+    // });
+  }
+  async proposalSent(
+    to: string,
+    name: string,
+    proposalTitle: string,
+    proposalDescription: string,
+    submissionDate: string,
+  ) {
+    const telegramLink = this.configService.getOrThrow<AllConfigType>(
+      'TELEGRAM_LINK',
+      {
+        infer: true,
+      },
+    );
+    // await this.mailerService.sendSimpleMail({
+    //   to,
+    //   subject: 'Hi your proposal is sent',
+    //   text: 'Hi your proposal is sent , you will be notified once approved or rejected',
+    // });
+    await this.mailerService.sendMail({
+      to: to,
       subject: 'Hi your proposal is sent',
-      text: 'Hi your proposal is sent , you will be notified once approved or rejected',
+      context: {
+        name,
+        proposalTitle,
+        proposalDescription,
+        submissionDate,
+
+        telegramLink,
+      },
+      templatePath: path.join(__dirname, '../../templates/proposalSent.hbs'),
     });
   }
 }

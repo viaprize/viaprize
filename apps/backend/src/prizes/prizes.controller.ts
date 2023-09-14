@@ -35,6 +35,7 @@ import { infinityPagination } from 'src/utils/infinity-pagination';
 import { ApiProperty } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
+import { RejectProposalDto } from './dto/reject-proposal.dto';
 
 class PrizeProposalsPaginationResult
   implements InfinityPaginationResultType<PrizeProposals>
@@ -173,12 +174,32 @@ export class PrizesController {
     return await this.prizeProposalsService.findByUser(userId);
   }
 
+  @Post('/proposals/reject/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'The Proposals was Rejected',
+  })
+  @ApiBody({
+    description: 'Request body to reject a proposal',
+    type: RejectProposalDto,
+  })
+  @UseGuards(AdminAuthGuard)
+  async rejectProposal(
+    @Param('id') id: string,
+    @Body() rejectProposalDto: RejectProposalDto,
+  ) {
+    return await this.prizeProposalsService.reject(
+      id,
+      rejectProposalDto.comment,
+    );
+  }
+
   @Post('/proposals/accept/:id')
   @ApiResponse({
     status: 200,
     description: 'The Proposals was Approved',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AdminAuthGuard)
   @ApiParam({
     name: 'id',
     type: String,

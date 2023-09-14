@@ -29,7 +29,13 @@ export class PrizeProposalsService {
       ...createPrizeDto,
       user: user,
     });
-    await this.mailService.proposalSent(user.email);
+    await this.mailService.proposalSent(
+      user.email,
+      user.name,
+      createPrizeDto.title,
+      createPrizeDto.description,
+      createPrizeDto.submission_time.toString(),
+    );
   }
 
   async findAll() {
@@ -85,7 +91,25 @@ export class PrizeProposalsService {
       isApproved: true,
     });
 
-    await this.mailService.approved(prizeProposal.user.email);
+    await this.mailService.approved(
+      prizeProposal.user.email,
+      prizeProposal.user.name,
+      prizeProposal.title,
+      prizeProposal.description,
+      prizeProposal.submission_time.toString(),
+    );
+  }
+
+  async reject(id: string, comment: string) {
+    const prizeProposal = await this.findOne(id);
+    if (!prizeProposal?.user) {
+      throw new Error('User not found');
+    }
+    await this.prizeProposalsRepository.update(id, {
+      isApproved: false,
+    });
+
+    await this.mailService.rejected(prizeProposal.user.email, comment);
   }
 
   async update(id: string, updatePrizeDto: UpdatePrizeDto) {
