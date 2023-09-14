@@ -20,6 +20,7 @@ export declare class PrizeProposalsService {
     findByUser(userId: string): Promise<PrizeProposals[]>;
     findOne(id: string): Promise<PrizeProposals | null>;
     approve(id: string): Promise<void>;
+    reject(id: string, comment: string): Promise<void>;
     update(id: string, updatePrizeDto: UpdatePrizeDto): Promise<PrizeProposals | null>;
     remove(id: string): Promise<void>;
 }

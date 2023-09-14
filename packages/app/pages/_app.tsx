@@ -40,9 +40,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
-  const handleLogin = (user: User, isNewUser: boolean) => {
-    // console.log(`User ${user.id} logged in!`);
-  };
 
   const getLayout = Component.getLayout ?? ((page) => page);
 

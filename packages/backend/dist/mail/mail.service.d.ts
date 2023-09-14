@@ -8,5 +8,6 @@ export declare class MailService {
     welcome(email: string): void;
     test(): Promise<void>;
     approved(to: string): Promise<void>;
+    rejected(to: string, comment: string): Promise<void>;
     proposalSent(to: string): Promise<void>;
 }

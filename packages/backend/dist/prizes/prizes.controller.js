@@ -22,6 +22,7 @@ const infinity_pagination_1 = require("../utils/infinity-pagination");
 const swagger_2 = require("@nestjs/swagger");
 const auth_guard_1 = require("../auth/auth.guard");
 const admin_auth_guard_1 = require("../auth/admin-auth.guard");
+const reject_proposal_dto_1 = require("./dto/reject-proposal.dto");
 class PrizeProposalsPaginationResult {
 }
 __decorate([
@@ -69,6 +70,9 @@ let PrizesController = class PrizesController {
     }
     async getProposal(userId) {
         return await this.prizeProposalsService.findByUser(userId);
+    }
+    async rejectProposal(id, rejectProposalDto) {
+        return await this.prizeProposalsService.reject(id, rejectProposalDto.comment);
     }
     async approveProposal(id) {
         return await this.prizeProposalsService.approve(id);
@@ -166,12 +170,29 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PrizesController.prototype, "getProposal", null);
 __decorate([
+    (0, common_1.Post)('/proposals/reject/:id'),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'The Proposals was Rejected',
+    }),
+    (0, swagger_1.ApiBody)({
+        description: 'Request body to reject a proposal',
+        type: reject_proposal_dto_1.RejectProposalDto,
+    }),
+    (0, common_1.UseGuards)(admin_auth_guard_1.AdminAuthGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, reject_proposal_dto_1.RejectProposalDto]),
+    __metadata("design:returntype", Promise)
+], PrizesController.prototype, "rejectProposal", null);
+__decorate([
     (0, common_1.Post)('/proposals/accept/:id'),
     (0, swagger_1.ApiResponse)({
         status: 200,
         description: 'The Proposals was Approved',
     }),
-    (0, common_1.UseGuards)(auth_guard_1.AuthGuard),
+    (0, common_1.UseGuards)(admin_auth_guard_1.AdminAuthGuard),
     (0, swagger_1.ApiParam)({
         name: 'id',
         type: String,

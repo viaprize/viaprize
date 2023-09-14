@@ -88,6 +88,18 @@ export class PrizeProposalsService {
     await this.mailService.approved(prizeProposal.user.email);
   }
 
+  async reject(id: string, comment: string) {
+    const prizeProposal = await this.findOne(id);
+    if (!prizeProposal?.user) {
+      throw new Error('User not found');
+    }
+    await this.prizeProposalsRepository.update(id, {
+      isApproved: false,
+    });
+
+    await this.mailService.rejected(prizeProposal.user.email, comment);
+  }
+
   async update(id: string, updatePrizeDto: UpdatePrizeDto) {
     await this.prizeProposalsRepository.update(id, updatePrizeDto);
     return this.findOne(id);

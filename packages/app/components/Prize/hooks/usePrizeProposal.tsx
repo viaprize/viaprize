@@ -86,12 +86,23 @@ export default function usePrizeProposal() {
         return res.data as PrizeProposalsList
     }
 
+    const acceptProposal = async (proposalId: string) => {
+        const res = await myAxios.post(`/prizes/proposals/${proposalId}/accept`)
+        return res.data
+    }
+    const rejectProposal = async ({ comment, proposalId }: { proposalId: string, comment: string }) => {
+        const res = await myAxios.post(`/prizes/proposals/${proposalId}/reject`, { comment })
+        return res.data
+    }
+
     return {
         addProposals,
         uploadImages,
         proposals,
         getProposalsOfUser,
-        getAllProposals
+        getAllProposals,
+        acceptProposal,
+        rejectProposal
     }
 
 
