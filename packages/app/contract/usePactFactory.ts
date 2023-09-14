@@ -7,6 +7,8 @@ import BN from 'bignumber.js';
 import Eth from 'web3-eth';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+import { getContract, readContract, prepareWriteContract, writeContract } from '@wagmi/core';
+import { Account } from 'viem';
 
 /**
  * Interface for the pact object.
@@ -24,7 +26,13 @@ interface Pact {
  */
 interface PactFactory {
   getAllPacts(): Promise<Pact[]>;
-  createPact(commitment: any, endTime: number, sum: any, leads: any): Promise<any>;
+  createPact(
+    commitment: any,
+    endTime: number,
+    sum: any,
+    leads: any,
+    account: `0x${string}` | Account | undefined
+  ): Promise<any>;
 }
 
 /**
@@ -81,42 +89,63 @@ export default function usePactFactory(): PactFactory {
      * @param endTime The end time for the pact.
      * @param sum The sum value for the pact.
      * @param leads The leads value for the pact.
+     * @param account The account to use for the transaction.
      * @returns A promise that resolves to the transaction receipt.
      */
-    async createPact(commitment: any, endTime: number, sum: number, leads: any): Promise<any> {
+    async createPact(
+      commitment: any,
+      endTime: number,
+      sum: number,
+      leads: any,
+      account: `0x${string}` | Account | undefined
+    ): Promise<any> {
       const duration = endTime - Math.floor(new Date().valueOf() / 1000);
 
       console.log('end time', endTime, 'now', Math.floor(new Date().valueOf() / 1000));
       const amountInWei = new BN(sum).shiftedBy(18).toString();
+      const commit = readContract({
+        abi: PactFactoryAbi as AbiItem[],
+        address: config.contracts.pactFactory,
+        functionName: 'commit',
+        args: [commitment],
+        account,
+      });
 
-      const pactFactoryContract = new web3.eth.Contract(
-        PactFactoryAbi as AbiItem[],
-        config.contracts.pactFactory
-      );
-      console.log(pactFactoryContract, 'pactFactoryContract');
+      const pactFactoryContract = await prepareWriteContract({
+        abi: PactFactoryAbi as AbiItem[],
+        address: config.contracts.pactFactory,
+        functionName: 'create',
+        args: [commit, new BN(duration), amountInWei, leads],
+      });
 
-      const estimatedGas = await pactFactoryContract.methods
-        .create(
-          await pactFactoryContract.methods.commit(commitment).call({
-            from: account,
-          }),
-          new BN(duration),
-          amountInWei,
-          leads
-        )
-        .estimateGas({ from: account });
-      console.log(estimatedGas, 'estimatedGas');
+      // const pactFactoryContract = new web3.eth.Contract(
+      //   PactFactoryAbi as AbiItem[],
+      //   config.contracts.pactFactory
+      // );
+      // console.log(pactFactoryContract, 'pactFactoryContract');
 
-      const func = pactFactoryContract.methods.create(
-        await pactFactoryContract.methods.commit(commitment).call({
-          from: account,
-        }),
-        new BN(duration),
-        amountInWei,
-        leads
-      );
+      // const estimatedGas = await pactFactoryContract.methods
+      //   .create(
+      //     await pactFactoryContract.methods.commit(commitment).call({
+      //       from: account,
+      //     }),
+      //     new BN(duration),
+      //     amountInWei,
+      //     leads
+      //   )
+      //   .estimateGas({ from: account });
+      // console.log(estimatedGas, 'estimatedGas');
 
-      return await sendTx(func);
+      // const func = pactFactoryContract.methods.create(
+      //   await pactFactoryContract.methods.commit(commitment).call({
+      //     from: account,
+      //   }),
+      //   new BN(duration),
+      //   amountInWei,
+      //   leads
+      // );
+
+      return await writeContract(pactFactoryContract.request);
     },
   };
 }

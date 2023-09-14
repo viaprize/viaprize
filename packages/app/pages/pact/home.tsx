@@ -9,6 +9,8 @@ import { useEffect, useState } from "react";
 import HistoryItem from "@/components/HistoryItem";
 import { Loader } from "@mantine/core";
 import { DatePicker, DateValue } from '@mantine/dates';
+import { usePrivyWagmi } from "@privy-io/wagmi-connector";
+import usePactContract from "@/contract/usePactContract";
 
 const tabs = ["about", "create", "preview"];
 
@@ -25,18 +27,25 @@ const Home: NextPage = () => {
     const [activeTab, setActiveTab] = useState(tabs[0]);
     const [endDate, setEndDate] = useState<number>(0);
     const { account, connectWallet, web3 }: any = useWeb3Context();
+    const { wallet } = usePrivyWagmi()
     const pactFactory = usePactFactory();
+    const pactContract = usePactContract();
 
 
     const doCreate = async () => {
         console.log("creating...................")
         setCreating(true);
+        if (!wallet) {
+            throw new Error("Wallet not connected")
+        }
+
         try {
             const res: any = await pactFactory.createPact(
                 terms,
                 endDate,
                 amount,
-                address
+                address,
+                wallet?.address as `0x${string}`,
             );
             if (res.status) {
                 await axios.post("/pact", {
@@ -95,14 +104,15 @@ const Home: NextPage = () => {
         }
         const res: any = await axios.get("/pacts");
         // get balances
-        // for (let i = 0; i < res.length; i++) {
-        //   const pactAddress = res[i].address;
+        for (let i = 0; i < res.length; i++) {
+            const pactAddress = res[i].address;
 
-        //   res[i] = {
-        //     ...res[i],
-        //     // ...await pactContract.getPactInfo(pactAddress)
-        //   };
-        // }
+
+            res[i] = {
+                ...res[i],
+                ...await pactContract.getPactInfo(pactAddress, wallet?.address ?? '0x')
+            };
+        }
         setHistoryList(res);
         setLoading(false);
     };

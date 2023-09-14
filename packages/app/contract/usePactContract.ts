@@ -10,6 +10,8 @@ import config from '@/config';
 import Eth from 'web3-eth';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+import { WalletClient, readContracts } from 'wagmi';
+import { readContract } from '@wagmi/core';
 interface PactContractInfo {
   balance: string;
   safe: string;
@@ -27,7 +29,7 @@ interface PactContract {
   commitment(pactAddress: string): Promise<any>;
   safeAddress(pactAddress: string): Promise<string>;
   resolve(pactAddress: string): Promise<void>;
-  getPactInfo(pactAddress: string): Promise<PactContractInfo>;
+  getPactInfo(pactAddress: string, wallet: string): Promise<PactContractInfo>;
 }
 
 /**
@@ -118,32 +120,128 @@ export default function usePactContract(): PactContract {
      * @param {string} pactAddress - The address of the Pact contract.
      * @returns {Promise<PactContractInfo>} Information about the Pact contract.
      */
-    async getPactInfo(pactAddress: string): Promise<PactContractInfo> {
+    async getPactInfo(pactAddress: string, wallet: `0x${string}`): Promise<PactContractInfo> {
       const web3 = new Web3(config.provider);
+
       const multicall = new web3.eth.Contract(
         MulticallABI as AbiItem[],
         config.contracts.multicall3
       );
+      const pactContractDetails = {
+        address: pactAddress as `0x${string}`,
+        abi: PactABI as AbiItem[],
+      };
 
       const pactContract = new web3.eth.Contract(PactABI as AbiItem[], pactAddress);
-      const sum = await pactContract.methods.sum().call({ from: account });
-      const leads = await pactContract.methods.leads().call({ from: account });
+      const sum = await readContract({
+        ...pactContractDetails,
+        functionName: 'sum',
+        account: wallet,
+      });
+      // const sum = await pactContract.methods.sum().call({ from: account });
+      const leads = await readContract({
+        ...pactContractDetails,
+        functionName: 'sum',
+        account: wallet,
+      });
+      const res = await readContracts({
+        contracts: [
+          {
+            ...pactContractDetails,
+            abi: [
+              {
+                inputs: [],
+                name: 'safe',
+                outputs: [
+                  {
+                    internalType: 'contract GnosisSafe',
+                    name: '',
+                    type: 'address',
+                  },
+                ],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'safe',
+          },
+          {
+            ...pactContractDetails,
+            abi: [
+              {
+                inputs: [],
+                name: 'resolved',
+                outputs: [
+                  {
+                    internalType: 'bool',
+                    name: '',
+                    type: 'bool',
+                  },
+                ],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'resolved',
+          },
+          {
+            ...pactContractDetails,
+            abi: [
+              {
+                inputs: [],
+                name: 'resolvable',
+                outputs: [
+                  {
+                    internalType: 'bool',
+                    name: '',
+                    type: 'bool',
+                  },
+                ],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'resolvable',
+          },
+          {
+            ...pactContractDetails,
+            abi: [
+              {
+                inputs: [],
+                name: 'end',
+                outputs: [
+                  {
+                    internalType: 'uint256',
+                    name: '',
+                    type: 'uint256',
+                  },
+                ],
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ],
+            functionName: 'end',
+          },
+        ],
+      });
+      // const leads = await pactContract.methods.leads().call({ from: account });
 
-      const calls = [
-        [pactAddress, pactContract.methods.safe().encodeABI()],
-        [pactAddress, pactContract.methods.resolved().encodeABI()],
-        [pactAddress, pactContract.methods.resolvable().encodeABI()],
-        [pactAddress, pactContract.methods.end().encodeABI()],
-      ];
+      // const calls = [
+      //   [pactAddress, pactContract.methods.safe().encodeABI()],
+      //   [pactAddress, pactContract.methods.resolved().encodeABI()],
+      //   [pactAddress, pactContract.methods.resolvable().encodeABI()],
+      //   [pactAddress, pactContract.methods.end().encodeABI()],
+      // ];
 
-      const res = await multicall.methods.aggregate(calls).call();
+      // const res = await multicall.methods.aggregate(calls).call();
+      console.log({ res }, 'multicall res is here ');
 
       return {
         balance: web3.utils.fromWei(await web3.eth.getBalance(pactAddress)),
-        safe: web3.eth.abi.decodeParameter('address', res['returnData'][0]),
-        resolved: web3.eth.abi.decodeParameter('bool', res['returnData'][1]),
-        resolvable: web3.eth.abi.decodeParameter('bool', res['returnData'][2]),
-        end: web3.eth.abi.decodeParameter('uint256', res['returnData'][3]),
+        safe: web3.eth.abi.decodeParameter('address', res[0]!.result as string),
+        resolved: web3.eth.abi.decodeParameter('bool', res[1]!.result as string),
+        resolvable: web3.eth.abi.decodeParameter('bool', res[2]!.result as string),
+        end: web3.eth.abi.decodeParameter('uint256', res[3]!.result as string),
         sum: sum,
         leads: leads,
       } as unknown as PactContractInfo;
