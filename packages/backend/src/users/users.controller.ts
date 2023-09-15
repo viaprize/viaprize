@@ -27,24 +27,8 @@ export class UsersController {
     console.log({ ...createUserDto }, 'hi');
     return this.usersService.create(createUserDto);
   }
-
-  // @Get()
-  // findAll() {
-  //   return this.usersService.findAll();
-  // }
-
-  @Get(':address')
-  findOne(@Param('address') address: string) {
-    return this.usersService.findOneByAddress(address);
+  @Get(':userId')
+  findOne(@Param('userId') userId: string) {
+    return this.usersService.findOneByUserId(userId);
   }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.usersService.update(+id, updateUserDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
 }

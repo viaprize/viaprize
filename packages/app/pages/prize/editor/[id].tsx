@@ -1,4 +1,5 @@
-import React from 'react'
+import AppShellLayout from '@/components/layout/appshell';
+import React, { ReactElement } from 'react'
 
 export default function EditorID() {
   return (
@@ -7,3 +8,8 @@ export default function EditorID() {
     </div>
   )
 }
+
+
+EditorID.getLayout = function getLayout(page: ReactElement) {
+  return <AppShellLayout>{page}</AppShellLayout>;
+};

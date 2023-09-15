@@ -1,8 +1,11 @@
+import useAppUser from '@/context/hooks/useAppUser';
 import myAxios from '@/lib/axios';
 import { Autocomplete, Button, Card, Center, Text, TextInput } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
+import { useRouter } from 'next/router';
 import React, { useRef, useState } from 'react';
 import { useMutation } from 'react-query';
+import { toast } from 'sonner';
 
 export default function Details() {
   const timeoutRef = useRef<number>(-1);
@@ -10,12 +13,18 @@ export default function Details() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState('');
-  const { user } = usePrivy()
-  const { mutateAsync: uploadProfile, isLoading } = useMutation(async ({ name, email }: { name: string, email: string }) => {
-    return await myAxios.post('/users', { name, email, address: user?.wallet?.address, userId: user?.id })
-
-  })
-
+  const { createNewUser } = useAppUser()
+  /**
+   * Mutation for logging in the user.
+   * @type {import('react-query').UseMutationResult<any, unknown>}
+   */
+  const uploadUserMutation = useMutation(createNewUser,{
+    onSuccess: (data) => {
+      router.push('/prize/explore-prizes');
+    }
+  });
+  
+  const router = useRouter();
   const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
     setEmail(val);
@@ -29,6 +38,25 @@ export default function Details() {
         setLoading(false);
         setData(['gmail.com', 'outlook.com', 'yahoo.com'].map((provider) => `${val}@${provider}`));
       }, 1000);
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      toast.promise(
+        uploadUserMutation.mutateAsync({
+          email,
+          name
+        }),
+        {
+          loading: 'Logging In',
+          success: 'Logged In Successfully',
+          error: 'Error Logging In',
+        },
+      );
+      
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -52,14 +80,9 @@ export default function Details() {
           my="sm"
         />
         <Button
-          onClick={async () => {
-            await uploadProfile({
-              email,
-              name
-            })
-          }}
-          loading={loading || isLoading}
-          disabled={loading || isLoading}
+          onClick={handleLogin}
+          loading={loading || uploadUserMutation.isLoading}
+          disabled={loading || uploadUserMutation.isLoading}
           color="blue"
           fullWidth
           my="sm"

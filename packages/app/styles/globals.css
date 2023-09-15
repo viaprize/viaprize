@@ -29,13 +29,7 @@
 }
 
 html,
-body {
-  padding: 0;
-  margin : 0;
-  color  : #000;
-  font-family: 'Figtree', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-}
+
 
 .ant-btn,
 .tab-active {

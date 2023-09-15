@@ -4,14 +4,6 @@ import { IsString } from 'class-validator';
 export class CreateUserDto {
   @ApiProperty({
     type: String,
-    description: 'The wallet address of the user',
-    example: '0x',
-  })
-  @IsString()
-  address: string;
-
-  @ApiProperty({
-    type: String,
     description: 'The user wallet',
     example: 'sex@gmail.com',
   })
@@ -24,7 +16,7 @@ export class CreateUserDto {
     example: 'jsldj3lkj',
   })
   @IsString()
-  userId: string;
+  user_id: string;
 
   @ApiProperty({
     type: String,

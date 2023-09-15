@@ -9,12 +9,12 @@ import {
   MediaQuery,
   Burger,
   useMantineTheme,
+  Center,
 } from '@mantine/core';
 import { ReactNode } from 'react';
 import HeaderLayout from './headerLayout';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
-  console.log('reloading');
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   return (
@@ -43,7 +43,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         </Header>
       }
     >
-      {children}
+      <Center>{children}</Center>
     </AppShell>
   );
 }

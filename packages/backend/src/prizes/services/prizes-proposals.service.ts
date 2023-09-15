@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreatePrizeProposalDto } from '../dto/create-prize-proposal.dto';
 import { UpdatePrizeDto } from '../dto/update-prize-proposal.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,11 +22,12 @@ export class PrizeProposalsService {
   async create(createPrizeDto: CreatePrizeProposalDto, userId: string) {
     const user = await this.userService.findOneByUserId(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new HttpException('User not found', HttpStatus.NOT_ACCEPTABLE);
     }
 
     await this.prizeProposalsRepository.save({
       ...createPrizeDto,
+      user: user,
     });
     await this.mailService.proposalSent(user.email);
   }
@@ -35,22 +36,35 @@ export class PrizeProposalsService {
     return await this.prizeProposalsRepository.find();
   }
 
-  async findByProposerAddressWithPagination(
+  async findAllWithPagination(paginationOptions: IPaginationOptions) {
+    return this.prizeProposalsRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      relations: ['user'],
+    });
+  }
+
+  async findByUserWithPagination(
     paginationOptions: IPaginationOptions,
-    propserAddress: string,
+    userId: string,
   ) {
     return this.prizeProposalsRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: {
-        proposer_address: propserAddress,
+        user: {
+          user_id: userId,
+        },
       },
+      relations: ['user'],
     });
   }
 
-  async findByProposerAddress(propserAddress: string) {
+  async findByUser(userId: string) {
     return await this.prizeProposalsRepository.findBy({
-      proposer_address: propserAddress,
+      user: {
+        user_id: userId,
+      },
     });
   }
 
@@ -59,25 +73,31 @@ export class PrizeProposalsService {
       where: {
         id,
       },
+      relations: ['user'],
     });
   }
   async approve(id: string) {
     const prizeProposal = await this.findOne(id);
-    if (!prizeProposal?.proposer_address) {
-      throw new Error('Proposal not found');
+    if (!prizeProposal?.user) {
+      throw new Error('User not found');
     }
     await this.prizeProposalsRepository.update(id, {
       isApproved: true,
     });
 
-    const user = await this.userService.findOneByAddress(
-      prizeProposal?.proposer_address,
-    );
-    if (!user) {
+    await this.mailService.approved(prizeProposal.user.email);
+  }
+
+  async reject(id: string, comment: string) {
+    const prizeProposal = await this.findOne(id);
+    if (!prizeProposal?.user) {
       throw new Error('User not found');
     }
+    await this.prizeProposalsRepository.update(id, {
+      isApproved: false,
+    });
 
-    await this.mailService.approved(user?.email);
+    await this.mailService.rejected(prizeProposal.user.email, comment);
   }
 
   async update(id: string, updatePrizeDto: UpdatePrizeDto) {

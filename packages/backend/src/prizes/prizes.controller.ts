@@ -25,13 +25,17 @@ import {
   getSchemaPath,
   ApiParam,
   ApiTags,
+  ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 
 import { ApiProperty } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
+import { RejectProposalDto } from './dto/reject-proposal.dto';
 
 class PrizeProposalsPaginationResult
   implements InfinityPaginationResultType<PrizeProposals>
@@ -56,6 +60,43 @@ class PrizeProposalsPaginationResult
 export class PrizesController {
   constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
 
+  @Get('/proposals')
+  @UseGuards(AdminAuthGuard)
+  @ApiOperation({
+    summary: 'Get all Pending proposals',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The proposals were returned successfully',
+    type: PrizeProposalsPaginationResult,
+  })
+  @ApiQuery({
+    name: 'page',
+    example: 1,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    example: 10,
+    type: Number,
+  })
+  @ApiBearerAuth('access-token')
+  async getPendingProposals(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    return infinityPagination(
+      await this.prizeProposalsService.findAllWithPagination({
+        page,
+        limit,
+      }),
+      {
+        limit,
+        page,
+      },
+    );
+  }
+
   @Post('/proposals')
   @UseGuards(AuthGuard)
   @ApiOperation({
@@ -65,59 +106,92 @@ export class PrizesController {
     description: 'Request body to create a prize',
     type: CreatePrizeProposalDto,
   })
+  @ApiBearerAuth('access-token')
   create(
     @Body() createPrizeProposalDto: CreatePrizeProposalDto,
     @Request() req,
   ) {
+    console.log({ createPrizeProposalDto });
+    console.log(req.user, 'user');
     return this.prizeProposalsService.create(
       createPrizeProposalDto,
       req.user.userId,
     );
   }
 
-  @Get('/proposals/proposer_address/:address')
+  @Get('/proposals/user/:userId')
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: 200,
     description: 'The proposals were returned successfully',
     type: PrizeProposalsPaginationResult,
   })
+  @ApiQuery({
+    name: 'page',
+    example: 1,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    example: 10,
+    type: Number,
+  })
   @ApiParam({
-    name: 'address',
+    name: 'userId',
     type: String,
   })
   async getProposalsBy(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Param('address') address,
+    @Param('userId') userId,
   ): Promise<InfinityPaginationResultType<PrizeProposals>> {
     if (limit > 50) {
       limit = 50;
     }
 
     return infinityPagination(
-      await this.prizeProposalsService.findByProposerAddressWithPagination(
+      await this.prizeProposalsService.findByUserWithPagination(
         {
           limit,
           page,
         },
-        address,
+        userId,
       ),
       { page, limit },
     );
   }
-  @Get('/proposals/:id')
+  @Get('/proposals/:userId')
   @ApiResponse({
     status: 200,
     description: 'The proposals were returned successfully',
     type: PrizeProposalsPaginationResult,
   })
   @ApiParam({
-    name: 'id',
+    name: 'userId',
     type: String,
   })
-  async getProposal(@Param('id') id: string) {
-    return await this.prizeProposalsService.findOne(id);
+  async getProposal(@Param('userId') userId: string) {
+    return await this.prizeProposalsService.findByUser(userId);
+  }
+
+  @Post('/proposals/reject/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'The Proposals was Rejected',
+  })
+  @ApiBody({
+    description: 'Request body to reject a proposal',
+    type: RejectProposalDto,
+  })
+  @UseGuards(AdminAuthGuard)
+  async rejectProposal(
+    @Param('id') id: string,
+    @Body() rejectProposalDto: RejectProposalDto,
+  ) {
+    return await this.prizeProposalsService.reject(
+      id,
+      rejectProposalDto.comment,
+    );
   }
 
   @Post('/proposals/accept/:id')
@@ -125,7 +199,7 @@ export class PrizesController {
     status: 200,
     description: 'The Proposals was Approved',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AdminAuthGuard)
   @ApiParam({
     name: 'id',
     type: String,

@@ -9,7 +9,7 @@ import PrizeFunderCard from './prizeFunderCard';
 
 export default function PrizePageTabs() {
   return (
-    <Tabs className='w-full' variant='pills' defaultValue="about">
+    <Tabs className='w-full' variant='pills' defaultValue="about" >
       <Tabs.List position="center" grow>
         <Tabs.Tab value="about" icon={<BsInfoLg size="1rem" />}>
           About
@@ -22,7 +22,7 @@ export default function PrizePageTabs() {
         <AboutPrize/>
       </Tabs.Panel>
       <Tabs.Panel value='creators'>
-        <PrizeFunderCard/>
+        <PrizeFunderCard name={'test'} email={'test'}/>
       </Tabs.Panel>
     </Tabs>
   );

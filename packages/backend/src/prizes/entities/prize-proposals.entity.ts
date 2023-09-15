@@ -1,21 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsDate } from 'class-validator';
-import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Priority, Proficiency } from './types';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 export class PrizeProposals {
   @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @ApiProperty({ nullable: true })
-  @Column({ nullable: true })
-  platform_reward: number;
-
-  @ApiProperty()
-  @Column({ default: false })
-  distributed: boolean;
 
   @ApiProperty()
   @Column()
@@ -33,6 +33,10 @@ export class PrizeProposals {
   @ApiProperty()
   @Column({ default: false })
   isApproved: boolean;
+
+  @ApiProperty({ type: 'string' })
+  @Column({ default: '' })
+  title: string;
 
   //This text is in markdown
 
@@ -55,10 +59,6 @@ export class PrizeProposals {
   @Column({ nullable: true })
   startSubmissionDate: Date;
 
-  @ApiProperty()
-  @Column()
-  proposer_address: string;
-
   @ApiProperty({ type: 'array', items: { type: 'string' } })
   @Column('simple-array')
   proficiencies: string[];
@@ -66,4 +66,13 @@ export class PrizeProposals {
   @ApiProperty({ type: 'array', items: { type: 'string' } })
   @Column('simple-array')
   priorities: string[];
+
+  @ApiProperty({ type: 'array', items: { type: 'string' } })
+  @Column('simple-array')
+  images: string[];
+
+  @ApiProperty({ type: 'string' })
+  @ManyToOne(() => User, (user) => user.prizeProposals)
+  @JoinColumn({ name: 'user', referencedColumnName: 'user_id' })
+  user: User;
 }

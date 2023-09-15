@@ -14,13 +14,15 @@ import Header from '@/components/layout/headerLayout';
 import { mainnet, goerli } from '@wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
-import { ReactElement, ReactNode } from 'react';
+import { ReactElement, ReactNode, useState } from 'react';
 import { NextPage } from 'next';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { optimism, optimismGoerli } from 'wagmi/chains'
+import { ToastContainer } from 'react-toastify';
+import { Toaster } from 'sonner';
+import { optimism, optimismGoerli } from 'wagmi/chains';
 
 import config from '@/config';
-
+import { env } from '@env';
 
 const queryClient = new QueryClient();
 
@@ -34,26 +36,22 @@ type AppPropsWithLayout = AppProps & {
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
-  const handleLogin = (user: User, isNewUser: boolean) => {
-    // console.log(`User ${user.id} logged in!`);
-  };
 
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
     <>
-
       <Head>
         <title>Mantine next example</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <PrivyProvider
-        appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
-
-
-
+        appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
         config={{
           loginMethods: ['email', 'wallet'],
           additionalChains: [optimism, optimismGoerli],
@@ -63,19 +61,19 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
             showWalletLoginFirst: true,
             // logo: 'https://your-logo-url',
           },
-
         }}
       >
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-          <Web3ContextProvider>
-            <QueryClientProvider client={queryClient}>
-              <MantineProvider theme={{}} withGlobalStyles withNormalizeCSS>
 
+          <QueryClientProvider client={queryClient}>
+            <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+              <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+                <Toaster />
                 {getLayout(<Component {...pageProps} />)}
-
               </MantineProvider>
-            </QueryClientProvider>
-          </Web3ContextProvider>
+            </ColorSchemeProvider>
+          </QueryClientProvider>
+
         </PrivyWagmiConnector>
       </PrivyProvider>
     </>

@@ -63,7 +63,7 @@ const getPactInfo = async (pactAddress: string) => {
 async function getPactItem(address: string) {
 
     if (!address) {
-        throw new Error("Pact not found")
+        throw new Error("Pact not fhound")
     }
     const res = {
         name: 'test-name',
@@ -192,6 +192,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const eth = new Eth(
         provider
     );
+    console.log({
+        // ...res,
+        // //@ts-ignore
+        // balance: web3.utils.fromWei(await eth.getBalance(address)),
+        // ...await getPactInfo(address as string),
+        name: 'test-name',
+        terms: 'these are my terms',
+        address: '0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c',
+        transactionHash: '0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992',
+        blockHash: '0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7',
+        balance: '0',
+        safe: '0x7AC866911a436a2Eec98F848d7b9bFE404d66a6c',
+        resolved: true,
+        resolvable: true,
+        end: '1682567999',
+        sum: '100000000000'
+    })
+
 
 
 
