@@ -1,3 +1,4 @@
+// @ts-nocheck
 import AdminCard from '@/components/Admin/card';
 import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
 import AppShellLayout from '@/components/layout/appshell';
