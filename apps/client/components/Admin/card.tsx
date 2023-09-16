@@ -12,8 +12,6 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import ViewDetails from './details';
-import { PrizeProposals } from 'types/prizes';
-import { AppUser } from 'types/app-user';
 import usePrizeProposal from '../Prize/hooks/usePrizeProposal';
 import { useMutation } from 'react-query';
 

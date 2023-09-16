@@ -1,4 +1,3 @@
-import { env } from '@env'
 import { Web3Storage } from 'web3.storage'
 
 function getAccessToken () {

@@ -1,10 +1,10 @@
 {
-  "name": "mantine-next-template",
+  "name": "@viaprize/client",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cd ../backend && yarn build && cd ../app && next build ",
+    "build": "next build ",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
@@ -112,6 +112,8 @@
     "storybook-dark-mode": "^3.0.0",
     "tailwindcss": "^3.3.3",
     "ts-jest": "^29.1.0",
-    "typescript": "5.0.4"
+    "typescript": "5.0.4",
+    "eslint-config-custom": "*",
+    "tsconfig": "*"
   }
 }
