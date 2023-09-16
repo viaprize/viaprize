@@ -14,6 +14,7 @@ import { useState } from 'react';
 import ViewDetails from './details';
 import usePrizeProposal from '../Prize/hooks/usePrizeProposal';
 import { useMutation } from 'react-query';
+import { AppUser } from '../../types/app-user';
 
 interface AdminCardProps {
   images: string[]

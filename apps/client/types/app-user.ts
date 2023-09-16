@@ -1,5 +1,4 @@
-import { User } from '@/backend/users/entities/user.entity';
-import { CreateUserDto } from '@/backend/src/users/dto/create-user.dto';
+import { User } from '../../backend/dist/users/entities/user.entity';
+import { CreateUserDto } from '../../backend/dist/users/dto/create-user.dto';
 
-interface AppUser extends User {}
-interface CreateUserDto extends CreateUserDto {}
+export interface AppUser extends User {}
