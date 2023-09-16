@@ -10,6 +10,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "env.mjs",
+    "*.mjs",
     "../backend/*"
   ],
   "exclude": ["node_modules"]

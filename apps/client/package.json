@@ -18,6 +18,7 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
+    "@viaprize/ui": "*",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
     "@mantine/core": "^6.0.20",

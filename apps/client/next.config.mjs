@@ -1,5 +1,5 @@
-import './env.mjs';
 /** @type {import("next").NextConfig} */
+import './env.mjs';
 import BundleAnalyzer from '@next/bundle-analyzer';
 
 const withBundleAnalyzer = BundleAnalyzer({
@@ -8,6 +8,7 @@ const withBundleAnalyzer = BundleAnalyzer({
 
 export default withBundleAnalyzer({
   reactStrictMode: true,
+  transpilePackages:['@viaprize/ui'],
   eslint: {
     ignoreDuringBuilds: true,
   },
