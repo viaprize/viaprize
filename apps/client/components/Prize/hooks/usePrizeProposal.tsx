@@ -1,7 +1,7 @@
 // import { useQuery, useMutation } from 'react-query';
 // import axios from 'axios';
 // import myAxios from '@/lib/axios';
-import { CreatePrizeProposalDto } from '@/backend/prizes/dto/create-prize-proposal.dto';
+import { CreatePrizeProposalDto, PrizeProposalQueryParams, PrizeProposals, PrizeProposalsList } from './../../../types/prizes';
 import { makeStorageClient } from '@/components/_providers/web3client';
 import myAxios from '@/lib/axios';
 import { usePrivy } from '@privy-io/react-auth';

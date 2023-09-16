@@ -1,6 +1,6 @@
-type Submission = any;
-interface Prize extends any {}
-interface PrizeProposals extends any {}
-interface PrizeProposalsList extends any {}
-interface CreatePrizeProposalDto extends any {}
-interface PrizeProposalQueryParams extends any {}
+export type Submission = any;
+export interface Prize extends any {}
+export interface PrizeProposals extends any {}
+export interface PrizeProposalsList extends any {}
+export interface CreatePrizeProposalDto extends any {}
+export interface PrizeProposalQueryParams extends any {}
