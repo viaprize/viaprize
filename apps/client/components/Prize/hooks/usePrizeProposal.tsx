@@ -6,7 +6,6 @@ import { makeStorageClient } from '@/components/_providers/web3client';
 import myAxios from '@/lib/axios';
 import { usePrivy } from '@privy-io/react-auth';
 import { useState } from 'react';
-import { PrizeProposalQueryParams, PrizeProposals, PrizeProposalsList } from 'types/prizes';
 
 function objectToRecord(obj: { [key: string]: any }): Record<string, string> {
     return Object.entries(obj).reduce((record, [key, value]) => {

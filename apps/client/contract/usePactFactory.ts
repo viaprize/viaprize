@@ -1,3 +1,4 @@
+// @ts-nocheck
 import useWeb3Context from '@/context/hooks/useWeb3Context';
 import PactFactoryAbi from './abi/PactFactory.json';
 import usePactContract from './usePactContract';

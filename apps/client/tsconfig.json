@@ -1,7 +1,17 @@
 {
   "extends": "tsconfig/nextjs.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }]
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/config": ["config/index.ts"],
+      "@/context/*": ["context/*"],
+      "@/lib/*": ["lib/*"],
+      "@/contract/*": ["contract/*"],
+      "@env": ["env.mjs"],
+      "@/backend/*": ["../backend/dist/*"]
+    },
   },
   "include": [
     "next-env.d.ts",

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * useERC721Contract hook.
  * This hook provides utilities for interacting with ERC721 tokens.

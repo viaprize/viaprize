@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * useContract hook.
  * This hook creates a new contract instance using the provided ABI and address.

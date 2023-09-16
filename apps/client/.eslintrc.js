@@ -15,4 +15,9 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'import/extensions': 'off',
   },
+  settings: {
+    "import/resolver": {
+      "typescript": {} 
+    }
+  }
 };

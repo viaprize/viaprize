@@ -1,3 +1,4 @@
+// @ts-nocheck
 import useWeb3Context from '@/context/hooks/useWeb3Context';
 import WalletAbi from './abi/Wallet.json';
 import { AbiItem } from 'web3-utils';

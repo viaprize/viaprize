@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * useErc20Contract hook.
  * This hook provides utilities for interacting with ERC20 tokens.

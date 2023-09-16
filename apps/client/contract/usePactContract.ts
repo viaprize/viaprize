@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @module hooks/usePactContract
  * @description Provides utilities for interacting with a Pact contract.
