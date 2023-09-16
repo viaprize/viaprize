@@ -1,4 +1,17 @@
-import { User } from '../../backend/dist/users/entities/user.entity';
-import { CreateUserDto } from '../../backend/dist/users/dto/create-user.dto';
-
 export interface AppUser extends User {}
+
+export declare class User {
+  id: string;
+  email: string;
+  user_id: string;
+  name: string;
+  isAdmin: boolean;
+  submissions: any[];
+  prizeProposals: any[];
+}
+
+export class CreateUserDto {
+  email: string;
+  user_id: string;
+  name: string;
+}
