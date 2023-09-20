@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUser } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
@@ -11,30 +11,30 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private mailService: MailService,
   ) {}
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUser): Promise<User> {
     try {
       const user = await this.userRepository.create(createUserDto);
-      await this.userRepository.save(user);
-      await this.mailService.welcome(user.email);
+      await this.userRepository.insert(user)
+      return user
     } catch (error) {
       throw new HttpException('User Already Exists', HttpStatus.FORBIDDEN);
     }
+    
   }
 
   findAll() {
     return `This action returns all users`;
   }
-  async findOneByUserId(userId: string) {
+  async findOneByAuthId(authId: string) {
     const user = await this.userRepository.findOne({
       where: {
-        user_id: userId,
+        authId: authId,
       },
     });
     if (!user)
       throw new HttpException(
-        `User not found with user id ${userId}`,
+        `User not found with authId ${authId}`,
         HttpStatus.BAD_REQUEST,
       );
     return user;
