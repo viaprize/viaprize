@@ -167,11 +167,11 @@ export class PrizesController {
     type: PrizeProposalsPaginationResult,
   })
   @ApiParam({
-    name: 'userId',
+    name: 'authId',
     type: String,
   })
-  async getProposal(@Param('userId') userId: string) {
-    return await this.prizeProposalsService.findByUser(userId);
+  async getProposal(@Param('authId') authId: string) {
+    return await this.prizeProposalsService.findByUserAuthId(authId);
   }
 
   @Post('/proposals/reject/:id')

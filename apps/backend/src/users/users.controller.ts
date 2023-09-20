@@ -15,7 +15,7 @@ import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
 import { CreatePactDto } from 'src/pacts/dto/create-pact.dto';
 import { User } from './entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
-import api from 'src/api';
+
 
 /**
  * This is the users controller class.

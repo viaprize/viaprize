@@ -20,7 +20,7 @@ export class PrizeProposalsService {
     private userService: UsersService,
   ) {}
   async create(createPrizeDto: CreatePrizeProposalDto, userId: string) {
-    const user = await this.userService.findOneByUserId(userId);
+    const user = await this.userService.findOneByAuthId(userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_ACCEPTABLE);
     }
@@ -46,24 +46,24 @@ export class PrizeProposalsService {
 
   async findByUserWithPagination(
     paginationOptions: IPaginationOptions,
-    userId: string,
+    authId: string,
   ) {
     return this.prizeProposalsRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: {
         user: {
-          user_id: userId,
+          authId: authId,
         },
       },
       relations: ['user'],
     });
   }
 
-  async findByUser(userId: string) {
+  async findByUserAuthId(authId: string) {
     return await this.prizeProposalsRepository.findBy({
       user: {
-        user_id: userId,
+        authId: authId,
       },
     });
   }

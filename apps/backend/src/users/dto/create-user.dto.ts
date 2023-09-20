@@ -1,28 +1,26 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import {tags} from "typia"
+/**
+ * Interface of Create User , using this interface it create a new user in @link ../users.service~UsersService
+ */
+export interface CreateUser{
+  /**
+   * User's emails which will be used to send emails and futher communication
+   * @example johnsmith@gmail.com
+   
+   */
+  email: string & tags.Format<"email">,
 
-export class CreateUserDto {
-  @ApiProperty({
-    type: String,
-    description: 'The user wallet',
-    example: 'sex@gmail.com',
-  })
-  @IsString()
-  email: string;
+  /**
+   * User Id which is gotten from the auth provider like privy , torus etc...
+   * @example did:lsjfdlk:ljsdlkjsdfkm
+   */
+  user_id: string & tags.MinLength<5>
 
-  @ApiProperty({
-    type: String,
-    description: 'This is gotten from privy',
-    example: 'jsldj3lkj',
-  })
-  @IsString()
-  user_id: string;
+  /**
+   * The user name which is gotten from the onboarding process or page
+   * @example Johnny Sins
+   */
+  name:string
 
-  @ApiProperty({
-    type: String,
-    description: 'The name gotten from on boarding',
-    example: 'johnsmith',
-  })
-  @IsString()
-  name: string;
 }
+
