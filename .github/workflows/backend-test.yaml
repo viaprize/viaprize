@@ -23,7 +23,7 @@ jobs:
         working-directory: ./apps/backend
 
       - name: Install dependencies
-        run: yarn install --prefer-offline --frozen-lockfile
+        run: npm ci
         working-directory: ./apps/backend
 
       - name: Build
