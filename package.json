@@ -17,5 +17,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "typia": "^5.0.4"
+  }
 }
