@@ -1,3 +1,5 @@
-module.exports = {
+config = {
   extends: ["custom/next"],
 };
+
+export default config;

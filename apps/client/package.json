@@ -42,7 +42,7 @@
     "@tiptap/pm": "^2.1.8",
     "@tiptap/react": "^2.1.8",
     "@tiptap/starter-kit": "^2.1.8",
-    "@viaprize/ui": "*",
+    "@viaprize/ui": "workspace:*",
     "@wagmi/chains": "^1.8.0",
     "@walletconnect/web3-provider": "^1.8.0",
     "@web3modal/ethereum": "^2.7.1",
@@ -98,7 +98,7 @@
     "eslint": "^8.46.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-config-custom": "*",
+    "eslint-config-custom": "workspace:*",
     "eslint-config-mantine": "2.0.0",
     "eslint-config-standard-with-typescript": "^39.0.0",
     "eslint-plugin-import": "^2.28.1",
@@ -119,7 +119,7 @@
     "storybook-dark-mode": "^3.0.0",
     "tailwindcss": "^3.3.3",
     "ts-jest": "^29.1.0",
-    "tsconfig": "*",
+    "tsconfig": "workspace:*",
     "typescript": "5.0.4"
   }
 }

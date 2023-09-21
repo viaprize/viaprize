@@ -11,8 +11,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       tsconfig:
-        specifier: '*'
-        version: 0.0.1
+        specifier: workspace:*
+        version: link:packages/tsconfig
       turbo:
         specifier: latest
         version: 1.10.14
@@ -342,7 +342,7 @@ importers:
         specifier: ^2.1.8
         version: 2.1.8(@tiptap/pm@2.1.8)
       '@viaprize/ui':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/ui
       '@wagmi/chains':
         specifier: ^1.8.0
@@ -505,7 +505,7 @@ importers:
         specifier: ^17.0.0
         version: 17.0.0(@typescript-eslint/eslint-plugin@6.4.1)(@typescript-eslint/parser@5.59.7)(eslint-plugin-import@2.28.1)(eslint@8.46.0)
       eslint-config-custom:
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/eslint-config-custom
       eslint-config-mantine:
         specifier: 2.0.0
@@ -568,8 +568,8 @@ importers:
         specifier: ^29.1.0
         version: 29.1.1(@babel/core@7.22.1)(esbuild@0.17.19)(jest@29.6.2)(typescript@5.0.4)
       tsconfig:
-        specifier: '*'
-        version: 0.0.1
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       typescript:
         specifier: 5.0.4
         version: 5.0.4
@@ -577,7 +577,7 @@ importers:
   apps/docs:
     dependencies:
       '@viaprize/ui':
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/ui
       next:
         specifier: ^13.4.19
@@ -602,11 +602,11 @@ importers:
         specifier: ^18.0.7
         version: 18.2.0
       eslint-config-custom:
-        specifier: '*'
+        specifier: workspace:*
         version: link:../../packages/eslint-config-custom
       tsconfig:
-        specifier: '*'
-        version: 0.0.1
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       typescript:
         specifier: ^4.5.3
         version: 4.5.3
