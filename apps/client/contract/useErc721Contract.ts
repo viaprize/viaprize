@@ -60,7 +60,11 @@ export default function useERC721Contract() {
      * @param {string} toAddress - The address to transfer the token to.
      * @param {string} tokenId - The ID of the token to transfer.
      */
-    async transferFrom(nftAddress: string, toAddress: string, tokenId: string): Promise<void> {
+    async transferFrom(
+      nftAddress: string,
+      toAddress: string,
+      tokenId: string,
+    ): Promise<void> {
       const contract = new web3.eth.Contract(Erc721Abi as AbiItem[], nftAddress);
       const func = contract.methods.transferFrom(account, toAddress, tokenId);
       sendTx(func);

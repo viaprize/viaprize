@@ -40,14 +40,16 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
 
-
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
     <>
       <Head>
         <title>Mantine next example</title>
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width"
+        />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <PrivyProvider
@@ -64,16 +66,17 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         }}
       >
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-
           <QueryClientProvider client={queryClient}>
-            <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+            <ColorSchemeProvider
+              colorScheme={colorScheme}
+              toggleColorScheme={toggleColorScheme}
+            >
               <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
                 <Toaster />
                 {getLayout(<Component {...pageProps} />)}
               </MantineProvider>
             </ColorSchemeProvider>
           </QueryClientProvider>
-
         </PrivyWagmiConnector>
       </PrivyProvider>
     </>

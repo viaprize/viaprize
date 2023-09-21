@@ -33,7 +33,9 @@ export default function useErc20Contract() {
     async allowance(tokenAddress: string, spenderAddress: string): Promise<number> {
       const tokenContract = new web3.eth.Contract(Erc20Abi as AbiItem[], tokenAddress);
 
-      return await tokenContract.methods.allowance(account, spenderAddress).call({ from: account });
+      return await tokenContract.methods
+        .allowance(account, spenderAddress)
+        .call({ from: account });
     },
 
     /**
@@ -81,9 +83,16 @@ export default function useErc20Contract() {
      * @param {string} amount - The amount of token to send.
      * @returns {Promise<any>} The transaction receipt.
      */
-    async transfer(tokenAddress: string, toAddress: string, amount: string): Promise<any> {
+    async transfer(
+      tokenAddress: string,
+      toAddress: string,
+      amount: string,
+    ): Promise<any> {
       const tokenContract = new web3.eth.Contract(Erc20Abi as AbiItem[], tokenAddress);
-      const func = tokenContract.methods.transfer(toAddress, web3.utils.toWei(amount, 'mwei'));
+      const func = tokenContract.methods.transfer(
+        toAddress,
+        web3.utils.toWei(amount, 'mwei'),
+      );
       return await sendTx(func);
     },
 
@@ -98,10 +107,13 @@ export default function useErc20Contract() {
     async approve(
       tokenAddress: string,
       spenderAddress: string,
-      amount = '10000000000000'
+      amount = '10000000000000',
     ): Promise<any> {
       const tokenContract = new web3.eth.Contract(Erc20Abi as AbiItem[], tokenAddress);
-      const func = tokenContract.methods.approve(spenderAddress, web3.utils.toWei(amount, 'mwei'));
+      const func = tokenContract.methods.approve(
+        spenderAddress,
+        web3.utils.toWei(amount, 'mwei'),
+      );
       return await sendTx(func);
     },
   };

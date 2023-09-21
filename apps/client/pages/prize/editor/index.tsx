@@ -6,7 +6,9 @@ import { Button } from '@mantine/core';
 import AppShellLayout from '@/components/layout/appshell';
 
 function EditorsPage() {
-  const [content, setContent] = useState<JSONContent | undefined>(PrizeSubmissionTemplate);
+  const [content, setContent] = useState<JSONContent | undefined>(
+    PrizeSubmissionTemplate,
+  );
 
   return (
     <div className="w-full flex justify-center my-3 relative">
@@ -18,7 +20,6 @@ function EditorsPage() {
             setContent(e?.getJSON());
             console.log(e?.getJSON());
           }}
-          
           defaultValue={content}
         />
         <button className="py-3 px-4 bg-gray-800 text-white absolute bottom-5 right-5 rounded-md">

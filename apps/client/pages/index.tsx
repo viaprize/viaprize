@@ -14,7 +14,7 @@ export default function MyComponent() {
 
   const { user } = usePrivy();
 
-  const { loginUser } = useAppUser()
+  const { loginUser } = useAppUser();
 
   return (
     <div>
@@ -43,14 +43,15 @@ export default function MyComponent() {
               <p className="text-xl font-semibold">
                 Your Wallet Address is {user?.wallet?.address}
               </p>
-              <Button className='z-50' onClick={() => router.push('/prize/explore-prizes')}>
+              <Button
+                className="z-50"
+                onClick={() => router.push('/prize/explore-prizes')}
+              >
                 Explore Prizes
               </Button>
             </div>
           ) : (
-            <Button  onClick={loginUser}>
-              login
-            </Button>
+            <Button onClick={loginUser}>login</Button>
           )}
         </div>
 

@@ -7,7 +7,10 @@ type EthereumEvents = {
   close: unknown;
 };
 export interface Ethereum extends MetaMaskInpageProvider {
-  on<K extends keyof EthereumEvents>(event: K, handler: (event: EthereumEvents[K]) => void): void;
+  on<K extends keyof EthereumEvents>(
+    event: K,
+    handler: (event: EthereumEvents[K]) => void,
+  ): void;
   // other methods...
 }
 declare global {

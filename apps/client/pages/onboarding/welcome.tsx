@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Button, Title,Text } from '@mantine/core';
+import { Button, Title, Text } from '@mantine/core';
 
 export default function Example() {
   const router = useRouter();
@@ -13,11 +13,11 @@ export default function Example() {
           Welcome to Viaprize
         </Title>
         <Text className="text-center" variant="lead" color="gray" my="md">
-          viaPrize is the only platform in the world that allows anyone to launch their own
-          crowdfunded prize and win bounties for their work.
+          viaPrize is the only platform in the world that allows anyone to launch their
+          own crowdfunded prize and win bounties for their work.
         </Text>
         <Button
-        //   className="btn text-white btn-primary btn-wide my-3"
+          //   className="btn text-white btn-primary btn-wide my-3"
           onClick={async () => {
             await router.push('/onboarding/details');
           }}

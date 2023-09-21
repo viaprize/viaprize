@@ -1,23 +1,29 @@
 module.exports = {
-  extends: ['plugin:@next/next/recommended', 'plugin:jest/recommended'],
-  plugins: ['testing-library', 'jest'],
+  env: {
+    browser: true,
+    es2021: true,
+  },
+  extends: ["standard-with-typescript", "plugin:react/recommended","prettier"],
   overrides: [
     {
-      files: ['**/?(*.)+(spec|test).[jt]s?(x)'],
-      extends: ['plugin:testing-library/react'],
+      env: {
+        node: true,
+      },
+      files: [".eslintrc.{js,cjs}"],
+      parserOptions: {
+        sourceType: "script",
+      },
     },
   ],
   parserOptions: {
-    project: 'tsconfig.json',
-    tsconfigRootDir: __dirname
+    ecmaVersion: "latest",
+    sourceType: "module",
   },
-  rules: {
-    'react/react-in-jsx-scope': 'off',
-    'import/extensions': 'off',
-  },
+  plugins: ["react"],
+  rules: {},
   settings: {
-    "import/resolver": {
-      "typescript": {} 
-    }
-  }
+    react: {
+      version: "detect",
+    },
+  },
 };

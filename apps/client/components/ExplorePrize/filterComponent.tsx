@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { MultiSelect, Select } from '@mantine/core';
 
-
 const Filter = () => {
   const [proficiencydata, setProficiencyData] = useState([
     { value: '1', label: 'Programming' },
@@ -32,45 +31,45 @@ const Filter = () => {
 
   return (
     <>
-    <MultiSelect
-      label="Proficiency"
-      maw={"300px"}
-      data={proficiencydata}
-      placeholder="Select items"
-      searchable
-      creatable
-      getCreateLabel={(query) => `+ Create ${query}`}
-      onCreate={(query) => {
-        const item = { value: query, label: query };
-        setProficiencyData((current) => [...current, item]);
-        return item;
-      }}
-    />
-    <MultiSelect
-      maw={"300px"}
-      label="Priorities"
-      data={prioritiesdata}
-      placeholder="Select items"
-      searchable
-      creatable
-      getCreateLabel={(query) => `+ Create ${query}`}
-      onCreate={(query) => {
-        const item = { value: query, label: query };
-        setPrioritiesData((current) => [...current, item]);
-        return item;
-      }}
-    />
-    <Select
-      label="Sort By:"
-      placeholder="sort by"
-      searchable
-      onSearchChange={onSearchChange}
-      searchValue={searchValue}
-      nothingFound="No options"
-      data={['Data', 'Price']}
-    />
+      <MultiSelect
+        label="Proficiency"
+        maw={'300px'}
+        data={proficiencydata}
+        placeholder="Select items"
+        searchable
+        creatable
+        getCreateLabel={(query) => `+ Create ${query}`}
+        onCreate={(query) => {
+          const item = { value: query, label: query };
+          setProficiencyData((current) => [...current, item]);
+          return item;
+        }}
+      />
+      <MultiSelect
+        maw={'300px'}
+        label="Priorities"
+        data={prioritiesdata}
+        placeholder="Select items"
+        searchable
+        creatable
+        getCreateLabel={(query) => `+ Create ${query}`}
+        onCreate={(query) => {
+          const item = { value: query, label: query };
+          setPrioritiesData((current) => [...current, item]);
+          return item;
+        }}
+      />
+      <Select
+        label="Sort By:"
+        placeholder="sort by"
+        searchable
+        onSearchChange={onSearchChange}
+        searchValue={searchValue}
+        nothingFound="No options"
+        data={['Data', 'Price']}
+      />
     </>
   );
-}
+};
 
-export default Filter
+export default Filter;

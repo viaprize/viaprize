@@ -4,7 +4,7 @@ import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { Badge, Card, Checkbox, Group, Text } from '@mantine/core';
 import clsx from 'clsx';
 
-export default  function SwitchAccount()  {
+export default function SwitchAccount() {
   const { login, ready, authenticated } = usePrivy();
   const { wallets } = useWallets();
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
@@ -28,15 +28,16 @@ export default  function SwitchAccount()  {
           <Group position="apart">
             {wallet.address}
             {wallet.address === activeWallet?.address && (
-            <Badge
-              color={wallet.address === activeWallet?.address ? 'green' : 'gray'}
-              variant="light"
-            >
-              {wallet.address === activeWallet?.address ? 'Active' : 'Inactive'}
-            </Badge>)}
+              <Badge
+                color={wallet.address === activeWallet?.address ? 'green' : 'gray'}
+                variant="light"
+              >
+                {wallet.address === activeWallet?.address ? 'Active' : 'Inactive'}
+              </Badge>
+            )}
           </Group>
         </Card>
       ))}
     </div>
   );
-};
+}

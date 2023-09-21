@@ -7,9 +7,9 @@
  * @module hooks/useContract
  */
 
-import { useMemo } from "react";
-import useWeb3Context from "./useWeb3Context";
-import { AbiItem } from "web3-utils";
+import { useMemo } from 'react';
+import useWeb3Context from './useWeb3Context';
+import { AbiItem } from 'web3-utils';
 /**
  * @function useContract
  * @description Creates a new contract instance using the provided ABI and address.

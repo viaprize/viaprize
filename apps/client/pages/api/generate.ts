@@ -4,12 +4,13 @@ import { OpenAI } from 'openai';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const { prompt } =  JSON.parse(req.body) as { prompt: string };
-  
+    const { prompt } = JSON.parse(req.body) as { prompt: string };
 
     const openaiKey = process.env.OPENAI_API_KEY;
     if (!openaiKey) {
-      res.status(500).send('This feature is currently under progress. Please check back later.');
+      res
+        .status(500)
+        .send('This feature is currently under progress. Please check back later.');
     }
 
     const openai = new OpenAI({

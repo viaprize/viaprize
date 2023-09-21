@@ -1,7 +1,7 @@
-import React from "react";
-import Link from "next/link";
-import useWeb3Context from "@/context/hooks/useWeb3Context";
-import { shortenAddress } from "@/context/tools";
+import React from 'react';
+import Link from 'next/link';
+import useWeb3Context from '@/context/hooks/useWeb3Context';
+import { shortenAddress } from '@/context/tools';
 
 export default function AppHeader() {
   const { account, connectWallet, resetWallet } = useWeb3Context();

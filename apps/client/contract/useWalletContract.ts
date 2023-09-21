@@ -13,7 +13,9 @@ export default function useWaletContract() {
     async isValidSignature(hash: string, signature: string) {
       const contract = new web3.eth.Contract(WalletAbi as AbiItem[], account);
 
-      return await contract.methods.isValidSignature(hash, signature).call({ from: account });
+      return await contract.methods
+        .isValidSignature(hash, signature)
+        .call({ from: account });
     },
   };
 }

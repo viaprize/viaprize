@@ -6,19 +6,18 @@ import { usePrivy } from '@privy-io/react-auth';
 import { ReactElement, useEffect } from 'react';
 
 const ExplorePage = () => {
-  const { getProposalsOfUser } = usePrizeProposal()
-  const { user } = usePrivy()
+  const { getProposalsOfUser } = usePrizeProposal();
+  const { user } = usePrivy();
 
   useEffect(() => {
-    console.log("hiiii")
+    console.log('hiiii');
 
     getProposalsOfUser().then((res) => {
-      console.log(res, "Res");
-    })
-
-  }, [])
+      console.log(res, 'Res');
+    });
+  }, []);
   if (!user) {
-    return null
+    return null;
   }
   return (
     <div className="max-w-screen-xl">

@@ -1,4 +1,12 @@
-import { Card, TypographyStylesProvider, Text, Avatar, Group, Button, ActionIcon } from '@mantine/core';
+import {
+  Card,
+  TypographyStylesProvider,
+  Text,
+  Avatar,
+  Group,
+  Button,
+  ActionIcon,
+} from '@mantine/core';
 import { IconArrowAutofitUp } from '@tabler/icons-react';
 import React from 'react';
 
@@ -55,11 +63,11 @@ export default function SubmissionsCard({
       <Text lineClamp={3}>
         <TypographyStylesProvider>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt nulla quam aut sed
-            corporis voluptates praesentium inventore, sapiente ex tempore sit consequatur debitis
-            non! Illo cum ipsa reiciendis quidem facere, deserunt eos totam impedit. Vel ab, ipsum
-            veniam aperiam odit molestiae incidunt minus, sint eos iusto earum quaerat vitae
-            perspiciatis.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt nulla quam
+            aut sed corporis voluptates praesentium inventore, sapiente ex tempore sit
+            consequatur debitis non! Illo cum ipsa reiciendis quidem facere, deserunt eos
+            totam impedit. Vel ab, ipsum veniam aperiam odit molestiae incidunt minus,
+            sint eos iusto earum quaerat vitae perspiciatis.
           </p>
         </TypographyStylesProvider>
       </Text>

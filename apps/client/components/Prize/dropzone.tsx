@@ -1,6 +1,11 @@
 import { Group, Text, useMantineTheme, rem, Button } from '@mantine/core';
 import { IconUpload, IconPhoto, IconX } from '@tabler/icons-react';
-import { Dropzone, DropzoneProps, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import {
+  Dropzone,
+  DropzoneProps,
+  FileWithPath,
+  IMAGE_MIME_TYPE,
+} from '@mantine/dropzone';
 import { useState } from 'react';
 import Image from 'next/image';
 
@@ -10,12 +15,11 @@ interface ImageComponentProps extends Partial<DropzoneProps> {
 }
 
 export default function ImageComponent(props: ImageComponentProps) {
-
   const previews = props.files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
     return (
       <Image
-       className='aspect-video object-cover max-h-[400px]'
+        className="aspect-video object-cover max-h-[400px]"
         key={index}
         src={imageUrl}
         width="1280"
@@ -28,7 +32,7 @@ export default function ImageComponent(props: ImageComponentProps) {
 
   const theme = useMantineTheme();
   return (
-    <div className='overflow-hidden'>
+    <div className="overflow-hidden">
       {props.files.length == 0 ? (
         <Dropzone
           onDrop={props.setFiles}
@@ -47,7 +51,9 @@ export default function ImageComponent(props: ImageComponentProps) {
               <IconUpload
                 size="3.2rem"
                 stroke={1.5}
-                color={theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6]}
+                color={
+                  theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6]
+                }
               />
             </Dropzone.Accept>
             <Dropzone.Reject>
@@ -72,14 +78,17 @@ export default function ImageComponent(props: ImageComponentProps) {
           </Group>
         </Dropzone>
       ) : (
-        <div className="aspect-video">{previews}
-        <Button fullWidth onClick={()=>{
-            props.setFiles([])
-        }}
-        my="md"
-        >
+        <div className="aspect-video">
+          {previews}
+          <Button
+            fullWidth
+            onClick={() => {
+              props.setFiles([]);
+            }}
+            my="md"
+          >
             Remove
-        </Button>
+          </Button>
         </div>
       )}
     </div>

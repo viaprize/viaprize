@@ -84,7 +84,12 @@ export default function usePactFactory(): PactFactory {
      * @param leads The leads value for the pact.
      * @returns A promise that resolves to the transaction receipt.
      */
-    async createPact(commitment: any, endTime: number, sum: number, leads: any): Promise<any> {
+    async createPact(
+      commitment: any,
+      endTime: number,
+      sum: number,
+      leads: any,
+    ): Promise<any> {
       const duration = endTime - Math.floor(new Date().valueOf() / 1000);
 
       console.log('end time', endTime, 'now', Math.floor(new Date().valueOf() / 1000));
@@ -92,7 +97,7 @@ export default function usePactFactory(): PactFactory {
 
       const pactFactoryContract = new web3.eth.Contract(
         PactFactoryAbi as AbiItem[],
-        config.contracts.pactFactory
+        config.contracts.pactFactory,
       );
       console.log(pactFactoryContract, 'pactFactoryContract');
 
@@ -103,7 +108,7 @@ export default function usePactFactory(): PactFactory {
           }),
           new BN(duration),
           amountInWei,
-          leads
+          leads,
         )
         .estimateGas({ from: account });
       console.log(estimatedGas, 'estimatedGas');
@@ -114,7 +119,7 @@ export default function usePactFactory(): PactFactory {
         }),
         new BN(duration),
         amountInWei,
-        leads
+        leads,
       );
 
       return await sendTx(func);

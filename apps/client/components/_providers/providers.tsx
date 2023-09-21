@@ -1,15 +1,13 @@
-"use client"
-import React from 'react'
-import WagmiProvider from './WagmiProvider'
+'use client';
+import React from 'react';
+import WagmiProvider from './WagmiProvider';
 
 type ProviderType = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
-const Providers = ({children}: ProviderType) => {
-  return (
-    <WagmiProvider>{children}</WagmiProvider>
-  )
-}
+const Providers = ({ children }: ProviderType) => {
+  return <WagmiProvider>{children}</WagmiProvider>;
+};
 
-export default Providers
+export default Providers;

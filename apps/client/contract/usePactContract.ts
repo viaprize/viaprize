@@ -123,7 +123,7 @@ export default function usePactContract(): PactContract {
       const web3 = new Web3(config.provider);
       const multicall = new web3.eth.Contract(
         MulticallABI as AbiItem[],
-        config.contracts.multicall3
+        config.contracts.multicall3,
       );
 
       const pactContract = new web3.eth.Contract(PactABI as AbiItem[], pactAddress);

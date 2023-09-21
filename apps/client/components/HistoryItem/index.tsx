@@ -1,28 +1,25 @@
-import React, { useEffect, useState } from "react";
-import Contribute from "../Contribute";
-import Link from "next/link";
-import usePactContract from "@/contract/usePactContract";
-import config from "@/config";
-import { FaEthereum } from "react-icons/fa";
+import React, { useEffect, useState } from 'react';
+import Contribute from '../Contribute';
+import Link from 'next/link';
+import usePactContract from '@/contract/usePactContract';
+import config from '@/config';
+import { FaEthereum } from 'react-icons/fa';
 
 function formatEtherValue(weiAmount: number): string {
   const etherAmount = weiAmount / 10 ** 18;
 
   if (etherAmount >= 0.001) {
-    return etherAmount.toFixed(3).replace(/\.?0+$/, '') + " ETH";
+    return etherAmount.toFixed(3).replace(/\.?0+$/, '') + ' ETH';
   } else if (etherAmount >= 1e-6) {
     const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
-    return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, '') + " ETH";
-  }
-  else if (etherAmount >= 1e-18) {
+    return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, '') + ' ETH';
+  } else if (etherAmount >= 1e-18) {
     const decimalPlaces = Math.max(0, 18 - Math.ceil(Math.log10(etherAmount)));
-    return etherAmount.toFixed(10).replace(/\.?0+$/, '') + " ETH";
-  }
-  else {
-    return etherAmount.toExponential(6).replace(/\.?0+e/, 'e') + " ETH";
+    return etherAmount.toFixed(10).replace(/\.?0+$/, '') + ' ETH';
+  } else {
+    return etherAmount.toExponential(6).replace(/\.?0+e/, 'e') + ' ETH';
   }
 }
-
 
 export default function HistoryItem({ item, address, pictureVisible }: any) {
   const [loaded, setLoaded] = useState(false);
@@ -37,18 +34,17 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
         src="https://${window.location.host}/pact/preview/${address}"
         frameborder="0"
         scrolling="no"
-      ></iframe>`
-    )
-    alert("Copied to clipboard")
-  }
+      ></iframe>`,
+    );
+    alert('Copied to clipboard');
+  };
 
   const inputDate = new Date(detail.end * 1000);
   const outputDateString = inputDate.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
+    day: 'numeric',
   });
-
 
   const getDetail = async () => {
     try {
@@ -76,26 +72,22 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
     getDetail();
   }, [address]);
 
-
-
   return (
     <div className="card bg-base-100 shadow-xl mb-4 dark:text-gray-300">
       <div className="card-body break-words">
         {pictureVisible && config.pictures[item.address] && (
-          <img
-            src={config.pictures[item.address]}
-            className="rounded-xl mb-3"
-          />
+          <img src={config.pictures[item.address]} className="rounded-xl mb-3" />
         )}
-        <Link href={`/pact/${item.address}`} className="card-title text-3xl break-words dark:text-white inline-block hover:underline">
-
+        <Link
+          href={`/pact/${item.address}`}
+          className="card-title text-3xl break-words dark:text-white inline-block hover:underline"
+        >
           {item.name}
-
         </Link>
         <h3 className="mt-1 mb-0 text-xl font-bold dark:text-white">Terms</h3>
         <span className="mt-0">{item.terms}</span>
         <div className="flex gap-2 text-lg items-center dark:text-green-400 text-green-500">
-          <span >Balance</span>
+          <span>Balance</span>
           <span>{detail.balance} ETH</span>
           <FaEthereum />
         </div>
@@ -111,15 +103,18 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
           </a>
 
           <div className="font-bold mt-4 mb-1">Admin Addresses:</div>
-          {detail.leads && detail.leads.map((lead: any) => (
-            <div key={lead}>
-              <p className="my-1">
-                {lead}
-              </p>
-            </div>
-          ))}
-          <p className="text-yellow-700 font-bold dark:text-yellow-400 text-md mt-8">Funding Goal: {formatEtherValue(detail.sum)}</p>
-          <p className="text-red-700 font-bold dark:text-red-400 text-lg leading-[0px]">Deadline: {outputDateString.toString()}</p>
+          {detail.leads &&
+            detail.leads.map((lead: any) => (
+              <div key={lead}>
+                <p className="my-1">{lead}</p>
+              </div>
+            ))}
+          <p className="text-yellow-700 font-bold dark:text-yellow-400 text-md mt-8">
+            Funding Goal: {formatEtherValue(detail.sum)}
+          </p>
+          <p className="text-red-700 font-bold dark:text-red-400 text-lg leading-[0px]">
+            Deadline: {outputDateString.toString()}
+          </p>
         </div>
 
         {detail.resolved && detail.safe && (
@@ -151,7 +146,12 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
             <Contribute address={item.address} onContributed={getDetail} />
           </div>
         )}
-        <button className="btn btn-info w-1/2 float-right btn-sm" onClick={() => copyToClipboard(item.address)}>Share Using Iframe</button>
+        <button
+          className="btn btn-info w-1/2 float-right btn-sm"
+          onClick={() => copyToClipboard(item.address)}
+        >
+          Share Using Iframe
+        </button>
       </div>
     </div>
   );

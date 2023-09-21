@@ -1,4 +1,11 @@
-import { ActionIcon, Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Checkbox,
+  NumberInput,
+  SimpleGrid,
+  TextInput,
+} from '@mantine/core';
 import ImageComponent from '../../components/Prize/dropzone';
 import { TextEditor } from '../../components/richtexteditor/textEditor';
 import React, { ReactElement, useState } from 'react';
@@ -21,9 +28,10 @@ const Prize = () => {
   const [proposalTime, setProposalTime] = useState(0);
   const { user } = usePrivy();
   const [files, setFiles] = useState<FileWithPath[]>([]);
-  const [images, setImages] = useState<string>()
-  const { addProposals, uploadImages } = usePrizeProposal()
-  const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } = useMutation(addProposals)
+  const [images, setImages] = useState<string>();
+  const { addProposals, uploadImages } = usePrizeProposal();
+  const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
+    useMutation(addProposals);
   const onAddressChange = (index: number, value: string) => {
     setAddress((prev: any) => {
       prev[index] = value;
@@ -31,46 +39,38 @@ const Prize = () => {
     });
   };
   const handleUploadImages = async () => {
-    const newImages = await uploadImages(files)
-    setImages(newImages)
-  }
+    const newImages = await uploadImages(files);
+    setImages(newImages);
+  };
   const submit = async () => {
-    await handleUploadImages()
-    await addProposalsMutation(
-      {
-        admins: address,
-        description: richtext,
-        isAutomatic: isAutomatic,
-        voting_time: votingTime,
-        proposer_address: '',
-        priorities: [],
-        proficiencies: [],
-        submission_time: proposalTime,
-        images: images ? [images] : [],
-        title: title
-
-      }
-    )
-  }
+    await handleUploadImages();
+    await addProposalsMutation({
+      admins: address,
+      description: richtext,
+      isAutomatic: isAutomatic,
+      voting_time: votingTime,
+      proposer_address: '',
+      priorities: [],
+      proficiencies: [],
+      submission_time: proposalTime,
+      images: images ? [images] : [],
+      title: title,
+    });
+  };
 
   const handleSubmit = () => {
     console.log(user);
     try {
-      console.log(images, "images")
-      toast.promise(
-        submit()
-        ,
-        {
-          loading: 'Submitting Proposal',
-          success: 'Proposal Submitted',
-          error: 'Error Submitting Proposal',
-        }
-      );
+      console.log(images, 'images');
+      toast.promise(submit(), {
+        loading: 'Submitting Proposal',
+        success: 'Proposal Submitted',
+        error: 'Error Submitting Proposal',
+      });
     } catch {
       toast.error('Error Submitting Proposal');
     }
   };
-
 
   const useTemplateForDescription = () => {
     setRichtext(PrizeCreationTemplate);
@@ -91,10 +91,7 @@ const Prize = () => {
   };
   return (
     <div className="shadow-md max-w-screen-lg p-8 m-6">
-      <ImageComponent
-        files={files}
-        setFiles={setFiles}
-      />
+      <ImageComponent files={files} setFiles={setFiles} />
       <TextInput
         className="my-2"
         placeholder="Title"
@@ -150,7 +147,11 @@ const Prize = () => {
                   stroke="currentColor"
                   className="w-6 h-6"
                 >
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </Button>
             )}
