@@ -4,7 +4,11 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "tsc --pretty --noEmit",
+    "check-format": "prettier --check \"**/*.{ts,tsx,md}\"",
+    "check-lint": "eslint --ext .ts,.tsx .",
+    "test-all": "pnpm check-types && pnpm check-format && pnpm check-lint"
   },
   "devDependencies": {
     "eslint": "^8.48.0",
