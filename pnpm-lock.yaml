@@ -341,6 +341,9 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^2.1.8
         version: 2.1.8(@tiptap/pm@2.1.8)
+      '@viaprize/client':
+        specifier: workspace:^
+        version: 'link:'
       '@viaprize/ui':
         specifier: workspace:*
         version: link:../../packages/ui

@@ -20,7 +20,14 @@ module.exports = {
     "@vercel/style-guide/eslint/next",
     "eslint-config-turbo",
   ].map(require.resolve),
-  files: ["**/*.ts", "**/*.tsx"],
+  overrides: [
+    {
+      // extends: [
+      //   "plugin:@typescript-eslint/recommended-requiring-type-checking",
+      // ],
+      files: ["*.ts", "*.tsx"],
+    },
+  ],
   parserOptions: {
     project,
   },
@@ -38,11 +45,11 @@ module.exports = {
   ignorePatterns: ["node_modules/", "dist/"],
   // add rules configurations here
   rules: {
-    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
     "import/no-default-export": "off",
     'react/react-in-jsx-scope': 'off',
     'jsx-a11y/accessible-emoji': 'off',
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    'import/no-extraneous-dependencies': 'off',
   },
 };

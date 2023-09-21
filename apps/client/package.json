@@ -11,7 +11,7 @@
     "lint": "next lint",
     "jest": "jest",
     "jest:watch": "jest --watch",
-    "prettier":"prettier-config",
+    "prettier": "prettier-config",
     "prettier:check": "prettier --check \"**/*.{ts,tsx}\"",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run jest",
@@ -43,6 +43,7 @@
     "@tiptap/pm": "^2.1.8",
     "@tiptap/react": "^2.1.8",
     "@tiptap/starter-kit": "^2.1.8",
+    "@viaprize/client": "workspace:^",
     "@viaprize/ui": "workspace:*",
     "@wagmi/chains": "^1.8.0",
     "@walletconnect/web3-provider": "^1.8.0",
@@ -116,12 +117,12 @@
     "postcss-preset-mantine": "1.6.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": "^2.8.8",
+    "prettier-config": "workspace:*",
     "storybook": "^7.0.18",
     "storybook-dark-mode": "^3.0.0",
     "tailwindcss": "^3.3.3",
     "ts-jest": "^29.1.0",
     "tsconfig": "workspace:*",
-    "prettier-config": "workspace:*",
     "typescript": "5.0.4"
   }
 }
