@@ -14,7 +14,7 @@ export const sleep = (ms: number): Promise<void> => {
  */
 export const switchChain = async (chainId: number): Promise<void> => {
   await window.ethereum.request({
-    method: 'wallet_switchEthereumChain',
+    method: "wallet_switchEthereumChain",
     params: [{ chainId: `0x${chainId.toString(16)}` }],
   });
 };
@@ -24,11 +24,11 @@ export const switchChain = async (chainId: number): Promise<void> => {
  * @param text - The text to copy.
  */
 export function copyText(text: string): void {
-  const copied = document.createElement('input');
-  copied.setAttribute('value', text);
+  const copied = document.createElement("input");
+  copied.setAttribute("value", text);
   document.body.appendChild(copied);
   copied.select();
-  document.execCommand('copy');
+  document.execCommand("copy");
   document.body.removeChild(copied);
 }
 
@@ -37,8 +37,12 @@ export function copyText(text: string): void {
  * @param arr - The array to filter.
  * @returns The filtered array without duplicate nodes.
  */
-export const filterDuplicateNodes = <T extends { address: string }>(arr: T[]): T[] => {
-  return arr.filter((v, i, a) => a.findIndex((v2) => v2.address === v.address) === i);
+export const filterDuplicateNodes = <T extends { address: string }>(
+  arr: T[]
+): T[] => {
+  return arr.filter(
+    (v, i, a) => a.findIndex((v2) => v2.address === v.address) === i
+  );
 };
 
 /**

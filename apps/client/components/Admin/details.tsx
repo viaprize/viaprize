@@ -1,9 +1,9 @@
-import React from 'react';
-import { Card, Flex, Group, Image } from '@mantine/core';
-import { TextEditor } from '../richtexteditor/textEditor';
-import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
-import PrizeFunderCard from '../Prize/prizepage/prizeFunderCard';
-import { AppUser } from '../../types/app-user';
+import React from "react";
+import { Card, Flex, Group, Image } from "@mantine/core";
+import { TextEditor } from "../richtexteditor/textEditor";
+import { PrizeCreationTemplate } from "../Prize/prizepage/defaultcontent";
+import PrizeFunderCard from "../Prize/prizepage/prizeFunderCard";
+import { AppUser } from "../../types/app-user";
 
 export default function ViewDetails({
   admins,
@@ -37,7 +37,14 @@ export default function ViewDetails({
       <div>
         Admin wallets
         {admins.map((admin, index) => (
-          <Card shadow="sm" padding="lg" radius="md" key={admin} withBorder mt="sm">
+          <Card
+            shadow="sm"
+            padding="lg"
+            radius="md"
+            key={admin}
+            withBorder
+            mt="sm"
+          >
             {index + 1}. {admin}
           </Card>
         ))}

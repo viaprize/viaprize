@@ -1,5 +1,13 @@
-import { Card, Image, Text, Badge, Button, Group, ScrollArea } from '@mantine/core';
-import { useState } from 'react';
+import {
+  Card,
+  Image,
+  Text,
+  Badge,
+  Button,
+  Group,
+  ScrollArea,
+} from "@mantine/core";
+import { useState } from "react";
 
 interface ExploreCardProps {
   imageUrl: string;
@@ -30,7 +38,9 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           {profileName}
         </Badge>
       </Group>
-      <p className="text-md text-gray-500 max-h-14 overflow-y-auto">{description}</p>
+      <p className="text-md text-gray-500 max-h-14 overflow-y-auto">
+        {description}
+      </p>
       <Group position="apart" mt="md" mb="xs">
         <Text weight={500} color="green">
           {money}

@@ -1,6 +1,6 @@
-import PrizePageComponent from '@/components/Prize/prizepage/prizepage';
-import AppShellLayout from '@/components/layout/appshell';
-import React, { ReactElement } from 'react';
+import PrizePageComponent from "@/components/Prize/prizepage/prizepage";
+import AppShellLayout from "@/components/layout/appshell";
+import React, { ReactElement } from "react";
 
 export default function PrizePage() {
   return (

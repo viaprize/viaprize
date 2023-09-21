@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useState } from "react";
 import {
   Avatar,
   Text,
@@ -13,9 +13,9 @@ import {
   Card,
   CopyButton,
   Tooltip,
-} from '@mantine/core';
-import Link from 'next/link';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+} from "@mantine/core";
+import Link from "next/link";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import {
   IconArrowsLeftRight,
   IconCheck,
@@ -25,15 +25,15 @@ import {
   IconSignRight,
   IconSun,
   IconUser,
-} from '@tabler/icons-react';
-import { toast } from 'sonner';
-import { useRouter } from 'next/router';
-import { IoExit } from 'react-icons/io5';
-import useAppUser from '@/context/hooks/useAppUser';
-import SwitchAccount from './switchWallet';
+} from "@tabler/icons-react";
+import { toast } from "sonner";
+import { useRouter } from "next/router";
+import { IoExit } from "react-icons/io5";
+import useAppUser from "@/context/hooks/useAppUser";
+import SwitchAccount from "./switchWallet";
 
 function getEmailInitials(email: string) {
-  const [username, domain] = email.split('@');
+  const [username, domain] = email.split("@");
   const usernameInitial = username.slice(0, 5);
   const domainInitial = domain.charAt(0);
 
@@ -42,7 +42,7 @@ function getEmailInitials(email: string) {
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const dark = colorScheme === 'dark';
+  const dark = colorScheme === "dark";
   const { wallets } = useWallets();
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
@@ -53,7 +53,7 @@ export default function HeaderLayout() {
       justify="space-between"
       align="center"
       sx={{
-        width: '100%',
+        width: "100%",
       }}
     >
       <div>Image</div>
@@ -61,13 +61,21 @@ export default function HeaderLayout() {
       <Flex align="center" gap="md">
         <Card py="5px">
           <Group>
-            {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
+            {wallets[0] ? displayAddress(wallets[0].address) : "No Wallet"}
             {wallets[0] && (
               <CopyButton value={wallets[0].address}>
                 {({ copied, copy }) => (
-                  <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
-                    <ActionIcon color={copied ? 'teal' : 'gray'} onClick={copy}>
-                      {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+                  <Tooltip
+                    label={copied ? "Copied" : "Copy"}
+                    withArrow
+                    position="right"
+                  >
+                    <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
+                      {copied ? (
+                        <IconCheck size="1rem" />
+                      ) : (
+                        <IconCopy size="1rem" />
+                      )}
                     </ActionIcon>
                   </Tooltip>
                 )}
@@ -77,7 +85,7 @@ export default function HeaderLayout() {
         </Card>
         <ActionIcon
           variant="outline"
-          color={dark ? 'yellow.7' : 'blue.8'}
+          color={dark ? "yellow.7" : "blue.8"}
           onClick={() => toggleColorScheme()}
           title="Toggle color scheme"
         >
@@ -98,12 +106,12 @@ function ProfileMenu() {
   const handleLogout = () => {
     try {
       toast.promise(logoutUser(), {
-        loading: 'Logging out',
-        success: 'Logged out',
-        error: 'Error logging out',
+        loading: "Logging out",
+        success: "Logged out",
+        error: "Error logging out",
       });
     } catch {
-      toast.error('Error logging out');
+      toast.error("Error logging out");
     }
   };
   const { wallets } = useWallets();
@@ -113,7 +121,12 @@ function ProfileMenu() {
         <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
           <Menu.Target>
             {appUser ? (
-              <Badge variant="filled" size="xl" radius="sm" className="cursor-pointer">
+              <Badge
+                variant="filled"
+                size="xl"
+                radius="sm"
+                className="cursor-pointer"
+              >
                 {getEmailInitials(appUser.email)}
               </Badge>
             ) : (
@@ -126,7 +139,7 @@ function ProfileMenu() {
               <Menu.Item
                 icon={<IconUser size={14} />}
                 onClick={() => {
-                  router.push('/profile');
+                  router.push("/profile");
                 }}
               >
                 View Profile
@@ -154,7 +167,11 @@ function ProfileMenu() {
               Switch Wallet
             </Menu.Item>
             {authenticated ? (
-              <Menu.Item color="red" icon={<IoExit size={14} />} onClick={handleLogout}>
+              <Menu.Item
+                color="red"
+                icon={<IoExit size={14} />}
+                onClick={handleLogout}
+              >
                 Logout
               </Menu.Item>
             ) : (
@@ -162,7 +179,7 @@ function ProfileMenu() {
                 color="green"
                 icon={<IconUser size={14} />}
                 onClick={() => {
-                  router.push('/');
+                  router.push("/");
                 }}
               >
                 Login

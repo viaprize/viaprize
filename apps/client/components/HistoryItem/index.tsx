@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import Contribute from '../Contribute';
-import Link from 'next/link';
-import usePactContract from '@/contract/usePactContract';
-import config from '@/config';
-import { FaEthereum } from 'react-icons/fa';
+import React, { useEffect, useState } from "react";
+import Contribute from "../Contribute";
+import Link from "next/link";
+import usePactContract from "@/contract/usePactContract";
+import config from "@/config";
+import { FaEthereum } from "react-icons/fa";
 
 function formatEtherValue(weiAmount: number): string {
   const etherAmount = weiAmount / 10 ** 18;
 
   if (etherAmount >= 0.001) {
-    return etherAmount.toFixed(3).replace(/\.?0+$/, '') + ' ETH';
+    return etherAmount.toFixed(3).replace(/\.?0+$/, "") + " ETH";
   } else if (etherAmount >= 1e-6) {
     const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
-    return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, '') + ' ETH';
+    return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, "") + " ETH";
   } else if (etherAmount >= 1e-18) {
     const decimalPlaces = Math.max(0, 18 - Math.ceil(Math.log10(etherAmount)));
-    return etherAmount.toFixed(10).replace(/\.?0+$/, '') + ' ETH';
+    return etherAmount.toFixed(10).replace(/\.?0+$/, "") + " ETH";
   } else {
-    return etherAmount.toExponential(6).replace(/\.?0+e/, 'e') + ' ETH';
+    return etherAmount.toExponential(6).replace(/\.?0+e/, "e") + " ETH";
   }
 }
 
@@ -34,16 +34,16 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
         src="https://${window.location.host}/pact/preview/${address}"
         frameborder="0"
         scrolling="no"
-      ></iframe>`,
+      ></iframe>`
     );
-    alert('Copied to clipboard');
+    alert("Copied to clipboard");
   };
 
   const inputDate = new Date(detail.end * 1000);
-  const outputDateString = inputDate.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+  const outputDateString = inputDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 
   const getDetail = async () => {
@@ -76,7 +76,10 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
     <div className="card bg-base-100 shadow-xl mb-4 dark:text-gray-300">
       <div className="card-body break-words">
         {pictureVisible && config.pictures[item.address] && (
-          <img src={config.pictures[item.address]} className="rounded-xl mb-3" />
+          <img
+            src={config.pictures[item.address]}
+            className="rounded-xl mb-3"
+          />
         )}
         <Link
           href={`/pact/${item.address}`}

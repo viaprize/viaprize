@@ -1,6 +1,6 @@
-import { Card, Group, Badge, Button, Text, Flex, Avatar } from '@mantine/core';
-import React from 'react';
-import Image from 'next/image';
+import { Card, Group, Badge, Button, Text, Flex, Avatar } from "@mantine/core";
+import React from "react";
+import Image from "next/image";
 
 interface PrizeFunderCardProps {
   name: string;
@@ -9,7 +9,11 @@ interface PrizeFunderCardProps {
   walletAddress?: string;
 }
 
-export default function PrizeFunderCard({ name, email, budget }: PrizeFunderCardProps) {
+export default function PrizeFunderCard({
+  name,
+  email,
+  budget,
+}: PrizeFunderCardProps) {
   return (
     <Card
       shadow="xs"

@@ -1,15 +1,19 @@
-import { Box, Button, Tabs, Text } from '@mantine/core';
-import { IconPhoto, IconMessageCircle, IconSettings } from '@tabler/icons-react';
-import { RichTextEditor, Link } from '@mantine/tiptap';
-import { JSONContent, useEditor } from '@tiptap/react';
-import Highlight from '@tiptap/extension-highlight';
-import StarterKit from '@tiptap/starter-kit';
-import Underline from '@tiptap/extension-underline';
-import TextAlign from '@tiptap/extension-text-align';
-import Superscript from '@tiptap/extension-superscript';
-import SubScript from '@tiptap/extension-subscript';
-import React, { useCallback, useEffect } from 'react';
-import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
+import { Box, Button, Tabs, Text } from "@mantine/core";
+import {
+  IconPhoto,
+  IconMessageCircle,
+  IconSettings,
+} from "@tabler/icons-react";
+import { RichTextEditor, Link } from "@mantine/tiptap";
+import { JSONContent, useEditor } from "@tiptap/react";
+import Highlight from "@tiptap/extension-highlight";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import TextAlign from "@tiptap/extension-text-align";
+import Superscript from "@tiptap/extension-superscript";
+import SubScript from "@tiptap/extension-subscript";
+import React, { useCallback, useEffect } from "react";
+import { PrizeCreationTemplate } from "../Prize/prizepage/defaultcontent";
 
 interface TextEditorProps {
   disabled?: boolean;
@@ -33,17 +37,17 @@ export const TextEditor = ({
       Superscript,
       SubScript,
       Highlight,
-      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     content: richtext,
     onUpdate: (e) => {
       if (setRichtext) {
         setRichtext(e.editor.getHTML().toString());
-        console.log(richtext, 'richtext');
+        console.log(richtext, "richtext");
       }
     },
   });
-  console.log(richtext, 'richtext');
+  console.log(richtext, "richtext");
 
   return (
     <>

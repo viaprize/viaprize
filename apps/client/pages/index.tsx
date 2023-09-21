@@ -1,11 +1,16 @@
-import myAxios from '@/lib/axios';
-import { Button } from '@mantine/core';
-import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
-import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { useRouter } from 'next/router';
-import { toast } from 'react-toastify';
-import Image from 'next/image';
-import useAppUser from '@/context/hooks/useAppUser';
+import myAxios from "@/lib/axios";
+import { Button } from "@mantine/core";
+import {
+  getAccessToken,
+  useLogin,
+  usePrivy,
+  useWallets,
+} from "@privy-io/react-auth";
+import { usePrivyWagmi } from "@privy-io/wagmi-connector";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
+import Image from "next/image";
+import useAppUser from "@/context/hooks/useAppUser";
 
 export default function MyComponent() {
   // const { login, ready, authenticated, } = usePrivy();
@@ -45,7 +50,7 @@ export default function MyComponent() {
               </p>
               <Button
                 className="z-50"
-                onClick={() => router.push('/prize/explore-prizes')}
+                onClick={() => router.push("/prize/explore-prizes")}
               >
                 Explore Prizes
               </Button>
@@ -63,7 +68,7 @@ export default function MyComponent() {
             rel="noopener noreferrer"
           >
             <h2 className={`mb-3 text-2xl font-semibold`}>
-              About Prizes{' '}
+              About Prizes{" "}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
@@ -80,7 +85,7 @@ export default function MyComponent() {
             rel="noopener noreferrer"
           >
             <h2 className={`mb-3 text-2xl font-semibold`}>
-              Explore Prizes{' '}
+              Explore Prizes{" "}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
@@ -97,7 +102,7 @@ export default function MyComponent() {
             rel="noopener noreferrer"
           >
             <h2 className={`mb-3 text-2xl font-semibold`}>
-              Pacts{' '}
+              Pacts{" "}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
@@ -114,7 +119,7 @@ export default function MyComponent() {
             rel="noopener noreferrer"
           >
             <h2 className={`mb-3 text-2xl font-semibold`}>
-              Explore Pacts{' '}
+              Explore Pacts{" "}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>

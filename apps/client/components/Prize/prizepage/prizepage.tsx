@@ -1,9 +1,17 @@
-import React from 'react';
-import Image from 'next/image';
-import PrizePageTabs from './prizepagetabs';
-import { ActionIcon, Button, Center, Flex, Group, Text, Title } from '@mantine/core';
-import { IconSettings } from '@tabler/icons-react';
-import Submissions from './submissions';
+import React from "react";
+import Image from "next/image";
+import PrizePageTabs from "./prizepagetabs";
+import {
+  ActionIcon,
+  Button,
+  Center,
+  Flex,
+  Group,
+  Text,
+  Title,
+} from "@mantine/core";
+import { IconSettings } from "@tabler/icons-react";
+import Submissions from "./submissions";
 
 export default function PrizePageComponent() {
   return (

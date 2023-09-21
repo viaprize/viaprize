@@ -1,15 +1,15 @@
-import { useForm } from '@mantine/form';
-import { TextInput, Button, Group, Box } from '@mantine/core';
+import { useForm } from "@mantine/form";
+import { TextInput, Button, Group, Box } from "@mantine/core";
 
 const PrizeForm = () => {
   const form = useForm({
     initialValues: {
-      Total_Funds: '',
-      Submission_Time: '',
-      Voting_Time: '',
-      Admins: '',
-      Proposser_Address: '',
-      Description: '',
+      Total_Funds: "",
+      Submission_Time: "",
+      Voting_Time: "",
+      Admins: "",
+      Proposser_Address: "",
+      Description: "",
     },
   });
 
@@ -18,37 +18,37 @@ const PrizeForm = () => {
       <TextInput
         label="Total_Funds"
         placeholder="total funds in ETH"
-        {...form.getInputProps('Total_Funds')}
+        {...form.getInputProps("Total_Funds")}
       />
       <TextInput
         mt="md"
         label="Submission_Time"
         placeholder="time in days"
-        {...form.getInputProps('Submission_Time')}
+        {...form.getInputProps("Submission_Time")}
       />
       <TextInput
         mt="md"
         label="Voting_Time"
         placeholder="time in days"
-        {...form.getInputProps('Voting_Time')}
+        {...form.getInputProps("Voting_Time")}
       />
       <TextInput
         mt="md"
         label="Admins"
         placeholder="seperate admins addresses by comma"
-        {...form.getInputProps('Admins')}
+        {...form.getInputProps("Admins")}
       />
       <TextInput
         mt="md"
         label="Proposser_Address"
         placeholder="address"
-        {...form.getInputProps('Proposser_Address')}
+        {...form.getInputProps("Proposser_Address")}
       />
       <TextInput
         mt="md"
         label="Description"
         placeholder="description"
-        {...form.getInputProps('Description')}
+        {...form.getInputProps("Description")}
       />
 
       <Group position="center" mt="xl">

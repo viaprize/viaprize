@@ -1,18 +1,25 @@
-import useAppUser from '@/context/hooks/useAppUser';
-import myAxios from '@/lib/axios';
-import { Autocomplete, Button, Card, Center, Text, TextInput } from '@mantine/core';
-import { usePrivy } from '@privy-io/react-auth';
-import { useRouter } from 'next/router';
-import React, { useRef, useState } from 'react';
-import { useMutation } from 'react-query';
-import { toast } from 'sonner';
+import useAppUser from "@/context/hooks/useAppUser";
+import myAxios from "@/lib/axios";
+import {
+  Autocomplete,
+  Button,
+  Card,
+  Center,
+  Text,
+  TextInput,
+} from "@mantine/core";
+import { usePrivy } from "@privy-io/react-auth";
+import { useRouter } from "next/router";
+import React, { useRef, useState } from "react";
+import { useMutation } from "react-query";
+import { toast } from "sonner";
 
 export default function Details() {
   const timeoutRef = useRef<number>(-1);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const { createNewUser } = useAppUser();
   /**
    * Mutation for logging in the user.
@@ -20,7 +27,7 @@ export default function Details() {
    */
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: (data) => {
-      router.push('/prize/explore-prizes');
+      router.push("/prize/explore-prizes");
     },
   });
 
@@ -30,16 +37,16 @@ export default function Details() {
     setEmail(val);
     setData([]);
 
-    if (val.trim().length === 0 || val.includes('@')) {
+    if (val.trim().length === 0 || val.includes("@")) {
       setLoading(false);
     } else {
       setLoading(true);
       timeoutRef.current = window.setTimeout(() => {
         setLoading(false);
         setData(
-          ['gmail.com', 'outlook.com', 'yahoo.com'].map(
-            (provider) => `${val}@${provider}`,
-          ),
+          ["gmail.com", "outlook.com", "yahoo.com"].map(
+            (provider) => `${val}@${provider}`
+          )
         );
       }, 1000);
     }
@@ -53,10 +60,10 @@ export default function Details() {
           name,
         }),
         {
-          loading: 'Logging In',
-          success: 'Logged In Successfully',
-          error: 'Error Logging In',
-        },
+          loading: "Logging In",
+          success: "Logged In Successfully",
+          error: "Error Logging In",
+        }
       );
     } catch (e) {
       console.log(e);

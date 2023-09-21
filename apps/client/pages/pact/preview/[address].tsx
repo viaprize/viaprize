@@ -1,13 +1,13 @@
-import config from '@/config';
-import { PactDetail } from '@/lib/types';
-import Eth from 'web3-eth';
-import Web3 from 'web3';
-import MulticallABI from '@/contract/abi/Multicall.json';
-import PactABI from '@/contract/abi/Pact.json';
-import { AbiItem } from 'web3-utils';
-import { FaEthereum } from 'react-icons/fa';
-import Link from 'next/link';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import config from "@/config";
+import { PactDetail } from "@/lib/types";
+import Eth from "web3-eth";
+import Web3 from "web3";
+import MulticallABI from "@/contract/abi/Multicall.json";
+import PactABI from "@/contract/abi/Pact.json";
+import { AbiItem } from "web3-utils";
+import { FaEthereum } from "react-icons/fa";
+import Link from "next/link";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 
 interface PackPreviewProp {
   item: PactDetail;
@@ -16,22 +16,22 @@ function formatEtherValue(weiAmount: number): string {
   const etherAmount = weiAmount / 10 ** 18;
 
   if (etherAmount >= 0.001) {
-    return etherAmount.toFixed(3).replace(/\.?0+$/, '') + ' ETH';
+    return etherAmount.toFixed(3).replace(/\.?0+$/, "") + " ETH";
   } else if (etherAmount >= 1e-6) {
     const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
-    return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, '') + ' ETH';
+    return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, "") + " ETH";
   } else if (etherAmount >= 1e-18) {
     const decimalPlaces = Math.max(0, 18 - Math.ceil(Math.log10(etherAmount)));
-    return etherAmount.toFixed(10).replace(/\.?0+$/, '') + ' ETH';
+    return etherAmount.toFixed(10).replace(/\.?0+$/, "") + " ETH";
   } else {
-    return etherAmount.toExponential(6).replace(/\.?0+e/, 'e') + ' ETH';
+    return etherAmount.toExponential(6).replace(/\.?0+e/, "e") + " ETH";
   }
 }
 const getPactInfo = async (pactAddress: string) => {
   const web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
   const multicall = new web3.eth.Contract(
     MulticallABI as AbiItem[],
-    config.contracts.multicall3,
+    config.contracts.multicall3
   );
 
   const pactContract = new web3.eth.Contract(PactABI as AbiItem[], pactAddress);
@@ -46,23 +46,25 @@ const getPactInfo = async (pactAddress: string) => {
   const res = await multicall.methods.aggregate(calls).call();
 
   return {
-    safe: web3.eth.abi.decodeParameter('address', res['returnData'][0]),
-    resolved: web3.eth.abi.decodeParameter('bool', res['returnData'][1]),
-    resolvable: web3.eth.abi.decodeParameter('bool', res['returnData'][2]),
-    end: web3.eth.abi.decodeParameter('uint256', res['returnData'][3]),
+    safe: web3.eth.abi.decodeParameter("address", res["returnData"][0]),
+    resolved: web3.eth.abi.decodeParameter("bool", res["returnData"][1]),
+    resolvable: web3.eth.abi.decodeParameter("bool", res["returnData"][2]),
+    end: web3.eth.abi.decodeParameter("uint256", res["returnData"][3]),
     sum: sum,
   };
 };
 async function getPactItem(address: string) {
   if (!address) {
-    throw new Error('Pact not fhound');
+    throw new Error("Pact not fhound");
   }
   const res = {
-    name: 'test-name',
-    terms: 'these are my terms',
-    address: '0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c',
-    transactionHash: '0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992',
-    blockHash: '0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7',
+    name: "test-name",
+    terms: "these are my terms",
+    address: "0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c",
+    transactionHash:
+      "0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992",
+    blockHash:
+      "0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7",
   };
 
   const provider = new Web3.providers.HttpProvider(config.provider);
@@ -80,23 +82,23 @@ export default async function Page({ item }: PackPreviewProp) {
 
   const inputDate = new Date(item.end * 1000);
   console.log({ item });
-  const outputDateString = inputDate.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+  const outputDateString = inputDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
   return (
     <div className="card bg-base-100 w-72 h-[700px]  shadow-xl dark:text-gray-300">
       <img
-        src={'https://picsum.photos/200'}
+        src={"https://picsum.photos/200"}
         style={{
-          borderRadius: '5px',
+          borderRadius: "5px",
 
-          marginTop: '8px',
-          marginInline: 'auto',
+          marginTop: "8px",
+          marginInline: "auto",
         }}
-        width={'90%'}
-        height={'200px'}
+        width={"90%"}
+        height={"200px"}
       />
       <div className="card-body justify-between  break-words">
         <Link
@@ -135,7 +137,7 @@ export default async function Page({ item }: PackPreviewProp) {
               target="_blank"
             >
               {item.safe}
-            </a>{' '}
+            </a>{" "}
           </div>
         )}
 
@@ -160,7 +162,7 @@ export default async function Page({ item }: PackPreviewProp) {
               onClick={() =>
                 window.open(
                   `https://${window.location.host}/pact/${item.address}`,
-                  '_blank',
+                  "_blank"
                 )
               }
             >
@@ -175,7 +177,7 @@ export default async function Page({ item }: PackPreviewProp) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const address = context.params?.address;
   if (!address) {
-    throw new Error('Pact not found');
+    throw new Error("Pact not found");
   }
   // const res = await axios.get("/pact", {
   //     params: {
@@ -183,11 +185,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   //     },
   // });
   const res = {
-    name: 'test-name',
-    terms: 'these are my terms',
-    address: '0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c',
-    transactionHash: '0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992',
-    blockHash: '0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7',
+    name: "test-name",
+    terms: "these are my terms",
+    address: "0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c",
+    transactionHash:
+      "0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992",
+    blockHash:
+      "0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7",
   };
 
   const provider = new Web3.providers.HttpProvider(config.provider);
@@ -198,17 +202,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // //@ts-ignore
     // balance: web3.utils.fromWei(await eth.getBalance(address)),
     // ...await getPactInfo(address as string),
-    name: 'test-name',
-    terms: 'these are my terms',
-    address: '0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c',
-    transactionHash: '0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992',
-    blockHash: '0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7',
-    balance: '0',
-    safe: '0x7AC866911a436a2Eec98F848d7b9bFE404d66a6c',
+    name: "test-name",
+    terms: "these are my terms",
+    address: "0x84b136a9B359Bf0749e5e6B3c2daB8931e68a02c",
+    transactionHash:
+      "0x36d15d2a1b3b5880c5724045311cff3ada0b7f9eb2e347367f1ff0b50f6ee992",
+    blockHash:
+      "0x957afdfba92a2ddd16c43b89677c8e4efae0c3ab563c3331d2c63944b8016ed7",
+    balance: "0",
+    safe: "0x7AC866911a436a2Eec98F848d7b9bFE404d66a6c",
     resolved: true,
     resolvable: true,
-    end: '1682567999',
-    sum: '100000000000',
+    end: "1682567999",
+    sum: "100000000000",
   });
 
   return {

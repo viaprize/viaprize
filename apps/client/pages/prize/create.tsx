@@ -5,24 +5,24 @@ import {
   NumberInput,
   SimpleGrid,
   TextInput,
-} from '@mantine/core';
-import ImageComponent from '../../components/Prize/dropzone';
-import { TextEditor } from '../../components/richtexteditor/textEditor';
-import React, { ReactElement, useState } from 'react';
-import { IconNewSection, IconPlus } from '@tabler/icons-react';
-import { JSONContent } from '@tiptap/react';
-import { PrizeCreationTemplate } from '@/components/Prize/prizepage/defaultcontent';
-import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
-import { toast } from 'sonner';
-import { usePrivy } from '@privy-io/react-auth';
-import { FileWithPath } from '@mantine/dropzone';
-import AppShellLayout from '@/components/layout/appshell';
-import { useMutation } from 'wagmi';
+} from "@mantine/core";
+import ImageComponent from "../../components/Prize/dropzone";
+import { TextEditor } from "../../components/richtexteditor/textEditor";
+import React, { ReactElement, useState } from "react";
+import { IconNewSection, IconPlus } from "@tabler/icons-react";
+import { JSONContent } from "@tiptap/react";
+import { PrizeCreationTemplate } from "@/components/Prize/prizepage/defaultcontent";
+import usePrizeProposal from "@/components/Prize/hooks/usePrizeProposal";
+import { toast } from "sonner";
+import { usePrivy } from "@privy-io/react-auth";
+import { FileWithPath } from "@mantine/dropzone";
+import AppShellLayout from "@/components/layout/appshell";
+import { useMutation } from "wagmi";
 
 const Prize = () => {
-  const [address, setAddress] = useState(['']);
-  const [title, setTitle] = useState('');
-  const [richtext, setRichtext] = useState('');
+  const [address, setAddress] = useState([""]);
+  const [title, setTitle] = useState("");
+  const [richtext, setRichtext] = useState("");
   const [isAutomatic, setIsAutomatic] = useState(false);
   const [votingTime, setVotingTime] = useState(0);
   const [proposalTime, setProposalTime] = useState(0);
@@ -49,7 +49,7 @@ const Prize = () => {
       description: richtext,
       isAutomatic: isAutomatic,
       voting_time: votingTime,
-      proposer_address: '',
+      proposer_address: "",
       priorities: [],
       proficiencies: [],
       submission_time: proposalTime,
@@ -61,14 +61,14 @@ const Prize = () => {
   const handleSubmit = () => {
     console.log(user);
     try {
-      console.log(images, 'images');
+      console.log(images, "images");
       toast.promise(submit(), {
-        loading: 'Submitting Proposal',
-        success: 'Proposal Submitted',
-        error: 'Error Submitting Proposal',
+        loading: "Submitting Proposal",
+        success: "Proposal Submitted",
+        error: "Error Submitting Proposal",
       });
     } catch {
-      toast.error('Error Submitting Proposal');
+      toast.error("Error Submitting Proposal");
     }
   };
 
@@ -78,7 +78,7 @@ const Prize = () => {
 
   const addAddress = () => {
     setAddress((prev: string[]) => {
-      return [...prev, ''];
+      return [...prev, ""];
     });
   };
 
@@ -98,7 +98,11 @@ const Prize = () => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
+      <TextEditor
+        richtext={richtext}
+        setRichtext={setRichtext}
+        canSetRichtext
+      />
 
       <SimpleGrid cols={2} className="my-3">
         <div className="">
@@ -138,7 +142,11 @@ const Prize = () => {
               onChange={(e) => onAddressChange(index, e.target.value)}
             />
             {address.length > 1 && (
-              <Button color="red" className="my-2" onClick={() => removeAddress(index)}>
+              <Button
+                color="red"
+                className="my-2"
+                onClick={() => removeAddress(index)}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -157,7 +165,12 @@ const Prize = () => {
             )}
           </div>
         ))}
-        <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
+        <ActionIcon
+          variant="filled"
+          color="blue"
+          size="lg"
+          onClick={addAddress}
+        >
           <IconPlus />
         </ActionIcon>
       </SimpleGrid>

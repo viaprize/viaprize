@@ -6,10 +6,10 @@
  * @module hooks/useErc20Contract
  */
 
-import useWeb3Context from '@/context/hooks/useWeb3Context';
-import Erc20Abi from './abi/ERC20.json';
-import BN from 'bignumber.js';
-import { AbiItem } from 'web3-utils';
+import useWeb3Context from "@/context/hooks/useWeb3Context";
+import Erc20Abi from "./abi/ERC20.json";
+import BN from "bignumber.js";
+import { AbiItem } from "web3-utils";
 
 /**
  * @function useErc20Contract
@@ -30,8 +30,14 @@ export default function useErc20Contract() {
      * @param {string} spenderAddress - The address of the spender.
      * @returns {Promise<number>} The allowance of the spender.
      */
-    async allowance(tokenAddress: string, spenderAddress: string): Promise<number> {
-      const tokenContract = new web3.eth.Contract(Erc20Abi as AbiItem[], tokenAddress);
+    async allowance(
+      tokenAddress: string,
+      spenderAddress: string
+    ): Promise<number> {
+      const tokenContract = new web3.eth.Contract(
+        Erc20Abi as AbiItem[],
+        tokenAddress
+      );
 
       return await tokenContract.methods
         .allowance(account, spenderAddress)
@@ -46,8 +52,13 @@ export default function useErc20Contract() {
      * @returns {Promise<string>} The balance of the current account.
      */
     async balanceOf(tokenAddress: string, decimals = 18): Promise<string> {
-      const tokenContract = new web3.eth.Contract(Erc20Abi as AbiItem[], tokenAddress);
-      const res = await tokenContract.methods.balanceOf(account).call({ from: account });
+      const tokenContract = new web3.eth.Contract(
+        Erc20Abi as AbiItem[],
+        tokenAddress
+      );
+      const res = await tokenContract.methods
+        .balanceOf(account)
+        .call({ from: account });
       return new BN(res).shiftedBy(-decimals).toString();
     },
 
@@ -59,8 +70,14 @@ export default function useErc20Contract() {
      * @param {number} token.decimals - The number of decimals the token has.
      * @returns {Promise<string>} The total supply of the token.
      */
-    async totalSupply(token: { address: string; decimals: number }): Promise<string> {
-      const tokenContract = new web3.eth.Contract(Erc20Abi as AbiItem[], token.address);
+    async totalSupply(token: {
+      address: string;
+      decimals: number;
+    }): Promise<string> {
+      const tokenContract = new web3.eth.Contract(
+        Erc20Abi as AbiItem[],
+        token.address
+      );
       return new Promise((resolve, reject) => {
         tokenContract.methods
           .totalSupply()
@@ -69,7 +86,7 @@ export default function useErc20Contract() {
             resolve(new BN(res).shiftedBy(-token.decimals).toString());
           })
           .catch((err: any) => {
-            console.log('Error', err);
+            console.log("Error", err);
             reject(err);
           });
       });
@@ -86,12 +103,15 @@ export default function useErc20Contract() {
     async transfer(
       tokenAddress: string,
       toAddress: string,
-      amount: string,
+      amount: string
     ): Promise<any> {
-      const tokenContract = new web3.eth.Contract(Erc20Abi as AbiItem[], tokenAddress);
+      const tokenContract = new web3.eth.Contract(
+        Erc20Abi as AbiItem[],
+        tokenAddress
+      );
       const func = tokenContract.methods.transfer(
         toAddress,
-        web3.utils.toWei(amount, 'mwei'),
+        web3.utils.toWei(amount, "mwei")
       );
       return await sendTx(func);
     },
@@ -107,12 +127,15 @@ export default function useErc20Contract() {
     async approve(
       tokenAddress: string,
       spenderAddress: string,
-      amount = '10000000000000',
+      amount = "10000000000000"
     ): Promise<any> {
-      const tokenContract = new web3.eth.Contract(Erc20Abi as AbiItem[], tokenAddress);
+      const tokenContract = new web3.eth.Contract(
+        Erc20Abi as AbiItem[],
+        tokenAddress
+      );
       const func = tokenContract.methods.approve(
         spenderAddress,
-        web3.utils.toWei(amount, 'mwei'),
+        web3.utils.toWei(amount, "mwei")
       );
       return await sendTx(func);
     },

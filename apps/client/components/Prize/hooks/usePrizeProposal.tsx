@@ -6,11 +6,11 @@ import {
   PrizeProposalQueryParams,
   PrizeProposals,
   PrizeProposalsList,
-} from './../../../types/prizes';
-import { makeStorageClient } from '@/components/_providers/web3client';
-import myAxios from '@/lib/axios';
-import { usePrivy } from '@privy-io/react-auth';
-import { useState } from 'react';
+} from "./../../../types/prizes";
+import { makeStorageClient } from "@/components/_providers/web3client";
+import myAxios from "@/lib/axios";
+import { usePrivy } from "@privy-io/react-auth";
+import { useState } from "react";
 
 function objectToRecord(obj: { [key: string]: any }): Record<string, string> {
   return Object.entries(obj).reduce((record, [key, value]) => {
@@ -22,9 +22,9 @@ function objectToRecord(obj: { [key: string]: any }): Record<string, string> {
 async function storeFiles(files: File[]) {
   const client = makeStorageClient();
   const cid = await client.put(files);
-  console.log('stored files with cid:', cid);
+  console.log("stored files with cid:", cid);
   const url = `https://dweb.link/ipfs/${cid}/${files[0].name}`;
-  console.log('URL of the uploaded image:', url);
+  console.log("URL of the uploaded image:", url);
   return url;
 }
 
@@ -52,7 +52,7 @@ export default function usePrizeProposal() {
   const [proposals, setProposals] = useState<PrizeProposals[]>();
   const { user } = usePrivy();
   const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
-    const res = await myAxios.post('/prizes/proposals', { ...proposalDto });
+    const res = await myAxios.post("/prizes/proposals", { ...proposalDto });
     return res;
   };
 
@@ -65,7 +65,7 @@ export default function usePrizeProposal() {
     queryParams: PrizeProposalQueryParams = {
       limit: 10,
       page: 1,
-    },
+    }
   ) => {
     const record: Record<string, string> = objectToRecord(queryParams);
     const queryString = new URLSearchParams(record);
@@ -74,9 +74,9 @@ export default function usePrizeProposal() {
       return;
     }
     const res = await myAxios.get(
-      `/prizes/proposals/user/${user?.id}${queryString.toString()}`,
+      `/prizes/proposals/user/${user?.id}${queryString.toString()}`
     );
-    console.log('res', 'acxi0', res);
+    console.log("res", "acxi0", res);
     return res.data as PrizeProposalsList;
   };
 
@@ -84,12 +84,14 @@ export default function usePrizeProposal() {
     queryParam: PrizeProposalQueryParams = {
       limit: 10,
       page: 1,
-    },
+    }
   ) => {
     const record: Record<string, string> = objectToRecord(queryParam);
     const queryString = new URLSearchParams(record);
-    const res = await myAxios.get(`/prizes/proposals?${queryString.toString()}`);
-    console.log({ res }, 'proposals');
+    const res = await myAxios.get(
+      `/prizes/proposals?${queryString.toString()}`
+    );
+    console.log({ res }, "proposals");
     return res.data as PrizeProposalsList;
   };
 
@@ -104,7 +106,9 @@ export default function usePrizeProposal() {
     proposalId: string;
     comment: string;
   }) => {
-    const res = await myAxios.post(`/prizes/proposals/${proposalId}/reject`, { comment });
+    const res = await myAxios.post(`/prizes/proposals/${proposalId}/reject`, {
+      comment,
+    });
     return res.data;
   };
 

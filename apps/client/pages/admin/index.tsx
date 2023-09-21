@@ -1,17 +1,22 @@
 // @ts-nocheck
-import AdminCard from '@/components/Admin/card';
-import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
-import AppShellLayout from '@/components/layout/appshell';
-import { Loader, Tabs } from '@mantine/core';
-import { IconPhoto, IconMessageCircle, IconSettings } from '@tabler/icons-react';
-import { ReactElement } from 'react';
-import { useQuery } from 'react-query';
-import { AppUser } from 'types/app-user';
-import { useMutation } from 'wagmi';
+import AdminCard from "@/components/Admin/card";
+import usePrizeProposal from "@/components/Prize/hooks/usePrizeProposal";
+import AppShellLayout from "@/components/layout/appshell";
+import { Loader, Tabs } from "@mantine/core";
+import {
+  IconPhoto,
+  IconMessageCircle,
+  IconSettings,
+} from "@tabler/icons-react";
+import { ReactElement } from "react";
+import { useQuery } from "react-query";
+import { AppUser } from "types/app-user";
+import { useMutation } from "wagmi";
 
 export default function AdminPage() {
-  const { getAllProposals, acceptProposal, rejectProposal } = usePrizeProposal();
-  const getAllProposalsMutation = useQuery(['all-proposals', undefined], () => {
+  const { getAllProposals, acceptProposal, rejectProposal } =
+    usePrizeProposal();
+  const getAllProposalsMutation = useQuery(["all-proposals", undefined], () => {
     return getAllProposals();
   });
   const acceptProposalMutation = useMutation(acceptProposal);
@@ -51,10 +56,10 @@ export default function AdminPage() {
                 user={proposal.user}
                 voting={proposal.voting_time}
               />
-            ),
+            )
           )
         ) : (
-          'Error'
+          "Error"
         )}
       </Tabs.Panel>
 

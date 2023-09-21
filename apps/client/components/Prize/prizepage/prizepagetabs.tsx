@@ -1,9 +1,9 @@
-import { Tabs } from '@mantine/core';
-import AboutPrize from './aboutprize';
-import { BsInfoLg } from 'react-icons/bs';
-import { FaMoneyBillWaveAlt } from 'react-icons/fa';
-import { TabsPanel } from '@mantine/core/lib/Tabs/TabsPanel/TabsPanel';
-import PrizeFunderCard from './prizeFunderCard';
+import { Tabs } from "@mantine/core";
+import AboutPrize from "./aboutprize";
+import { BsInfoLg } from "react-icons/bs";
+import { FaMoneyBillWaveAlt } from "react-icons/fa";
+import { TabsPanel } from "@mantine/core/lib/Tabs/TabsPanel/TabsPanel";
+import PrizeFunderCard from "./prizeFunderCard";
 
 export default function PrizePageTabs() {
   return (
@@ -20,7 +20,7 @@ export default function PrizePageTabs() {
         <AboutPrize />
       </Tabs.Panel>
       <Tabs.Panel value="creators">
-        <PrizeFunderCard name={'test'} email={'test'} />
+        <PrizeFunderCard name={"test"} email={"test"} />
       </Tabs.Panel>
     </Tabs>
   );

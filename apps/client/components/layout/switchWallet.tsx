@@ -1,8 +1,8 @@
-import React from 'react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { Badge, Card, Checkbox, Group, Text } from '@mantine/core';
-import clsx from 'clsx';
+import React from "react";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { usePrivyWagmi } from "@privy-io/wagmi-connector";
+import { Badge, Card, Checkbox, Group, Text } from "@mantine/core";
+import clsx from "clsx";
 
 export default function SwitchAccount() {
   const { login, ready, authenticated } = usePrivy();
@@ -29,10 +29,14 @@ export default function SwitchAccount() {
             {wallet.address}
             {wallet.address === activeWallet?.address && (
               <Badge
-                color={wallet.address === activeWallet?.address ? 'green' : 'gray'}
+                color={
+                  wallet.address === activeWallet?.address ? "green" : "gray"
+                }
                 variant="light"
               >
-                {wallet.address === activeWallet?.address ? 'Active' : 'Inactive'}
+                {wallet.address === activeWallet?.address
+                  ? "Active"
+                  : "Inactive"}
               </Badge>
             )}
           </Group>

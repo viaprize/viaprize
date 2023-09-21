@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { Loader } from '@mantine/core';
-import AppHeader from '@/components/layout/switchWallet';
-import axio from '@/lib/axios';
-import HistoryItem from '@/components/HistoryItem';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { Loader } from "@mantine/core";
+import AppHeader from "@/components/layout/switchWallet";
+import axio from "@/lib/axios";
+import HistoryItem from "@/components/HistoryItem";
 export default function PactDetail() {
   const [item, setItem] = useState({});
   const [loading, setLoading] = useState(true);
@@ -11,7 +11,7 @@ export default function PactDetail() {
   const { address } = router.query;
 
   const getPactDetail = async () => {
-    const res = await axio.get('/pact', {
+    const res = await axio.get("/pact", {
       params: {
         address,
       },

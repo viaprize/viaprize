@@ -1,7 +1,7 @@
-import myAxios from '@/lib/axios';
-import { AppUser, CreateUserDto } from 'types/app-user';
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import myAxios from "@/lib/axios";
+import { AppUser, CreateUserDto } from "types/app-user";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface AppUserStore {
   user: AppUser | undefined;
@@ -25,15 +25,15 @@ const useAppUserStore = create(
         set({ user: newUserData });
       },
       uploadUser: async (newUser: CreateUserDto) => {
-        const res = await myAxios.post('/users', newUser);
+        const res = await myAxios.post("/users", newUser);
         set({ user: res.data });
       },
       clearUser: () => set({ user: undefined }),
     }),
     {
-      name: 'app-user-storage',
-    },
-  ),
+      name: "app-user-storage",
+    }
+  )
 );
 
 export default useAppUserStore;

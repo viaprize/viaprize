@@ -1,5 +1,5 @@
-import AppShellLayout from '@/components/layout/appshell';
-import React, { ReactElement } from 'react';
+import AppShellLayout from "@/components/layout/appshell";
+import React, { ReactElement } from "react";
 
 export default function EditorID() {
   return <div></div>;

@@ -1,6 +1,6 @@
-import { TextInput, Text, Button, Group, Flex } from '@mantine/core';
-import { IconChevronDown, IconSearch } from '@tabler/icons-react';
-import Filter from './filterComponent';
+import { TextInput, Text, Button, Group, Flex } from "@mantine/core";
+import { IconChevronDown, IconSearch } from "@tabler/icons-react";
+import Filter from "./filterComponent";
 
 export const SearchFilters = () => {
   return (
@@ -13,7 +13,7 @@ export const SearchFilters = () => {
       </Text>
       <Group position="apart" mt="md" mb="xs">
         <TextInput
-          style={{ width: '500px' }}
+          style={{ width: "500px" }}
           placeholder="Search"
           icon={<IconSearch size="1rem" />}
         />

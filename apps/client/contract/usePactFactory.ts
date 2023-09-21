@@ -1,13 +1,13 @@
 // @ts-nocheck
-import useWeb3Context from '@/context/hooks/useWeb3Context';
-import PactFactoryAbi from './abi/PactFactory.json';
-import usePactContract from './usePactContract';
-import AbiCoder from 'web3-eth-abi';
-import config from '@/config';
-import BN from 'bignumber.js';
-import Eth from 'web3-eth';
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
+import useWeb3Context from "@/context/hooks/useWeb3Context";
+import PactFactoryAbi from "./abi/PactFactory.json";
+import usePactContract from "./usePactContract";
+import AbiCoder from "web3-eth-abi";
+import config from "@/config";
+import BN from "bignumber.js";
+import Eth from "web3-eth";
+import Web3 from "web3";
+import { AbiItem } from "web3-utils";
 
 /**
  * Interface for the pact object.
@@ -25,7 +25,12 @@ interface Pact {
  */
 interface PactFactory {
   getAllPacts(): Promise<Pact[]>;
-  createPact(commitment: any, endTime: number, sum: any, leads: any): Promise<any>;
+  createPact(
+    commitment: any,
+    endTime: number,
+    sum: any,
+    leads: any
+  ): Promise<any>;
 }
 
 /**
@@ -49,8 +54,10 @@ export default function usePactFactory(): PactFactory {
     async getAllPacts(): Promise<Pact[]> {
       const logs = await eth.getPastLogs({
         fromBlock: 8106597,
-        address: '0x642a7864cBe44ED24D408Cbc38117Cfd6E6D1a95',
-        topics: ['0xe3758539c1bd6726422843471b2886c2d2cefd3b4aead6778386283e20a32a80'],
+        address: "0x642a7864cBe44ED24D408Cbc38117Cfd6E6D1a95",
+        topics: [
+          "0xe3758539c1bd6726422843471b2886c2d2cefd3b4aead6778386283e20a32a80",
+        ],
       });
 
       if (!logs || !logs.length) {
@@ -58,7 +65,7 @@ export default function usePactFactory(): PactFactory {
       }
 
       const pactAddresses = logs.map((eventLog) => {
-        return AbiCoder.decodeParameter('address', eventLog.data);
+        return AbiCoder.decodeParameter("address", eventLog.data);
       });
 
       const pacts: Pact[] = [];
@@ -88,18 +95,23 @@ export default function usePactFactory(): PactFactory {
       commitment: any,
       endTime: number,
       sum: number,
-      leads: any,
+      leads: any
     ): Promise<any> {
       const duration = endTime - Math.floor(new Date().valueOf() / 1000);
 
-      console.log('end time', endTime, 'now', Math.floor(new Date().valueOf() / 1000));
+      console.log(
+        "end time",
+        endTime,
+        "now",
+        Math.floor(new Date().valueOf() / 1000)
+      );
       const amountInWei = new BN(sum).shiftedBy(18).toString();
 
       const pactFactoryContract = new web3.eth.Contract(
         PactFactoryAbi as AbiItem[],
-        config.contracts.pactFactory,
+        config.contracts.pactFactory
       );
-      console.log(pactFactoryContract, 'pactFactoryContract');
+      console.log(pactFactoryContract, "pactFactoryContract");
 
       const estimatedGas = await pactFactoryContract.methods
         .create(
@@ -108,10 +120,10 @@ export default function usePactFactory(): PactFactory {
           }),
           new BN(duration),
           amountInWei,
-          leads,
+          leads
         )
         .estimateGas({ from: account });
-      console.log(estimatedGas, 'estimatedGas');
+      console.log(estimatedGas, "estimatedGas");
 
       const func = pactFactoryContract.methods.create(
         await pactFactoryContract.methods.commit(commitment).call({
@@ -119,7 +131,7 @@ export default function usePactFactory(): PactFactory {
         }),
         new BN(duration),
         amountInWei,
-        leads,
+        leads
       );
 
       return await sendTx(func);
