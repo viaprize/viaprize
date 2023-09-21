@@ -1,6 +1,7 @@
 {
   "extends": "tsconfig/nextjs.json",
   "compilerOptions": {
+    "strict": true,
     "plugins": [{ "name": "next" }],
     "baseUrl": ".",
     "paths": {
@@ -11,7 +12,7 @@
       "@/contract/*": ["contract/*"],
       "@env": ["env.mjs"],
       "@/backend/*": ["../backend/dist/*"]
-    },
+    }
   },
   "include": [
     "next-env.d.ts",
@@ -25,4 +26,3 @@
   ],
   "exclude": ["node_modules"]
 }
-
