@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { MultiSelect, Select } from "@mantine/core";
+import { useState } from "react";
 
-const Filter = () => {
-  const [proficiencydata, setProficiencyData] = useState([
+function Filter() {
+  const [proficiencyData, setProficiencyData] = useState([
     { value: "1", label: "Programming" },
     { value: "2", label: "Python" },
     { value: "3", label: "JavaScript" },
@@ -18,7 +18,7 @@ const Filter = () => {
     { value: "13", label: "AI" },
   ]);
 
-  const [prioritiesdata, setPrioritiesData] = useState([
+  const [prioritiesData, setPrioritiesData] = useState([
     { value: "1", label: "Climate Change" },
     { value: "2", label: "Network Civilizations" },
     { value: "3", label: "Open-Source" },
@@ -27,49 +27,49 @@ const Filter = () => {
     { value: "6", label: "Education" },
   ]);
 
-  const [searchValue, onSearchChange] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   return (
     <>
       <MultiSelect
-        label="Proficiency"
-        maw={"300px"}
-        data={proficiencydata}
-        placeholder="Select items"
-        searchable
         creatable
+        data={proficiencyData}
         getCreateLabel={(query) => `+ Create ${query}`}
+        label="Proficiency"
+        maw="300px"
         onCreate={(query) => {
           const item = { value: query, label: query };
           setProficiencyData((current) => [...current, item]);
           return item;
         }}
-      />
-      <MultiSelect
-        maw={"300px"}
-        label="Priorities"
-        data={prioritiesdata}
         placeholder="Select items"
         searchable
+      />
+      <MultiSelect
         creatable
+        data={prioritiesData}
         getCreateLabel={(query) => `+ Create ${query}`}
+        label="Priorities"
+        maw="300px"
         onCreate={(query) => {
           const item = { value: query, label: query };
           setPrioritiesData((current) => [...current, item]);
           return item;
         }}
+        placeholder="Select items"
+        searchable
       />
       <Select
-        label="Sort By:"
-        placeholder="sort by"
-        searchable
-        onSearchChange={onSearchChange}
-        searchValue={searchValue}
-        nothingFound="No options"
         data={["Data", "Price"]}
+        label="Sort By:"
+        nothingFound="No options"
+        onSearchChange={setSearchValue}
+        placeholder="sort by"
+        searchValue={searchValue}
+        searchable
       />
     </>
   );
-};
+}
 
 export default Filter;

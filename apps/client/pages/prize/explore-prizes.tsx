@@ -1,6 +1,6 @@
+import ExploreCard from "@/components/ExplorePrize/ExplorePrize";
+import { SearchFilters } from "@/components/ExplorePrize/SearchFilters";
 import usePrizeProposal from "@/components/Prize/hooks/usePrizeProposal";
-import ExploreCard from "@/components/ExplorePrize/explorePrize";
-import { SearchFilters } from "@/components/ExplorePrize/searchFilters";
 import AppShellLayout from "@/components/layout/appshell";
 import { usePrivy } from "@privy-io/react-auth";
 import { ReactElement, useEffect } from "react";

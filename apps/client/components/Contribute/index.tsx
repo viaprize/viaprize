@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
-
 import useWeb3Context from "@/context/hooks/useWeb3Context";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Contribute({ address, onContributed }: any) {
   const { web3, account, connectWallet }: any = useWeb3Context();
@@ -20,11 +19,13 @@ export default function Contribute({ address, onContributed }: any) {
   return (
     <div className="flex gap-2 flex-wrap w-full">
       <input
-        type="text"
-        placeholder="Amount"
         className="input input-bordered flex-1"
+        onChange={(e) => {
+          setAmount(e.target.value);
+        }}
+        placeholder="Amount"
+        type="text"
         value={amount}
-        onChange={(e) => setAmount(e.target.value)}
       />
       <button className="btn" onClick={() => doContribute()}>
         Contribute

@@ -7,7 +7,7 @@ import {
   PrizeProposals,
   PrizeProposalsList,
 } from "./../../../types/prizes";
-import { makeStorageClient } from "@/components/_providers/web3client";
+import { makeStorageClient } from "@/components/_providers/WebClient";
 import myAxios from "@/lib/axios";
 import { usePrivy } from "@privy-io/react-auth";
 import { useState } from "react";

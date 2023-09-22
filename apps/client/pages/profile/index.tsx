@@ -1,11 +1,6 @@
-import ExploreCard from "@/components/ExplorePrize/explorePrize";
+import ExploreCard from "@/components/ExplorePrize/ExplorePrize";
 import AppShellLayout from "@/components/layout/appshell";
 import { Tabs } from "@mantine/core";
-import {
-  IconPhoto,
-  IconMessageCircle,
-  IconSettings,
-} from "@tabler/icons-react";
 import { ReactElement } from "react";
 
 export default function Profile() {

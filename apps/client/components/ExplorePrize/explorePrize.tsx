@@ -1,12 +1,4 @@
-import {
-  Card,
-  Image,
-  Text,
-  Badge,
-  Button,
-  Group,
-  ScrollArea,
-} from "@mantine/core";
+import { Badge, Button, Card, Group, Image, Text } from "@mantine/core";
 import { useState } from "react";
 
 interface ExploreCardProps {
@@ -28,11 +20,11 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
 }) => {
   const [scrollPosition, onScrollPositionChange] = useState({ x: 0, y: 0 });
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
+    <Card padding="lg" radius="md" shadow="sm" withBorder>
       <Card.Section>
-        <Image src={imageUrl} height={160} alt="Image" />
+        <Image alt="Image" height={160} src={imageUrl} />
       </Card.Section>
-      <Group position="apart" mt="md" mb="xs">
+      <Group mb="xs" mt="md" position="apart">
         <Text weight={500}>{title}</Text>
         <Badge color="gray" variant="light">
           {profileName}
@@ -41,15 +33,15 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
       <p className="text-md text-gray-500 max-h-14 overflow-y-auto">
         {description}
       </p>
-      <Group position="apart" mt="md" mb="xs">
-        <Text weight={500} color="green">
+      <Group mb="xs" mt="md" position="apart">
+        <Text color="green" weight={500}>
           {money}
         </Text>
-        <Text weight={500} color="red">
+        <Text color="red" weight={500}>
           {deadline}
         </Text>
       </Group>
-      <Button variant="light" color="blue" fullWidth mt="md" radius="md">
+      <Button color="blue" fullWidth mt="md" radius="md" variant="light">
         Details
       </Button>
     </Card>
