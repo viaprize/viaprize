@@ -1,17 +1,27 @@
+
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUser } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { MailService } from 'src/mail/mail.service';
 
+
+/* The UsersService class is responsible for creating and retrieving user data from a repository. */
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
+
+  /**
+   * The function creates a new user by inserting the provided user data into the user repository, and
+   * returns the created user.
+   * @param {CreateUser} createUserDto - The `createUserDto` parameter is an object that contains the
+   * data needed to create a new user. It likely includes properties such as `name`, `email`,
+   * `password`, etc.
+   * @returns a Promise that resolves to a User object.
+   */
   async create(createUserDto: CreateUser): Promise<User> {
     try {
       const user = await this.userRepository.create(createUserDto);
@@ -23,10 +33,15 @@ export class UsersService {
     
   }
 
-  findAll() {
-    return `This action returns all users`;
-  }
-  async findOneByAuthId(authId: string) {
+  /**
+   * The function finds a user by their authentication ID and throws an error if the user is not found.
+   * @param {string} authId - The `authId` parameter is a string that represents the authentication ID
+   * of a user which is gotten from auth provider . It is used to find a user in the database based on their authentication ID.
+   * 
+   * @returns {Promise<User> } the user object that is found in the database based on the provided authId.
+   * @see {@link User}
+   */
+  async findOneByAuthId(authId: string) : Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         authId: authId,
@@ -39,12 +54,4 @@ export class UsersService {
       );
     return user;
   }
-
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
 }

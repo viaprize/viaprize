@@ -1,29 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePactDto } from './dto/create-pact.dto';
+import { CreatePact } from './dto/create-pact.dto';
 import { PactEntity } from './entities/pact.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from 'src/mail/mail.service';
+/* The PactsService class is responsible for creating, finding, and retrieving pact entities, and it
+also uses the MailService to perform a test operation. */
 @Injectable()
 export class PactsService {
   constructor(
     @InjectRepository(PactEntity)
-    private packRepository: Repository<PactEntity>,
+    private pactRepository: Repository<PactEntity>,
     private mailService: MailService,
   ) {}
-  create(createPactDto: CreatePactDto, networkType: string) {
-    const createPact = { ...createPactDto, networkType };
-    return this.packRepository.save(createPact);
+  async create(createPact: CreatePact) {
+    const pact = this.pactRepository.create(createPact)
+    await this.pactRepository.insert(pact)
+    return pact
   }
 
-  async findAll(networkType: string) {
-    await this.mailService.test();
-    return this.packRepository.find({
-      where: { networkType },
-    });
+  async findAll() {
+    
+    return this.pactRepository.find({});
   }
 
   findOne(address: string) {
-    return this.packRepository.findOne({ where: { address } });
+    return this.pactRepository.findOne({ where: { address } });
   }
 }

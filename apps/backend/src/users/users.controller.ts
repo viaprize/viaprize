@@ -1,18 +1,9 @@
 import {
   Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUser } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
-import { CreatePactDto } from 'src/pacts/dto/create-pact.dto';
 import { User } from './entities/user.entity';
 import { MailService } from 'src/mail/mail.service';
 
@@ -20,6 +11,7 @@ import { MailService } from 'src/mail/mail.service';
 /**
  * This is the users controller class.
  * it handles the documentation of routes and implementation of services related to the route.
+ * @tag {users}
  */
 @Controller('users')
 export class UsersController {

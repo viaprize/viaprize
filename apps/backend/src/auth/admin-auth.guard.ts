@@ -21,7 +21,11 @@ export class AdminAuthGuard implements CanActivate {
     private configService: ConfigService,
     private userService: UsersService,
   ) {}
-
+  /**
+   * This functions runs when you use the decorator UseGuard
+   * @param {ExecutionContext} context This contains the https request objects which contains the headers
+   * @returns {Promise<boolean>}
+   */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
@@ -42,7 +46,7 @@ export class AdminAuthGuard implements CanActivate {
     if (!verifiedClaims) {
       throw new HttpException('Token verification failed', HttpStatus.CONFLICT);
     }
-    const admin = await this.userService.findOneByUserId(verifiedClaims.userId);
+    const admin = await this.userService.findOneByAuthId(verifiedClaims.userId);
     if (!admin.isAdmin) {
       throw new HttpException(
         'Only Admins can call this route ',
@@ -54,6 +58,9 @@ export class AdminAuthGuard implements CanActivate {
     return true;
   }
 
+  /**
+   * Simply extracts token from header request
+   */
   private extractTokenFromHeader(request: Request): string | undefined {
     console.log(request.headers, 'header');
     if (!request?.headers?.authorization) {
