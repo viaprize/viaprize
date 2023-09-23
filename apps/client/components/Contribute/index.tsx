@@ -1,6 +1,6 @@
-import useWeb3Context from "@/context/hooks/useWeb3Context";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import useWeb3Context from "@/context/hooks/useWeb3Context";
 
 export default function Contribute({ address, onContributed }: any) {
   const { web3, account, connectWallet }: any = useWeb3Context();

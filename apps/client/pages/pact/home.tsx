@@ -1,14 +1,15 @@
-import type { NextPage } from "next";
-import useWeb3Context from "@/context/hooks/useWeb3Context";
-import AppHeader from "@/components/layout/switchWallet";
-import axios from "../../lib/axios";
-import usePactFactory from "../../contract/usePactFactory";
-
-import cn from "classnames";
-import { useEffect, useState } from "react";
 import HistoryItem from "@/components/HistoryItem";
+import AppHeader from "@/components/layout/switchWallet";
+import useWeb3Context from "@/context/hooks/useWeb3Context";
 import { Loader } from "@mantine/core";
-import { DatePicker, DateValue } from "@mantine/dates";
+import type { DateValue } from "@mantine/dates";
+import { DatePicker } from "@mantine/dates";
+import cn from "classnames";
+import type { NextPage } from "next";
+import { useEffect, useState } from "react";
+import usePactFactory from "../../contract/usePactFactory";
+import axios from "../../lib/axios";
+
 
 const tabs = ["about", "create", "preview"];
 
@@ -23,14 +24,16 @@ const Home: NextPage = () => {
   const [historyList, setHistoryList] = useState([]);
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const [endDate, setEndDate] = useState<number>(0);
-  const { account, connectWallet, web3 }: any = useWeb3Context();
+  const { account, connectWallet } = useWeb3Context();
   const pactFactory = usePactFactory();
 
   const doCreate = async () => {
     console.log("creating...................");
     setCreating(true);
     try {
-      const res: any = await pactFactory.createPact(
+      /* eslint-disable  -- Because any is what the nature of the return type is*/
+
+      const res = await pactFactory.createPact(
         terms,
         endDate,
         amount,
@@ -39,9 +42,12 @@ const Home: NextPage = () => {
       if (res.status) {
         await axios.post("/pact", {
           name: projectName,
-          terms: terms,
+          terms,
+          /* eslint-disable */
           address: res.events.Create.returnValues[0],
+          /* eslint-disable */
           transactionHash: res.transactionHash,
+          /* eslint-disable */
           blockHash: res.blockHash,
         });
         setActiveTab(tabs[2]);
@@ -54,7 +60,7 @@ const Home: NextPage = () => {
   };
 
   const onAddressChange = (index: number, value: string) => {
-    setAddress((prev: any) => {
+    setAddress((prev) => {
       prev[index] = value;
       return [...prev];
     });
@@ -83,7 +89,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (!account) {
-      return;
+      return
     }
   }, [account]);
 
@@ -91,7 +97,7 @@ const Home: NextPage = () => {
     if (!skipLoading) {
       setLoading(true);
     }
-    const res: any = await axios.get("/pacts");
+    const res = await axios.get("/pacts");
     // get balances
     // for (let i = 0; i < res.length; i++) {
     //   const pactAddress = res[i].address;
@@ -124,7 +130,7 @@ const Home: NextPage = () => {
                   "tab tab-boxed tab-lg capitalize",
                   activeTab === item && "tab-active"
                 )}
-                onClick={() => setActiveTab(item)}
+                onClick={() => { setActiveTab(item); }}
               >
                 {item}
               </a>
@@ -163,142 +169,139 @@ const Home: NextPage = () => {
           )}
 
           {activeTab === tabs[1] && (
-            <>
-              <div className="flex flex-col gap-4 mb-4 dark:text-white">
-                <div className="mb-4">
+            <div className="flex flex-col gap-4 mb-4 dark:text-white">
+              <div className="mb-4">
+                <h1 className="text-xl mb-2 font-medium dark:text-gray-900">
+                  Name
+                </h1>
+                <div className="flex">
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    className="input input-bordered w-full "
+                    value={projectName}
+                    onChange={(e) => { setProjectName(e.target.value); }}
+                  />
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <h1 className="text-xl mb-1 font-medium dark:text-gray-900">
+                  Terms
+                </h1>
+                <textarea
+                  className="textarea w-full input-bordered"
+                  value={terms}
+                  onChange={(e) => { setTerms(e.target.value); }}
+                  placeholder="Terms"
+                />
+              </div>
+
+              <div className="mb-4 flex gap-3 ">
+                <div>
                   <h1 className="text-xl mb-2 font-medium dark:text-gray-900">
-                    Name
+                    Funding Goal (in ETH)
                   </h1>
-                  <div className="flex">
+                  <div className="flex items-center gap-4">
                     <input
-                      type="text"
-                      placeholder="Name"
-                      className="input input-bordered w-full "
-                      value={projectName}
-                      onChange={(e) => setProjectName(e.target.value)}
+                      type="number"
+                      placeholder="Funding Goal"
+                      className="input input-bordered"
+                      value={amount}
+                      onChange={(e) => { setAmount(e.target.value); }}
                     />
                   </div>
                 </div>
-
-                <div className="mb-4">
-                  <h1 className="text-xl mb-1 font-medium dark:text-gray-900">
-                    Terms
-                  </h1>
-                  <textarea
-                    className="textarea w-full input-bordered"
-                    value={terms}
-                    onChange={(e) => setTerms(e.target.value)}
-                    placeholder="Terms"
-                  />
-                </div>
-
-                <div className="mb-4 flex gap-3 ">
-                  <div>
-                    <h1 className="text-xl mb-2 font-medium dark:text-gray-900">
-                      Funding Goal (in ETH)
-                    </h1>
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="number"
-                        placeholder="Funding Goal"
-                        className="input input-bordered"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <h1 className="text-xl mb-2 font-medium dark:text-gray-900">
-                      Deadline
-                    </h1>
-                    <div className="flex items-center gap-4">
-                      {/*@ts-ignore */}
-
-                      <DatePicker
-                        defaultDate={new Date(2015, 1)}
-                        value={rawEndDate}
-                        onChange={(val: DateValue) => dateChange(val)}
-                      />
-                    </div>
-                  </div>
-                </div>
-
                 <div>
                   <h1 className="text-xl mb-2 font-medium dark:text-gray-900">
-                    Admin Addresses
+                    Deadline
                   </h1>
+                  <div className="flex items-center gap-4">
+                    {/*@ts-expect-error */}
 
-                  <div className="flex items-center gap-4 flex-col">
-                    {address.map((item, index) => (
-                      <div className="flex w-full gap-2" key={index}>
-                        <input
-                          type="text"
-                          placeholder="Address"
-                          className="input input-bordered w-full"
-                          value={item}
-                          onChange={(e) =>
-                            onAddressChange(index, e.target.value)
-                          }
-                        />
-                        {address.length > 1 && (
-                          <button
-                            className="btn btn-square"
-                            onClick={() => removeAddress(index)}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              className="w-6 h-6"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-                    ))}
+                    <DatePicker
+                      defaultDate={new Date(2015, 1)}
+                      value={rawEndDate}
+                      onChange={(val: DateValue) => { dateChange(val); }}
+                    />
                   </div>
-
-                  <button className="btn btn-square mt-4" onClick={addAddress}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                      />
-                    </svg>
-                  </button>
-                </div>
-
-                <div className="mb-4">
-                  {account ? (
-                    <a
-                      className={cn("btn w-full", creating && "loading")}
-                      onClick={doCreate}
-                    >
-                      Create
-                    </a>
-                  ) : (
-                    <a className={cn("btn w-full")} onClick={connectWallet}>
-                      Connect Wallet
-                    </a>
-                  )}
                 </div>
               </div>
-            </>
+
+              <div>
+                <h1 className="text-xl mb-2 font-medium dark:text-gray-900">
+                  Admin Addresses
+                </h1>
+
+                <div className="flex items-center gap-4 flex-col">
+                  {address.map((item, index) => (
+                    <div className="flex w-full gap-2" key={index}>
+                      <input
+                        type="text"
+                        placeholder="Address"
+                        className="input input-bordered w-full"
+                        value={item}
+                        onChange={(e) => { onAddressChange(index, e.target.value); }
+                        }
+                      />
+                      {address.length > 1 && (
+                        <button
+                          className="btn btn-square"
+                          onClick={() => { removeAddress(index); }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="1.5"
+                            stroke="currentColor"
+                            className="w-6 h-6"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <button className="btn btn-square mt-4" onClick={addAddress}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="mb-4">
+                {account ? (
+                  <a
+                    className={cn("btn w-full", creating && "loading")}
+                    onClick={doCreate}
+                  >
+                    Create
+                  </a>
+                ) : (
+                  <a className={cn("btn w-full")} onClick={connectWallet}>
+                    Connect Wallet
+                  </a>
+                )}
+              </div>
+            </div>
           )}
 
           {activeTab === tabs[2] && (

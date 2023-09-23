@@ -1,10 +1,12 @@
+import type {
+  ColorScheme} from "@mantine/core";
 import {
-  ColorScheme,
   ColorSchemeProvider,
   MantineProvider,
 } from "@mantine/core";
 import { getCookie } from "cookies-next";
-import NextApp, { AppContext, AppProps } from "next/app";
+import type { AppContext, AppProps } from "next/app";
+import NextApp from "next/app";
 import Head from "next/head";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.css";
@@ -12,22 +14,18 @@ import "../styles/index.css";
 
 import { PrivyProvider } from "@privy-io/react-auth";
 import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
-
-import { configureChainsConfig } from "@/lib/wagmi";
-
-import { NextPage } from "next";
-import { ReactNode, useState } from "react";
+import type { NextPage } from "next";
+import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-
 import { optimism, optimismGoerli } from "wagmi/chains";
-
-import { env } from "@env";
 import { Toaster } from "sonner";
+import { env } from "@env";
+import { configureChainsConfig } from "@/lib/wagmi";
 
 const queryClient = new QueryClient();
 
 export type NextPageWithLayout<P = NonNullable<unknown>, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: any) => ReactNode;
+  getLayout?: (page: Element) => React.JSX.Element;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -37,11 +35,9 @@ type AppPropsWithLayout = AppProps & {
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
   const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
-  const toggleColorScheme = (value?: ColorScheme) =>
-    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
-
-  const getLayout = Component.getLayout ?? ((page) => page);
-
+  const toggleColorScheme = (value?: ColorScheme) => {
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"))
+  }
   return (
     <>
       <Head>
@@ -77,7 +73,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                 withNormalizeCSS
               >
                 <Toaster />
-                {getLayout(<Component {...pageProps} />)}
+                <Component {...pageProps} />
               </MantineProvider>
             </ColorSchemeProvider>
           </QueryClientProvider>

@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import { Loader } from "@mantine/core";
+import HistoryItem from "@/components/HistoryItem";
 import AppHeader from "@/components/layout/switchWallet";
 import axio from "@/lib/axios";
-import HistoryItem from "@/components/HistoryItem";
+import { Loader } from "@mantine/core";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+
 export default function PactDetail() {
   const [item, setItem] = useState({});
   const [loading, setLoading] = useState(true);
@@ -27,7 +28,7 @@ export default function PactDetail() {
       return;
     }
 
-    getPactDetail();
+    getPactDetail().then(console.log).catch(console.error);
   }, [address]);
 
   return (
@@ -39,7 +40,7 @@ export default function PactDetail() {
             <Loader color="cyan" />;
           </div>
         ) : (
-          <HistoryItem item={item} address={address} pictureVisible={true} />
+          <HistoryItem item={item} address={address} pictureVisible />
         )}
       </div>
     </div>

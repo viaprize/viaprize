@@ -1,20 +1,20 @@
-import React, { forwardRef, useState } from "react";
 import {
-  Avatar,
-  Text,
-  Group,
-  Menu,
-  Badge,
-  useMantineColorScheme,
-  Flex,
   ActionIcon,
-  Button,
-  Modal,
+  Avatar,
+  Badge,
   Card,
   CopyButton,
+  Flex,
+  Group,
+  Menu,
+  Modal,
+  Text,
   Tooltip,
+  useMantineColorScheme
 } from "@mantine/core";
-import Link from "next/link";
+import { useState } from "react";
+
+import useAppUser from "@/context/hooks/useAppUser";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import {
   IconArrowsLeftRight,
@@ -22,14 +22,13 @@ import {
   IconCopy,
   IconMoonStars,
   IconSearch,
-  IconSignRight,
+
   IconSun,
   IconUser,
 } from "@tabler/icons-react";
-import { toast } from "sonner";
 import { useRouter } from "next/router";
 import { IoExit } from "react-icons/io5";
-import useAppUser from "@/context/hooks/useAppUser";
+import { toast } from "sonner";
 import SwitchAccount from "./switchWallet";
 
 function getEmailInitials(email: string) {
@@ -42,7 +41,7 @@ function getEmailInitials(email: string) {
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const dark = colorScheme === "dark";
+
   const { wallets } = useWallets();
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
@@ -62,34 +61,32 @@ export default function HeaderLayout() {
         <Card py="5px">
           <Group>
             {wallets[0] ? displayAddress(wallets[0].address) : "No Wallet"}
-            {wallets[0] && (
-              <CopyButton value={wallets[0].address}>
-                {({ copied, copy }) => (
-                  <Tooltip
-                    label={copied ? "Copied" : "Copy"}
-                    withArrow
-                    position="right"
-                  >
-                    <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
-                      {copied ? (
-                        <IconCheck size="1rem" />
-                      ) : (
-                        <IconCopy size="1rem" />
-                      )}
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-              </CopyButton>
-            )}
+            {wallets[0] ? <CopyButton value={wallets[0].address}>
+              {({ copied, copy }) => (
+                <Tooltip
+                  label={copied ? "Copied" : "Copy"}
+                  withArrow
+                  position="right"
+                >
+                  <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
+                    {copied ? (
+                      <IconCheck size="1rem" />
+                    ) : (
+                      <IconCopy size="1rem" />
+                    )}
+                  </ActionIcon>
+                </Tooltip>
+              )}
+            </CopyButton> : null}
           </Group>
         </Card>
         <ActionIcon
           variant="outline"
-          color={dark ? "yellow.7" : "blue.8"}
-          onClick={() => toggleColorScheme()}
+          color={colorScheme === "dark" ? "yellow.7" : "blue.8"}
+          onClick={() => { toggleColorScheme(); }}
           title="Toggle color scheme"
         >
-          {dark ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
+          {colorScheme === "dark" ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
         </ActionIcon>
         <ProfileMenu />
       </Flex>
@@ -114,7 +111,7 @@ function ProfileMenu() {
       toast.error("Error logging out");
     }
   };
-  const { wallets } = useWallets();
+
   return (
     <>
       <Group position="center">
@@ -139,7 +136,7 @@ function ProfileMenu() {
               <Menu.Item
                 icon={<IconUser size={14} />}
                 onClick={() => {
-                  router.push("/profile");
+                  router.push("/profile").then(console.log).catch(console.error);
                 }}
               >
                 View Profile
@@ -161,7 +158,7 @@ function ProfileMenu() {
 
             {/* <Menu.Label>Danger zone</Menu.Label> */}
             <Menu.Item
-              onClick={() => setSwitchWallet(true)}
+              onClick={() => { setSwitchWallet(true); }}
               icon={<IconArrowsLeftRight size={14} />}
             >
               Switch Wallet
@@ -179,7 +176,7 @@ function ProfileMenu() {
                 color="green"
                 icon={<IconUser size={14} />}
                 onClick={() => {
-                  router.push("/");
+                  router.push("/").then(console.log).catch(console.error);
                 }}
               >
                 Login
@@ -191,7 +188,7 @@ function ProfileMenu() {
       <Modal
         size="lg"
         opened={switchWallet}
-        onClose={() => setSwitchWallet(false)}
+        onClose={() => { setSwitchWallet(false); }}
         title="Switch Wallets"
       >
         <SwitchAccount />

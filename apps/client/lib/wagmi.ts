@@ -1,4 +1,5 @@
-import { Chain, configureChains, createConfig } from "wagmi";
+import type { Chain} from "wagmi";
+import { configureChains, createConfig } from "wagmi";
 import { optimism, optimismGoerli } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { env } from "@env";

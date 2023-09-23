@@ -1,9 +1,10 @@
 import { Group, Text, useMantineTheme, rem, Button } from "@mantine/core";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
+import type {
+  DropzoneProps,
+  FileWithPath} from "@mantine/dropzone";
 import {
   Dropzone,
-  DropzoneProps,
-  FileWithPath,
   IMAGE_MIME_TYPE,
 } from "@mantine/dropzone";
 import { useState } from "react";
@@ -36,7 +37,7 @@ export default function ImageComponent(props: ImageComponentProps) {
       {props.files.length == 0 ? (
         <Dropzone
           onDrop={props.setFiles}
-          onReject={(files) => console.log("rejected files", files)}
+          onReject={(files) => { console.log("rejected files", files); }}
           maxSize={3 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
           maxFiles={1}

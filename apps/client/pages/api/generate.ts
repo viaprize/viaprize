@@ -1,5 +1,5 @@
-import axios from "axios";
-import { NextApiRequest, NextApiResponse } from "next";
+
+import type { NextApiRequest, NextApiResponse } from "next";
 import { OpenAI } from "openai";
 
 export default async function handler(
@@ -7,7 +7,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const { prompt } = JSON.parse(req.body) as { prompt: string };
+    const body = req.body as string;
+    const { prompt } = JSON.parse(body) as { prompt: string };
 
     const openaiKey = process.env.OPENAI_API_KEY;
     if (!openaiKey) {
@@ -46,11 +47,17 @@ export default async function handler(
     });
 
     const finalRes = response.choices[0].message.content;
-    console.log(response.usage);
+    
 
     res.status(200).send(finalRes);
   } catch (error) {
-    console.error("Error generating:", error);
-    res.status(500).json({ error: "Failed to generate", message: error });
+    const errorMessage = error as string;
+
+res.status(500).json({
+  error: "Failed to generate",
+  message: errorMessage
+});
+    
+   
   }
 }

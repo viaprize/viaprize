@@ -1,5 +1,4 @@
 import React from "react";
-
 import {
   EthereumClient,
   w3mConnectors,
@@ -9,12 +8,12 @@ import { Web3Modal } from "@web3modal/react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { polygonMumbai } from "wagmi/chains";
 
-type WagmiProviderType = {
+interface WagmiProviderType {
   children: React.ReactNode;
-};
+}
 
 const chains = [polygonMumbai];
-const projectId = process.env.NEXT_PUBLIC_W3C_PID as string;
+const projectId = process.env.NEXT_PUBLIC_W3C_PID!;
 
 const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
 const wagmiConfig = createConfig({
@@ -24,13 +23,13 @@ const wagmiConfig = createConfig({
 });
 
 const ethereumClient = new EthereumClient(wagmiConfig, chains);
-const WagmiProvider = ({ children }: WagmiProviderType) => {
+function WagmiProvider({ children }: WagmiProviderType) {
   return (
     <>
       <WagmiConfig config={wagmiConfig}>{children}</WagmiConfig>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </>
   );
-};
+}
 
 export default WagmiProvider;

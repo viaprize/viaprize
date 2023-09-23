@@ -3,7 +3,7 @@ import { Card, Flex, Group, Image } from "@mantine/core";
 import { TextEditor } from "../richtexteditor/textEditor";
 import { PrizeCreationTemplate } from "../Prize/prizepage/defaultcontent";
 import PrizeFunderCard from "../Prize/prizepage/prizeFunderCard";
-import { AppUser } from "../../types/app-user";
+import type { AppUser } from "../../types/app-user";
 
 export default function ViewDetails({
   admins,

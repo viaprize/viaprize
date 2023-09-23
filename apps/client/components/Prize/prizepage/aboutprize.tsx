@@ -1,6 +1,6 @@
-import { TextEditor } from "@/components/richtexteditor/textEditor";
 import { Badge, Group, Text, Title } from "@mantine/core";
 import React from "react";
+import { TextEditor } from "@/components/richtexteditor/textEditor";
 import { PrizeCreationTemplate } from "./defaultcontent";
 
 export default function AboutPrize() {

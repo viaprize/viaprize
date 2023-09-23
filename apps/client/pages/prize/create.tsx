@@ -6,20 +6,20 @@ import {
   SimpleGrid,
   TextInput,
 } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
+import type { ReactElement } from "react";
+import { useState } from "react";
+
+import usePrizeProposal from "@/components/Prize/hooks/usePrizeProposal";
+import AppShellLayout from "@/components/layout/appshell";
+import type { FileWithPath } from "@mantine/dropzone";
+import { usePrivy } from "@privy-io/react-auth";
+import { toast } from "sonner";
+import { useMutation } from "wagmi";
 import ImageComponent from "../../components/Prize/dropzone";
 import { TextEditor } from "../../components/richtexteditor/textEditor";
-import React, { ReactElement, useState } from "react";
-import { IconNewSection, IconPlus } from "@tabler/icons-react";
-import { JSONContent } from "@tiptap/react";
-import { PrizeCreationTemplate } from "@/components/Prize/prizepage/defaultcontent";
-import usePrizeProposal from "@/components/Prize/hooks/usePrizeProposal";
-import { toast } from "sonner";
-import { usePrivy } from "@privy-io/react-auth";
-import { FileWithPath } from "@mantine/dropzone";
-import AppShellLayout from "@/components/layout/appshell";
-import { useMutation } from "wagmi";
 
-const Prize = () => {
+function Prize() {
   const [address, setAddress] = useState([""]);
   const [title, setTitle] = useState("");
   const [richtext, setRichtext] = useState("");
@@ -33,7 +33,7 @@ const Prize = () => {
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
   const onAddressChange = (index: number, value: string) => {
-    setAddress((prev: any) => {
+    setAddress((prev) => {
       prev[index] = value;
       return [...prev];
     });
@@ -47,14 +47,14 @@ const Prize = () => {
     await addProposalsMutation({
       admins: address,
       description: richtext,
-      isAutomatic: isAutomatic,
+      isAutomatic,
       voting_time: votingTime,
       proposer_address: "",
       priorities: [],
       proficiencies: [],
       submission_time: proposalTime,
       images: images ? [images] : [],
-      title: title,
+      title,
     });
   };
 
@@ -72,9 +72,9 @@ const Prize = () => {
     }
   };
 
-  const useTemplateForDescription = () => {
-    setRichtext(PrizeCreationTemplate);
-  };
+  // const useTemplateForDescription = () => {
+  //   setRichtext(PrizeCreationTemplate);
+  // };
 
   const addAddress = () => {
     setAddress((prev: string[]) => {
@@ -84,7 +84,7 @@ const Prize = () => {
 
   const removeAddress = (index: number) => {
     setAddress((prev) => {
-      const arr = JSON.parse(JSON.stringify(prev));
+      const arr: string[] = JSON.parse(JSON.stringify(prev));
       arr.splice(index, 1);
       return [...arr];
     });
@@ -96,7 +96,7 @@ const Prize = () => {
         className="my-2"
         placeholder="Title"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={(e) => { setTitle(e.target.value); }}
       />
       <TextEditor
         richtext={richtext}
@@ -118,7 +118,7 @@ const Prize = () => {
           />
           <Checkbox
             checked={isAutomatic}
-            onChange={(e) => setIsAutomatic(e.currentTarget.checked)}
+            onChange={(e) => { setIsAutomatic(e.currentTarget.checked); }}
             className="my-2 cursor-pointer"
             label="Automatically start accepting funds after getting approval from the admin"
           />
@@ -129,7 +129,7 @@ const Prize = () => {
           stepHoldInterval={100}
           value={votingTime}
           defaultValue={0}
-          onChange={(e) => setVotingTime(e || 0)}
+          onChange={(e) => { setVotingTime(e || 0); }}
         />
 
         {address.map((item, index) => (
@@ -139,25 +139,25 @@ const Prize = () => {
               placeholder="Address"
               className=""
               value={item}
-              onChange={(e) => onAddressChange(index, e.target.value)}
+              onChange={(e) => { onAddressChange(index, e.target.value); }}
             />
             {address.length > 1 && (
               <Button
                 color="red"
                 className="my-2"
-                onClick={() => removeAddress(index)}
+                onClick={() => { removeAddress(index); }}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   className="w-6 h-6"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
@@ -184,7 +184,7 @@ const Prize = () => {
       </Button>
     </div>
   );
-};
+}
 
 Prize.getLayout = function getLayout(page: ReactElement) {
   return <AppShellLayout>{page}</AppShellLayout>;

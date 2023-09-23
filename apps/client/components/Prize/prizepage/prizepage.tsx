@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import PrizePageTabs from "./prizepagetabs";
 import {
   ActionIcon,
   Button,
@@ -11,6 +10,7 @@ import {
   Title,
 } from "@mantine/core";
 import { IconSettings } from "@tabler/icons-react";
+import PrizePageTabs from "./prizepagetabs";
 import Submissions from "./submissions";
 
 export default function PrizePageComponent() {

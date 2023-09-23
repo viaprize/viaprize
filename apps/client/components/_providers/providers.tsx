@@ -2,12 +2,12 @@
 import React from "react";
 import WagmiProvider from "./WagmiProvider";
 
-type ProviderType = {
+interface ProviderType {
   children: React.ReactNode;
-};
+}
 
-const Providers = ({ children }: ProviderType) => {
+function Providers({ children }: ProviderType) {
   return <WagmiProvider>{children}</WagmiProvider>;
-};
+}
 
 export default Providers;

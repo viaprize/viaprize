@@ -1,8 +1,9 @@
-import React, { ReactElement, useState } from "react";
+import type { JSONContent } from "@tiptap/react";
 import { Editor as NovalEditor } from "novel";
-import { JSONContent } from "@tiptap/react";
+import type { ReactElement } from "react";
+import { useState } from "react";
+
 import { PrizeSubmissionTemplate } from "@/components/Prize/prizepage/defaultcontent";
-import { Button } from "@mantine/core";
 import AppShellLayout from "@/components/layout/appshell";
 
 function EditorsPage() {

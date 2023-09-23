@@ -1,22 +1,22 @@
 // import { useQuery, useMutation } from 'react-query';
 // import axios from 'axios';
 // import myAxios from '@/lib/axios';
-import {
+import { usePrivy } from "@privy-io/react-auth";
+import { useState } from "react";
+import { makeStorageClient } from "@/components/_providers/WebClient";
+import myAxios from "@/lib/axios";
+import type {
   CreatePrizeProposalDto,
   PrizeProposalQueryParams,
   PrizeProposals,
   PrizeProposalsList,
-} from "./../../../types/prizes";
-import { makeStorageClient } from "@/components/_providers/WebClient";
-import myAxios from "@/lib/axios";
-import { usePrivy } from "@privy-io/react-auth";
-import { useState } from "react";
+} from "../../../types/prizes";
 
-function objectToRecord(obj: { [key: string]: any }): Record<string, string> {
-  return Object.entries(obj).reduce((record, [key, value]) => {
+function objectToRecord(obj: Record<string, any>): Record<string, string> {
+  return Object.entries(obj).reduce<Record<string, string>>((record, [key, value]) => {
     record[key] = value.toString();
     return record;
-  }, {} as Record<string, string>);
+  }, {});
 }
 
 async function storeFiles(files: File[]) {
@@ -74,7 +74,7 @@ export default function usePrizeProposal() {
       return;
     }
     const res = await myAxios.get(
-      `/prizes/proposals/user/${user?.id}${queryString.toString()}`
+      `/prizes/proposals/user/${user.id}${queryString.toString()}`
     );
     console.log("res", "acxi0", res);
     return res.data as PrizeProposalsList;

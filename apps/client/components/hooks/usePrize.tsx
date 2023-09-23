@@ -1,7 +1,12 @@
-import { useContractWrite, useContractReads } from "wagmi";
+/* eslint-disable */
+/**
+ * Because eslint sometimes needs to shut up and not complain
+ */
+
 import { getContract } from "@wagmi/core";
+import type { AbiItem } from "viem";
+import { useContractReads, useContractWrite } from "wagmi";
 import viaPrize from "./abi/viaPrize.json";
-import { AbiItem } from "viem";
 
 export const usePrize = () => {
   const contract = getContract({

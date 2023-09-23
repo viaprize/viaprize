@@ -11,10 +11,10 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
-import ViewDetails from "./details";
-import usePrizeProposal from "../Prize/hooks/usePrizeProposal";
 import { useMutation } from "react-query";
-import { AppUser } from "../../types/app-user";
+import usePrizeProposal from "../Prize/hooks/usePrizeProposal";
+import type { AppUser } from "../../types/app-user";
+import ViewDetails from "./details";
 
 interface AdminCardProps {
   images: string[];
@@ -78,9 +78,9 @@ const AdminCard: React.FC<AdminCardProps> = ({
           </Text>
         </Group>
         <Group>
-          <Button onClick={() => setDetailsOpen(true)}>View Details</Button>
+          <Button onClick={() => { setDetailsOpen(true); }}>View Details</Button>
 
-          <Button color="red" onClick={() => setRejectOpen(true)}>
+          <Button color="red" onClick={() => { setRejectOpen(true); }}>
             Reject
           </Button>
           <Button
@@ -96,7 +96,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
       </Card>
       <Modal
         opened={rejectOpen}
-        onClose={() => setRejectOpen(false)}
+        onClose={() => { setRejectOpen(false); }}
         title="Write your rejection reason"
       >
         <Textarea
@@ -106,7 +106,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
           radius="md"
           withAsterisk
           value={comment}
-          onChange={(event) => setComment(event.currentTarget.value)}
+          onChange={(event) => { setComment(event.currentTarget.value); }}
         />
         <Group position="right" my="md">
           <Button
@@ -114,7 +114,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
             onClick={async () => {
               await rejectProposalMutation.mutateAsync({
                 proposalId: id,
-                comment: comment,
+                comment,
               });
               window.location.reload();
               setRejectOpen(false);
@@ -128,7 +128,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
       <Modal
         size="xl"
         opened={detailsOpen}
-        onClose={() => setDetailsOpen(false)}
+        onClose={() => { setDetailsOpen(false); }}
         title="Prize details"
       >
         <ViewDetails

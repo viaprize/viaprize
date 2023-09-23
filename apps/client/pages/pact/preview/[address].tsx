@@ -1,13 +1,14 @@
-import config from "@/config";
-import { PactDetail } from "@/lib/types";
-import Eth from "web3-eth";
+import type { GetServerSideProps } from "next";
+import Link from "next/link";
+import { FaEthereum } from "react-icons/fa";
 import Web3 from "web3";
+import Eth from "web3-eth";
+import type { AbiItem } from "web3-utils";
+
+import config from "@/config";
 import MulticallABI from "@/contract/abi/Multicall.json";
 import PactABI from "@/contract/abi/Pact.json";
-import { AbiItem } from "web3-utils";
-import { FaEthereum } from "react-icons/fa";
-import Link from "next/link";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import type { PactDetail } from "@/lib/types";
 
 interface PackPreviewProp {
   item: PactDetail;
@@ -16,19 +17,20 @@ function formatEtherValue(weiAmount: number): string {
   const etherAmount = weiAmount / 10 ** 18;
 
   if (etherAmount >= 0.001) {
-    return etherAmount.toFixed(3).replace(/\.?0+$/, "") + " ETH";
+    return `${etherAmount.toFixed(3).replace(/\.?0+$/, "")} ETH`;
   } else if (etherAmount >= 1e-6) {
     const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
-    return etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, "") + " ETH";
+    return `${etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, "")} ETH`;
   } else if (etherAmount >= 1e-18) {
-    const decimalPlaces = Math.max(0, 18 - Math.ceil(Math.log10(etherAmount)));
-    return etherAmount.toFixed(10).replace(/\.?0+$/, "") + " ETH";
-  } else {
-    return etherAmount.toExponential(6).replace(/\.?0+e/, "e") + " ETH";
+
+    return `${etherAmount.toFixed(10).replace(/\.?0+$/, "")} ETH`;
   }
+  return `${etherAmount.toExponential(6).replace(/\.?0+e/, "e")} ETH`;
+
 }
 const getPactInfo = async (pactAddress: string) => {
   const web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
+  /* eslint-disable -- Because i dont know the return type*/
   const multicall = new web3.eth.Contract(
     MulticallABI as AbiItem[],
     config.contracts.multicall3
@@ -46,11 +48,11 @@ const getPactInfo = async (pactAddress: string) => {
   const res = await multicall.methods.aggregate(calls).call();
 
   return {
-    safe: web3.eth.abi.decodeParameter("address", res["returnData"][0]),
-    resolved: web3.eth.abi.decodeParameter("bool", res["returnData"][1]),
-    resolvable: web3.eth.abi.decodeParameter("bool", res["returnData"][2]),
-    end: web3.eth.abi.decodeParameter("uint256", res["returnData"][3]),
-    sum: sum,
+    safe: web3.eth.abi.decodeParameter("address", res.returnData[0]),
+    resolved: web3.eth.abi.decodeParameter("bool", res.returnData[1]),
+    resolvable: web3.eth.abi.decodeParameter("bool", res.returnData[2]),
+    end: web3.eth.abi.decodeParameter("uint256", res.returnData[3]),
+    sum,
   };
 };
 async function getPactItem(address: string) {
@@ -72,9 +74,9 @@ async function getPactItem(address: string) {
   const eth = new Eth(provider);
   return {
     ...res,
-    //@ts-ignore
+    //@ts-expect-error
     balance: web3.utils.fromWei(await eth.getBalance(address)),
-    ...(await getPactInfo(address as string)),
+    ...(await getPactInfo(address)),
   } as unknown as PactDetail;
 }
 export default async function Page({ item }: PackPreviewProp) {
@@ -90,15 +92,15 @@ export default async function Page({ item }: PackPreviewProp) {
   return (
     <div className="card bg-base-100 w-72 h-[700px]  shadow-xl dark:text-gray-300">
       <img
-        src={"https://picsum.photos/200"}
+        src="https://picsum.photos/200"
         style={{
           borderRadius: "5px",
 
           marginTop: "8px",
           marginInline: "auto",
         }}
-        width={"90%"}
-        height={"200px"}
+        width="90%"
+        height="200px"
       />
       <div className="card-body justify-between  break-words">
         <Link
@@ -127,23 +129,19 @@ export default async function Page({ item }: PackPreviewProp) {
           </a>
         </div>
 
-        {item.resolved && item.safe && (
-          <div>
-            <div className="font-bold mb-1">Safe Address: </div>
-            <a
-              href={`${config.scanUrl}/address/${item.safe}`}
-              rel="noreferrer"
-              className="font-mono mt-1 underline"
-              target="_blank"
-            >
-              {item.safe}
-            </a>{" "}
-          </div>
-        )}
+        {item.resolved && item.safe ? <div>
+          <div className="font-bold mb-1">Safe Address: </div>
+          <a
+            href={`${config.scanUrl}/address/${item.safe}`}
+            rel="noreferrer"
+            className="font-mono mt-1 underline"
+            target="_blank"
+          >
+            {item.safe}
+          </a>{" "}
+        </div> : null}
 
-        {item.resolved && (
-          <button className="btn btn-success text-white mt-2">Resolved</button>
-        )}
+        {item.resolved ? <button className="btn btn-success text-white mt-2">Resolved</button> : null}
         {!item.resolved && (
           <>
             <p className="text-yellow-700 font-bold dark:text-yellow-400 text-md mt-8">
@@ -221,7 +219,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       item: {
         ...res,
-        //@ts-ignore
+        //@ts-expect-error
         balance: web3.utils.fromWei(await eth.getBalance(address)),
         ...(await getPactInfo(address as string)),
       } as unknown as PactDetail,

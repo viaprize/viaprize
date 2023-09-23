@@ -1,7 +1,7 @@
 import { useForm } from "@mantine/form";
 import { TextInput, Button, Group, Box } from "@mantine/core";
 
-const PrizeForm = () => {
+function PrizeForm() {
   const form = useForm({
     initialValues: {
       Total_Funds: "",
@@ -56,6 +56,6 @@ const PrizeForm = () => {
       </Group>
     </Box>
   );
-};
+}
 
 export default PrizeForm;

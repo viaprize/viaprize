@@ -12,12 +12,12 @@ export default function Submissions() {
         Submissions
       </Title>
       <SubmissionsCard
-        fullname={"testing name"}
-        submission={"hello thsi sht etex ofdsafljshfkjas"}
-        wallet={"fasddskjvhksjdvfsda"}
-        time={"10:2342"}
+        fullname="testing name"
+        submission="hello thsi sht etex ofdsafljshfkjas"
+        wallet="fasddskjvhksjdvfsda"
+        time="10:2342"
         votes={0}
-        submissionId={"faskj"}
+        submissionId="faskj"
       />
     </div>
   );

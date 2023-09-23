@@ -3,9 +3,10 @@ import { SearchFilters } from "@/components/ExplorePrize/SearchFilters";
 import usePrizeProposal from "@/components/Prize/hooks/usePrizeProposal";
 import AppShellLayout from "@/components/layout/appshell";
 import { usePrivy } from "@privy-io/react-auth";
-import { ReactElement, useEffect } from "react";
+import type { ReactElement } from "react";
+import { useEffect } from "react";
 
-const ExplorePage = () => {
+function ExplorePage() {
   const { getProposalsOfUser } = usePrizeProposal();
   const { user } = usePrivy();
 
@@ -14,7 +15,7 @@ const ExplorePage = () => {
 
     getProposalsOfUser().then((res) => {
       console.log(res, "Res");
-    });
+    }).catch(console.error);
   }, []);
   if (!user) {
     return null;
@@ -61,7 +62,7 @@ const ExplorePage = () => {
       </div>
     </div>
   );
-};
+}
 
 ExplorePage.getLayout = function getLayout(page: ReactElement) {
   return <AppShellLayout>{page}</AppShellLayout>;

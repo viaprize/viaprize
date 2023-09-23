@@ -1,6 +1,5 @@
-import React from "react";
+import { Button, Text, Title } from "@mantine/core";
 import { useRouter } from "next/router";
-import { Button, Title, Text } from "@mantine/core";
 
 export default function Example() {
   const router = useRouter();
@@ -8,7 +7,7 @@ export default function Example() {
   return (
     <div className="flex py-24 w-full items-center justify-center">
       <div className="w-full max-w-lg flex flex-col justify-center items-center">
-        <img src="/viaprize.png" className="max-w-sm" />
+        <img alt="viaprize logo" src="/viaprize.png" className="max-w-sm" />
         <Title className="my-4" order={2}>
           Welcome to Viaprize
         </Title>

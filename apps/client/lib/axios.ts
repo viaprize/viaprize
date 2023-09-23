@@ -1,6 +1,7 @@
 import { env } from "@env";
-import { getAccessToken, usePrivy } from "@privy-io/react-auth";
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { getAccessToken } from "@privy-io/react-auth";
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios";
 import { toast } from "sonner";
 
 /**
@@ -45,7 +46,7 @@ myAxios.interceptors.request.use(async (config: AxiosRequestConfig) => {
 
   if (accessToken) {
     config.headers = config.headers || {}; // Initialize headers if they are undefined
-    config.headers["Authorization"] = `Bearer ${accessToken}`;
+    config.headers.Authorization = `Bearer ${accessToken}`;
   }
 
   // Important: request interceptors must return the request.

@@ -1,5 +1,3 @@
-import useAppUser from "@/context/hooks/useAppUser";
-import myAxios from "@/lib/axios";
 import {
   Autocomplete,
   Button,
@@ -8,9 +6,10 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { usePrivy } from "@privy-io/react-auth";
+
+import useAppUser from "@/context/hooks/useAppUser";
 import { useRouter } from "next/router";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation } from "react-query";
 import { toast } from "sonner";
 
@@ -21,13 +20,10 @@ export default function Details() {
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState("");
   const { createNewUser } = useAppUser();
-  /**
-   * Mutation for logging in the user.
-   * @type {import('react-query').UseMutationResult<any, unknown>}
-   */
+
   const uploadUserMutation = useMutation(createNewUser, {
-    onSuccess: (data) => {
-      router.push("/prize/explore-prizes");
+    onSuccess: () => {
+      router.push("/prize/explore-prizes").then(console.log).catch(console.error);
     },
   });
 
@@ -52,13 +48,13 @@ export default function Details() {
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     try {
       toast.promise(
         uploadUserMutation.mutateAsync({
           email,
           name,
-        }),
+        }).then(console.log).catch(console.error),
         {
           loading: "Logging In",
           success: "Logged In Successfully",
@@ -76,7 +72,7 @@ export default function Details() {
         <Text>Enter your details to get started</Text>
         <TextInput
           value={name}
-          onChange={(e) => setName(e.currentTarget.value)}
+          onChange={(e) => { setName(e.currentTarget.value); }}
           label="Name"
           placeholder="Enter your name"
           my="sm"
