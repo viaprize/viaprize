@@ -13,17 +13,18 @@ export default function Details() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState('');
-  const { createNewUser } = useAppUser()
+  const [username, setUsername] = useState('');
+  const { createNewUser } = useAppUser();
   /**
    * Mutation for logging in the user.
    * @type {import('react-query').UseMutationResult<any, unknown>}
    */
-  const uploadUserMutation = useMutation(createNewUser,{
+  const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: (data) => {
       router.push('/prize/explore-prizes');
-    }
+    },
   });
-  
+
   const router = useRouter();
   const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
@@ -46,15 +47,15 @@ export default function Details() {
       toast.promise(
         uploadUserMutation.mutateAsync({
           email,
-          name
+          name,
+          username,
         }),
         {
           loading: 'Logging In',
           success: 'Logged In Successfully',
           error: 'Error Logging In',
-        },
+        }
       );
-      
     } catch (e) {
       console.log(e);
     }
@@ -64,6 +65,13 @@ export default function Details() {
     <Center className="h-[80dvh]">
       <Card shadow="md" radius="md" withBorder className="w-[50vw]">
         <Text>Enter your details to get started</Text>
+        <TextInput
+          value={username}
+          onChange={(e) => setUsername(e.currentTarget.value)}
+          label="Username"
+          placeholder="Enter your username"
+          my="sm"
+        />
         <TextInput
           value={name}
           onChange={(e) => setName(e.currentTarget.value)}
