@@ -1,37 +1,33 @@
-import "../styles/globals.css";
-import "../styles/index.css";
-import "react-toastify/dist/ReactToastify.css";
-import NextApp, { AppProps, AppContext } from "next/app";
-import { getCookie, setCookie } from "cookies-next";
-import Head from "next/head";
 import {
-  MantineProvider,
   ColorScheme,
   ColorSchemeProvider,
+  MantineProvider,
 } from "@mantine/core";
-import { Web3ContextProvider } from "@/context/Web3Context";
-import { PrivyProvider, User } from "@privy-io/react-auth";
+import { getCookie } from "cookies-next";
+import NextApp, { AppContext, AppProps } from "next/app";
+import Head from "next/head";
+import "react-toastify/dist/ReactToastify.css";
+import "../styles/globals.css";
+import "../styles/index.css";
+
+import { PrivyProvider } from "@privy-io/react-auth";
 import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
-import { WagmiConfig, configureChains } from "wagmi";
-import wagmiConfig, { configureChainsConfig } from "@/lib/wagmi";
-import Header from "@/components/layout/headerLayout";
-import { mainnet, goerli } from "@wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
-import { infuraProvider } from "wagmi/providers/infura";
-import { ReactElement, ReactNode, useState } from "react";
+
+import { configureChainsConfig } from "@/lib/wagmi";
+
 import { NextPage } from "next";
+import { ReactNode, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ToastContainer } from "react-toastify";
-import { Toaster } from "sonner";
+
 import { optimism, optimismGoerli } from "wagmi/chains";
 
-import config from "@/config";
 import { env } from "@env";
+import { Toaster } from "sonner";
 
 const queryClient = new QueryClient();
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode;
+export type NextPageWithLayout<P = NonNullable<unknown>, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: any) => ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {
