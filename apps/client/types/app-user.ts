@@ -14,4 +14,5 @@ export class CreateUserDto {
   email: string;
   user_id: string;
   name: string;
+  username: string;
 }
