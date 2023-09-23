@@ -1,22 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Headers,
-} from '@nestjs/common';
-import { PactsService } from './pacts.service';
+import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
+import { ApiBody, ApiHeader, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreatePactDto } from './dto/create-pact.dto';
-import {
-  ApiBody,
-  ApiHeader,
-  ApiOperation,
-  ApiParam,
-  ApiTags,
-} from '@nestjs/swagger';
+import { PactsService } from './pacts.service';
 @ApiTags('pacts')
 @Controller('pacts')
 export class PactsController {
