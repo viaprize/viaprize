@@ -7,6 +7,9 @@ importers:
       eslint:
         specifier: ^8.48.0
         version: 8.48.0
+      husky:
+        specifier: ^8.0.3
+        version: 8.0.3
       prettier:
         specifier: ^3.0.3
         version: 3.0.3
@@ -21541,6 +21544,12 @@ packages:
     dependencies:
       ms: 2.1.3
     dev: false
+
+  /husky@8.0.3:
+    resolution: {integrity: sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: true
 
   /hygen@6.2.11:
     resolution: {integrity: sha512-t6/zLI2XozP5gvV74nnl8LZSbwpVNFUkUs/O9DwuOdiiBbws5k4AQNVwKZ9FGzcKjdJ5EBBYkVzlcUHkLyY0FQ==}
