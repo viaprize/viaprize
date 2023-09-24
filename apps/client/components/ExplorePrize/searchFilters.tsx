@@ -1,24 +1,25 @@
-import { TextInput ,Text, Button, Group, Flex} from "@mantine/core"
-import { IconChevronDown, IconSearch } from "@tabler/icons-react"
-import Filter from "./filterComponent"
+import { Group, Text, TextInput } from "@mantine/core";
+import { IconSearch } from "@tabler/icons-react";
 
-
-export const SearchFilters = () => {
+export function SearchFilters() {
   return (
     <div className="p-5">
-        <Text size='25px' weight={500}>Explore Prizes</Text>
-        <Text size='sm' weight={300}>you can explore prizes and work on them</Text>
-        <Group position="apart" mt="md" mb="xs">
+      <Text size="25px" weight={500}>
+        Explore Prizes
+      </Text>
+      <Text size="sm" weight={300}>
+        you can explore prizes and work on them
+      </Text>
+      <Group mb="xs" mt="md" position="apart">
         <TextInput
-        style={{ width: '500px' }}
-      placeholder="Search"
-      icon={<IconSearch size="1rem" />}
-    />
-    {/* <Flex  gap='md'>
+          icon={<IconSearch size="1rem" />}
+          placeholder="Search"
+          style={{ width: "500px" }}
+        />
+        {/* <Flex  gap='md'>
     <Filter />
     </Flex> */}
-    </Group>
-
+      </Group>
     </div>
-  )
+  );
 }

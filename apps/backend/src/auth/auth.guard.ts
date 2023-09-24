@@ -6,11 +6,10 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 
-import { Request } from 'express';
-import { PrivyClient } from '@privy-io/server-auth';
 import { ConfigService } from '@nestjs/config';
+import { PrivyClient } from '@privy-io/server-auth';
+import { Request } from 'express';
 import { Exception } from 'handlebars';
 
 @Injectable()
@@ -24,8 +23,15 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException();
     }
-    const appId = this.configService.getOrThrow<string>('PRIVY_APP_ID');
-    const appSecret = this.configService.getOrThrow<string>('PRIVY_APP_SECRET');
+    const appId = this.configService.getOrThrow<string>('PRIVY_APP_ID', {
+      infer: true,
+    });
+    const appSecret = this.configService.getOrThrow<string>(
+      'PRIVY_APP_SECRET',
+      {
+        infer: true,
+      },
+    );
 
     const privy = new PrivyClient(appId, appSecret);
     try {
