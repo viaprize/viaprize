@@ -18,12 +18,12 @@ export default function Details() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const { createNewUser } = useAppUser();
-
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: () => {
-      router.push("/prize/explore-prizes").then(console.log).catch(console.error);
+      router.push('/prize/explore-prizes').then(console.log).catch(console.error);
     },
   });
 
@@ -54,11 +54,12 @@ export default function Details() {
         uploadUserMutation.mutateAsync({
           email,
           name,
-        }).then(console.log).catch(console.error),
+          username,
+        }),
         {
-          loading: "Logging In",
-          success: "Logged In Successfully",
-          error: "Error Logging In",
+          loading: 'Logging In',
+          success: 'Logged In Successfully',
+          error: 'Error Logging In',
         }
       );
     } catch (e) {
@@ -70,6 +71,13 @@ export default function Details() {
     <Center className="h-[80dvh]">
       <Card shadow="md" radius="md" withBorder className="w-[50vw]">
         <Text>Enter your details to get started</Text>
+        <TextInput
+          value={username}
+          onChange={(e) => setUsername(e.currentTarget.value)}
+          label="Username"
+          placeholder="Enter your username"
+          my="sm"
+        />
         <TextInput
           value={name}
           onChange={(e) => { setName(e.currentTarget.value); }}
