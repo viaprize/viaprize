@@ -3,7 +3,6 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "test": "turbo run test",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "tsc --pretty --noEmit",
@@ -13,25 +12,11 @@
   },
   "devDependencies": {
     "eslint": "^8.48.0",
-    "husky": "^8.0.3",
-    "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
     "tsconfig": "workspace:*",
     "turbo": "latest"
   },
-  "lint-staged": {
-    "apps/**/*.{js,ts,jsx,tsx}": [
-      "eslint --fix"
-    ],
-    "packages/ui/**/*.{js,ts,jsx,tsx}": [
-      "eslint --fix"
-    ],
-    "*.json": [
-      "prettier --write"
-    ]
-  },
   "name": "viaprize",
-  "packageManager": "yarn@1.22.19",
   "workspaces": [
     "apps/*",
     "packages/*"
