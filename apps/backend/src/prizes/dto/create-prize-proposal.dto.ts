@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Priority, Proficiency } from '../entities/types';
 import {
   IsArray,
   IsBoolean,
@@ -8,7 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { User } from 'src/users/entities/user.entity';
+import { Priority, Proficiency } from '../entities/types';
 
 export class CreatePrizeProposalDto {
   @ApiProperty({
