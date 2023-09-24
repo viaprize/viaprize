@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreatePrizeProposalDto } from '../dto/create-prize-proposal.dto';
-import { UpdatePrizeDto } from '../dto/update-prize-proposal.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PrizeProposals } from '../entities/prize-proposals.entity';
-import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { AllConfigType, AppConfig } from 'src/config/config.type';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AppConfig } from 'src/config/config.type';
 import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/users/users.service';
+import { IPaginationOptions } from 'src/utils/types/pagination-options';
+import { Repository } from 'typeorm';
+import { CreatePrizeProposalDto } from '../dto/create-prize-proposal.dto';
+import { UpdatePrizeDto } from '../dto/update-prize-proposal.dto';
+import { PrizeProposals } from '../entities/prize-proposals.entity';
 
 @Injectable()
 export class PrizeProposalsService {

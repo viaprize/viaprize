@@ -1,10 +1,8 @@
-import React from 'react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { Badge, Card, Checkbox, Group, Text } from '@mantine/core';
-import clsx from 'clsx';
+import { Badge, Card, Group } from "@mantine/core";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
+import { usePrivyWagmi } from "@privy-io/wagmi-connector";
 
-export default  function SwitchAccount()  {
+export default function SwitchAccount() {
   const { login, ready, authenticated } = usePrivy();
   const { wallets } = useWallets();
   const { wallet: activeWallet, setActiveWallet } = usePrivyWagmi();
@@ -13,7 +11,15 @@ export default  function SwitchAccount()  {
 
   if (!authenticated) {
     // Use Privy login instead of wagmi's connect
-    return <button onClick={() => login()}>login</button>;
+    return (
+      <button
+        onClick={() => {
+          login();
+        }}
+      >
+        login
+      </button>
+    );
   }
   return (
     <div>
@@ -28,15 +34,20 @@ export default  function SwitchAccount()  {
           <Group position="apart">
             {wallet.address}
             {wallet.address === activeWallet?.address && (
-            <Badge
-              color={wallet.address === activeWallet?.address ? 'green' : 'gray'}
-              variant="light"
-            >
-              {wallet.address === activeWallet?.address ? 'Active' : 'Inactive'}
-            </Badge>)}
+              <Badge
+                color={
+                  wallet.address === activeWallet.address ? "green" : "gray"
+                }
+                variant="light"
+              >
+                {wallet.address === activeWallet.address
+                  ? "Active"
+                  : "Inactive"}
+              </Badge>
+            )}
           </Group>
         </Card>
       ))}
     </div>
   );
-};
+}

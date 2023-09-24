@@ -20,5 +20,4 @@ export class PactEntity {
 
   @Column({ type: 'varchar', length: 66, nullable: true })
   blockHash: string;
-
 }

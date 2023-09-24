@@ -1,40 +1,36 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
-  Delete,
-  HttpCode,
-  Query,
-  ParseIntPipe,
+  Controller,
   DefaultValuePipe,
+  Get,
+  HttpCode,
   HttpStatus,
-  UseGuards,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
   Request,
+  UseGuards,
 } from '@nestjs/common';
-import { PrizeProposalsService } from './services/prizes-proposals.service';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
+import { PrizeProposalsService } from './services/prizes-proposals.service';
 
 import {
-  ApiOperation,
-  ApiHeader,
-  ApiBody,
-  ApiResponse,
-  getSchemaPath,
-  ApiParam,
-  ApiTags,
   ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
   ApiQuery,
+  ApiResponse,
+  ApiTags,
 } from '@nestjs/swagger';
+import { infinityPagination } from 'src/utils/infinity-pagination';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { PrizeProposals } from './entities/prize-proposals.entity';
-import { infinityPagination } from 'src/utils/infinity-pagination';
 
 import { ApiProperty } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 
 class PrizeProposalsPaginationResult

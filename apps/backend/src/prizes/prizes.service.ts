@@ -1,29 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
-import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 import {
   FilterOperator,
-  FilterSuffix,
-  Paginate,
   PaginateQuery,
-  paginate,
   Paginated,
+  paginate,
 } from 'nestjs-paginate';
-import { Prize } from './entities/prize.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MailService } from 'src/mail/mail.service';
-import { CreateSubmissionDto } from './dto/create-submission.dto';
+import { Prize } from './entities/prize.entity';
 @Injectable()
 export class PrizesService {
   constructor(
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
-    private mailService: MailService,
   ) {}
-  create(createPrizeDto: CreatePrizeProposalDto) {
-    return 'This action adds a new prize';
-  }
 
   async findAll(query: PaginateQuery): Promise<Paginated<Prize>> {
     let paginations: Paginated<Prize>;
@@ -31,8 +21,8 @@ export class PrizesService {
 
     paginations = await paginate(query, this.prizeRepository, {
       sortableColumns: ['created_at'],
-      //@ts-ignore
-      defaultSortBy: ['created_at'],
+
+      defaultSortBy: [['created_at']] as any,
       filterableColumns: {
         proficiencies: [FilterOperator.IN],
         priorities: [FilterOperator.IN],
@@ -60,12 +50,6 @@ export class PrizesService {
       },
     });
   }
-
-  update(id: number, updatePrizeDto: UpdatePrizeDto) {
-    return `This action updates a #${id} prize`;
-  }
-
-  async addSummission(id: string, createSubmissionDto: CreateSubmissionDto) {}
 
   remove(id: number) {
     return `This action removes a #${id} prize`;

@@ -1,10 +1,8 @@
-
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUser } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-
 
 /* The UsersService class is responsible for creating and retrieving user data from a repository. */
 @Injectable()
@@ -25,23 +23,22 @@ export class UsersService {
   async create(createUserDto: CreateUser): Promise<User> {
     try {
       const user = await this.userRepository.create(createUserDto);
-      await this.userRepository.insert(user)
-      return user
+      await this.userRepository.insert(user);
+      return user;
     } catch (error) {
       throw new HttpException('User Already Exists', HttpStatus.FORBIDDEN);
     }
-    
   }
 
   /**
    * The function finds a user by their authentication ID and throws an error if the user is not found.
    * @param {string} authId - The `authId` parameter is a string that represents the authentication ID
    * of a user which is gotten from auth provider . It is used to find a user in the database based on their authentication ID.
-   * 
+   *
    * @returns {Promise<User> } the user object that is found in the database based on the provided authId.
    * @see {@link User}
    */
-  async findOneByAuthId(authId: string) : Promise<User> {
+  async findOneByAuthId(authId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {
         authId: authId,

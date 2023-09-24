@@ -1,47 +1,50 @@
-import { useState } from 'react';
 import {
   AppShell,
-  Navbar,
-  Header,
-  Footer,
-  Aside,
-  Text,
-  MediaQuery,
   Burger,
-  useMantineTheme,
   Center,
-} from '@mantine/core';
-import { ReactNode } from 'react';
-import HeaderLayout from './headerLayout';
+  Header,
+  MediaQuery,
+  useMantineTheme,
+} from "@mantine/core";
+import type { ReactNode } from "react";
+import { useState } from "react";
+import HeaderLayout from "./headerLayout";
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   return (
     <AppShell
-      styles={{
-        main: {
-          background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
-        },
-      }}
-      navbarOffsetBreakpoint="sm"
       asideOffsetBreakpoint="sm"
       header={
         <Header height={{ base: 50, md: 70 }} p="md">
-          <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-            <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+          <div
+            style={{ display: "flex", alignItems: "center", height: "100%" }}
+          >
+            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
               <Burger
-                opened={opened}
-                onClick={() => setOpened((o) => !o)}
-                size="sm"
                 color={theme.colors.gray[6]}
                 mr="xl"
+                onClick={() => {
+                  setOpened((o) => !o);
+                }}
+                opened={opened}
+                size="sm"
               />
             </MediaQuery>
             <HeaderLayout />
           </div>
         </Header>
       }
+      navbarOffsetBreakpoint="sm"
+      styles={{
+        main: {
+          background:
+            theme.colorScheme === "dark"
+              ? theme.colors.dark[8]
+              : theme.colors.gray[0],
+        },
+      }}
     >
       <Center>{children}</Center>
     </AppShell>

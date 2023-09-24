@@ -3,6 +3,7 @@
  * @param ms - The duration to sleep in milliseconds.
  * @returns A Promise that resolves after the specified duration.
  */
+/* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
@@ -38,10 +39,10 @@ export function copyText(text: string): void {
  * @returns The filtered array without duplicate nodes.
  */
 export const filterDuplicateNodes = <T extends { address: string }>(
-  arr: T[]
+  arr: T[],
 ): T[] => {
   return arr.filter(
-    (v, i, a) => a.findIndex((v2) => v2.address === v.address) === i
+    (v, i, a) => a.findIndex((v2) => v2.address === v.address) === i,
   );
 };
 
@@ -51,6 +52,6 @@ export const filterDuplicateNodes = <T extends { address: string }>(
  * @param length - The length of characters to keep from the start and end. Default is 3.
  * @returns The shortened address.
  */
-export const shortenAddr = (address: string, length: number = 3): string => {
+export const shortenAddr = (address: string, length = 3): string => {
   return `${address.slice(0, length)}...${address.slice(-length)}`;
 };

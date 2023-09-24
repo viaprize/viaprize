@@ -4,21 +4,23 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "prepare": "husky install",
+    "check-types": "tsc --pretty --noEmit",
+    "check-format": "prettier --check \"**/*.{ts,tsx,md}\"",
+    "check-lint": "eslint --ext .ts,.tsx .",
+    "test-all": "pnpm check-types && pnpm check-format && pnpm check-lint"
   },
   "devDependencies": {
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
-    "tsconfig": "*",
-    "turbo": "latest"
+    "tsconfig": "workspace:*",
+    "turbo": "latest",
+    "husky": "^8.0.3"
   },
   "name": "viaprize",
-  "packageManager": "yarn@1.22.19",
   "workspaces": [
     "apps/*",
     "packages/*"
-  ],
-  "dependencies": {
-    "typia": "^5.0.4"
-  }
+  ]
 }

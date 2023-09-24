@@ -30,7 +30,7 @@ export default function useWeb3Modal(): Web3Modal | undefined {
                   },
                 },
               },
-            })
+            }),
           );
         });
       } catch (e) {

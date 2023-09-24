@@ -1,8 +1,8 @@
-"use client"
+"use client";
 /**
  * Web3ContextProvider component.
  * This component provides a React context with Web3-related utilities.
- * 
+ *
  * @module components/Web3ContextProvider
  */
 import React, {
@@ -21,7 +21,7 @@ import config from "@/config";
 /**
  * ProviderError is an interface for Ethereum provider errors.
  * It extends the built-in Error object with a `code` property.
- * 
+ *
  * @interface ProviderError
  * @extends {Error}
  */
@@ -32,7 +32,7 @@ interface ProviderError extends Error {
 
 /**
  * scanMapping is an object mapping chain IDs to BlockExporer URLs.
- * 
+ *
  * @constant
  * @type {Object}
  */
@@ -41,10 +41,9 @@ const scanMapping: { [key: number]: string } = {
   56: "https://bscscan.com",
 };
 
-
 /**
  * actionMapping is an array of status messages for transaction actions.
- * 
+ *
  * @constant
  * @type {Array}
  */
@@ -58,7 +57,7 @@ const actionMapping = [
  * Web3ContextType is an interface for the Web3 context.
  * It includes the Web3 instance, the current chain ID, account, and block number,
  * as well as methods for interacting with the Ethereum blockchain.
- * 
+ *
  * @interface Web3ContextType
  */
 export interface Web3ContextType {
@@ -80,7 +79,7 @@ export interface Web3ContextType {
  * Web3Context is a React context for Web3.
  * It provides a Web3 instance, the current chain ID, account, and block number,
  * as well as methods for interacting with the Ethereum blockchain.
- * 
+ *
  * @constant
  * @type {React.Context}
  */
@@ -90,16 +89,16 @@ export const Web3Context = createContext<Web3ContextType>({
   networkId: undefined,
   blockNumber: undefined,
   account: undefined,
-  connectWallet: async () => { },
-  connectSoul: async () => { },
+  connectWallet: async () => {},
+  connectSoul: async () => {},
   getEthBalance: async () => {
     return "";
   },
-  resetWallet: async () => { },
+  resetWallet: async () => {},
   estimateGas: async () => {
     return 0;
   },
-  sendTx: async () => { },
+  sendTx: async () => {},
   signMessage: async (val) => {
     return "";
   },
@@ -107,7 +106,7 @@ export const Web3Context = createContext<Web3ContextType>({
 
 /**
  * Web3ContextProviderProp is an interface for the props of the Web3ContextProvider component.
- * 
+ *
  * @interface Web3ContextProviderProp
  */
 
@@ -118,7 +117,7 @@ type Web3ContextProviderProp = {
 /**
  * Web3ContextProvider is a React component that provides a Web3 context to its children.
  * It uses the useWeb3Modal hook to connect to an Ethereum provider and provides methods for interacting with the Ethereum blockchain.
- * 
+ *
  * @component
  * @param {Web3ContextProviderProp} props
  */
@@ -185,9 +184,8 @@ export const Web3ContextProvider = ({
           });
           console.log(`switched to chainid : ${chainId} succesfully`);
         } catch (err: any) {
-
           console.log(
-            `error occured while switching chain to chainId ${chainId}, err: ${err.message} code: ${err.code}`
+            `error occured while switching chain to chainId ${chainId}, err: ${err.message} code: ${err.code}`,
           );
 
           if (err.code === 4902) {
@@ -210,7 +208,7 @@ export const Web3ContextProvider = ({
               });
             } catch (err: any) {
               console.log(
-                `error ocuured while adding new chain with chainId:${chainId}, err: ${err.message}`
+                `error ocuured while adding new chain with chainId:${chainId}, err: ${err.message}`,
               );
             }
           }
@@ -252,7 +250,7 @@ export const Web3ContextProvider = ({
   }, [web3Modal]);
 
   const estimateGas = async (func: any, value = 0) => {
-    console.log(value, "this is the value")
+    console.log(value, "this is the value");
     try {
       const gas = await func.estimateGas({
         from: account,
@@ -274,7 +272,7 @@ export const Web3ContextProvider = ({
   };
 
   const goScan = (txnHash: string) => {
-    const chainIdMapping = scanMapping[chainId]
+    const chainIdMapping = scanMapping[chainId];
     window.open(`${chainIdMapping}/tx/${txnHash}`);
   };
 
@@ -304,7 +302,7 @@ export const Web3ContextProvider = ({
             onClick: () => goScan(txnHash),
           });
         })
-        .on("receipt", async (receipt: { transactionHash: any; }) => {
+        .on("receipt", async (receipt: { transactionHash: any }) => {
           console.log("receipt is", receipt);
           const txnHash = receipt?.transactionHash;
           toast.dismiss(txnHash);
@@ -313,18 +311,21 @@ export const Web3ContextProvider = ({
             onClick: () => goScan(txnHash),
           });
         })
-        .on("error", async (err: { code: number; }, txn: { transactionHash: any; }) => {
-          const txnHash = txn?.transactionHash;
-          await toast.dismiss(txnHash);
+        .on(
+          "error",
+          async (err: { code: number }, txn: { transactionHash: any }) => {
+            const txnHash = txn?.transactionHash;
+            await toast.dismiss(txnHash);
 
-          if (err.code === 4001) {
-            toast.error("User canceled action");
-          } else {
-            toast.error(actionMapping[2], {
-              onClick: () => goScan(txnHash),
-            });
-          }
-        });
+            if (err.code === 4001) {
+              toast.error("User canceled action");
+            } else {
+              toast.error(actionMapping[2], {
+                onClick: () => goScan(txnHash),
+              });
+            }
+          },
+        );
     }
   };
 
@@ -358,10 +359,9 @@ export const Web3ContextProvider = ({
   );
 };
 
-
 /**
  * Web3ContextConsumer is a React context consumer for the Web3 context.
- * 
+ *
  * @constant
  * @type {React.Context.Consumer}
  */

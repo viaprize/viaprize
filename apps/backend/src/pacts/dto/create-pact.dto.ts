@@ -1,6 +1,4 @@
-
-import {tags} from "typia"
-import { PactsService } from "../pacts.service";
+import { tags } from 'typia';
 
 /**
  * Interface of Create Pactt , using this interface it create a new pact in pact.service.ts
@@ -12,20 +10,20 @@ export interface CreatePact {
    * @example johnsmith
    
    */
-  name:string;
+  name: string;
   /**
    * Terms of the pact i.e the Description
    * @example test
    
   */
-  terms:string;
+  terms: string;
 
   /**
    * Address of the pact on the blockchain
    * @example 0xe7399b79838acc8caaa567fF84e5EFd0d11BB010
    
   */
-  address:string & tags.MaxLength<44>;
+  address: string & tags.MaxLength<44>;
 
   /**
    * Transaction hash of the pact on the blockchain
@@ -40,4 +38,4 @@ export interface CreatePact {
    
   */
   blockHash?: string;
-};
+}

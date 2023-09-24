@@ -8,20 +8,17 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
-import validationOptions from './utils/validation-options';
 import { AllConfigType } from './config/config.type';
+import validationOptions from './utils/validation-options';
 
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { join } from 'path';
 
 async function bootstrap() {
   const adapter = new FastifyAdapter({
     logger: true,
   });
-  adapter.useStaticAssets({
+  await adapter.useStaticAssets({
     root: join(__dirname, '..', 'public'), // Specify the directory where your static assets are located
     prefix: '/public/', // Spe
   });

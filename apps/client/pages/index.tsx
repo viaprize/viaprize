@@ -1,11 +1,8 @@
-import myAxios from '@/lib/axios';
-import { Button } from '@mantine/core';
-import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
-import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { useRouter } from 'next/router';
-import { toast } from 'react-toastify';
-import Image from 'next/image';
-import useAppUser from '@/context/hooks/useAppUser';
+import useAppUser from "@/context/hooks/useAppUser";
+import { Button } from "@mantine/core";
+import { usePrivy } from "@privy-io/react-auth";
+import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function MyComponent() {
   // const { login, ready, authenticated, } = usePrivy();
@@ -14,7 +11,10 @@ export default function MyComponent() {
 
   const { user } = usePrivy();
 
-  const { loginUser } = useAppUser()
+  const { loginUser } = useAppUser();
+  const gotoExplorePrizes = async () => {
+    await router.push("/prize/explore-prizes");
+  };
 
   return (
     <div>
@@ -41,14 +41,29 @@ export default function MyComponent() {
             <div>
               <p className="text-2xl font-semibold">Welcome Back</p>
               <p className="text-xl font-semibold">
-                Your Wallet Address is {user?.wallet?.address}
+                Your Wallet Address is {user.wallet?.address}
               </p>
-              <Button className='z-50' onClick={() => router.push('/prize/explore-prizes')}>
+              <Button
+                className="z-50"
+                onClick={async () => {
+                  await gotoExplorePrizes();
+                }}
+              >
                 Explore Prizes
               </Button>
             </div>
           ) : (
-            <Button  onClick={loginUser}>
+            <Button
+              onClick={() => {
+                loginUser()
+                  .then(() => {
+                    console.log("logging in ");
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }}
+            >
               login
             </Button>
           )}
@@ -61,13 +76,13 @@ export default function MyComponent() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <h2 className={`mb-3 text-2xl font-semibold`}>
-              About Prizes{' '}
+            <h2 className="mb-3 text-2xl font-semibold">
+              About Prizes{" "}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
             </h2>
-            <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+            <p className="m-0 max-w-[30ch] text-sm opacity-50">
               Find in-depth information about Prizes and how they work.
             </p>
           </a>
@@ -78,13 +93,13 @@ export default function MyComponent() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <h2 className={`mb-3 text-2xl font-semibold`}>
-              Explore Prizes{' '}
+            <h2 className="mb-3 text-2xl font-semibold">
+              Explore Prizes{" "}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
             </h2>
-            <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+            <p className="m-0 max-w-[30ch] text-sm opacity-50">
               Explore and discover open Prizes proposed by our community.
             </p>
           </a>
@@ -95,13 +110,13 @@ export default function MyComponent() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <h2 className={`mb-3 text-2xl font-semibold`}>
-              Pacts{' '}
+            <h2 className="mb-3 text-2xl font-semibold">
+              Pacts{" "}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
             </h2>
-            <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+            <p className="m-0 max-w-[30ch] text-sm opacity-50">
               Find in-depth information about Pacts and how they work.
             </p>
           </a>
@@ -112,13 +127,13 @@ export default function MyComponent() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <h2 className={`mb-3 text-2xl font-semibold`}>
-              Explore Pacts{' '}
+            <h2 className="mb-3 text-2xl font-semibold">
+              Explore Pacts{" "}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
             </h2>
-            <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+            <p className="m-0 max-w-[30ch] text-sm opacity-50">
               Explore and discover open Pacts proposed by our community.
             </p>
           </a>

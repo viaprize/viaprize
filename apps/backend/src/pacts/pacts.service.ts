@@ -14,13 +14,12 @@ export class PactsService {
     private mailService: MailService,
   ) {}
   async create(createPact: CreatePact) {
-    const pact = this.pactRepository.create(createPact)
-    await this.pactRepository.insert(pact)
-    return pact
+    const pact = this.pactRepository.create(createPact);
+    await this.pactRepository.insert(pact);
+    return pact;
   }
 
   async findAll() {
-    
     return this.pactRepository.find({});
   }
 

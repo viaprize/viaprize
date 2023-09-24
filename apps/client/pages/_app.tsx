@@ -1,33 +1,30 @@
-import '../styles/globals.css';
-import '../styles/index.css';
-import 'react-toastify/dist/ReactToastify.css';
-import NextApp, { AppProps, AppContext } from 'next/app';
-import { getCookie, setCookie } from 'cookies-next';
-import Head from 'next/head';
-import { MantineProvider, ColorScheme, ColorSchemeProvider } from '@mantine/core';
-import { Web3ContextProvider } from '@/context/Web3Context';
-import { PrivyProvider, User } from '@privy-io/react-auth';
-import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
-import { WagmiConfig, configureChains } from 'wagmi';
-import wagmiConfig, { configureChainsConfig } from '@/lib/wagmi';
-import Header from '@/components/layout/headerLayout';
-import { mainnet, goerli } from '@wagmi/chains';
-import { publicProvider } from 'wagmi/providers/public';
-import { infuraProvider } from 'wagmi/providers/infura';
-import { ReactElement, ReactNode, useState } from 'react';
-import { NextPage } from 'next';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ToastContainer } from 'react-toastify';
-import { Toaster } from 'sonner';
-import { optimism, optimismGoerli } from 'wagmi/chains';
+import type { ColorScheme } from "@mantine/core";
+import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
+import { getCookie } from "cookies-next";
+import type { AppContext, AppProps } from "next/app";
+import NextApp from "next/app";
+import Head from "next/head";
+import "react-toastify/dist/ReactToastify.css";
+import "../styles/globals.css";
+import "../styles/index.css";
 
-import config from '@/config';
-import { env } from '@env';
+import { configureChainsConfig } from "@/lib/wagmi";
+import { env } from "@env";
+import { PrivyProvider } from "@privy-io/react-auth";
+import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
+import type { NextPage } from "next";
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { Toaster } from "sonner";
+import { optimism, optimismGoerli } from "wagmi/chains";
 
 const queryClient = new QueryClient();
 
-export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode;
+export type NextPageWithLayout<P = NonNullable<unknown>, IP = P> = NextPage<
+  P,
+  IP
+> & {
+  getLayout?: (page: Element) => React.ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -36,44 +33,49 @@ type AppPropsWithLayout = AppProps & {
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
-  const toggleColorScheme = (value?: ColorScheme) =>
-    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
-
-
-  const getLayout = Component.getLayout ?? ((page) => page);
-
+  const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
+  const toggleColorScheme = (value?: ColorScheme) => {
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+  };
   return (
     <>
       <Head>
         <title>Mantine next example</title>
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width"
+        />
         <link rel="shortcut icon" href="/favicon.svg" />
       </Head>
       <PrivyProvider
-        appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
+        appId={env.NEXT_PUBLIC_PRIVY_APP_ID || " "}
         config={{
-          loginMethods: ['email', 'wallet'],
+          loginMethods: ["email", "wallet"],
           additionalChains: [optimism, optimismGoerli],
           appearance: {
-            theme: 'light',
-            accentColor: '#676FFF',
+            theme: "light",
+            accentColor: "#676FFF",
             showWalletLoginFirst: true,
             // logo: 'https://your-logo-url',
           },
         }}
       >
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-
           <QueryClientProvider client={queryClient}>
-            <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-              <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+            <ColorSchemeProvider
+              colorScheme={colorScheme}
+              toggleColorScheme={toggleColorScheme}
+            >
+              <MantineProvider
+                theme={{ colorScheme }}
+                withGlobalStyles
+                withNormalizeCSS
+              >
                 <Toaster />
-                {getLayout(<Component {...pageProps} />)}
+                <Component {...pageProps} />
               </MantineProvider>
             </ColorSchemeProvider>
           </QueryClientProvider>
-
         </PrivyWagmiConnector>
       </PrivyProvider>
     </>
@@ -84,6 +86,6 @@ App.getInitialProps = async (appContext: AppContext) => {
   const appProps = await NextApp.getInitialProps(appContext);
   return {
     ...appProps,
-    colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
+    colorScheme: getCookie("mantine-color-scheme", appContext.ctx) || "dark",
   };
 };

@@ -101,6 +101,7 @@ For auth with external services or social networks you need:
    <img alt="image" src="https://github.com/brocoders/nestjs-boilerplate/assets/6001723/05721db2-9d26-466a-ad7a-072680d0d49b">
 
    <img alt="image" src="https://github.com/brocoders/nestjs-boilerplate/assets/6001723/9f4aae18-61da-4abc-9304-821a0995a306">
+
 2. Go to `Settings` -> `Basic` and get `App ID` and `App Secret` from your app
    <img alt="image" src="https://github.com/brocoders/nestjs-boilerplate/assets/6001723/b0fc7d50-4bc6-45d0-8b20-fda0b6c01ac2">
 3. Change `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET` in `.env`

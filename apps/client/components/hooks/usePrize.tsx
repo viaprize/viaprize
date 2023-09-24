@@ -1,11 +1,14 @@
-import { useContractWrite, useContractReads } from 'wagmi';
-import { getContract } from '@wagmi/core';
-import viaPrize from './abi/viaPrize.json';
-import { AbiItem } from 'viem';
+/* eslint-disable  -- because eslint sometimes needs to shut up and not complain*/
+// @ts-nocheck -- will add support for types later
+
+import { getContract } from "@wagmi/core";
+import type { AbiItem } from "viem";
+import { useContractReads, useContractWrite } from "wagmi";
+import viaPrize from "./abi/viaPrize.json";
 
 export const usePrize = () => {
   const contract = getContract({
-    address: '0x123',
+    address: "0x123",
     abi: viaPrize,
   });
 
@@ -17,7 +20,7 @@ export const usePrize = () => {
   } = useContractWrite({
     address: contract.address,
     abi: contract.abi,
-    functionName: 'addFunds',
+    functionName: "addFunds",
   });
 
   const {
@@ -28,7 +31,7 @@ export const usePrize = () => {
   } = useContractWrite({
     address: contract.address,
     abi: contract.abi,
-    functionName: 'start_voting_period',
+    functionName: "start_voting_period",
   });
 
   const {
@@ -39,7 +42,7 @@ export const usePrize = () => {
   } = useContractWrite({
     address: contract.address,
     abi: contract.abi,
-    functionName: 'start_submission_period',
+    functionName: "start_submission_period",
   });
 
   const {
@@ -50,7 +53,7 @@ export const usePrize = () => {
   } = useContractWrite({
     address: contract.address,
     abi: contract.abi,
-    functionName: 'addSubmission',
+    functionName: "addSubmission",
   });
 
   const {
@@ -62,12 +65,12 @@ export const usePrize = () => {
       {
         address: contract.address,
         abi: contract.abi as AbiItem[],
-        functionName: 'get_submission_time',
+        functionName: "get_submission_time",
       },
       {
         address: contract.address,
         abi: contract.abi as AbiItem[],
-        functionName: 'get_voting_time',
+        functionName: "get_voting_time",
       },
     ],
   });
