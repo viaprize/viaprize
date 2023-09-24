@@ -1,17 +1,7 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { CreatePactDto } from 'src/pacts/dto/create-pact.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UsersService } from './users.service';
 
 @ApiTags('users')
 @Controller('users')

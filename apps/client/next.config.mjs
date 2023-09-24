@@ -8,7 +8,7 @@ const withBundleAnalyzer = BundleAnalyzer({
 
 export default withBundleAnalyzer({
   reactStrictMode: true,
-  transpilePackages:['@viaprize/ui'],
+  transpilePackages: ['@viaprize/ui'],
   eslint: {
     ignoreDuringBuilds: true,
   },

@@ -1,15 +1,22 @@
-import axios from 'axios';
-import { NextApiRequest, NextApiResponse } from 'next';
-import { OpenAI } from 'openai';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+import type { NextApiRequest, NextApiResponse } from "next";
+import { OpenAI } from "openai";
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
-    const { prompt } =  JSON.parse(req.body) as { prompt: string };
-  
+    const body = req.body as string;
+    const { prompt } = JSON.parse(body) as { prompt: string };
 
     const openaiKey = process.env.OPENAI_API_KEY;
     if (!openaiKey) {
-      res.status(500).send('This feature is currently under progress. Please check back later.');
+      res
+        .status(500)
+        .send(
+          "This feature is currently under progress. Please check back later."
+        );
     }
 
     const openai = new OpenAI({
@@ -17,10 +24,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
+      model: "gpt-3.5-turbo",
       messages: [
         {
-          role: 'user',
+          role: "user",
           content: `You are an AI writing assistant that continues existing text based on context from prior text. 
             Give more weight/priority to the later characters than the beginning ones.
             Limit your response to no more than 200 characters, but make sure to construct complete sentences.
@@ -40,11 +47,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     const finalRes = response.choices[0].message.content;
-    console.log(response.usage);
+    
 
     res.status(200).send(finalRes);
   } catch (error) {
-    console.error('Error generating:', error);
-    res.status(500).json({ error: 'Failed to generate', message: error });
+    const errorMessage = error as string;
+
+res.status(500).json({
+  error: "Failed to generate",
+  message: errorMessage
+});
+    
+   
   }
 }
