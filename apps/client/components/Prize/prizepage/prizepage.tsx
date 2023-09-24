@@ -1,5 +1,4 @@
-import React from "react";
-import Image from "next/image";
+
 import {
   ActionIcon,
   Button,
@@ -9,7 +8,7 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { IconSettings } from "@tabler/icons-react";
+
 import PrizePageTabs from "./prizepagetabs";
 import Submissions from "./submissions";
 
@@ -32,8 +31,8 @@ export default function PrizePageComponent() {
         src="/placeholder.jpg"
         width={1280}
         height={768}
-        alt="image"
-        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+        alt="prize info tumbnail"
+      // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
       <Center my="xl">
         <PrizePageTabs />

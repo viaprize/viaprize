@@ -1,14 +1,17 @@
+import useWeb3Context from "@/context/hooks/useWeb3Context";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import useWeb3Context from "@/context/hooks/useWeb3Context";
 
-export default function Contribute({ address, onContributed }: any) {
-  const { web3, account, connectWallet }: any = useWeb3Context();
+export default function Contribute({ address, onContributed }) {
+  const { web3, account } = useWeb3Context();
   const [amount, setAmount] = useState("");
   const doContribute = async () => {
-    await web3.eth.sendTransaction({
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment  -- because any needs to be implemented
+    await web3?.eth.sendTransaction({
       from: account,
-      to: address,
+      /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
+      to: address as string,
       value: web3.utils.toWei(amount, "ether"),
       data: "0x",
     });

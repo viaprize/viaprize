@@ -1,7 +1,7 @@
 import { Tabs } from "@mantine/core";
 import { BsInfoLg } from "react-icons/bs";
 import { FaMoneyBillWaveAlt } from "react-icons/fa";
-import { TabsPanel } from "@mantine/core/lib/Tabs/TabsPanel/TabsPanel";
+
 import AboutPrize from "./aboutprize";
 import PrizeFunderCard from "./prizeFunderCard";
 

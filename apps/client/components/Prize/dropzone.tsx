@@ -1,13 +1,13 @@
-import { Group, Text, useMantineTheme, rem, Button } from "@mantine/core";
-import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
+import { Button, Group, Text, rem, useMantineTheme } from "@mantine/core";
 import type {
   DropzoneProps,
-  FileWithPath} from "@mantine/dropzone";
+  FileWithPath
+} from "@mantine/dropzone";
 import {
   Dropzone,
   IMAGE_MIME_TYPE,
 } from "@mantine/dropzone";
-import { useState } from "react";
+import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 
 interface ImageComponentProps extends Partial<DropzoneProps> {
@@ -26,7 +26,7 @@ export default function ImageComponent(props: ImageComponentProps) {
         width="1280"
         height="768"
         alt="image"
-        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+      // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
     );
   });
@@ -34,7 +34,7 @@ export default function ImageComponent(props: ImageComponentProps) {
   const theme = useMantineTheme();
   return (
     <div className="overflow-hidden">
-      {props.files.length == 0 ? (
+      {props.files.length === 0 ? (
         <Dropzone
           onDrop={props.setFiles}
           onReject={(files) => { console.log("rejected files", files); }}
@@ -54,7 +54,7 @@ export default function ImageComponent(props: ImageComponentProps) {
                 stroke={1.5}
                 color={
                   theme.colors[theme.primaryColor][
-                    theme.colorScheme === "dark" ? 4 : 6
+                  theme.colorScheme === "dark" ? 4 : 6
                   ]
                 }
               />

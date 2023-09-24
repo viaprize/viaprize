@@ -1,5 +1,4 @@
 import { Badge, Button, Card, Group, Image, Text } from "@mantine/core";
-import { useState } from "react";
 
 interface ExploreCardProps {
   imageUrl: string;
@@ -18,7 +17,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   money,
   deadline,
 }) => {
-  const [scrollPosition, onScrollPositionChange] = useState({ x: 0, y: 0 });
+
   return (
     <Card padding="lg" radius="md" shadow="sm" withBorder>
       <Card.Section>

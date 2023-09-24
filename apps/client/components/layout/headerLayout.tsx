@@ -40,6 +40,7 @@ function getEmailInitials(email: string) {
 }
 
 export default function HeaderLayout() {
+  /* eslint-disable  @typescript-eslint/unbound-method -- this method seems to be a mantine color scheme issue */
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   const { wallets } = useWallets();

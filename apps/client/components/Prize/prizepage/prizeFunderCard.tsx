@@ -1,6 +1,4 @@
-import { Card, Group, Badge, Button, Text, Flex, Avatar } from "@mantine/core";
-import React from "react";
-import Image from "next/image";
+import { Avatar, Card, Group, Text } from "@mantine/core";
 
 interface PrizeFunderCardProps {
   name: string;
@@ -12,7 +10,7 @@ interface PrizeFunderCardProps {
 export default function PrizeFunderCard({
   name,
   email,
-  budget,
+
 }: PrizeFunderCardProps) {
   return (
     <Card

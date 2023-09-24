@@ -1,24 +1,26 @@
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import { FaEthereum } from "react-icons/fa";
-import usePactContract from "@/contract/usePactContract";
+/* eslint-disable -- this whole page will be changed soon*/
 import config from "@/config";
+import usePactContract from "@/contract/usePactContract";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { FaEthereum } from "react-icons/fa";
 import Contribute from "../Contribute";
+
 
 function formatEtherValue(weiAmount: number): string {
   const etherAmount = weiAmount / 10 ** 18;
 
   if (etherAmount >= 0.001) {
-    return `${etherAmount.toFixed(3).replace(/\.?0+$/, "")  } ETH`;
+    return `${etherAmount.toFixed(3).replace(/\.?0+$/, "")} ETH`;
   } else if (etherAmount >= 1e-6) {
     const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
-    return `${etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, "")  } ETH`;
+    return `${etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, "")} ETH`;
   } else if (etherAmount >= 1e-18) {
-    const decimalPlaces = Math.max(0, 18 - Math.ceil(Math.log10(etherAmount)));
-    return `${etherAmount.toFixed(10).replace(/\.?0+$/, "")  } ETH`;
-  } 
-    return `${etherAmount.toExponential(6).replace(/\.?0+e/, "e")  } ETH`;
-  
+
+    return `${etherAmount.toFixed(10).replace(/\.?0+$/, "")} ETH`;
+  }
+  return `${etherAmount.toExponential(6).replace(/\.?0+e/, "e")} ETH`;
+
 }
 
 export default function HistoryItem({ item, address, pictureVisible }: any) {
@@ -76,9 +78,9 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
     <div className="card bg-base-100 shadow-xl mb-4 dark:text-gray-300">
       <div className="card-body break-words">
         {pictureVisible && config.pictures[item.address] ? <img
-            src={config.pictures[item.address]}
-            className="rounded-xl mb-3"
-          /> : null}
+          src={config.pictures[item.address]}
+          className="rounded-xl mb-3"
+        /> : null}
         <Link
           href={`/pact/${item.address}`}
           className="card-title text-3xl break-words dark:text-white inline-block hover:underline"
@@ -105,10 +107,10 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
 
           <div className="font-bold mt-4 mb-1">Admin Addresses:</div>
           {detail.leads?.map((lead: any) => (
-              <div key={lead}>
-                <p className="my-1">{lead}</p>
-              </div>
-            ))}
+            <div key={lead}>
+              <p className="my-1">{lead}</p>
+            </div>
+          ))}
           <p className="text-yellow-700 font-bold dark:text-yellow-400 text-md mt-8">
             Funding Goal: {formatEtherValue(detail.sum)}
           </p>
@@ -118,20 +120,20 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
         </div>
 
         {detail.resolved && detail.safe ? <div>
-            <div className="font-bold mb-1">Safe Address: </div>
-            <a
-              href={`${config.scanUrl}/address/${detail.safe}`}
-              rel="noreferrer"
-              className="font-mono mt-1 underline"
-              target="_blank"
-            >
-              {detail.safe}
-            </a>
-          </div> : null}
+          <div className="font-bold mb-1">Safe Address: </div>
+          <a
+            href={`${config.scanUrl}/address/${detail.safe}`}
+            rel="noreferrer"
+            className="font-mono mt-1 underline"
+            target="_blank"
+          >
+            {detail.safe}
+          </a>
+        </div> : null}
 
         {detail.resolvable && !detail.resolved ? <button className="btn" onClick={() => doResolve()}>
-            Resolve
-          </button> : null}
+          Resolve
+        </button> : null}
 
         {detail.resolved ? <button className="btn btn-success text-white mt-2">Resolved</button> : null}
 

@@ -84,7 +84,7 @@ function Prize() {
 
   const removeAddress = (index: number) => {
     setAddress((prev) => {
-      const arr: string[] = JSON.parse(JSON.stringify(prev));
+      const arr: string[] = JSON.parse(JSON.stringify(prev)) as string[];
       arr.splice(index, 1);
       return [...arr];
     });

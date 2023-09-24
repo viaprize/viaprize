@@ -1,9 +1,7 @@
-import React from "react";
 import { Card, Flex, Group, Image } from "@mantine/core";
-import { TextEditor } from "../richtexteditor/textEditor";
-import { PrizeCreationTemplate } from "../Prize/prizepage/defaultcontent";
-import PrizeFunderCard from "../Prize/prizepage/prizeFunderCard";
 import type { AppUser } from "../../types/app-user";
+import PrizeFunderCard from "../Prize/prizepage/prizeFunderCard";
+import { TextEditor } from "../richtexteditor/textEditor";
 
 export default function ViewDetails({
   admins,
@@ -26,8 +24,8 @@ export default function ViewDetails({
     <Flex direction="column" gap="sm" my="xl">
       {images.length > 0
         ? images.map((image) => (
-            <Image src={image} height={160} alt="Image" key={image} />
-          ))
+          <Image src={image} height={160} alt="Image" key={image} />
+        ))
         : null}
       <div>
         <h2>{title}</h2>

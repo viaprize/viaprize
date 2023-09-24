@@ -1,10 +1,10 @@
 // import { useQuery, useMutation } from 'react-query';
 // import axios from 'axios';
 // import myAxios from '@/lib/axios';
-import { usePrivy } from "@privy-io/react-auth";
-import { useState } from "react";
 import { makeStorageClient } from "@/components/_providers/WebClient";
 import myAxios from "@/lib/axios";
+import { usePrivy } from "@privy-io/react-auth";
+import { useState } from "react";
 import type {
   CreatePrizeProposalDto,
   PrizeProposalQueryParams,
@@ -12,8 +12,10 @@ import type {
   PrizeProposalsList,
 } from "../../../types/prizes";
 
+/* eslint-disable @typescript-eslint/no-explicit-any -- needed this for the function */
 function objectToRecord(obj: Record<string, any>): Record<string, string> {
   return Object.entries(obj).reduce<Record<string, string>>((record, [key, value]) => {
+    /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
     record[key] = value.toString();
     return record;
   }, {});
@@ -49,7 +51,7 @@ async function storeFiles(files: File[]) {
 // };
 
 export default function usePrizeProposal() {
-  const [proposals, setProposals] = useState<PrizeProposals[]>();
+  const [proposals] = useState<PrizeProposals[]>();
   const { user } = usePrivy();
   const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
     const res = await myAxios.post("/prizes/proposals", { ...proposalDto });

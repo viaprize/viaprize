@@ -29,7 +29,7 @@ function formatEtherValue(weiAmount: number): string {
 
 }
 const getPactInfo = async (pactAddress: string) => {
-  const web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
+  const web3 = new Web3(new Web3.providers.HttpProvider(config.provider as string));
   /* eslint-disable -- Because i dont know the return type*/
   const multicall = new web3.eth.Contract(
     MulticallABI as AbiItem[],

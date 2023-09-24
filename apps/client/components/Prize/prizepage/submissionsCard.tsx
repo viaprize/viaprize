@@ -1,14 +1,13 @@
 import {
-  Card,
-  TypographyStylesProvider,
-  Text,
-  Avatar,
-  Group,
-  Button,
   ActionIcon,
+  Avatar,
+  Button,
+  Card,
+  Group,
+  Text,
+  TypographyStylesProvider,
 } from "@mantine/core";
 import { IconArrowAutofitUp } from "@tabler/icons-react";
-import React from "react";
 
 interface SubmissionsCardProps {
   fullname: string;
@@ -22,12 +21,10 @@ interface SubmissionsCardProps {
 
 export default function SubmissionsCard({
   fullname,
-  submission,
+
   wallet,
   time,
-  votes,
-  onUpVote,
-  submissionId,
+
 }: SubmissionsCardProps) {
   return (
     <Card className="flex flex-col justify-center gap-3">

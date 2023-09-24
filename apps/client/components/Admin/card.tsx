@@ -1,19 +1,17 @@
 import {
-  Card,
-  Image,
-  Text,
   Badge,
   Button,
+  Card,
   Group,
-  ScrollArea,
+  Image,
   Modal,
+  Text,
   Textarea,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import { useMutation } from "react-query";
-import usePrizeProposal from "../Prize/hooks/usePrizeProposal";
 import type { AppUser } from "../../types/app-user";
+import usePrizeProposal from "../Prize/hooks/usePrizeProposal";
 import ViewDetails from "./details";
 
 interface AdminCardProps {
@@ -37,11 +35,11 @@ const AdminCard: React.FC<AdminCardProps> = ({
   user,
   voting,
 }) => {
-  const [scrollPosition, onScrollPositionChange] = useState({ x: 0, y: 0 });
+
   const [rejectOpen, setRejectOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [comment, setComment] = useState("");
-  const { getAllProposals, acceptProposal, rejectProposal } =
+  const { acceptProposal, rejectProposal } =
     usePrizeProposal();
   const acceptProposalMutation = useMutation(acceptProposal);
   const rejectProposalMutation = useMutation(rejectProposal);
@@ -53,14 +51,14 @@ const AdminCard: React.FC<AdminCardProps> = ({
         <Card.Section>
           {images.length > 0
             ? images.map((image) => (
-                <Image
-                  src={image}
-                  height={160}
-                  alt="Image"
-                  key={image}
-                  width={346}
-                />
-              ))
+              <Image
+                src={image}
+                height={160}
+                alt="Image"
+                key={image}
+                width={346}
+              />
+            ))
             : null}
         </Card.Section>
         <Group position="apart" mt="md" mb="xs">

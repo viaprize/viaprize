@@ -1,7 +1,4 @@
-/* eslint-disable */
-/**
- * Because eslint sometimes needs to shut up and not complain
- */
+/* eslint-disable  -- because eslint sometimes needs to shut up and not complain*/
 
 import { getContract } from "@wagmi/core";
 import type { AbiItem } from "viem";
