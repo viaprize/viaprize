@@ -185,7 +185,7 @@ export const Web3ContextProvider = ({
           console.log(`switched to chainid : ${chainId} succesfully`);
         } catch (err: any) {
           console.log(
-            `error occured while switching chain to chainId ${chainId}, err: ${err.message} code: ${err.code}`
+            `error occured while switching chain to chainId ${chainId}, err: ${err.message} code: ${err.code}`,
           );
 
           if (err.code === 4902) {
@@ -208,7 +208,7 @@ export const Web3ContextProvider = ({
               });
             } catch (err: any) {
               console.log(
-                `error ocuured while adding new chain with chainId:${chainId}, err: ${err.message}`
+                `error ocuured while adding new chain with chainId:${chainId}, err: ${err.message}`,
               );
             }
           }
@@ -324,7 +324,7 @@ export const Web3ContextProvider = ({
                 onClick: () => goScan(txnHash),
               });
             }
-          }
+          },
         );
     }
   };

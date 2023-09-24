@@ -1,10 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment -- will change back later */ 
+/* eslint-disable @typescript-eslint/no-unsafe-assignment -- will change back later */
 
 import useWeb3Context from "@/context/hooks/useWeb3Context";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
-export default function Contribute({ address, onContributed }: { address: string; onContributed: () => void }) {
+export default function Contribute({
+  address,
+  onContributed,
+}: {
+  address: string;
+  onContributed: () => void;
+}) {
   const { web3, account } = useWeb3Context();
   const [amount, setAmount] = useState("");
   const doContribute = async () => {

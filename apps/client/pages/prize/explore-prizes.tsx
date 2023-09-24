@@ -1,4 +1,3 @@
-
 import ExploreCard from "@/components/ExplorePrize/explorePrize";
 import { SearchFilters } from "@/components/ExplorePrize/searchFilters";
 import usePrizeProposal from "@/components/Prize/hooks/usePrizeProposal";

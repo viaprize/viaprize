@@ -1,4 +1,4 @@
-import {ethers} from "hardhat";
+import { ethers } from "hardhat";
 
 async function main() {
   const [deployer] = await ethers.getSigners();
@@ -12,7 +12,11 @@ async function main() {
   console.log("submission AVL Tree Contract: ", submission_tree.address);
 
   const viaPrize = await ethers.getContractFactory("ViaPrize");
-  const viaPrize_contract = await viaPrize.deploy(submission_tree.address, 10, 10);
+  const viaPrize_contract = await viaPrize.deploy(
+    submission_tree.address,
+    10,
+    10,
+  );
   await viaPrize_contract.deployed();
 
   console.log("ViaPrize address:", viaPrize_contract.address);

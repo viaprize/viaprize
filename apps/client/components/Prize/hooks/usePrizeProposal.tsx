@@ -20,7 +20,7 @@ function objectToRecord(obj: Record<string, any>): Record<string, string> {
       record[key] = value.toString();
       return record;
     },
-    {}
+    {},
   );
 }
 
@@ -70,7 +70,7 @@ export default function usePrizeProposal() {
     queryParams: PrizeProposalQueryParams = {
       limit: 10,
       page: 1,
-    }
+    },
   ) => {
     const record: Record<string, string> = objectToRecord(queryParams);
     const queryString = new URLSearchParams(record);
@@ -79,7 +79,7 @@ export default function usePrizeProposal() {
       return;
     }
     const res = await myAxios.get(
-      `/prizes/proposals/user/${user.id}${queryString.toString()}`
+      `/prizes/proposals/user/${user.id}${queryString.toString()}`,
     );
     console.log("res", "acxi0", res);
     return res.data as PrizeProposalsList;
@@ -89,12 +89,12 @@ export default function usePrizeProposal() {
     queryParam: PrizeProposalQueryParams = {
       limit: 10,
       page: 1,
-    }
+    },
   ) => {
     const record: Record<string, string> = objectToRecord(queryParam);
     const queryString = new URLSearchParams(record);
     const res = await myAxios.get(
-      `/prizes/proposals?${queryString.toString()}`
+      `/prizes/proposals?${queryString.toString()}`,
     );
     console.log({ res }, "proposals");
     return res.data as PrizeProposalsList;
