@@ -101,7 +101,7 @@ const Home: NextPage = () => {
     //     // ...await pactContract.getPactInfo(pactAddress)
     //   };
     // }
-    setHistoryList(res);
+    setHistoryList(res.data);
     setLoading(false);
   };
 
@@ -219,8 +219,6 @@ const Home: NextPage = () => {
                     Deadline
                   </h1>
                   <div className="flex items-center gap-4">
-                    {/*@ts-expect-error */}
-
                     <DatePicker
                       defaultDate={new Date(2015, 1)}
                       value={rawEndDate}

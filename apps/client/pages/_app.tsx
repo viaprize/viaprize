@@ -8,15 +8,15 @@ import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.css";
 import "../styles/index.css";
 
+import { configureChainsConfig } from "@/lib/wagmi";
+import { env } from "@env";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
 import type { NextPage } from "next";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { optimism, optimismGoerli } from "wagmi/chains";
 import { Toaster } from "sonner";
-import { env } from "@env";
-import { configureChainsConfig } from "@/lib/wagmi";
+import { optimism, optimismGoerli } from "wagmi/chains";
 
 const queryClient = new QueryClient();
 
@@ -24,7 +24,7 @@ export type NextPageWithLayout<P = NonNullable<unknown>, IP = P> = NextPage<
   P,
   IP
 > & {
-  getLayout?: (page: Element) => React.JSX.Element;
+  getLayout?: (page: Element) => React.ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {

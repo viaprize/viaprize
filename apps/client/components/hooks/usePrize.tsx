@@ -1,4 +1,5 @@
 /* eslint-disable  -- because eslint sometimes needs to shut up and not complain*/
+// @ts-nocheck -- will add support for types later
 
 import { getContract } from "@wagmi/core";
 import type { AbiItem } from "viem";

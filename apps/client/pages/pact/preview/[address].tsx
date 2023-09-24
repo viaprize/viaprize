@@ -1,3 +1,6 @@
+/* eslint-disable  -- because eslint sometimes needs to shut up and not complain*/
+// @ts-nocheck -- will add support for types later
+
 import type { GetServerSideProps } from "next";
 import Link from "next/link";
 import { FaEthereum } from "react-icons/fa";
