@@ -14,7 +14,7 @@ interface WagmiProviderType {
 
 const chains = [polygonMumbai];
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- because i will change this soon
-const projectId = process.env.NEXT_PUBLIC_W3C_PID!
+const projectId = process.env.NEXT_PUBLIC_W3C_PID!;
 // eslint-disable-next-line -- can't seem to understand its types
 const { publicClient } = configureChains(chains, [w3mProvider({ projectId })]);
 const wagmiConfig = createConfig({

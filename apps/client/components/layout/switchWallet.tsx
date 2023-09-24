@@ -1,7 +1,6 @@
-import { Badge, Card, Group, } from "@mantine/core";
+import { Badge, Card, Group } from "@mantine/core";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { usePrivyWagmi } from "@privy-io/wagmi-connector";
-
 
 export default function SwitchAccount() {
   const { login, ready, authenticated } = usePrivy();
@@ -12,7 +11,15 @@ export default function SwitchAccount() {
 
   if (!authenticated) {
     // Use Privy login instead of wagmi's connect
-    return <button onClick={() => { login(); }}>login</button>;
+    return (
+      <button
+        onClick={() => {
+          login();
+        }}
+      >
+        login
+      </button>
+    );
   }
   return (
     <div>

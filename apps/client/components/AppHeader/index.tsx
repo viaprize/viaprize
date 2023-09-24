@@ -12,28 +12,41 @@ export default function AppHeader() {
         </Link>
         {account ? (
           <div className="dropdown dropdown-end">
-            <a className="btn px-3 mb-2" href="#address"
+            <a
+              className="btn px-3 mb-2"
+              href="#address"
               // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- because this said so
-              tabIndex={0}>
+              tabIndex={0}
+            >
               {shortenAddress(account, 4)}
             </a>
             <ul
               // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- because this is used for tab ui
-              tabIndex={0} role="presentation"
+              tabIndex={0}
+              role="presentation"
               className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <button className="btn" onClick={() => resetWallet().then(console.log).catch(console.error)}>Disconnect</button>
+                <button
+                  className="btn"
+                  onClick={() =>
+                    resetWallet().then(console.log).catch(console.error)
+                  }
+                >
+                  Disconnect
+                </button>
               </li>
             </ul>
           </div>
         ) : (
-
-          <button className="btn px-3" onClick={() => connectWallet().then(console.log).catch(console.error)}>
+          <button
+            className="btn px-3"
+            onClick={() =>
+              connectWallet().then(console.log).catch(console.error)
+            }
+          >
             Connect Wallet
           </button>
-
-
         )}
       </div>
     </header>

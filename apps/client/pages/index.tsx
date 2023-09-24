@@ -1,9 +1,6 @@
-
 import useAppUser from "@/context/hooks/useAppUser";
 import { Button } from "@mantine/core";
-import {
-  usePrivy,
-} from "@privy-io/react-auth";
+import { usePrivy } from "@privy-io/react-auth";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -16,8 +13,8 @@ export default function MyComponent() {
 
   const { loginUser } = useAppUser();
   const gotoExplorePrizes = async () => {
-    await router.push("/prize/explore-prizes")
-  }
+    await router.push("/prize/explore-prizes");
+  };
 
   return (
     <div>
@@ -49,20 +46,26 @@ export default function MyComponent() {
               <Button
                 className="z-50"
                 onClick={async () => {
-                  await gotoExplorePrizes()
+                  await gotoExplorePrizes();
                 }}
               >
                 Explore Prizes
               </Button>
             </div>
           ) : (
-            <Button onClick={() => {
-              loginUser().then(() => {
-                console.log("logging in ")
-              }).catch(error => {
-                console.error(error)
-              })
-            }}>login</Button>
+            <Button
+              onClick={() => {
+                loginUser()
+                  .then(() => {
+                    console.log("logging in ");
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }}
+            >
+              login
+            </Button>
           )}
         </div>
 

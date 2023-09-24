@@ -96,7 +96,9 @@ function Prize() {
         className="my-2"
         placeholder="Title"
         value={title}
-        onChange={(e) => { setTitle(e.target.value); }}
+        onChange={(e) => {
+          setTitle(e.target.value);
+        }}
       />
       <TextEditor
         richtext={richtext}
@@ -118,7 +120,9 @@ function Prize() {
           />
           <Checkbox
             checked={isAutomatic}
-            onChange={(e) => { setIsAutomatic(e.currentTarget.checked); }}
+            onChange={(e) => {
+              setIsAutomatic(e.currentTarget.checked);
+            }}
             className="my-2 cursor-pointer"
             label="Automatically start accepting funds after getting approval from the admin"
           />
@@ -129,7 +133,9 @@ function Prize() {
           stepHoldInterval={100}
           value={votingTime}
           defaultValue={0}
-          onChange={(e) => { setVotingTime(e || 0); }}
+          onChange={(e) => {
+            setVotingTime(e || 0);
+          }}
         />
 
         {address.map((item, index) => (
@@ -139,13 +145,17 @@ function Prize() {
               placeholder="Address"
               className=""
               value={item}
-              onChange={(e) => { onAddressChange(index, e.target.value); }}
+              onChange={(e) => {
+                onAddressChange(index, e.target.value);
+              }}
             />
             {address.length > 1 && (
               <Button
                 color="red"
                 className="my-2"
-                onClick={() => { removeAddress(index); }}
+                onClick={() => {
+                  removeAddress(index);
+                }}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

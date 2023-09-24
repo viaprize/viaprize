@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import usePactFactory from "../../contract/usePactFactory";
 import axios from "../../lib/axios";
 
-
 const tabs = ["about", "create", "preview"];
 
 const Home: NextPage = () => {
@@ -33,12 +32,7 @@ const Home: NextPage = () => {
     try {
       /* eslint-disable  -- Because any is what the nature of the return type is*/
 
-      const res = await pactFactory.createPact(
-        terms,
-        endDate,
-        amount,
-        address
-      );
+      const res = await pactFactory.createPact(terms, endDate, amount, address);
       if (res.status) {
         await axios.post("/pact", {
           name: projectName,
@@ -89,7 +83,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (!account) {
-      return
+      return;
     }
   }, [account]);
 
@@ -130,7 +124,9 @@ const Home: NextPage = () => {
                   "tab tab-boxed tab-lg capitalize",
                   activeTab === item && "tab-active"
                 )}
-                onClick={() => { setActiveTab(item); }}
+                onClick={() => {
+                  setActiveTab(item);
+                }}
               >
                 {item}
               </a>
@@ -180,7 +176,9 @@ const Home: NextPage = () => {
                     placeholder="Name"
                     className="input input-bordered w-full "
                     value={projectName}
-                    onChange={(e) => { setProjectName(e.target.value); }}
+                    onChange={(e) => {
+                      setProjectName(e.target.value);
+                    }}
                   />
                 </div>
               </div>
@@ -192,7 +190,9 @@ const Home: NextPage = () => {
                 <textarea
                   className="textarea w-full input-bordered"
                   value={terms}
-                  onChange={(e) => { setTerms(e.target.value); }}
+                  onChange={(e) => {
+                    setTerms(e.target.value);
+                  }}
                   placeholder="Terms"
                 />
               </div>
@@ -208,7 +208,9 @@ const Home: NextPage = () => {
                       placeholder="Funding Goal"
                       className="input input-bordered"
                       value={amount}
-                      onChange={(e) => { setAmount(e.target.value); }}
+                      onChange={(e) => {
+                        setAmount(e.target.value);
+                      }}
                     />
                   </div>
                 </div>
@@ -222,7 +224,9 @@ const Home: NextPage = () => {
                     <DatePicker
                       defaultDate={new Date(2015, 1)}
                       value={rawEndDate}
-                      onChange={(val: DateValue) => { dateChange(val); }}
+                      onChange={(val: DateValue) => {
+                        dateChange(val);
+                      }}
                     />
                   </div>
                 </div>
@@ -241,13 +245,16 @@ const Home: NextPage = () => {
                         placeholder="Address"
                         className="input input-bordered w-full"
                         value={item}
-                        onChange={(e) => { onAddressChange(index, e.target.value); }
-                        }
+                        onChange={(e) => {
+                          onAddressChange(index, e.target.value);
+                        }}
                       />
                       {address.length > 1 && (
                         <button
                           className="btn btn-square"
-                          onClick={() => { removeAddress(index); }}
+                          onClick={() => {
+                            removeAddress(index);
+                          }}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"

@@ -6,7 +6,6 @@ export default function Contribute({ address, onContributed }) {
   const { web3, account } = useWeb3Context();
   const [amount, setAmount] = useState("");
   const doContribute = async () => {
-
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment  -- because any needs to be implemented
     await web3?.eth.sendTransaction({
       from: account,

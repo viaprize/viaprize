@@ -24,7 +24,6 @@ export default function SubmissionsCard({
 
   wallet,
   time,
-
 }: SubmissionsCardProps) {
   return (
     <Card className="flex flex-col justify-center gap-3">

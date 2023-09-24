@@ -1,12 +1,6 @@
 import { Button, Group, Text, rem, useMantineTheme } from "@mantine/core";
-import type {
-  DropzoneProps,
-  FileWithPath
-} from "@mantine/dropzone";
-import {
-  Dropzone,
-  IMAGE_MIME_TYPE,
-} from "@mantine/dropzone";
+import type { DropzoneProps, FileWithPath } from "@mantine/dropzone";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
 import Image from "next/image";
 
@@ -26,7 +20,7 @@ export default function ImageComponent(props: ImageComponentProps) {
         width="1280"
         height="768"
         alt="image"
-      // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
     );
   });
@@ -37,7 +31,9 @@ export default function ImageComponent(props: ImageComponentProps) {
       {props.files.length === 0 ? (
         <Dropzone
           onDrop={props.setFiles}
-          onReject={(files) => { console.log("rejected files", files); }}
+          onReject={(files) => {
+            console.log("rejected files", files);
+          }}
           maxSize={3 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
           maxFiles={1}
@@ -54,7 +50,7 @@ export default function ImageComponent(props: ImageComponentProps) {
                 stroke={1.5}
                 color={
                   theme.colors[theme.primaryColor][
-                  theme.colorScheme === "dark" ? 4 : 6
+                    theme.colorScheme === "dark" ? 4 : 6
                   ]
                 }
               />

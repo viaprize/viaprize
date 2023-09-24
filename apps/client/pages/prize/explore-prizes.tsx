@@ -13,9 +13,11 @@ function ExplorePage() {
   useEffect(() => {
     console.log("hiiii");
 
-    getProposalsOfUser().then((res) => {
-      console.log(res, "Res");
-    }).catch(console.error);
+    getProposalsOfUser()
+      .then((res) => {
+        console.log(res, "Res");
+      })
+      .catch(console.error);
   }, []);
   if (!user) {
     return null;

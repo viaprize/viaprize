@@ -1,9 +1,5 @@
-import type {
-  ColorScheme} from "@mantine/core";
-import {
-  ColorSchemeProvider,
-  MantineProvider,
-} from "@mantine/core";
+import type { ColorScheme } from "@mantine/core";
+import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { getCookie } from "cookies-next";
 import type { AppContext, AppProps } from "next/app";
 import NextApp from "next/app";
@@ -24,7 +20,10 @@ import { configureChainsConfig } from "@/lib/wagmi";
 
 const queryClient = new QueryClient();
 
-export type NextPageWithLayout<P = NonNullable<unknown>, IP = P> = NextPage<P, IP> & {
+export type NextPageWithLayout<P = NonNullable<unknown>, IP = P> = NextPage<
+  P,
+  IP
+> & {
   getLayout?: (page: Element) => React.JSX.Element;
 };
 
@@ -36,8 +35,8 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
   const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
   const toggleColorScheme = (value?: ColorScheme) => {
-    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"))
-  }
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+  };
   return (
     <>
       <Head>

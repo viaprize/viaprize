@@ -14,11 +14,14 @@ import type {
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- needed this for the function */
 function objectToRecord(obj: Record<string, any>): Record<string, string> {
-  return Object.entries(obj).reduce<Record<string, string>>((record, [key, value]) => {
-    /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
-    record[key] = value.toString();
-    return record;
-  }, {});
+  return Object.entries(obj).reduce<Record<string, string>>(
+    (record, [key, value]) => {
+      /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
+      record[key] = value.toString();
+      return record;
+    },
+    {}
+  );
 }
 
 async function storeFiles(files: File[]) {

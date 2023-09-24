@@ -17,7 +17,6 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   money,
   deadline,
 }) => {
-
   return (
     <Card padding="lg" radius="md" shadow="sm" withBorder>
       <Card.Section>

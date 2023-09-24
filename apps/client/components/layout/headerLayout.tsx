@@ -10,7 +10,7 @@ import {
   Modal,
   Text,
   Tooltip,
-  useMantineColorScheme
+  useMantineColorScheme,
 } from "@mantine/core";
 import { useState } from "react";
 
@@ -22,7 +22,6 @@ import {
   IconCopy,
   IconMoonStars,
   IconSearch,
-
   IconSun,
   IconUser,
 } from "@tabler/icons-react";
@@ -62,32 +61,40 @@ export default function HeaderLayout() {
         <Card py="5px">
           <Group>
             {wallets[0] ? displayAddress(wallets[0].address) : "No Wallet"}
-            {wallets[0] ? <CopyButton value={wallets[0].address}>
-              {({ copied, copy }) => (
-                <Tooltip
-                  label={copied ? "Copied" : "Copy"}
-                  withArrow
-                  position="right"
-                >
-                  <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
-                    {copied ? (
-                      <IconCheck size="1rem" />
-                    ) : (
-                      <IconCopy size="1rem" />
-                    )}
-                  </ActionIcon>
-                </Tooltip>
-              )}
-            </CopyButton> : null}
+            {wallets[0] ? (
+              <CopyButton value={wallets[0].address}>
+                {({ copied, copy }) => (
+                  <Tooltip
+                    label={copied ? "Copied" : "Copy"}
+                    withArrow
+                    position="right"
+                  >
+                    <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
+                      {copied ? (
+                        <IconCheck size="1rem" />
+                      ) : (
+                        <IconCopy size="1rem" />
+                      )}
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </CopyButton>
+            ) : null}
           </Group>
         </Card>
         <ActionIcon
           variant="outline"
           color={colorScheme === "dark" ? "yellow.7" : "blue.8"}
-          onClick={() => { toggleColorScheme(); }}
+          onClick={() => {
+            toggleColorScheme();
+          }}
           title="Toggle color scheme"
         >
-          {colorScheme === "dark" ? <IconSun size="1.1rem" /> : <IconMoonStars size="1.1rem" />}
+          {colorScheme === "dark" ? (
+            <IconSun size="1.1rem" />
+          ) : (
+            <IconMoonStars size="1.1rem" />
+          )}
         </ActionIcon>
         <ProfileMenu />
       </Flex>
@@ -137,7 +144,10 @@ function ProfileMenu() {
               <Menu.Item
                 icon={<IconUser size={14} />}
                 onClick={() => {
-                  router.push("/profile").then(console.log).catch(console.error);
+                  router
+                    .push("/profile")
+                    .then(console.log)
+                    .catch(console.error);
                 }}
               >
                 View Profile
@@ -159,7 +169,9 @@ function ProfileMenu() {
 
             {/* <Menu.Label>Danger zone</Menu.Label> */}
             <Menu.Item
-              onClick={() => { setSwitchWallet(true); }}
+              onClick={() => {
+                setSwitchWallet(true);
+              }}
               icon={<IconArrowsLeftRight size={14} />}
             >
               Switch Wallet
@@ -189,7 +201,9 @@ function ProfileMenu() {
       <Modal
         size="lg"
         opened={switchWallet}
-        onClose={() => { setSwitchWallet(false); }}
+        onClose={() => {
+          setSwitchWallet(false);
+        }}
         title="Switch Wallets"
       >
         <SwitchAccount />
