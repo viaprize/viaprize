@@ -73,7 +73,7 @@ export default function Details() {
         <Text>Enter your details to get started</Text>
         <TextInput
           value={username}
-          onChange={(e) => setUsername(e.currentTarget.value)}
+          onChange={(e) => { setUsername(e.currentTarget.value) }}
           label="Username"
           placeholder="Enter your username"
           my="sm"
