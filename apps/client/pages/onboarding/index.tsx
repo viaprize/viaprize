@@ -18,12 +18,15 @@ export default function Details() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const { createNewUser } = useAppUser();
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: () => {
-      router.push('/prize/explore-prizes').then(console.log).catch(console.error);
+      router
+        .push("/prize/explore-prizes")
+        .then(console.log)
+        .catch(console.error);
     },
   });
 
@@ -41,8 +44,8 @@ export default function Details() {
         setLoading(false);
         setData(
           ["gmail.com", "outlook.com", "yahoo.com"].map(
-            (provider) => `${val}@${provider}`
-          )
+            (provider) => `${val}@${provider}`,
+          ),
         );
       }, 1000);
     }
@@ -57,10 +60,10 @@ export default function Details() {
           username,
         }),
         {
-          loading: 'Logging In',
-          success: 'Logged In Successfully',
-          error: 'Error Logging In',
-        }
+          loading: "Logging In",
+          success: "Logged In Successfully",
+          error: "Error Logging In",
+        },
       );
     } catch (e) {
       console.log(e);
@@ -73,14 +76,18 @@ export default function Details() {
         <Text>Enter your details to get started</Text>
         <TextInput
           value={username}
-          onChange={(e) => { setUsername(e.currentTarget.value) }}
+          onChange={(e) => {
+            setUsername(e.currentTarget.value);
+          }}
           label="Username"
           placeholder="Enter your username"
           my="sm"
         />
         <TextInput
           value={name}
-          onChange={(e) => { setName(e.currentTarget.value); }}
+          onChange={(e) => {
+            setName(e.currentTarget.value);
+          }}
           label="Name"
           placeholder="Enter your name"
           my="sm"

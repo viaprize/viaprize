@@ -7,11 +7,7 @@ interface PrizeFunderCardProps {
   walletAddress?: string;
 }
 
-export default function PrizeFunderCard({
-  name,
-  email,
-
-}: PrizeFunderCardProps) {
+export default function PrizeFunderCard({ name, email }: PrizeFunderCardProps) {
   return (
     <Card
       shadow="xs"

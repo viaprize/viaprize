@@ -1,7 +1,7 @@
 import { Tabs } from "@mantine/core";
 import type { ReactElement } from "react";
 import AppShellLayout from "@/components/layout/appshell";
-import ExploreCard from "@/components/ExplorePrize/ExplorePrize";
+import ExploreCard from "@/components/ExplorePrize/explorePrize";
 
 export default function Profile() {
   return (

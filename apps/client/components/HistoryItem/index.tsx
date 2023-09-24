@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { FaEthereum } from "react-icons/fa";
 import Contribute from "../Contribute";
 
-
 function formatEtherValue(weiAmount: number): string {
   const etherAmount = weiAmount / 10 ** 18;
 
@@ -16,11 +15,9 @@ function formatEtherValue(weiAmount: number): string {
     const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
     return `${etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, "")} ETH`;
   } else if (etherAmount >= 1e-18) {
-
     return `${etherAmount.toFixed(10).replace(/\.?0+$/, "")} ETH`;
   }
   return `${etherAmount.toExponential(6).replace(/\.?0+e/, "e")} ETH`;
-
 }
 
 export default function HistoryItem({ item, address, pictureVisible }: any) {
@@ -36,7 +33,7 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
         src="https://${window.location.host}/pact/preview/${address}"
         frameborder="0"
         scrolling="no"
-      ></iframe>`
+      ></iframe>`,
     );
     alert("Copied to clipboard");
   };
@@ -77,10 +74,12 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
   return (
     <div className="card bg-base-100 shadow-xl mb-4 dark:text-gray-300">
       <div className="card-body break-words">
-        {pictureVisible && config.pictures[item.address] ? <img
-          src={config.pictures[item.address]}
-          className="rounded-xl mb-3"
-        /> : null}
+        {pictureVisible && config.pictures[item.address] ? (
+          <img
+            src={config.pictures[item.address]}
+            className="rounded-xl mb-3"
+          />
+        ) : null}
         <Link
           href={`/pact/${item.address}`}
           className="card-title text-3xl break-words dark:text-white inline-block hover:underline"
@@ -119,23 +118,29 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
           </p>
         </div>
 
-        {detail.resolved && detail.safe ? <div>
-          <div className="font-bold mb-1">Safe Address: </div>
-          <a
-            href={`${config.scanUrl}/address/${detail.safe}`}
-            rel="noreferrer"
-            className="font-mono mt-1 underline"
-            target="_blank"
-          >
-            {detail.safe}
-          </a>
-        </div> : null}
+        {detail.resolved && detail.safe ? (
+          <div>
+            <div className="font-bold mb-1">Safe Address: </div>
+            <a
+              href={`${config.scanUrl}/address/${detail.safe}`}
+              rel="noreferrer"
+              className="font-mono mt-1 underline"
+              target="_blank"
+            >
+              {detail.safe}
+            </a>
+          </div>
+        ) : null}
 
-        {detail.resolvable && !detail.resolved ? <button className="btn" onClick={() => doResolve()}>
-          Resolve
-        </button> : null}
+        {detail.resolvable && !detail.resolved ? (
+          <button className="btn" onClick={() => doResolve()}>
+            Resolve
+          </button>
+        ) : null}
 
-        {detail.resolved ? <button className="btn btn-success text-white mt-2">Resolved</button> : null}
+        {detail.resolved ? (
+          <button className="btn btn-success text-white mt-2">Resolved</button>
+        ) : null}
 
         {!detail.resolvable && !detail.resolved && (
           <div>

@@ -6,8 +6,8 @@ import AppShellLayout from "@/components/layout/appshell";
 export default function PrizePage() {
   return (
     <div className="flex justify-center w-full">
-        <PrizePageComponent />
-      </div>
+      <PrizePageComponent />
+    </div>
   );
 }
 

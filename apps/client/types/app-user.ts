@@ -1,6 +1,8 @@
-export interface AppUser extends User {}
+export interface AppUser extends User {
+  falseValue: boolean; // This is just to test the type remove it later
+}
 
-export declare class User {
+export interface User {
   id: string;
   email: string;
   user_id: string;
@@ -10,7 +12,7 @@ export declare class User {
   prizeProposals: any[];
 }
 
-export class CreateUserDto {
+export interface CreateUserDto {
   email: string;
   user_id: string;
   name: string;

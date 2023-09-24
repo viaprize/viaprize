@@ -1,3 +1,6 @@
+/* eslint-disable  -- because eslint sometimes needs to shut up and not complain*/
+// @ts-nocheck -- will add support for types later
+
 import type { GetServerSideProps } from "next";
 import Link from "next/link";
 import { FaEthereum } from "react-icons/fa";
@@ -22,18 +25,18 @@ function formatEtherValue(weiAmount: number): string {
     const decimalPlaces = Math.max(0, 6 - Math.ceil(Math.log10(etherAmount)));
     return `${etherAmount.toFixed(decimalPlaces).replace(/\.?0+$/, "")} ETH`;
   } else if (etherAmount >= 1e-18) {
-
     return `${etherAmount.toFixed(10).replace(/\.?0+$/, "")} ETH`;
   }
   return `${etherAmount.toExponential(6).replace(/\.?0+e/, "e")} ETH`;
-
 }
 const getPactInfo = async (pactAddress: string) => {
-  const web3 = new Web3(new Web3.providers.HttpProvider(config.provider as string));
+  const web3 = new Web3(
+    new Web3.providers.HttpProvider(config.provider as string),
+  );
   /* eslint-disable -- Because i dont know the return type*/
   const multicall = new web3.eth.Contract(
     MulticallABI as AbiItem[],
-    config.contracts.multicall3
+    config.contracts.multicall3,
   );
 
   const pactContract = new web3.eth.Contract(PactABI as AbiItem[], pactAddress);
@@ -129,19 +132,23 @@ export default async function Page({ item }: PackPreviewProp) {
           </a>
         </div>
 
-        {item.resolved && item.safe ? <div>
-          <div className="font-bold mb-1">Safe Address: </div>
-          <a
-            href={`${config.scanUrl}/address/${item.safe}`}
-            rel="noreferrer"
-            className="font-mono mt-1 underline"
-            target="_blank"
-          >
-            {item.safe}
-          </a>{" "}
-        </div> : null}
+        {item.resolved && item.safe ? (
+          <div>
+            <div className="font-bold mb-1">Safe Address: </div>
+            <a
+              href={`${config.scanUrl}/address/${item.safe}`}
+              rel="noreferrer"
+              className="font-mono mt-1 underline"
+              target="_blank"
+            >
+              {item.safe}
+            </a>{" "}
+          </div>
+        ) : null}
 
-        {item.resolved ? <button className="btn btn-success text-white mt-2">Resolved</button> : null}
+        {item.resolved ? (
+          <button className="btn btn-success text-white mt-2">Resolved</button>
+        ) : null}
         {!item.resolved && (
           <>
             <p className="text-yellow-700 font-bold dark:text-yellow-400 text-md mt-8">
@@ -160,7 +167,7 @@ export default async function Page({ item }: PackPreviewProp) {
               onClick={() =>
                 window.open(
                   `https://${window.location.host}/pact/${item.address}`,
-                  "_blank"
+                  "_blank",
                 )
               }
             >

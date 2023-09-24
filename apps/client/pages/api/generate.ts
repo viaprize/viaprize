@@ -1,10 +1,9 @@
-
 import type { NextApiRequest, NextApiResponse } from "next";
 import { OpenAI } from "openai";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     const body = req.body as string;
@@ -15,7 +14,7 @@ export default async function handler(
       res
         .status(500)
         .send(
-          "This feature is currently under progress. Please check back later."
+          "This feature is currently under progress. Please check back later.",
         );
     }
 
@@ -47,17 +46,14 @@ export default async function handler(
     });
 
     const finalRes = response.choices[0].message.content;
-    
 
     res.status(200).send(finalRes);
   } catch (error) {
     const errorMessage = error as string;
 
-res.status(500).json({
-  error: "Failed to generate",
-  message: errorMessage
-});
-    
-   
+    res.status(500).json({
+      error: "Failed to generate",
+      message: errorMessage,
+    });
   }
 }

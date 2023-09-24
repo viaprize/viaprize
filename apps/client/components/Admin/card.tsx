@@ -35,12 +35,10 @@ const AdminCard: React.FC<AdminCardProps> = ({
   user,
   voting,
 }) => {
-
   const [rejectOpen, setRejectOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [comment, setComment] = useState("");
-  const { acceptProposal, rejectProposal } =
-    usePrizeProposal();
+  const { acceptProposal, rejectProposal } = usePrizeProposal();
   const acceptProposalMutation = useMutation(acceptProposal);
   const rejectProposalMutation = useMutation(rejectProposal);
 
@@ -51,14 +49,14 @@ const AdminCard: React.FC<AdminCardProps> = ({
         <Card.Section>
           {images.length > 0
             ? images.map((image) => (
-              <Image
-                src={image}
-                height={160}
-                alt="Image"
-                key={image}
-                width={346}
-              />
-            ))
+                <Image
+                  src={image}
+                  height={160}
+                  alt="Image"
+                  key={image}
+                  width={346}
+                />
+              ))
             : null}
         </Card.Section>
         <Group position="apart" mt="md" mb="xs">
@@ -76,9 +74,20 @@ const AdminCard: React.FC<AdminCardProps> = ({
           </Text>
         </Group>
         <Group>
-          <Button onClick={() => { setDetailsOpen(true); }}>View Details</Button>
+          <Button
+            onClick={() => {
+              setDetailsOpen(true);
+            }}
+          >
+            View Details
+          </Button>
 
-          <Button color="red" onClick={() => { setRejectOpen(true); }}>
+          <Button
+            color="red"
+            onClick={() => {
+              setRejectOpen(true);
+            }}
+          >
             Reject
           </Button>
           <Button
@@ -94,7 +103,9 @@ const AdminCard: React.FC<AdminCardProps> = ({
       </Card>
       <Modal
         opened={rejectOpen}
-        onClose={() => { setRejectOpen(false); }}
+        onClose={() => {
+          setRejectOpen(false);
+        }}
         title="Write your rejection reason"
       >
         <Textarea
@@ -104,7 +115,9 @@ const AdminCard: React.FC<AdminCardProps> = ({
           radius="md"
           withAsterisk
           value={comment}
-          onChange={(event) => { setComment(event.currentTarget.value); }}
+          onChange={(event) => {
+            setComment(event.currentTarget.value);
+          }}
         />
         <Group position="right" my="md">
           <Button
@@ -126,7 +139,9 @@ const AdminCard: React.FC<AdminCardProps> = ({
       <Modal
         size="xl"
         opened={detailsOpen}
-        onClose={() => { setDetailsOpen(false); }}
+        onClose={() => {
+          setDetailsOpen(false);
+        }}
         title="Prize details"
       >
         <ViewDetails

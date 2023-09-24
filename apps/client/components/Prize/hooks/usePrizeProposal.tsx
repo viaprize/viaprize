@@ -14,11 +14,14 @@ import type {
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- needed this for the function */
 function objectToRecord(obj: Record<string, any>): Record<string, string> {
-  return Object.entries(obj).reduce<Record<string, string>>((record, [key, value]) => {
-    /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
-    record[key] = value.toString();
-    return record;
-  }, {});
+  return Object.entries(obj).reduce<Record<string, string>>(
+    (record, [key, value]) => {
+      /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
+      record[key] = value.toString();
+      return record;
+    },
+    {},
+  );
 }
 
 async function storeFiles(files: File[]) {
@@ -67,7 +70,7 @@ export default function usePrizeProposal() {
     queryParams: PrizeProposalQueryParams = {
       limit: 10,
       page: 1,
-    }
+    },
   ) => {
     const record: Record<string, string> = objectToRecord(queryParams);
     const queryString = new URLSearchParams(record);
@@ -76,7 +79,7 @@ export default function usePrizeProposal() {
       return;
     }
     const res = await myAxios.get(
-      `/prizes/proposals/user/${user.id}${queryString.toString()}`
+      `/prizes/proposals/user/${user.id}${queryString.toString()}`,
     );
     console.log("res", "acxi0", res);
     return res.data as PrizeProposalsList;
@@ -86,12 +89,12 @@ export default function usePrizeProposal() {
     queryParam: PrizeProposalQueryParams = {
       limit: 10,
       page: 1,
-    }
+    },
   ) => {
     const record: Record<string, string> = objectToRecord(queryParam);
     const queryString = new URLSearchParams(record);
     const res = await myAxios.get(
-      `/prizes/proposals?${queryString.toString()}`
+      `/prizes/proposals?${queryString.toString()}`,
     );
     console.log({ res }, "proposals");
     return res.data as PrizeProposalsList;
