@@ -1,8 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AppConfig } from 'src/config/config.type';
-import { MailService } from 'src/mail/mail.service';
 import { UsersService } from 'src/users/users.service';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { Repository } from 'typeorm';
@@ -15,8 +12,6 @@ export class PrizeProposalsService {
   constructor(
     @InjectRepository(PrizeProposals)
     private prizeProposalsRepository: Repository<PrizeProposals>,
-    private configService: ConfigService<AppConfig>,
-    private mailService: MailService,
     private userService: UsersService,
   ) {}
   async create(createPrizeDto: CreatePrizeProposalDto, userId: string) {
@@ -25,11 +20,12 @@ export class PrizeProposalsService {
       throw new HttpException('User not found', HttpStatus.NOT_ACCEPTABLE);
     }
 
-    await this.prizeProposalsRepository.save({
+    const prizeProposal = await this.prizeProposalsRepository.save({
       ...createPrizeDto,
       user: user,
     });
-    await this.mailService.proposalSent(user.email);
+    return prizeProposal;
+    // await this.mailService.proposalSent(user.email);
   }
 
   async findAll() {
@@ -85,7 +81,7 @@ export class PrizeProposalsService {
       isApproved: true,
     });
 
-    await this.mailService.approved(prizeProposal.user.email);
+    // await this.mailService.approved(prizeProposal.user.email);
   }
 
   async reject(id: string, comment: string) {
@@ -97,7 +93,7 @@ export class PrizeProposalsService {
       isApproved: false,
     });
 
-    await this.mailService.rejected(prizeProposal.user.email, comment);
+    // await this.mailService.rejected(prizeProposal.user.email, comment);
   }
 
   async update(id: string, updatePrizeDto: UpdatePrizeDto) {

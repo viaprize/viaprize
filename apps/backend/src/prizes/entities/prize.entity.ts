@@ -1,49 +1,47 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDate } from 'class-validator';
-import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { IsDate } from 'class-validator';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Submission } from './submission.entity';
 
+/* The Prize class represents a prize in a TypeScript application, with various properties such as
+description, start dates, addresses, and arrays of admins, proficiencies, and priorities. */
 @Entity()
 export class Prize {
-  @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty()
   @Column('text')
   description: string;
 
-  @ApiProperty()
-  @IsBoolean()
+  @Column('boolean')
   isAutomatic: boolean;
 
-  @ApiProperty()
   @IsDate()
   @Column({ nullable: true })
   startVotingDate: Date;
 
-  @ApiProperty()
   @IsDate()
   @Column({ nullable: true })
   startSubmissionDate: Date;
 
-  @ApiProperty()
   @Column()
   proposer_address: string;
 
-  @ApiProperty()
   @Column()
   contract_address: string;
 
-  @ApiProperty({ type: 'string', items: { type: 'string' } })
   @Column('simple-array')
   admins: string[];
-  @ApiProperty({ type: 'array', items: { type: 'string' } })
+
   @Column('simple-array')
   proficiencies: string[];
 
-  @ApiProperty({ type: 'array', items: { type: 'string' } })
   @Column('simple-array')
   priorities: string[];
 

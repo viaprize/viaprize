@@ -16,6 +16,13 @@ export const NESTIA_CONFIG: INestiaConfig = {
      * `swagger.json` file would be renamed to it.
      */
     output: 'swagger.json',
+    security: {
+      bearer: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+    },
   },
 
   /**

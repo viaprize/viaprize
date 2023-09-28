@@ -1,8 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('pacts')
-@Unique(['address', 'transactionHash'])
-export class PactEntity {
+@Entity()
+export class Pact {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 

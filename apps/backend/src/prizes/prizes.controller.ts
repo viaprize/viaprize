@@ -1,188 +1,167 @@
-import {
-  Body,
-  Controller,
-  DefaultValuePipe,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseIntPipe,
-  Post,
-  Query,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Request, UseGuards } from '@nestjs/common';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiParam,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 
-import { ApiProperty } from '@nestjs/swagger';
+import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 
+/**
+ * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
+ * InfinityPaginationResultType interface, representing the result of paginated prize proposals with
+ * properties for data, hasNextPage, results, total, page, and limit.
+ * @date 9/25/2023 - 3:54:21 AM
+ *
+ * @class PrizeProposalsPaginationResult
+ * @typedef {PrizeProposalsPaginationResult}
+ * @implements {InfinityPaginationResultType<PrizeProposals>}
+ */
 class PrizeProposalsPaginationResult
   implements InfinityPaginationResultType<PrizeProposals>
 {
   data: PrizeProposals[];
   hasNextPage: boolean;
-  @ApiProperty({ type: [PrizeProposals] })
   results: PrizeProposals[];
-
-  @ApiProperty()
   total: number;
-
-  @ApiProperty()
   page: number;
-
-  @ApiProperty()
   limit: number;
 }
 
-@ApiTags('prizes')
+interface PrzieQuery {
+  page: number;
+  limit: number;
+}
+/**
+ * This is the prizes controller class.
+ * it handles the documentation of routes and implementation of services related to the prizes route.
+ * @tag {prizes}
+ */
 @Controller('prizes')
 export class PrizesController {
   constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
 
-  @Get('/proposals')
+  /**
+   *  The code snippet you provided is a method in the `PrizesController` class. It is a route handler
+   * for the GET request to `/proposals` endpoint. Here's a breakdown of what it does:
+   * Gets page 
+   * 
+   * @summary Get all Pending proposals
+   * 
+   * @date 9/25/2023 - 4:06:45 AM
+   * @security bearer
+   * @async
+  * @param {PrzieQuery} [query={
+        page: 1,
+        limit: 10
+      }]
+   * @returns {Promise<Readonly<{data: PrizeProposals[];hasNextPage: boolean;}>>}
+   */
+  @TypedRoute.Get('/proposals')
   @UseGuards(AdminAuthGuard)
-  @ApiOperation({
-    summary: 'Get all Pending proposals',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'The proposals were returned successfully',
-    type: PrizeProposalsPaginationResult,
-  })
-  @ApiQuery({
-    name: 'page',
-    example: 1,
-    type: Number,
-  })
-  @ApiQuery({
-    name: 'limit',
-    example: 10,
-    type: Number,
-  })
-  @ApiBearerAuth('access-token')
   async getPendingProposals(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-  ) {
+    @TypedQuery()
+    query: PrzieQuery = {
+      page: 1,
+      limit: 10,
+    },
+  ): Promise<
+    Readonly<{
+      data: PrizeProposals[];
+      hasNextPage: boolean;
+    }>
+  > {
     return infinityPagination(
       await this.prizeProposalsService.findAllWithPagination({
-        page,
-        limit,
+        ...query,
       }),
       {
-        limit,
-        page,
+        ...query,
       },
     );
   }
 
-  @Post('/proposals')
+  /**
+   * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
+   * for the POST request to `/proposals` endpoint. Here's a breakdown of what it does:
+   * @summary Create a new proposal using user auth token to know which user is calling this function
+   * @date 9/25/2023 - 4:44:05 AM
+   *
+   * @async
+   * @param {CreatePrizeProposalDto} createPrizeProposalDto
+   * @security bearer
+   * @returns {Promise<PrizeProposals>}
+   */
+
+  @TypedRoute.Post('/proposals')
   @UseGuards(AuthGuard)
-  @ApiOperation({
-    summary: 'Proposal of a Prize  by passing Prize data ',
-  })
-  @ApiBody({
-    description: 'Request body to create a prize',
-    type: CreatePrizeProposalDto,
-  })
-  @ApiBearerAuth('access-token')
-  create(
-    @Body() createPrizeProposalDto: CreatePrizeProposalDto,
+  async create(
+    @TypedBody() createPrizeProposalDto: CreatePrizeProposalDto,
     @Request() req,
-  ) {
+  ): Promise<PrizeProposals> {
     console.log({ createPrizeProposalDto });
     console.log(req.user, 'user');
-    return this.prizeProposalsService.create(
+    return await this.prizeProposalsService.create(
       createPrizeProposalDto,
       req.user.userId,
     );
   }
 
-  @Get('/proposals/user/:userId')
-  @HttpCode(HttpStatus.OK)
-  @ApiResponse({
-    status: 200,
-    description: 'The proposals were returned successfully',
-    type: PrizeProposalsPaginationResult,
-  })
-  @ApiQuery({
-    name: 'page',
-    example: 1,
-    type: Number,
-  })
-  @ApiQuery({
-    name: 'limit',
-    example: 10,
-    type: Number,
-  })
-  @ApiParam({
-    name: 'userId',
-    type: String,
-  })
+  /**
+   * Get pending proposal of user 
+   * @date 9/25/2023 - 4:47:51 AM
+   * @summary Get pending proposals,
+   * @async 
+   * @param {PrzieQuery} [query={
+        page: 1,
+        limit: 10
+      }]
+   * @param {string} userId
+   * @returns {Promise<InfinityPaginationResultType<PrizeProposals>>}
+   */
+  @TypedRoute.Get('/proposals/user/:userId')
   async getProposalsBy(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Param('userId') userId,
+    @TypedQuery()
+    query: PrzieQuery = {
+      page: 1,
+      limit: 10,
+    },
+    @TypedParam('userId') userId: string,
   ): Promise<InfinityPaginationResultType<PrizeProposals>> {
-    if (limit > 50) {
-      limit = 50;
+    if (query.limit > 50) {
+      query.limit = 50;
     }
 
     return infinityPagination(
       await this.prizeProposalsService.findByUserWithPagination(
         {
-          limit,
-          page,
+          ...query,
         },
         userId,
       ),
-      { page, limit },
+      { ...query },
     );
   }
-  @Get('/proposals/:userId')
-  @ApiResponse({
-    status: 200,
-    description: 'The proposals were returned successfully',
-    type: PrizeProposalsPaginationResult,
-  })
-  @ApiParam({
-    name: 'authId',
-    type: String,
-  })
-  async getProposal(@Param('authId') authId: string) {
-    return await this.prizeProposalsService.findByUserAuthId(authId);
-  }
 
-  @Post('/proposals/reject/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'The Proposals was Rejected',
-  })
-  @ApiBody({
-    description: 'Request body to reject a proposal',
-    type: RejectProposalDto,
-  })
+  /**
+   * Admin Reject proposal
+   * @date 9/25/2023 - 5:19:58 AM
+   * @summary Reject Proposal,
+   * @async
+   * @param {string} id
+   * @security bearer
+   * @param {RejectProposalDto} rejectProposalDto
+   * @returns {unknown}
+   */
+  @TypedRoute.Post('/proposals/reject/:id')
   @UseGuards(AdminAuthGuard)
   async rejectProposal(
-    @Param('id') id: string,
-    @Body() rejectProposalDto: RejectProposalDto,
+    @TypedParam('id') id: string,
+    @TypedBody() rejectProposalDto: RejectProposalDto,
   ) {
     return await this.prizeProposalsService.reject(
       id,
@@ -190,17 +169,18 @@ export class PrizesController {
     );
   }
 
-  @Post('/proposals/accept/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'The Proposals was Approved',
-  })
+  /**
+   * The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls
+   * the `approve` method of the `prizeProposalsService` with the given `id`.
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {unknown}
+   */
+  @TypedRoute.Post('/proposals/accept/:id')
   @UseGuards(AdminAuthGuard)
-  @ApiParam({
-    name: 'id',
-    type: String,
-  })
-  async approveProposal(@Param('id') id: string) {
+  async approveProposal(@TypedParam('id') id: string) {
     return await this.prizeProposalsService.approve(id);
   }
 }
