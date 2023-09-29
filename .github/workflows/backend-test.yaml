@@ -28,4 +28,4 @@ jobs:
 
       - name: Build
         run: npm run build
-        working-directory: ./apps/backend
+        working-directory: ./backend
