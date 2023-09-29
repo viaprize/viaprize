@@ -20,11 +20,11 @@ jobs:
 
       - name: Copy env # copy in your env file
         run: 'echo -e "${{secrets.BACKEND_ENV}}" > .env'
-        working-directory: ./apps/backend
+        working-directory: ./backend
 
       - name: Install dependencies
         run: npm ci
-        working-directory: ./apps/backend
+        working-directory: ./backend
 
       - name: Build
         run: npm run build
