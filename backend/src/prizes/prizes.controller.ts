@@ -43,10 +43,10 @@ interface PrzieQuery {
  */
 @Controller('prizes')
 export class PrizesController {
-  constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
+  constructor(private readonly prizeProposalsService: PrizeProposalsService) { }
 
   /**
-   *  The code snippet you provided is a method in the `PrizesController` class. It is a route handler
+   * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
    * for the GET request to `/proposals` endpoint. Here's a breakdown of what it does:
    * Gets page 
    * 
@@ -55,20 +55,19 @@ export class PrizesController {
    * @date 9/25/2023 - 4:06:45 AM
    * @security bearer
    * @async
-  * @param {PrzieQuery} [query={
+   * @param {PrzieQuery} [query={
         page: 1,
         limit: 10
-      }]
+      }] 
+   * @param {PrzieQuery.page=1}  this is the page number of the return pending proposals 
+   * @param {PrzieQuery.limit=10} this is the limit of the return type of the pending proposals
    * @returns {Promise<Readonly<{data: PrizeProposals[];hasNextPage: boolean;}>>}
    */
   @TypedRoute.Get('/proposals')
   @UseGuards(AdminAuthGuard)
   async getPendingProposals(
     @TypedQuery()
-    query: PrzieQuery = {
-      page: 1,
-      limit: 10,
-    },
+    query: PrzieQuery,
   ): Promise<
     Readonly<{
       data: PrizeProposals[];

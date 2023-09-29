@@ -28,14 +28,14 @@ export const NESTIA_CONFIG: INestiaConfig = {
   /**
    * List of files or directories containing the NestJS controller classes.
    */
-  input: 'src/users/users.controller.ts',
+  input: "src/**/*.controller.ts",
 
   /**
    * Output directory that SDK would be placed in.
    *
    * If not configured, you can't build the SDK library.
    */
-  output: 'src/api',
+  output: '../packages/api',
 
   /**
    * Target directory that SDK distribution files would be placed in.
