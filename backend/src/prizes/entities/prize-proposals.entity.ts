@@ -1,4 +1,4 @@
-import { User } from 'src/users/entities/user.entity';
+
 import {
   Column,
   Entity,
@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class PrizeProposals {
@@ -50,6 +51,6 @@ export class PrizeProposals {
   images: string[];
 
   @ManyToOne(() => User, (user) => user.prizeProposals)
-  @JoinColumn({ name: 'user', referencedColumnName: 'user_id' })
+  @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
   user: User;
 }

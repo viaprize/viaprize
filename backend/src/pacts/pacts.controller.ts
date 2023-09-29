@@ -1,7 +1,7 @@
 import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
 import { Controller } from '@nestjs/common';
 import { CreatePact } from './dto/create-pact.dto';
-import { PactEntity } from './entities/pact.entity';
+import { Pact } from './entities/pact.entity';
 import { PactsService } from './pacts.service';
 
 /**
@@ -11,7 +11,7 @@ import { PactsService } from './pacts.service';
  */
 @Controller('pacts')
 export class PactsController {
-  constructor(private readonly pactsService: PactsService) {}
+  constructor(private readonly pactsService: PactsService) { }
 
   /**
    * @summary Create Pact by passing pact data
@@ -20,26 +20,26 @@ export class PactsController {
    * @returns {Promise<Pact>} The created pact object.
    */
   @TypedRoute.Post()
-  create(@TypedBody() createPact: CreatePact): Promise<PactEntity> {
+  create(@TypedBody() createPact: CreatePact): Promise<Pact> {
     return this.pactsService.create(createPact);
   }
 
   /**
    * @summary Get all pacts of application
    *
-   * @see {PactEntity}
-   * @returns {Promise<PactEntity[]>} Returns all pacts
+   * @see {Pact}
+   * @returns {Promise<Pact[]>} Returns all pacts
    */
 
-  findAll(): Promise<PactEntity[]> {
+  findAll(): Promise<Pact[]> {
     return this.pactsService.findAll();
   }
 
   /**
    * @summary Get all pacts of application
    *
-   * @see {PactEntity}
-   * @returns {Promise<PactEntity[]>} Returns all pacts
+   * @see {Pact}
+   * @returns {Promise<Pact[]>} Returns all pacts
    */
   @TypedRoute.Get(':address')
   findOne(@TypedParam('address') address: string) {
