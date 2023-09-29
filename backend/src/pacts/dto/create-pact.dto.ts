@@ -14,7 +14,7 @@ export interface CreatePact {
   /**
    * Terms of the pact i.e the Description
    * @example test
-  */
+   */
   terms: string;
 
   /**

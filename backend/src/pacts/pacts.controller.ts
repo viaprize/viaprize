@@ -11,7 +11,7 @@ import { PactsService } from './pacts.service';
  */
 @Controller('pacts')
 export class PactsController {
-  constructor(private readonly pactsService: PactsService) { }
+  constructor(private readonly pactsService: PactsService) {}
 
   /**
    * @summary Create Pact by passing pact data
