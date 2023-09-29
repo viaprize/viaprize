@@ -1,0 +1,76 @@
+@tailwind components;
+@tailwind utilities;
+
+
+
+@font-face {
+  font-family: "inter";
+  font-weight: 200;
+  src        : url("/fonts/Inter/Inter-Thin.ttf");
+}
+
+
+@font-face {
+  font-family: "inter";
+  font-weight: 400;
+  src        : url("/fonts/Inter/Inter-Regular.ttf");
+}
+
+@font-face {
+  font-family: "inter";
+  font-weight: 600;
+  src        : url("/fonts/Inter/Inter-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "inter";
+  font-weight: 900;
+  src        : url("/fonts/Inter/Inter-ExtraBold.ttf");
+}
+
+html,
+
+
+.ant-btn,
+.tab-active {
+  background: #3d4451 !important;
+}
+
+a {
+  color          : inherit;
+  text-decoration: none;
+  text-transform : none;
+}
+
+.font-inter {
+  font-family: 'Figtree';
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+.hover-up {
+  transition: transform 0.3s;
+}
+
+.hover-up:hover {
+  transform: translateY(-4px);
+}
+
+.btn-blue {
+  background: #BE7DFF;
+  border    : none;
+}
+
+.container {
+  max-width: 90%;
+}
+
+.sign-card {
+  background     : rgba(255, 255, 255, 0.02);
+  box-shadow     : 12.8px 57.6px 83.2px rgba(184, 158, 253, 0.3);
+  backdrop-filter: blur(20px);
+  border-radius  : 24px;
+}

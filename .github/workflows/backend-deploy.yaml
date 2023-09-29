@@ -1,5 +1,4 @@
 name: Deploy to server
-
 on:
   push:
     branches:
@@ -8,21 +7,62 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.5.3
+      - name: Setup SSH
+        uses: appleboy/ssh-action@master
         with:
-          ssh-private-key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
+          host: ec2-13-126-81-178.ap-south-1.compute.amazonaws.com
+          username: ubuntu
+          key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/viaprize/apps/backend
+            ls -a
+            sudo chown -R ubuntu .
+            git add -A 
+            git stash 
+            git pull origin main
+            exit
+      - name: Copy Env
+        uses: appleboy/ssh-action@master
+        with:
+          host: ec2-13-126-81-178.ap-south-1.compute.amazonaws.com
+          username: ubuntu
+          key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/viaprize/apps/backend
+            echo "${{secrets.BACKEND_ENV}}" > .env
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh   
+            exit
+      - name: Install apps
+        uses: appleboy/ssh-action@master
+        with:
+          host: ec2-13-126-81-178.ap-south-1.compute.amazonaws.com
+          username: ubuntu
+          key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/viaprize/apps/backend
+            sudo chown -R ubuntu .
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh  
 
-      - name: Copy secrets file to server
-        run: |
-          echo -n ${{ secrets.BACKEND_ENV }} > secrets.env
-          scp -o StrictHostKeyChecking=no -r secrets.env ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }}:~/viaprize/packages/backend/.env
-
-      - name: Deploy to server
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.BACKEND_SERVER_USERNAME }}@${{ secrets.BACKEND_SERVER_HOST }} "cd ~/viaprize/packages/backend/  && git pull origin main && npm ci &&  npm run  build  && pm2 restart backend"
+            yarn install --prefer-offline --frozen-lockfile --cache-folder ./.yarn-cache
+            exit
+      - name: Build and Run
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.BACKEND_SERVER_HOST }}
+          username: ${{ secrets.BACKEND_SERVER_USERNAME }}
+          key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/viaprize/apps/backend
+            sudo chown -R ubuntu .
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            yarn migration:run  
+            yarn build
+            pm2 restart backend 
+            exit
