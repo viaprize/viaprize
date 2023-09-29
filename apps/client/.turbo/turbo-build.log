@@ -39,3 +39,6 @@ Route (pages)                              Size     First Load JS
 
 λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
 
+Static worker unexpectedly exited with code: null and signal: SIGTERM
+Static worker unexpectedly exited with code: null and signal: SIGTERM
+Static worker unexpectedly exited with code: null and signal: SIGTERM
