@@ -1,27 +1,15 @@
-import * as React from "react";
-
-export function Card({
-  className,
-  title,
-  children,
-  href,
-}: {
-  className?: string;
+type CardProps = {
   title: string;
   children: React.ReactNode;
-  href: string;
-}): JSX.Element {
+};
+
+const Card: React.FC<CardProps> = ({ title, children }) => {
   return (
-    <a
-      className={className}
-      href={`${href}?utm_source=create-turbo&utm_medium=basic&utm_campaign=create-turbo"`}
-      rel="noopener noreferrer"
-      target="_blank"
-    >
+    <a>
       <h2>
         {title} <span>-&gt;</span>
       </h2>
       <p>{children}</p>
     </a>
   );
-}
+};

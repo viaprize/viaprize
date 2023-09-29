@@ -5,7 +5,7 @@ export interface AppUser extends User {
 export interface User {
   id: string;
   email: string;
-  auth_id: string;
+  authId: string;
   name: string;
   isAdmin: boolean;
   submissions: any[];
@@ -14,7 +14,7 @@ export interface User {
 
 export interface CreateUserDto {
   email: string;
-  auth_id: string;
+  authId: string;
   name: string;
   username: string;
 }
