@@ -12,7 +12,7 @@ export class PactsService {
     @InjectRepository(Pact)
     private pactRepository: Repository<Pact>,
     private mailService: MailService,
-  ) { }
+  ) {}
   async create(createPact: CreatePact) {
     const pact = this.pactRepository.create(createPact);
     await this.pactRepository.insert(pact);

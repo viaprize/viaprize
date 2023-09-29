@@ -11,4 +11,4 @@ import { PactsService } from './pacts.service';
   providers: [PactsService],
   exports: [PactsService],
 })
-export class PactsModule { }
+export class PactsModule {}
