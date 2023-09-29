@@ -1,0 +1,41 @@
+
+> @viaprize/client@1.0.0 build C:\Users\DPS\Desktop\projects\viaprize\viaprize\apps\client
+> next build 
+
+- info Loaded env from C:\Users\DPS\Desktop\projects\viaprize\viaprize\apps\client\.env
+- info Skipping linting
+- info Checking validity of types...
+- info Creating an optimized production build...
+- info Compiled successfully
+- info Collecting page data...
+Warning: You have opted-out of Automatic Static Optimization due to `getInitialProps` in `pages/_app`. This does not opt-out pages with `getStaticProps`
+Read more: https://nextjs.org/docs/messages/opt-out-auto-static-optimization
+
+- info Finalizing page optimization...
+
+Route (pages)                              Size     First Load JS
+┌ λ /                                      6.35 kB         719 kB
+├   /_app                                  0 B             691 kB
+├ λ /404                                   185 B           692 kB
+├ λ /admin                                 6.92 kB         948 kB
+├ λ /api/generate                          0 B             691 kB
+├ λ /onboarding                            13.6 kB         750 kB
+├ λ /onboarding/welcome                    5.44 kB         701 kB
+├ λ /pact/[address]                        619 B          1.96 MB
+├ λ /pact/home                             18.4 kB        1.98 MB
+├ λ /pact/preview/[address]                3.5 kB         1.84 MB
+├ λ /prize/[id]                            3.66 kB         898 kB
+├ λ /prize/create                          18 kB           959 kB
+├ λ /prize/editor                          164 kB         1.03 MB
+├ λ /prize/editor/[id]                     2.94 kB         759 kB
+├ λ /prize/explore-prizes                  3.5 kB          816 kB
+└ λ /profile                               5.65 kB         768 kB
++ First Load JS shared by all              701 kB
+  ├ chunks/framework-0203d16360ddbf38.js   45.2 kB
+  ├ chunks/main-c6c8af97df462b3b.js        27.7 kB
+  ├ chunks/pages/_app-26843923effd5018.js  617 kB
+  ├ chunks/webpack-e953249113ea9cab.js     1.91 kB
+  └ css/af0e715d331f65fc.css               10 kB
+
+λ  (Server)  server-side renders at runtime (uses getInitialProps or getServerSideProps)
+

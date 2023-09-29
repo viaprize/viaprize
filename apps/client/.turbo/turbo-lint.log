@@ -1,0 +1,149 @@
+
+> @viaprize/client@1.0.0 lint C:\Users\DPS\Desktop\projects\viaprize\viaprize\apps\client
+> next lint
+
+- info Loaded env from C:\Users\DPS\Desktop\projects\viaprize\viaprize\apps\client\.env
+
+./pages/admin/index.tsx
+16:3  Warning: Unsafe return of an `any` typed value.  @typescript-eslint/no-unsafe-return
+17:7  Warning: Unsafe member access .map on an `any` value.  @typescript-eslint/no-unsafe-member-access
+17:7  Warning: Unsafe call of an `any` typed value.  @typescript-eslint/no-unsafe-call
+
+./pages/api/generate.ts
+12:23  Warning: OPENAI_API_KEY is not listed as a dependency in turbo.json  turbo/no-undeclared-env-vars
+
+./pages/index.tsx
+1:1  Warning: `@/context/hooks/useAppUser` import should occur after import of `next/router`  import/order
+48:25  Warning: Promise-returning function provided to attribute where a void return was expected.  @typescript-eslint/no-misused-promises
+60:21  Warning: Unexpected console statement.  no-console
+63:21  Warning: Unexpected console statement.  no-console
+
+./pages/onboarding/index.tsx
+1:1  Warning: There should be no empty line between import groups  import/order
+10:1  Warning: `@/context/hooks/useAppUser` import should occur after import of `sonner`  import/order
+28:15  Warning: Unexpected console statement.  no-console
+29:16  Warning: Unexpected console statement.  no-console
+69:7  Warning: Unexpected console statement.  no-console
+
+./pages/onboarding/welcome.tsx
+10:9  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+20:19  Warning: Promise-returning function provided to attribute where a void return was expected.  @typescript-eslint/no-misused-promises
+
+./pages/pact/home.tsx
+1:1  Warning: `@/components/HistoryItem` import should occur after import of `react`  import/order
+2:1  Warning: `@/components/layout/switchWallet` import should occur after import of `react`  import/order
+3:1  Warning: `@/context/hooks/useWeb3Context` import should occur after import of `react`  import/order
+15:24  Warning: Function component is not a function declaration  react/function-component-definition
+30:5  Warning: Unexpected console statement.  no-console
+
+./pages/pact/[address].tsx
+4:1  Warning: `@mantine/core` import should occur before import of `@/components/HistoryItem`  import/order
+5:1  Warning: `next/router` import should occur before import of `@/components/HistoryItem`  import/order
+6:1  Warning: `react` import should occur before import of `@/components/HistoryItem`  import/order
+31:26  Warning: Unexpected console statement.  no-console
+31:45  Warning: Unexpected console statement.  no-console
+32:6  Warning: React Hook useEffect has a missing dependency: 'getPactDetail'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./pages/prize/create.tsx
+11:1  Warning: There should be no empty line between import groups  import/order
+13:1  Warning: `@/components/Prize/hooks/usePrizeProposal` import should occur after import of `wagmi`  import/order
+14:1  Warning: `@/components/layout/appshell` import should occur after import of `wagmi`  import/order
+62:5  Warning: Unexpected console statement.  no-console
+64:7  Warning: Unexpected console statement.  no-console
+142:34  Warning: Do not use Array index in keys  react/no-array-index-key
+
+./pages/prize/editor/index.tsx
+4:1  Warning: There should be no empty line between import groups  import/order
+22:13  Warning: Unexpected console statement.  no-console
+
+./pages/prize/explore-prizes.tsx
+5:1  Warning: `@privy-io/react-auth` import should occur before import of `@/components/ExplorePrize/explorePrize`  import/order
+6:1  Warning: `react` type import should occur before import of `@/components/ExplorePrize/explorePrize`  import/order
+7:1  Warning: `react` import should occur before import of `@/components/ExplorePrize/explorePrize`  import/order
+14:5  Warning: Unexpected console statement.  no-console
+18:9  Warning: Unexpected console statement.  no-console
+20:14  Warning: Unexpected console statement.  no-console
+21:6  Warning: React Hook useEffect has a missing dependency: 'getProposalsOfUser'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./pages/_app.tsx
+6:1  Warning: There should be no empty line between import groups  import/order
+11:1  Warning: `@/lib/wagmi` import should occur after import of `wagmi/chains`  import/order
+12:1  Warning: `@env` import should occur after import of `wagmi/chains`  import/order
+
+./components/Admin/card.tsx
+28:45  Warning: Function component is not a function declaration  react/function-component-definition
+45:3  Warning: Unexpected console statement.  no-console
+95:21  Warning: Promise-returning function provided to attribute where a void return was expected.  @typescript-eslint/no-misused-promises
+125:21  Warning: Promise-returning function provided to attribute where a void return was expected.  @typescript-eslint/no-misused-promises
+
+./components/AppHeader/index.tsx
+3:1  Warning: `next/link` import should occur before import of `@/context/hooks/useWeb3Context`  import/order
+18:15  Warning: Unused eslint-disable directive (no problems were reported from 'jsx-a11y/no-noninteractive-tabindex').
+32:27  Warning: Promise-returning function provided to attribute where a void return was expected.  @typescript-eslint/no-misused-promises
+33:40  Warning: Unexpected console statement.  no-console
+33:59  Warning: Unexpected console statement.  no-console
+44:21  Warning: Promise-returning function provided to attribute where a void return was expected.  @typescript-eslint/no-misused-promises
+45:36  Warning: Unexpected console statement.  no-console
+45:55  Warning: Unexpected console statement.  no-console
+
+./components/Contribute/index.tsx
+1:1  Warning: Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unsafe-assignment').
+3:1  Warning: `@/context/hooks/useWeb3Context` import should occur after import of `react-toastify`  import/order
+19:7  Warning: Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-unsafe-assignment').
+39:39  Warning: Promise-returning function provided to attribute where a void return was expected.  @typescript-eslint/no-misused-promises
+
+./components/ExplorePrize/explorePrize.tsx
+12:49  Warning: Function component is not a function declaration  react/function-component-definition
+
+./components/layout/headerLayout.tsx
+15:1  Warning: There should be no empty line between import groups  import/order
+17:1  Warning: `@/context/hooks/useAppUser` import should occur after import of `sonner`  import/order
+149:27  Warning: Unexpected console statement.  no-console
+150:28  Warning: Unexpected console statement.  no-console
+192:41  Warning: Unexpected console statement.  no-console
+192:60  Warning: Unexpected console statement.  no-console
+
+./components/layout/switchWallet.tsx
+29:19  Warning: Promise-returning function provided to attribute where a void return was expected.  @typescript-eslint/no-misused-promises
+
+./components/Prize/dropzone.tsx
+18:14  Warning: Do not use Array index in keys  react/no-array-index-key
+35:13  Warning: Unexpected console statement.  no-console
+
+./components/Prize/hooks/usePrizeProposal.tsx
+6:1  Warning: `@privy-io/react-auth` import should occur before import of `@/components/_providers/WebClient`  import/order
+7:1  Warning: `react` import should occur before import of `@/components/_providers/WebClient`  import/order
+20:21  Warning: Unsafe member access .toString on an `any` value.  @typescript-eslint/no-unsafe-member-access
+20:21  Warning: Unsafe call of an `any` typed value.  @typescript-eslint/no-unsafe-call
+30:3  Warning: Unexpected console statement.  no-console
+32:3  Warning: Unexpected console statement.  no-console
+57:9  Warning: useState call is not destructured into value + setter pair  react/hook-use-state
+84:5  Warning: Unexpected console statement.  no-console
+99:5  Warning: Unexpected console statement.  no-console
+105:5  Warning: Unsafe return of an `any` typed value.  @typescript-eslint/no-unsafe-return
+117:5  Warning: Unsafe return of an `any` typed value.  @typescript-eslint/no-unsafe-return
+
+./components/Prize/prizepage/prizepage.tsx
+1:1  Warning: There should be no empty line between import groups  import/order
+28:7  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+./components/Prize/prizepage/prizepagetabs.tsx
+3:1  Warning: There should be no empty line between import groups  import/order
+
+./components/richtexteditor/textEditor.tsx
+3:8  Warning: Using exported name 'Highlight' as identifier for default export.  import/no-named-as-default
+5:8  Warning: Using exported name 'Superscript' as identifier for default export.  import/no-named-as-default
+6:8  Warning: Using exported name 'TextAlign' as identifier for default export.  import/no-named-as-default
+7:8  Warning: Using exported name 'Underline' as identifier for default export.  import/no-named-as-default
+9:8  Warning: Using exported name 'StarterKit' as identifier for default export.  import/no-named-as-default
+40:9  Warning: Unexpected console statement.  no-console
+44:3  Warning: Unexpected console statement.  no-console
+
+./lib/axios.ts
+1:1  Warning: `@env` import should occur after import of `sonner`  import/order
+27:5  Warning: Unexpected console statement.  no-console
+42:3  Warning: Unexpected console statement.  no-console
+45:3  Warning: Unexpected console statement.  no-console
+63:3  Warning: Unsafe return of an `any` typed value.  @typescript-eslint/no-unsafe-return
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
