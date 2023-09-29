@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": ["**/.env.*local",".env"],
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
@@ -13,7 +13,8 @@
     "lint": {},
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dotEnv":[".env.backend"]
     }
   }
 }
