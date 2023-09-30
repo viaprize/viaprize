@@ -28,7 +28,7 @@ WORKDIR /app
 COPY .gitignore .gitignore
 # COPY --from=builder /app/json/ .
 COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN pnpm --filter=@viaprize/client install
+RUN pnpm install
 
 
 # Build the project
@@ -42,7 +42,7 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN pnpm --filter=@viaprize/client  run build 
+RUN pnpm turbo run build --filter=client
 
 FROM base AS runner
 WORKDIR /app
@@ -52,7 +52,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer /app/apps/client/next.config.js .
+COPY --from=installer /app/apps/client/next.config.mjs .
 COPY --from=installer /app/apps/client/package.json .
 
 # Automatically leverage output traces to reduce image size
