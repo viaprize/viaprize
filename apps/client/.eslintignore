@@ -6,3 +6,4 @@ dist-ssr
 node_modules/*
 .js
 .cjs
+.mjs
