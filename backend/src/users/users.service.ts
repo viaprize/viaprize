@@ -10,7 +10,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) { }
+  ) {}
 
   /**
    * The function creates a new user by inserting the provided user data into the user repository, and
@@ -52,7 +52,6 @@ export class UsersService {
     return user;
   }
 
-
   /**
    * The function finds a user by their username and throws an error if the user is not found.
    * @param {string} username - The `username` parameter is a string that represents the username
@@ -75,6 +74,4 @@ export class UsersService {
       );
     return user;
   }
-
-
 }

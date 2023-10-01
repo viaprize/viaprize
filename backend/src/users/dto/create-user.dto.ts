@@ -23,8 +23,8 @@ export interface CreateUser {
   name: string;
 
   /**
-  * The username which is gotten from the onboarding process or page and it is unique
-  * @example sins
-  */
+   * The username which is gotten from the onboarding process or page and it is unique
+   * @example sins
+   */
   username: string;
 }
