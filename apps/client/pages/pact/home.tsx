@@ -122,7 +122,7 @@ const Home: NextPage = () => {
                 key={item}
                 className={cn(
                   "tab tab-boxed tab-lg capitalize",
-                  activeTab === item && "tab-active"
+                  activeTab === item && "tab-active",
                 )}
                 onClick={() => {
                   setActiveTab(item);

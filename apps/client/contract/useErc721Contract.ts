@@ -49,11 +49,11 @@ export default function useERC721Contract() {
      */
     async isApprovedForAll(
       nftAddress: string,
-      spender: string
+      spender: string,
     ): Promise<boolean> {
       const contract = new web3.eth.Contract(
         Erc721Abi as AbiItem[],
-        nftAddress
+        nftAddress,
       );
 
       return await contract.methods.isApprovedForAll(account, spender).call();
@@ -69,11 +69,11 @@ export default function useERC721Contract() {
     async transferFrom(
       nftAddress: string,
       toAddress: string,
-      tokenId: string
+      tokenId: string,
     ): Promise<void> {
       const contract = new web3.eth.Contract(
         Erc721Abi as AbiItem[],
-        nftAddress
+        nftAddress,
       );
       const func = contract.methods.transferFrom(account, toAddress, tokenId);
       sendTx(func);
@@ -88,11 +88,11 @@ export default function useERC721Contract() {
      */
     async setApprovalForAll(
       nftAddress: string,
-      spender: string
+      spender: string,
     ): Promise<void> {
       const contract = new web3.eth.Contract(
         Erc721Abi as AbiItem[],
-        nftAddress
+        nftAddress,
       );
       const func = contract.methods.setApprovalForAll(spender, true);
       return await sendTx(func);
@@ -108,7 +108,7 @@ export default function useERC721Contract() {
     async tokenURI(nftAddress: string, id: string): Promise<string> {
       const contract = new web3.eth.Contract(
         Erc721Abi as AbiItem[],
-        nftAddress
+        nftAddress,
       );
       return await contract.methods.tokenURI(id).call();
     },
@@ -122,7 +122,7 @@ export default function useERC721Contract() {
     async balanceOf(nftAddress: string): Promise<string> {
       const contract = new web3.eth.Contract(
         Erc721Abi as AbiItem[],
-        nftAddress
+        nftAddress,
       );
       const balance = await contract.methods.balanceOf(account).call();
       return balance;
@@ -138,7 +138,7 @@ export default function useERC721Contract() {
     async getNftInfo(nftAddress: string, tokenId: string): Promise<Object> {
       const contract = new web3.eth.Contract(
         Erc721Abi as AbiItem[],
-        nftAddress
+        nftAddress,
       );
       const uri = await contract.methods.tokenURI(tokenId).call();
       const formattedUri = formatIPFS(uri);
@@ -155,7 +155,7 @@ export default function useERC721Contract() {
     async getName(nftAddress: string): Promise<string> {
       const contract = new web3.eth.Contract(
         Erc721Abi as AbiItem[],
-        nftAddress
+        nftAddress,
       );
       return await contract.methods.name().call();
     },
@@ -171,7 +171,7 @@ export default function useERC721Contract() {
     async mint(nftAddress: string, to: string, tokenId: string): Promise<void> {
       const contract = new web3.eth.Contract(
         Erc721Abi as AbiItem[],
-        nftAddress
+        nftAddress,
       );
       const func = contract.methods.mint(to, tokenId);
       return await sendTx(func);

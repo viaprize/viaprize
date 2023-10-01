@@ -3,7 +3,7 @@ import { OpenAI } from "openai";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     const body = req.body as string;
@@ -14,7 +14,7 @@ export default async function handler(
       res
         .status(500)
         .send(
-          "This feature is currently under progress. Please check back later."
+          "This feature is currently under progress. Please check back later.",
         );
     }
 

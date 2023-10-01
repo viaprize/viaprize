@@ -51,7 +51,7 @@ export default function useAppUser() {
   });
 
   const createNewUser = async (
-    userWithoutUserId: Omit<CreateUserDto, "authId">
+    userWithoutUserId: Omit<CreateUserDto, "authId">,
   ): Promise<any> => {
     if (!user) {
       throw new Error("User is not logged in");
