@@ -35,7 +35,7 @@ export const NESTIA_CONFIG: INestiaConfig = {
    *
    * If not configured, you can't build the SDK library.
    */
-  output: '../packages/api',
+  output: '../packages/sdk',
 
   /**
    * Target directory that SDK distribution files would be placed in.
@@ -63,5 +63,7 @@ export const NESTIA_CONFIG: INestiaConfig = {
    * @default false
    */
   // simulate: true,
+  propagate: true,
+  distribute: '../packages/sdk',
 };
 export default NESTIA_CONFIG;
