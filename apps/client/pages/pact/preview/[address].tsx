@@ -31,12 +31,12 @@ function formatEtherValue(weiAmount: number): string {
 }
 const getPactInfo = async (pactAddress: string) => {
   const web3 = new Web3(
-    new Web3.providers.HttpProvider(config.provider as string),
+    new Web3.providers.HttpProvider(config.provider as string)
   );
   /* eslint-disable -- Because i dont know the return type*/
   const multicall = new web3.eth.Contract(
     MulticallABI as AbiItem[],
-    config.contracts.multicall3,
+    config.contracts.multicall3
   );
 
   const pactContract = new web3.eth.Contract(PactABI as AbiItem[], pactAddress);
@@ -167,7 +167,7 @@ export default async function Page({ item }: PackPreviewProp) {
               onClick={() =>
                 window.open(
                   `https://${window.location.host}/pact/${item.address}`,
-                  "_blank",
+                  "_blank"
                 )
               }
             >

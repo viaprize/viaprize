@@ -33,7 +33,7 @@ export default function HistoryItem({ item, address, pictureVisible }: any) {
         src="https://${window.location.host}/pact/preview/${address}"
         frameborder="0"
         scrolling="no"
-      ></iframe>`,
+      ></iframe>`
     );
     alert("Copied to clipboard");
   };

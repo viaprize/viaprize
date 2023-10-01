@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build ",
+    "docs": "typedoc",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
@@ -67,6 +68,7 @@
     "react-query": "^3.39.3",
     "react-toastify": "^9.0.8",
     "sonner": "^0.7.1",
+    "typedoc-theme-hierarchy": "^4.1.1",
     "viem": "^1.10.1",
     "wagmi": "^1.4.1",
     "web3": "^1.7.5",

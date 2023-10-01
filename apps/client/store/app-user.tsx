@@ -32,8 +32,8 @@ const useAppUserStore = create(
     }),
     {
       name: "app-user-storage",
-    },
-  ),
+    }
+  )
 );
 
 export default useAppUserStore;

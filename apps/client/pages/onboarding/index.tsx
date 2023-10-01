@@ -44,8 +44,8 @@ export default function Details() {
         setLoading(false);
         setData(
           ["gmail.com", "outlook.com", "yahoo.com"].map(
-            (provider) => `${val}@${provider}`,
-          ),
+            (provider) => `${val}@${provider}`
+          )
         );
       }, 1000);
     }
@@ -63,7 +63,7 @@ export default function Details() {
           loading: "Logging In",
           success: "Logged In Successfully",
           error: "Error Logging In",
-        },
+        }
       );
     } catch (e) {
       console.log(e);

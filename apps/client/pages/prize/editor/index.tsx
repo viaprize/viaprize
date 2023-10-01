@@ -8,7 +8,7 @@ import AppShellLayout from "@/components/layout/appshell";
 
 function EditorsPage() {
   const [content, setContent] = useState<JSONContent | undefined>(
-    PrizeSubmissionTemplate,
+    PrizeSubmissionTemplate
   );
 
   return (

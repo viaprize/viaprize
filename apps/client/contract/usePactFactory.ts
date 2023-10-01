@@ -29,7 +29,7 @@ interface PactFactory {
     commitment: any,
     endTime: number,
     sum: any,
-    leads: any,
+    leads: any
   ): Promise<any>;
 }
 
@@ -95,7 +95,7 @@ export default function usePactFactory(): PactFactory {
       commitment: any,
       endTime: number,
       sum: number,
-      leads: any,
+      leads: any
     ): Promise<any> {
       const duration = endTime - Math.floor(new Date().valueOf() / 1000);
 
@@ -103,13 +103,13 @@ export default function usePactFactory(): PactFactory {
         "end time",
         endTime,
         "now",
-        Math.floor(new Date().valueOf() / 1000),
+        Math.floor(new Date().valueOf() / 1000)
       );
       const amountInWei = new BN(sum).shiftedBy(18).toString();
 
       const pactFactoryContract = new web3.eth.Contract(
         PactFactoryAbi as AbiItem[],
-        config.contracts.pactFactory,
+        config.contracts.pactFactory
       );
       console.log(pactFactoryContract, "pactFactoryContract");
 
@@ -120,7 +120,7 @@ export default function usePactFactory(): PactFactory {
           }),
           new BN(duration),
           amountInWei,
-          leads,
+          leads
         )
         .estimateGas({ from: account });
       console.log(estimatedGas, "estimatedGas");
@@ -131,7 +131,7 @@ export default function usePactFactory(): PactFactory {
         }),
         new BN(duration),
         amountInWei,
-        leads,
+        leads
       );
 
       return await sendTx(func);

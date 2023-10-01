@@ -43,7 +43,7 @@ const Proposals = ({
             user={proposal.user}
             voting={proposal.voting_time}
           />
-        ),
+        )
       )
     : "Error";
 };

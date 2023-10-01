@@ -32,11 +32,11 @@ export default function useErc20Contract() {
      */
     async allowance(
       tokenAddress: string,
-      spenderAddress: string,
+      spenderAddress: string
     ): Promise<number> {
       const tokenContract = new web3.eth.Contract(
         Erc20Abi as AbiItem[],
-        tokenAddress,
+        tokenAddress
       );
 
       return await tokenContract.methods
@@ -54,7 +54,7 @@ export default function useErc20Contract() {
     async balanceOf(tokenAddress: string, decimals = 18): Promise<string> {
       const tokenContract = new web3.eth.Contract(
         Erc20Abi as AbiItem[],
-        tokenAddress,
+        tokenAddress
       );
       const res = await tokenContract.methods
         .balanceOf(account)
@@ -76,7 +76,7 @@ export default function useErc20Contract() {
     }): Promise<string> {
       const tokenContract = new web3.eth.Contract(
         Erc20Abi as AbiItem[],
-        token.address,
+        token.address
       );
       return new Promise((resolve, reject) => {
         tokenContract.methods
@@ -103,15 +103,15 @@ export default function useErc20Contract() {
     async transfer(
       tokenAddress: string,
       toAddress: string,
-      amount: string,
+      amount: string
     ): Promise<any> {
       const tokenContract = new web3.eth.Contract(
         Erc20Abi as AbiItem[],
-        tokenAddress,
+        tokenAddress
       );
       const func = tokenContract.methods.transfer(
         toAddress,
-        web3.utils.toWei(amount, "mwei"),
+        web3.utils.toWei(amount, "mwei")
       );
       return await sendTx(func);
     },
@@ -127,15 +127,15 @@ export default function useErc20Contract() {
     async approve(
       tokenAddress: string,
       spenderAddress: string,
-      amount = "10000000000000",
+      amount = "10000000000000"
     ): Promise<any> {
       const tokenContract = new web3.eth.Contract(
         Erc20Abi as AbiItem[],
-        tokenAddress,
+        tokenAddress
       );
       const func = tokenContract.methods.approve(
         spenderAddress,
-        web3.utils.toWei(amount, "mwei"),
+        web3.utils.toWei(amount, "mwei")
       );
       return await sendTx(func);
     },

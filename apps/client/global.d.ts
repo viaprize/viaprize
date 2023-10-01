@@ -9,7 +9,7 @@ type EthereumEvents = {
 export interface Ethereum extends MetaMaskInpageProvider {
   on<K extends keyof EthereumEvents>(
     event: K,
-    handler: (event: EthereumEvents[K]) => void,
+    handler: (event: EthereumEvents[K]) => void
   ): void;
   // other methods...
 }

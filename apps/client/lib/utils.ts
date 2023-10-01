@@ -39,10 +39,10 @@ export function copyText(text: string): void {
  * @returns The filtered array without duplicate nodes.
  */
 export const filterDuplicateNodes = <T extends { address: string }>(
-  arr: T[],
+  arr: T[]
 ): T[] => {
   return arr.filter(
-    (v, i, a) => a.findIndex((v2) => v2.address === v.address) === i,
+    (v, i, a) => a.findIndex((v2) => v2.address === v.address) === i
   );
 };
 
