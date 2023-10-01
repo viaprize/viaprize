@@ -1,7 +1,7 @@
 {
   "entryPoints": ["src/**"],
   // "basePath": ["./lib","./components"],
-  "out": ["docs"],
+  "out": "docs",
   "name": "Viaprize Backend Documentation",
   "plugin": ["typedoc-theme-hierarchy"],
 
