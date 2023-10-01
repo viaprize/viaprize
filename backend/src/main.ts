@@ -42,7 +42,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
-  const docs = require("../../swagger.json")
+  const docs = require('../../swagger.json');
 
   // const options = new DocumentBuilder().
   //   .addBearerAuth(
