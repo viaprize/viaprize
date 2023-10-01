@@ -1,0 +1,10 @@
+{
+  "entryPoints": ["src/**"],
+  "out": ["docs"],
+  "name": "My Documentation",
+  // "exclude": "/*.spec.ts,/*.test.ts,/*.spec.tsx,/*.test.tsx,/*.d.ts,/node_modules/**,node_modules/*/index.d.ts",
+  "theme": "default",
+  "compilerOptions": {
+    "strictNullChecks": false,
+  }
+}

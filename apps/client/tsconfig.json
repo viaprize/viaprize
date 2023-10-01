@@ -12,7 +12,8 @@
       "@/contract/*": ["contract/*"],
       "@env": ["env.mjs"],
       "@/backend/*": ["../backend/dist/*"]
-    }
+    },
+    "jsx": "react",
   },
   "include": [
     "next-env.d.ts",
