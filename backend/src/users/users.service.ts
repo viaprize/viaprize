@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateUser } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { CreateUser } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
 
 /* The UsersService class is responsible for creating and retrieving user data from a repository. */
 @Injectable()
@@ -43,10 +43,35 @@ export class UsersService {
       where: {
         authId: authId,
       },
+      relations: ['submissions', 'prizeProposals'],
     });
     if (!user)
       throw new HttpException(
         `User not found with authId ${authId}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    return user;
+  }
+
+  /**
+   * The function finds a user by their username and throws an error if the user is not found.
+   * @param {string} username - The `username` parameter is a string that represents the username
+   * of a user which is gotten from auth provider . It is used to find a user in the database based on their username.
+   *
+   * @returns {Promise<User> } the user object that is found in the database based on the provided username.
+   * @see {@link User}
+   */
+
+  async findOneByUsername(username: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username: username,
+      },
+      relations: ['submissions', 'prizeProposals'],
+    });
+    if (!user)
+      throw new HttpException(
+        `User not found with username ${username}`,
         HttpStatus.BAD_REQUEST,
       );
     return user;

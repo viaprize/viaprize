@@ -1,20 +1,27 @@
-FROM node:18.17.0-alpine
+# Use the official Node.js 18 image.
+FROM node:18
 
-RUN apk add --no-cache bash
+# Create and change to the app directory.
+WORKDIR /backend
+
+# Copy application dependency manifests to the container image.
+# A wildcard is used to ensure both package.json AND package-lock.json are copied.
+# Copying this separately prevents re-running npm install on every code change.
+COPY package*.json ./
+
+# Install production dependencies.
+RUN npm ci
+
 RUN npm i -g @nestjs/cli typescript ts-node
 
-COPY package*.json /tmp/app/
-RUN cd /tmp/app && npm install
+# Copy local code to the container image.
+COPY . .
 
-COPY . /usr/src/app
-RUN cp -a /tmp/app/node_modules /usr/src/app
-COPY ./wait-for-it.sh /opt/wait-for-it.sh
-COPY ./startup.dev.sh /opt/startup.dev.sh
-RUN sed -i 's/\r//g' /opt/wait-for-it.sh
-RUN sed -i 's/\r//g' /opt/startup.dev.sh
+# Copy .env file
+COPY .env ./
 
-WORKDIR /usr/src/app
-RUN if [ ! -f .env ]; then cp env-example .env; fi
+# Build the application
 RUN npm run build
 
-CMD ["/opt/startup.dev.sh"]
+# Run the web service on container startup.
+CMD [ "npm", "run", "start:prod" ]

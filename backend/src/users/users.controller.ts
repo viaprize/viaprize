@@ -1,15 +1,18 @@
-import { Controller } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUser } from './dto/create-user.dto';
 import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
-import { User } from './entities/user.entity';
+import { Controller } from '@nestjs/common';
 import { MailService } from 'src/mail/mail.service';
+import typia from 'typia';
+import { CreateUser } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
+import { UsersService } from './users.service';
 
 /**
  * This is the users controller class.
  * it handles the documentation of routes and implementation of services related to the route.
  * @tag {users}
  */
+const assertSubmission = typia.json.createAssertStringify<User>();
+
 @Controller('users')
 export class UsersController {
   constructor(
@@ -36,11 +39,34 @@ export class UsersController {
   /**
    * Get a user by ID.
    *
-   * @param {string} authId - Retrieve user by querying through it's auth id from auth provider.
-   * @returns {User} The user object.
+   * @returns {Promise<User>} The user object.
    */
   @TypedRoute.Get(':authId')
-  findOne(@TypedParam('authId') userId: string) {
-    return this.usersService.findOneByAuthId(userId);
+  async findOneByAuthId(@TypedParam('authId') userId: string): Promise<User> {
+    const user = await this.usersService.findOneByAuthId(userId);
+    user.submissions = user.submissions.filter(
+      (submission) => submission !== null && submission !== undefined,
+    );
+    assertSubmission(user);
+    return user;
+  }
+
+  /**
+   * Get a user by username.
+   *
+   * @returns {Promise<User>} The user object.
+   */
+  @TypedRoute.Get('username/:username')
+  async findOneByUsername(
+    @TypedParam('username') username: string,
+  ): Promise<User> {
+    console.log('here is the user: ', username);
+    const user = await this.usersService.findOneByUsername(username);
+    user.submissions = user.submissions.filter(
+      (submission) => submission !== null && submission !== undefined,
+    );
+
+    assertSubmission(user);
+    return user;
   }
 }
