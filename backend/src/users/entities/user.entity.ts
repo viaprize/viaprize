@@ -23,6 +23,9 @@ export class User {
   @Column()
   name: string;
 
+  @Column({ unique: true })
+  username: string;
+
   @Column({ default: false })
   isAdmin: boolean;
 

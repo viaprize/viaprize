@@ -1,9 +1,9 @@
-import { Controller } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUser } from './dto/create-user.dto';
 import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
-import { User } from './entities/user.entity';
+import { Controller } from '@nestjs/common';
 import { MailService } from 'src/mail/mail.service';
+import { CreateUser } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
+import { UsersService } from './users.service';
 
 /**
  * This is the users controller class.
@@ -15,7 +15,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
-  ) {}
+  ) { }
 
   /**
    * Creates a new user and sends welcome email.
@@ -40,7 +40,18 @@ export class UsersController {
    * @returns {User} The user object.
    */
   @TypedRoute.Get(':authId')
-  findOne(@TypedParam('authId') userId: string) {
+  findById(@TypedParam('authId') userId: string) {
     return this.usersService.findOneByAuthId(userId);
+  }
+
+  /**
+   * Get a user by username.
+   *
+   * @param {string} username - Retrieve user by querying through it's username.
+   * @returns {User} The user object.
+   */
+  @TypedRoute.Get('username/:username')
+  findByUsername(@TypedParam('username') username: string) {
+    return this.usersService.findOneByUsername(username);
   }
 }
