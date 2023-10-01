@@ -1,6 +1,7 @@
 import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
 import { Controller } from '@nestjs/common';
 import { MailService } from 'src/mail/mail.service';
+import typia from 'typia';
 import { CreateUser } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -10,12 +11,15 @@ import { UsersService } from './users.service';
  * it handles the documentation of routes and implementation of services related to the route.
  * @tag {users}
  */
+const assertSubmission = typia.json.createAssertStringify<User>();
+
 @Controller('users')
 export class UsersController {
+
   constructor(
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
-  ) {}
+  ) { }
 
   /**
    * Creates a new user and sends welcome email.
@@ -36,22 +40,28 @@ export class UsersController {
   /**
    * Get a user by ID.
    *
-   * @param {string} authId - Retrieve user by querying through it's auth id from auth provider.
-   * @returns {User} The user object.
+   * @returns {Promise<User>} The user object.
    */
   @TypedRoute.Get(':authId')
-  findById(@TypedParam('authId') userId: string) {
-    return this.usersService.findOneByAuthId(userId);
+  async findOneByAuthId(@TypedParam('authId') userId: string): Promise<User> {
+    const user = await this.usersService.findOneByAuthId(userId);
+    return user
   }
 
   /**
    * Get a user by username.
    *
-   * @param {string} username - Retrieve user by querying through it's username.
-   * @returns {User} The user object.
+   * @returns {Promise<User>} The user object.
    */
   @TypedRoute.Get('username/:username')
-  findByUsername(@TypedParam('username') username: string) {
-    return this.usersService.findOneByUsername(username);
+  async findOneByUsername(@TypedParam('username') username: string): Promise<User> {
+    console.log('here is the user: ', username);
+    const user = await this.usersService.findOneByUsername(username);
+
+    // Filter out null or undefined values from submissions
+    user.submissions = user.submissions.filter((submission) => submission !== null && submission !== undefined);
+
+    assertSubmission(user)
+    return user
   }
 }

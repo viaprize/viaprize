@@ -14,7 +14,7 @@ export interface CreateUser {
    * User Id which is gotten from the auth provider like privy , torus etc...
    * @example did:lsjfdlk:ljsdlkjsdfkm
    */
-  user_id: string & tags.MinLength<5>;
+  authId: string & tags.MinLength<5>;
 
   /**
    * The user name which is gotten from the onboarding process or page
