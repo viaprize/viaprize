@@ -1,0 +1,1608 @@
+{
+  "openapi": "3.0.1",
+  "servers": [
+    {
+      "url": "https://github.com/samchon/nestia",
+      "description": "insert your server url"
+    }
+  ],
+  "info": {
+    "version": "0.0.1",
+    "title": "nestjs-boilerplate",
+    "description": "",
+    "license": {
+      "name": "UNLICENSED"
+    }
+  },
+  "paths": {
+    "/pacts": {
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePact"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "The created pact object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pact"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "pacts.create",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Create Pact by passing pact data",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "createUserType",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The user creation Interface.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "see",
+            "text": [
+              {
+                "text": "{CreatePact}",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "The created pact object.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/pacts/{address}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns all pacts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pact.Nullable"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "pacts.findOne",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Get all pacts of application",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "see",
+            "text": [
+              {
+                "text": "{Pact}",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "Returns all pacts",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/proposals": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PrzieQuery"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Get all Pending proposals",
+        "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the GET request to `/proposals` endpoint. Here's a breakdown of what it does:\nGets page",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "prizes.proposals.getPendingProposals",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Get all Pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:06:45 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "query",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "1}  this is the page number of the return pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "10} this is the limit of the return type of the pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      },
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePrizeProposalDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeProposals"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Create a new proposal using user auth token to know which user is calling this function",
+        "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the POST request to `/proposals` endpoint. Here's a breakdown of what it does:",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "prizes.proposals.create",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Create a new proposal using user auth token to know which user is calling this function",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:44:05 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "createPrizeProposalDto",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/prizes/proposals/user/{userId}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/PrzieQuery"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type.o1"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Get pending proposals,",
+        "description": "Get pending proposal of user",
+        "x-nestia-namespace": "prizes.proposals.user.getProposalsBy",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:47:51 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Get pending proposals,",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "query",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "userId",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/proposals/reject/{id}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectProposalDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Reject Proposal,",
+        "description": "Admin Reject proposal",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "prizes.proposals.reject.rejectProposal",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:19:58 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Reject Proposal,",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "rejectProposalDto",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/prizes/proposals/accept/{id}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `prizeProposalsService` with the given `id`",
+        "description": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `prizeProposalsService` with the given `id`.",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "prizes.proposals.accept.approveProposal",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUser"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "The created user object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Creates a new user and sends welcome email",
+        "description": "Creates a new user and sends welcome email.",
+        "x-nestia-namespace": "users.create",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "see",
+            "text": [
+              {
+                "text": "{",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "link",
+            "text": [
+              {
+                "text": "MailService }",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "createUserType",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The user creation Interface.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "The created user object.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/users/{authId}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "authId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Get a user by ID",
+        "description": "Get a user by ID.",
+        "x-nestia-namespace": "users.findOne",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "authId",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- Retrieve user by querying through it's auth id from auth provider.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "The user object.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreatePact": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Name of the pact i.e the title, which is gotten in the pact form",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "johnsmith",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "terms": {
+            "description": "Terms of the pact i.e the Description",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "test",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "address": {
+            "description": "Address of the pact on the blockchain",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "0xe7399b79838acc8caaa567fF84e5EFd0d11BB010",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "maxLength": 44,
+            "x-typia-typeTags": [
+              {
+                "target": "string",
+                "name": "MaxLength<44>",
+                "kind": "maxLength",
+                "value": 44,
+                "validate": "$input.length <= 44",
+                "exclusive": true
+              }
+            ]
+          },
+          "transactionHash": {
+            "description": "Transaction hash of the pact on the blockchain",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "0x2e8937d96e633c82df2f8f5a19aafa132795496cd98d0ca3d3c336a6c79f09e4",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "maxLength": 66,
+            "x-typia-typeTags": [
+              {
+                "target": "string",
+                "name": "MaxLength<66>",
+                "kind": "maxLength",
+                "value": 66,
+                "validate": "$input.length <= 66",
+                "exclusive": true
+              }
+            ]
+          },
+          "blockHash": {
+            "description": "Block hash of the pact on the blockchain",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "0x2e8937d96e633c82df2f8f5a19aafa132795496cd98d0ca3d3c336a6c79f09e4",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "name",
+          "terms",
+          "address",
+          "transactionHash"
+        ],
+        "description": "Interface of Create Pactt , using this interface it create a new pact in pact.service.ts",
+        "x-typia-jsDocTags": [
+          {
+            "name": "see",
+            "text": [
+              {
+                "text": "",
+                "kind": "text"
+              },
+              {
+                "text": "{@link ",
+                "kind": "link"
+              },
+              {
+                "text": "PactsService ",
+                "kind": "linkText"
+              },
+              {
+                "text": "}",
+                "kind": "link"
+              }
+            ]
+          }
+        ]
+      },
+      "Pact": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "name": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "terms": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "transactionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "blockHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "name",
+          "terms",
+          "address",
+          "transactionHash",
+          "blockHash"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Pact.Nullable": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "name": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "terms": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "transactionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "blockHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": true,
+        "required": [
+          "id",
+          "name",
+          "terms",
+          "address",
+          "transactionHash",
+          "blockHash"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "PrzieQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "limit": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "page",
+          "limit"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Readonly__type": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizeProposals"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "PrizeProposals": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "voting_time": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "submission_time": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "admins": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "isApproved": {
+            "description": "The Columns here are not part of the smart contract",
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAutomatic": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "startVotingDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "startSubmissionDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "proficiencies": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "voting_time",
+          "submission_time",
+          "admins",
+          "isApproved",
+          "title",
+          "description",
+          "isAutomatic",
+          "startVotingDate",
+          "startSubmissionDate",
+          "proficiencies",
+          "priorities",
+          "images",
+          "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "email": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "authId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "name": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAdmin": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submissions": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Submission"
+            }
+          },
+          "prizeProposals": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizeProposals"
+            }
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "email",
+          "authId",
+          "name",
+          "isAdmin",
+          "submissions",
+          "prizeProposals"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Submission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionTitle": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "subimissionDescription": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "prize": {
+            "$ref": "#/components/schemas/Prize"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "submissionTitle",
+          "subimissionDescription",
+          "user",
+          "prize"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Prize": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAutomatic": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "startVotingDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "startSubmissionDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "proposer_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "contract_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "admins": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "proficiencies": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "submissions": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Submission"
+            }
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "description",
+          "isAutomatic",
+          "startVotingDate",
+          "startSubmissionDate",
+          "proposer_address",
+          "contract_address",
+          "admins",
+          "proficiencies",
+          "priorities",
+          "created_at",
+          "updated_at",
+          "submissions"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "CreatePrizeProposalDto": {
+        "type": "object",
+        "properties": {
+          "voting_time": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "submission_time": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "admins": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "proposer_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAutomatic": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "startVotingDate": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string",
+            "format": "date-time"
+          },
+          "startSubmissionDate": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string",
+            "format": "date-time"
+          },
+          "proficiencies": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string",
+              "enum": [
+                "Programming",
+                "Python",
+                "JavaScript",
+                "Writing",
+                "Design",
+                "Translation",
+                "Research",
+                "Real estate",
+                "Apps",
+                "Hardware",
+                "Art",
+                "Meta",
+                "AI"
+              ]
+            }
+          },
+          "priorities": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string",
+              "enum": [
+                "Climate change",
+                "Network civilizations",
+                "Open-source",
+                "Community coordination",
+                "Health",
+                "Education"
+              ]
+            }
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          }
+        },
+        "nullable": false,
+        "required": [
+          "voting_time",
+          "submission_time",
+          "admins",
+          "title",
+          "description",
+          "proposer_address",
+          "isAutomatic",
+          "proficiencies",
+          "priorities",
+          "images"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Readonly__type.o1": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizeProposals"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "RejectProposalDto": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "comment"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "CreateUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "description": "User's emails which will be used to send emails and futher communication",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "johnsmith@gmail.com",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "email",
+            "x-typia-typeTags": [
+              {
+                "target": "string",
+                "name": "Format<\"email\">",
+                "kind": "format",
+                "value": "email",
+                "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
+                "exclusive": [
+                  "format",
+                  "pattern"
+                ]
+              }
+            ]
+          },
+          "user_id": {
+            "description": "User Id which is gotten from the auth provider like privy , torus etc...",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "did:lsjfdlk:ljsdlkjsdfkm",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "minLength": 5,
+            "x-typia-typeTags": [
+              {
+                "target": "string",
+                "name": "MinLength<5>",
+                "kind": "minLength",
+                "value": 5,
+                "validate": "5 <= $input.length",
+                "exclusive": true
+              }
+            ]
+          },
+          "name": {
+            "description": "The user name which is gotten from the onboarding process or page",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "Johnny Sins",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "email",
+          "user_id",
+          "name"
+        ],
+        "description": "Interface of Create User , using this interface it create a new user in",
+        "x-typia-jsDocTags": [
+          {
+            "name": "link",
+            "text": [
+              {
+                "text": "../users.service~UsersService",
+                "kind": "text"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

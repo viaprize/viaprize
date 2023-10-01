@@ -16,7 +16,8 @@
     "prettier": "^3.0.3",
     "tsconfig": "workspace:*",
     "turbo": "latest",
-    "husky": "^8.0.3"
+    "husky": "^8.0.3",
+     "dotenv-cli": "latest"
   },
   "name": "viaprize",
   "workspaces": [

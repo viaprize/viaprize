@@ -6,8 +6,6 @@ import {
 } from "@privy-io/react-auth";
 import { usePrivyWagmi } from "@privy-io/wagmi-connector";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { useMutation, useQueries, useQuery } from "react-query";
 import { toast } from "react-toastify";
 import useAppUserStore from "store/app-user";
 import { CreateUserDto } from "types/app-user";
@@ -53,14 +51,14 @@ export default function useAppUser() {
   });
 
   const createNewUser = async (
-    userWithoutUserId: Omit<CreateUserDto, "user_id">,
+    userWithoutUserId: Omit<CreateUserDto, "authId">,
   ): Promise<any> => {
     if (!user) {
       throw new Error("User is not logged in");
     }
     return uploadUser({
       ...userWithoutUserId,
-      user_id: user.id,
+      authId: user.id,
     });
   };
 
