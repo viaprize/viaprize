@@ -14,7 +14,7 @@ function ExplorePage() {
     console.log("hiiii");
     getProposalsOfUser()
       .then((res) => {
-        console.log(res, "Res");
+        console.log(res, "Res ");
       })
       .catch(console.error);
   }, []);
