@@ -1,6 +1,5 @@
 # Viaprize
 
-
 ## What's inside?
 
 This repo includes the following packages/apps:
@@ -8,34 +7,32 @@ This repo includes the following packages/apps:
 ### Apps and Packages
 
 - `client`: another [Next.js](https://nextjs.org/) app
-- `ui`: a stub React component library shared by both `client` 
+- `ui`: a stub React component library shared by both `client`
 - `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
 - `tsconfig`: `tsconfig.json`s used throughout the monorepo
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-
 ### Getting Started with docker
+
 Follow these steps to set up the project on your local machine.
 
 1. Build Docker Image
-In the project directory, run the following command to build the Docker image for the client service:
+   In the project directory, run the following command to build the Docker image for the client service:
 
 `docker-compose build client`
 
 2. Declare the Network
-Declare the required network for inter-container communication. This step is necessary to ensure the containers can communicate using their container names as hostnames.
+   Declare the required network for inter-container communication. This step is necessary to ensure the containers can communicate using their container names as hostnames.
 
 `docker network create --driver=bridge app_network`
 
 3. Run the Services
-Start the client service using the following command. This will launch the containerized application and connect it to the specified network.
+   Start the client service using the following command. This will launch the containerized application and connect it to the specified network.
 
 `docker-compose up -d client`
 
 The -d flag runs the container in detached mode, allowing you to continue using the terminal.
-
-
 
 ### Utilities
 
