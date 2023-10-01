@@ -74,7 +74,8 @@
     "web3modal": "^1.9.9",
     "webextension-polyfill": "^0.10.0",
     "zod": "^3.22.2",
-    "zustand": "^4.4.1"
+    "zustand": "^4.4.1",
+    "@viaprize/sdk": "workspace:*"
   },
   "devDependencies": {
     "@babel/core": "^7.22.1",

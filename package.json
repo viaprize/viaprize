@@ -17,7 +17,7 @@
     "tsconfig": "workspace:*",
     "turbo": "latest",
     "husky": "^8.0.3",
-     "dotenv-cli": "latest"
+    "dotenv-cli": "latest"
   },
   "name": "viaprize",
   "workspaces": [
