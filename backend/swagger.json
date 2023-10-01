@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "servers": [
     {
-      "url": "https://github.com/samchon/nestia",
+      "url": "http://127.0.0.1:3001/api",
       "description": "insert your server url"
     }
   ],
@@ -853,12 +853,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "name",
-          "terms",
-          "address",
-          "transactionHash"
-        ],
+        "required": ["name", "terms", "address", "transactionHash"],
         "description": "Interface of Create Pactt , using this interface it create a new pact in pact.service.ts",
         "x-typia-jsDocTags": [
           {
@@ -989,10 +984,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "page",
-          "limit"
-        ],
+        "required": ["page", "limit"],
         "x-typia-jsDocTags": []
       },
       "Readonly__type": {
@@ -1013,10 +1005,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "x-typia-jsDocTags": []
       },
       "PrizeProposals": {
@@ -1476,10 +1465,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "x-typia-jsDocTags": []
       },
       "RejectProposalDto": {
@@ -1492,9 +1478,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "comment"
-        ],
+        "required": ["comment"],
         "x-typia-jsDocTags": []
       },
       "CreateUser": {
@@ -1524,10 +1508,7 @@
                 "kind": "format",
                 "value": "email",
                 "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
-                "exclusive": [
-                  "format",
-                  "pattern"
-                ]
+                "exclusive": ["format", "pattern"]
               }
             ]
           },
@@ -1578,11 +1559,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "email",
-          "user_id",
-          "name"
-        ],
+        "required": ["email", "user_id", "name"],
         "description": "Interface of Create User , using this interface it create a new user in",
         "x-typia-jsDocTags": [
           {

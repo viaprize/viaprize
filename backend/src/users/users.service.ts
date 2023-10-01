@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUser } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
+import { PrizeProposalsService } from '../prizes/services/prizes-proposals.service';
 
 /* The UsersService class is responsible for creating and retrieving user data from a repository. */
 @Injectable()
@@ -10,7 +11,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   /**
    * The function creates a new user by inserting the provided user data into the user repository, and
