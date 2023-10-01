@@ -18,9 +18,9 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"nestia.config.ts\" ",
     "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/src/main",
+    "start:dev": "npm run swagger && nest start --watch",
+    "start:debug": "npm run swagger && nest start --debug --watch",
+    "start:prod": "npm run swagger && node dist/src/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -28,6 +28,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "env-cmd jest --config ./test/jest-e2e.json",
     "sdk:generate": "npx nestia swagger && npx swagger-typescript-api -p ./swagger.json -o  ../apps/client/lib/sdk.ts --route-types --debug",
+    "swagger": "npx nestia swagger",
     "postinstall": "ts-patch install"
   },
   "dependencies": {
