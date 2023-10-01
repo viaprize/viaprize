@@ -6,7 +6,6 @@ import { User } from './entities/user.entity';
 
 /* The UsersService class is responsible for creating and retrieving user data from a repository. */
 @Injectable()
-
 export class UsersService {
   constructor(
     @InjectRepository(User)
@@ -44,6 +43,7 @@ export class UsersService {
       where: {
         authId: authId,
       },
+      relations: ['submissions', 'prizeProposals'],
     });
     if (!user)
       throw new HttpException(
@@ -68,8 +68,6 @@ export class UsersService {
         username: username,
       },
       relations: ['submissions', 'prizeProposals'],
-
-
     });
     if (!user)
       throw new HttpException(

@@ -15,7 +15,6 @@ const assertSubmission = typia.json.createAssertStringify<User>();
 
 @Controller('users')
 export class UsersController {
-
   constructor(
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
@@ -45,7 +44,11 @@ export class UsersController {
   @TypedRoute.Get(':authId')
   async findOneByAuthId(@TypedParam('authId') userId: string): Promise<User> {
     const user = await this.usersService.findOneByAuthId(userId);
-    return user
+    user.submissions = user.submissions.filter(
+      (submission) => submission !== null && submission !== undefined,
+    );
+    assertSubmission(user);
+    return user;
   }
 
   /**
@@ -54,14 +57,16 @@ export class UsersController {
    * @returns {Promise<User>} The user object.
    */
   @TypedRoute.Get('username/:username')
-  async findOneByUsername(@TypedParam('username') username: string): Promise<User> {
+  async findOneByUsername(
+    @TypedParam('username') username: string,
+  ): Promise<User> {
     console.log('here is the user: ', username);
     const user = await this.usersService.findOneByUsername(username);
+    user.submissions = user.submissions.filter(
+      (submission) => submission !== null && submission !== undefined,
+    );
 
-    // Filter out null or undefined values from submissions
-    user.submissions = user.submissions.filter((submission) => submission !== null && submission !== undefined);
-
-    assertSubmission(user)
-    return user
+    assertSubmission(user);
+    return user;
   }
 }
