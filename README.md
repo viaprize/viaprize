@@ -20,7 +20,7 @@ Follow these steps to set up the project on your local machine.
 1. Build Docker Image
    In the project directory, run the following command to build the Docker image for the client service:
 
-`docker-compose build client`
+`docker compose build client`
 
 2. Declare the Network
    Declare the required network for inter-container communication. This step is necessary to ensure the containers can communicate using their container names as hostnames.
@@ -30,7 +30,7 @@ Follow these steps to set up the project on your local machine.
 3. Run the Services
    Start the client service using the following command. This will launch the containerized application and connect it to the specified network.
 
-`docker-compose up -d client`
+`docker compose up -d client`
 
 The -d flag runs the container in detached mode, allowing you to continue using the terminal.
 
