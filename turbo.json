@@ -14,7 +14,7 @@
       "dependsOn": ["^build"]
     },
     "dev": {
-      "cache": false,
+      "cache": true,
       "persistent": true,
       "dotEnv": [".env.backend"]
     }
