@@ -13,18 +13,16 @@ import { env } from "@env";
 import { PrivyProvider } from "@privy-io/react-auth";
 import { PrivyWagmiConnector } from "@privy-io/wagmi-connector";
 import type { NextPage } from "next";
-import { useState } from "react";
+import { ReactElement, ReactNode, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Toaster } from "sonner";
 import { optimism, optimismGoerli } from "wagmi/chains";
 
 const queryClient = new QueryClient();
 
-export type NextPageWithLayout<P = NonNullable<unknown>, IP = P> = NextPage<
-  P,
-  IP
-> & {
-  getLayout?: (page: Element) => React.ReactNode;
+// eslint-disable-next-line @typescript-eslint/ban-types -- required for Next.js
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -37,6 +35,8 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const toggleColorScheme = (value?: ColorScheme) => {
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
   };
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
     <>
       <Head>
@@ -72,7 +72,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                 withNormalizeCSS
               >
                 <Toaster />
-                <Component {...pageProps} />
+                {getLayout(<Component {...pageProps} />)}
               </MantineProvider>
             </ColorSchemeProvider>
           </QueryClientProvider>

@@ -19,7 +19,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
-  ) { }
+  ) {}
 
   /**
    * Creates a new user and sends welcome email.
@@ -50,7 +50,7 @@ export class UsersController {
     );
     user.prizeProposals = user.prizeProposals.filter(
       (prizeProposal) => prizeProposal !== null && prizeProposal !== undefined,
-    )
+    );
     assertSubmission(user);
     assertPrizes(user);
     return user;

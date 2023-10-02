@@ -1,0 +1,13 @@
+{
+  "entryPoints": ["lib/**", "components/**"],
+  // "basePath": ["./lib","./components"],
+  "out": ["docs"],
+  "name": "My Documentation",
+  "plugin": ["typedoc-theme-hierarchy"],
+
+  // "exclude": "/*.spec.ts,/*.test.ts,/*.spec.tsx,/*.test.tsx,/*.d.ts,/node_modules/**,node_modules/*/index.d.ts",
+  "theme": "hierarchy",
+  "compilerOptions": {
+    "strictNullChecks": false
+  }
+}

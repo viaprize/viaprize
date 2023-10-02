@@ -2,17 +2,36 @@
   "extends": "tsconfig/nextjs.json",
   "compilerOptions": {
     "strict": true,
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/config": ["config/index.ts"],
-      "@/context/*": ["context/*"],
-      "@/lib/*": ["lib/*"],
-      "@/contract/*": ["contract/*"],
-      "@env": ["env.mjs"],
-      "@/backend/*": ["../backend/dist/*"]
-    }
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/config": [
+        "config/index.ts"
+      ],
+      "@/context/*": [
+        "context/*"
+      ],
+      "@/lib/*": [
+        "lib/*"
+      ],
+      "@/contract/*": [
+        "contract/*"
+      ],
+      "@env": [
+        "env.mjs"
+      ],
+      "@/backend/*": [
+        "../backend/dist/*"
+      ]
+    },
+    "jsx": "preserve"
   },
   "include": [
     "next-env.d.ts",
@@ -24,5 +43,7 @@
     "*.mjs",
     "../backend/*"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

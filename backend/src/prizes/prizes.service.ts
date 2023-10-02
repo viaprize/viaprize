@@ -13,7 +13,7 @@ export class PrizesService {
   constructor(
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
-  ) { }
+  ) {}
 
   async findAll(query: PaginateQuery): Promise<Paginated<Prize>> {
     let paginations: Paginated<Prize>;
@@ -41,14 +41,13 @@ export class PrizesService {
     return paginations;
   }
 
-  getSmartContractDetails() { }
+  getSmartContractDetails() {}
 
   async findOne(id: string) {
     return await this.prizeRepository.findOne({
       where: {
         id,
       },
-
     });
   }
 
