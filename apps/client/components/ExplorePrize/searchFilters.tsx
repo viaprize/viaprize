@@ -1,7 +1,10 @@
-import { Group, Text, TextInput } from "@mantine/core";
+import { Button, Drawer, Group, Text, TextInput } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
+import Filter from "./filterComponent";
 
 export function SearchFilters() {
+  const [opened, { open, close }] = useDisclosure(false);
   return (
     <div className="p-5">
       <Text size="25px" weight={500}>
@@ -16,10 +19,14 @@ export function SearchFilters() {
           placeholder="Search"
           style={{ width: "500px" }}
         />
-        {/* <Flex  gap='md'>
-    <Filter />
-    </Flex> */}
+        <Group position="right">
+          <Button onClick={open}>Filter</Button>
+          <Button>Sort</Button>
+        </Group>
       </Group>
+      <Drawer opened={opened} onClose={close} title="Filters" position="right">
+        <Filter />
+      </Drawer>
     </div>
   );
 }
