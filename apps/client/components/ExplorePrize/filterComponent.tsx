@@ -8,11 +8,7 @@ import {
   Text,
   rem,
 } from "@mantine/core";
-import {
-  IconCoin,
-  IconCurrencyDollar,
-  
-} from "@tabler/icons-react";
+import { IconCoin, IconCurrencyDollar } from "@tabler/icons-react";
 import { useState } from "react";
 
 function toTuple(arr: number[]): [number, number] {
@@ -66,7 +62,6 @@ function Filter() {
       />
       <Group position="apart">
         <Box my="md" styles={{}}>
-
           <b>{rangeValues[0]}</b>
         </Box>
         <Box mt="md">
@@ -85,8 +80,6 @@ function Filter() {
         defaultValue={["react"]}
         label="Sub Categories"
         // onChange={() => {}}
-
-
       >
         <Stack mt="xs">
           <Checkbox value="react" label="React" />
