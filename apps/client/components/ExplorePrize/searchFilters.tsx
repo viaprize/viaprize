@@ -32,7 +32,7 @@ export function SearchFilters() {
 
   const handleSort = async (value: string) => {
     params.set("sort", value);
-    await router.push({ query: params.toString() });
+    await router.replace({ query: params.toString() });
   };
 
   return (
@@ -65,6 +65,7 @@ export function SearchFilters() {
                   <Menu.Item
                     key={key.value}
                     onClick={() => void handleSort(key.value)}
+                    className={`${key.value === searchParams.sort ? "font-bold" : "font-normal"}`}
                   >
                     {key.label}
                   </Menu.Item>
