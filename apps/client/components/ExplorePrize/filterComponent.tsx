@@ -138,8 +138,7 @@ function Filter() {
       >
         <Stack mt="xs">
           {proficiencyOptions.map((option) => (
-            <Checkbox key={option} value={option} label={option}
-            />
+            <Checkbox key={option} value={option} label={option} />
           ))}
         </Stack>
       </Checkbox.Group>
