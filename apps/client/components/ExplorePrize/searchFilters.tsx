@@ -65,7 +65,11 @@ export function SearchFilters() {
                   <Menu.Item
                     key={key.value}
                     onClick={() => void handleSort(key.value)}
-                    className={`${key.value === searchParams.sort ? "font-bold" : "font-normal"}`}
+                    className={`${
+                      key.value === searchParams.sort
+                        ? "font-bold"
+                        : "font-normal"
+                    }`}
                   >
                     {key.label}
                   </Menu.Item>
