@@ -13,7 +13,7 @@
 // import { useState } from "react";
 // const categoryOptions = ["Proficiency", "Priorities"];
 //   const proficiencyOptions = [
-//      "Programming", 
+//      "Programming",
 //       "Python" ,
 //      "JavaScript" ,
 //       "Writing" ,
@@ -25,17 +25,17 @@
 //     "Hardware" ,
 //       "Art" ,
 //       "Meta" ,
-//       "AI" 
+//       "AI"
 //   ];
 
 //   const priorityOptions = [
 //     "Climate Change" ,
-//      "Network Civilizations" ,     
+//      "Network Civilizations" ,
 //      "Open-Source" ,
 //     "Community Coordination" ,
 //       "Health" ,
 //      "Education"
-      
+
 //   ];
 
 // function toTuple(arr: number[]): [number, number] {
@@ -47,7 +47,6 @@
 // }: {
 //   searchParams: Record<string, string | string[] | undefined>;
 // }) {
-  
 
 //   // const [searchValue, setSearchValue] = useState("");
 //   const [rangeValues, setRangeValues] = useState([0, 500]);
@@ -55,7 +54,6 @@
 //   const options = selectedCategory === "Proficiency" ? proficiencyOptions : priorityOptions;
 //   const category=(searchParams.category || "Proficiency") as string;
 //   const subCategory=(searchParams.subCategory || "Programming") as string;
-  
 
 //   return (
 //     <Box maw={400} mx="auto">
@@ -82,10 +80,10 @@
 //         </Box>
 //       </Group>
 //        <Link
-                    
+
 //                     href={`?${new URLSearchParams({
 //                       category=category,z
-                      
+
 //                     })}`}>
 //       <Select
 //         mb="md"
@@ -94,10 +92,10 @@
 //         data={categoryOptions}
 //         defaultValue="Proficiency"
 //         allowDeselect={false}
-                    
+
 //       />
 //       </Link>
-        
+
 //       <Checkbox.Group
 //         defaultValue={[]}
 //         label="Sub Categories"
@@ -116,7 +114,7 @@
 // ))}
 //         </Stack>
 //       </Checkbox.Group>
-      
+
 //     </Box>
 //   );
 // }
