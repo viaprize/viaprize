@@ -41,28 +41,8 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-
   const docs = require('../../swagger.json');
-
-  // const options = new DocumentBuilder().
-  //   .addBearerAuth(
-  //     {
-  //       type: 'http',
-  //       scheme: 'bearer',
-  //       bearerFormat: 'JWT',
-  //     },
-  //     'access-token',
-  //   )
-
-  //   .setTitle('API')
-  //   .setDescription('API docs')
-  //   .setVersion('1.0')
-  //   .addBearerAuth()
-  //   .build();
-
-  // const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, docs);
-
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
 void bootstrap();

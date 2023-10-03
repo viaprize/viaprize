@@ -23,5 +23,8 @@ COPY .env ./
 # Build the application
 RUN npm run build
 
+EXPOSE 3001
+
 # Run the web service on container startup.
 CMD [ "npm", "run", "start:prod" ]
+
