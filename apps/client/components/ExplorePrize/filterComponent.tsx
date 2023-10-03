@@ -46,28 +46,46 @@ function Filter() {
   const searchParams = router.query;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix
   const params = new URLSearchParams(searchParams as any as string);
-  const selectedCategories = (searchParams.category || "Proficiency") as string;
+  const selectedCategories = (searchParams.category || "") as string;
   const subCategory = searchParams.subCategory
     ? (searchParams.subCategory as string).split(",")
-    : ["Programming"];
+    : [];
 
-  const range = (
-    searchParams.range ? (searchParams.range as string).split(",") : [0, 500]
-  ) as number[];
+  // const range = (
+  //   searchParams.range ? (searchParams.range as string).split(",") : [0, 500]
+  // ) as number[];
+
+  const RangeValue = () => {
+    const ranges = (
+      searchParams.range ? (searchParams.range as string).split(",") : [0, 500]
+    ) as number[];
+
+    if (ranges[1] > 500) {
+      ranges[1] = 500;
+    }
+
+    if (ranges[0] < 0) {
+      ranges[0] = 0;
+    }
+
+    return ranges;
+  };
+
+  const range = RangeValue();
 
   const handlerange = async (value: number[]) => {
     params.set("range", value.join(","));
-    await router.push(`?${params.toString()}`, undefined, { shallow: true });
+    await router.replace(`?${params.toString()}`, undefined, { shallow: true });
   };
 
   const handleCategory = async (value: string) => {
     params.set("category", value);
-    await router.push(`?${params.toString()}`, undefined, { shallow: true });
+    await router.replace(`?${params.toString()}`, undefined, { shallow: true });
   };
 
   const handleSubCategory = async (value: string[]) => {
     params.set("subCategory", value.join(","));
-    await router.push(`?${params.toString()}`, undefined, {
+    await router.replace(`?${params.toString()}`, undefined, {
       shallow: true,
     });
   };
@@ -120,7 +138,8 @@ function Filter() {
       >
         <Stack mt="xs">
           {proficiencyOptions.map((option) => (
-            <Checkbox key={option} value={option} label={option} />
+            <Checkbox key={option} value={option} label={option}
+            />
           ))}
         </Stack>
       </Checkbox.Group>
