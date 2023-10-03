@@ -1,6 +1,7 @@
 import { Button, Drawer, Group, Text, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
+import Filter from "./filterComponent";
 // import Filter from "./filterComponent";
 
 export function SearchFilters() {
@@ -25,7 +26,7 @@ export function SearchFilters() {
         </Group>
       </Group>
       <Drawer opened={opened} onClose={close} title="Filters" position="right">
-        {/* <Filter /> */}
+        <Filter />
       </Drawer>
     </div>
   );
