@@ -66,6 +66,8 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.10.1",
     "react-query": "^3.39.3",
+    "react-router": "^6.16.0",
+    "react-router-dom": "^6.16.0",
     "react-toastify": "^9.0.8",
     "sonner": "^0.7.1",
     "typedoc-theme-hierarchy": "^4.1.1",
