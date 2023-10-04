@@ -1,0 +1,3 @@
+[submodule "apps/client/docs"]
+	path = apps/client/docs
+	url = https://github.com/viaprize/frontend-docs.git
