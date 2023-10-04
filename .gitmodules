@@ -1,3 +1,6 @@
 [submodule "apps/client/docs"]
 	path = apps/client/docs
 	url = https://github.com/viaprize/frontend-docs.git
+[submodule "backend/docs"]
+	path = backend/docs
+	url = https://github.com/viaprize/backend-docs.git
