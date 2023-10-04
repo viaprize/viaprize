@@ -313,6 +313,9 @@ importers:
       eslint-plugin-testing-library:
         specifier: ^5.11.0
         version: 5.11.0(eslint@8.46.0)(typescript@5.0.4)
+      husky:
+        specifier: '8'
+        version: 8.0.3
       jest:
         specifier: ^29.5.0
         version: 29.6.2(@types/node@18.7.13)
