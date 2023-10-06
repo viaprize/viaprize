@@ -2,17 +2,13 @@ import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
-
 import { TypedBody, TypedParam, TypedQuery } from '@nestia/core';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
-import { RejectProposalDto } from "./dto/reject-proposal.dto";
+import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
-
-
-
 
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
@@ -46,7 +42,7 @@ interface PrzieQuery {
  */
 @Controller('prizes')
 export class PrizesController {
-  constructor(private readonly prizeProposalsService: PrizeProposalsService) { }
+  constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
 
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler

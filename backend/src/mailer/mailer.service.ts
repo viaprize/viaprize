@@ -41,8 +41,8 @@ export class MailerService {
       from: mailOptions.from
         ? mailOptions.from
         : `"${this.configService.get('mail.user', {
-          infer: true,
-        })}"`,
+            infer: true,
+          })}"`,
       html: mailOptions.html ? mailOptions.html : html,
     });
   }

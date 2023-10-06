@@ -18,7 +18,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
-  ) {}
+  ) { }
 
   /**
    * Creates a new user and sends welcome email.
@@ -31,8 +31,7 @@ export class UsersController {
   async create(@TypedBody() createUserDto: CreateUser): Promise<User> {
     console.log({ ...createUserDto }, 'hi');
     const user = await this.usersService.create(createUserDto);
-    await this.mailService.welcome(user.email);
-
+    await this.mailService.welcome(user.email, user.name);
     return user;
   }
 

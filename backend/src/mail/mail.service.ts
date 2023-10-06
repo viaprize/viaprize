@@ -9,7 +9,7 @@ export class MailService {
   constructor(
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService<AllConfigType>,
-  ) { }
+  ) {}
   async welcome(email: string, name: string) {
     const telegramLink = this.configService.getOrThrow<AllConfigType>(
       'TELEGRAM_LINK',
