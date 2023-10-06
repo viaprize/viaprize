@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import fs from 'node:fs/promises';
 import { ConfigService } from '@nestjs/config';
-import nodemailer from 'nodemailer';
 import Handlebars from 'handlebars';
+import fs from 'node:fs/promises';
+import nodemailer from 'nodemailer';
 import { AllConfigType } from 'src/config/config.type';
 
 @Injectable()
@@ -40,11 +40,9 @@ export class MailerService {
       ...mailOptions,
       from: mailOptions.from
         ? mailOptions.from
-        : `"${this.configService.get('mail.defaultName', {
-            infer: true,
-          })}" <${this.configService.get('mail.defaultEmail', {
-            infer: true,
-          })}>`,
+        : `"${this.configService.get('mail.user', {
+          infer: true,
+        })}"`,
       html: mailOptions.html ? mailOptions.html : html,
     });
   }
