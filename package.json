@@ -12,11 +12,14 @@
     "test-all": "pnpm check-types && pnpm check-format && pnpm check-lint"
   },
   "devDependencies": {
-    "dotenv-cli": "latest",
+   
     "eslint": "^8.48.0",
-    "husky": "^8.0.3",
+    
     "prettier": "^3.0.3",
     "tsconfig": "workspace:*",
+  
+    "husky": "^8.0.3",
+    "dotenv-cli": "latest",
     "turbo": "latest"
   },
   "name": "viaprize",

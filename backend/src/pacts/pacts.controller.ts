@@ -1,5 +1,5 @@
-import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
-import { Controller } from '@nestjs/common';
+import { TypedBody, TypedParam } from '@nestia/core';
+import { Controller, Get, Post } from '@nestjs/common';
 import { CreatePact } from './dto/create-pact.dto';
 import { Pact } from './entities/pact.entity';
 import { PactsService } from './pacts.service';
@@ -19,7 +19,7 @@ export class PactsController {
    * @see {CreatePact}
    * @returns {Promise<Pact>} The created pact object.
    */
-  @TypedRoute.Post()
+  @Post()
   create(@TypedBody() createPact: CreatePact): Promise<Pact> {
     return this.pactsService.create(createPact);
   }
@@ -41,7 +41,7 @@ export class PactsController {
    * @see {Pact}
    * @returns {Promise<Pact[]>} Returns all pacts
    */
-  @TypedRoute.Get(':address')
+  @Get(':address')
   findOne(@TypedParam('address') address: string) {
     return this.pactsService.findOne(address);
   }
