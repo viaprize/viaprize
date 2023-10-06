@@ -1,74 +1,148 @@
-import { MultiSelect, Select } from "@mantine/core";
-import { useState } from "react";
+import {
+  Box,
+  Checkbox,
+  Group,
+  RangeSlider,
+  Select,
+  Stack,
+  Text,
+  rem,
+} from "@mantine/core";
+import { IconCoin, IconCurrencyDollar } from "@tabler/icons-react";
+import { useRouter } from "next/router";
+
+const categoryOptions = ["Proficiency", "Priorities"];
+const proficiencyOptions = [
+  "Programming",
+  "Python",
+  "JavaScript",
+  "Writing",
+  "Design",
+  "Translation",
+  "Research",
+  "Real estate",
+  "Apps",
+  "Hardware",
+  "Art",
+  "Meta",
+  "AI",
+];
+
+// const priorityOptions = [
+//   "Climate Change",
+//   "Network Civilizations",
+//   "Open-Source",
+//   "Community Coordination",
+//   "Health",
+//   "Education",
+// ];
+
+function toTuple(arr: number[]): [number, number] {
+  return [arr[0], arr[1]];
+}
 
 function Filter() {
-  const [proficiencyData, setProficiencyData] = useState([
-    { value: "1", label: "Programming" },
-    { value: "2", label: "Python" },
-    { value: "3", label: "JavaScript" },
-    { value: "4", label: "Writing" },
-    { value: "5", label: "Design" },
-    { value: "6", label: "Translation" },
-    { value: "7", label: "Research" },
-    { value: "8", label: "Real estate" },
-    { value: "9", label: "Apps" },
-    { value: "10", label: "Hardware" },
-    { value: "11", label: "Art" },
-    { value: "12", label: "Meta" },
-    { value: "13", label: "AI" },
-  ]);
+  const router = useRouter();
+  const searchParams = router.query;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix
+  const params = new URLSearchParams(searchParams as any as string);
+  const selectedCategories = (searchParams.category || "") as string;
+  const subCategory = searchParams.subCategory
+    ? (searchParams.subCategory as string).split(",")
+    : [];
 
-  const [prioritiesData, setPrioritiesData] = useState([
-    { value: "1", label: "Climate Change" },
-    { value: "2", label: "Network Civilizations" },
-    { value: "3", label: "Open-Source" },
-    { value: "4", label: "Community Coordination" },
-    { value: "5", label: "Health" },
-    { value: "6", label: "Education" },
-  ]);
+  // const range = (
+  //   searchParams.range ? (searchParams.range as string).split(",") : [0, 500]
+  // ) as number[];
 
-  const [searchValue, setSearchValue] = useState("");
+  const RangeValue = () => {
+    const ranges = (
+      searchParams.range ? (searchParams.range as string).split(",") : [0, 500]
+    ) as number[];
+
+    if (ranges[1] > 500) {
+      ranges[1] = 500;
+    }
+
+    if (ranges[0] < 0) {
+      ranges[0] = 0;
+    }
+
+    return ranges;
+  };
+
+  const range = RangeValue();
+
+  const handlerange = async (value: number[]) => {
+    params.set("range", value.join(","));
+    await router.replace(`?${params.toString()}`, undefined, { shallow: true });
+  };
+
+  const handleCategory = async (value: string) => {
+    params.set("category", value);
+    await router.replace(`?${params.toString()}`, undefined, { shallow: true });
+  };
+
+  const handleSubCategory = async (value: string[]) => {
+    params.set("subCategory", value.join(","));
+    await router.replace(`?${params.toString()}`, undefined, {
+      shallow: true,
+    });
+  };
 
   return (
-    <>
-      <MultiSelect
-        creatable
-        data={proficiencyData}
-        getCreateLabel={(query) => `+ Create ${query}`}
-        label="Proficiency"
-        maw="300px"
-        onCreate={(query) => {
-          const item = { value: query, label: query };
-          setProficiencyData((current) => [...current, item]);
-          return item;
-        }}
-        placeholder="Select items"
-        searchable
+    <Box maw={400} mx="auto">
+      <Text>Price range ($)</Text>
+      <RangeSlider
+        mt="xl"
+        styles={{ thumb: { borderWidth: rem(2), padding: rem(3) } }}
+        color="blue"
+        max={500}
+        min={0}
+        label={null}
+        defaultValue={toTuple(range)}
+        thumbSize={26}
+        thumbChildren={[
+          <IconCurrencyDollar size="1rem" key="1" />,
+          <IconCoin size="1rem" key="2" />,
+        ]}
+        onChange={(value) => void handlerange(value)}
       />
-      <MultiSelect
-        creatable
-        data={prioritiesData}
-        getCreateLabel={(query) => `+ Create ${query}`}
-        label="Priorities"
-        maw="300px"
-        onCreate={(query) => {
-          const item = { value: query, label: query };
-          setPrioritiesData((current) => [...current, item]);
-          return item;
-        }}
-        placeholder="Select items"
-        searchable
-      />
+      <Group position="apart">
+        <Box my="md" styles={{}}>
+          <b>{range[0]}</b>
+        </Box>
+        <Box mt="md">
+          <b>{range[1]}</b>
+        </Box>
+      </Group>
       <Select
-        data={["Data", "Price"]}
-        label="Sort By:"
-        nothingFound="No options"
-        onSearchChange={setSearchValue}
-        placeholder="sort by"
-        searchValue={searchValue}
-        searchable
+        mb="md"
+        label="Categories"
+        placeholder="Pick value"
+        data={categoryOptions}
+        defaultValue="Proficiency"
+        allowDeselect={false}
+        value={selectedCategories}
+        onChange={(value) => {
+          if (value) {
+            void handleCategory(value);
+          }
+        }}
       />
-    </>
+      <Checkbox.Group
+        defaultValue={[]}
+        label="Sub Categories"
+        value={subCategory}
+        onChange={(value) => void handleSubCategory(value)}
+      >
+        <Stack mt="xs">
+          {proficiencyOptions.map((option) => (
+            <Checkbox key={option} value={option} label={option} />
+          ))}
+        </Stack>
+      </Checkbox.Group>
+    </Box>
   );
 }
 
