@@ -18,7 +18,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
-  ) { }
+  ) {}
 
   /**
    * Creates a new user and sends welcome email.
