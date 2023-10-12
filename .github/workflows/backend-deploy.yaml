@@ -42,7 +42,7 @@ jobs:
         with:
           host: ec2-3-109-187-85.ap-south-1.compute.amazonaws.com
           username: ubuntu
-          key: ${{ secrets//.BACKEND_SSH_PRIVATE_KEY }}
+          key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
           script: |
             cd ~/viaprize/backend
             sudo chown -R ubuntu .
