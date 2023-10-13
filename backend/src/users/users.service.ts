@@ -48,7 +48,7 @@ export class UsersService {
     if (!user)
       throw new HttpException(
         `User not found with authId ${authId}`,
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.NOT_FOUND,
       );
     return user;
   }
@@ -75,5 +75,21 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     return user;
+  }
+
+  /**
+   * Checks if a user with the specified username exists.
+   * @async
+   * @param {string} username - The username to check.
+   * @returns {Promise<boolean>} A boolean indicating if the user exists.
+   */
+
+  async exists(username: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username: username,
+      },
+    });
+    return !!user;
   }
 }

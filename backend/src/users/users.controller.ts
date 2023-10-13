@@ -31,6 +31,7 @@ export class UsersController {
   async create(@TypedBody() createUserDto: CreateUser): Promise<User> {
     console.log({ ...createUserDto }, 'hi');
     const user = await this.usersService.create(createUserDto);
+    console.log({ ...user }, 'user');
     await this.mailService.welcome(user.email, user.name);
     return user;
   }
@@ -67,5 +68,14 @@ export class UsersController {
 
     assertSubmission(user);
     return user;
+  }
+  /**
+   * Endpoint for checking if a user with the specified username exists.
+   * @param username The username to check.
+   * @returns A boolean indicating if the user exists.
+   */
+  @Get('exists/:username')
+  async exists(@TypedParam('username') username: string): Promise<boolean> {
+    return this.usersService.exists(username);
   }
 }

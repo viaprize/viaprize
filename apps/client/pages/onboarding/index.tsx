@@ -3,19 +3,26 @@ import {
   Button,
   Card,
   Center,
+  Flex,
+  Loader,
   Text,
   TextInput,
 } from "@mantine/core";
 
 import useAppUser from "@/context/hooks/useAppUser";
+import { Api } from "@/lib/Api";
+import { useDebouncedValue } from "@mantine/hooks";
+import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/router";
-import { useRef, useState } from "react";
+import { ChangeEvent, useCallback, useRef, useState } from "react";
 import { useMutation } from "react-query";
+import { sleep } from "react-query/types/core/utils";
 import { toast } from "sonner";
 
 export default function Details() {
   const timeoutRef = useRef<number>(-1);
-  const [email, setEmail] = useState("");
+  const { user } = usePrivy();
+  const [email, setEmail] = useState(user?.email?.address || "");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState("");
@@ -23,10 +30,7 @@ export default function Details() {
   const { createNewUser } = useAppUser();
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: () => {
-      router
-        .push("/prize/explore-prizes")
-        .then(console.log)
-        .catch(console.error);
+      router.push("/prize/explore").then(console.log).catch(console.error);
     },
   });
 
@@ -70,19 +74,58 @@ export default function Details() {
     }
   };
 
+  const [debouncedUsername] = useDebouncedValue(username, 200);
+
+  const [exists, setExists] = useState(false);
+  const [usernameLoading, setUsernameLoading] = useState(false);
+
+  const checkUsername = useCallback(
+    async (newusername: string) => {
+      try {
+        console.log("checking newusername", newusername);
+        const response = await new Api().users.existsDetail(newusername);
+        setExists(response.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setUsernameLoading(false);
+      }
+    },
+    [debouncedUsername],
+  );
+
+  const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.currentTarget.value.toLowerCase();
+    setUsernameLoading(true);
+    setUsername(value);
+    sleep(1000)
+      .then(() => {
+        checkUsername(value).catch(console.error);
+      })
+      .catch(console.error);
+  };
+
   return (
     <Center className="h-[80dvh]">
       <Card shadow="md" radius="md" withBorder className="w-[50vw]">
         <Text>Enter your details to get started</Text>
         <TextInput
           value={username}
-          onChange={(e) => {
-            setUsername(e.currentTarget.value);
-          }}
+          onChange={handleUsernameChange}
           label="Username"
           placeholder="Enter your username"
-          my="sm"
         />
+
+        <Flex>
+          {usernameLoading && <Loader m="xs" size={"xs"} />}
+          {!usernameLoading &&
+            debouncedUsername.length > 0 &&
+            (exists && debouncedUsername.length > 0 ? (
+              <Text color="red">Username already exists</Text>
+            ) : (
+              <Text color="green">{username} Is a Valid Username</Text>
+            ))}
+        </Flex>
         <TextInput
           value={name}
           onChange={(e) => {
@@ -103,7 +146,7 @@ export default function Details() {
         <Button
           onClick={handleLogin}
           loading={loading || uploadUserMutation.isLoading}
-          disabled={loading || uploadUserMutation.isLoading}
+          disabled={loading || uploadUserMutation.isLoading || exists}
           color="blue"
           fullWidth
           my="sm"

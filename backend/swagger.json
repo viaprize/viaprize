@@ -4,10 +4,6 @@
     {
       "url": "http://localhost:3001/api",
       "description": "Local server"
-    },
-    {
-      "url": "https://api.pactsmith.com/docs",
-      "description": "Prod Server"
     }
   ],
   "info": {
@@ -768,6 +764,67 @@
         ],
         "x-nestia-method": "GET"
       }
+    },
+    "/users/exists/{username}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The username to check.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A boolean indicating if the user exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Endpoint for checking if a user with the specified username exists",
+        "description": "Endpoint for checking if a user with the specified username exists.",
+        "x-nestia-namespace": "users.exists.exists",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "username",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "The username to check.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "A boolean indicating if the user exists.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
     }
   },
   "components": {
@@ -884,7 +941,12 @@
           }
         },
         "nullable": false,
-        "required": ["name", "terms", "address", "transactionHash"],
+        "required": [
+          "name",
+          "terms",
+          "address",
+          "transactionHash"
+        ],
         "description": "Interface of Create Pactt , using this interface it create a new pact in pact.service.ts",
         "x-typia-jsDocTags": [
           {
@@ -1015,7 +1077,10 @@
           }
         },
         "nullable": false,
-        "required": ["page", "limit"],
+        "required": [
+          "page",
+          "limit"
+        ],
         "x-typia-jsDocTags": []
       },
       "Readonly__type": {
@@ -1036,7 +1101,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "x-typia-jsDocTags": []
       },
       "PrizeProposals": {
@@ -1502,7 +1570,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "x-typia-jsDocTags": []
       },
       "RejectProposalDto": {
@@ -1515,7 +1586,9 @@
           }
         },
         "nullable": false,
-        "required": ["comment"],
+        "required": [
+          "comment"
+        ],
         "x-typia-jsDocTags": []
       },
       "CreateUser": {
@@ -1545,7 +1618,10 @@
                 "kind": "format",
                 "value": "email",
                 "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
-                "exclusive": ["format", "pattern"]
+                "exclusive": [
+                  "format",
+                  "pattern"
+                ]
               }
             ]
           },
@@ -1613,7 +1689,12 @@
           }
         },
         "nullable": false,
-        "required": ["email", "authId", "name", "username"],
+        "required": [
+          "email",
+          "authId",
+          "name",
+          "username"
+        ],
         "description": "Interface of Create User , using this interface it create a new user in",
         "x-typia-jsDocTags": [
           {

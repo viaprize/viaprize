@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import path from 'path';
 import { AllConfigType } from 'src/config/config.type';
 import { MailerService } from 'src/mailer/mailer.service';
 
@@ -11,6 +10,7 @@ export class MailService {
     private readonly configService: ConfigService<AllConfigType>,
   ) {}
   async welcome(email: string, name: string) {
+    console.log(email, name, 'emailll');
     const telegramLink = this.configService.getOrThrow<AllConfigType>(
       'TELEGRAM_LINK',
       {
@@ -21,7 +21,7 @@ export class MailService {
       to: email,
       subject: 'Welcome to the Viaprize',
       text: `Viaprize`,
-      templatePath: path.join(__dirname, './templates/welcome.hbs'),
+      templateName: 'welcome.hbs',
       context: {
         name,
         telegramLink,
@@ -53,7 +53,7 @@ export class MailService {
       to: to,
       subject: 'Hi your proposal was approved',
       text: `Viaprize `,
-      templatePath: path.join(__dirname, '../../templates/approved.hbs'),
+      templateName: 'approved.hbs',
       context: {
         name,
         proposalTitle,
@@ -95,7 +95,7 @@ export class MailService {
         submissionDate,
         telegramLink,
       },
-      templatePath: path.join(__dirname, '../../templates/proposalSent.hbs'),
+      templateName: 'proposalSent.hbs',
     });
   }
 }

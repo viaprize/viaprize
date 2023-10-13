@@ -3,15 +3,32 @@ import { Button } from "@mantine/core";
 import { usePrivy } from "@privy-io/react-auth";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
+interface FetchError extends Error {
+  status?: number;
+}
 export default function MyComponent() {
   // const { login, ready, authenticated, } = usePrivy();
 
   const router = useRouter();
 
-  const { user } = usePrivy();
+  const { user, ready } = usePrivy();
 
-  const { loginUser } = useAppUser();
+  const { loginUser, refreshUser } = useAppUser();
+
+  useEffect(() => {
+    if (ready) {
+      void refreshUser()
+        .catch((error: FetchError) => {
+          console.log({ error }, "errror");
+          if (error.status === 404) {
+            router.push("/onboarding").catch(console.error);
+          }
+        })
+        .then(console.log);
+    }
+  }, [ready]);
   const gotoExplorePrizes = async () => {
     await router.push("/prize/explore-prizes");
   };

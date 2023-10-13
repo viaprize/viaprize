@@ -1,30 +1,31 @@
+import { Api, CreateUser, User } from "@/lib/Api";
 import myAxios from "@/lib/axios";
-import { AppUser, CreateUserDto } from "types/app-user";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 
 interface AppUserStore {
-  user: AppUser | undefined;
-  setUser: (user: AppUser) => void;
-  fetchUser: (_userId: string) => Promise<AppUser>;
+  user: User | undefined;
+  setUser: (user: User) => void;
+  fetchUser: (_userId: string) => Promise<User>;
   refreshUser: (_userId: string) => Promise<void>;
-  uploadUser: (newUser: CreateUserDto) => Promise<void>;
+  uploadUser: (newUser: CreateUser) => Promise<void>;
   clearUser: () => void;
 }
 const useAppUserStore = create(
   persist<AppUserStore>(
     (set, get) => ({
       user: undefined,
-      setUser: (user: AppUser) => set({ user }),
+      setUser: (user: User) => set({ user }),
       fetchUser: async (_userId: string) => {
-        const res = await myAxios.get(`/users/${_userId}`);
+        // const res = await myAxios.get(`/users/${_userId}`);
+        const res = await new Api().users.usersDetail(_userId);
         return res.data;
       },
       refreshUser: async (_userId: string) => {
         const newUserData = await get().fetchUser(_userId);
         set({ user: newUserData });
       },
-      uploadUser: async (newUser: CreateUserDto) => {
+      uploadUser: async (newUser: CreateUser) => {
         const res = await myAxios.post("/users", newUser);
         set({ user: res.data });
       },
