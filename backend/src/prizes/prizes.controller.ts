@@ -10,6 +10,7 @@ import { TypedBody, TypedParam, TypedQuery } from '@nestia/core';
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
+import { PrizePaginateQuery } from './entities/types';
 
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
@@ -43,7 +44,7 @@ interface PrzieQuery {
  */
 @Controller('prizes')
 export class PrizesController {
-  constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
+  constructor(private readonly prizeProposalsService: PrizeProposalsService) { }
 
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
@@ -67,19 +68,31 @@ export class PrizesController {
   @UseGuards(AdminAuthGuard)
   async getPendingProposals(
     @TypedQuery()
-    query: PrzieQuery,
+    query: PrizePaginateQuery,
   ): Promise<
     Readonly<{
       data: PrizeProposals[];
       hasNextPage: boolean;
     }>
   > {
+    // return infinityPagination(
+    //   await this.prizeProposalsService.findAllWithPagination({
+    //     ...query,
+    //   }),
+    //   {
+    //     ...query,
+    //   },
+    // );
+    const { page = 1, limit = 10, ...rest } = query;
     return infinityPagination(
       await this.prizeProposalsService.findAllWithPagination({
-        ...query,
+        page,
+        limit,
+        ...rest,
       }),
       {
-        ...query,
+        page,
+        limit,
       },
     );
   }
