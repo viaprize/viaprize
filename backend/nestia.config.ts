@@ -69,7 +69,5 @@ export const NESTIA_CONFIG: INestiaConfig = {
    * @default false
    */
   // simulate: true,
-  propagate: true,
-  distribute: '../packages/sdk',
 };
 export default NESTIA_CONFIG;
