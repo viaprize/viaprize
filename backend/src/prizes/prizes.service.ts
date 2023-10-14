@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  Paginated,
-  paginate
-} from 'nestjs-paginate';
+import { Paginated, paginate } from 'nestjs-paginate';
 import { Repository } from 'typeorm';
 import { Prize } from './entities/prize.entity';
 import { PrizePaginateQuery } from './entities/types';
@@ -12,7 +9,7 @@ export class PrizesService {
   constructor(
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
-  ) { }
+  ) {}
 
   async findAll(query: PrizePaginateQuery): Promise<Paginated<Prize>> {
     // let paginations: Paginated<Prize>;
@@ -43,11 +40,15 @@ export class PrizesService {
     const queryBuilder = this.prizeRepository.createQueryBuilder('prize');
 
     if (proficiencies) {
-      queryBuilder.andWhere('prize.proficiencies IN (:...proficiencies)', { proficiencies });
+      queryBuilder.andWhere('prize.proficiencies IN (:...proficiencies)', {
+        proficiencies,
+      });
     }
 
     if (priorities) {
-      queryBuilder.andWhere('prize.priorities IN (:...priorities)', { priorities });
+      queryBuilder.andWhere('prize.priorities IN (:...priorities)', {
+        priorities,
+      });
     }
 
     let paginations = await paginate(paginateQuery, queryBuilder, {
@@ -69,7 +70,7 @@ export class PrizesService {
     return paginations;
   }
 
-  getSmartContractDetails() { }
+  getSmartContractDetails() {}
 
   async findOne(id: string) {
     return await this.prizeRepository.findOne({
