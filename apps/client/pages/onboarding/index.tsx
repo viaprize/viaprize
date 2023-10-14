@@ -11,12 +11,12 @@ import {
 
 import useAppUser from "@/context/hooks/useAppUser";
 import { Api } from "@/lib/Api";
+import { sleep } from "@/lib/utils";
 import { useDebouncedValue } from "@mantine/hooks";
 import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/router";
 import { ChangeEvent, useCallback, useRef, useState } from "react";
 import { useMutation } from "react-query";
-import { sleep } from "react-query/types/core/utils";
 import { toast } from "sonner";
 
 export default function Details() {
