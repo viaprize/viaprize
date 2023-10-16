@@ -9,7 +9,7 @@ async function main() {
   const submission_tree = await submissionTree.deploy();
   await submission_tree.deployed();
 
-  console.log("submission AVL Tree Contract: ", submission_tree.address);
+  console.log("SubmissionAVLTree Contract Address:", submission_tree.address);
 
   const viaPrize = await ethers.getContractFactory("ViaPrize");
   const viaPrize_contract = await viaPrize.deploy(
@@ -19,7 +19,7 @@ async function main() {
   );
   await viaPrize_contract.deployed();
 
-  console.log("ViaPrize address:", viaPrize_contract.address);
+  console.log("ViaPrize Contract Address:", viaPrize_contract.address);
 }
 
 main()
