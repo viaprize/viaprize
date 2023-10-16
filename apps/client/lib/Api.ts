@@ -1,4 +1,4 @@
-/* eslint-disable  -- Because this is auto generated */
+/* eslint-disable  -- Because this is auto generated*/
 /* tslint:disable */
 /*
  * ---------------------------------------------------------------
@@ -233,7 +233,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "https://api.pactsmith.com/api";
+  public baseUrl: string = "http://localhost:3001/api";
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -619,6 +619,21 @@ the `approve` method of the `prizeProposalsService` with the given `id`
     usernameDetail: (username: string, params: RequestParams = {}) =>
       this.request<User, any>({
         path: `/users/username/${username}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Endpoint for checking if a user with the specified username exists.
+     *
+     * @name ExistsDetail
+     * @summary Endpoint for checking if a user with the specified username exists
+     * @request GET:/users/exists/{username}
+     */
+    existsDetail: (username: string, params: RequestParams = {}) =>
+      this.request<boolean, any>({
+        path: `/users/exists/${username}`,
         method: "GET",
         format: "json",
         ...params,

@@ -1,51 +1,39 @@
-<!DOCTYPE html>
 <html>
-<head>
-  <title>Greeting from ViaPrize</title>
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    .container {
-      margin: auto;
-      padding: 20px;
-      max-width: 600px;
-      background-color: #fff;
-    }
-    h1, h2 {
-      color: #333;
-    }
-    p {
-      font-size: 16px;
-      line-height: 1.6;
-    }
-    .footer {
-      text-align: left;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Welcome, {{username}}!</h1>
-    <p>
-      Thank you for joining the ViaPrize community. We're excited to have you!
-    </p>
-    <h2>Here's what you can do:</h2>
-    <ul>
-      <li><strong>Proposer:</strong> Share your ideas with proper documentation. If someone likes your idea, they can fund it, and someone can implement your idea and add a submission to your proposal.</li>
-      <li><strong>Funder:</strong> Fund proposals that you find interesting and valuable.</li>
-      <li><strong>Pursuer:</strong> Implement the ideas proposed by others and bring them into reality.</li>
-    </ul>
-    <p>
-      If you have any queries, feel free to reply to this email or join the discussion form.
-    </p>
-    <div class="footer">
-      <p>Best regards,</p>
-      <p>Noah Chon Lee, Founder</p>
+  <head>
+    <title>Greeting from ViaPrize</title>
+    <style>
+      body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0;
+      background-color: #f4f4f4; } .container { margin: auto; padding: 20px;
+      max-width: 600px; background-color: #fff; } h1, h2 { color: #333; } p {
+      font-size: 16px; line-height: 1.6; } .footer { text-align: left; }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <h1>Welcome, {{name}}!</h1>
+      <p>
+        Thank you for joining the ViaPrize community. We're excited to have you!
+      </p>
+      <h2>Here's what you can do:</h2>
+      <ul>
+        <li><strong>Proposer:</strong>
+          Share your ideas with proper documentation. If someone likes your
+          idea, they can fund it, and someone can implement your idea and add a
+          submission to your proposal.</li>
+        <li><strong>Funder:</strong>
+          Fund proposals that you find interesting and valuable.</li>
+        <li><strong>Pursuer:</strong>
+          Implement the ideas proposed by others and bring them into reality.</li>
+      </ul>
+      <p>
+        If you have any queries, feel free to reply to this email or join the
+        discussion form. Plus Join our community on Telegram
+        {{telegramLink}}
+      </p>
+      <div class='footer'>
+        <p>Best regards,</p>
+        <p>Noah Chon Lee, Founder</p>
+      </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

@@ -764,6 +764,67 @@
         ],
         "x-nestia-method": "GET"
       }
+    },
+    "/users/exists/{username}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The username to check.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A boolean indicating if the user exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Endpoint for checking if a user with the specified username exists",
+        "description": "Endpoint for checking if a user with the specified username exists.",
+        "x-nestia-namespace": "users.exists.exists",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "username",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "The username to check.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "A boolean indicating if the user exists.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
     }
   },
   "components": {
