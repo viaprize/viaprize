@@ -16,6 +16,12 @@ export const NESTIA_CONFIG: INestiaConfig = {
      * `swagger.json` file would be renamed to it.
      */
     output: 'swagger.json',
+    servers: [
+      {
+        url: 'http://localhost:3001/api',
+        description: 'Local server',
+      },
+    ],
     security: {
       bearer: {
         type: 'http',
@@ -63,7 +69,5 @@ export const NESTIA_CONFIG: INestiaConfig = {
    * @default false
    */
   // simulate: true,
-  propagate: true,
-  distribute: '../packages/sdk',
 };
 export default NESTIA_CONFIG;

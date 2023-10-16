@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import fs from 'node:fs/promises';
 import { ConfigService } from '@nestjs/config';
-import nodemailer from 'nodemailer';
 import Handlebars from 'handlebars';
+import fs from 'node:fs/promises';
+import nodemailer from 'nodemailer';
+import path from 'path';
 import { AllConfigType } from 'src/config/config.type';
 
 @Injectable()
@@ -21,14 +22,20 @@ export class MailerService {
   }
 
   async sendMail({
-    templatePath,
+    templateName,
     context,
     ...mailOptions
   }: nodemailer.SendMailOptions & {
-    templatePath: string;
+    templateName: string;
     context: Record<string, unknown>;
   }): Promise<void> {
     let html: string | undefined;
+    console.log(templateName, 'templateName');
+    const templatePath = path.join(
+      __dirname,
+      `../../mail/templates/${templateName}`,
+    );
+    console.log(templatePath, 'templatePath');
     if (templatePath) {
       const template = await fs.readFile(templatePath, 'utf-8');
       html = Handlebars.compile(template, {
@@ -40,11 +47,9 @@ export class MailerService {
       ...mailOptions,
       from: mailOptions.from
         ? mailOptions.from
-        : `"${this.configService.get('mail.defaultName', {
+        : `"${this.configService.get('mail.user', {
             infer: true,
-          })}" <${this.configService.get('mail.defaultEmail', {
-            infer: true,
-          })}>`,
+          })}"`,
       html: mailOptions.html ? mailOptions.html : html,
     });
   }

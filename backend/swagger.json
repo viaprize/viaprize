@@ -2,8 +2,8 @@
   "openapi": "3.0.1",
   "servers": [
     {
-      "url": "https://github.com/samchon/nestia",
-      "description": "insert your server url"
+      "url": "http://localhost:3001/api",
+      "description": "Local server"
     }
   ],
   "info": {
@@ -706,13 +706,101 @@
         },
         "summary": "Get a user by ID",
         "description": "Get a user by ID.",
-        "x-nestia-namespace": "users.findOne",
+        "x-nestia-namespace": "users.findOneByAuthId",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "The user object.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/users/username/{username}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Get a user by username",
+        "description": "Get a user by username.",
+        "x-nestia-namespace": "users.username.findOneByUsername",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "The user object.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/users/exists/{username}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The username to check.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A boolean indicating if the user exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Endpoint for checking if a user with the specified username exists",
+        "description": "Endpoint for checking if a user with the specified username exists.",
+        "x-nestia-namespace": "users.exists.exists",
         "x-nestia-jsDocTags": [
           {
             "name": "param",
             "text": [
               {
-                "text": "authId",
+                "text": "username",
                 "kind": "parameterName"
               },
               {
@@ -720,7 +808,7 @@
                 "kind": "space"
               },
               {
-                "text": "- Retrieve user by querying through it's auth id from auth provider.",
+                "text": "The username to check.",
                 "kind": "text"
               }
             ]
@@ -729,7 +817,7 @@
             "name": "returns",
             "text": [
               {
-                "text": "The user object.",
+                "text": "A boolean indicating if the user exists.",
                 "kind": "text"
               }
             ]
@@ -1156,6 +1244,11 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "username": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "isAdmin": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -1184,6 +1277,7 @@
           "email",
           "authId",
           "name",
+          "username",
           "isAdmin",
           "submissions",
           "prizeProposals"
@@ -1531,7 +1625,7 @@
               }
             ]
           },
-          "user_id": {
+          "authId": {
             "description": "User Id which is gotten from the auth provider like privy , torus etc...",
             "x-typia-jsDocTags": [
               {
@@ -1575,13 +1669,31 @@
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
+          },
+          "username": {
+            "description": "The username which is gotten from the onboarding process or page and it is unique",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "sins",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
           }
         },
         "nullable": false,
         "required": [
           "email",
-          "user_id",
-          "name"
+          "authId",
+          "name",
+          "username"
         ],
         "description": "Interface of Create User , using this interface it create a new user in",
         "x-typia-jsDocTags": [

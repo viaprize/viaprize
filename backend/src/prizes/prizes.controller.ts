@@ -1,15 +1,14 @@
-import { Controller, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
-import { infinityPagination } from 'src/utils/infinity-pagination';
-import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
-import { PrizeProposals } from './entities/prize-proposals.entity';
-
-import { TypedBody, TypedParam, TypedQuery, TypedRoute } from '@nestia/core';
-import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { TypedBody, TypedParam, TypedQuery } from '@nestia/core';
+import { AdminAuthGuard } from '../auth/admin-auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
+import { infinityPagination } from '../utils/infinity-pagination';
+import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
+import { PrizeProposals } from './entities/prize-proposals.entity';
 
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
@@ -63,7 +62,7 @@ export class PrizesController {
    * @param {PrzieQuery.limit=10} this is the limit of the return type of the pending proposals
    * @returns {Promise<Readonly<{data: PrizeProposals[];hasNextPage: boolean;}>>}
    */
-  @TypedRoute.Get('/proposals')
+  @Get('/proposals')
   @UseGuards(AdminAuthGuard)
   async getPendingProposals(
     @TypedQuery()
@@ -96,7 +95,7 @@ export class PrizesController {
    * @returns {Promise<PrizeProposals>}
    */
 
-  @TypedRoute.Post('/proposals')
+  @Post('/proposals')
   @UseGuards(AuthGuard)
   async create(
     @TypedBody() createPrizeProposalDto: CreatePrizeProposalDto,
@@ -122,7 +121,7 @@ export class PrizesController {
    * @param {string} userId
    * @returns {Promise<InfinityPaginationResultType<PrizeProposals>>}
    */
-  @TypedRoute.Get('/proposals/user/:userId')
+  @Get('/proposals/user/:userId')
   async getProposalsBy(
     @TypedQuery()
     query: PrzieQuery = {
@@ -156,7 +155,7 @@ export class PrizesController {
    * @param {RejectProposalDto} rejectProposalDto
    * @returns {unknown}
    */
-  @TypedRoute.Post('/proposals/reject/:id')
+  @Post('/proposals/reject/:id')
   @UseGuards(AdminAuthGuard)
   async rejectProposal(
     @TypedParam('id') id: string,
@@ -177,7 +176,7 @@ export class PrizesController {
    * @param {string} id
    * @returns {unknown}
    */
-  @TypedRoute.Post('/proposals/accept/:id')
+  @Post('/proposals/accept/:id')
   @UseGuards(AdminAuthGuard)
   async approveProposal(@TypedParam('id') id: string) {
     return await this.prizeProposalsService.approve(id);

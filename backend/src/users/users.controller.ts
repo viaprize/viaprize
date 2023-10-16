@@ -1,5 +1,5 @@
-import { TypedBody, TypedParam, TypedRoute } from '@nestia/core';
-import { Controller } from '@nestjs/common';
+import { TypedBody, TypedParam } from '@nestia/core';
+import { Controller, Get, Post } from '@nestjs/common';
 import { MailService } from 'src/mail/mail.service';
 import typia from 'typia';
 import { CreateUser } from './dto/create-user.dto';
@@ -27,12 +27,12 @@ export class UsersController {
    * @param {CreateUser} createUserType - The user creation Interface.
    * @returns {Promise<User>} The created user object.
    */
-  @TypedRoute.Post()
+  @Post()
   async create(@TypedBody() createUserDto: CreateUser): Promise<User> {
     console.log({ ...createUserDto }, 'hi');
     const user = await this.usersService.create(createUserDto);
-    await this.mailService.welcome(user.email);
-
+    console.log({ ...user }, 'user');
+    await this.mailService.welcome(user.email, user.name);
     return user;
   }
 
@@ -41,7 +41,7 @@ export class UsersController {
    *
    * @returns {Promise<User>} The user object.
    */
-  @TypedRoute.Get(':authId')
+  @Get(':authId')
   async findOneByAuthId(@TypedParam('authId') userId: string): Promise<User> {
     const user = await this.usersService.findOneByAuthId(userId);
     user.submissions = user.submissions.filter(
@@ -56,7 +56,7 @@ export class UsersController {
    *
    * @returns {Promise<User>} The user object.
    */
-  @TypedRoute.Get('username/:username')
+  @Get('username/:username')
   async findOneByUsername(
     @TypedParam('username') username: string,
   ): Promise<User> {
@@ -68,5 +68,14 @@ export class UsersController {
 
     assertSubmission(user);
     return user;
+  }
+  /**
+   * Endpoint for checking if a user with the specified username exists.
+   * @param username The username to check.
+   * @returns A boolean indicating if the user exists.
+   */
+  @Get('exists/:username')
+  async exists(@TypedParam('username') username: string): Promise<boolean> {
+    return this.usersService.exists(username);
   }
 }

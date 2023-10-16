@@ -21,10 +21,18 @@ export default function useAppUser() {
   const { setActiveWallet } = usePrivyWagmi();
 
   const { user, logout } = usePrivy();
-  console.log({ user }, "user");
+
   const { login } = useLogin({
     async onComplete(user, isNewUser, wasAlreadyAuthenticated) {
       const token = await getAccessToken();
+      await refreshUser().catch((error) => {
+        console.log({ error }, "errror");
+        if (error && error.status) {
+          if (error.status === 404) {
+            router.push("/onboarding");
+          }
+        }
+      });
       console.log({ token });
       if (wasAlreadyAuthenticated || isNewUser) {
         const walletAddress = user.wallet?.address;
@@ -36,9 +44,6 @@ export default function useAppUser() {
           setActiveWallet(wallet);
         });
         console.log({ user });
-        if (user) {
-          await refreshUser();
-        }
       }
 
       if (isNewUser && !wasAlreadyAuthenticated) {
