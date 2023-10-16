@@ -9,7 +9,6 @@ import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
-import { PrizePaginateQuery } from './entities/types';
 
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
@@ -43,7 +42,7 @@ interface PrzieQuery {
  */
 @Controller('prizes')
 export class PrizesController {
-  constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
+  constructor(private readonly prizeProposalsService: PrizeProposalsService) { }
 
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
@@ -67,7 +66,7 @@ export class PrizesController {
   @UseGuards(AdminAuthGuard)
   async getPendingProposals(
     @TypedQuery()
-    query: PrizePaginateQuery,
+    query: PrzieQuery,
   ): Promise<
     Readonly<{
       data: PrizeProposals[];
