@@ -42,7 +42,7 @@ interface PrzieQuery {
  */
 @Controller('prizes')
 export class PrizesController {
-  constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
+  constructor(private readonly prizeProposalsService: PrizeProposalsService) { }
 
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
@@ -73,12 +73,24 @@ export class PrizesController {
       hasNextPage: boolean;
     }>
   > {
+    // return infinityPagination(
+    //   await this.prizeProposalsService.findAllWithPagination({
+    //     ...query,
+    //   }),
+    //   {
+    //     ...query,
+    //   },
+    // );
+    const { page = 1, limit = 10, ...rest } = query;
     return infinityPagination(
       await this.prizeProposalsService.findAllWithPagination({
-        ...query,
+        page,
+        limit,
+        ...rest,
       }),
       {
-        ...query,
+        page,
+        limit,
       },
     );
   }

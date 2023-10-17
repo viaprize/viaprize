@@ -1,3 +1,5 @@
+import { PaginateQuery } from 'nestjs-paginate';
+
 export enum Proficiency {
   Programming = 'Programming',
   Python = 'Python',
@@ -21,3 +23,8 @@ export enum Priority {
   Health = 'Health',
   Education = 'Education',
 }
+
+export type PrizePaginateQuery = PaginateQuery & {
+  proficiencies?: Proficiency[];
+  priorities?: Priority[];
+};
