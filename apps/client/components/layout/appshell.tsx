@@ -46,7 +46,9 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         },
       }}
     >
-      <Center>{children}</Center>
+      <div className="w-full grid place-content-center">
+        <Center className="max-w-screen-xl">{children}</Center>
+      </div>
     </AppShell>
   );
 }
