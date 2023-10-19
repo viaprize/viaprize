@@ -42,7 +42,7 @@ interface PrzieQuery {
  */
 @Controller('prizes')
 export class PrizesController {
-  constructor(private readonly prizeProposalsService: PrizeProposalsService) { }
+  constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
 
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
