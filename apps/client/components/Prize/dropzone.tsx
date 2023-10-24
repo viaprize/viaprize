@@ -49,7 +49,7 @@ export default function ImageComponent(props: ImageComponentProps) {
                 size="3.2rem"
                 stroke={1.5}
                 color={
-                  theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6]
+                  theme.colors.blue[theme.colorScheme === 'dark' ? 4 : 6]
                 }
               />
             </Dropzone.Accept>

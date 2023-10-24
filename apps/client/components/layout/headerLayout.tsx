@@ -32,6 +32,9 @@ import SwitchAccount from './switchWallet';
 
 function getEmailInitials(email: string) {
   const [username, domain] = email.split('@');
+  if (!username || !domain) {
+    return '??';
+  }
   const usernameInitial = username.slice(0, 5);
   const domainInitial = domain.charAt(0);
 

@@ -25,6 +25,9 @@ async function storeFiles(files: File[]) {
   const client = makeStorageClient();
   const cid = await client.put(files);
   console.log('stored files with cid:', cid);
+  if(!files[0]) {
+    return '';
+  }
   const url = `https://dweb.link/ipfs/${cid}/${files[0].name}`;
   console.log('URL of the uploaded image:', url);
   return url;
