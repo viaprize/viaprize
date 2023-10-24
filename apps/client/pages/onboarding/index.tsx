@@ -7,30 +7,30 @@ import {
   Loader,
   Text,
   TextInput,
-} from "@mantine/core";
+} from '@mantine/core';
 
-import useAppUser from "@/context/hooks/useAppUser";
-import { Api } from "@/lib/Api";
-import { sleep } from "@/lib/utils";
-import { useDebouncedValue } from "@mantine/hooks";
-import { usePrivy } from "@privy-io/react-auth";
-import { useRouter } from "next/router";
-import { ChangeEvent, useCallback, useRef, useState } from "react";
-import { useMutation } from "react-query";
-import { toast } from "sonner";
+import useAppUser from '@/context/hooks/useAppUser';
+import { Api } from '@/lib/Api';
+import { sleep } from '@/lib/utils';
+import { useDebouncedValue } from '@mantine/hooks';
+import { usePrivy } from '@privy-io/react-auth';
+import { useRouter } from 'next/router';
+import { ChangeEvent, useCallback, useRef, useState } from 'react';
+import { useMutation } from 'react-query';
+import { toast } from 'sonner';
 
 export default function Details() {
   const timeoutRef = useRef<number>(-1);
   const { user } = usePrivy();
-  const [email, setEmail] = useState(user?.email?.address || "");
+  const [email, setEmail] = useState(user?.email?.address || '');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
-  const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const { createNewUser } = useAppUser();
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: () => {
-      router.push("/prize/explore").then(console.log).catch(console.error);
+      router.push('/prize/explore').then(console.log).catch(console.error);
     },
   });
 
@@ -40,14 +40,14 @@ export default function Details() {
     setEmail(val);
     setData([]);
 
-    if (val.trim().length === 0 || val.includes("@")) {
+    if (val.trim().length === 0 || val.includes('@')) {
       setLoading(false);
     } else {
       setLoading(true);
       timeoutRef.current = window.setTimeout(() => {
         setLoading(false);
         setData(
-          ["gmail.com", "outlook.com", "yahoo.com"].map(
+          ['gmail.com', 'outlook.com', 'yahoo.com'].map(
             (provider) => `${val}@${provider}`,
           ),
         );
@@ -64,9 +64,9 @@ export default function Details() {
           username,
         }),
         {
-          loading: "Logging In",
-          success: "Logged In Successfully",
-          error: "Error Logging In",
+          loading: 'Logging In',
+          success: 'Logged In Successfully',
+          error: 'Error Logging In',
         },
       );
     } catch (e) {
@@ -82,7 +82,7 @@ export default function Details() {
   const checkUsername = useCallback(
     async (newusername: string) => {
       try {
-        console.log("checking newusername", newusername);
+        console.log('checking newusername', newusername);
         const response = await new Api().users.existsDetail(newusername);
         setExists(response.data);
       } catch (error) {
@@ -117,7 +117,7 @@ export default function Details() {
         />
 
         <Flex>
-          {usernameLoading && <Loader m="xs" size={"xs"} />}
+          {usernameLoading && <Loader m="xs" size={'xs'} />}
           {!usernameLoading &&
             debouncedUsername.length > 0 &&
             (exists && debouncedUsername.length > 0 ? (

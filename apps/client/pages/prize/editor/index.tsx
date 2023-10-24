@@ -1,10 +1,10 @@
-import type { JSONContent } from "@tiptap/react";
-import { Editor as NovalEditor } from "novel";
-import type { ReactElement } from "react";
-import { useState } from "react";
+import type { JSONContent } from '@tiptap/react';
+import { Editor as NovalEditor } from 'novel';
+import type { ReactElement } from 'react';
+import { useState } from 'react';
 
-import { PrizeSubmissionTemplate } from "@/components/Prize/prizepage/defaultcontent";
-import AppShellLayout from "@/components/layout/appshell";
+import { PrizeSubmissionTemplate } from '@/components/Prize/prizepage/defaultcontent';
+import AppShellLayout from '@/components/layout/appshell';
 
 function EditorsPage() {
   const [content, setContent] = useState<JSONContent | undefined>(

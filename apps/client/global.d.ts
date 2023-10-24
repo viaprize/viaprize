@@ -1,4 +1,4 @@
-import { MetaMaskInpageProvider } from "@metamask/providers";
+import { MetaMaskInpageProvider } from '@metamask/providers';
 type EthereumEvents = {
   connect: { chainId: string };
   disconnect: { message: string; code: number; data?: unknown };

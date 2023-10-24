@@ -1,7 +1,7 @@
-import { Api, CreateUser, User } from "@/lib/Api";
-import myAxios from "@/lib/axios";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { Api, CreateUser, User } from '@/lib/Api';
+import myAxios from '@/lib/axios';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface AppUserStore {
   user: User | undefined;
@@ -26,13 +26,13 @@ const useAppUserStore = create(
         set({ user: newUserData });
       },
       uploadUser: async (newUser: CreateUser) => {
-        const res = await myAxios.post("/users", newUser);
+        const res = await myAxios.post('/users', newUser);
         set({ user: res.data });
       },
       clearUser: () => set({ user: undefined }),
     }),
     {
-      name: "app-user-storage",
+      name: 'app-user-storage',
     },
   ),
 );

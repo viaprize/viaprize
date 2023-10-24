@@ -1,6 +1,6 @@
-import React from "react";
-import ExploreCard from "../ExplorePrize/explorePrize";
-import { Button, Box, Group, Menu, SimpleGrid, Text } from "@mantine/core";
+import React from 'react';
+import ExploreCard from '../ExplorePrize/explorePrize';
+import { Button, Box, Group, Menu, SimpleGrid, Text } from '@mantine/core';
 import {
   IconSettings,
   IconMessageCircle,
@@ -8,7 +8,7 @@ import {
   IconSearch,
   IconArrowsLeftRight,
   IconTrash,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
 
 export default function ProposalsTabs() {
   return (
@@ -25,9 +25,7 @@ export default function ProposalsTabs() {
           <Menu.Dropdown>
             <Menu.Label>Application</Menu.Label>
             <Menu.Item icon={<IconSettings size={14} />}>Settings</Menu.Item>
-            <Menu.Item icon={<IconMessageCircle size={14} />}>
-              Messages
-            </Menu.Item>
+            <Menu.Item icon={<IconMessageCircle size={14} />}>Messages</Menu.Item>
             <Menu.Item icon={<IconPhoto size={14} />}>Gallery</Menu.Item>
             <Menu.Item icon={<IconSearch size={14} />}>Search</Menu.Item>
 

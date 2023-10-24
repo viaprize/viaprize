@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { infuraId } from "@/config";
-import WalletConnect from "@walletconnect/web3-provider";
-import Web3Modal from "web3modal";
+import { useState, useEffect } from 'react';
+import { infuraId } from '@/config';
+import WalletConnect from '@walletconnect/web3-provider';
+import Web3Modal from 'web3modal';
 
 interface ProviderOptions {
   walletconnect: {
@@ -18,7 +18,7 @@ export default function useWeb3Modal(): Web3Modal | undefined {
   useEffect(() => {
     if (!web3Modal) {
       try {
-        import("web3modal").then((Web3Modal) => {
+        import('web3modal').then((Web3Modal) => {
           setWeb3Modal(
             new Web3Modal.default({
               cacheProvider: true,
@@ -34,7 +34,7 @@ export default function useWeb3Modal(): Web3Modal | undefined {
           );
         });
       } catch (e) {
-        console.log("Error while creating Web3Modal");
+        console.log('Error while creating Web3Modal');
       }
     }
   }, []);

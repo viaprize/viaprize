@@ -6,10 +6,10 @@
  * @module hooks/useERC721Contract
  */
 
-import { AbiItem } from "web3-utils";
-import axios from "axios";
-import useWeb3Context from "@/context/hooks/useWeb3Context";
-import Erc721Abi from "./abi/ERC721.json";
+import { AbiItem } from 'web3-utils';
+import axios from 'axios';
+import useWeb3Context from '@/context/hooks/useWeb3Context';
+import Erc721Abi from './abi/ERC721.json';
 
 /**
  * @function formatIPFS
@@ -21,8 +21,8 @@ const formatIPFS = (val: string): string => {
   if (!val) {
     return val;
   }
-  if (val.indexOf("ipfs://") > -1) {
-    return val.replace("ipfs://", "https://ipfs.io/ipfs/");
+  if (val.indexOf('ipfs://') > -1) {
+    return val.replace('ipfs://', 'https://ipfs.io/ipfs/');
   } else {
     return val;
   }
@@ -47,14 +47,8 @@ export default function useERC721Contract() {
      * @param {string} spender - The address of the spender.
      * @returns {Promise<boolean>} Whether the spender is approved for all tokens.
      */
-    async isApprovedForAll(
-      nftAddress: string,
-      spender: string,
-    ): Promise<boolean> {
-      const contract = new web3.eth.Contract(
-        Erc721Abi as AbiItem[],
-        nftAddress,
-      );
+    async isApprovedForAll(nftAddress: string, spender: string): Promise<boolean> {
+      const contract = new web3.eth.Contract(Erc721Abi as AbiItem[], nftAddress);
 
       return await contract.methods.isApprovedForAll(account, spender).call();
     },
@@ -71,10 +65,7 @@ export default function useERC721Contract() {
       toAddress: string,
       tokenId: string,
     ): Promise<void> {
-      const contract = new web3.eth.Contract(
-        Erc721Abi as AbiItem[],
-        nftAddress,
-      );
+      const contract = new web3.eth.Contract(Erc721Abi as AbiItem[], nftAddress);
       const func = contract.methods.transferFrom(account, toAddress, tokenId);
       sendTx(func);
     },
@@ -86,14 +77,8 @@ export default function useERC721Contract() {
      * @param {string} spender - The address of the spender.
      * @returns {Promise<void>}
      */
-    async setApprovalForAll(
-      nftAddress: string,
-      spender: string,
-    ): Promise<void> {
-      const contract = new web3.eth.Contract(
-        Erc721Abi as AbiItem[],
-        nftAddress,
-      );
+    async setApprovalForAll(nftAddress: string, spender: string): Promise<void> {
+      const contract = new web3.eth.Contract(Erc721Abi as AbiItem[], nftAddress);
       const func = contract.methods.setApprovalForAll(spender, true);
       return await sendTx(func);
     },
@@ -106,10 +91,7 @@ export default function useERC721Contract() {
      * @returns {Promise<string>} The URI of the token.
      */
     async tokenURI(nftAddress: string, id: string): Promise<string> {
-      const contract = new web3.eth.Contract(
-        Erc721Abi as AbiItem[],
-        nftAddress,
-      );
+      const contract = new web3.eth.Contract(Erc721Abi as AbiItem[], nftAddress);
       return await contract.methods.tokenURI(id).call();
     },
 
@@ -120,10 +102,7 @@ export default function useERC721Contract() {
      * @returns {Promise<string>} The balance of the current account.
      */
     async balanceOf(nftAddress: string): Promise<string> {
-      const contract = new web3.eth.Contract(
-        Erc721Abi as AbiItem[],
-        nftAddress,
-      );
+      const contract = new web3.eth.Contract(Erc721Abi as AbiItem[], nftAddress);
       const balance = await contract.methods.balanceOf(account).call();
       return balance;
     },
@@ -136,10 +115,7 @@ export default function useERC721Contract() {
      * @returns {Promise<Object>} Information about the NFT.
      */
     async getNftInfo(nftAddress: string, tokenId: string): Promise<Object> {
-      const contract = new web3.eth.Contract(
-        Erc721Abi as AbiItem[],
-        nftAddress,
-      );
+      const contract = new web3.eth.Contract(Erc721Abi as AbiItem[], nftAddress);
       const uri = await contract.methods.tokenURI(tokenId).call();
       const formattedUri = formatIPFS(uri);
 
@@ -153,10 +129,7 @@ export default function useERC721Contract() {
      * @returns {Promise<string>} The name of the contract.
      */
     async getName(nftAddress: string): Promise<string> {
-      const contract = new web3.eth.Contract(
-        Erc721Abi as AbiItem[],
-        nftAddress,
-      );
+      const contract = new web3.eth.Contract(Erc721Abi as AbiItem[], nftAddress);
       return await contract.methods.name().call();
     },
 
@@ -169,10 +142,7 @@ export default function useERC721Contract() {
      * @returns {Promise<void>}
      */
     async mint(nftAddress: string, to: string, tokenId: string): Promise<void> {
-      const contract = new web3.eth.Contract(
-        Erc721Abi as AbiItem[],
-        nftAddress,
-      );
+      const contract = new web3.eth.Contract(Erc721Abi as AbiItem[], nftAddress);
       const func = contract.methods.mint(to, tokenId);
       return await sendTx(func);
     },

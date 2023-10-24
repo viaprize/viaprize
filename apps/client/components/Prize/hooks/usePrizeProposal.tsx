@@ -1,35 +1,32 @@
 // import { useQuery, useMutation } from 'react-query';
 // import axios from 'axios';
 // import myAxios from '@/lib/axios';
-import { makeStorageClient } from "@/components/_providers/WebClient";
-import myAxios from "@/lib/axios";
-import { usePrivy } from "@privy-io/react-auth";
-import { useState } from "react";
+import { makeStorageClient } from '@/components/_providers/WebClient';
+import myAxios from '@/lib/axios';
+import { usePrivy } from '@privy-io/react-auth';
+import { useState } from 'react';
 import type {
   CreatePrizeProposalDto,
   PrizeProposalQueryParams,
   PrizeProposals,
   PrizeProposalsList,
-} from "../../../types/prizes";
+} from '../../../types/prizes';
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- needed this for the function */
 function objectToRecord(obj: Record<string, any>): Record<string, string> {
-  return Object.entries(obj).reduce<Record<string, string>>(
-    (record, [key, value]) => {
-      /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
-      record[key] = value.toString();
-      return record;
-    },
-    {},
-  );
+  return Object.entries(obj).reduce<Record<string, string>>((record, [key, value]) => {
+    /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
+    record[key] = value.toString();
+    return record;
+  }, {});
 }
 
 async function storeFiles(files: File[]) {
   const client = makeStorageClient();
   const cid = await client.put(files);
-  console.log("stored files with cid:", cid);
+  console.log('stored files with cid:', cid);
   const url = `https://dweb.link/ipfs/${cid}/${files[0].name}`;
-  console.log("URL of the uploaded image:", url);
+  console.log('URL of the uploaded image:', url);
   return url;
 }
 
@@ -57,7 +54,7 @@ export default function usePrizeProposal() {
   const [proposals] = useState<PrizeProposals[]>();
   const { user } = usePrivy();
   const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
-    const res = await myAxios.post("/prizes/proposals", { ...proposalDto });
+    const res = await myAxios.post('/prizes/proposals', { ...proposalDto });
     return res;
   };
 
@@ -81,7 +78,7 @@ export default function usePrizeProposal() {
     const res = await myAxios.get(
       `/prizes/proposals/user/${user.id}${queryString.toString()}`,
     );
-    console.log("res", "acxi0", res);
+    console.log('res', 'acxi0', res);
     return res.data as PrizeProposalsList;
   };
 
@@ -93,10 +90,8 @@ export default function usePrizeProposal() {
   ) => {
     const record: Record<string, string> = objectToRecord(queryParam);
     const queryString = new URLSearchParams(record);
-    const res = await myAxios.get(
-      `/prizes/proposals?${queryString.toString()}`,
-    );
-    console.log({ res }, "proposals");
+    const res = await myAxios.get(`/prizes/proposals?${queryString.toString()}`);
+    console.log({ res }, 'proposals');
     return res.data as PrizeProposalsList;
   };
 

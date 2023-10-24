@@ -1,9 +1,9 @@
-import useAppUser from "@/context/hooks/useAppUser";
-import { Button } from "@mantine/core";
-import { usePrivy } from "@privy-io/react-auth";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import useAppUser from '@/context/hooks/useAppUser';
+import { Button } from '@mantine/core';
+import { usePrivy } from '@privy-io/react-auth';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 interface FetchError extends Error {
   status?: number;
@@ -21,16 +21,16 @@ export default function MyComponent() {
     if (ready) {
       void refreshUser()
         .catch((error: FetchError) => {
-          console.log({ error }, "errror");
+          console.log({ error }, 'errror');
           if (error.status === 404) {
-            router.push("/onboarding").catch(console.error);
+            router.push('/onboarding').catch(console.error);
           }
         })
         .then(console.log);
     }
   }, [ready]);
   const gotoExplorePrizes = async () => {
-    await router.push("/prize/explore-prizes");
+    await router.push('/prize/explore-prizes');
   };
 
   return (
@@ -74,7 +74,7 @@ export default function MyComponent() {
               onClick={() => {
                 loginUser()
                   .then(() => {
-                    console.log("logging in ");
+                    console.log('logging in ');
                   })
                   .catch((error) => {
                     console.error(error);
@@ -94,7 +94,7 @@ export default function MyComponent() {
             rel="noopener noreferrer"
           >
             <h2 className="mb-3 text-2xl font-semibold">
-              About Prizes{" "}
+              About Prizes{' '}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
@@ -111,7 +111,7 @@ export default function MyComponent() {
             rel="noopener noreferrer"
           >
             <h2 className="mb-3 text-2xl font-semibold">
-              Explore Prizes{" "}
+              Explore Prizes{' '}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
@@ -128,7 +128,7 @@ export default function MyComponent() {
             rel="noopener noreferrer"
           >
             <h2 className="mb-3 text-2xl font-semibold">
-              Pacts{" "}
+              Pacts{' '}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>
@@ -145,7 +145,7 @@ export default function MyComponent() {
             rel="noopener noreferrer"
           >
             <h2 className="mb-3 text-2xl font-semibold">
-              Explore Pacts{" "}
+              Explore Pacts{' '}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 -&gt;
               </span>

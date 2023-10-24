@@ -1,49 +1,40 @@
 {
-  "extends": "tsconfig/nextjs.json",
   "compilerOptions": {
+    "target": "es2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "checkJs": true,
+    "skipLibCheck": true,
     "strict": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
     "paths": {
-      "@/components/*": [
-        "components/*"
-      ],
-      "@/config": [
-        "config/index.ts"
-      ],
-      "@/context/*": [
-        "context/*"
-      ],
-      "@/lib/*": [
-        "lib/*"
-      ],
-      "@/contract/*": [
-        "contract/*"
-      ],
-      "@env": [
-        "env.mjs"
-      ],
-      "@/backend/*": [
-        "../backend/dist/*"
-      ]
+      "@/components/*": ["components/*"],
+      "@/config": ["config/index.ts"],
+      "@/context/*": ["context/*"],
+      "@/lib/*": ["lib/*"],
+      "@/contract/*": ["contract/*"],
+      "@env": ["env.mjs"],
+      "@/backend/*": ["../backend/dist/*"]
     },
-    "jsx": "preserve"
   },
   "include": [
+    ".eslintrc.cjs",
     "next-env.d.ts",
-    "global.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "env.mjs",
-    "*.mjs",
-    "../backend/*"
+    "**/*.cjs",
+    "**/*.mjs",
+    ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

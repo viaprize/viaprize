@@ -13,7 +13,7 @@ export const sleep = (ms: number): Promise<void> => {
  */
 export const switchChain = async (chainId: number): Promise<void> => {
   await window.ethereum.request({
-    method: "wallet_switchEthereumChain",
+    method: 'wallet_switchEthereumChain',
     params: [{ chainId: `0x${chainId.toString(16)}` }],
   });
 };
@@ -34,11 +34,11 @@ export const shortenAddress = (address: string, unit?: number): string => {
  * @param text - The text to copy.
  */
 export function copyToClipboard(text: string): void {
-  const copied = document.createElement("input");
-  copied.setAttribute("value", text);
+  const copied = document.createElement('input');
+  copied.setAttribute('value', text);
   document.body.appendChild(copied);
   copied.select();
-  document.execCommand("copy");
+  document.execCommand('copy');
   document.body.removeChild(copied);
 }
 
@@ -48,5 +48,5 @@ export function copyToClipboard(text: string): void {
  * @returns The formatted URL.
  */
 export const formatIPFS = (url: string): string => {
-  return url.replace("ipfs://", "https://ipfs.io/ipfs/");
+  return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
 };
