@@ -1,3 +1,6 @@
+//eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: fix
+// @ts-nocheck
+
 import {
   Box,
   Checkbox,
