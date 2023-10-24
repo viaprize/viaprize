@@ -7,25 +7,25 @@ import {
   Stack,
   Text,
   rem,
-} from "@mantine/core";
-import { IconCoin, IconCurrencyDollar } from "@tabler/icons-react";
-import { useRouter } from "next/router";
+} from '@mantine/core';
+import { IconCoin, IconCurrencyDollar } from '@tabler/icons-react';
+import { useRouter } from 'next/router';
 
-const categoryOptions = ["Proficiency", "Priorities"];
+const categoryOptions = ['Proficiency', 'Priorities'];
 const proficiencyOptions = [
-  "Programming",
-  "Python",
-  "JavaScript",
-  "Writing",
-  "Design",
-  "Translation",
-  "Research",
-  "Real estate",
-  "Apps",
-  "Hardware",
-  "Art",
-  "Meta",
-  "AI",
+  'Programming',
+  'Python',
+  'JavaScript',
+  'Writing',
+  'Design',
+  'Translation',
+  'Research',
+  'Real estate',
+  'Apps',
+  'Hardware',
+  'Art',
+  'Meta',
+  'AI',
 ];
 
 // const priorityOptions = [
@@ -46,9 +46,9 @@ function Filter() {
   const searchParams = router.query;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix
   const params = new URLSearchParams(searchParams as any as string);
-  const selectedCategories = (searchParams.category || "") as string;
+  const selectedCategories = (searchParams.category || '') as string;
   const subCategory = searchParams.subCategory
-    ? (searchParams.subCategory as string).split(",")
+    ? (searchParams.subCategory as string).split(',')
     : [];
 
   // const range = (
@@ -57,7 +57,7 @@ function Filter() {
 
   const RangeValue = () => {
     const ranges = (
-      searchParams.range ? (searchParams.range as string).split(",") : [0, 500]
+      searchParams.range ? (searchParams.range as string).split(',') : [0, 500]
     ) as number[];
 
     if (ranges[1] > 500) {
@@ -74,17 +74,17 @@ function Filter() {
   const range = RangeValue();
 
   const handlerange = async (value: number[]) => {
-    params.set("range", value.join(","));
+    params.set('range', value.join(','));
     await router.replace(`?${params.toString()}`, undefined, { shallow: true });
   };
 
   const handleCategory = async (value: string) => {
-    params.set("category", value);
+    params.set('category', value);
     await router.replace(`?${params.toString()}`, undefined, { shallow: true });
   };
 
   const handleSubCategory = async (value: string[]) => {
-    params.set("subCategory", value.join(","));
+    params.set('subCategory', value.join(','));
     await router.replace(`?${params.toString()}`, undefined, {
       shallow: true,
     });

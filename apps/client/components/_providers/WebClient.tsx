@@ -1,5 +1,5 @@
-import { env } from "@env";
-import { Web3Storage } from "web3.storage";
+import { env } from '@env';
+import { Web3Storage } from 'web3.storage';
 
 function getAccessToken() {
   // If you're just testing, you can paste in a token

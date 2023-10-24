@@ -6,8 +6,8 @@ import {
   Group,
   Text,
   TypographyStylesProvider,
-} from "@mantine/core";
-import { IconArrowAutofitUp } from "@tabler/icons-react";
+} from '@mantine/core';
+import { IconArrowAutofitUp } from '@tabler/icons-react';
 
 interface SubmissionsCardProps {
   fullname: string;
@@ -29,12 +29,7 @@ export default function SubmissionsCard({
     <Card className="flex flex-col justify-center gap-3">
       <div className="flex justify-between items-center">
         <Group>
-          <Avatar
-            color="blue"
-            radius="md"
-            alt="creator"
-            className="rounded-sm"
-          />
+          <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
           <div>
             <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
               {fullname}
@@ -64,18 +59,15 @@ export default function SubmissionsCard({
       <Text lineClamp={3}>
         <TypographyStylesProvider>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt
-            nulla quam aut sed corporis voluptates praesentium inventore,
-            sapiente ex tempore sit consequatur debitis non! Illo cum ipsa
-            reiciendis quidem facere, deserunt eos totam impedit. Vel ab, ipsum
-            veniam aperiam odit molestiae incidunt minus, sint eos iusto earum
-            quaerat vitae perspiciatis.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt nulla quam
+            aut sed corporis voluptates praesentium inventore, sapiente ex tempore sit
+            consequatur debitis non! Illo cum ipsa reiciendis quidem facere, deserunt eos
+            totam impedit. Vel ab, ipsum veniam aperiam odit molestiae incidunt minus,
+            sint eos iusto earum quaerat vitae perspiciatis.
           </p>
         </TypographyStylesProvider>
       </Text>
-      <Button rightIcon={<IconArrowAutofitUp size="1rem" />}>
-        View Submission
-      </Button>
+      <Button rightIcon={<IconArrowAutofitUp size="1rem" />}>View Submission</Button>
     </Card>
   );
 }

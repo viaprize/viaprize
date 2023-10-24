@@ -1,14 +1,9 @@
-import {
-  getAccessToken,
-  useLogin,
-  usePrivy,
-  useWallets,
-} from "@privy-io/react-auth";
-import { usePrivyWagmi } from "@privy-io/wagmi-connector";
-import { useRouter } from "next/router";
-import { toast } from "react-toastify";
-import useAppUserStore from "store/app-user";
-import { CreateUserDto } from "types/app-user";
+import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
+import useAppUserStore from 'store/app-user';
+import { CreateUserDto } from 'types/app-user';
 
 export default function useAppUser() {
   const router = useRouter();
@@ -26,10 +21,10 @@ export default function useAppUser() {
     async onComplete(user, isNewUser, wasAlreadyAuthenticated) {
       const token = await getAccessToken();
       await refreshUser().catch((error) => {
-        console.log({ error }, "errror");
+        console.log({ error }, 'errror');
         if (error && error.status) {
           if (error.status === 404) {
-            router.push("/onboarding");
+            router.push('/onboarding');
           }
         }
       });
@@ -37,7 +32,7 @@ export default function useAppUser() {
       if (wasAlreadyAuthenticated || isNewUser) {
         const walletAddress = user.wallet?.address;
         if (!walletAddress) {
-          toast("Wallet address not found, please try again");
+          toast('Wallet address not found, please try again');
           return;
         }
         wallets.forEach((wallet) => {
@@ -47,7 +42,7 @@ export default function useAppUser() {
       }
 
       if (isNewUser && !wasAlreadyAuthenticated) {
-        router.push("/onboarding");
+        router.push('/onboarding');
       }
     },
     onError(error) {
@@ -56,10 +51,10 @@ export default function useAppUser() {
   });
 
   const createNewUser = async (
-    userWithoutUserId: Omit<CreateUserDto, "authId">,
+    userWithoutUserId: Omit<CreateUserDto, 'authId'>,
   ): Promise<any> => {
     if (!user) {
-      throw new Error("User is not logged in");
+      throw new Error('User is not logged in');
     }
     return uploadUser({
       ...userWithoutUserId,
@@ -74,7 +69,7 @@ export default function useAppUser() {
   const logoutUser = async (): Promise<void> => {
     await logout();
     clearUser();
-    router.push("/");
+    router.push('/');
   };
 
   const refreshUser = async (): Promise<void> => {

@@ -1,6 +1,6 @@
-import useWeb3Context from "@/context/hooks/useWeb3Context";
-import { shortenAddress } from "@/context/tools";
-import Link from "next/link";
+import useWeb3Context from '@/context/hooks/useWeb3Context';
+import { shortenAddress } from '@/context/tools';
+import Link from 'next/link';
 
 export default function AppHeader() {
   const { account, connectWallet, resetWallet } = useWeb3Context();
@@ -29,9 +29,7 @@ export default function AppHeader() {
               <li>
                 <button
                   className="btn"
-                  onClick={() =>
-                    resetWallet().then(console.log).catch(console.error)
-                  }
+                  onClick={() => resetWallet().then(console.log).catch(console.error)}
                 >
                   Disconnect
                 </button>
@@ -41,9 +39,7 @@ export default function AppHeader() {
         ) : (
           <button
             className="btn px-3"
-            onClick={() =>
-              connectWallet().then(console.log).catch(console.error)
-            }
+            onClick={() => connectWallet().then(console.log).catch(console.error)}
           >
             Connect Wallet
           </button>

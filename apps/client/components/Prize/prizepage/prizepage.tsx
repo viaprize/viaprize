@@ -1,15 +1,7 @@
-import {
-  ActionIcon,
-  Button,
-  Center,
-  Flex,
-  Group,
-  Text,
-  Title,
-} from "@mantine/core";
+import { ActionIcon, Button, Center, Flex, Group, Text, Title } from '@mantine/core';
 
-import PrizePageTabs from "./prizepagetabs";
-import Submissions from "./submissions";
+import PrizePageTabs from './prizepagetabs';
+import Submissions from './submissions';
 
 export default function PrizePageComponent() {
   return (

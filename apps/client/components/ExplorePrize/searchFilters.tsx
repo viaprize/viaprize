@@ -1,20 +1,20 @@
-import { Button, Drawer, Group, Menu, Text, TextInput } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconSearch } from "@tabler/icons-react";
-import { useRouter } from "next/router";
-import Filter from "./filterComponent";
+import { Button, Drawer, Group, Menu, Text, TextInput } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconSearch } from '@tabler/icons-react';
+import { useRouter } from 'next/router';
+import Filter from './filterComponent';
 
 // import Filter from "./filterComponent";
 
 type Sorts = Record<string, string>;
 
 const sorts: Sorts = {
-  "Date: Old to New": "date.asc",
-  "Date: New to Old": "date.desc",
-  "Prize: Low to High": "prize.asc",
-  "Prize: High to Low": "prize.desc",
-  "Deadline: Sooner to Later": "deadline.asc",
-  "Deadline: Later to Sooner": "deadline.desc",
+  'Date: Old to New': 'date.asc',
+  'Date: New to Old': 'date.desc',
+  'Prize: Low to High': 'prize.asc',
+  'Prize: High to Low': 'prize.desc',
+  'Deadline: Sooner to Later': 'deadline.asc',
+  'Deadline: Later to Sooner': 'deadline.desc',
 };
 
 const sortKeys = Object.keys(sorts).map((key) => ({
@@ -31,7 +31,7 @@ export function SearchFilters() {
   const params = new URLSearchParams(searchParams as any as string);
 
   const handleSort = async (value: string) => {
-    params.set("sort", value);
+    params.set('sort', value);
     await router.replace({ query: params.toString() });
   };
 
@@ -47,7 +47,7 @@ export function SearchFilters() {
         <TextInput
           icon={<IconSearch size="1rem" />}
           placeholder="Search"
-          style={{ width: "500px" }}
+          style={{ width: '500px' }}
         />
         <Group position="right">
           <Button onClick={open}>Filter</Button>
@@ -66,9 +66,7 @@ export function SearchFilters() {
                     key={key.value}
                     onClick={() => void handleSort(key.value)}
                     className={`${
-                      key.value === searchParams.sort
-                        ? "font-bold"
-                        : "font-normal"
+                      key.value === searchParams.sort ? 'font-bold' : 'font-normal'
                     }`}
                   >
                     {key.label}

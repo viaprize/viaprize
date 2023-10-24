@@ -5,24 +5,24 @@ import {
   NumberInput,
   SimpleGrid,
   TextInput,
-} from "@mantine/core";
-import { IconPlus } from "@tabler/icons-react";
-import type { ReactElement } from "react";
-import { useState } from "react";
+} from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
+import type { ReactElement } from 'react';
+import { useState } from 'react';
 
-import usePrizeProposal from "@/components/Prize/hooks/usePrizeProposal";
-import AppShellLayout from "@/components/layout/appshell";
-import type { FileWithPath } from "@mantine/dropzone";
-import { usePrivy } from "@privy-io/react-auth";
-import { toast } from "sonner";
-import { useMutation } from "wagmi";
-import ImageComponent from "../../components/Prize/dropzone";
-import { TextEditor } from "../../components/richtexteditor/textEditor";
+import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
+import AppShellLayout from '@/components/layout/appshell';
+import type { FileWithPath } from '@mantine/dropzone';
+import { usePrivy } from '@privy-io/react-auth';
+import { toast } from 'sonner';
+import { useMutation } from 'wagmi';
+import ImageComponent from '../../components/Prize/dropzone';
+import { TextEditor } from '../../components/richtexteditor/textEditor';
 
 function Prize() {
-  const [address, setAddress] = useState([""]);
-  const [title, setTitle] = useState("");
-  const [richtext, setRichtext] = useState("");
+  const [address, setAddress] = useState(['']);
+  const [title, setTitle] = useState('');
+  const [richtext, setRichtext] = useState('');
   const [isAutomatic, setIsAutomatic] = useState(false);
   const [votingTime, setVotingTime] = useState(0);
   const [proposalTime, setProposalTime] = useState(0);
@@ -49,7 +49,7 @@ function Prize() {
       description: richtext,
       isAutomatic,
       voting_time: votingTime,
-      proposer_address: "",
+      proposer_address: '',
       priorities: [],
       proficiencies: [],
       submission_time: proposalTime,
@@ -61,14 +61,14 @@ function Prize() {
   const handleSubmit = () => {
     console.log(user);
     try {
-      console.log(images, "images");
+      console.log(images, 'images');
       toast.promise(submit(), {
-        loading: "Submitting Proposal",
-        success: "Proposal Submitted",
-        error: "Error Submitting Proposal",
+        loading: 'Submitting Proposal',
+        success: 'Proposal Submitted',
+        error: 'Error Submitting Proposal',
       });
     } catch {
-      toast.error("Error Submitting Proposal");
+      toast.error('Error Submitting Proposal');
     }
   };
 
@@ -78,7 +78,7 @@ function Prize() {
 
   const addAddress = () => {
     setAddress((prev: string[]) => {
-      return [...prev, ""];
+      return [...prev, ''];
     });
   };
 
@@ -100,11 +100,7 @@ function Prize() {
           setTitle(e.target.value);
         }}
       />
-      <TextEditor
-        richtext={richtext}
-        setRichtext={setRichtext}
-        canSetRichtext
-      />
+      <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
 
       <SimpleGrid cols={2} className="my-3">
         <div className="">
@@ -175,12 +171,7 @@ function Prize() {
             )}
           </div>
         ))}
-        <ActionIcon
-          variant="filled"
-          color="blue"
-          size="lg"
-          onClick={addAddress}
-        >
+        <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
           <IconPlus />
         </ActionIcon>
       </SimpleGrid>

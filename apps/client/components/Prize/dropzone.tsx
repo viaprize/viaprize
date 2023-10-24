@@ -1,8 +1,8 @@
-import { Button, Group, Text, rem, useMantineTheme } from "@mantine/core";
-import type { DropzoneProps, FileWithPath } from "@mantine/dropzone";
-import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
-import { IconPhoto, IconUpload, IconX } from "@tabler/icons-react";
-import Image from "next/image";
+import { Button, Group, Text, rem, useMantineTheme } from '@mantine/core';
+import type { DropzoneProps, FileWithPath } from '@mantine/dropzone';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import Image from 'next/image';
 
 interface ImageComponentProps extends Partial<DropzoneProps> {
   files: FileWithPath[];
@@ -32,7 +32,7 @@ export default function ImageComponent(props: ImageComponentProps) {
         <Dropzone
           onDrop={props.setFiles}
           onReject={(files) => {
-            console.log("rejected files", files);
+            console.log('rejected files', files);
           }}
           maxSize={3 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
@@ -42,16 +42,14 @@ export default function ImageComponent(props: ImageComponentProps) {
           <Group
             position="center"
             spacing="xl"
-            style={{ minHeight: rem(220), pointerEvents: "none" }}
+            style={{ minHeight: rem(220), pointerEvents: 'none' }}
           >
             <Dropzone.Accept>
               <IconUpload
                 size="3.2rem"
                 stroke={1.5}
                 color={
-                  theme.colors[theme.primaryColor][
-                    theme.colorScheme === "dark" ? 4 : 6
-                  ]
+                  theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6]
                 }
               />
             </Dropzone.Accept>
@@ -59,7 +57,7 @@ export default function ImageComponent(props: ImageComponentProps) {
               <IconX
                 size="3.2rem"
                 stroke={1.5}
-                color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]}
+                color={theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6]}
               />
             </Dropzone.Reject>
             <Dropzone.Idle>
@@ -71,8 +69,7 @@ export default function ImageComponent(props: ImageComponentProps) {
                 Drag images here or click to select files
               </Text>
               <Text size="sm" color="dimmed" inline mt={7}>
-                Attach as many files as you like, each file should not exceed
-                5mb
+                Attach as many files as you like, each file should not exceed 5mb
               </Text>
             </div>
           </Group>

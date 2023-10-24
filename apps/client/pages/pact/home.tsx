@@ -1,24 +1,24 @@
-import HistoryItem from "@/components/HistoryItem";
-import AppHeader from "@/components/layout/switchWallet";
-import useWeb3Context from "@/context/hooks/useWeb3Context";
-import { Loader } from "@mantine/core";
-import type { DateValue } from "@mantine/dates";
-import { DatePicker } from "@mantine/dates";
-import cn from "classnames";
-import type { NextPage } from "next";
-import { useEffect, useState } from "react";
-import usePactFactory from "../../contract/usePactFactory";
-import axios from "../../lib/axios";
+import HistoryItem from '@/components/HistoryItem';
+import AppHeader from '@/components/layout/switchWallet';
+import useWeb3Context from '@/context/hooks/useWeb3Context';
+import { Loader } from '@mantine/core';
+import type { DateValue } from '@mantine/dates';
+import { DatePicker } from '@mantine/dates';
+import cn from 'classnames';
+import type { NextPage } from 'next';
+import { useEffect, useState } from 'react';
+import usePactFactory from '../../contract/usePactFactory';
+import axios from '../../lib/axios';
 
-const tabs = ["about", "create", "preview"];
+const tabs = ['about', 'create', 'preview'];
 
 const Home: NextPage = () => {
-  const [amount, setAmount] = useState("");
-  const [terms, setTerms] = useState("");
-  const [projectName, setProjectName] = useState("");
+  const [amount, setAmount] = useState('');
+  const [terms, setTerms] = useState('');
+  const [projectName, setProjectName] = useState('');
   const [creating, setCreating] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [address, setAddress] = useState([""]);
+  const [address, setAddress] = useState(['']);
   const [rawEndDate, setRawEndDate] = useState<Date>();
   const [historyList, setHistoryList] = useState([]);
   const [activeTab, setActiveTab] = useState(tabs[0]);
@@ -27,14 +27,14 @@ const Home: NextPage = () => {
   const pactFactory = usePactFactory();
 
   const doCreate = async () => {
-    console.log("creating...................");
+    console.log('creating...................');
     setCreating(true);
     try {
       /* eslint-disable  -- Because any is what the nature of the return type is*/
 
       const res = await pactFactory.createPact(terms, endDate, amount, address);
       if (res.status) {
-        await axios.post("/pact", {
+        await axios.post('/pact', {
           name: projectName,
           terms,
           /* eslint-disable */
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
         setActiveTab(tabs[2]);
       }
     } catch (err) {
-      console.log("err create", err);
+      console.log('err create', err);
     } finally {
       setCreating(false);
     }
@@ -62,7 +62,7 @@ const Home: NextPage = () => {
 
   const addAddress = () => {
     setAddress((prev: string[]) => {
-      return [...prev, ""];
+      return [...prev, ''];
     });
   };
 
@@ -91,7 +91,7 @@ const Home: NextPage = () => {
     if (!skipLoading) {
       setLoading(true);
     }
-    const res = await axios.get("/pacts");
+    const res = await axios.get('/pacts');
     // get balances
     // for (let i = 0; i < res.length; i++) {
     //   const pactAddress = res[i].address;
@@ -121,8 +121,8 @@ const Home: NextPage = () => {
               <a
                 key={item}
                 className={cn(
-                  "tab tab-boxed tab-lg capitalize",
-                  activeTab === item && "tab-active",
+                  'tab tab-boxed tab-lg capitalize',
+                  activeTab === item && 'tab-active',
                 )}
                 onClick={() => {
                   setActiveTab(item);
@@ -136,7 +136,7 @@ const Home: NextPage = () => {
           {activeTab === tabs[0] && (
             <div className="max-w-[90%] mx-auto text-xl  p-8 card bg-base-100 shadow-xl text-gray-500">
               <p className="font-bold">
-                Pactsmith.com is a platform to deploy{" "}
+                Pactsmith.com is a platform to deploy{' '}
                 <a
                   target="_blank"
                   className="underline"
@@ -154,12 +154,11 @@ const Home: NextPage = () => {
               <p>4. Determine a deadline</p>
               <p>5. Add the wallet addresses of admins</p>
               <p>
-                If the target goal is met before the deadline, the funds will
-                immediately transfer into a Gnosis wallet which admins control.
-                Admins are responsible to enact the transactions defined in the
-                terms. If the target goal is not met when the deadline is
-                reached, then funds will automatically be refunded to
-                contributors.
+                If the target goal is met before the deadline, the funds will immediately
+                transfer into a Gnosis wallet which admins control. Admins are responsible
+                to enact the transactions defined in the terms. If the target goal is not
+                met when the deadline is reached, then funds will automatically be
+                refunded to contributors.
               </p>
             </div>
           )}
@@ -167,9 +166,7 @@ const Home: NextPage = () => {
           {activeTab === tabs[1] && (
             <div className="flex flex-col gap-4 mb-4 dark:text-white">
               <div className="mb-4">
-                <h1 className="text-xl mb-2 font-medium dark:text-gray-900">
-                  Name
-                </h1>
+                <h1 className="text-xl mb-2 font-medium dark:text-gray-900">Name</h1>
                 <div className="flex">
                   <input
                     type="text"
@@ -184,9 +181,7 @@ const Home: NextPage = () => {
               </div>
 
               <div className="mb-4">
-                <h1 className="text-xl mb-1 font-medium dark:text-gray-900">
-                  Terms
-                </h1>
+                <h1 className="text-xl mb-1 font-medium dark:text-gray-900">Terms</h1>
                 <textarea
                   className="textarea w-full input-bordered"
                   value={terms}
@@ -295,13 +290,13 @@ const Home: NextPage = () => {
               <div className="mb-4">
                 {account ? (
                   <a
-                    className={cn("btn w-full", creating && "loading")}
+                    className={cn('btn w-full', creating && 'loading')}
                     onClick={doCreate}
                   >
                     Create
                   </a>
                 ) : (
-                  <a className={cn("btn w-full")} onClick={connectWallet}>
+                  <a className={cn('btn w-full')} onClick={connectWallet}>
                     Connect Wallet
                   </a>
                 )}
@@ -333,7 +328,7 @@ const Home: NextPage = () => {
                   )}
                 </>
               ) : (
-                <a className={cn("btn w-full mt-8")} onClick={connectWallet}>
+                <a className={cn('btn w-full mt-8')} onClick={connectWallet}>
                   Connect Wallet
                 </a>
               )}

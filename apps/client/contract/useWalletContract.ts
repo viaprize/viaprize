@@ -1,7 +1,7 @@
 // @ts-nocheck
-import useWeb3Context from "@/context/hooks/useWeb3Context";
-import WalletAbi from "./abi/Wallet.json";
-import { AbiItem } from "web3-utils";
+import useWeb3Context from '@/context/hooks/useWeb3Context';
+import WalletAbi from './abi/Wallet.json';
+import { AbiItem } from 'web3-utils';
 
 export default function useWaletContract() {
   const { web3, account } = useWeb3Context();

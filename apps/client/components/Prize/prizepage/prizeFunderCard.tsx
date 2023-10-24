@@ -1,4 +1,4 @@
-import { Avatar, Card, Group, Text } from "@mantine/core";
+import { Avatar, Card, Group, Text } from '@mantine/core';
 
 interface PrizeFunderCardProps {
   name: string;

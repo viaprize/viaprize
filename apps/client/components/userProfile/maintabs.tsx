@@ -1,7 +1,7 @@
-import { Tabs } from "@mantine/core";
+import { Tabs } from '@mantine/core';
 
-import React from "react";
-import ProposalsTabs from "./proposals-tabs";
+import React from 'react';
+import ProposalsTabs from './proposals-tabs';
 
 export default function MainTabsUserProfile() {
   return (

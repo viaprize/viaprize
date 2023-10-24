@@ -1,12 +1,12 @@
-import type { ReactElement } from "react";
-import type { UseQueryResult } from "react-query";
-import { useQuery } from "react-query";
-import { Loader, Tabs } from "@mantine/core";
-import AdminCard from "@/components/Admin/card";
-import usePrizeProposal from "@/components/Prize/hooks/usePrizeProposal";
-import AppShellLayout from "@/components/layout/appshell";
-import type { AppUser } from "types/app-user";
-import type { PrizeProposalsList } from "types/prizes";
+import type { ReactElement } from 'react';
+import type { UseQueryResult } from 'react-query';
+import { useQuery } from 'react-query';
+import { Loader, Tabs } from '@mantine/core';
+import AdminCard from '@/components/Admin/card';
+import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
+import AppShellLayout from '@/components/layout/appshell';
+import type { AppUser } from 'types/app-user';
+import type { PrizeProposalsList } from 'types/prizes';
 
 const Proposals = ({
   mutation,
@@ -45,13 +45,13 @@ const Proposals = ({
           />
         ),
       )
-    : "Error";
+    : 'Error';
 };
 
 export default function AdminPage() {
   const { getAllProposals } = usePrizeProposal();
 
-  const getAllProposalsMutation = useQuery(["all-proposals", undefined], () => {
+  const getAllProposalsMutation = useQuery(['all-proposals', undefined], () => {
     return getAllProposals();
   });
 

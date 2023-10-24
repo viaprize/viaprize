@@ -1,6 +1,6 @@
-import { Badge, Card, Group } from "@mantine/core";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { usePrivyWagmi } from "@privy-io/wagmi-connector";
+import { Badge, Card, Group } from '@mantine/core';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 
 export default function SwitchAccount() {
   const { login, ready, authenticated } = usePrivy();
@@ -35,14 +35,10 @@ export default function SwitchAccount() {
             {wallet.address}
             {wallet.address === activeWallet?.address && (
               <Badge
-                color={
-                  wallet.address === activeWallet.address ? "green" : "gray"
-                }
+                color={wallet.address === activeWallet.address ? 'green' : 'gray'}
                 variant="light"
               >
-                {wallet.address === activeWallet.address
-                  ? "Active"
-                  : "Inactive"}
+                {wallet.address === activeWallet.address ? 'Active' : 'Inactive'}
               </Badge>
             )}
           </Group>

@@ -1,11 +1,11 @@
-import { Avatar, Box, Group, Stack, Text, Badge, Button } from "@mantine/core";
+import { Avatar, Box, Group, Stack, Text, Badge, Button } from '@mantine/core';
 import {
   IconBrandGithubFilled,
   IconBrandLinkedin,
   IconBrandTelegram,
   IconBrandX,
-} from "@tabler/icons-react";
-import React from "react";
+} from '@tabler/icons-react';
+import React from 'react';
 
 export default function Profile() {
   return (
@@ -51,8 +51,7 @@ export default function Profile() {
       <Box>
         <Text weight={600}>Description</Text>
         <Text>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-          voluptatum.
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
         </Text>
         <Group mt="md">
           <Stack>

@@ -11,11 +11,11 @@ import {
   Text,
   Tooltip,
   useMantineColorScheme,
-} from "@mantine/core";
-import { useState } from "react";
+} from '@mantine/core';
+import { useState } from 'react';
 
-import useAppUser from "@/context/hooks/useAppUser";
-import { usePrivy, useWallets } from "@privy-io/react-auth";
+import useAppUser from '@/context/hooks/useAppUser';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import {
   IconArrowsLeftRight,
   IconCheck,
@@ -24,14 +24,14 @@ import {
   IconSearch,
   IconSun,
   IconUser,
-} from "@tabler/icons-react";
-import { useRouter } from "next/router";
-import { IoExit } from "react-icons/io5";
-import { toast } from "sonner";
-import SwitchAccount from "./switchWallet";
+} from '@tabler/icons-react';
+import { useRouter } from 'next/router';
+import { IoExit } from 'react-icons/io5';
+import { toast } from 'sonner';
+import SwitchAccount from './switchWallet';
 
 function getEmailInitials(email: string) {
-  const [username, domain] = email.split("@");
+  const [username, domain] = email.split('@');
   const usernameInitial = username.slice(0, 5);
   const domainInitial = domain.charAt(0);
 
@@ -52,7 +52,7 @@ export default function HeaderLayout() {
       justify="space-between"
       align="center"
       sx={{
-        width: "100%",
+        width: '100%',
       }}
     >
       <div>Image</div>
@@ -60,21 +60,13 @@ export default function HeaderLayout() {
       <Flex align="center" gap="md">
         <Card py="5px">
           <Group>
-            {wallets[0] ? displayAddress(wallets[0].address) : "No Wallet"}
+            {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
             {wallets[0] ? (
               <CopyButton value={wallets[0].address}>
                 {({ copied, copy }) => (
-                  <Tooltip
-                    label={copied ? "Copied" : "Copy"}
-                    withArrow
-                    position="right"
-                  >
-                    <ActionIcon color={copied ? "teal" : "gray"} onClick={copy}>
-                      {copied ? (
-                        <IconCheck size="1rem" />
-                      ) : (
-                        <IconCopy size="1rem" />
-                      )}
+                  <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
+                    <ActionIcon color={copied ? 'teal' : 'gray'} onClick={copy}>
+                      {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
                     </ActionIcon>
                   </Tooltip>
                 )}
@@ -84,13 +76,13 @@ export default function HeaderLayout() {
         </Card>
         <ActionIcon
           variant="outline"
-          color={colorScheme === "dark" ? "yellow.7" : "blue.8"}
+          color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}
           onClick={() => {
             toggleColorScheme();
           }}
           title="Toggle color scheme"
         >
-          {colorScheme === "dark" ? (
+          {colorScheme === 'dark' ? (
             <IconSun size="1.1rem" />
           ) : (
             <IconMoonStars size="1.1rem" />
@@ -111,12 +103,12 @@ function ProfileMenu() {
   const handleLogout = () => {
     try {
       toast.promise(logoutUser(), {
-        loading: "Logging out",
-        success: "Logged out",
-        error: "Error logging out",
+        loading: 'Logging out',
+        success: 'Logged out',
+        error: 'Error logging out',
       });
     } catch {
-      toast.error("Error logging out");
+      toast.error('Error logging out');
     }
   };
 
@@ -126,12 +118,7 @@ function ProfileMenu() {
         <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
           <Menu.Target>
             {appUser ? (
-              <Badge
-                variant="filled"
-                size="xl"
-                radius="sm"
-                className="cursor-pointer"
-              >
+              <Badge variant="filled" size="xl" radius="sm" className="cursor-pointer">
                 {getEmailInitials(appUser.email)}
               </Badge>
             ) : (
@@ -144,10 +131,7 @@ function ProfileMenu() {
               <Menu.Item
                 icon={<IconUser size={14} />}
                 onClick={() => {
-                  router
-                    .push("/profile")
-                    .then(console.log)
-                    .catch(console.error);
+                  router.push('/profile').then(console.log).catch(console.error);
                 }}
               >
                 View Profile
@@ -177,11 +161,7 @@ function ProfileMenu() {
               Switch Wallet
             </Menu.Item>
             {authenticated ? (
-              <Menu.Item
-                color="red"
-                icon={<IoExit size={14} />}
-                onClick={handleLogout}
-              >
+              <Menu.Item color="red" icon={<IoExit size={14} />} onClick={handleLogout}>
                 Logout
               </Menu.Item>
             ) : (
@@ -189,7 +169,7 @@ function ProfileMenu() {
                 color="green"
                 icon={<IconUser size={14} />}
                 onClick={() => {
-                  router.push("/").then(console.log).catch(console.error);
+                  router.push('/').then(console.log).catch(console.error);
                 }}
               >
                 Login

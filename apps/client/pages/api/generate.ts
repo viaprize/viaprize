@@ -1,10 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import { OpenAI } from "openai";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { OpenAI } from 'openai';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const body = req.body as string;
     const { prompt } = JSON.parse(body) as { prompt: string };
@@ -13,9 +10,7 @@ export default async function handler(
     if (!openaiKey) {
       res
         .status(500)
-        .send(
-          "This feature is currently under progress. Please check back later.",
-        );
+        .send('This feature is currently under progress. Please check back later.');
     }
 
     const openai = new OpenAI({
@@ -23,10 +18,10 @@ export default async function handler(
     });
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: 'gpt-3.5-turbo',
       messages: [
         {
-          role: "user",
+          role: 'user',
           content: `You are an AI writing assistant that continues existing text based on context from prior text. 
             Give more weight/priority to the later characters than the beginning ones.
             Limit your response to no more than 200 characters, but make sure to construct complete sentences.
@@ -52,7 +47,7 @@ export default async function handler(
     const errorMessage = error as string;
 
     res.status(500).json({
-      error: "Failed to generate",
+      error: 'Failed to generate',
       message: errorMessage,
     });
   }

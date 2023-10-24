@@ -1,7 +1,7 @@
-import { Card, Flex, Group, Image } from "@mantine/core";
-import type { AppUser } from "../../types/app-user";
-import PrizeFunderCard from "../Prize/prizepage/prizeFunderCard";
-import { TextEditor } from "../richtexteditor/textEditor";
+import { Card, Flex, Group, Image } from '@mantine/core';
+import type { AppUser } from '../../types/app-user';
+import PrizeFunderCard from '../Prize/prizepage/prizeFunderCard';
+import { TextEditor } from '../richtexteditor/textEditor';
 
 export default function ViewDetails({
   admins,
@@ -35,14 +35,7 @@ export default function ViewDetails({
       <div>
         Admin wallets
         {admins.map((admin, index) => (
-          <Card
-            shadow="sm"
-            padding="lg"
-            radius="md"
-            key={admin}
-            withBorder
-            mt="sm"
-          >
+          <Card shadow="sm" padding="lg" radius="md" key={admin} withBorder mt="sm">
             {index + 1}. {admin}
           </Card>
         ))}

@@ -1,84 +1,84 @@
 export const PrizeSubmissionTemplate = [
   {
-    type: "heading",
+    type: 'heading',
     attrs: {
       level: 2,
     },
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "Prize Submission Template",
+        text: 'Prize Submission Template',
       },
     ],
   },
   {
-    type: "blockquote",
+    type: 'blockquote',
     content: [
       {
-        type: "paragraph",
+        type: 'paragraph',
         content: [
           {
-            type: "text",
+            type: 'text',
             marks: [
               {
-                type: "bold",
+                type: 'bold',
               },
               {
-                type: "textStyle",
+                type: 'textStyle',
                 attrs: {
-                  color: "#EAB308",
+                  color: '#EAB308',
                 },
               },
             ],
-            text: "(Change or remove contents accordingly this is just a template)",
+            text: '(Change or remove contents accordingly this is just a template)',
           },
         ],
       },
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "Submission Information",
+        text: 'Submission Information',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Task/Project Title:",
+                text: 'Task/Project Title:',
               },
               {
-                type: "text",
-                text: " [Title of Your Task/Project]",
+                type: 'text',
+                text: ' [Title of Your Task/Project]',
               },
             ],
           },
@@ -87,70 +87,70 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "Task/Project Description",
+        text: 'Task/Project Description',
       },
       {
-        type: "text",
-        text: " ",
-      },
-    ],
-  },
-  {
-    type: "paragraph",
-    content: [
-      {
-        type: "text",
-        text: "Please provide a brief description of the task or project you completed for the competition. Include the goals, objectives, and any relevant context.",
+        type: 'text',
+        text: ' ',
       },
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
+        text: 'Please provide a brief description of the task or project you completed for the competition. Include the goals, objectives, and any relevant context.',
+      },
+    ],
+  },
+  {
+    type: 'paragraph',
+    content: [
+      {
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "Repository Link",
+        text: 'Repository Link',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Repository URL:",
+                text: 'Repository URL:',
               },
               {
-                type: "text",
-                text: " [Link to Your Repository]",
+                type: 'text',
+                text: ' [Link to Your Repository]',
               },
             ],
           },
@@ -159,107 +159,107 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "Submission Details",
+        text: 'Submission Details',
       },
       {
-        type: "text",
-        text: " Please answer the following questions related to your submission:",
+        type: 'text',
+        text: ' Please answer the following questions related to your submission:',
       },
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "1. Task/Project Overview",
+        text: '1. Task/Project Overview',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Briefly describe your task/project:",
+                text: 'Briefly describe your task/project:',
               },
               {
-                type: "text",
-                text: " [Provide a high-level overview]",
+                type: 'text',
+                text: ' [Provide a high-level overview]',
               },
             ],
           },
         ],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "What problem does it address?",
+                text: 'What problem does it address?',
               },
               {
-                type: "text",
-                text: " [Explain the problem your task/project is solving]",
+                type: 'text',
+                text: ' [Explain the problem your task/project is solving]',
               },
             ],
           },
         ],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "What technology stack did you use?",
+                text: 'What technology stack did you use?',
               },
               {
-                type: "text",
-                text: " [List the technologies and tools used]",
+                type: 'text',
+                text: ' [List the technologies and tools used]',
               },
             ],
           },
@@ -268,43 +268,43 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "2. Features/Functionality",
+        text: '2. Features/Functionality',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "List the key features or functionality:",
+                text: 'List the key features or functionality:',
               },
               {
-                type: "text",
-                text: " [Describe the main features or functionalities of your task/project]",
+                type: 'text',
+                text: ' [Describe the main features or functionalities of your task/project]',
               },
             ],
           },
@@ -313,66 +313,66 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "3. Installation and Usage",
+        text: '3. Installation and Usage',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Provide clear instructions for installation:",
+                text: 'Provide clear instructions for installation:',
               },
               {
-                type: "text",
-                text: " [Explain how to set up and run your task/project]",
+                type: 'text',
+                text: ' [Explain how to set up and run your task/project]',
               },
             ],
           },
         ],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "How can someone use your task/project?",
+                text: 'How can someone use your task/project?',
               },
               {
-                type: "text",
-                text: " [Provide usage instructions or a demo if available]",
+                type: 'text',
+                text: ' [Provide usage instructions or a demo if available]',
               },
             ],
           },
@@ -381,43 +381,43 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "4. Documentation",
+        text: '4. Documentation',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Link to documentation (if available):",
+                text: 'Link to documentation (if available):',
               },
               {
-                type: "text",
-                text: " [Provide a link to any documentation you have created]",
+                type: 'text',
+                text: ' [Provide a link to any documentation you have created]',
               },
             ],
           },
@@ -426,43 +426,43 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "5. Screenshots or Demo",
+        text: '5. Screenshots or Demo',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Screenshots or demo video:",
+                text: 'Screenshots or demo video:',
               },
               {
-                type: "text",
-                text: " [If applicable, provide screenshots or a demo video of your task/project]",
+                type: 'text',
+                text: ' [If applicable, provide screenshots or a demo video of your task/project]',
               },
             ],
           },
@@ -471,43 +471,43 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "6. Challenges Faced",
+        text: '6. Challenges Faced',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Describe any challenges you encountered:",
+                text: 'Describe any challenges you encountered:',
               },
               {
-                type: "text",
-                text: " [Explain any difficulties you faced during development]",
+                type: 'text',
+                text: ' [Explain any difficulties you faced during development]',
               },
             ],
           },
@@ -516,43 +516,43 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "7. Future Improvements",
+        text: '7. Future Improvements',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "What future improvements do you envision?",
+                text: 'What future improvements do you envision?',
               },
               {
-                type: "text",
-                text: " [Share your ideas for further development]",
+                type: 'text',
+                text: ' [Share your ideas for further development]',
               },
             ],
           },
@@ -561,116 +561,116 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "Review and Evaluation",
+        text: 'Review and Evaluation',
       },
       {
-        type: "text",
-        text: " Please review and evaluate your own submission against the competition criteria. Be honest and provide a self-assessment.",
+        type: 'text',
+        text: ' Please review and evaluate your own submission against the competition criteria. Be honest and provide a self-assessment.',
       },
     ],
   },
   {
-    type: "bulletList",
+    type: 'bulletList',
     attrs: {
       tight: true,
     },
     content: [
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Creativity and Innovation:",
+                text: 'Creativity and Innovation:',
               },
               {
-                type: "text",
-                text: " [Rate your submission out of 10]",
+                type: 'text',
+                text: ' [Rate your submission out of 10]',
               },
             ],
           },
         ],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Functionality and Usability:",
+                text: 'Functionality and Usability:',
               },
               {
-                type: "text",
-                text: " [Rate your submission out of 10]",
+                type: 'text',
+                text: ' [Rate your submission out of 10]',
               },
             ],
           },
         ],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Code Quality and Documentation:",
+                text: 'Code Quality and Documentation:',
               },
               {
-                type: "text",
-                text: " [Rate your submission out of 10]",
+                type: 'text',
+                text: ' [Rate your submission out of 10]',
               },
             ],
           },
         ],
       },
       {
-        type: "listItem",
+        type: 'listItem',
         content: [
           {
-            type: "paragraph",
+            type: 'paragraph',
             content: [
               {
-                type: "text",
+                type: 'text',
                 marks: [
                   {
-                    type: "bold",
+                    type: 'bold',
                   },
                 ],
-                text: "Overall Impression:",
+                text: 'Overall Impression:',
               },
               {
-                type: "text",
-                text: " [Rate your submission out of 10]",
+                type: 'text',
+                text: ' [Rate your submission out of 10]',
               },
             ],
           },
@@ -679,20 +679,20 @@ export const PrizeSubmissionTemplate = [
     ],
   },
   {
-    type: "paragraph",
+    type: 'paragraph',
     content: [
       {
-        type: "text",
+        type: 'text',
         marks: [
           {
-            type: "bold",
+            type: 'bold',
           },
         ],
-        text: "Additional Comments",
+        text: 'Additional Comments',
       },
       {
-        type: "text",
-        text: " Is there anything else you would like to add or highlight about your submission?",
+        type: 'text',
+        text: ' Is there anything else you would like to add or highlight about your submission?',
       },
     ],
   },

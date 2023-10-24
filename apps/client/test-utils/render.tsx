@@ -1,5 +1,5 @@
-import { render as testingLibraryRender } from "@testing-library/react";
-import { MantineProvider } from "@mantine/core";
+import { render as testingLibraryRender } from '@testing-library/react';
+import { MantineProvider } from '@mantine/core';
 
 export function render(ui: React.ReactNode) {
   return testingLibraryRender(<>{ui}</>, {

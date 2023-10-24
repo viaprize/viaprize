@@ -1,18 +1,9 @@
-import {
-  Badge,
-  Button,
-  Card,
-  Group,
-  Image,
-  Modal,
-  Text,
-  Textarea,
-} from "@mantine/core";
-import { useState } from "react";
-import { useMutation } from "react-query";
-import type { AppUser } from "../../types/app-user";
-import usePrizeProposal from "../Prize/hooks/usePrizeProposal";
-import ViewDetails from "./details";
+import { Badge, Button, Card, Group, Image, Modal, Text, Textarea } from '@mantine/core';
+import { useState } from 'react';
+import { useMutation } from 'react-query';
+import type { AppUser } from '../../types/app-user';
+import usePrizeProposal from '../Prize/hooks/usePrizeProposal';
+import ViewDetails from './details';
 
 interface AdminCardProps {
   images: string[];
@@ -37,25 +28,19 @@ const AdminCard: React.FC<AdminCardProps> = ({
 }) => {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState('');
   const { acceptProposal, rejectProposal } = usePrizeProposal();
   const acceptProposalMutation = useMutation(acceptProposal);
   const rejectProposalMutation = useMutation(rejectProposal);
 
-  console.log({ images }, "in admin card");
+  console.log({ images }, 'in admin card');
   return (
     <>
       <Card shadow="sm" padding="lg" radius="md" withBorder my="md">
         <Card.Section>
           {images.length > 0
             ? images.map((image) => (
-                <Image
-                  src={image}
-                  height={160}
-                  alt="Image"
-                  key={image}
-                  width={346}
-                />
+                <Image src={image} height={160} alt="Image" key={image} width={346} />
               ))
             : null}
         </Card.Section>

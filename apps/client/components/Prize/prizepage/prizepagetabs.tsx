@@ -1,9 +1,9 @@
-import { Tabs } from "@mantine/core";
-import { BsInfoLg } from "react-icons/bs";
-import { FaMoneyBillWaveAlt } from "react-icons/fa";
+import { Tabs } from '@mantine/core';
+import { BsInfoLg } from 'react-icons/bs';
+import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 
-import AboutPrize from "./aboutprize";
-import PrizeFunderCard from "./prizeFunderCard";
+import AboutPrize from './aboutprize';
+import PrizeFunderCard from './prizeFunderCard';
 
 export default function PrizePageTabs() {
   return (
