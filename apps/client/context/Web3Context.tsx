@@ -139,6 +139,10 @@ export const Web3ContextProvider = ({
     });
     window.ethereum.on('accountsChanged', async (accounts) => {
       console.log('account changed', accounts);
+      if (!accounts[0]) {
+        resetWallet();
+        return;
+      }
       setAccount(accounts[0]);
     });
     window.ethereum.on('chainChanged', (chainId) => {
