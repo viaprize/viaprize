@@ -65,13 +65,13 @@ contract ViaPrize {
     uint platformFee;
 
     bool votingPeriod = false;
-
+        
     address[] public Platformadmins;
     mapping(address => bool) public isPlatformAdmin;
 
 
     /// @notice this will be the address of the platform
-    address public constant PLATFORM_ADDRESS = 0xcd258fCe467DDAbA643f813141c3560FF6c12518; 
+    address public constant PLATFORM_ADDRESS = 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C; 
 
     /// @notice / @notice submissionTree contract
     SubmissionAVLTree private submissionTree;
@@ -133,17 +133,21 @@ contract ViaPrize {
 
 
     modifier onlyPlatformAdmin() {
-    require(isPlatformAdmin[msg.sender]);
+     require(isPlatformAdmin[msg.sender]);
     _;
     }
 
     /// @notice create a function to start the submission period
     function start_submission_period(uint256 _submission_time) public {
-        if(admins[msg.sender] == true || isPlatformAdmin[msg.sender] == true) revert NotAdmin();
+        if(admins[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
 
         /// @notice submission time will be in days
         submission_time = block.timestamp + _submission_time * 1 days;
      
+    }
+
+    function getAdmin(address _address) public view returns (bool) {
+        return admins[_address];
     }
 
     /// @notice getter for submission time
@@ -157,23 +161,13 @@ contract ViaPrize {
     }
 
     function end_submission_period() public onlyPlatformAdmin {
+        // if(submission_time == 0) revert SubmissionPeriodNotActive();
         submission_time = 0;
     }
-//Nithin Varma Mengani
-// Issue is without starting the voting period. if owner called the end_voting_period , when i called the end_voting_period
-// the distribute funds function will be get called, when it called the funds will distributed, without voting.
-// it doesnot makes any sense, so to do this we have 2 ways, first need to check if the voting time is already 0 then, 
-// give me an error, there is no voting period going on, else perform the transaction and make the voting_period
-// to the 0, thats it. Also get a complete clarity on the threshold which i commented out.
-
-// After completing above one, start deploying test it, add the new features to it, 
-// Test the new features in the testnet, definetly i will get errors, solve it, add the hardhat deployment to it.
-// if possible make sure to complete the tests using chai and hardhat. If all the tests are passed successfully.
-// congratulations you are done with your work......................................
 
     /// @notice start the voting period 
     function start_voting_period(uint256 _voting_time) public {
-        if(admins[msg.sender] == false || isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+        if(admins[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(block.timestamp < submission_time) revert SubmissionPeriodActive();
 
         /// @notice voting time also in days
@@ -182,8 +176,8 @@ contract ViaPrize {
 
     }
 
-     function end_voting_period() public onlyPlatformAdmin {
-        if(voting_time == 0) revert VotingPeriodNotActive();
+    function end_voting_period() public onlyPlatformAdmin {
+        // if(voting_time == 0) revert VotingPeriodNotActive();
         voting_time = 0;
         distributeRewards();
     }
@@ -198,19 +192,19 @@ contract ViaPrize {
 
     /// @notice Distribute rewards
     function distributeRewards() private {
-        if(admins[msg.sender] == false) revert NotAdmin();
+        if(admins[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(distributed == true) revert RewardsAlreadyDistributed();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         platform_reward = (total_funds * platformFee ) / 100;
         payable(PLATFORM_ADDRESS).transfer(platform_reward);
         /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
         for (uint256 i = 0; i < allSubmissions.length;) {
-        if (allSubmissions[i].funded) {
-            uint256 reward = (allSubmissions[i].votes * (100-proposerFee-platformFee)) / 100;
-            total_rewards -= reward;
-            payable(allSubmissions[i].submitter).transfer(reward);
-        } 
-        unchecked { ++i; }
+            if (allSubmissions[i].funded) {
+                uint256 reward = (allSubmissions[i].votes * (100-proposerFee-platformFee)) / 100;
+                total_rewards -= reward;
+                payable(allSubmissions[i].submitter).transfer(reward);
+            } 
+            unchecked { ++i; }
     }
         total_rewards = 0;
         /// @notice  Send the platform reward

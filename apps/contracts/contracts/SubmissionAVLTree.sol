@@ -187,11 +187,9 @@ contract SubmissionAVLTree {
         if (node == 0) {
             return;
         }
-
         inOrderTraversalHelper(submissions[node].left, submissionHashes, index);
         submissionHashes[index] = submissions[node].submissionHash;
         index++;
         inOrderTraversalHelper(submissions[node].right, submissionHashes, index);
     }
-
 }
