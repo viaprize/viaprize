@@ -38,12 +38,14 @@ import "./SubmissionAVLTree.sol";
 */
 
 contract ViaPrize {
-    /// @notice this will be the total amount of funds raised
+     /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
     /// @notice this will be the total amount of rewards available
     uint256 public total_rewards; 
     /// @notice this will be the total amount of rewards available for the platform
     uint256 public platform_reward;
+    /// @notice this will be the total amount of rewards available for the proposer
+    uint256 public proposer_reward;
     /// @notice bool to check if rewards have been distributed with end_voting_period
     bool public distributed;
     /// @notice this will be the time that the voting period ends
@@ -65,9 +67,14 @@ contract ViaPrize {
     uint platformFee;
 
     bool votingPeriod = false;
+
+    uint[] public paisalEtuPothunnaiRa;
         
     address[] public Platformadmins;
     mapping(address => bool) public isPlatformAdmin;
+
+    ///@notice to test the things i am hardcoding this proposer contract
+    address public constant PROPOSER_ADDRESS = 0x583031D1113aD414F02576BD6afaBfb302140225;
 
 
     /// @notice this will be the address of the platform
@@ -182,25 +189,18 @@ contract ViaPrize {
         distributeRewards();
     }
 
-    /// @notice end the voting period
-//     function distribute_rewards() public {
-//         require(votingPeriod == true, "you cant distribute rewards without starting votingPeriod");
-//         if(block.timestamp < voting_time) revert VotingPeriodActive();
-//         distributeRewards();
-//         votingPeriod = false;
-// }
-
     /// @notice Distribute rewards
     function distributeRewards() private {
         if(admins[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(distributed == true) revert RewardsAlreadyDistributed();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         platform_reward = (total_funds * platformFee ) / 100;
-        payable(PLATFORM_ADDRESS).transfer(platform_reward);
+        proposer_reward = (total_funds * proposerFee ) / 100;
         /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
         for (uint256 i = 0; i < allSubmissions.length;) {
             if (allSubmissions[i].funded) {
                 uint256 reward = (allSubmissions[i].votes * (100-proposerFee-platformFee)) / 100;
+                paisalEtuPothunnaiRa.push(reward);
                 total_rewards -= reward;
                 payable(allSubmissions[i].submitter).transfer(reward);
             } 
@@ -208,16 +208,22 @@ contract ViaPrize {
     }
         total_rewards = 0;
         /// @notice  Send the platform reward
+        uint256 send_platform_reward = platform_reward;
         platform_reward = 0;
+        /// @notice  Send the proposer reward
+        uint256 send_proposer_reward = proposer_reward;
+        proposer_reward = 0;
         distributed = true;
+        payable(PLATFORM_ADDRESS).transfer(send_platform_reward);
+        payable(PROPOSER_ADDRESS).transfer(send_proposer_reward);
         
     }
 
     /// @notice addSubmission should return the submissionHash
-    function addSubmission(address submitter, string memory submissionText) public returns(bytes32) {
+    function addSubmission(address submitter, string memory submissionText, uint256 threshold) public returns(bytes32) {
         if (block.timestamp > submission_time) revert SubmissionPeriodNotActive();
         bytes32 submissionHash = keccak256(abi.encodePacked(submitter, submissionText));
-        submissionTree.add_submission(submitter, submissionHash, submissionText);
+        submissionTree.add_submission(submitter, submissionHash, submissionText, threshold);
 
         return submissionHash;
     }
@@ -238,10 +244,10 @@ contract ViaPrize {
         funderVotes[msg.sender][_submissionHash] += amount;
         submissionTree.updateFunderBalance(_submissionHash, msg.sender, (funderVotes[msg.sender][_submissionHash]*(100-platformFee))/100);
 
-        // SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
-        // if (submission.votes >= submission.threshhold) {
-        // submissionTree.setThresholdCrossed(_submissionHash, true);
-        // }
+        SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
+        if (submission.votes >= submission.threshhold) {
+        submissionTree.setThresholdCrossed(_submissionHash, true);
+        }
 
 
     }
@@ -258,17 +264,17 @@ contract ViaPrize {
         funderVotes[msg.sender][_previous_submissionHash] -= amount;
         funderVotes[msg.sender][_new_submissionHash] += amount;
 
-        // SubmissionAVLTree.SubmissionInfo memory previousSubmission = submissionTree.getSubmission(_previous_submissionHash);
+        SubmissionAVLTree.SubmissionInfo memory previousSubmission = submissionTree.getSubmission(_previous_submissionHash);
 
-        // if (previousSubmission.votes < previousSubmission.threshhold) {
-        //     submissionTree.setThresholdCrossed(_previous_submissionHash, false);
-        // }
+        if (previousSubmission.votes < previousSubmission.threshhold) {
+            submissionTree.setThresholdCrossed(_previous_submissionHash, false);
+        }
 
-        // SubmissionAVLTree.SubmissionInfo memory newSubmission = submissionTree.getSubmission(_new_submissionHash);
+        SubmissionAVLTree.SubmissionInfo memory newSubmission = submissionTree.getSubmission(_new_submissionHash);
 
-        // if (newSubmission.votes >= newSubmission.threshhold) {
-        //     submissionTree.setThresholdCrossed(_new_submissionHash, true);
-        // }
+        if (newSubmission.votes >= newSubmission.threshhold) {
+            submissionTree.setThresholdCrossed(_new_submissionHash, true);
+        }
 
 
         }
