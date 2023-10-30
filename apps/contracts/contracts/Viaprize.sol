@@ -38,7 +38,7 @@ import "./SubmissionAVLTree.sol";
 */
 
 contract ViaPrize {
-     /// @notice this will be the total amount of funds raised
+    /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
     /// @notice this will be the total amount of rewards available
     uint256 public total_rewards; 
@@ -167,8 +167,8 @@ contract ViaPrize {
         return voting_time;
     }
 
-    function end_submission_period() public onlyPlatformAdmin {
-        // if(submission_time == 0) revert SubmissionPeriodNotActive();
+    function end_submission_period() public {
+        if(submission_time == 0) revert SubmissionPeriodNotActive();
         submission_time = 0;
     }
 
@@ -220,10 +220,10 @@ contract ViaPrize {
     }
 
     /// @notice addSubmission should return the submissionHash
-    function addSubmission(address submitter, string memory submissionText, uint256 threshold) public returns(bytes32) {
+    function addSubmission(address submitter, string memory submissionText) public returns(bytes32) {
         if (block.timestamp > submission_time) revert SubmissionPeriodNotActive();
         bytes32 submissionHash = keccak256(abi.encodePacked(submitter, submissionText));
-        submissionTree.add_submission(submitter, submissionHash, submissionText, threshold);
+        submissionTree.add_submission(submitter, submissionHash, submissionText);
 
         return submissionHash;
     }
@@ -243,10 +243,9 @@ contract ViaPrize {
         submissionTree.addVotes(_submissionHash, amount);
         funderVotes[msg.sender][_submissionHash] += amount;
         submissionTree.updateFunderBalance(_submissionHash, msg.sender, (funderVotes[msg.sender][_submissionHash]*(100-platformFee))/100);
-
         SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
-        if (submission.votes >= submission.threshhold) {
-        submissionTree.setThresholdCrossed(_submissionHash, true);
+        if (submission.votes > 0) {
+        submissionTree.setFundedTrue(_submissionHash, true);
         }
 
 
@@ -266,14 +265,14 @@ contract ViaPrize {
 
         SubmissionAVLTree.SubmissionInfo memory previousSubmission = submissionTree.getSubmission(_previous_submissionHash);
 
-        if (previousSubmission.votes < previousSubmission.threshhold) {
-            submissionTree.setThresholdCrossed(_previous_submissionHash, false);
+        if (previousSubmission.votes <= 0) {
+            submissionTree.setFundedTrue(_previous_submissionHash, false);
         }
 
         SubmissionAVLTree.SubmissionInfo memory newSubmission = submissionTree.getSubmission(_new_submissionHash);
 
-        if (newSubmission.votes >= newSubmission.threshhold) {
-            submissionTree.setThresholdCrossed(_new_submissionHash, true);
+        if (newSubmission.votes > 0) {
+            submissionTree.setFundedTrue(_new_submissionHash, true);
         }
 
 

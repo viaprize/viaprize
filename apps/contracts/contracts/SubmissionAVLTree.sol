@@ -5,14 +5,14 @@ import "./helperContracts/owner.sol";
 
 contract SubmissionAVLTree {
 
-    mapping(bytes32 => mapping(address => uint256)) public submissionFunderBalances;
+   mapping(bytes32 => mapping(address => uint256)) public submissionFunderBalances;
 
     struct SubmissionInfo {
         bytes32 submissionHash;
         string submissionText;
         uint256 votes;
         address submitter;
-        uint256 threshhold;
+        // uint256 threshhold;
         bool funded;
         int256 height;
         uint256 left;
@@ -79,9 +79,9 @@ contract SubmissionAVLTree {
         return node;
     }
 
-    function add_submission(address submitter, bytes32 submissionHash, string memory submissionText, uint256 threshhold) external {
+    function add_submission(address submitter, bytes32 submissionHash, string memory submissionText) external {
         uint256 newNodeIndex = submissions.length;
-        submissions.push(SubmissionInfo(submissionHash, submissionText, 0, submitter, threshhold, false, 0, 0, 0));
+        submissions.push(SubmissionInfo(submissionHash, submissionText, 0, submitter, false, 0, 0, 0));
 
         if (newNodeIndex == 0) {
             root = newNodeIndex;
@@ -142,13 +142,13 @@ contract SubmissionAVLTree {
     }
 
     //thresholdCrossed is a function that returns true if the number of votes is greater than or equal to the threshold, and takes in a submissionhash
-    function thresholdCrossed(bytes32 submissionHash) external view returns (bool) {
+    function votesGreaterThanZero(bytes32 submissionHash) external view returns (bool) {
         uint256 node = find(root, submissionHash);
-        return submissions[node].votes >= submissions[node].threshhold;
+        return submissions[node].votes > 0;
     }
 
     //setThresholdCrossed also takes in a submissionhash and sets the funded boolean to true
-    function setThresholdCrossed(bytes32 submissionHash, bool status) external {
+    function setFundedTrue(bytes32 submissionHash, bool status) external {
         uint256 node = find(root, submissionHash);
         submissions[node].funded = status;
     }
