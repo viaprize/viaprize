@@ -1,6 +1,8 @@
-import type { ColorScheme } from '@mantine/core';
-import { ColorSchemeProvider, MantineProvider } from '@mantine/core';
-import { getCookie } from 'cookies-next';
+import { ColorSchemeScript, MantineProvider, createTheme } from '@mantine/core';
+import '@mantine/core/styles.css';
+import '@mantine/dropzone/styles.css';
+import '@mantine/tiptap/styles.css';
+
 import type { AppContext, AppProps } from 'next/app';
 import NextApp from 'next/app';
 import Head from 'next/head';
@@ -13,7 +15,7 @@ import { env } from '@env';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import type { NextPage } from 'next';
-import { ReactElement, ReactNode, useState } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { optimism, optimismGoerli } from 'wagmi/chains';
@@ -29,12 +31,12 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
+const theme = createTheme({
+  /** Your theme override here */
+});
+
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('dark');
-  const toggleColorScheme = (value?: ColorScheme) => {
-    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
-  };
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
@@ -62,15 +64,11 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       >
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
           <QueryClientProvider client={queryClient}>
-            <ColorSchemeProvider
-              colorScheme={colorScheme}
-              toggleColorScheme={toggleColorScheme}
-            >
-              <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-                <Toaster />
-                {getLayout(<Component {...pageProps} />)}
-              </MantineProvider>
-            </ColorSchemeProvider>
+            <ColorSchemeScript defaultColorScheme="auto" />
+            <MantineProvider theme={theme} defaultColorScheme={'auto'}>
+              <Toaster />
+              {getLayout(<Component {...pageProps} />)}
+            </MantineProvider>
           </QueryClientProvider>
         </PrivyWagmiConnector>
       </PrivyProvider>
@@ -82,6 +80,5 @@ App.getInitialProps = async (appContext: AppContext) => {
   const appProps = await NextApp.getInitialProps(appContext);
   return {
     ...appProps,
-    colorScheme: getCookie('mantine-color-scheme', appContext.ctx) || 'dark',
   };
 };

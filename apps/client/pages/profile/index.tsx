@@ -1,12 +1,12 @@
+import ExploreCard from '@/components/ExplorePrize/explorePrize';
+import AppShellLayout from '@/components/layout/appshell';
 import { Tabs } from '@mantine/core';
 import type { ReactElement } from 'react';
-import AppShellLayout from '@/components/layout/appshell';
-import ExploreCard from '@/components/ExplorePrize/explorePrize';
 
 export default function Profile() {
   return (
     <Tabs variant="pills" defaultValue="pending">
-      <Tabs.List position="center">
+      <Tabs.List justify="center">
         <Tabs.Tab value="pending">Pending</Tabs.Tab>
         <Tabs.Tab value="rejected">Rejected</Tabs.Tab>
         <Tabs.Tab value="accepted">Accepted</Tabs.Tab>

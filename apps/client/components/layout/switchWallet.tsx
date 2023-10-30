@@ -31,7 +31,7 @@ export default function SwitchAccount() {
           radius="sm"
           className="cursor-pointer transition-colors duration-300 hover:bg-gray-200 dark:hover:bg-gray-700"
         >
-          <Group position="apart">
+          <Group justify="space-around">
             {wallet.address}
             {wallet.address === activeWallet?.address && (
               <Badge

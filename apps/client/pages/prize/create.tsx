@@ -106,13 +106,12 @@ function Prize() {
         <div className="">
           <NumberInput
             placeholder="Proposal Time (in days)"
-            stepHoldDelay={500}
-            stepHoldInterval={100}
+            label="This is number of days the submission would be valid for "
             value={proposalTime}
-            defaultValue={0}
             onChange={(e) => {
-              setProposalTime(e || 0);
+              setProposalTime(parseInt(e.toString()));
             }}
+            allowNegative={false}
           />
           <Checkbox
             checked={isAutomatic}
@@ -125,12 +124,11 @@ function Prize() {
         </div>
         <NumberInput
           placeholder="voting Time (in days)"
-          stepHoldDelay={500}
-          stepHoldInterval={100}
+          label="This is the number of days you want the voting to last "
+          allowNegative={false}
           value={votingTime}
-          defaultValue={0}
           onChange={(e) => {
-            setVotingTime(e || 0);
+            setVotingTime(parseInt(e.toString()));
           }}
         />
 

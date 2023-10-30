@@ -1,50 +1,39 @@
-import {
-  AppShell,
-  Burger,
-  Center,
-  Header,
-  MediaQuery,
-  useMantineTheme,
-} from '@mantine/core';
+import { AppShell, Center, useComputedColorScheme, useMantineTheme } from '@mantine/core';
 import type { ReactNode } from 'react';
-import { useState } from 'react';
 import HeaderLayout from './headerLayout';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
-  const [opened, setOpened] = useState(false);
+
+  const computedColorScheme = useComputedColorScheme('light');
+
   return (
     <AppShell
-      asideOffsetBreakpoint="sm"
-      header={
-        <Header height={{ base: 50, md: 70 }} p="md">
-          <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-            <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
-              <Burger
-                color={theme.colors.gray[6]}
-                mr="xl"
-                onClick={() => {
-                  setOpened((o) => !o);
-                }}
-                opened={opened}
-                size="sm"
-              />
-            </MediaQuery>
-            <HeaderLayout />
-          </div>
-        </Header>
-      }
-      navbarOffsetBreakpoint="sm"
+      header={{
+        height: 50,
+      }}
       styles={{
         main: {
           background:
-            theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
+            computedColorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
         },
       }}
     >
-      <div className="w-full grid place-content-center">
-        <Center className="max-w-screen-xl">{children}</Center>
-      </div>
+      <AppShell.Header
+        p="md"
+        bg={computedColorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+          {/* {A Burger was here } */}
+          <HeaderLayout />
+        </div>
+      </AppShell.Header>
+      
+      <AppShell.Main>
+        <div className="w-full grid place-content-center">
+          <Center className="max-w-screen-xl">{children}</Center>
+        </div>
+      </AppShell.Main>
     </AppShell>
   );
 }
