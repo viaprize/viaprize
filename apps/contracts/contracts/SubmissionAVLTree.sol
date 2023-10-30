@@ -5,7 +5,7 @@ import "./helperContracts/owner.sol";
 
 contract SubmissionAVLTree {
 
-    mapping(bytes32 => mapping(address => uint256)) public submissionFunderBalances;
+   mapping(bytes32 => mapping(address => uint256)) public submissionFunderBalances;
 
     struct SubmissionInfo {
         bytes32 submissionHash;
@@ -141,17 +141,17 @@ contract SubmissionAVLTree {
         }
     }
 
-    // //thresholdCrossed is a function that returns true if the number of votes is greater than or equal to the threshold, and takes in a submissionhash
-    // function thresholdCrossed(bytes32 submissionHash) external view returns (bool) {
-    //     uint256 node = find(root, submissionHash);
-    //     return submissions[node].votes >= submissions[node].threshhold;
-    // }
+    //thresholdCrossed is a function that returns true if the number of votes is greater than or equal to the threshold, and takes in a submissionhash
+    function votesGreaterThanZero(bytes32 submissionHash) external view returns (bool) {
+        uint256 node = find(root, submissionHash);
+        return submissions[node].votes > 0;
+    }
 
-    // //setThresholdCrossed also takes in a submissionhash and sets the funded boolean to true
-    // function setThresholdCrossed(bytes32 submissionHash, bool status) external {
-    //     uint256 node = find(root, submissionHash);
-    //     submissions[node].funded = status;
-    // }
+    //setThresholdCrossed also takes in a submissionhash and sets the funded boolean to true
+    function setFundedTrue(bytes32 submissionHash, bool status) external {
+        uint256 node = find(root, submissionHash);
+        submissions[node].funded = status;
+    }
 
     function addVotes(bytes32 submissionHash, uint256 votes) external {
         uint256 node = find(root, submissionHash);
@@ -187,11 +187,9 @@ contract SubmissionAVLTree {
         if (node == 0) {
             return;
         }
-
         inOrderTraversalHelper(submissions[node].left, submissionHashes, index);
         submissionHashes[index] = submissions[node].submissionHash;
         index++;
         inOrderTraversalHelper(submissions[node].right, submissionHashes, index);
     }
-
 }
