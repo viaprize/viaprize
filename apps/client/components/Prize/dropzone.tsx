@@ -28,7 +28,7 @@ export default function ImageComponent(props: ImageComponentProps) {
         width="1280"
         height="768"
         alt="image"
-      // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
     );
   });
@@ -40,7 +40,9 @@ export default function ImageComponent(props: ImageComponentProps) {
       {props.files.length === 0 ? (
         <Dropzone
           onDrop={props.setFiles}
-          onReject={(files) => { console.log('rejected files', files) }}
+          onReject={(files) => {
+            console.log('rejected files', files);
+          }}
           maxSize={3 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
           {...props}

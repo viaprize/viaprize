@@ -6,8 +6,7 @@ staged_files=$(git diff --cached --name-only)
 # Check if any files in the 'backend' directory are staged for commit
 if echo "$staged_files" | grep -q "^backend/"; then
     echo "Running checks for backend..."
-    (cd backend && pnpm run format)
-    (cd backend && pnpm run check-format) || {
+    (cd backend && pnpm run format) || {
         echo '🤢🤮🤢🤮 Its FOKING RAW - Your styling looks disgusting. 🤢🤮🤢🤮
             Prettier Check Failed. Run pnpm run format, add changes and try commit again.'
         exit 1

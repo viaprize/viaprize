@@ -1105,6 +1105,7 @@
           "data",
           "hasNextPage"
         ],
+        "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
       "PrizeProposals": {
@@ -1574,6 +1575,7 @@
           "data",
           "hasNextPage"
         ],
+        "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
       "RejectProposalDto": {

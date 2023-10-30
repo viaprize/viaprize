@@ -3,6 +3,7 @@ import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
 import { TypedBody, TypedParam, TypedQuery } from '@nestia/core';
+import { MailService } from 'src/mail/mail.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
@@ -19,17 +20,17 @@ import { PrizeProposals } from './entities/prize-proposals.entity';
  * @class PrizeProposalsPaginationResult
  * @typedef {PrizeProposalsPaginationResult}
  * @implements {InfinityPaginationResultType<PrizeProposals>}
- */
-class PrizeProposalsPaginationResult
-  implements InfinityPaginationResultType<PrizeProposals>
-{
-  data: PrizeProposals[];
-  hasNextPage: boolean;
-  results: PrizeProposals[];
-  total: number;
-  page: number;
-  limit: number;
-}
+//  */
+// class PrizeProposalsPaginationResult
+//   implements InfinityPaginationResultType<PrizeProposals>
+// {
+//   data: PrizeProposals[];
+//   hasNextPage: boolean;
+//   results: PrizeProposals[];
+//   total: number;
+//   page: number;
+//   limit: number;
+// }
 
 interface PrzieQuery {
   page: number;
@@ -42,7 +43,10 @@ interface PrzieQuery {
  */
 @Controller('prizes')
 export class PrizesController {
-  constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
+  constructor(
+    private readonly prizeProposalsService: PrizeProposalsService,
+    private readonly mailService: MailService,
+  ) {}
 
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
@@ -98,7 +102,7 @@ export class PrizesController {
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
    * for the POST request to `/proposals` endpoint. Here's a breakdown of what it does:
-   * @summary Create a new proposal using user auth token to know which user is calling this function
+   * @summary Create a new proposal using user auth token to know which user is calling this function and sends email to user
    * @date 9/25/2023 - 4:44:05 AM
    *
    * @async
@@ -115,10 +119,20 @@ export class PrizesController {
   ): Promise<PrizeProposals> {
     console.log({ createPrizeProposalDto });
     console.log(req.user, 'user');
-    return await this.prizeProposalsService.create(
+    const proposals = await this.prizeProposalsService.create(
       createPrizeProposalDto,
       req.user.userId,
     );
+    await this.mailService.proposalSent(
+      proposals.user.email,
+      proposals.user.name,
+      proposals.title,
+      proposals.description,
+      proposals.startSubmissionDate
+        ? proposals.startSubmissionDate.toDateString()
+        : 'No Submission Date has been set',
+    );
+    return proposals;
   }
 
   /**
