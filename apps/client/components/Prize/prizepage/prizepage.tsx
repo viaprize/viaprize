@@ -8,7 +8,7 @@ export default function PrizePageComponent() {
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Flex justify="space-between" my="lg">
         <Title order={2}>A simple Title for the prizes page</Title>
-        <Group position="right" spacing="0" noWrap>
+        <Group justify="right" gap="0" wrap='nowrap'>
           <Button color="black" mx="5px">
             Upvote
           </Button>
@@ -23,7 +23,7 @@ export default function PrizePageComponent() {
         width={1280}
         height={768}
         alt="prize info tumbnail"
-        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+      // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
       <Center my="xl">
         <PrizePageTabs />

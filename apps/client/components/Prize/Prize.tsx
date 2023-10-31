@@ -1,5 +1,5 @@
+import { Box, Button, Group, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { TextInput, Button, Group, Box } from '@mantine/core';
 
 function PrizeForm() {
   const form = useForm({
@@ -51,7 +51,7 @@ function PrizeForm() {
         {...form.getInputProps('Description')}
       />
 
-      <Group position="center" mt="xl">
+      <Group justify="center" mt="xl">
         <Button variant="outline">Submit Proposal</Button>
       </Group>
     </Box>

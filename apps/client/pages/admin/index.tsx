@@ -2,7 +2,7 @@ import AdminCard from '@/components/Admin/card';
 import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
 import AppShellLayout from '@/components/layout/appshell';
 import { PrizeProposals } from '@/lib/api';
-import { Loader, Tabs } from '@mantine/core';
+import { Loader, Tabs, Text } from '@mantine/core';
 import type { ReactElement } from 'react';
 import type { UseQueryResult } from 'react-query';
 import { useQuery } from 'react-query';
@@ -11,9 +11,10 @@ const Proposals = ({
   mutation,
 }: {
   mutation: UseQueryResult<PrizeProposals[], unknown>;
-}): ReactElement => {
-  return mutation.isSuccess
-    ? mutation.data.map((proposal: PrizeProposals) => (
+}) => {
+  return <>
+    {mutation.isSuccess
+      ? mutation.data.map((proposal: PrizeProposals) => (
         <AdminCard
           key={proposal.id}
           id={proposal.id}
@@ -26,7 +27,8 @@ const Proposals = ({
           voting={proposal.voting_time}
         />
       ))
-    : 'Error';
+      : <Text>Error</Text>}
+  </>
 };
 
 export default function AdminPage() {

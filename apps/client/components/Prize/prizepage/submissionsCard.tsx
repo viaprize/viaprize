@@ -46,7 +46,7 @@ export default function SubmissionsCard({
           <Text c="dimmed" fz="sm">
             {time}
           </Text>
-          <Group position="right" spacing="0" noWrap>
+          <Group justify="right" gap="0" wrap='nowrap'>
             <Button color="black" mx="5px">
               vote
             </Button>
@@ -67,7 +67,7 @@ export default function SubmissionsCard({
           </p>
         </TypographyStylesProvider>
       </Text>
-      <Button rightIcon={<IconArrowAutofitUp size="1rem" />}>View Submission</Button>
+      <Button rightSection={<IconArrowAutofitUp size="1rem" />}>View Submission</Button>
     </Card>
   );
 }
