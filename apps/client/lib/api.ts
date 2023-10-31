@@ -1,4 +1,4 @@
-/* eslint-disable -- life is short */
+/* eslint-disable */
 /* tslint:disable */
 /*
  * ---------------------------------------------------------------
@@ -47,7 +47,6 @@ export type PactNullable = {
   blockHash: string;
 } | null;
 
-/** Make all properties in T readonly */
 export interface ReadonlyType {
   data: PrizeProposals[];
   hasNextPage: boolean;
@@ -60,6 +59,7 @@ export interface PrizeProposals {
   admins: string[];
   /** The Columns here are not part of the smart contract */
   isApproved: boolean;
+  isRejected: boolean;
   title: string;
   description: string;
   isAutomatic: boolean;
@@ -112,6 +112,11 @@ export interface Prize {
   submissions: Submission[];
 }
 
+export interface ReadonlyTypeO1 {
+  data: PrizeProposals[];
+  hasNextPage: boolean;
+}
+
 export interface CreatePrizeProposalDto {
   voting_time: number;
   submission_time: number;
@@ -160,8 +165,7 @@ export interface PrzieQuery {
   limit: number;
 }
 
-/** Make all properties in T readonly */
-export interface ReadonlyTypeO1 {
+export interface ReadonlyTypeO2 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
@@ -507,6 +511,32 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+ * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does: Gets page
+ *
+ * @name ProposalsAcceptList
+ * @summary Retrieve a list of accepted prize proposals
+description: Retrieve a list of accepted prize proposals. The list supports pagination.
+parameters
+ * @request GET:/prizes/proposals/accept
+ * @secure
+ */
+    proposalsAcceptList: (
+      query: {
+        page: number;
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReadonlyTypeO1, any>({
+        path: `/prizes/proposals/accept`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * @description Get pending proposal of user
      *
      * @name ProposalsUserDetail
@@ -525,7 +555,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO1, any>({
+      this.request<ReadonlyTypeO2, any>({
         path: `/prizes/proposals/user/${userId}`,
         method: 'GET',
         query: query,

@@ -44,7 +44,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
               ))
             : null}
         </Card.Section>
-        <Group justify="space-evenly" mt="md" mb="xs">
+        <Group justify="space-between" mt="md" mb="xs">
           <Text fw={500}>{title}</Text>
           <Badge color="gray" variant="light">
             {user.name}
@@ -57,8 +57,6 @@ const AdminCard: React.FC<AdminCardProps> = ({
           <Text fw={500} color="red">
             Submission Days is {submission} Days
           </Text>
-        </Group>
-        <Group>
           <Button
             onClick={() => {
               setDetailsOpen(true);
@@ -66,7 +64,26 @@ const AdminCard: React.FC<AdminCardProps> = ({
           >
             View Details
           </Button>
-
+        </Group>
+        <Modal
+          size="xl"
+          opened={detailsOpen}
+          onClose={() => {
+            setDetailsOpen(false);
+          }}
+          title="Prize details"
+        >
+          <ViewDetails
+            user={user}
+            admins={admins}
+            images={images}
+            description={description}
+            title={title}
+            submission={submission}
+            voting={voting}
+          />
+        </Modal>
+        <Group>
           <Button
             color="red"
             onClick={() => {
@@ -104,40 +121,30 @@ const AdminCard: React.FC<AdminCardProps> = ({
             setComment(event.currentTarget.value);
           }}
         />
-        <Group justify="right" my="md">
+        <Group justify="space-evenly" my="md">
           <Button
-            loading={rejectProposalMutation.isLoading}
-            onClick={async () => {
-              await rejectProposalMutation.mutateAsync({
-                proposalId: id,
-                comment,
-              });
-              window.location.reload();
+            onClick={() => {
               setRejectOpen(false);
             }}
           >
             Cancel
           </Button>
-          <Button color="red">Reject</Button>
+          <Button
+            color="red"
+            loading={rejectProposalMutation.isLoading}
+            onClick={async () => {
+              const res = await rejectProposalMutation.mutateAsync({
+                proposalId: id,
+                comment,
+              });
+              console.log({ res }, 'this is the res');
+              window.location.reload();
+              setRejectOpen(false);
+            }}
+          >
+            Reject
+          </Button>
         </Group>
-      </Modal>
-      <Modal
-        size="xl"
-        opened={detailsOpen}
-        onClose={() => {
-          setDetailsOpen(false);
-        }}
-        title="Prize details"
-      >
-        <ViewDetails
-          user={user}
-          admins={admins}
-          images={images}
-          description={description}
-          title={title}
-          submission={submission}
-          voting={voting}
-        />
       </Modal>
     </>
   );

@@ -23,6 +23,9 @@ export class PrizeProposals {
   @Column({ default: false })
   isApproved: boolean;
 
+  @Column({ default: false })
+  isRejected: boolean;
+
   @Column({ default: '' })
   title: string;
 

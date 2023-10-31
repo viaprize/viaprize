@@ -13,6 +13,7 @@ export class MailerService {
     this.transporter = nodemailer.createTransport({
       host: configService.get('mail.host', { infer: true }),
       port: configService.get('mail.port', { infer: true }),
+      name: configService.get('mail.defaultEmail', { infer: true }),
 
       auth: {
         user: configService.get('mail.user', { infer: true }),
@@ -47,7 +48,7 @@ export class MailerService {
       ...mailOptions,
       from: mailOptions.from
         ? mailOptions.from
-        : `"${this.configService.get('mail.user', {
+        : `"${this.configService.get('mail.defaultEmail', {
             infer: true,
           })}"`,
       html: mailOptions.html ? mailOptions.html : html,

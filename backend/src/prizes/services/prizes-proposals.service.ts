@@ -32,7 +32,9 @@ export class PrizeProposalsService {
     return await this.prizeProposalsRepository.find();
   }
 
-  async findAllWithPagination(paginationOptions: IPaginationOptions) {
+  async findAllWithPagination(
+    paginationOptions: IPaginationOptions<PrizeProposals>,
+  ) {
     return this.prizeProposalsRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
@@ -40,8 +42,19 @@ export class PrizeProposalsService {
     });
   }
 
+  async findAllPendingWithPagination(
+    paginationOptions: IPaginationOptions<PrizeProposals>,
+  ) {
+    return this.prizeProposalsRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      relations: ['user'],
+      where: paginationOptions.where,
+    });
+  }
+
   async findByUserWithPagination(
-    paginationOptions: IPaginationOptions,
+    paginationOptions: IPaginationOptions<PrizeProposals>,
     authId: string,
   ) {
     return this.prizeProposalsRepository.find({

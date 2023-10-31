@@ -84,9 +84,57 @@ export class PrizesController {
     }>
   > {
     return infinityPagination(
-      await this.prizeProposalsService.findAllWithPagination({
+      await this.prizeProposalsService.findAllPendingWithPagination({
         page,
         limit,
+        where: {
+          isApproved: false,
+          isRejected: false,
+        },
+      }),
+      {
+        page,
+        limit,
+      },
+    );
+  }
+  /**
+   * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
+   * for the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:
+   * Gets page
+   *
+   * @summary Retrieve a list of accepted prize proposals
+   * description: Retrieve a list of accepted prize proposals. The list supports pagination.
+   * parameters
+   *
+   * @date 9/25/2023 - 4:06:45 AM
+   * @security bearer
+   * @async
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
+   * @returns {Promise<Readonly<{data: PrizeProposals[];hasNextPage: boolean;}>>}
+   */
+  @Get('/proposals/accept')
+  @UseGuards(AdminAuthGuard)
+  async getAcceptedProposals(
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
+  ): Promise<
+    Readonly<{
+      data: PrizeProposals[];
+      hasNextPage: boolean;
+    }>
+  > {
+    return infinityPagination(
+      await this.prizeProposalsService.findAllPendingWithPagination({
+        page,
+        limit,
+        where: {
+          isApproved: true,
+          isRejected: false,
+        },
       }),
       {
         page,

@@ -55,6 +55,7 @@ const config = {
     'jsx-a11y/accessible-emoji': 'off',
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
+    'eslint-comments/require-description': 'warn',
     'import/no-extraneous-dependencies': 'off',
     // "unicorn/filename-case": [
     //   "error",
@@ -62,7 +63,7 @@ const config = {
     //     case: "pascalCase",
     //   },
     // ],
-    'no-alert':'warn',
+    'no-alert': 'warn',
     'react/button-has-type': 'off',
   },
 };

@@ -1,13 +1,9 @@
-// import { useQuery, useMutation } from 'react-query';
-// import axios from 'axios';
-// import myAxios from '@/lib/axios';
 import { makeStorageClient } from '@/components/_providers/WebClient';
 import { CreatePrizeProposalDto, PrizeProposals, PrzieQuery } from '@/lib/api';
 import myAxios from '@/lib/axios';
 import { backendApi } from '@/lib/backend';
 import { usePrivy } from '@privy-io/react-auth';
 import { useState } from 'react';
-
 /* eslint-disable @typescript-eslint/no-explicit-any -- needed this for the function */
 function objectToRecord(obj: Record<string, any>): Record<string, string> {
   return Object.entries(obj).reduce<Record<string, string>>((record, [key, value]) => {
@@ -109,15 +105,32 @@ export default function usePrizeProposal() {
     proposalId: string;
     comment: string;
   }) => {
-    alert('hi');
+    console.log('loggg reject');
     const res = await (
       await backendApi()
     ).prizes.proposalsRejectCreate(proposalId, {
       comment,
     });
+    console.log({ res }, 'res isn ajfslj');
     return res.data;
   };
 
+  const getAcceptedProposals = async (
+    queryParam: PrzieQuery = {
+      limit: 10,
+      page: 1,
+    },
+  ) => {
+    const res = await (
+      await backendApi()
+    ).prizes.proposalsAcceptList({
+      limit: queryParam.limit,
+      page: queryParam.page,
+    });
+    console.log({ res });
+    console.log(res.data.data);
+    return res.data.data;
+  };
   return {
     addProposals,
     uploadImages,
@@ -126,5 +139,6 @@ export default function usePrizeProposal() {
     getAllProposals,
     acceptProposal,
     rejectProposal,
+    getAcceptedProposals,
   };
 }
