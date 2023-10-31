@@ -1,4 +1,4 @@
-import { Api, CreateUser, User } from '@/lib/Api';
+import { Api, CreateUser, User } from '@/lib/api';
 import myAxios from '@/lib/axios';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';

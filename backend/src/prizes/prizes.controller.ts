@@ -1,4 +1,11 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
@@ -51,46 +58,34 @@ export class PrizesController {
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
    * for the GET request to `/proposals` endpoint. Here's a breakdown of what it does:
-   * Gets page 
-   * 
+   * Gets page
+   *
    * @summary Get all Pending proposals
-   * 
+   *
    * @date 9/25/2023 - 4:06:45 AM
    * @security bearer
    * @async
-   * @param {PrzieQuery} [query={
-        page: 1,
-        limit: 10
-      }] 
-   * @param {PrzieQuery.page=1}  this is the page number of the return pending proposals 
-   * @param {PrzieQuery.limit=10} this is the limit of the return type of the pending proposals
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
    * @returns {Promise<Readonly<{data: PrizeProposals[];hasNextPage: boolean;}>>}
    */
   @Get('/proposals')
   @UseGuards(AdminAuthGuard)
   async getPendingProposals(
-    @TypedQuery()
-    query: PrzieQuery,
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
   ): Promise<
     Readonly<{
       data: PrizeProposals[];
       hasNextPage: boolean;
     }>
   > {
-    // return infinityPagination(
-    //   await this.prizeProposalsService.findAllWithPagination({
-    //     ...query,
-    //   }),
-    //   {
-    //     ...query,
-    //   },
-    // );
-    const { page = 1, limit = 10, ...rest } = query;
     return infinityPagination(
       await this.prizeProposalsService.findAllWithPagination({
         page,
         limit,
-        ...rest,
       }),
       {
         page,

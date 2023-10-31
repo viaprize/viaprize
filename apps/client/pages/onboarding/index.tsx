@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 
 import useAppUser from '@/context/hooks/useAppUser';
-import { Api } from '@/lib/Api';
+import { Api } from '@/lib/api';
 import { sleep } from '@/lib/utils';
 import { useDebouncedValue } from '@mantine/hooks';
 import { usePrivy } from '@privy-io/react-auth';

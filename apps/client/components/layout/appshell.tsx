@@ -23,7 +23,9 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         p="md"
         bg={computedColorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]}
       >
-        <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+        <div
+          style={{ display: 'flex', alignItems: 'center', height: '100%', width: '90%' }}
+        >
           {/* {A Burger was here } */}
           <HeaderLayout />
         </div>

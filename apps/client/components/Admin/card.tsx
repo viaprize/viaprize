@@ -1,13 +1,13 @@
+import { User } from '@/lib/api';
 import { Badge, Button, Card, Group, Image, Modal, Text, Textarea } from '@mantine/core';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
-import type { AppUser } from '../../types/app-user';
 import usePrizeProposal from '../Prize/hooks/usePrizeProposal';
 import ViewDetails from './details';
 
 interface AdminCardProps {
   images: string[];
-  user: AppUser;
+  user: User;
   title: string;
   description: string;
   admins: string[];
@@ -40,8 +40,8 @@ const AdminCard: React.FC<AdminCardProps> = ({
         <Card.Section>
           {images.length > 0
             ? images.map((image) => (
-                <Image src={image} height={160} alt="Image" key={image} width={346} />
-              ))
+              <Image src={image} height={160} alt="Image" key={image} width={346} />
+            ))
             : null}
         </Card.Section>
         <Group justify="space-evenly" mt="md" mb="xs">

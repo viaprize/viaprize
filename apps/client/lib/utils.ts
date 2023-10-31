@@ -3,6 +3,10 @@
  * @param ms - The duration to sleep in milliseconds.
  * @returns A Promise that resolves after the specified duration.
  */
+
+import { getAccessToken } from '@privy-io/react-auth';
+import { toast } from 'react-toastify';
+
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -50,4 +54,18 @@ export const filterDuplicateNodes = <T extends { address: string }>(arr: T[]): T
  */
 export const shortenAddr = (address: string, length = 3): string => {
   return `${address.slice(0, length)}...${address.slice(-length)}`;
+};
+
+// Function to get the access token or show an error toast
+export const getAccessTokenWithFallback = async (): Promise<string | null> => {
+  try {
+    const accessToken = await getAccessToken();
+    if (!accessToken) {
+      toast.error('You are logged out'); // Show an error toast if no access token
+    }
+    return accessToken;
+  } catch (error) {
+    console.error('Error fetching access token:', error);
+    return null;
+  }
 };

@@ -1,50 +1,34 @@
-import type { ReactElement } from 'react';
-import type { UseQueryResult } from 'react-query';
-import { useQuery } from 'react-query';
-import { Loader, Tabs } from '@mantine/core';
 import AdminCard from '@/components/Admin/card';
 import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
 import AppShellLayout from '@/components/layout/appshell';
-import type { AppUser } from 'types/app-user';
-import type { PrizeProposalsList } from 'types/prizes';
+import { PrizeProposals } from '@/lib/api';
+import { Loader, Tabs } from '@mantine/core';
+import type { ReactElement } from 'react';
+import type { UseQueryResult } from 'react-query';
+import { useQuery } from 'react-query';
 
 const Proposals = ({
   mutation,
 }: {
-  mutation: UseQueryResult<PrizeProposalsList, unknown>;
+  mutation: UseQueryResult<PrizeProposals[], unknown>
+  ;
 }): ReactElement => {
   return mutation.isSuccess
-    ? mutation.data.data.map(
-        (proposal: {
-          id: string;
-
-          admins: string[];
-
-          description: string;
-
-          images: string[];
-
-          submission_time: number;
-
-          title: string;
-
-          user: AppUser;
-
-          voting_time: number;
-        }) => (
-          <AdminCard
-            key={proposal.id}
-            id={proposal.id}
-            admins={proposal.admins}
-            description={proposal.description}
-            images={proposal.images}
-            submission={proposal.submission_time}
-            title={proposal.title}
-            user={proposal.user}
-            voting={proposal.voting_time}
-          />
-        ),
-      )
+    ? (mutation.data).map(
+      (proposal: PrizeProposals) => (
+        <AdminCard
+          key={proposal.id}
+          id={proposal.id}
+          admins={proposal.admins}
+          description={proposal.description}
+          images={proposal.images}
+          submission={proposal.submission_time}
+          title={proposal.title}
+          user={proposal.user}
+          voting={proposal.voting_time}
+        />
+      ),
+    )
     : 'Error';
 };
 

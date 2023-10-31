@@ -1,8 +1,7 @@
 import { env } from '@env';
-import { getAccessToken } from '@privy-io/react-auth';
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import axios from 'axios';
-import { toast } from 'sonner';
+import { getAccessTokenWithFallback } from './utils';
 
 /**
  * Axios instance with base URL configured.
@@ -14,20 +13,6 @@ const NETWORK_TYPE = env.NEXT_PUBLIC_NETWORK_TYPE;
 if (!NETWORK_TYPE) {
   throw new Error('NETWORK_TYPE is not set in .env');
 }
-
-// Function to get the access token or show an error toast
-const getAccessTokenWithFallback = async (): Promise<string | null> => {
-  try {
-    const accessToken = await getAccessToken();
-    if (!accessToken) {
-      toast.error('You are logged out'); // Show an error toast if no access token
-    }
-    return accessToken;
-  } catch (error) {
-    console.error('Error fetching access token:', error);
-    return null;
-  }
-};
 
 const myAxios: AxiosInstance = axios.create({
   baseURL: 'http://localhost:3001/api',

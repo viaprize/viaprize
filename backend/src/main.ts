@@ -43,7 +43,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
-  SwaggerModule.setup('docs', app, docs);
+  SwaggerModule.setup('docs', app, docs as any);
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
 void bootstrap();
