@@ -1,5 +1,5 @@
+import { User } from '@/lib/api';
 import { Card, Flex, Group, Image } from '@mantine/core';
-import type { AppUser } from '../../types/app-user';
 import PrizeFunderCard from '../Prize/prizepage/prizeFunderCard';
 import { TextEditor } from '../richtexteditor/textEditor';
 
@@ -18,7 +18,7 @@ export default function ViewDetails({
   admins: string[];
   voting: number;
   submission: number;
-  user: AppUser;
+  user: User;
 }) {
   return (
     <Flex direction="column" gap="sm" my="xl">

@@ -25,7 +25,7 @@ const sortKeys = Object.keys(sorts).map((key) => ({
   value: sorts[key],
 }));
 
-export function SearchFilters() {
+export default function SearchFilters() {
   const [opened, { open, close }] = useDisclosure(false);
 
   const router = useRouter();

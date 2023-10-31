@@ -158,10 +158,19 @@
         "tags": [],
         "parameters": [
           {
-            "name": "query",
+            "name": "page",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/PrzieQuery"
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
             },
             "description": "",
             "required": true
@@ -223,15 +232,6 @@
             "name": "param",
             "text": [
               {
-                "text": "query",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "param",
-            "text": [
-              {
                 "text": "",
                 "kind": "parameterName"
               },
@@ -240,7 +240,7 @@
                 "kind": "space"
               },
               {
-                "text": "1}  this is the page number of the return pending proposals",
+                "text": "1} this is the page number of the return pending proposals",
                 "kind": "text"
               }
             ]
@@ -295,7 +295,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Create a new proposal using user auth token to know which user is calling this function",
+        "summary": "Create a new proposal using user auth token to know which user is calling this function and sends email to user",
         "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the POST request to `/proposals` endpoint. Here's a breakdown of what it does:",
         "security": [
           {
@@ -308,7 +308,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Create a new proposal using user auth token to know which user is calling this function",
+                "text": "Create a new proposal using user auth token to know which user is calling this function and sends email to user",
                 "kind": "text"
               }
             ]
@@ -1062,27 +1062,6 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "PrzieQuery": {
-        "type": "object",
-        "properties": {
-          "page": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "limit": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "page",
-          "limit"
-        ],
-        "x-typia-jsDocTags": []
-      },
       "Readonly__type": {
         "type": "object",
         "properties": {
@@ -1105,6 +1084,7 @@
           "data",
           "hasNextPage"
         ],
+        "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
       "PrizeProposals": {
@@ -1552,6 +1532,28 @@
         ],
         "x-typia-jsDocTags": []
       },
+      "PrzieQuery": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "limit": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "page",
+          "limit"
+        ],
+        "description": "The PrizeProposalsPaginationResult class is a TypeScript implementation of the\nInfinityPaginationResultType interface, representing the result of paginated prize proposals with\nproperties for data, hasNextPage, results, total, page, and limit.",
+        "x-typia-jsDocTags": []
+      },
       "Readonly__type.o1": {
         "type": "object",
         "properties": {
@@ -1574,6 +1576,7 @@
           "data",
           "hasNextPage"
         ],
+        "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
       "RejectProposalDto": {

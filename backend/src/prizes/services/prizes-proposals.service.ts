@@ -92,6 +92,7 @@ export class PrizeProposalsService {
     await this.prizeProposalsRepository.update(id, {
       isApproved: false,
     });
+    console.log(comment);
 
     // await this.mailService.rejected(prizeProposal.user.email, comment);
   }

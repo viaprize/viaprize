@@ -14,6 +14,7 @@ import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
 import AppShellLayout from '@/components/layout/appshell';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 import ImageComponent from '../../components/Prize/dropzone';
@@ -30,6 +31,7 @@ function Prize() {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [images, setImages] = useState<string>();
   const { addProposals, uploadImages } = usePrizeProposal();
+  const { wallet } = usePrivyWagmi();
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
   const onAddressChange = (index: number, value: string) => {
@@ -43,13 +45,16 @@ function Prize() {
     setImages(newImages);
   };
   const submit = async () => {
+    if (!wallet) {
+      throw Error('Wallet is undefined');
+    }
     await handleUploadImages();
     await addProposalsMutation({
       admins: address,
       description: richtext,
       isAutomatic,
       voting_time: votingTime,
-      proposer_address: '',
+      proposer_address: wallet?.address,
       priorities: [],
       proficiencies: [],
       submission_time: proposalTime,
@@ -106,13 +111,12 @@ function Prize() {
         <div className="">
           <NumberInput
             placeholder="Proposal Time (in days)"
-            stepHoldDelay={500}
-            stepHoldInterval={100}
+            label="This is number of days the submission would be valid for "
             value={proposalTime}
-            defaultValue={0}
             onChange={(e) => {
-              setProposalTime(e || 0);
+              setProposalTime(parseInt(e.toString()));
             }}
+            allowNegative={false}
           />
           <Checkbox
             checked={isAutomatic}
@@ -125,12 +129,11 @@ function Prize() {
         </div>
         <NumberInput
           placeholder="voting Time (in days)"
-          stepHoldDelay={500}
-          stepHoldInterval={100}
+          label="This is the number of days you want the voting to last "
+          allowNegative={false}
           value={votingTime}
-          defaultValue={0}
           onChange={(e) => {
-            setVotingTime(e || 0);
+            setVotingTime(parseInt(e.toString()));
           }}
         />
 
@@ -138,7 +141,7 @@ function Prize() {
           <div className="" key={index}>
             <TextInput
               type="text"
-              placeholder="Address"
+              placeholder="Enter Admin Address"
               className=""
               value={item}
               onChange={(e) => {

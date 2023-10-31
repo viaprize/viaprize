@@ -1,8 +1,16 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
 import { TypedBody, TypedParam, TypedQuery } from '@nestia/core';
+import { MailService } from 'src/mail/mail.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
@@ -19,17 +27,17 @@ import { PrizeProposals } from './entities/prize-proposals.entity';
  * @class PrizeProposalsPaginationResult
  * @typedef {PrizeProposalsPaginationResult}
  * @implements {InfinityPaginationResultType<PrizeProposals>}
- */
-class PrizeProposalsPaginationResult
-  implements InfinityPaginationResultType<PrizeProposals>
-{
-  data: PrizeProposals[];
-  hasNextPage: boolean;
-  results: PrizeProposals[];
-  total: number;
-  page: number;
-  limit: number;
-}
+//  */
+// class PrizeProposalsPaginationResult
+//   implements InfinityPaginationResultType<PrizeProposals>
+// {
+//   data: PrizeProposals[];
+//   hasNextPage: boolean;
+//   results: PrizeProposals[];
+//   total: number;
+//   page: number;
+//   limit: number;
+// }
 
 interface PrzieQuery {
   page: number;
@@ -42,51 +50,42 @@ interface PrzieQuery {
  */
 @Controller('prizes')
 export class PrizesController {
-  constructor(private readonly prizeProposalsService: PrizeProposalsService) {}
+  constructor(
+    private readonly prizeProposalsService: PrizeProposalsService,
+    private readonly mailService: MailService,
+  ) {}
 
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
    * for the GET request to `/proposals` endpoint. Here's a breakdown of what it does:
-   * Gets page 
-   * 
+   * Gets page
+   *
    * @summary Get all Pending proposals
-   * 
+   *
    * @date 9/25/2023 - 4:06:45 AM
    * @security bearer
    * @async
-   * @param {PrzieQuery} [query={
-        page: 1,
-        limit: 10
-      }] 
-   * @param {PrzieQuery.page=1}  this is the page number of the return pending proposals 
-   * @param {PrzieQuery.limit=10} this is the limit of the return type of the pending proposals
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
    * @returns {Promise<Readonly<{data: PrizeProposals[];hasNextPage: boolean;}>>}
    */
   @Get('/proposals')
   @UseGuards(AdminAuthGuard)
   async getPendingProposals(
-    @TypedQuery()
-    query: PrzieQuery,
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
   ): Promise<
     Readonly<{
       data: PrizeProposals[];
       hasNextPage: boolean;
     }>
   > {
-    // return infinityPagination(
-    //   await this.prizeProposalsService.findAllWithPagination({
-    //     ...query,
-    //   }),
-    //   {
-    //     ...query,
-    //   },
-    // );
-    const { page = 1, limit = 10, ...rest } = query;
     return infinityPagination(
       await this.prizeProposalsService.findAllWithPagination({
         page,
         limit,
-        ...rest,
       }),
       {
         page,
@@ -98,7 +97,7 @@ export class PrizesController {
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
    * for the POST request to `/proposals` endpoint. Here's a breakdown of what it does:
-   * @summary Create a new proposal using user auth token to know which user is calling this function
+   * @summary Create a new proposal using user auth token to know which user is calling this function and sends email to user
    * @date 9/25/2023 - 4:44:05 AM
    *
    * @async
@@ -115,10 +114,20 @@ export class PrizesController {
   ): Promise<PrizeProposals> {
     console.log({ createPrizeProposalDto });
     console.log(req.user, 'user');
-    return await this.prizeProposalsService.create(
+    const proposals = await this.prizeProposalsService.create(
       createPrizeProposalDto,
       req.user.userId,
     );
+    await this.mailService.proposalSent(
+      proposals.user.email,
+      proposals.user.name,
+      proposals.title,
+      proposals.description,
+      proposals.startSubmissionDate
+        ? proposals.startSubmissionDate.toDateString()
+        : 'No Submission Date has been set',
+    );
+    return proposals;
   }
 
   /**

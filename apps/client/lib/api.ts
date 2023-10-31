@@ -1,4 +1,4 @@
-/* eslint-disable  -- Because this is auto generated*/
+/* eslint-disable -- Everything is a lie */
 /* tslint:disable */
 /*
  * ---------------------------------------------------------------
@@ -47,11 +47,7 @@ export type PactNullable = {
   blockHash: string;
 } | null;
 
-export interface PrzieQuery {
-  page: number;
-  limit: number;
-}
-
+/** Make all properties in T readonly */
 export interface ReadonlyType {
   data: PrizeProposals[];
   hasNextPage: boolean;
@@ -154,6 +150,17 @@ export interface CreatePrizeProposalDto {
   images: string[];
 }
 
+/**
+ * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
+ * InfinityPaginationResultType interface, representing the result of paginated prize proposals with
+ * properties for data, hasNextPage, results, total, page, and limit.
+ */
+export interface PrzieQuery {
+  page: number;
+  limit: number;
+}
+
+/** Make all properties in T readonly */
 export interface ReadonlyTypeO1 {
   data: PrizeProposals[];
   hasNextPage: boolean;
@@ -462,7 +469,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      */
     proposalsList: (
       query: {
-        query: PrzieQuery;
+        page: number;
+        limit: number;
       },
       params: RequestParams = {},
     ) =>
@@ -479,7 +487,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the POST request to `/proposals` endpoint. Here's a breakdown of what it does:
      *
      * @name ProposalsCreate
-     * @summary Create a new proposal using user auth token to know which user is calling this function
+     * @summary Create a new proposal using user auth token to know which user is calling this function and sends email to user
      * @request POST:/prizes/proposals
      * @secure
      */
@@ -504,6 +512,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     proposalsUserDetail: (
       userId: string,
       query: {
+        /**
+         * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
+         * InfinityPaginationResultType interface, representing the result of paginated prize proposals with
+         * properties for data, hasNextPage, results, total, page, and limit.
+         */
         query: PrzieQuery;
       },
       params: RequestParams = {},

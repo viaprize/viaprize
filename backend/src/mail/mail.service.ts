@@ -64,13 +64,13 @@ export class MailService {
     });
   }
 
-  async rejected(to: string, comment: string) {
-    // await this.mailerService.sendSimpleMail({
-    //   to,
-    //   subject: `Hi your proposal was rejected `,
-    //   text: `${comment} \n This is why your proposal was rejected`,
-    // });
-  }
+  // async rejected(to: string, comment: string) {
+  //   // await this.mailerService.sendSimpleMail({
+  //   //   to,
+  //   //   subject: `Hi your proposal was rejected `,
+  //   //   text: `${comment} \n This is why your proposal was rejected`,
+  //   // });
+  // }
   async proposalSent(
     to: string,
     name: string,

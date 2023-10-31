@@ -1,11 +1,10 @@
-import { Avatar, Box, Group, Stack, Text, Badge, Button } from '@mantine/core';
+import { Avatar, Badge, Box, Button, Group, Stack, Text } from '@mantine/core';
 import {
   IconBrandGithubFilled,
   IconBrandLinkedin,
   IconBrandTelegram,
   IconBrandX,
 } from '@tabler/icons-react';
-import React from 'react';
 
 export default function Profile() {
   return (
@@ -49,23 +48,23 @@ export default function Profile() {
       </Box>
 
       <Box>
-        <Text weight={600}>Description</Text>
+        <Text w={600}>Description</Text>
         <Text>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
         </Text>
         <Group mt="md">
           <Stack>
-            <Text weight={300} color="" size="lg">
+            <Text w={300} color="" size="lg">
               Projects :
-              <Text weight={500} color="orange" size="xl">
+              <Text w={500} color="orange" size="xl">
                 200
               </Text>
             </Text>
           </Stack>
           <Stack>
-            <Text weight={300} color="" size="lg">
+            <Text w={300} color="" size="lg">
               Contributions :
-              <Text weight={500} color="green" size="xl">
+              <Text w={500} color="green" size="xl">
                 200
               </Text>
             </Text>

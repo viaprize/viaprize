@@ -1,4 +1,11 @@
-import { Button, Group, Text, rem, useMantineTheme } from '@mantine/core';
+import {
+  Button,
+  Group,
+  Text,
+  rem,
+  useComputedColorScheme,
+  useMantineTheme,
+} from '@mantine/core';
 import type { DropzoneProps, FileWithPath } from '@mantine/dropzone';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
@@ -10,6 +17,7 @@ interface ImageComponentProps extends Partial<DropzoneProps> {
 }
 
 export default function ImageComponent(props: ImageComponentProps) {
+  const computedColorScheme = useComputedColorScheme('light');
   const previews = props.files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
     return (
@@ -26,6 +34,7 @@ export default function ImageComponent(props: ImageComponentProps) {
   });
 
   const theme = useMantineTheme();
+
   return (
     <div className="overflow-hidden">
       {props.files.length === 0 ? (
@@ -36,37 +45,47 @@ export default function ImageComponent(props: ImageComponentProps) {
           }}
           maxSize={3 * 1024 ** 2}
           accept={IMAGE_MIME_TYPE}
-          maxFiles={1}
           {...props}
         >
-          <Group
-            position="center"
-            spacing="xl"
-            style={{ minHeight: rem(220), pointerEvents: 'none' }}
-          >
+          <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
             <Dropzone.Accept>
               <IconUpload
-                size="3.2rem"
+                style={{
+                  width: rem(52),
+                  height: rem(52),
+                  color: 'var(--mantine-color-blue-6)',
+                }}
                 stroke={1.5}
-                color={theme.colors.blue[theme.colorScheme === 'dark' ? 4 : 6]}
+                color={theme.colors.blue[computedColorScheme === 'dark' ? 4 : 6]}
               />
             </Dropzone.Accept>
             <Dropzone.Reject>
               <IconX
-                size="3.2rem"
+                style={{
+                  width: rem(52),
+                  height: rem(52),
+                  color: 'var(--mantine-color-red-6)',
+                }}
                 stroke={1.5}
-                color={theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6]}
+                color={theme.colors.red[computedColorScheme === 'dark' ? 4 : 6]}
               />
             </Dropzone.Reject>
             <Dropzone.Idle>
-              <IconPhoto size="3.2rem" stroke={1.5} />
+              <IconPhoto
+                style={{
+                  width: rem(52),
+                  height: rem(52),
+                  color: 'var(--mantine-color-dimmed)',
+                }}
+                stroke={1.5}
+              />
             </Dropzone.Idle>
 
             <div>
               <Text size="xl" inline>
                 Drag images here or click to select files
               </Text>
-              <Text size="sm" color="dimmed" inline mt={7}>
+              <Text size="sm" c="dimmed" inline mt={7}>
                 Attach as many files as you like, each file should not exceed 5mb
               </Text>
             </div>

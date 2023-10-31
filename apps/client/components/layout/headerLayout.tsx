@@ -13,6 +13,7 @@ import {
   useMantineColorScheme,
 } from '@mantine/core';
 import { useState } from 'react';
+import { TbTopologyStarRing2 } from 'react-icons/tb';
 
 import useAppUser from '@/context/hooks/useAppUser';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
@@ -51,13 +52,7 @@ export default function HeaderLayout() {
   };
 
   return (
-    <Flex
-      justify="space-between"
-      align="center"
-      sx={{
-        width: '100%',
-      }}
-    >
+    <Group justify="space-around" w={'100%'} align="center" pos={'fixed'}>
       <div>Image</div>
 
       <Flex align="center" gap="md">
@@ -93,7 +88,7 @@ export default function HeaderLayout() {
         </ActionIcon>
         <ProfileMenu />
       </Flex>
-    </Flex>
+    </Group>
   );
 }
 
@@ -117,7 +112,7 @@ function ProfileMenu() {
 
   return (
     <>
-      <Group position="center">
+      <Group justify="center">
         <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
           <Menu.Target>
             {appUser ? (
@@ -131,19 +126,30 @@ function ProfileMenu() {
           <Menu.Dropdown p="md" mr="sm">
             <Menu.Label>Profile</Menu.Label>
             {authenticated ? (
-              <Menu.Item
-                icon={<IconUser size={14} />}
-                onClick={() => {
-                  router.push('/profile').then(console.log).catch(console.error);
-                }}
-              >
-                View Profile
-              </Menu.Item>
+              <>
+                <Menu.Item
+                  leftSection={<IconUser size={14} />}
+                  onClick={() => {
+                    router.push('/profile').then(console.log).catch(console.error);
+                  }}
+                >
+                  View Profile
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<TbTopologyStarRing2 />}
+                  onClick={() => {
+                    router.push('/prize/create').then(console.log).catch(console.error);
+                  }}
+                >
+                  Create Prize
+                </Menu.Item>
+              </>
             ) : null}
+
             {/* <Menu.Item icon={<IconMessageCircle size={14} />}>Messages</Menu.Item>
           <Menu.Item icon={<IconPhoto size={14} />}>Gallery</Menu.Item> */}
             <Menu.Item
-              icon={<IconSearch size={14} />}
+              leftSection={<IconSearch size={14} />}
               rightSection={
                 <Text size="xs" color="dimmed" pl="sm">
                   ⌘K
@@ -159,18 +165,22 @@ function ProfileMenu() {
               onClick={() => {
                 setSwitchWallet(true);
               }}
-              icon={<IconArrowsLeftRight size={14} />}
+              rightSection={<IconArrowsLeftRight size={14} />}
             >
               Switch Wallet
             </Menu.Item>
             {authenticated ? (
-              <Menu.Item color="red" icon={<IoExit size={14} />} onClick={handleLogout}>
+              <Menu.Item
+                color="red"
+                leftSection={<IoExit size={14} />}
+                onClick={handleLogout}
+              >
                 Logout
               </Menu.Item>
             ) : (
               <Menu.Item
                 color="green"
-                icon={<IconUser size={14} />}
+                leftSection={<IconUser size={14} />}
                 onClick={() => {
                   router.push('/').then(console.log).catch(console.error);
                 }}

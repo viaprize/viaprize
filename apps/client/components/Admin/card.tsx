@@ -1,13 +1,13 @@
+import { User } from '@/lib/api';
 import { Badge, Button, Card, Group, Image, Modal, Text, Textarea } from '@mantine/core';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
-import type { AppUser } from '../../types/app-user';
 import usePrizeProposal from '../Prize/hooks/usePrizeProposal';
 import ViewDetails from './details';
 
 interface AdminCardProps {
   images: string[];
-  user: AppUser;
+  user: User;
   title: string;
   description: string;
   admins: string[];
@@ -44,8 +44,8 @@ const AdminCard: React.FC<AdminCardProps> = ({
               ))
             : null}
         </Card.Section>
-        <Group position="apart" mt="md" mb="xs">
-          <Text weight={500}>{title}</Text>
+        <Group justify="space-evenly" mt="md" mb="xs">
+          <Text fw={500}>{title}</Text>
           <Badge color="gray" variant="light">
             {user.name}
           </Badge>
@@ -53,8 +53,8 @@ const AdminCard: React.FC<AdminCardProps> = ({
         <p className="text-md text-gray-500 max-h-14 overflow-y-auto">
           Click on View Details to See Description
         </p>
-        <Group position="apart" mt="md" mb="xs">
-          <Text weight={500} color="red">
+        <Group justify="space-evenly" mt="md" mb="xs">
+          <Text fw={500} color="red">
             Submission Days is {submission} Days
           </Text>
         </Group>
@@ -104,7 +104,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
             setComment(event.currentTarget.value);
           }}
         />
-        <Group position="right" my="md">
+        <Group justify="right" my="md">
           <Button
             loading={rejectProposalMutation.isLoading}
             onClick={async () => {

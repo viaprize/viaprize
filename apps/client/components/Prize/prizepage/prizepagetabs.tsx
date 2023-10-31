@@ -8,11 +8,11 @@ import PrizeFunderCard from './prizeFunderCard';
 export default function PrizePageTabs() {
   return (
     <Tabs className="w-full" variant="pills" defaultValue="about">
-      <Tabs.List position="center" grow>
-        <Tabs.Tab value="about" icon={<BsInfoLg size="1rem" />}>
+      <Tabs.List justify="center" grow>
+        <Tabs.Tab value="about" leftSection={<BsInfoLg size="1rem" />}>
           About
         </Tabs.Tab>
-        <Tabs.Tab value="creators" icon={<FaMoneyBillWaveAlt size="1rem" />}>
+        <Tabs.Tab value="creators" leftSection={<FaMoneyBillWaveAlt size="1rem" />}>
           Backed By
         </Tabs.Tab>
       </Tabs.List>

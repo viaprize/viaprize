@@ -2,15 +2,11 @@
 // import axios from 'axios';
 // import myAxios from '@/lib/axios';
 import { makeStorageClient } from '@/components/_providers/WebClient';
+import { CreatePrizeProposalDto, PrizeProposals, PrzieQuery } from '@/lib/api';
 import myAxios from '@/lib/axios';
+import { backendApi, backendApiWithAuth } from '@/lib/backend';
 import { usePrivy } from '@privy-io/react-auth';
 import { useState } from 'react';
-import type {
-  CreatePrizeProposalDto,
-  PrizeProposalQueryParams,
-  PrizeProposals,
-  PrizeProposalsList,
-} from '../../../types/prizes';
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- needed this for the function */
 function objectToRecord(obj: Record<string, any>): Record<string, string> {
@@ -57,7 +53,7 @@ export default function usePrizeProposal() {
   const [proposals] = useState<PrizeProposals[]>();
   const { user } = usePrivy();
   const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
-    const res = await myAxios.post('/prizes/proposals', { ...proposalDto });
+    const res = backendApi.prizes.proposalsCreate(proposalDto);
     return res;
   };
 
@@ -67,7 +63,7 @@ export default function usePrizeProposal() {
   };
 
   const getProposalsOfUser = async (
-    queryParams: PrizeProposalQueryParams = {
+    queryParams: { limit: number; page: number } = {
       limit: 10,
       page: 1,
     },
@@ -82,20 +78,24 @@ export default function usePrizeProposal() {
       `/prizes/proposals/user/${user.id}${queryString.toString()}`,
     );
     console.log('res', 'acxi0', res);
-    return res.data as PrizeProposalsList;
+    return res.data as PrizeProposals[];
   };
 
   const getAllProposals = async (
-    queryParam: PrizeProposalQueryParams = {
+    queryParam: PrzieQuery = {
       limit: 10,
       page: 1,
     },
   ) => {
-    const record: Record<string, string> = objectToRecord(queryParam);
-    const queryString = new URLSearchParams(record);
-    const res = await myAxios.get(`/prizes/proposals?${queryString.toString()}`);
-    console.log({ res }, 'proposals');
-    return res.data as PrizeProposalsList;
+    const res = await (
+      await backendApiWithAuth()
+    ).prizes.proposalsList({
+      limit: queryParam.limit,
+      page: queryParam.page,
+    });
+    console.log({ res });
+    console.log(res.data.data);
+    return res.data.data;
   };
 
   const acceptProposal = async (proposalId: string) => {

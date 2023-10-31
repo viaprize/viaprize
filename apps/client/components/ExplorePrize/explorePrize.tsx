@@ -22,18 +22,18 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
       <Card.Section>
         <Image alt="Image" height={160} src={imageUrl} />
       </Card.Section>
-      <Group mb="xs" mt="md" position="apart">
-        <Text weight={500}>{title}</Text>
+      <Group mb="xs" mt="md" justify="space-between">
+        <Text fw={500}>{title}</Text>
         <Badge color="gray" variant="light">
           {profileName}
         </Badge>
       </Group>
       <p className="text-md text-gray-500 max-h-14 overflow-y-auto">{description}</p>
-      <Group mb="xs" mt="md" position="apart">
-        <Text color="green" weight={500}>
+      <Group mb="xs" mt="md" justify="space-between">
+        <Text color="green" fw={500}>
           {money}
         </Text>
-        <Text color="red" weight={500}>
+        <Text c="red" fw={500}>
           {deadline}
         </Text>
       </Group>

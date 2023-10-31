@@ -9,6 +9,7 @@ import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { join } from 'path';
+import docs from '../swagger.json';
 import { AppModule } from './app.module';
 import { AllConfigType } from './config/config.type';
 import validationOptions from './utils/validation-options';
@@ -41,8 +42,8 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  const docs = require('../../swagger.json');
-  SwaggerModule.setup('docs', app, docs);
+
+  SwaggerModule.setup('docs', app, docs as any);
   await app.listen(configService.getOrThrow('app.port', { infer: true }));
 }
 void bootstrap();
