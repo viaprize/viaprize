@@ -24,8 +24,8 @@ export default function ViewDetails({
     <Flex direction="column" gap="sm" my="xl">
       {images.length > 0
         ? images.map((image) => (
-          <Image src={image} height={160} alt="Image" key={image} />
-        ))
+            <Image src={image} height={160} alt="Image" key={image} />
+          ))
         : null}
       <div>
         <h2>{title}</h2>

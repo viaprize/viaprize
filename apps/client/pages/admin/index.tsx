@@ -10,12 +10,10 @@ import { useQuery } from 'react-query';
 const Proposals = ({
   mutation,
 }: {
-  mutation: UseQueryResult<PrizeProposals[], unknown>
-  ;
+  mutation: UseQueryResult<PrizeProposals[], unknown>;
 }): ReactElement => {
   return mutation.isSuccess
-    ? (mutation.data).map(
-      (proposal: PrizeProposals) => (
+    ? mutation.data.map((proposal: PrizeProposals) => (
         <AdminCard
           key={proposal.id}
           id={proposal.id}
@@ -27,8 +25,7 @@ const Proposals = ({
           user={proposal.user}
           voting={proposal.voting_time}
         />
-      ),
-    )
+      ))
     : 'Error';
 };
 
