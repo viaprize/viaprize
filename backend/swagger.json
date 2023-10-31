@@ -464,6 +464,13 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
@@ -548,11 +555,18 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
         "summary": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `prizeProposalsService` with the given `id`",
-        "description": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `prizeProposalsService` with the given `id`.",
+        "description": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `prizeProposalsService` with the given `id`. and it approves the proposal\nand sends an email of approval",
         "security": [
           {
             "bearer": []
@@ -1591,6 +1605,21 @@
         "nullable": false,
         "required": [
           "comment"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Http200Response": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "message"
         ],
         "x-typia-jsDocTags": []
       },

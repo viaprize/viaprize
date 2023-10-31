@@ -80,8 +80,8 @@ export class PrizeProposalsService {
     await this.prizeProposalsRepository.update(id, {
       isApproved: true,
     });
-
-    // await this.mailService.approved(prizeProposal.user.email);
+    prizeProposal.isApproved = true;
+    return prizeProposal;
   }
 
   async reject(id: string, comment: string) {
@@ -92,8 +92,9 @@ export class PrizeProposalsService {
     await this.prizeProposalsRepository.update(id, {
       isApproved: false,
     });
+    prizeProposal.isApproved = false;
     console.log(comment);
-
+    return prizeProposal;
     // await this.mailService.rejected(prizeProposal.user.email, comment);
   }
 

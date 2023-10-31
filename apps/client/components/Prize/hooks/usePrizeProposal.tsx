@@ -4,7 +4,7 @@
 import { makeStorageClient } from '@/components/_providers/WebClient';
 import { CreatePrizeProposalDto, PrizeProposals, PrzieQuery } from '@/lib/api';
 import myAxios from '@/lib/axios';
-import { backendApi, backendApiWithAuth } from '@/lib/backend';
+import { backendApi } from '@/lib/backend';
 import { usePrivy } from '@privy-io/react-auth';
 import { useState } from 'react';
 
@@ -53,7 +53,7 @@ export default function usePrizeProposal() {
   const [proposals] = useState<PrizeProposals[]>();
   const { user } = usePrivy();
   const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
-    const res = backendApi.prizes.proposalsCreate(proposalDto);
+    const res = await (await backendApi()).prizes.proposalsCreate(proposalDto);
     return res;
   };
 
@@ -88,7 +88,7 @@ export default function usePrizeProposal() {
     },
   ) => {
     const res = await (
-      await backendApiWithAuth()
+      await backendApi()
     ).prizes.proposalsList({
       limit: queryParam.limit,
       page: queryParam.page,
@@ -99,7 +99,7 @@ export default function usePrizeProposal() {
   };
 
   const acceptProposal = async (proposalId: string) => {
-    const res = await myAxios.post(`/prizes/proposals/${proposalId}/accept`);
+    const res = await (await backendApi()).prizes.proposalsAcceptCreate(proposalId);
     return res.data;
   };
   const rejectProposal = async ({
@@ -109,7 +109,10 @@ export default function usePrizeProposal() {
     proposalId: string;
     comment: string;
   }) => {
-    const res = await myAxios.post(`/prizes/proposals/${proposalId}/reject`, {
+    alert('hi');
+    const res = await (
+      await backendApi()
+    ).prizes.proposalsRejectCreate(proposalId, {
       comment,
     });
     return res.data;

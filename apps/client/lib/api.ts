@@ -1,4 +1,4 @@
-/* eslint-disable -- Everything is a lie */
+/* eslint-disable -- life is short */
 /* tslint:disable */
 /*
  * ---------------------------------------------------------------
@@ -168,6 +168,10 @@ export interface ReadonlyTypeO1 {
 
 export interface RejectProposalDto {
   comment: string;
+}
+
+export interface Http200Response {
+  message: string;
 }
 
 /** Interface of Create User , using this interface it create a new user in */
@@ -542,17 +546,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: RejectProposalDto,
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<Http200Response, any>({
         path: `/prizes/proposals/reject/${id}`,
         method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
     /**
- * @description The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls the `approve` method of the `prizeProposalsService` with the given `id`.
+ * @description The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls the `approve` method of the `prizeProposalsService` with the given `id`. and it approves the proposal and sends an email of approval
  *
  * @name ProposalsAcceptCreate
  * @summary The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls
@@ -561,10 +566,11 @@ the `approve` method of the `prizeProposalsService` with the given `id`
  * @secure
  */
     proposalsAcceptCreate: (id: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<Http200Response, any>({
         path: `/prizes/proposals/accept/${id}`,
         method: 'POST',
         secure: true,
+        format: 'json',
         ...params,
       }),
   };

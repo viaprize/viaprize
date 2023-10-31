@@ -62,6 +62,7 @@ const config = {
     //     case: "pascalCase",
     //   },
     // ],
+    'no-alert':'warn',
     'react/button-has-type': 'off',
   },
 };

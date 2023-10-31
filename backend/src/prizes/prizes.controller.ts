@@ -11,6 +11,7 @@ import { PrizeProposalsService } from './services/prizes-proposals.service';
 
 import { TypedBody, TypedParam, TypedQuery } from '@nestia/core';
 import { MailService } from 'src/mail/mail.service';
+import { Http200Response } from 'src/utils/types/http.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
@@ -174,32 +175,53 @@ export class PrizesController {
    * @param {string} id
    * @security bearer
    * @param {RejectProposalDto} rejectProposalDto
-   * @returns {unknown}
+   * @returns {Promise<Http200Response>}
    */
   @Post('/proposals/reject/:id')
   @UseGuards(AdminAuthGuard)
   async rejectProposal(
     @TypedParam('id') id: string,
     @TypedBody() rejectProposalDto: RejectProposalDto,
-  ) {
-    return await this.prizeProposalsService.reject(
+  ): Promise<Http200Response> {
+    const prizeProposal = await this.prizeProposalsService.reject(
       id,
       rejectProposalDto.comment,
     );
+    await this.mailService.rejected(
+      prizeProposal.user.email,
+      prizeProposal.user.email,
+      rejectProposalDto.comment,
+    );
+    return {
+      message: `Proposal with id ${id} has been rejected`,
+    };
   }
 
   /**
    * The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls
-   * the `approve` method of the `prizeProposalsService` with the given `id`.
+   * the `approve` method of the `prizeProposalsService` with the given `id`. and it approves the proposal
+   * and sends an email of approval
    * @date 9/25/2023 - 5:35:35 AM
    * @security bearer
    * @async
    * @param {string} id
-   * @returns {unknown}
+   * @returns {Promise<Http200Response>}
    */
   @Post('/proposals/accept/:id')
   @UseGuards(AdminAuthGuard)
-  async approveProposal(@TypedParam('id') id: string) {
-    return await this.prizeProposalsService.approve(id);
+  async approveProposal(
+    @TypedParam('id') id: string,
+  ): Promise<Http200Response> {
+    const proposal = await this.prizeProposalsService.approve(id);
+    await this.mailService.approved(
+      proposal.user.email,
+      proposal.user.name,
+      proposal.title,
+      proposal.description,
+      `Link is not implemented yet`,
+    );
+    return {
+      message: `Proposal with id ${id} has been accepted`,
+    };
   }
 }
