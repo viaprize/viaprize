@@ -46,7 +46,7 @@ export default function SubmissionsCard({
           <Text c="dimmed" fz="sm">
             {time}
           </Text>
-          <Group justify="right" gap="0" wrap='nowrap'>
+          <Group justify="right" gap="0" wrap="nowrap">
             <Button color="black" mx="5px">
               vote
             </Button>

@@ -12,23 +12,27 @@ const Proposals = ({
 }: {
   mutation: UseQueryResult<PrizeProposals[], unknown>;
 }) => {
-  return <>
-    {mutation.isSuccess
-      ? mutation.data.map((proposal: PrizeProposals) => (
-        <AdminCard
-          key={proposal.id}
-          id={proposal.id}
-          admins={proposal.admins}
-          description={proposal.description}
-          images={proposal.images}
-          submission={proposal.submission_time}
-          title={proposal.title}
-          user={proposal.user}
-          voting={proposal.voting_time}
-        />
-      ))
-      : <Text>Error</Text>}
-  </>
+  return (
+    <>
+      {mutation.isSuccess ? (
+        mutation.data.map((proposal: PrizeProposals) => (
+          <AdminCard
+            key={proposal.id}
+            id={proposal.id}
+            admins={proposal.admins}
+            description={proposal.description}
+            images={proposal.images}
+            submission={proposal.submission_time}
+            title={proposal.title}
+            user={proposal.user}
+            voting={proposal.voting_time}
+          />
+        ))
+      ) : (
+        <Text>Error</Text>
+      )}
+    </>
+  );
 };
 
 export default function AdminPage() {
