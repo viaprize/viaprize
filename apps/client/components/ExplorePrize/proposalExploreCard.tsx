@@ -1,3 +1,4 @@
+import { ProposalStatus } from '@/lib/types';
 import { Badge, Button, Card, Group, Image, Text } from '@mantine/core';
 
 interface ExploreCardProps {
@@ -5,17 +6,17 @@ interface ExploreCardProps {
   title: string;
   profileName: string;
   description: string;
-  money: string;
-  deadline: string;
+  status: ProposalStatus;
+  onStatusClick: (status: ProposalStatus) => void | Promise<void>;
 }
 
-const ExploreCard: React.FC<ExploreCardProps> = ({
+const ProposalExploreCard: React.FC<ExploreCardProps> = ({
   imageUrl,
   profileName,
   title,
   description,
-  money,
-  deadline,
+  status,
+  onStatusClick,
 }) => {
   return (
     <Card padding="lg" radius="md" shadow="sm" withBorder>
@@ -29,19 +30,13 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
         </Badge>
       </Group>
       <p className="text-md text-gray-500 max-h-14 overflow-y-auto">{description}</p>
-      <Group mb="xs" mt="md" justify="space-between">
-        <Text c="green" fw={500}>
-          {money}
-        </Text>
-        <Text c="red" fw={500}>
-          {deadline}
-        </Text>
-      </Group>
+
       <Button color="blue" fullWidth mt="md" radius="md" variant="light">
         Details
       </Button>
+      <Button onClick={() => onStatusClick(status)}>{status.toUpperCase()}</Button>
     </Card>
   );
 };
 
-export default ExploreCard;
+export default ProposalExploreCard;

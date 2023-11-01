@@ -32,7 +32,9 @@ export class PrizeProposalsService {
     return await this.prizeProposalsRepository.find();
   }
 
-  async findAllWithPagination(paginationOptions: IPaginationOptions) {
+  async findAllWithPagination(
+    paginationOptions: IPaginationOptions<PrizeProposals>,
+  ) {
     return this.prizeProposalsRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
@@ -40,8 +42,34 @@ export class PrizeProposalsService {
     });
   }
 
+  async findAllPendingWithPagination(
+    paginationOptions: IPaginationOptions<PrizeProposals>,
+  ) {
+    return this.prizeProposalsRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      relations: ['user'],
+      where: paginationOptions.where,
+    });
+  }
+  async findByUserNameWithPagination(
+    paginationOptions: IPaginationOptions<PrizeProposals>,
+    username: string,
+  ) {
+    return this.prizeProposalsRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: {
+        user: {
+          username,
+        },
+      },
+      relations: ['user'],
+    });
+  }
+
   async findByUserWithPagination(
-    paginationOptions: IPaginationOptions,
+    paginationOptions: IPaginationOptions<PrizeProposals>,
     authId: string,
   ) {
     return this.prizeProposalsRepository.find({
@@ -80,8 +108,8 @@ export class PrizeProposalsService {
     await this.prizeProposalsRepository.update(id, {
       isApproved: true,
     });
-
-    // await this.mailService.approved(prizeProposal.user.email);
+    prizeProposal.isApproved = true;
+    return prizeProposal;
   }
 
   async reject(id: string, comment: string) {
@@ -92,8 +120,9 @@ export class PrizeProposalsService {
     await this.prizeProposalsRepository.update(id, {
       isApproved: false,
     });
+    prizeProposal.isApproved = false;
     console.log(comment);
-
+    return prizeProposal;
     // await this.mailService.rejected(prizeProposal.user.email, comment);
   }
 

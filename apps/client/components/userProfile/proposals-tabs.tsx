@@ -1,3 +1,5 @@
+import { PrizeProposals } from '@/lib/api';
+import { ProposalStatus } from '@/lib/types';
 import { Box, Button, Group, Menu, SimpleGrid, Text } from '@mantine/core';
 import {
   IconArrowsLeftRight,
@@ -7,9 +9,26 @@ import {
   IconSettings,
   IconTrash,
 } from '@tabler/icons-react';
-import ExploreCard from '../ExplorePrize/explorePrize';
+import ProposalExploreCard from '../ExplorePrize/proposalExploreCard';
 
-export default function ProposalsTabs() {
+export default function ProposalsTabs({
+  data,
+  isSuccess,
+}: {
+  data?: PrizeProposals[];
+  isSuccess: boolean;
+}) {
+  const getProposalStatus = (item: PrizeProposals): ProposalStatus => {
+    if (data) {
+      if (item.isApproved) {
+        return 'approved';
+      } else if (item.isRejected) {
+        return `rejected`;
+      }
+      return 'pending';
+    }
+    return 'pending';
+  };
   return (
     <Box p="md">
       <Group justify="space-between" px="md">
@@ -41,76 +60,35 @@ export default function ProposalsTabs() {
         </Menu>
       </Group>
       <SimpleGrid cols={3} my="md">
-        <ExploreCard
-          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-          title="yourTitle"
-          profileName="yourProfileName"
-          description="shortDescription goes here shortDescription goes
-           here short Description goes here shortDescription goes here
-            short Description goes here shortDescription goes here shortDescription goes here "
-          money="$500"
-          deadline="yourDeadline"
-        />
-        <ExploreCard
-          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-          title="yourTitle"
-          profileName="yourProfileName"
-          description="shortDescription goes here shortDescription goes
-           here short Description goes here shortDescription goes here
-            short Description goes here shortDescription goes here shortDescription goes here "
-          money="$500"
-          deadline="yourDeadline"
-        />
-        <ExploreCard
-          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-          title="yourTitle"
-          profileName="yourProfileName"
-          description="shortDescription goes here shortDescription goes
-           here short Description goes here shortDescription goes here
-            short Description goes here shortDescription goes here shortDescription goes here "
-          money="$500"
-          deadline="yourDeadline"
-        />
-        <ExploreCard
-          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-          title="yourTitle"
-          profileName="yourProfileName"
-          description="shortDescription goes here shortDescription goes
-           here short Description goes here shortDescription goes here
-            short Description goes here shortDescription goes here shortDescription goes here "
-          money="$500"
-          deadline="yourDeadline"
-        />
-        <ExploreCard
-          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-          title="yourTitle"
-          profileName="yourProfileName"
-          description="shortDescription goes here shortDescription goes
-           here short Description goes here shortDescription goes here
-            short Description goes here shortDescription goes here shortDescription goes here "
-          money="$500"
-          deadline="yourDeadline"
-        />
-        <ExploreCard
-          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-          title="yourTitle"
-          profileName="yourProfileName"
-          description="shortDescription goes here shortDescription goes
-           here short Description goes here shortDescription goes here
-            short Description goes here shortDescription goes here shortDescription goes here "
-          money="$500"
-          deadline="yourDeadline"
-        />
-        <ExploreCard
-          imageUrl="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80"
-          title="yourTitle"
-          profileName="yourProfileName"
-          description="shortDescription goes here shortDescription goes
-           here short Description goes here shortDescription goes here
-            short Description goes here shortDescription goes here shortDescription goes here "
-          money="$500"
-          deadline="yourDeadline"
-        />
+        {isSuccess ? (
+          data?.map((item) => (
+            <ProposalExploreCard
+              status={getProposalStatus(item)}
+              key={item.id}
+              imageUrl={item.images[0]}
+              description={item.description}
+              onStatusClick={(status) => {
+                switch (status) {
+                  case 'pending':
+                    console.log('pending');
+                    break;
+                  case 'approved':
+                    console.log('approved');
+                    break;
+                  case 'rejected':
+                    console.log('rejected');
+                    break;
+                  default:
+                    break;
+                }
+              }}
+              profileName={item.user.username}
+              title={item.title}
+            />
+          ))
+        ) : (
+          <Text>No Proposals</Text>
+        )}
       </SimpleGrid>
     </Box>
   );

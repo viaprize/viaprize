@@ -13,3 +13,5 @@ export interface PactDetail {
   terms: string;
   transactionHash: string;
 }
+
+export type ProposalStatus = 'pending' | 'approved' | 'rejected';

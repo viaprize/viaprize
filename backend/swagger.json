@@ -350,24 +350,24 @@
         "x-nestia-method": "POST"
       }
     },
-    "/prizes/proposals/user/{userId}": {
+    "/prizes/proposals/accept": {
       "get": {
         "tags": [],
         "parameters": [
           {
-            "name": "query",
+            "name": "page",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/PrzieQuery"
+              "type": "number"
             },
             "description": "",
             "required": true
           },
           {
-            "name": "userId",
-            "in": "path",
+            "name": "limit",
+            "in": "query",
             "schema": {
-              "type": "string"
+              "type": "number"
             },
             "description": "",
             "required": true
@@ -386,9 +386,134 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Get pending proposals,",
-        "description": "Get pending proposal of user",
-        "x-nestia-namespace": "prizes.proposals.user.getProposalsBy",
+        "summary": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
+        "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "prizes.proposals.accept.getAcceptedProposals",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:06:45 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "1} this is the page number of the return pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "10} this is the limit of the return type of the pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/proposals/user/{username}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type.o2"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Get all proposals of users by username,",
+        "description": "Get all proposals  of user  by username",
+        "x-nestia-namespace": "prizes.proposals.user.getProposalsByUsername",
         "x-nestia-jsDocTags": [
           {
             "name": "date",
@@ -403,7 +528,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Get pending proposals,",
+                "text": "Get all proposals of users by username,",
                 "kind": "text"
               }
             ]
@@ -415,7 +540,32 @@
             "name": "param",
             "text": [
               {
-                "text": "query",
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "1} this is the page number of the return pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "10} this is the limit of the return type of the pending proposals",
                 "kind": "text"
               }
             ]
@@ -464,6 +614,13 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
@@ -548,11 +705,18 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
         "summary": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `prizeProposalsService` with the given `id`",
-        "description": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `prizeProposalsService` with the given `id`.",
+        "description": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `prizeProposalsService` with the given `id`. and it approves the proposal\nand sends an email of approval",
         "security": [
           {
             "bearer": []
@@ -1084,7 +1248,6 @@
           "data",
           "hasNextPage"
         ],
-        "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
       "PrizeProposals": {
@@ -1117,6 +1280,11 @@
           },
           "isApproved": {
             "description": "The Columns here are not part of the smart contract",
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "isRejected": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "boolean"
@@ -1189,6 +1357,7 @@
           "submission_time",
           "admins",
           "isApproved",
+          "isRejected",
           "title",
           "description",
           "isAutomatic",
@@ -1408,6 +1577,30 @@
         ],
         "x-typia-jsDocTags": []
       },
+      "Readonly__type.o1": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizeProposals"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "x-typia-jsDocTags": []
+      },
       "CreatePrizeProposalDto": {
         "type": "object",
         "properties": {
@@ -1532,29 +1725,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "PrzieQuery": {
-        "type": "object",
-        "properties": {
-          "page": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "limit": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "page",
-          "limit"
-        ],
-        "description": "The PrizeProposalsPaginationResult class is a TypeScript implementation of the\nInfinityPaginationResultType interface, representing the result of paginated prize proposals with\nproperties for data, hasNextPage, results, total, page, and limit.",
-        "x-typia-jsDocTags": []
-      },
-      "Readonly__type.o1": {
+      "Readonly__type.o2": {
         "type": "object",
         "properties": {
           "data": {
@@ -1576,7 +1747,6 @@
           "data",
           "hasNextPage"
         ],
-        "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
       "RejectProposalDto": {
@@ -1591,6 +1761,21 @@
         "nullable": false,
         "required": [
           "comment"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Http200Response": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "message"
         ],
         "x-typia-jsDocTags": []
       },

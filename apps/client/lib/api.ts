@@ -1,4 +1,4 @@
-/* eslint-disable -- Everything is a lie */
+/* eslint-disable */
 /* tslint:disable */
 /*
  * ---------------------------------------------------------------
@@ -47,7 +47,6 @@ export type PactNullable = {
   blockHash: string;
 } | null;
 
-/** Make all properties in T readonly */
 export interface ReadonlyType {
   data: PrizeProposals[];
   hasNextPage: boolean;
@@ -60,6 +59,7 @@ export interface PrizeProposals {
   admins: string[];
   /** The Columns here are not part of the smart contract */
   isApproved: boolean;
+  isRejected: boolean;
   title: string;
   description: string;
   isAutomatic: boolean;
@@ -112,6 +112,11 @@ export interface Prize {
   submissions: Submission[];
 }
 
+export interface ReadonlyTypeO1 {
+  data: PrizeProposals[];
+  hasNextPage: boolean;
+}
+
 export interface CreatePrizeProposalDto {
   voting_time: number;
   submission_time: number;
@@ -150,24 +155,17 @@ export interface CreatePrizeProposalDto {
   images: string[];
 }
 
-/**
- * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
- * InfinityPaginationResultType interface, representing the result of paginated prize proposals with
- * properties for data, hasNextPage, results, total, page, and limit.
- */
-export interface PrzieQuery {
-  page: number;
-  limit: number;
-}
-
-/** Make all properties in T readonly */
-export interface ReadonlyTypeO1 {
+export interface ReadonlyTypeO2 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
 
 export interface RejectProposalDto {
   comment: string;
+}
+
+export interface Http200Response {
+  message: string;
 }
 
 /** Interface of Create User , using this interface it create a new user in */
@@ -503,26 +501,48 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description Get pending proposal of user
-     *
-     * @name ProposalsUserDetail
-     * @summary Get pending proposals,
-     * @request GET:/prizes/proposals/user/{userId}
-     */
-    proposalsUserDetail: (
-      userId: string,
+ * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does: Gets page
+ *
+ * @name ProposalsAcceptList
+ * @summary Retrieve a list of accepted prize proposals
+description: Retrieve a list of accepted prize proposals. The list supports pagination.
+parameters
+ * @request GET:/prizes/proposals/accept
+ * @secure
+ */
+    proposalsAcceptList: (
       query: {
-        /**
-         * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
-         * InfinityPaginationResultType interface, representing the result of paginated prize proposals with
-         * properties for data, hasNextPage, results, total, page, and limit.
-         */
-        query: PrzieQuery;
+        page: number;
+        limit: number;
       },
       params: RequestParams = {},
     ) =>
       this.request<ReadonlyTypeO1, any>({
-        path: `/prizes/proposals/user/${userId}`,
+        path: `/prizes/proposals/accept`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get all proposals  of user  by username
+     *
+     * @name ProposalsUserDetail
+     * @summary Get all proposals of users by username,
+     * @request GET:/prizes/proposals/user/{username}
+     */
+    proposalsUserDetail: (
+      username: string,
+      query: {
+        page: number;
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReadonlyTypeO2, any>({
+        path: `/prizes/proposals/user/${username}`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -542,17 +562,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: RejectProposalDto,
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<Http200Response, any>({
         path: `/prizes/proposals/reject/${id}`,
         method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
     /**
- * @description The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls the `approve` method of the `prizeProposalsService` with the given `id`.
+ * @description The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls the `approve` method of the `prizeProposalsService` with the given `id`. and it approves the proposal and sends an email of approval
  *
  * @name ProposalsAcceptCreate
  * @summary The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls
@@ -561,10 +582,11 @@ the `approve` method of the `prizeProposalsService` with the given `id`
  * @secure
  */
     proposalsAcceptCreate: (id: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<Http200Response, any>({
         path: `/prizes/proposals/accept/${id}`,
         method: 'POST',
         secure: true,
+        format: 'json',
         ...params,
       }),
   };

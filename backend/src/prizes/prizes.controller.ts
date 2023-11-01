@@ -9,8 +9,9 @@ import {
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
-import { TypedBody, TypedParam, TypedQuery } from '@nestia/core';
+import { TypedBody, TypedParam } from '@nestia/core';
 import { MailService } from 'src/mail/mail.service';
+import { Http200Response } from 'src/utils/types/http.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
@@ -39,10 +40,6 @@ import { PrizeProposals } from './entities/prize-proposals.entity';
 //   limit: number;
 // }
 
-interface PrzieQuery {
-  page: number;
-  limit: number;
-}
 /**
  * This is the prizes controller class.
  * it handles the documentation of routes and implementation of services related to the prizes route.
@@ -83,9 +80,57 @@ export class PrizesController {
     }>
   > {
     return infinityPagination(
-      await this.prizeProposalsService.findAllWithPagination({
+      await this.prizeProposalsService.findAllPendingWithPagination({
         page,
         limit,
+        where: {
+          isApproved: false,
+          isRejected: false,
+        },
+      }),
+      {
+        page,
+        limit,
+      },
+    );
+  }
+  /**
+   * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
+   * for the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:
+   * Gets page
+   *
+   * @summary Retrieve a list of accepted prize proposals
+   * description: Retrieve a list of accepted prize proposals. The list supports pagination.
+   * parameters
+   *
+   * @date 9/25/2023 - 4:06:45 AM
+   * @security bearer
+   * @async
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
+   * @returns {Promise<Readonly<{data: PrizeProposals[];hasNextPage: boolean;}>>}
+   */
+  @Get('/proposals/accept')
+  @UseGuards(AdminAuthGuard)
+  async getAcceptedProposals(
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
+  ): Promise<
+    Readonly<{
+      data: PrizeProposals[];
+      hasNextPage: boolean;
+    }>
+  > {
+    return infinityPagination(
+      await this.prizeProposalsService.findAllPendingWithPagination({
+        page,
+        limit,
+        where: {
+          isApproved: true,
+          isRejected: false,
+        },
       }),
       {
         page,
@@ -131,38 +176,39 @@ export class PrizesController {
   }
 
   /**
-   * Get pending proposal of user 
+   * Get all proposals  of user  by username
    * @date 9/25/2023 - 4:47:51 AM
-   * @summary Get pending proposals,
-   * @async 
-   * @param {PrzieQuery} [query={
-        page: 1,
-        limit: 10
-      }]
+   * @summary Get all proposals of users by username,
+   * @async
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
    * @param {string} userId
    * @returns {Promise<InfinityPaginationResultType<PrizeProposals>>}
    */
-  @Get('/proposals/user/:userId')
-  async getProposalsBy(
-    @TypedQuery()
-    query: PrzieQuery = {
-      page: 1,
-      limit: 10,
-    },
-    @TypedParam('userId') userId: string,
+  @Get('/proposals/user/:username')
+  async getProposalsByUsername(
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
+    @TypedParam('username') username: string,
   ): Promise<InfinityPaginationResultType<PrizeProposals>> {
-    if (query.limit > 50) {
-      query.limit = 50;
+    if (limit > 50) {
+      limit = 50;
     }
 
     return infinityPagination(
-      await this.prizeProposalsService.findByUserWithPagination(
+      await this.prizeProposalsService.findByUserNameWithPagination(
         {
-          ...query,
+          limit,
+          page,
         },
-        userId,
+        username,
       ),
-      { ...query },
+      {
+        page,
+        limit,
+      },
     );
   }
 
@@ -174,32 +220,53 @@ export class PrizesController {
    * @param {string} id
    * @security bearer
    * @param {RejectProposalDto} rejectProposalDto
-   * @returns {unknown}
+   * @returns {Promise<Http200Response>}
    */
   @Post('/proposals/reject/:id')
   @UseGuards(AdminAuthGuard)
   async rejectProposal(
     @TypedParam('id') id: string,
     @TypedBody() rejectProposalDto: RejectProposalDto,
-  ) {
-    return await this.prizeProposalsService.reject(
+  ): Promise<Http200Response> {
+    const prizeProposal = await this.prizeProposalsService.reject(
       id,
       rejectProposalDto.comment,
     );
+    await this.mailService.rejected(
+      prizeProposal.user.email,
+      prizeProposal.user.email,
+      rejectProposalDto.comment,
+    );
+    return {
+      message: `Proposal with id ${id} has been rejected`,
+    };
   }
 
   /**
    * The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls
-   * the `approve` method of the `prizeProposalsService` with the given `id`.
+   * the `approve` method of the `prizeProposalsService` with the given `id`. and it approves the proposal
+   * and sends an email of approval
    * @date 9/25/2023 - 5:35:35 AM
    * @security bearer
    * @async
    * @param {string} id
-   * @returns {unknown}
+   * @returns {Promise<Http200Response>}
    */
   @Post('/proposals/accept/:id')
   @UseGuards(AdminAuthGuard)
-  async approveProposal(@TypedParam('id') id: string) {
-    return await this.prizeProposalsService.approve(id);
+  async approveProposal(
+    @TypedParam('id') id: string,
+  ): Promise<Http200Response> {
+    const proposal = await this.prizeProposalsService.approve(id);
+    await this.mailService.approved(
+      proposal.user.email,
+      proposal.user.name,
+      proposal.title,
+      proposal.description,
+      `Link is not implemented yet`,
+    );
+    return {
+      message: `Proposal with id ${id} has been accepted`,
+    };
   }
 }

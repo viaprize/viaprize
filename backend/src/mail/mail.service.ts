@@ -5,18 +5,20 @@ import { MailerService } from 'src/mailer/mailer.service';
 
 @Injectable()
 export class MailService {
+  telegramLink: string;
   constructor(
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService<AllConfigType>,
-  ) {}
-  async welcome(email: string, name: string) {
-    console.log(email, name, 'emailll');
-    const telegramLink = this.configService.getOrThrow<AllConfigType>(
+  ) {
+    this.telegramLink = this.configService.getOrThrow<AllConfigType>(
       'TELEGRAM_LINK',
       {
         infer: true,
       },
     );
+  }
+
+  async welcome(email: string, name: string) {
     await this.mailerService.sendMail({
       to: email,
       subject: 'Welcome to the Viaprize',
@@ -24,7 +26,7 @@ export class MailService {
       templateName: 'welcome.hbs',
       context: {
         name,
-        telegramLink,
+        telegramLink: this.telegramLink,
       },
     });
   }
@@ -43,34 +45,33 @@ export class MailService {
     proposalDescription: string,
     proposalLink: string,
   ) {
-    const telegramLink = this.configService.getOrThrow<AllConfigType>(
-      'TELEGRAM_LINK',
-      {
-        infer: true,
-      },
-    );
     await this.mailerService.sendMail({
       to: to,
       subject: 'Hi your proposal was approved',
-      text: `Viaprize `,
+
       templateName: 'approved.hbs',
       context: {
         name,
         proposalTitle,
         proposalDescription,
         proposalLink,
-        telegramLink,
+        telegramLink: this.telegramLink,
       },
     });
   }
 
-  // async rejected(to: string, comment: string) {
-  //   // await this.mailerService.sendSimpleMail({
-  //   //   to,
-  //   //   subject: `Hi your proposal was rejected `,
-  //   //   text: `${comment} \n This is why your proposal was rejected`,
-  //   // });
-  // }
+  async rejected(to: string, name: string, comment: string) {
+    await this.mailerService.sendMail({
+      to: to,
+      subject: 'Your Proposal was Rejected',
+      templateName: 'rejected.hbs',
+      context: {
+        name,
+        comment,
+        telegramLink: this.telegramLink,
+      },
+    });
+  }
   async proposalSent(
     to: string,
     name: string,
@@ -78,13 +79,6 @@ export class MailService {
     proposalDescription: string,
     submissionDate: string,
   ) {
-    const telegramLink = this.configService.getOrThrow<AllConfigType>(
-      'TELEGRAM_LINK',
-      {
-        infer: true,
-      },
-    );
-
     await this.mailerService.sendMail({
       to: to,
       subject: 'Hi your proposal is sent',
@@ -93,7 +87,7 @@ export class MailService {
         proposalTitle,
         proposalDescription,
         submissionDate,
-        telegramLink,
+        telegramLink: this.telegramLink,
       },
       templateName: 'proposalSent.hbs',
     });

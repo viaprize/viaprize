@@ -1,21 +1,7 @@
-// import { useQuery, useMutation } from 'react-query';
-// import axios from 'axios';
-// import myAxios from '@/lib/axios';
 import { makeStorageClient } from '@/components/_providers/WebClient';
-import { CreatePrizeProposalDto, PrizeProposals, PrzieQuery } from '@/lib/api';
-import myAxios from '@/lib/axios';
-import { backendApi, backendApiWithAuth } from '@/lib/backend';
-import { usePrivy } from '@privy-io/react-auth';
+import { CreatePrizeProposalDto, PrizeProposals } from '@/lib/api';
+import { backendApi } from '@/lib/backend';
 import { useState } from 'react';
-
-/* eslint-disable @typescript-eslint/no-explicit-any -- needed this for the function */
-function objectToRecord(obj: Record<string, any>): Record<string, string> {
-  return Object.entries(obj).reduce<Record<string, string>>((record, [key, value]) => {
-    /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
-    record[key] = value.toString();
-    return record;
-  }, {});
-}
 
 async function storeFiles(files: File[]) {
   const client = makeStorageClient();
@@ -27,6 +13,10 @@ async function storeFiles(files: File[]) {
   const url = `https://dweb.link/ipfs/${cid}/${files[0].name}`;
   console.log('URL of the uploaded image:', url);
   return url;
+}
+interface PrzieQuery {
+  limit: number;
+  page: number;
 }
 
 // const addProsposal = async (data: Proposal) => {
@@ -51,9 +41,9 @@ async function storeFiles(files: File[]) {
 
 export default function usePrizeProposal() {
   const [proposals] = useState<PrizeProposals[]>();
-  const { user } = usePrivy();
+
   const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
-    const res = backendApi.prizes.proposalsCreate(proposalDto);
+    const res = await (await backendApi()).prizes.proposalsCreate(proposalDto);
     return res;
   };
 
@@ -67,18 +57,13 @@ export default function usePrizeProposal() {
       limit: 10,
       page: 1,
     },
+    username: string,
   ) => {
-    const record: Record<string, string> = objectToRecord(queryParams);
-    const queryString = new URLSearchParams(record);
-    if (!user) {
-      // throw new Error('Privy User not available')
-      return;
-    }
-    const res = await myAxios.get(
-      `/prizes/proposals/user/${user.id}${queryString.toString()}`,
-    );
+    const res = await (
+      await backendApi()
+    ).prizes.proposalsUserDetail(username, queryParams);
     console.log('res', 'acxi0', res);
-    return res.data as PrizeProposals[];
+    return res.data.data;
   };
 
   const getAllProposals = async (
@@ -88,7 +73,7 @@ export default function usePrizeProposal() {
     },
   ) => {
     const res = await (
-      await backendApiWithAuth()
+      await backendApi()
     ).prizes.proposalsList({
       limit: queryParam.limit,
       page: queryParam.page,
@@ -99,7 +84,7 @@ export default function usePrizeProposal() {
   };
 
   const acceptProposal = async (proposalId: string) => {
-    const res = await myAxios.post(`/prizes/proposals/${proposalId}/accept`);
+    const res = await (await backendApi()).prizes.proposalsAcceptCreate(proposalId);
     return res.data;
   };
   const rejectProposal = async ({
@@ -109,12 +94,32 @@ export default function usePrizeProposal() {
     proposalId: string;
     comment: string;
   }) => {
-    const res = await myAxios.post(`/prizes/proposals/${proposalId}/reject`, {
+    console.log('loggg reject');
+    const res = await (
+      await backendApi()
+    ).prizes.proposalsRejectCreate(proposalId, {
       comment,
     });
+    console.log({ res }, 'res isn ajfslj');
     return res.data;
   };
 
+  const getAcceptedProposals = async (
+    queryParam: PrzieQuery = {
+      limit: 10,
+      page: 1,
+    },
+  ) => {
+    const res = await (
+      await backendApi()
+    ).prizes.proposalsAcceptList({
+      limit: queryParam.limit,
+      page: queryParam.page,
+    });
+    console.log({ res });
+    console.log(res.data.data);
+    return res.data.data;
+  };
   return {
     addProposals,
     uploadImages,
@@ -123,5 +128,6 @@ export default function usePrizeProposal() {
     getAllProposals,
     acceptProposal,
     rejectProposal,
+    getAcceptedProposals,
   };
 }
