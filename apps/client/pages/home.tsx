@@ -2,6 +2,46 @@ import { Button, Card, Flex } from '@mantine/core';
 import Image from 'next/image';
 import Link from 'next/link';
 import { BiSolidRightArrowCircle } from 'react-icons/bi';
+import type { RenderPhotoProps } from 'react-photo-album';
+import PhotoAlbum from 'react-photo-album';
+
+const photoSizes: number[][] = [
+  [2160, 2160],
+  [2160, 1170],
+  [2160, 1076],
+  [2160, 890],
+  [2160, 984],
+  [2160, 984],
+  [2160, 4260],
+  [2160, 1048],
+  [2160, 1896],
+  [2160, 3840],
+  [2160, 1264],
+];
+
+const breakpoints: number[] = [1080, 640, 384, 256, 128, 96, 64, 48];
+
+const basePath = '/home/tweets/tweet';
+
+const photos: {
+  src: string;
+  width: number;
+  height: number;
+  srcSet: { src: string; width: number; height: number }[];
+}[] = photoSizes.map(([width, height], index) => ({
+  src: `${basePath}${index + 1}.png`,
+  width,
+  height,
+  srcSet: breakpoints.map((breakpoint) => {
+    const scaledHeight = Math.round((height / width) * breakpoint);
+    console.log(basePath);
+    return {
+      src: `${basePath}${index + 1}.png`,
+      width: breakpoint,
+      height: scaledHeight,
+    };
+  }),
+}));
 
 export default function Home() {
   return (
@@ -71,7 +111,6 @@ export default function Home() {
           </div>
         </div>
         {/* How it works */}
-
         <div className="flex flex-col items-center">
           <h1 className="text-black capitalize">Why viarprize?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
@@ -119,8 +158,10 @@ export default function Home() {
           </Flex>
         </div>
         {/* Viaprize’s Core Functions  */}
-        <section className="mt-24 flex items-center flex-col gap-3">
-          <h1 className="text-3xl font-bold text-black">Viaprize{"'"}s Core Functions</h1>
+        <section className="my-24 flex items-center flex-col gap-3">
+          <h1 className="text-3xl font-bold text-black">
+            Viaprize&apos;s Core Functions
+          </h1>
           <FunctionCard
             Title="Prize"
             Description="Hey testing is the one of the hello sadlkfjlajsl Hey testing 
@@ -164,6 +205,14 @@ export default function Home() {
             explore="sadlfsafasd"
           />
         </section>
+        <section className='my-12'>
+          <PhotoAlbum
+            layout="masonry"
+            columns={3}
+            photos={photos}
+            renderPhoto={NextJsImage}
+          />
+        </section>
       </div>
     </div>
   );
@@ -171,7 +220,7 @@ export default function Home() {
 
 function ReasonCard({ Title, Description }: { Title: string; Description: string }) {
   return (
-    <Card shadow="sm" padding="lg" radius="lg" className="bg-[#127C9F]">
+    <Card shadow="sm" padding="lg" radius="lg" className="bg-[#486B78]">
       <Card.Section className="p-4 rounded-lg">
         <Image
           src="/placeholder.jpg"
@@ -225,5 +274,26 @@ function FunctionCard({
         </Button>
       </Flex>
     </Card>
+  );
+}
+
+function NextJsImage({
+  photo,
+  imageProps: { alt, title, sizes, onClick },
+  wrapperStyle,
+}: RenderPhotoProps) {
+  return (
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    <div style={{ ...wrapperStyle, position: 'relative' }}>
+      <Image
+        fill
+        className="rounded-lg"
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        src={photo}
+        placeholder={'blurDataURL' in photo ? 'blur' : undefined}
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        {...{ alt, title, sizes, onClick }}
+      />
+    </div>
   );
 }
