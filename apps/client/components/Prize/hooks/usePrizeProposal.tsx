@@ -3,7 +3,6 @@ import { CreatePrizeProposalDto, PrizeProposals } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
 import { useState } from 'react';
 
-
 async function storeFiles(files: File[]) {
   const client = makeStorageClient();
   const cid = await client.put(files);
@@ -16,8 +15,8 @@ async function storeFiles(files: File[]) {
   return url;
 }
 interface PrzieQuery {
-  limit: number,
-  page: number
+  limit: number;
+  page: number;
 }
 
 // const addProsposal = async (data: Proposal) => {
@@ -58,13 +57,13 @@ export default function usePrizeProposal() {
       limit: 10,
       page: 1,
     },
-    username: string
+    username: string,
   ) => {
     const res = await (
       await backendApi()
     ).prizes.proposalsUserDetail(username, queryParams);
     console.log('res', 'acxi0', res);
-    return res.data.data
+    return res.data.data;
   };
 
   const getAllProposals = async (

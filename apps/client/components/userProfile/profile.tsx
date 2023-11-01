@@ -1,4 +1,14 @@
-import { ActionIcon, Avatar, Badge, Box, Button, Group, Loader, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Group,
+  Loader,
+  Stack,
+  Text,
+} from '@mantine/core';
 import {
   IconBrandGithubFilled,
   IconBrandLinkedin,
@@ -9,7 +19,7 @@ import {
 import { useAccount, useBalance } from 'wagmi';
 
 export default function Profile() {
-  const { address } = useAccount()
+  const { address } = useAccount();
   const { data, isLoading, refetch } = useBalance({ address });
   return (
     <div>
@@ -76,10 +86,13 @@ export default function Profile() {
           <Stack>
             <Text w={300} color="" size="lg">
               Balance In Eth :
-              {isLoading ? <Loader color="blue" /> : <Text w={500} color="green" size="xl">
-                {data?.formatted}
-              </Text>}
-
+              {isLoading ? (
+                <Loader color="blue" />
+              ) : (
+                <Text w={500} color="green" size="xl">
+                  {data?.formatted} Eth
+                </Text>
+              )}
             </Text>
             <ActionIcon>
               <IconRefresh onClick={() => refetch()} />
