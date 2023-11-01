@@ -4,9 +4,6 @@ import AppShellLayout from '@/components/layout/appshell';
 import type { ReactElement } from 'react';
 
 function ExplorePage() {
-
-
-
   return (
     <div className="max-w-screen-xl">
       <SearchFilters />
