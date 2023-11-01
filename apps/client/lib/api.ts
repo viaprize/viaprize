@@ -155,16 +155,6 @@ export interface CreatePrizeProposalDto {
   images: string[];
 }
 
-/**
- * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
- * InfinityPaginationResultType interface, representing the result of paginated prize proposals with
- * properties for data, hasNextPage, results, total, page, and limit.
- */
-export interface PrzieQuery {
-  page: number;
-  limit: number;
-}
-
 export interface ReadonlyTypeO2 {
   data: PrizeProposals[];
   hasNextPage: boolean;
@@ -537,26 +527,22 @@ parameters
       }),
 
     /**
-     * @description Get pending proposal of user
+     * @description Get all proposals  of user  by username
      *
      * @name ProposalsUserDetail
-     * @summary Get pending proposals,
-     * @request GET:/prizes/proposals/user/{userId}
+     * @summary Get all proposals of users by username,
+     * @request GET:/prizes/proposals/user/{username}
      */
     proposalsUserDetail: (
-      userId: string,
+      username: string,
       query: {
-        /**
-         * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
-         * InfinityPaginationResultType interface, representing the result of paginated prize proposals with
-         * properties for data, hasNextPage, results, total, page, and limit.
-         */
-        query: PrzieQuery;
+        page: number;
+        limit: number;
       },
       params: RequestParams = {},
     ) =>
       this.request<ReadonlyTypeO2, any>({
-        path: `/prizes/proposals/user/${userId}`,
+        path: `/prizes/proposals/user/${username}`,
         method: 'GET',
         query: query,
         format: 'json',

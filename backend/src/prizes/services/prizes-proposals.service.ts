@@ -52,6 +52,21 @@ export class PrizeProposalsService {
       where: paginationOptions.where,
     });
   }
+  async findByUserNameWithPagination(
+    paginationOptions: IPaginationOptions<PrizeProposals>,
+    username: string,
+  ) {
+    return this.prizeProposalsRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: {
+        user: {
+          username,
+        },
+      },
+      relations: ['user'],
+    });
+  }
 
   async findByUserWithPagination(
     paginationOptions: IPaginationOptions<PrizeProposals>,

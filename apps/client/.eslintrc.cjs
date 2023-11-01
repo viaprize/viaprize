@@ -65,6 +65,7 @@ const config = {
     // ],
     'no-alert': 'warn',
     'react/button-has-type': 'off',
+    '@typescript-eslint/default-param-last': 'off',
   },
 };
 

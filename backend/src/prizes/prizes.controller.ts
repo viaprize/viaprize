@@ -9,7 +9,7 @@ import {
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
-import { TypedBody, TypedParam, TypedQuery } from '@nestia/core';
+import { TypedBody, TypedParam } from '@nestia/core';
 import { MailService } from 'src/mail/mail.service';
 import { Http200Response } from 'src/utils/types/http.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
@@ -40,10 +40,6 @@ import { PrizeProposals } from './entities/prize-proposals.entity';
 //   limit: number;
 // }
 
-interface PrzieQuery {
-  page: number;
-  limit: number;
-}
 /**
  * This is the prizes controller class.
  * it handles the documentation of routes and implementation of services related to the prizes route.
@@ -180,38 +176,39 @@ export class PrizesController {
   }
 
   /**
-   * Get pending proposal of user 
+   * Get all proposals  of user  by username
    * @date 9/25/2023 - 4:47:51 AM
-   * @summary Get pending proposals,
-   * @async 
-   * @param {PrzieQuery} [query={
-        page: 1,
-        limit: 10
-      }]
+   * @summary Get all proposals of users by username,
+   * @async
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
    * @param {string} userId
    * @returns {Promise<InfinityPaginationResultType<PrizeProposals>>}
    */
-  @Get('/proposals/user/:userId')
-  async getProposalsBy(
-    @TypedQuery()
-    query: PrzieQuery = {
-      page: 1,
-      limit: 10,
-    },
-    @TypedParam('userId') userId: string,
+  @Get('/proposals/user/:username')
+  async getProposalsByUsername(
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
+    @TypedParam('username') username: string,
   ): Promise<InfinityPaginationResultType<PrizeProposals>> {
-    if (query.limit > 50) {
-      query.limit = 50;
+    if (limit > 50) {
+      limit = 50;
     }
 
     return infinityPagination(
-      await this.prizeProposalsService.findByUserWithPagination(
+      await this.prizeProposalsService.findByUserNameWithPagination(
         {
-          ...query,
+          limit,
+          page,
         },
-        userId,
+        username,
       ),
-      { ...query },
+      {
+        page,
+        limit,
+      },
     );
   }
 

@@ -1,17 +1,8 @@
 import { makeStorageClient } from '@/components/_providers/WebClient';
-import { CreatePrizeProposalDto, PrizeProposals, PrzieQuery } from '@/lib/api';
-import myAxios from '@/lib/axios';
+import { CreatePrizeProposalDto, PrizeProposals } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
-import { usePrivy } from '@privy-io/react-auth';
 import { useState } from 'react';
-/* eslint-disable @typescript-eslint/no-explicit-any -- needed this for the function */
-function objectToRecord(obj: Record<string, any>): Record<string, string> {
-  return Object.entries(obj).reduce<Record<string, string>>((record, [key, value]) => {
-    /* eslint-disable @typescript-eslint/no-unsafe-assignment -- needed this for the function */
-    record[key] = value.toString();
-    return record;
-  }, {});
-}
+
 
 async function storeFiles(files: File[]) {
   const client = makeStorageClient();
@@ -23,6 +14,10 @@ async function storeFiles(files: File[]) {
   const url = `https://dweb.link/ipfs/${cid}/${files[0].name}`;
   console.log('URL of the uploaded image:', url);
   return url;
+}
+interface PrzieQuery {
+  limit: number,
+  page: number
 }
 
 // const addProsposal = async (data: Proposal) => {
@@ -47,7 +42,7 @@ async function storeFiles(files: File[]) {
 
 export default function usePrizeProposal() {
   const [proposals] = useState<PrizeProposals[]>();
-  const { user } = usePrivy();
+
   const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
     const res = await (await backendApi()).prizes.proposalsCreate(proposalDto);
     return res;
@@ -63,18 +58,13 @@ export default function usePrizeProposal() {
       limit: 10,
       page: 1,
     },
+    username: string
   ) => {
-    const record: Record<string, string> = objectToRecord(queryParams);
-    const queryString = new URLSearchParams(record);
-    if (!user) {
-      // throw new Error('Privy User not available')
-      return;
-    }
-    const res = await myAxios.get(
-      `/prizes/proposals/user/${user.id}${queryString.toString()}`,
-    );
+    const res = await (
+      await backendApi()
+    ).prizes.proposalsUserDetail(username, queryParams);
     console.log('res', 'acxi0', res);
-    return res.data as PrizeProposals[];
+    return res.data.data
   };
 
   const getAllProposals = async (
