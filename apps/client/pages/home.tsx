@@ -205,7 +205,18 @@ export default function Home() {
             explore="sadlfsafasd"
           />
         </section>
-        <section className='my-12'>
+        <section className="my-12 gap-3 ">
+          <div className=" flex flex-col items-center" />
+          <h1 className="w-96 text-3xl font-bold text-black">
+            Tons of love who are building and working with Viaprize
+          </h1>
+          <Link
+            href="https://t.me/viaprize"
+            className="text-black text-xl font-normal mb-[100px]"
+          >
+            Join Community
+          </Link>
+          <div className='my-4'/>
           <PhotoAlbum
             layout="masonry"
             columns={3}
