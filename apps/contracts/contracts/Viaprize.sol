@@ -37,8 +37,17 @@ import "./SubmissionAVLTree.sol";
 ·--------------------------------------------|-------------|-------------|-------------|---------------|-------------·
 */
 
+
+library SubmissionLibrary {
+    function deploySubmission() external returns(address) {
+        SubmissionAVLTree new_SubmissionAVLTree = new SubmissionAVLTree();
+        return address(new_SubmissionAVLTree);
+    }
+}
+
+
 contract ViaPrize {
-    /// @notice this will be the total amount of funds raised
+        /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
     /// @notice this will be the total amount of rewards available
     uint256 public total_rewards; 
@@ -53,7 +62,9 @@ contract ViaPrize {
     /// @notice this will be the time that the submission period ends
     uint256 submission_time;
     /// @notice  this will be a mapping of the addresses of the admins to a boolean value of true or false
-    mapping (address => bool) public admins; 
+    mapping (address => bool) public isAdmin;
+    /// @notice array of admins;
+    address[] public admins;
     /// @notice this will be a mapping of the addresses of the funders to the amount of eth they have contributed
     mapping (address => uint256) public funders;
     /// @notice Add a new mapping to store each funder's votes on each submission
@@ -67,24 +78,21 @@ contract ViaPrize {
     uint platformFee;
 
     bool votingPeriod = false;
-
-    uint[] public paisalEtuPothunnaiRa;
         
-    address[] public Platformadmins;
+    address[] public platformAdmins;
     mapping(address => bool) public isPlatformAdmin;
 
     ///@notice to test the things i am hardcoding this proposer contract
-    address public constant PROPOSER_ADDRESS = 0x583031D1113aD414F02576BD6afaBfb302140225;
+    address public proposerAddress;
 
 
     /// @notice this will be the address of the platform
-    address public constant PLATFORM_ADDRESS = 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C; 
+    address public platformAddress;
 
     /// @notice / @notice submissionTree contract
     SubmissionAVLTree private submissionTree;
-
+ 
     // Errors
-
     /// @notice not admin error
     error NotAdmin();
 
@@ -125,15 +133,21 @@ contract ViaPrize {
     error VotingPeriodActive();
 
 
-    constructor(address submissionContract, uint _platFormFee, uint _proposerFee) {
+    constructor(address[] memory _admins, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress) {
         /// @notice add as many admins as you need to -- replace msg.sender with the address of the admin(s) for now this means the deployer will be the sole admin
-        admins[msg.sender] = true;
-        Platformadmins = [0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2, 0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db];
-        for (uint i = 0; i < Platformadmins.length; i++) {
-            isPlatformAdmin[Platformadmins[i]] = true;
+        
+        for(uint i=0; i<_admins.length; i++) {
+            admins.push(_admins[i]);
+            isAdmin[_admins[i]] = true;
+        }
+        proposerAddress = admins[0];
+        platformAddress = _platformAddress;
+        for (uint i = 0; i < _platformAdmins.length; i++) {
+            platformAdmins.push(_platformAdmins[i]);
+            isPlatformAdmin[_platformAdmins[i]] = true;
         }
         /// @notice  Initialize the submissionTree
-        submissionTree = SubmissionAVLTree(submissionContract); 
+        submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission());
         proposerFee = _proposerFee;
         platformFee = _platFormFee;
     }
@@ -146,15 +160,11 @@ contract ViaPrize {
 
     /// @notice create a function to start the submission period
     function start_submission_period(uint256 _submission_time) public {
-        if(admins[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+        if(isAdmin[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
 
         /// @notice submission time will be in days
         submission_time = block.timestamp + _submission_time * 1 days;
      
-    }
-
-    function getAdmin(address _address) public view returns (bool) {
-        return admins[_address];
     }
 
     /// @notice getter for submission time
@@ -167,14 +177,14 @@ contract ViaPrize {
         return voting_time;
     }
 
-    function end_submission_period() public {
+    function end_submission_period() public onlyPlatformAdmin {
         if(submission_time == 0) revert SubmissionPeriodNotActive();
         submission_time = 0;
     }
 
     /// @notice start the voting period 
     function start_voting_period(uint256 _voting_time) public {
-        if(admins[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+        if(isAdmin[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(block.timestamp < submission_time) revert SubmissionPeriodActive();
 
         /// @notice voting time also in days
@@ -184,14 +194,14 @@ contract ViaPrize {
     }
 
     function end_voting_period() public onlyPlatformAdmin {
-        // if(voting_time == 0) revert VotingPeriodNotActive();
+        if(voting_time == 0) revert VotingPeriodNotActive();
         voting_time = 0;
         distributeRewards();
     }
 
     /// @notice Distribute rewards
     function distributeRewards() private {
-        if(admins[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+        if(isAdmin[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(distributed == true) revert RewardsAlreadyDistributed();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         platform_reward = (total_funds * platformFee ) / 100;
@@ -200,7 +210,6 @@ contract ViaPrize {
         for (uint256 i = 0; i < allSubmissions.length;) {
             if (allSubmissions[i].funded) {
                 uint256 reward = (allSubmissions[i].votes * (100-proposerFee-platformFee)) / 100;
-                paisalEtuPothunnaiRa.push(reward);
                 total_rewards -= reward;
                 payable(allSubmissions[i].submitter).transfer(reward);
             } 
@@ -214,8 +223,8 @@ contract ViaPrize {
         uint256 send_proposer_reward = proposer_reward;
         proposer_reward = 0;
         distributed = true;
-        payable(PLATFORM_ADDRESS).transfer(send_platform_reward);
-        payable(PROPOSER_ADDRESS).transfer(send_proposer_reward);
+        payable(platformAddress).transfer(send_platform_reward);
+        payable(proposerAddress).transfer(send_proposer_reward);
         
     }
 
@@ -297,13 +306,27 @@ contract ViaPrize {
 
     /// @notice create function to allow admins to withdraw funds to the submission winners and the platform but do not iterate through an unknown length array
     function use_unused_votes(bytes32 _submissionHash) public {
-        if(admins[msg.sender] == false) revert NotAdmin();
+        if(isAdmin[msg.sender] == false) revert NotAdmin();
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
 
         uint256 unused_admin_votes = total_funds - total_rewards;
         submissionTree.addVotes(_submissionHash, unused_admin_votes);
         unused_admin_votes = 0;
     }
+
+    // function distribute_use_unused_votes_v2() public view {
+    //     if(isAdmin[msg.sender] == false) revert NotAdmin();
+    //     if (block.timestamp > voting_time) revert VotingPeriodNotActive();
+
+    //     uint256 total_unused_votes = total_funds - total_rewards;
+    //     uint256 total_votes = 0;
+
+    //     SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+    //     for(uint256 i=0; i<allSubmissions.length; i++) {
+    //         total_votes += allSubmissions[i].votes;
+    //     }
+
+    // }
 
     /// @notice Allows users to withdraw funds that they have voted for but did not cross threshhold as well as unused funds 
     function claimRefund(address recipient) public {
@@ -345,7 +368,7 @@ contract ViaPrize {
 
     /// @notice Simple view functions to check the refund amount
     function check_refund_amount(address recipient) public view returns (uint256 _refundAmount) {
-        if(admins[msg.sender] == false) revert NotAdmin();
+        if(isAdmin[msg.sender] == false) revert NotAdmin();
         if(block.timestamp < voting_time) revert VotingPeriodActive();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
 
