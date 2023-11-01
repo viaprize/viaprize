@@ -1,4 +1,4 @@
-import { Button } from '@mantine/core';
+import { Button, Flex } from '@mantine/core';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -10,7 +10,7 @@ export default function Home() {
         background: `radial-gradient(243.55% 153.69% at 23.48% -1.07%, #EBF3F5 6.99%, #C5E2F0 100%)`,
       }}
     >
-      <div className="max-w-screen-lg w-full">
+      <div className="max-w-screen-2xl px-8 py-8 w-full">
         {/* Hero Section */}
         <div className="md:flex justify-betweem items-center h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
@@ -27,8 +27,29 @@ export default function Home() {
             <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
               <Link href="/prize/explore">Explore Prizes</Link>
             </Button>
+            <Flex
+              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 text-black"
+              style={{
+                background: `rgba(125, 185, 206, 0.15)`,
+              }}
+              justify="space-between"
+                align="center"
+            >
+              <div>
+                <h3 className='my-0'>$50 million</h3>
+                <p className='my-0'>Total Prize Money</p>
+              </div>
+              <div>
+                <h3 className='my-0'>100+</h3>
+                <p className='my-0'>Total Prizes</p>
+              </div>
+              <div>
+                <h3 className='my-0'>500+</h3>
+                <p className='my-0'>Total Participants</p>
+              </div>
+            </Flex>
           </div>
-          <div className="w-1/2">
+          <div className="md:w-1/2">
             <div
               className="absolute right-[-30%] top-[-40%] w-[80vw] h-[80vw] rounded-full"
               style={{
@@ -44,7 +65,7 @@ export default function Home() {
               height={500}
               width={500}
               className="relative z-10 object-cover w-full"
-              src="home/hero.png"
+              src="/home/hero.png"
             />
           </div>
         </div>
