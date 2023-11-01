@@ -216,7 +216,7 @@ export default function Home() {
           >
             Join Community
           </Link>
-          <div className='my-4'/>
+          <div className="my-4" />
           <PhotoAlbum
             layout="masonry"
             columns={3}
