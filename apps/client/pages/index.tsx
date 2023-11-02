@@ -29,7 +29,7 @@ export default function MyComponent() {
         .then(console.log);
     }
   }, [ready]);
-  
+
   const gotoExplorePrizes = async () => {
     await router.push('/prize/explore');
   };

@@ -104,9 +104,9 @@ export default function Home() {
               <NavBarLinks key={data.text} text={data.text} link={data.link} />
             ))}
             {user ? (
-              <Badge variant='gradient'>
-                {user.wallet?.address.slice(0,6)}...{user.wallet?.address.slice(-6,-1)}
-                </Badge>
+              <Badge variant="gradient">
+                {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
+              </Badge>
             ) : (
               <Button
                 className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
