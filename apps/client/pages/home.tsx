@@ -98,7 +98,17 @@ export default function Home() {
       <div className="max-w-screen-2xl px-8 py-8 w-full">
         {/*Nav bar*/}
         <div className="flex justify-between">
-          <div>Image</div>
+          <div className="flex gap-3 items-center">
+            <Image
+              src="/viaprizeBg.png"
+              alt="ViaPrize Logo"
+              width={40}
+              height={40}
+              priority
+              className="rounded-full"
+            />
+            <h3 className="font-bold text-2xl text-black">ViaPrize</h3>
+          </div>
           <div className="flex gap-10 justify-between items-center">
             {navBarLinks.map((data) => (
               <NavBarLinks key={data.text} text={data.text} link={data.link} />
@@ -279,16 +289,20 @@ export default function Home() {
           />
         </section>
         <section className="my-12 gap-3 ">
-          <div className=" flex flex-col items-center" />
-          <h1 className="w-96 text-3xl font-bold text-black">
-            Tons of love who are building and working with Viaprize
-          </h1>
-          <Link
-            href="https://t.me/viaprize"
-            className="text-black text-xl font-normal mb-[100px]"
-          >
-            Join Community
-          </Link>
+          <div className=" flex flex-col items-center">
+            <h1 className="w-96 text-3xl text-center font-bold text-black">
+              Tons of love who are building and working with Viaprize
+            </h1>
+            <Button 
+            className='bg-gradient-to-r from-[#005A6D] to-[#147EA3]'
+            >
+              <Link
+                href="https://t.me/viaprize"
+              >
+                Join Community
+              </Link>
+            </Button>
+          </div>
           <div className="my-4" />
           <PhotoAlbum
             layout="masonry"
