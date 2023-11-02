@@ -42,7 +42,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <>
       <Head>
-        <title>Mantine next example</title>
+        <title>ViaPrize</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"

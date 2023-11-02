@@ -1,6 +1,10 @@
-import { Button, Card, Flex } from '@mantine/core';
+import useAppUser from '@/context/hooks/useAppUser';
+import { Badge, Button, Card, Flex } from '@mantine/core';
+import { usePrivy } from '@privy-io/react-auth';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { BiSolidRightArrowCircle } from 'react-icons/bi';
 import type { RenderPhotoProps } from 'react-photo-album';
 import PhotoAlbum from 'react-photo-album';
@@ -18,7 +22,9 @@ const photoSizes: number[][] = [
   [2160, 3840],
   [2160, 1264],
 ];
-
+interface FetchError extends Error {
+  status?: number;
+}
 const breakpoints: number[] = [1080, 640, 384, 256, 128, 96, 64, 48];
 
 const basePath = '/home/tweets/tweet';
@@ -43,7 +49,45 @@ const photos: {
   }),
 }));
 
+const navBarLinks = [
+  {
+    text: 'Home',
+    link: '/',
+  },
+  {
+    text: 'Prizes',
+    link: '/prize/explore',
+  },
+  {
+    text: 'Pacts',
+    link: '/pact/home',
+  },
+  {
+    text: 'about',
+    link: '/about',
+  },
+];
+
 export default function Home() {
+  const router = useRouter();
+
+  const { user, ready } = usePrivy();
+
+  const { loginUser, refreshUser } = useAppUser();
+
+  useEffect(() => {
+    if (ready) {
+      void refreshUser()
+        .catch((error: FetchError) => {
+          console.log({ error }, 'errror');
+          if (error.status === 404) {
+            router.push('/onboarding').catch(console.error);
+          }
+        })
+        .then(console.log);
+    }
+  }, [ready]);
+
   return (
     <div
       className="w-full min-h-screen flex justify-center py-4 relative overflow-clip"
@@ -52,8 +96,37 @@ export default function Home() {
       }}
     >
       <div className="max-w-screen-2xl px-8 py-8 w-full">
+        {/*Nav bar*/}
+        <div className="flex justify-between">
+          <div>Image</div>
+          <div className="flex gap-10 justify-between items-center">
+            {navBarLinks.map((data) => (
+              <NavBarLinks key={data.text} text={data.text} link={data.link} />
+            ))}
+            {user ? (
+              <Badge variant='gradient'>
+                {user.wallet?.address.slice(0,6)}...{user.wallet?.address.slice(-6,-1)}
+                </Badge>
+            ) : (
+              <Button
+                className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
+                onClick={() => {
+                  loginUser()
+                    .then(() => {
+                      console.log('logging in ');
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
+                }}
+              >
+                Login
+              </Button>
+            )}
+          </div>
+        </div>
         {/* Hero Section */}
-        <div className="md:flex justify-betweem items-center h-screen">
+        <section className="md:flex justify-betweem items-center h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
             <h2 className="font-normal text-lg text-black uppercase my-0">
               Crowdfund the future
@@ -97,7 +170,7 @@ export default function Home() {
                 background: `linear-gradient(136deg, #D8E6EF 27.28%, #B4D8E4 87.37%)`,
               }}
             />
-            <div className="absolute h-screen w-16 right-0 top-0">
+            <div className="hidden sm:block absolute h-screen w-16 right-0 top-0">
               <div className="h-1/2 w-full bg-gradient-to-t from-[#35A7A0] to-[#8ee8d8]" />
               <div className="h-1/2 w-full bg-gradient-to-t from-[#89C8DD] to-[#73ADC1]" />
             </div>
@@ -109,7 +182,7 @@ export default function Home() {
               src="/home/hero.png"
             />
           </div>
-        </div>
+        </section>
         {/* How it works */}
         <div className="flex flex-col items-center">
           <h1 className="text-black capitalize">Why viarprize?</h1>
@@ -219,13 +292,28 @@ export default function Home() {
           <div className="my-4" />
           <PhotoAlbum
             layout="masonry"
-            columns={3}
             photos={photos}
             renderPhoto={NextJsImage}
+            columns={(containerWidth) => {
+              if (containerWidth < 400) return 1;
+              if (containerWidth < 800) return 2;
+              return 3;
+            }}
           />
         </section>
       </div>
     </div>
+  );
+}
+
+function NavBarLinks({ text, link }: { text: string; link: string }) {
+  return (
+    <Link
+      href={link}
+      className="font-semibold text-lg text-gray-700 capitalize hover:text-black"
+    >
+      {text}
+    </Link>
   );
 }
 
@@ -267,7 +355,7 @@ function FunctionCard({
   return (
     <Card className="bg-[#486B78] rounded-2xl p-10">
       <h1 className="my-0 text-white ">{Title}</h1>
-      <p className="text-white max-w-[80%] text-lg font-semibold leading-7">
+      <p className="text-white md:max-w-[80%] text-lg lg:font-semibold leading-7">
         {Description}
       </p>
       <Flex gap="sm">
@@ -294,15 +382,12 @@ function NextJsImage({
   wrapperStyle,
 }: RenderPhotoProps) {
   return (
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     <div style={{ ...wrapperStyle, position: 'relative' }}>
       <Image
         fill
         className="rounded-lg"
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         src={photo}
         placeholder={'blurDataURL' in photo ? 'blur' : undefined}
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         {...{ alt, title, sizes, onClick }}
       />
     </div>
