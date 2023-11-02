@@ -5,7 +5,7 @@ import type { ReactElement } from 'react';
 
 export default function UserProfile() {
   return (
-    <div className="flex">
+    <div className="md:flex md:w-[95vw] justify-between p-7">
       <Profile />
       <MainTabsUserProfile />
     </div>
