@@ -29,7 +29,12 @@ const ProposalExploreCard: React.FC<ExploreCardProps> = ({
       </Group>
       <p className="text-md text-gray-500 max-h-14 overflow-y-auto">{description}</p>
 
-      <Button color="blue" fullWidth mt="md" radius="md" variant="light"
+      <Button
+        color="blue"
+        fullWidth
+        mt="md"
+        radius="md"
+        variant="light"
         onClick={() => onStatusClick(status)}
       >
         Details
