@@ -347,13 +347,7 @@ function NavBar() {
 
   return (
     <>
-      <Burger
-        opened={opened}
-        onClick={toggle}
-        aria-label="Toggle navigation"
-        className="sm:hidden absolute top-4 right-4 z-[1000]"
-      />
-      <nav className="relative z-10 hidden sm:flex justify-between w-full md:px-14 pt-2 ">
+      <nav className="relative z-10 hidden md:flex justify-between w-full md:px-14 pt-2 ">
         <div className="flex gap-3 items-center">
           <Image
             src="/viaprizeBg.png"
@@ -391,18 +385,33 @@ function NavBar() {
           )}
         </div>
       </nav>
-      {opened ? (
-        <nav
-          className="sm:hidden flex flex-col items-center gap-3 absolute top-3 right-3 rounded-lg backdrop-blur-md py-24 px-24 z-[999]"
-          style={{
-            background: `rgba(125, 185, 206, 0.15)`,
-          }}
-        >
-          {navBarLinks.map((data) => (
-            <NavBarLinks key={data.text} text={data.text} link={data.link} />
-          ))}
-        </nav>
-      ) : null}
+      <nav className="md:hidden flex w-full justify-between px-5 py-5">
+        <Image
+          src="/viaprizeBg.png"
+          alt="ViaPrize Logo"
+          width={40}
+          height={40}
+          priority
+        />
+        <Burger
+          opened={opened}
+          onClick={toggle}
+          aria-label="Toggle navigation"
+          className="z-[1000]"
+        />
+        {opened ? (
+          <div
+            className=" flex flex-col items-center gap-3 absolute top-3 right-3 rounded-lg backdrop-blur-md py-24 px-24 z-[999]"
+            style={{
+              background: `rgba(125, 185, 206, 0.15)`,
+            }}
+          >
+            {navBarLinks.map((data) => (
+              <NavBarLinks key={data.text} text={data.text} link={data.link} />
+            ))}
+          </div>
+        ) : null}
+      </nav>
     </>
   );
 }
