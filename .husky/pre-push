@@ -6,7 +6,11 @@ commits_to_push=$(git log $(git rev-parse @{u}..) --pretty=format:"%H")
 # Get the list of files that have changes in the unpushed commits
 files_to_push=$(git diff --name-only $commits_to_push)
 
-echo "Commits to push: $commits_to_push"
+commit_messages=$(git log --pretty=format:"%s" $(git rev-parse @{u}..))
+
+echo "Commits to push:"
+echo "$commit_messages"
+
 echo "Files with changes: $files_to_push"
 
 # Flag to track if changes are found
