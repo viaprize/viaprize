@@ -8,6 +8,8 @@ import { useEffect } from 'react';
 import { BiSolidRightArrowCircle } from 'react-icons/bi';
 import type { RenderPhotoProps } from 'react-photo-album';
 import PhotoAlbum from 'react-photo-album';
+import { useDisclosure } from '@mantine/hooks';
+import { Burger } from '@mantine/core';
 
 const photoSizes: number[][] = [
   [2160, 2160],
@@ -70,9 +72,9 @@ const navBarLinks = [
 export default function Home() {
   const router = useRouter();
 
-  const { user, ready } = usePrivy();
+  const {  ready } = usePrivy();
 
-  const { loginUser, refreshUser } = useAppUser();
+  const {  refreshUser } = useAppUser();
 
   useEffect(() => {
     if (ready) {
@@ -89,51 +91,14 @@ export default function Home() {
 
   return (
     <div
-      className="w-full min-h-screen flex flex-col items-center pt-4 relative overflow-clip"
+      className="w-full min-h-screen flex flex-col items-center relative overflow-clip"
       style={{
         background: `radial-gradient(243.55% 153.69% at 23.48% -1.07%, #EBF3F5 6.99%, #C5E2F0 100%)`,
       }}
     >
-      <body className="max-w-screen-2xl px-8 py-8 w-full bg-transparent">
-        {/*Nav bar*/}
-        <nav className="flex justify-between">
-          <div className="flex gap-3 items-center">
-            <Image
-              src="/viaprizeBg.png"
-              alt="ViaPrize Logo"
-              width={40}
-              height={40}
-              priority
-              className="rounded-full"
-            />
-            <h3 className="font-bold text-2xl text-black">ViaPrize</h3>
-          </div>
-          <div className="flex gap-10 justify-between items-center">
-            {navBarLinks.map((data) => (
-              <NavBarLinks key={data.text} text={data.text} link={data.link} />
-            ))}
-            {user ? (
-              <Badge variant="gradient">
-                {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
-              </Badge>
-            ) : (
-              <Button
-                className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
-                onClick={() => {
-                  loginUser()
-                    .then(() => {
-                      console.log('logging in ');
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                    });
-                }}
-              >
-                Login
-              </Button>
-            )}
-          </div>
-        </nav>
+      {/*Nav bar*/}
+      <NavBar />
+      <body className="max-w-screen-2xl px-8 pt-4 pb-8 w-full bg-transparent">
         {/* Hero Section */}
         <section className="md:flex justify-betweem items-center h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
@@ -371,6 +336,74 @@ function NavBarLinks({ text, link }: { text: string; link: string }) {
     >
       {text}
     </Link>
+  );
+}
+
+function NavBar(){
+    const [opened, { toggle }] = useDisclosure();
+      const { user, } = usePrivy();
+
+      const { loginUser } = useAppUser();
+
+  return (
+    <>
+      <Burger
+        opened={opened}
+        onClick={toggle}
+        aria-label="Toggle navigation"
+        className="sm:hidden absolute top-4 right-4 z-[1000]"
+      />
+      <nav className="relative z-10 hidden sm:flex justify-between w-full md:px-14 pt-2 ">
+        <div className="flex gap-3 items-center">
+          <Image
+            src="/viaprizeBg.png"
+            alt="ViaPrize Logo"
+            width={40}
+            height={40}
+            priority
+            className="rounded-full"
+          />
+          <h3 className="font-bold text-2xl text-black">ViaPrize</h3>
+        </div>
+        <div className="flex gap-10 justify-between items-center">
+          {navBarLinks.map((data) => (
+            <NavBarLinks key={data.text} text={data.text} link={data.link} />
+          ))}
+          {user ? (
+            <Badge variant="gradient">
+              {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
+            </Badge>
+          ) : (
+            <Button
+              className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
+              onClick={() => {
+                loginUser()
+                  .then(() => {
+                    console.log('logging in ');
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }}
+            >
+              Login
+            </Button>
+          )}
+        </div>
+      </nav>
+      {opened ? (
+        <nav
+          className="flex flex-col items-center gap-3 absolute top-3 right-3 rounded-lg backdrop-blur-md py-24 px-24 z-[999]"
+          style={{
+            background: `rgba(125, 185, 206, 0.15)`,
+          }}
+        >
+          {navBarLinks.map((data) => (
+            <NavBarLinks key={data.text} text={data.text} link={data.link} />
+          ))}
+        </nav>
+      ) : null}
+    </>
   );
 }
 
