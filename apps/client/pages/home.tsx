@@ -8,6 +8,8 @@ import { useEffect } from 'react';
 import { BiSolidRightArrowCircle } from 'react-icons/bi';
 import type { RenderPhotoProps } from 'react-photo-album';
 import PhotoAlbum from 'react-photo-album';
+import { useDisclosure } from '@mantine/hooks';
+import { Burger } from '@mantine/core';
 
 const photoSizes: number[][] = [
   [2160, 2160],
@@ -40,7 +42,6 @@ const photos: {
   height,
   srcSet: breakpoints.map((breakpoint) => {
     const scaledHeight = Math.round((height / width) * breakpoint);
-    console.log(basePath);
     return {
       src: `${basePath}${index + 1}.png`,
       width: breakpoint,
@@ -71,9 +72,9 @@ const navBarLinks = [
 export default function Home() {
   const router = useRouter();
 
-  const { user, ready } = usePrivy();
+  const { ready } = usePrivy();
 
-  const { loginUser, refreshUser } = useAppUser();
+  const { refreshUser } = useAppUser();
 
   useEffect(() => {
     if (ready) {
@@ -90,41 +91,14 @@ export default function Home() {
 
   return (
     <div
-      className="w-full min-h-screen flex justify-center py-4 relative overflow-clip"
+      className="w-full min-h-screen flex flex-col items-center relative overflow-clip"
       style={{
         background: `radial-gradient(243.55% 153.69% at 23.48% -1.07%, #EBF3F5 6.99%, #C5E2F0 100%)`,
       }}
     >
-      <div className="max-w-screen-2xl px-8 py-8 w-full">
-        {/*Nav bar*/}
-        <div className="flex justify-between">
-          <div>Image</div>
-          <div className="flex gap-10 justify-between items-center">
-            {navBarLinks.map((data) => (
-              <NavBarLinks key={data.text} text={data.text} link={data.link} />
-            ))}
-            {user ? (
-              <Badge variant="gradient">
-                {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
-              </Badge>
-            ) : (
-              <Button
-                className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
-                onClick={() => {
-                  loginUser()
-                    .then(() => {
-                      console.log('logging in ');
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                    });
-                }}
-              >
-                Login
-              </Button>
-            )}
-          </div>
-        </div>
+      {/*Nav bar*/}
+      <NavBar />
+      <body className="max-w-screen-2xl px-8 pt-4 pb-8 w-full bg-transparent">
         {/* Hero Section */}
         <section className="md:flex justify-betweem items-center h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
@@ -278,17 +252,16 @@ export default function Home() {
             explore="sadlfsafasd"
           />
         </section>
+        {/* Community */}
         <section className="my-12 gap-3 ">
-          <div className=" flex flex-col items-center" />
-          <h1 className="w-96 text-3xl font-bold text-black">
-            Tons of love who are building and working with Viaprize
-          </h1>
-          <Link
-            href="https://t.me/viaprize"
-            className="text-black text-xl font-normal mb-[100px]"
-          >
-            Join Community
-          </Link>
+          <div className=" flex flex-col items-center">
+            <h1 className="w-96 text-3xl text-center font-bold text-black">
+              Tons of love who are building and working with Viaprize
+            </h1>
+            <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
+              <Link href="https://t.me/viaprize">Join Community</Link>
+            </Button>
+          </div>
           <div className="my-4" />
           <PhotoAlbum
             layout="masonry"
@@ -301,7 +274,56 @@ export default function Home() {
             }}
           />
         </section>
-      </div>
+        {/* Footer */}
+      </body>
+      <footer className="text-white w-full bg-slate-950">
+        <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+          <div className="sm:flex sm:items-center sm:justify-between">
+            <Link href="/" className="flex items-center mb-4 sm:mb-0">
+              <Image
+                src="/viaprizeBg.png"
+                className="h-8 mr-3"
+                alt="ViaPrize Logo"
+                width={32}
+                height={32}
+              />
+              <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+                ViaPrize
+              </span>
+            </Link>
+            <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+              <li>
+                <Link href="#" className="mr-4 hover:underline md:mr-6 ">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="mr-4 hover:underline md:mr-6">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="mr-4 hover:underline md:mr-6 ">
+                  Licensing
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:underline">
+                  Support
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+          <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
+            © 2023{' '}
+            <a href="https://flowbite.com/" className="hover:underline">
+              ViaPrize™
+            </a>
+            . All Rights Reserved.
+          </span>
+        </div>
+      </footer>
     </div>
   );
 }
@@ -314,6 +336,83 @@ function NavBarLinks({ text, link }: { text: string; link: string }) {
     >
       {text}
     </Link>
+  );
+}
+
+function NavBar() {
+  const [opened, { toggle }] = useDisclosure();
+  const { user } = usePrivy();
+
+  const { loginUser } = useAppUser();
+
+  return (
+    <>
+      <nav className="relative z-10 hidden md:flex justify-between w-full md:px-14 pt-2 ">
+        <div className="flex gap-3 items-center">
+          <Image
+            src="/viaprizeBg.png"
+            alt="ViaPrize Logo"
+            width={40}
+            height={40}
+            priority
+            className="rounded-full"
+          />
+          <h3 className="font-bold text-2xl text-black">ViaPrize</h3>
+        </div>
+        <div className="flex gap-10 justify-between items-center">
+          {navBarLinks.map((data) => (
+            <NavBarLinks key={data.text} text={data.text} link={data.link} />
+          ))}
+          {user ? (
+            <Badge variant="gradient">
+              {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
+            </Badge>
+          ) : (
+            <Button
+              className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
+              onClick={() => {
+                loginUser()
+                  .then(() => {
+                    console.log('logging in ');
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                  });
+              }}
+            >
+              Login
+            </Button>
+          )}
+        </div>
+      </nav>
+      <nav className="md:hidden flex w-full justify-between px-5 py-5">
+        <Image
+          src="/viaprizeBg.png"
+          alt="ViaPrize Logo"
+          width={40}
+          height={40}
+          priority
+        />
+        <Burger
+          opened={opened}
+          onClick={toggle}
+          aria-label="Toggle navigation"
+          className="z-[1000]"
+        />
+        {opened ? (
+          <div
+            className=" flex flex-col items-center gap-3 absolute top-3 right-3 rounded-lg backdrop-blur-md py-24 px-24 z-[999]"
+            style={{
+              background: `rgba(125, 185, 206, 0.15)`,
+            }}
+          >
+            {navBarLinks.map((data) => (
+              <NavBarLinks key={data.text} text={data.text} link={data.link} />
+            ))}
+          </div>
+        ) : null}
+      </nav>
+    </>
   );
 }
 

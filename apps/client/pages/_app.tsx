@@ -15,7 +15,7 @@ import { env } from '@env';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import type { NextPage } from 'next';
-import { ReactElement, ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { optimism, optimismGoerli } from 'wagmi/chains';
@@ -65,7 +65,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
           <QueryClientProvider client={queryClient}>
             <ColorSchemeScript defaultColorScheme="auto" />
-            <MantineProvider theme={theme} defaultColorScheme={'auto'}>
+            <MantineProvider theme={theme} defaultColorScheme="auto">
               <Toaster />
               {getLayout(<Component {...pageProps} />)}
             </MantineProvider>
