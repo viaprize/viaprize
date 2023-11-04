@@ -72,9 +72,9 @@ const navBarLinks = [
 export default function Home() {
   const router = useRouter();
 
-  const {  ready } = usePrivy();
+  const { ready } = usePrivy();
 
-  const {  refreshUser } = useAppUser();
+  const { refreshUser } = useAppUser();
 
   useEffect(() => {
     if (ready) {
@@ -339,11 +339,11 @@ function NavBarLinks({ text, link }: { text: string; link: string }) {
   );
 }
 
-function NavBar(){
-    const [opened, { toggle }] = useDisclosure();
-      const { user, } = usePrivy();
+function NavBar() {
+  const [opened, { toggle }] = useDisclosure();
+  const { user } = usePrivy();
 
-      const { loginUser } = useAppUser();
+  const { loginUser } = useAppUser();
 
   return (
     <>
