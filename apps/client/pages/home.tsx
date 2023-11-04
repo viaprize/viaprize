@@ -98,7 +98,7 @@ export default function Home() {
     >
       {/*Nav bar*/}
       <NavBar />
-      <body className="max-w-screen-2xl px-8 pt-4 pb-8 w-full bg-transparent">
+      <div className="max-w-screen-2xl px-8 pt-4 pb-8 w-full bg-transparent">
         {/* Hero Section */}
         <section className="md:flex justify-betweem items-center h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
@@ -275,7 +275,7 @@ export default function Home() {
           />
         </section>
         {/* Footer */}
-      </body>
+      </div>
       <footer className="text-white w-full bg-slate-950">
         <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
           <div className="sm:flex sm:items-center sm:justify-between">
