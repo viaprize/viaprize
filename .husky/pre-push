@@ -18,6 +18,7 @@ changes_found=false
 
 # Iterate through the list of files
 for file in $files_to_push; do
+
     changes_found=true
     # Check if the file is in the 'backend' directory
     if echo "$file" | grep -q "^backend/"; then
@@ -54,5 +55,5 @@ if [ "$changes_found" = true ]; then
     exit 0
 else
     echo 'No changes found in specified directories. Nothing to push.'
-    exit 1
+    exit 0
 fi
