@@ -26,6 +26,10 @@ import { Prize } from './entities/prize.entity';
 interface PrizeWithBalance extends Prize {
   balance: number;
 }
+interface PrizeWithBlockchainData extends PrizeWithBalance {
+  submission_time: number;
+  voting_time: number;
+}
 
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
@@ -137,6 +141,29 @@ export class PrizesController {
     return {
       data: prizeWithBalanceData as PrizeWithBalance[],
       hasNextPage: prizeWithoutBalance.hasNextPage,
+    };
+  }
+
+  @Get('/:id')
+  async getPrize(
+    @TypedParam('id') id: string,
+  ): Promise<PrizeWithBlockchainData> {
+    const prize = await this.prizeService.findOne(id);
+    const balance = await this.blockchainService.getBalanceOfAddress(
+      prize.contract_address,
+    );
+    const submission_time = await this.blockchainService.getSubmissionTime(
+      prize.contract_address,
+    );
+    const voting_time = await this.blockchainService.getVotingTime(
+      prize.contract_address,
+    );
+
+    return {
+      ...prize,
+      balance: parseInt(balance.toString()),
+      submission_time: parseInt(submission_time.toString()),
+      voting_time: parseInt(voting_time.toString()),
     };
   }
 

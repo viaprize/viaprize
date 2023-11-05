@@ -146,6 +146,32 @@ export interface PrizeWithBalance {
   user: User;
 }
 
+export interface PrizeWithBlockchainData {
+  submission_time: number;
+  voting_time: number;
+  balance: number;
+  id: string;
+  description: string;
+  isAutomatic: boolean;
+  /** @format date-time */
+  startVotingDate: string;
+  /** @format date-time */
+  startSubmissionDate: string;
+  proposer_address: string;
+  contract_address: string;
+  admins: string[];
+  proficiencies: string[];
+  priorities: string[];
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  updated_at: string;
+  images: string[];
+  title: string;
+  submissions: Submission[];
+  user: User;
+}
+
 /** Make all properties in T readonly */
 export interface ReadonlyTypeO1 {
   data: PrizeProposals[];
@@ -533,6 +559,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/prizes`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizesDetail
+     * @request GET:/prizes/{id}
+     */
+    prizesDetail: (id: string, params: RequestParams = {}) =>
+      this.request<PrizeWithBlockchainData, any>({
+        path: `/prizes/${id}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JsonRpcProvider } from 'ethers';
+import { JsonRpcProvider, ethers } from 'ethers';
 import { AllConfigType } from 'src/config/config.type';
 @Injectable()
 export class BlockchainService {
@@ -14,5 +14,25 @@ export class BlockchainService {
 
   getBalanceOfAddress(address: string) {
     return this.provider.getBalance(address);
+  }
+
+  async getSubmissionTime(viaprizeContractAddress: string): Promise<bigint> {
+    const abi = ['function get_submission_time() view returns (uint256)'];
+    const contract = new ethers.Contract(
+      viaprizeContractAddress,
+      abi,
+      this.provider,
+    );
+    return await contract.get_submission_time();
+  }
+
+  async getVotingTime(viaprizeContractAddress: string): Promise<bigint> {
+    const abi = ['function get_voting_time() view returns (uint256)'];
+    const contract = new ethers.Contract(
+      viaprizeContractAddress,
+      abi,
+      this.provider,
+    );
+    return await contract.get_voting_time();
   }
 }

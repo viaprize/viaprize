@@ -68,11 +68,11 @@ export class PrizesService {
   getSmartContractDetails() {}
 
   async findOne(id: string) {
-    return await this.prizeRepository.findOne({
-      where: {
-        id,
-      },
+    const prize = await this.prizeRepository.findOneByOrFail({
+      id,
     });
+
+    return prize;
   }
 
   async findAllPendingWithPagination(
