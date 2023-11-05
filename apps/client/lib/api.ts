@@ -47,9 +47,52 @@ export type PactNullable = {
   blockHash: string;
 } | null;
 
-export interface ReadonlyType {
-  data: PrizeProposals[];
-  hasNextPage: boolean;
+export interface CreatePrizeDto {
+  address: string;
+  proposal_id: string;
+}
+
+export interface Prize {
+  id: string;
+  description: string;
+  isAutomatic: boolean;
+  /** @format date-time */
+  startVotingDate: string;
+  /** @format date-time */
+  startSubmissionDate: string;
+  proposer_address: string;
+  contract_address: string;
+  admins: string[];
+  proficiencies: string[];
+  priorities: string[];
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  updated_at: string;
+  images: string[];
+  title: string;
+  submissions: Submission[];
+  user: User;
+}
+
+export interface Submission {
+  id: string;
+  submissionTitle: string;
+  subimissionDescription: string;
+  user: User;
+  prize: Prize;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  authId: string;
+  name: string;
+  username: string;
+  isAdmin: boolean;
+  submissions: Submission[];
+  prizeProposals: PrizeProposals[];
+  prizes: Prize[];
 }
 
 export interface PrizeProposals {
@@ -73,26 +116,14 @@ export interface PrizeProposals {
   user: User;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  authId: string;
-  name: string;
-  username: string;
-  isAdmin: boolean;
-  submissions: Submission[];
-  prizeProposals: PrizeProposals[];
+/** Make all properties in T readonly */
+export interface ReadonlyType {
+  data: PrizeWithBalance[];
+  hasNextPage: boolean;
 }
 
-export interface Submission {
-  id: string;
-  submissionTitle: string;
-  subimissionDescription: string;
-  user: User;
-  prize: Prize;
-}
-
-export interface Prize {
+export interface PrizeWithBalance {
+  balance: number;
   id: string;
   description: string;
   isAutomatic: boolean;
@@ -109,10 +140,20 @@ export interface Prize {
   created_at: string;
   /** @format date-time */
   updated_at: string;
+  images: string[];
+  title: string;
   submissions: Submission[];
+  user: User;
 }
 
+/** Make all properties in T readonly */
 export interface ReadonlyTypeO1 {
+  data: PrizeProposals[];
+  hasNextPage: boolean;
+}
+
+/** Make all properties in T readonly */
+export interface ReadonlyTypeO2 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
@@ -155,7 +196,8 @@ export interface CreatePrizeProposalDto {
   images: string[];
 }
 
-export interface ReadonlyTypeO2 {
+/** Make all properties in T readonly */
+export interface ReadonlyTypeO3 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
@@ -458,6 +500,44 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   };
   prizes = {
     /**
+     * No description
+     *
+     * @name PrizesCreate
+     * @request POST:/prizes
+     */
+    prizesCreate: (data: CreatePrizeDto, params: RequestParams = {}) =>
+      this.request<Prize, any>({
+        path: `/prizes`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the GET request to `/prizes` endpoint. Here's a breakdown of what it does: Gets page
+     *
+     * @name PrizesList
+     * @summary Get all Prizes
+     * @request GET:/prizes
+     */
+    prizesList: (
+      query: {
+        page: number;
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReadonlyType, any>({
+        path: `/prizes`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the GET request to `/proposals` endpoint. Here's a breakdown of what it does: Gets page
      *
      * @name ProposalsList
@@ -472,7 +552,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyType, any>({
+      this.request<ReadonlyTypeO1, any>({
         path: `/prizes/proposals`,
         method: 'GET',
         query: query,
@@ -517,7 +597,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO1, any>({
+      this.request<ReadonlyTypeO2, any>({
         path: `/prizes/proposals/accept`,
         method: 'GET',
         query: query,
@@ -541,7 +621,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO2, any>({
+      this.request<ReadonlyTypeO3, any>({
         path: `/prizes/proposals/user/${username}`,
         method: 'GET',
         query: query,

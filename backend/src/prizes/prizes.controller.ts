@@ -11,6 +11,7 @@ import { PrizesService } from './prizes.service';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
 import { TypedBody, TypedParam } from '@nestia/core';
+import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { Http200Response } from 'src/utils/types/http.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
@@ -21,6 +22,10 @@ import { CreatePrizeDto } from './dto/create-prize.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
+
+interface PrizeWithBalance extends Prize {
+  balance: number;
+}
 
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
@@ -54,6 +59,7 @@ export class PrizesController {
     private readonly prizeProposalsService: PrizeProposalsService,
     private readonly mailService: MailService,
     private readonly prizeService: PrizesService,
+    private readonly blockchainService: BlockchainService,
   ) {}
 
   @Post('')
@@ -65,6 +71,7 @@ export class PrizesController {
       createPrizeDto.proposal_id,
     );
     const prize = await this.prizeService.create({
+      title: prizeProposal.title,
       admins: prizeProposal.admins,
       contract_address: createPrizeDto.address,
       description: prizeProposal.description,
@@ -72,6 +79,7 @@ export class PrizesController {
       priorities: prizeProposal.priorities,
       proficiencies: prizeProposal.proficiencies,
       proposer_address: prizeProposal.admins[0],
+      images: prizeProposal.images,
       startSubmissionDate: prizeProposal.startSubmissionDate,
       startVotingDate: prizeProposal.startVotingDate,
       user: prizeProposal.user,
@@ -83,6 +91,53 @@ export class PrizesController {
       prizeProposal.title,
     );
     return prize;
+  }
+
+  /**
+   * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
+   * for the GET request to `/prizes` endpoint. Here's a breakdown of what it does:
+   * Gets page
+   *
+   * @summary Get all Prizes
+   *
+   * @date 9/25/2023 - 4:06:45 AM
+   * @async
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
+   * @returns {Promise<Readonly<{data: PrizeWithBalance[];hasNextPage: boolean;}>>>}
+   */
+  @Get('')
+  async getPrizes(
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
+  ): Promise<Readonly<{ data: PrizeWithBalance[]; hasNextPage: boolean }>> {
+    const prizeWithoutBalance = infinityPagination(
+      await this.prizeService.findAllPendingWithPagination({
+        page,
+        limit,
+      }),
+      {
+        limit,
+        page,
+      },
+    );
+    const prizeWithBalanceData: PrizeWithBalance[] = await Promise.all(
+      prizeWithoutBalance.data.map(async (prize) => {
+        const balance = await this.blockchainService.getBalanceOfAddress(
+          prize.contract_address,
+        );
+        return {
+          ...prize,
+          balance: parseInt(balance.toString()),
+        } as PrizeWithBalance;
+      }),
+    );
+    return {
+      data: prizeWithBalanceData as PrizeWithBalance[],
+      hasNextPage: prizeWithoutBalance.hasNextPage,
+    };
   }
 
   /**

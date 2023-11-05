@@ -54,6 +54,12 @@ export class Prize {
   @UpdateDateColumn()
   updated_at: Date;
 
+  @Column('simple-array')
+  images: string[];
+
+  @Column({ default: '' })
+  title: string;
+
   @OneToMany(() => Submission, (submission) => submission.prize)
   submissions: Submission[];
 

@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated, paginate } from 'nestjs-paginate';
 import { User } from 'src/users/entities/user.entity';
+import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { Repository } from 'typeorm';
 import { Prize } from './entities/prize.entity';
 import { PrizePaginateQuery } from './entities/types';
 
 type CreatPrize = {
+  title: string;
   description: string;
   isAutomatic: boolean;
   startVotingDate?: Date;
@@ -15,6 +17,7 @@ type CreatPrize = {
   contract_address: string;
   admins: string[];
   proficiencies: string[];
+  images: string[];
   priorities: string[];
   user: User;
 };
@@ -69,6 +72,17 @@ export class PrizesService {
       where: {
         id,
       },
+    });
+  }
+
+  async findAllPendingWithPagination(
+    paginationOptions: IPaginationOptions<Prize>,
+  ) {
+    return this.prizeRepository.find({
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      relations: [],
+      where: paginationOptions.where,
     });
   }
 

@@ -14,6 +14,7 @@ import { waitForTransaction } from '@wagmi/core';
 import { useRef } from 'react';
 import { useAccount } from 'wagmi';
 import ProposalExploreCard from '../ExplorePrize/proposalExploreCard';
+import { usePrize } from '../hooks/usePrize';
 export default function ProposalsTabs({
   data,
   isSuccess,
@@ -24,6 +25,7 @@ export default function ProposalsTabs({
   console.log(data, 'data');
   const { address } = useAccount();
   const currentTimestamp = useRef(Date.now());
+  const { createPrize } = usePrize();
 
   const {
     data: prizeContract,
@@ -128,7 +130,12 @@ export default function ProposalsTabs({
                     const prizeAddress =
                       '0x' + waitForTransactionOut.logs[0].topics[2]?.slice(-40);
                     console.log(prizeAddress, 'prizeAddress');
-
+                    const prize = await createPrize({
+                      address: prizeAddress,
+                      proposal_id: item.id,
+                    });
+                    console.log(prize, 'prize');
+                    alert('done');
                     break;
                   }
                   case 'rejected': {
