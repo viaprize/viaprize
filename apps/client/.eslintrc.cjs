@@ -18,6 +18,7 @@ const config = {
     },
   ],
   parserOptions: {
+    tsconfigRootDir: __dirname,
     project: './tsconfig.json',
   },
   globals: {
