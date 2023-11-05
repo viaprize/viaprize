@@ -1,8 +1,11 @@
 import { IsDate } from 'class-validator';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -53,6 +56,10 @@ export class Prize {
 
   @OneToMany(() => Submission, (submission) => submission.prize)
   submissions: Submission[];
+
+  @ManyToOne(() => User, (user) => user.prizeProposals)
+  @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
+  user: User;
 
   /* On Chain Data */
   // total_funds: number;

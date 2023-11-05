@@ -9,7 +9,7 @@ export default function MainTabsUserProfile() {
   const { getProposalsOfUser } = usePrizeProposal();
   const { query } = useRouter();
   const getProposalsOfUserMutation = useQuery(['getProposalsOfUser', undefined], () => {
-    return getProposalsOfUser({ limit: 10, page: 1 }, query.username as string);
+    return getProposalsOfUser({ limit: 10, page: 1 }, query.id as string);
   });
   return (
     <Tabs defaultValue="proposals" mx="xl">

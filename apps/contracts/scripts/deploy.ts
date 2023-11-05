@@ -1,25 +1,24 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
 
-  console.log("Deploying contracts with the account:", deployer.address);
 
-  const submissionTree = await ethers.getContractFactory("SubmissionAVLTree");
+  console.log("Deploying contracts...");
+  const submissionTree = await ethers.getContractFactory("SubmissionLibrary");
   const submission_tree = await submissionTree.deploy();
   await submission_tree.deployed();
 
-  console.log("SubmissionAVLTree Contract Address:", submission_tree.address);
+  console.log("SubmissionLibrary deployed to:", submission_tree.address);
 
-  const viaPrize = await ethers.getContractFactory("ViaPrize");
-  const viaPrize_contract = await viaPrize.deploy(
-    submission_tree.address,
-    10,
-    10,
-  );
-  await viaPrize_contract.deployed();
+  const ViaPrizeFactory = await ethers.getContractFactory("ViaPrizeFactory", {
+    libraries: {
+      SubmissionLibrary: submission_tree.address
+    }
+  });
+  const viaPrizeFactory = await ViaPrizeFactory.deploy();
+  await viaPrizeFactory.deployed();
 
-  console.log("ViaPrize Contract Address:", viaPrize_contract.address);
+  console.log("ViaPrizeFactory deployed to:", viaPrizeFactory.address);
 }
 
 main()

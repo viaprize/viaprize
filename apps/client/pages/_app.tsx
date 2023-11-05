@@ -18,7 +18,6 @@ import type { NextPage } from 'next';
 import type { ReactElement, ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
-import { optimism, optimismGoerli } from 'wagmi/chains';
 
 const queryClient = new QueryClient();
 
@@ -53,7 +52,8 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
         config={{
           loginMethods: ['email', 'wallet'],
-          additionalChains: [optimism, optimismGoerli],
+          additionalChains: [],
+          defaultChain: configureChainsConfig.chains[0],
           appearance: {
             theme: 'light',
             accentColor: '#676FFF',

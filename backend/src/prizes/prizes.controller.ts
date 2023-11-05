@@ -7,6 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
+import { PrizesService } from './prizes.service';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 
 import { TypedBody, TypedParam } from '@nestia/core';
@@ -16,8 +17,10 @@ import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
+import { CreatePrizeDto } from './dto/create-prize.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
+import { Prize } from './entities/prize.entity';
 
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
@@ -50,7 +53,37 @@ export class PrizesController {
   constructor(
     private readonly prizeProposalsService: PrizeProposalsService,
     private readonly mailService: MailService,
+    private readonly prizeService: PrizesService,
   ) {}
+
+  @Post('')
+  @UseGuards(AuthGuard)
+  async createPrize(
+    @TypedBody() createPrizeDto: CreatePrizeDto,
+  ): Promise<Prize> {
+    const prizeProposal = await this.prizeProposalsService.findOne(
+      createPrizeDto.proposal_id,
+    );
+    const prize = await this.prizeService.create({
+      admins: prizeProposal.admins,
+      contract_address: createPrizeDto.address,
+      description: prizeProposal.description,
+      isAutomatic: prizeProposal.isAutomatic,
+      priorities: prizeProposal.priorities,
+      proficiencies: prizeProposal.proficiencies,
+      proposer_address: prizeProposal.admins[0],
+      startSubmissionDate: prizeProposal.startSubmissionDate,
+      startVotingDate: prizeProposal.startVotingDate,
+      user: prizeProposal.user,
+    });
+    await this.prizeProposalsService.remove(prizeProposal.id);
+    await this.mailService.prizeDeployed(
+      prizeProposal.user.email,
+      prizeProposal.user.name,
+      prizeProposal.title,
+    );
+    return prize;
+  }
 
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler

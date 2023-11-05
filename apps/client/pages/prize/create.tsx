@@ -49,8 +49,9 @@ function Prize() {
       throw Error('Wallet is undefined');
     }
     await handleUploadImages();
+    const finalAddress = address.filter((x) => x);
     await addProposalsMutation({
-      admins: address,
+      admins: [wallet.address, ...finalAddress],
       description: richtext,
       isAutomatic,
       voting_time: votingTime,
