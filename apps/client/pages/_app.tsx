@@ -64,7 +64,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       >
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
           <QueryClientProvider client={queryClient}>
-            <ColorSchemeScript defaultColorScheme="auto" />
             <MantineProvider theme={theme} defaultColorScheme="auto">
               <Toaster />
               {getLayout(<Component {...pageProps} />)}

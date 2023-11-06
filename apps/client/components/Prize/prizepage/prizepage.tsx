@@ -1,12 +1,12 @@
-import { ActionIcon, Button, Center, Flex, Group, Text, Title } from '@mantine/core';
-
+import { ActionIcon, Button, Center, Group, Text, Title } from '@mantine/core';
 import PrizePageTabs from './prizepagetabs';
 import Submissions from './submissions';
+import Image from 'next/image';
 
 export default function PrizePageComponent() {
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
-      <Flex justify="space-between" my="lg">
+      <Group justify="space-between" my="lg">
         <Title order={2}>A simple Title for the prizes page</Title>
         <Group justify="right" gap="0" wrap="nowrap">
           <Button color="black" mx="5px">
@@ -16,8 +16,8 @@ export default function PrizePageComponent() {
             <Text>20</Text>
           </ActionIcon>
         </Group>
-      </Flex>
-      <img
+      </Group>
+      <Image
         className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md"
         src="/placeholder.jpg"
         width={1280}
