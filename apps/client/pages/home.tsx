@@ -57,17 +57,17 @@ const navBarLinks = [
     link: '/',
   },
   {
-    text: 'Prizes',
+    text: 'Explore Prizes',
     link: '/prize/explore',
   },
-  {
-    text: 'Pacts',
-    link: '/pact/home',
-  },
-  {
-    text: 'about',
-    link: '/about',
-  },
+  // {
+  //   text: 'Pacts',
+  //   link: '/pact/home',
+  // },
+  // {
+  //   text: 'about',
+  //   link: '/about',
+  // },
 ];
 
 export default function Home() {
@@ -393,8 +393,15 @@ function NavBar() {
           {navBarLinks.map((data) => (
             <NavBarLinks key={data.text} text={data.text} link={data.link} />
           ))}
+          <Button
+            className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
+            component='a'
+            href='/prize/create'
+          >
+            Create Prize
+          </Button>
           {user ? (
-            <Badge variant="gradient">
+            <Badge variant="gradient" className='py-4'>
               {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
             </Badge>
           ) : (
