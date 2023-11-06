@@ -52,7 +52,7 @@ export default function HeaderLayout() {
   };
 
   return (
-    <Group justify="space-around" w={'100%'} align="center" pos={'fixed'}>
+    <Group justify="space-between" w={'100%'} align="center" pos={'fixed'} px="xl">
       <div>Image</div>
 
       <Flex align="center" gap="md">

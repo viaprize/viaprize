@@ -20,7 +20,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   id,
 }) => {
   return (
-    <Card padding="lg" radius="md" shadow="sm" withBorder>
+    <Card padding="lg" radius="md" shadow="sm" withBorder className="w-full">
       <Card.Section>
         <Image alt="Image" height={160} src={imageUrl} />
       </Card.Section>

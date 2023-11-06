@@ -1,47 +1,38 @@
-import {
-  ActionIcon,
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  Group,
-  Loader,
-  Stack,
-  Text,
-} from '@mantine/core';
+import { Avatar, Badge, Box, Button, Group, Text } from '@mantine/core';
 import {
   IconBrandGithubFilled,
   IconBrandLinkedin,
   IconBrandTelegram,
   IconBrandX,
-  IconRefresh,
 } from '@tabler/icons-react';
-import { useAccount, useBalance } from 'wagmi';
 
 export default function Profile() {
-  const { address } = useAccount();
-  const { data, isLoading, refetch } = useBalance({ address });
+  // const { address } = useAccount();
+  // const { data, isLoading, refetch } = useBalance({ address });
   return (
-    <div>
-      <Box my="sm">
-        <Avatar radius="xl" size="xl" />
-
-        <Text size="xl">ARYAN TIWARI</Text>
-        <Text className="lg">@arrytiwari</Text>
-        {/* <Group>
-      <Text weight={200} className='flex flex-cols '>
-        <Text weight={500}  className='mr-1' >
+    <div className="p-8 md:w-1/3">
+      <div>
+        <Avatar radius="full" size="xl" />
+        <Text fw={700} size="xl" className="mb-0 uppercase mt-4">
+          ARYAN TIWARI
+        </Text>
+        <Text className="lg my-0">@arrytiwari</Text>
+        <Group>
+          {/* <div>
+        <span   className='mr-1 font-bold' >
             200
-        </Text> 
+        </span> 
+        <span>
         Followers
-      </Text>
-       <Text weight={200}   className='flex flex-cols'>
-        <Text weight={500}  className='mr-1 ml-6'>
+        </span>
+      </div>
+       <Text fw={200}   className='flex flex-cols'>
+        <Text fw={500}  className='mr-1 ml-6'>
             200
         </Text> 
         Following
-      </Text>
-      </Group> */}
+      </Text> */}
+        </Group>
         <Group mt="sm">
           <Avatar radius="xl" size="sm">
             <IconBrandX />
@@ -56,63 +47,64 @@ export default function Profile() {
             <IconBrandTelegram />
           </Avatar>
         </Group>
-        <Button fullWidth my="sm">
-          Edit Profile
-        </Button>
-      </Box>
+        <Button my="sm">Edit Profile</Button>
+      </div>
 
-      <Box>
-        <Text w={600}>Description</Text>
-        <Text>
+      <div>
+        <h1 className="mb-0 text-xl font-bold">Bio</h1>
+        <p className="my-0">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
-        </Text>
-        <Group mt="md">
-          <Stack>
-            <Text w={300} color="" size="lg">
-              Projects :
-              <Text w={500} color="orange" size="xl">
-                200
-              </Text>
-            </Text>
-          </Stack>
-          <Stack>
-            <Text w={300} color="" size="lg">
-              Contributions :
-              <Text w={500} color="green" size="xl">
-                200
-              </Text>
-            </Text>
-          </Stack>
-          <Stack>
-            <Text w={300} color="" size="lg">
-              Balance In Eth :
+        </p>
+        {/* <div className="flex gap-3 justify-between">
+          <div>
+              <div className='flex gap-3 items-center'>
               {isLoading ? (
                 <Loader color="blue" />
               ) : (
-                <Text w={500} color="green" size="xl">
+                <Text w={500} c="green" size="xl">
                   {data?.formatted} Eth
                 </Text>
               )}
-            </Text>
-            <ActionIcon>
+              <ActionIcon>
               <IconRefresh onClick={() => refetch()} />
             </ActionIcon>
-          </Stack>
-        </Group>
-      </Box>
+            </div>
+            <Text w={600} c="" size="lg">
+              Balance In Eth 
+            </Text>   
+          </div>
+        </div> */}
+      </div>
+
       <Box mt="md">
-        <Text>Skills</Text>
-        <div>
-          <Badge color="green">FULL STACK DEVELOPER</Badge>
-          <Badge color="green">SMART CONTRACT DEVELOPER</Badge>
-          <Badge color="green">Indigo cyan</Badge>
+        <Text fw={700} mb="sm" mt="md" className="pl-1">
+          Skills
+        </Text>
+        <div className="flex flex-wrap gap-1">
+          <Badge variant="light" color="green">
+            FULL STACK DEVELOPER
+          </Badge>
+          <Badge variant="light" color="green">
+            SMART CONTRACT DEVELOPER
+          </Badge>
+          <Badge variant="light" color="green">
+            Indigo cyan
+          </Badge>
         </div>
 
-        <Text mt="md">Values</Text>
-        <div>
-          <Badge color="green">FULL STACK DEVELOPER</Badge>
-          <Badge color="green">SMART CONTRACT DEVELOPER</Badge>
-          <Badge color="green">Indigo cyan</Badge>
+        <Text fw={700} mb="sm" mt="md" className="pl-1">
+          Values
+        </Text>
+        <div className="flex flex-wrap gap-1">
+          <Badge variant="light" color="green">
+            FULL STACK DEVELOPER
+          </Badge>
+          <Badge variant="light" color="green">
+            SMART CONTRACT DEVELOPER
+          </Badge>
+          <Badge variant="light" color="green">
+            Indigo cyan
+          </Badge>
         </div>
       </Box>
     </div>

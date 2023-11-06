@@ -1,15 +1,16 @@
 import useAppUser from '@/context/hooks/useAppUser';
-import { Badge, Button, Card, Flex } from '@mantine/core';
+import { Badge, Burger, Button, Card, Flex } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { usePrivy } from '@privy-io/react-auth';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { BiSolidRightArrowCircle } from 'react-icons/bi';
+import { BiLogoLinkedin, BiSolidRightArrowCircle } from 'react-icons/bi';
+import { BsTwitter } from 'react-icons/bs';
+import { ImTelegram } from 'react-icons/im';
 import type { RenderPhotoProps } from 'react-photo-album';
 import PhotoAlbum from 'react-photo-album';
-import { useDisclosure } from '@mantine/hooks';
-import { Burger } from '@mantine/core';
 
 const photoSizes: number[][] = [
   [2160, 2160],
@@ -56,17 +57,17 @@ const navBarLinks = [
     link: '/',
   },
   {
-    text: 'Prizes',
+    text: 'Explore Prizes',
     link: '/prize/explore',
   },
-  {
-    text: 'Pacts',
-    link: '/pact/home',
-  },
-  {
-    text: 'about',
-    link: '/about',
-  },
+  // {
+  //   text: 'Pacts',
+  //   link: '/pact/home',
+  // },
+  // {
+  //   text: 'about',
+  //   link: '/about',
+  // },
 ];
 
 export default function Home() {
@@ -102,21 +103,21 @@ export default function Home() {
         {/* Hero Section */}
         <section className="md:flex justify-betweem items-center h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
-            <h2 className="font-normal text-lg text-black uppercase my-0">
+            {/* <h2 className="font-normal text-lg text-black uppercase my-0">
               Crowdfund the future
-            </h2>
-            <h1 className="font-bold text-3xl text-black my-0">
-              Meet Viaprize Where Where Ideas Bloom, and your Funds Safeguarded Securely
+            </h2> */}
+            <h1 className="font-bold text-5xl text-black my-6">
+              Trustworthy crowdfunding
             </h1>
-            <p className="text-lg text-gray-600 my-4">
+            {/* <p className="text-lg text-gray-600 my-4">
               Simple and sleek design with users in mind. Viaprize is a platform that
               allows
-            </p>
+            </p> */}
             <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
               <Link href="/prize/explore">Explore Prizes</Link>
             </Button>
             <Flex
-              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 text-black"
+              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 text-black w-[70%]"
               style={{
                 background: `rgba(125, 185, 206, 0.15)`,
               }}
@@ -124,16 +125,16 @@ export default function Home() {
               align="center"
             >
               <div>
-                <h3 className="my-0">$50 million</h3>
-                <p className="my-0">Total Prize Money</p>
+                <h3 className="my-0">$32,460</h3>
+                <p className="my-0">Total contributions</p>
               </div>
               <div>
-                <h3 className="my-0">100+</h3>
-                <p className="my-0">Total Prizes</p>
+                <h3 className="my-0">62</h3>
+                <p className="my-0">Prize winners</p>
               </div>
               <div>
-                <h3 className="my-0">500+</h3>
-                <p className="my-0">Total Participants</p>
+                <h3 className="my-0">16</h3>
+                <p className="my-0">Prizes won</p>
               </div>
             </Flex>
           </div>
@@ -159,25 +160,19 @@ export default function Home() {
         </section>
         {/* How it works */}
         <div className="flex flex-col items-center">
-          <h1 className="text-black capitalize">Why viarprize?</h1>
+          <h1 className="text-black capitalize">Why Viaprize?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             <ReasonCard
               Title="Reason 1"
-              Description="We use the latest technology to ensure that your funds are safe and secure
-              We use the latest technology to ensure that your funds are safe and secure"
+              Description="30B is wasted annually on crowdfunding campaigns that never deliver"
             />
             <ReasonCard
               Title="Reason 2"
-              Description="We use the latest technology to ensure that your funds are safe and secure
-              We use the latest technology to ensure that your funds are safe and secure"
+              Description="Either the campaign delivers or you receive a refund"
             />
-            <ReasonCard
-              Title="Reason 3"
-              Description="We use the latest technology to ensure that your funds are safe and secure
-              We use the latest technology to ensure that your funds are safe and secure"
-            />
+            <ReasonCard Title="Reason 3" Description="Win prizes! and make Money" />
           </div>
-          <h2 className="text-black mt-6">Some More Stats</h2>
+          {/* <h2 className="text-black mt-6">Some More Stats</h2>
           <Flex
             className="backdrop-blur-md rounded-lg py-6 px-5 mb-4 text-black w-full"
             style={{
@@ -202,10 +197,10 @@ export default function Home() {
               <h3 className="my-0">500+</h3>
               <p className="my-0">Total Participants</p>
             </div>
-          </Flex>
+          </Flex> */}
         </div>
         {/* Viaprize’s Core Functions  */}
-        <section className="my-24 flex items-center flex-col gap-3">
+        {/* <section className="my-24 flex items-center flex-col gap-3">
           <h1 className="text-3xl font-bold text-black">
             Viaprize&apos;s Core Functions
           </h1>
@@ -250,6 +245,29 @@ export default function Home() {
           sadlkfjlajsl"
             know="linking"
             explore="sadlfsafasd"
+          />
+        </section> */}
+
+        {/* How it works */}
+        <section className="flex flex-col items-center my-14">
+          <h1 className="text-3xl font-bold text-black">How it works</h1>
+          <Image
+            src="/home/howItWorks.png"
+            width={1000}
+            height={500}
+            alt="How it works"
+            className="rounded-md"
+          />
+        </section>
+        {/* 3 roles in a prize */}
+        <section className="flex flex-col items-center my-14">
+          <h1 className="text-3xl font-bold text-black">3 Roles in Prize</h1>
+          <Image
+            src="/home/rolesInPrize.png"
+            width={1000}
+            height={500}
+            alt="How it works"
+            className="rounded-md"
           />
         </section>
         {/* Community */}
@@ -314,6 +332,18 @@ export default function Home() {
               </li>
             </ul>
           </div>
+          <div className="my-4">
+            <Link href="https://twitter.com/viaprize">
+              <BsTwitter className="inline-block mr-4 text-2xl text-blue-400 " />
+            </Link>
+            <Link href="https://www.linkedin.com/company/viaprize/">
+              <BiLogoLinkedin className="inline-block mr-4 text-2xl text-white " />
+            </Link>
+            <Link href="https://t.me/viaprize">
+              <ImTelegram className="inline-block mr-4 text-2xl text-blue-400 bg-white rounded-full" />
+            </Link>
+          </div>
+
           <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
           <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © 2023{' '}
@@ -363,8 +393,15 @@ function NavBar() {
           {navBarLinks.map((data) => (
             <NavBarLinks key={data.text} text={data.text} link={data.link} />
           ))}
+          <Button
+            className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
+            component="a"
+            href="/prize/create"
+          >
+            Create Prize
+          </Button>
           {user ? (
-            <Badge variant="gradient">
+            <Badge variant="gradient" className="py-4">
               {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
             </Badge>
           ) : (
@@ -431,15 +468,17 @@ function ReasonCard({ Title, Description }: { Title: string; Description: string
 
       <h3 className="text-xl text-white font-bold my-0">{Title}</h3>
 
-      <p className="text-base text-white my-0">{Description}</p>
+      <p className="text-base text-white">{Description}</p>
+      {/* //TODO: Add read more button  */}
 
-      <Button className="bg-[#DFEDF2] text-black rounded-lg" fullWidth mt="md">
-        Book classic tour now
-      </Button>
+      {/* <Button className="bg-[#DFEDF2] text-black rounded-lg" fullWidth mt="md">
+        Read More
+      </Button> */}
     </Card>
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- will use it later
 function FunctionCard({
   Title,
   Description,

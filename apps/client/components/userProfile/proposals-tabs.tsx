@@ -1,15 +1,7 @@
 import { PrizeProposals } from '@/lib/api';
 import { useViaPrizeFactoryCreateViaPrize } from '@/lib/smartContract';
 import { ProposalStatus } from '@/lib/types';
-import { Box, Button, Group, Menu, SimpleGrid, Text } from '@mantine/core';
-import {
-  IconArrowsLeftRight,
-  IconMessageCircle,
-  IconPhoto,
-  IconSearch,
-  IconSettings,
-  IconTrash,
-} from '@tabler/icons-react';
+import { Text } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
 import { useRef } from 'react';
 import { useAccount } from 'wagmi';
@@ -49,36 +41,8 @@ export default function ProposalsTabs({
     return 'pending';
   };
   return (
-    <Box p="md">
-      <Group justify="space-between" px="md">
-        <Text w={600} size="lg">
-          Submitted Proposals
-        </Text>
-        <Menu shadow="md" width={200}>
-          <Menu.Target>
-            <Button>All Categories</Button>
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Label>Application</Menu.Label>
-            <Menu.Item leftSection={<IconSettings size={14} />}>Settings</Menu.Item>
-            <Menu.Item leftSection={<IconMessageCircle size={14} />}>Messages</Menu.Item>
-            <Menu.Item leftSection={<IconPhoto size={14} />}>Gallery</Menu.Item>
-            <Menu.Item leftSection={<IconSearch size={14} />}>Search</Menu.Item>
-
-            <Menu.Divider />
-
-            <Menu.Label>Danger zone</Menu.Label>
-            <Menu.Item leftSection={<IconArrowsLeftRight size={14} />}>
-              Transfer my data
-            </Menu.Item>
-            <Menu.Item color="red" leftSection={<IconTrash size={14} />}>
-              Delete my account
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      </Group>
-      <SimpleGrid cols={3} my="md">
+    <div className="p-6 w-full">
+      <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
         {isSuccess ? (
           data?.map((item) => (
             <ProposalExploreCard
@@ -147,14 +111,13 @@ export default function ProposalsTabs({
                     break;
                 }
               }}
-              profileName={item.user.username}
               title={item.title}
             />
           ))
         ) : (
           <Text>No Proposals</Text>
         )}
-      </SimpleGrid>
-    </Box>
+      </div>
+    </div>
   );
 }

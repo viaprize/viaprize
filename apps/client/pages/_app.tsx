@@ -1,4 +1,4 @@
-import { ColorSchemeScript, MantineProvider, createTheme } from '@mantine/core';
+import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 import '@mantine/tiptap/styles.css';
@@ -64,7 +64,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       >
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
           <QueryClientProvider client={queryClient}>
-            <ColorSchemeScript defaultColorScheme="auto" />
             <MantineProvider theme={theme} defaultColorScheme="auto">
               <Toaster />
               {getLayout(<Component {...pageProps} />)}

@@ -1,4 +1,4 @@
-import { Tabs } from '@mantine/core';
+import { Divider, Tabs } from '@mantine/core';
 
 import { useRouter } from 'next/router';
 import { useQuery } from 'wagmi';
@@ -12,20 +12,26 @@ export default function MainTabsUserProfile() {
     return getProposalsOfUser({ limit: 10, page: 1 }, query.id as string);
   });
   return (
-    <Tabs defaultValue="proposals" mx="xl">
+    <Tabs defaultValue="proposals" variant="pills" m="lg" className="md:w-2/3">
       <Tabs.List grow justify="center">
         <Tabs.Tab value="prizes">Prize</Tabs.Tab>
         <Tabs.Tab value="proposals">Proposals</Tabs.Tab>
         <Tabs.Tab value="submissions">Submissions</Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel value="prizes">Prizes</Tabs.Panel>
+      <Divider my="sm" />
+
+      <Tabs.Panel value="prizes">
+        <div className="w-full flex justify-center items-center">lets see</div>
+      </Tabs.Panel>
       <Tabs.Panel value="proposals">
         <ProposalsTabs
           data={getProposalsOfUserMutation.data}
           isSuccess={getProposalsOfUserMutation.isSuccess}
         />
       </Tabs.Panel>
-      <Tabs.Panel value="submissions">hhi bitch</Tabs.Panel>
+      <Tabs.Panel value="submissions">
+        <div className="w-full flex justify-center items-center">lets see</div>
+      </Tabs.Panel>
     </Tabs>
   );
 }

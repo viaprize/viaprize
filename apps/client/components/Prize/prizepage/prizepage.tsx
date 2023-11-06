@@ -2,7 +2,6 @@ import {
   ActionIcon,
   Button,
   Center,
-  Flex,
   Group,
   NumberInput,
   Stack,
@@ -14,6 +13,7 @@ import useAppUser from '@/context/hooks/useAppUser';
 import { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconRefresh } from '@tabler/icons-react';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
@@ -110,7 +110,7 @@ export default function PrizePageComponent({
   console.log({ prize });
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
-      <Flex justify="space-between" my="lg">
+      <Group justify="space-between" my="lg">
         <Title order={2}>{prize.title}</Title>
         <Group justify="right" gap="0" wrap="nowrap">
           <Button color="black" mx="5px">
@@ -120,8 +120,8 @@ export default function PrizePageComponent({
             <Text>0</Text>
           </ActionIcon>
         </Group>
-      </Flex>
-      <img
+      </Group>
+      <Image
         className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md"
         src={prize.images[0]}
         width={1280}
