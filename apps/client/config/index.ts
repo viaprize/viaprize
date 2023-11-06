@@ -1,4 +1,4 @@
-let envConf = require(`./${process.env.NEXT_PUBLIC_CHAIN}`).default;
+let envConf = require(`./op`).default;
 
 export const geckoApi = 'https://api.coingecko.com/api/v3';
 

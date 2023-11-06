@@ -1,4 +1,5 @@
 import { PrizeProposals } from 'src/prizes/entities/prize-proposals.entity';
+import { Prize } from 'src/prizes/entities/prize.entity';
 import { Submission } from 'src/prizes/entities/submission.entity';
 import {
   Column,
@@ -34,4 +35,7 @@ export class User {
 
   @OneToMany(() => PrizeProposals, (prizeProposals) => prizeProposals.user)
   prizeProposals: PrizeProposals[];
+
+  @OneToMany(() => Prize, (prize) => prize.user)
+  prizes: Prize[];
 }

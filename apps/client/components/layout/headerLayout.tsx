@@ -130,7 +130,10 @@ function ProfileMenu() {
                 <Menu.Item
                   leftSection={<IconUser size={14} />}
                   onClick={() => {
-                    router.push('/profile').then(console.log).catch(console.error);
+                    router
+                      .push(`/profile/${appUser?.username}`)
+                      .then(console.log)
+                      .catch(console.error);
                   }}
                 >
                   View Profile

@@ -1,6 +1,4 @@
 import { registerAs } from '@nestjs/config';
-import { AppConfig } from './config.type';
-import validateConfig from 'src/utils/validate-config';
 import {
   IsEnum,
   IsInt,
@@ -10,6 +8,8 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import validateConfig from 'src/utils/validate-config';
+import { AppConfig } from './config.type';
 
 enum Environment {
   Development = 'development',
@@ -71,5 +71,6 @@ export default registerAs<AppConfig>('app', () => {
     ),
     scheduleDatabaseUrL: process.env.SCHEDULE_DATABASE_URL || 'default',
     alchemy: process.env.ALCHEMY || 'no-api',
+    rpcUrl: process.env.RPC_URL || 'no-url',
   };
 });

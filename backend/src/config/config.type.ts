@@ -10,6 +10,7 @@ export type AppConfig = {
   headerLanguage: string;
   platformSharePercentage: number;
   alchemy: string;
+  rpcUrl: string;
 };
 
 export type DatabaseConfig = {

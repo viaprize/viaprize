@@ -8,17 +8,36 @@ import {
 } from '@nestjs/common';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
+import { PrizesService } from './services/prizes.service';
 
 import { TypedBody, TypedParam } from '@nestia/core';
+import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
+import { UsersService } from 'src/users/users.service';
 import { Http200Response } from 'src/utils/types/http.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
+import { CreatePrizeDto } from './dto/create-prize.dto';
+import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
+import { Prize } from './entities/prize.entity';
+import { Submission } from './entities/submission.entity';
+import { SubmissionService } from './services/submissions.service';
 
+interface PrizeWithBalance extends Prize {
+  balance: number;
+}
+interface PrizeWithBlockchainData extends PrizeWithBalance {
+  submission_time_blockchain: number;
+  voting_time_blockchain: number;
+}
+
+interface SubmissionWithBlockchainData extends Submission {
+  voting_blockchain: number;
+}
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
  * InfinityPaginationResultType interface, representing the result of paginated prize proposals with
@@ -50,7 +69,180 @@ export class PrizesController {
   constructor(
     private readonly prizeProposalsService: PrizeProposalsService,
     private readonly mailService: MailService,
+    private readonly prizeService: PrizesService,
+    private readonly blockchainService: BlockchainService,
+    private readonly submissionService: SubmissionService,
+    private readonly userService: UsersService,
   ) {}
+
+  @Post('')
+  @UseGuards(AuthGuard)
+  async createPrize(
+    @TypedBody() createPrizeDto: CreatePrizeDto,
+  ): Promise<Prize> {
+    const prizeProposal = await this.prizeProposalsService.findOne(
+      createPrizeDto.proposal_id,
+    );
+    const prize = await this.prizeService.create({
+      submissionTime: prizeProposal.submission_time,
+      votingTime: prizeProposal.voting_time,
+      title: prizeProposal.title,
+      admins: prizeProposal.admins,
+      contract_address: createPrizeDto.address,
+      description: prizeProposal.description,
+      isAutomatic: prizeProposal.isAutomatic,
+      priorities: prizeProposal.priorities,
+      proficiencies: prizeProposal.proficiencies,
+      proposer_address: prizeProposal.admins[0],
+      images: prizeProposal.images,
+      startSubmissionDate: prizeProposal.startSubmissionDate,
+      startVotingDate: prizeProposal.startVotingDate,
+      user: prizeProposal.user,
+    });
+    await this.prizeProposalsService.remove(prizeProposal.id);
+    await this.mailService.prizeDeployed(
+      prizeProposal.user.email,
+      prizeProposal.user.name,
+      prizeProposal.title,
+    );
+    return prize;
+  }
+
+  /**
+   * The code snippet you provided is a method in the `PrizesController` class. It is a route handler
+   * for the GET request to `/prizes` endpoint. Here's a breakdown of what it does:
+   * Gets page
+   *
+   * @summary Get all Prizes
+   *
+   * @date 9/25/2023 - 4:06:45 AM
+   * @async
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
+   * @returns {Promise<Readonly<{data: PrizeWithBalance[];hasNextPage: boolean;}>>>}
+   */
+  @Get('')
+  async getPrizes(
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
+  ): Promise<Readonly<{ data: PrizeWithBalance[]; hasNextPage: boolean }>> {
+    const prizeWithoutBalance = infinityPagination(
+      await this.prizeService.findAllPendingWithPagination({
+        page,
+        limit,
+      }),
+      {
+        limit,
+        page,
+      },
+    );
+    const prizeWithBalanceData: PrizeWithBalance[] = await Promise.all(
+      prizeWithoutBalance.data.map(async (prize) => {
+        const balance = await this.blockchainService.getBalanceOfAddress(
+          prize.contract_address,
+        );
+        return {
+          ...prize,
+          balance: parseInt(balance.toString()),
+        } as PrizeWithBalance;
+      }),
+    );
+    return {
+      data: prizeWithBalanceData as PrizeWithBalance[],
+      hasNextPage: prizeWithoutBalance.hasNextPage,
+    };
+  }
+
+  @Get('/:id')
+  async getPrize(
+    @TypedParam('id') id: string,
+  ): Promise<PrizeWithBlockchainData> {
+    const prize = await this.prizeService.findOne(id);
+    const balance = await this.blockchainService.getBalanceOfAddress(
+      prize.contract_address,
+    );
+    const submission_time = await this.blockchainService.getSubmissionTime(
+      prize.contract_address,
+    );
+    const voting_time = await this.blockchainService.getVotingTime(
+      prize.contract_address,
+    );
+
+    return {
+      ...prize,
+      balance: parseInt(balance.toString()),
+      submission_time_blockchain: parseInt(submission_time.toString()),
+      voting_time_blockchain: parseInt(voting_time.toString()),
+    };
+  }
+
+  @Post('/:id/submission')
+  @UseGuards(AuthGuard)
+  async submit(
+    @TypedParam('id') id: string,
+    @TypedBody() body: CreateSubmissionDto,
+    @Request() req,
+  ): Promise<Http200Response> {
+    const user = await this.userService.findOneByAuthId(req.user.userId);
+    const submission = await this.submissionService.create(body, user);
+    await this.prizeService.addSubmission(submission, id);
+
+    await this.mailService.submission(user.email);
+
+    return {
+      message: `Submission has been sent`,
+    };
+  }
+
+  @Get('/:id/submission')
+  async getSubmissions(
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
+    @TypedParam('id') id: string,
+  ): Promise<
+    Readonly<{
+      data: SubmissionWithBlockchainData[];
+      hasNextPage: boolean;
+    }>
+  > {
+    const prize = await this.prizeService.findOne(id);
+    const submissions = await infinityPagination(
+      await this.submissionService.findAllWithPagination({
+        limit,
+        page,
+        where: {
+          prize: {
+            id: id,
+          },
+        },
+      }),
+      {
+        limit,
+        page,
+      },
+    );
+    const finalSubmissions = await Promise.all(
+      submissions.data.map(async (value) => {
+        const votes = await this.blockchainService.getSubmissionVotes(
+          prize.contract_address,
+          value.submissionHash,
+        );
+        return {
+          ...value,
+          voting_blockchain: parseInt(votes.toString()),
+        } as SubmissionWithBlockchainData;
+      }),
+    );
+
+    return {
+      data: finalSubmissions,
+      hasNextPage: submissions.hasNextPage,
+    };
+  }
 
   /**
    * The code snippet you provided is a method in the `PrizesController` class. It is a route handler

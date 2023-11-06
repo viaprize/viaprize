@@ -102,7 +102,7 @@ export default function AdminPage() {
           <Loader size="xl" variant="bars" />
         ) : (
           <AccpetedProposals
-            isSuccess={getAcceptedProposalsMutation.isLoading}
+            isSuccess={getAcceptedProposalsMutation.isSuccess}
             data={getAcceptedProposalsMutation.data}
           />
         )}

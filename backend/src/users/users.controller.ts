@@ -44,10 +44,7 @@ export class UsersController {
   @Get(':authId')
   async findOneByAuthId(@TypedParam('authId') userId: string): Promise<User> {
     const user = await this.usersService.findOneByAuthId(userId);
-    user.submissions = user.submissions.filter(
-      (submission) => submission !== null && submission !== undefined,
-    );
-    assertSubmission(user);
+
     return user;
   }
 

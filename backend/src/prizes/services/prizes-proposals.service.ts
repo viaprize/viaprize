@@ -25,7 +25,6 @@ export class PrizeProposalsService {
       user: user,
     });
     return prizeProposal;
-    // await this.mailService.proposalSent(user.email);
   }
 
   async findAll() {
@@ -92,13 +91,17 @@ export class PrizeProposalsService {
     });
   }
 
-  async findOne(id: string) {
-    return await this.prizeProposalsRepository.findOne({
+  async findOne(id: string): Promise<PrizeProposals> {
+    const prizeProposal = await this.prizeProposalsRepository.findOne({
       where: {
         id,
       },
       relations: ['user'],
     });
+    if (!prizeProposal) {
+      throw new Error('Prize not found with id ' + id);
+    }
+    return prizeProposal;
   }
   async approve(id: string) {
     const prizeProposal = await this.findOne(id);
@@ -132,6 +135,9 @@ export class PrizeProposalsService {
   }
 
   async remove(id: string) {
-    await this.prizeProposalsRepository.delete(id);
+    await this.prizeProposalsRepository.delete({
+      id,
+    });
+    return true;
   }
 }

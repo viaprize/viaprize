@@ -42,15 +42,18 @@ function Prize() {
   };
   const handleUploadImages = async () => {
     const newImages = await uploadImages(files);
+
     setImages(newImages);
+    return newImages;
   };
   const submit = async () => {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-    await handleUploadImages();
+    const newImages = await handleUploadImages();
+    const finalAddress = address.filter((x) => x);
     await addProposalsMutation({
-      admins: address,
+      admins: [wallet.address, ...finalAddress],
       description: richtext,
       isAutomatic,
       voting_time: votingTime,
@@ -58,7 +61,7 @@ function Prize() {
       priorities: [],
       proficiencies: [],
       submission_time: proposalTime,
-      images: images ? [images] : [],
+      images: newImages ? [newImages] : [],
       title,
     });
   };

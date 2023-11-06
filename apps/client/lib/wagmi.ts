@@ -1,8 +1,8 @@
+import { env } from '@env';
 import type { Chain } from 'wagmi';
 import { configureChains, createConfig } from 'wagmi';
-import { optimism, optimismGoerli } from 'wagmi/chains';
+import { optimism, optimismGoerli, polygonMumbai } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { env } from '@env';
 
 const getChain = (chainName: string): Chain => {
   switch (chainName) {
@@ -11,6 +11,9 @@ const getChain = (chainName: string): Chain => {
     }
     case 'op-goerli': {
       return optimismGoerli;
+    }
+    case 'mumbai': {
+      return polygonMumbai;
     }
     default: {
       throw new Error('Chain Id is not defined in the app');
@@ -28,6 +31,11 @@ const getProvider = (chainName: string) => {
     case 'op-goerli': {
       return alchemyProvider({
         apiKey: 'WJky3_r1JKKeHmTC6CsDg9_iJdaAvIqK',
+      });
+    }
+    case 'mumbai': {
+      return alchemyProvider({
+        apiKey: 'XcG0U49rmR40kygsOE2Z2MrqtZxXYjGS',
       });
     }
     default: {
