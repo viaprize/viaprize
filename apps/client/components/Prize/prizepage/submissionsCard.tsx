@@ -56,7 +56,7 @@ export default function SubmissionsCard({
           </Group>
         </Group>
       </div>
-      <Text lineClamp={3}>
+      <Text lineClamp={3} component="div">
         <TypographyStylesProvider>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt nulla quam

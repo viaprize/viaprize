@@ -46,13 +46,13 @@ export default function SearchFilters() {
       <Text size="sm" weight={300}>
         you can explore prizes and work on them
       </Text>
-      <Group mb="xs" mt="md" position="apart">
+      <Group mb="xs" mt="md" justify="space-between">
         <TextInput
           icon={<IconSearch size="1rem" />}
           placeholder="Search"
-          style={{ width: '500px' }}
+          className="sm:w-[500px]"
         />
-        <Group position="right">
+        <Group justify="space-between">
           <Button onClick={open}>Filter</Button>
           {/* <Button>Sort</Button> */}
           <Menu shadow="md" width={200}>
