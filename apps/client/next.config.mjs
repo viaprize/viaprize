@@ -8,19 +8,28 @@ const withBundleAnalyzer = BundleAnalyzer({
 
 export default withBundleAnalyzer({
   reactStrictMode: true,
-  transpilePackages: ["@viaprize/ui"],
+  transpilePackages: ['@viaprize/ui'],
   eslint: {
     ignoreDuringBuilds: true,
   },
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "dweb.link",
-        port: "",
-        pathname: "/**",
+        protocol: 'https',
+        hostname: 'dweb.link',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.freepik.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        hostname: 'www.freepik.com',
       },
     ],
   },
-  output: "standalone",
+  output: 'standalone',
 });

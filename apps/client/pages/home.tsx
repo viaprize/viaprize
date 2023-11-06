@@ -10,7 +10,7 @@ import { BiLogoLinkedin, BiSolidRightArrowCircle } from 'react-icons/bi';
 import { BsTwitter } from 'react-icons/bs';
 import { ImTelegram } from 'react-icons/im';
 import type { RenderPhotoProps } from 'react-photo-album';
-import PhotoAlbum from 'react-photo-album';
+import { PhotoAlbum } from 'react-photo-album';
 
 const photoSizes: number[][] = [
   [2160, 2160],
@@ -165,12 +165,18 @@ export default function Home() {
             <ReasonCard
               Title="Reason 1"
               Description="30B is wasted annually on crowdfunding campaigns that never deliver"
+              image="https://img.freepik.com/free-photo/piggy-bank-was-thrown-broke-gold-coins-flowed-out_35913-3161.jpg?w=2000&t=st=1699282904~exp=1699283504~hmac=e46f0c2043992af865d65686b9f5f909ec1fe85fc01f83a50ae4b00cd376ccd3"
             />
             <ReasonCard
               Title="Reason 2"
               Description="Either the campaign delivers or you receive a refund"
+              image="https://img.freepik.com/free-photo/3d-cryptocurrency-rendering-design_23-2149074550.jpg?w=2000&t=st=1699283400~exp=1699284000~hmac=d294cc280e87f50abd42aa22260ba7acd215464ec003659fb7067d535dbc5136"
             />
-            <ReasonCard Title="Reason 3" Description="Win prizes! and make Money" />
+            <ReasonCard
+              Title="Reason 3"
+              Description="Win prizes! and make Money"
+              image="https://img.freepik.com/free-photo/team-working-animation-project_23-2149269903.jpg?w=2000&t=st=1699283321~exp=1699283921~hmac=2c2cb20d21db38dcfcf08834445cc9087d7a33ba58dc0aadd75187156eda9062"
+            />
           </div>
           {/* <h2 className="text-black mt-6">Some More Stats</h2>
           <Flex
@@ -395,13 +401,13 @@ function NavBar() {
           ))}
           <Button
             className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
-            component='a'
-            href='/prize/create'
+            component="a"
+            href="/prize/create"
           >
             Create Prize
           </Button>
           {user ? (
-            <Badge variant="gradient" className='py-4'>
+            <Badge variant="gradient" className="py-4">
               {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
             </Badge>
           ) : (
@@ -453,13 +459,21 @@ function NavBar() {
   );
 }
 
-function ReasonCard({ Title, Description }: { Title: string; Description: string }) {
+function ReasonCard({
+  Title,
+  Description,
+  image,
+}: {
+  Title: string;
+  Description: string;
+  image: string;
+}) {
   return (
     <Card shadow="sm" padding="lg" radius="lg" className="bg-[#486B78]">
       <Card.Section className="p-4 rounded-lg">
         <Image
-          src="/placeholder.jpg"
-          height={160}
+          src={image}
+          height={200}
           alt="Reason 1"
           width={160}
           className="w-full object-cover rounded-lg"
