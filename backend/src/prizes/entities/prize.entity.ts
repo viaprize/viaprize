@@ -25,6 +25,12 @@ export class Prize {
   @Column('boolean')
   isAutomatic: boolean;
 
+  @Column()
+  submissionTime: number;
+
+  @Column()
+  votingTime: number;
+
   @IsDate()
   @Column({ nullable: true })
   startVotingDate: Date;

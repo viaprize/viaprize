@@ -5,12 +5,68 @@ import { useState } from 'react';
 
 import { PrizeSubmissionTemplate } from '@/components/Prize/prizepage/defaultcontent';
 import AppShellLayout from '@/components/layout/appshell';
+import useAppUser from '@/context/hooks/useAppUser';
+import { backendApi } from '@/lib/backend';
+import {
+  usePrepareViaPrizeAddSubmission,
+  useViaPrizeAddSubmission,
+} from '@/lib/smartContract';
+import { useRouter } from 'next/router';
+import { toast } from 'sonner';
+import { keccak256, toHex } from 'viem';
+import { useAccount } from 'wagmi';
 
 function EditorsPage() {
   const [content, setContent] = useState<JSONContent | undefined>(
     PrizeSubmissionTemplate,
   );
-
+  const { appUser } = useAppUser();
+  const { address } = useAccount();
+  const router = useRouter();
+  const { config } = usePrepareViaPrizeAddSubmission({
+    account: address,
+    address: router.query.contract as `0x${string}`,
+    args: [address ? address : '0x', `${appUser?.id}${router.query.id}`],
+  });
+  console.log({ address });
+  const { data, writeAsync } = useViaPrizeAddSubmission({
+    ...config,
+    async onSuccess(data) {
+      const res = await (
+        await backendApi()
+      ).prizes.submissionCreate(router.query.id as string, {
+        submissionDescription: JSON.stringify(content),
+        submissionHash: keccak256(toHex(`${address}${appUser?.id}${router.query.id}`)),
+        submitterAddress: address ?? '0x',
+      });
+      console.log({ res }, 'ressss');
+      alert('Submitted');
+      router.push(`/prize/${router.query.id}`);
+    },
+  });
+  const submitToSmartContract = async () => {
+    await writeAsync?.();
+  };
+  console.log({ data }, 'submission hash');
+  const onSumbit = async () => {
+    console.log('on sumbitttt');
+    try {
+      toast.promise(submitToSmartContract, {
+        loading: 'Submitting',
+        success: 'Submission Submitted',
+        error: 'Error Submitting Proposal',
+      });
+    } catch {
+      toast.error('Error Submitting Proposal');
+    }
+    // console.log({
+    //   submissionDescription: JSON.stringify(content),
+    //   submissionHash: keccak256(
+    //     toHex(`${address}${appUser?.id}${router.query.id}`)
+    //   ),
+    //   submitterAddress: address ?? '0x'
+    // })
+  };
   return (
     <div className="w-full flex justify-center my-3 relative">
       <div className="relative min-h-[500px] min-w-[70vw] max-w-screen-lg border-stone-200 sm:pb-[calc(10vh)] sm:rounded-lg sm:border sm:shadow-lg">
@@ -23,8 +79,11 @@ function EditorsPage() {
           }}
           defaultValue={content}
         />
-        <button className="py-3 px-4 bg-gray-800 text-white absolute bottom-5 right-5 rounded-md">
-          Submit Prize
+        <button
+          onClick={onSumbit}
+          className="py-3 px-4 bg-gray-800 text-white absolute bottom-5 right-5 rounded-md"
+        >
+          Submit
         </button>
       </div>
     </div>

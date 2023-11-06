@@ -257,6 +257,12 @@ contract ViaPrize {
         return submissionTree.inOrderTraversal();
     }
 
+    /// @notice i hate my life
+    function get_submission_by_hash(bytes32 submissionHash) public view returns (uint256){
+        return submissionTree.getSubmissionVote(submissionHash);
+
+    }
+    
     /// @notice function to allow funders to add funds to the contract
     function addFunds() public payable {
         if (msg.value == 0) revert NotEnoughFunds();

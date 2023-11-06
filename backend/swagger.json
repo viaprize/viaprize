@@ -324,6 +324,97 @@
         "x-nestia-method": "GET"
       }
     },
+    "/prizes/{id}/submission": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubmissionDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.submission.submit",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type.o1"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.submission.getSubmissions",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/prizes/proposals": {
       "get": {
         "tags": [],
@@ -353,7 +444,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o1"
+                  "$ref": "#/components/schemas/Readonly__type.o2"
                 }
               }
             },
@@ -550,7 +641,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o2"
+                  "$ref": "#/components/schemas/Readonly__type.o3"
                 }
               }
             },
@@ -675,7 +766,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o3"
+                  "$ref": "#/components/schemas/Readonly__type.o4"
                 }
               }
             },
@@ -1436,6 +1527,16 @@
             "x-typia-optional": false,
             "type": "boolean"
           },
+          "submissionTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "votingTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
           "startVotingDate": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -1532,6 +1633,8 @@
           "id",
           "description",
           "isAutomatic",
+          "submissionTime",
+          "votingTime",
           "startVotingDate",
           "startSubmissionDate",
           "proposer_address",
@@ -1556,12 +1659,17 @@
             "x-typia-optional": false,
             "type": "string"
           },
-          "submissionTitle": {
+          "submissionDescription": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
           },
-          "subimissionDescription": {
+          "submissionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submitterAddress": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
@@ -1576,8 +1684,9 @@
         "nullable": false,
         "required": [
           "id",
-          "submissionTitle",
-          "subimissionDescription",
+          "submissionDescription",
+          "submissionHash",
+          "submitterAddress",
           "user",
           "prize"
         ],
@@ -1823,6 +1932,16 @@
             "x-typia-optional": false,
             "type": "boolean"
           },
+          "submissionTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "votingTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
           "startVotingDate": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -1920,6 +2039,8 @@
           "id",
           "description",
           "isAutomatic",
+          "submissionTime",
+          "votingTime",
           "startVotingDate",
           "startSubmissionDate",
           "proposer_address",
@@ -1939,12 +2060,12 @@
       "PrizeWithBlockchainData": {
         "type": "object",
         "properties": {
-          "submission_time": {
+          "submission_time_blockchain": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "number"
           },
-          "voting_time": {
+          "voting_time_blockchain": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "number"
@@ -1969,6 +2090,16 @@
             "x-typia-optional": false,
             "type": "boolean"
           },
+          "submissionTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "votingTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
           "startVotingDate": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -2062,12 +2193,14 @@
         },
         "nullable": false,
         "required": [
-          "submission_time",
-          "voting_time",
+          "submission_time_blockchain",
+          "voting_time_blockchain",
           "balance",
           "id",
           "description",
           "isAutomatic",
+          "submissionTime",
+          "votingTime",
           "startVotingDate",
           "startSubmissionDate",
           "proposer_address",
@@ -2084,7 +2217,121 @@
         ],
         "x-typia-jsDocTags": []
       },
+      "CreateSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "submissionDescription": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submitterAddress": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "submissionDescription",
+          "submissionHash",
+          "submitterAddress"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Http200Response": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "message"
+        ],
+        "x-typia-jsDocTags": []
+      },
       "Readonly__type.o1": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubmissionWithBlockchainData"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "description": "Make all properties in T readonly",
+        "x-typia-jsDocTags": []
+      },
+      "SubmissionWithBlockchainData": {
+        "type": "object",
+        "properties": {
+          "voting_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionDescription": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submitterAddress": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "prize": {
+            "$ref": "#/components/schemas/Prize"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "voting_blockchain",
+          "id",
+          "submissionDescription",
+          "submissionHash",
+          "submitterAddress",
+          "user",
+          "prize"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Readonly__type.o2": {
         "type": "object",
         "properties": {
           "data": {
@@ -2109,7 +2356,7 @@
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o2": {
+      "Readonly__type.o3": {
         "type": "object",
         "properties": {
           "data": {
@@ -2258,7 +2505,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o3": {
+      "Readonly__type.o4": {
         "type": "object",
         "properties": {
           "data": {
@@ -2295,21 +2542,6 @@
         "nullable": false,
         "required": [
           "comment"
-        ],
-        "x-typia-jsDocTags": []
-      },
-      "Http200Response": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "message"
         ],
         "x-typia-jsDocTags": []
       },

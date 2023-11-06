@@ -17,6 +17,17 @@ export class MailService {
       },
     );
   }
+  async submission(email: string) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Submission was deployed',
+      text: 'Viaprize',
+      templateName: 'submission.hbs',
+      context: {
+        telegramLink: this.telegramLink,
+      },
+    });
+  }
 
   async prizeDeployed(email: string, name: string, proposalTitle: string) {
     await this.mailerService.sendMail({

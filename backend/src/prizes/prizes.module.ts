@@ -7,8 +7,9 @@ import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
 import { Submission } from './entities/submission.entity';
 import { PrizesController } from './prizes.controller';
-import { PrizesService } from './prizes.service';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
+import { PrizesService } from './services/prizes.service';
+import { SubmissionService } from './services/submissions.service';
 
 @Module({
   controllers: [PrizesController],
@@ -18,6 +19,6 @@ import { PrizeProposalsService } from './services/prizes-proposals.service';
     MailModule,
     BlockchainModule,
   ],
-  providers: [PrizesService, PrizeProposalsService],
+  providers: [PrizesService, SubmissionService, PrizeProposalsService],
 })
 export class PrizesModule {}

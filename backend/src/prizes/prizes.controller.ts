@@ -7,30 +7,37 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
-import { PrizesService } from './prizes.service';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
+import { PrizesService } from './services/prizes.service';
 
 import { TypedBody, TypedParam } from '@nestia/core';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
+import { UsersService } from 'src/users/users.service';
 import { Http200Response } from 'src/utils/types/http.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { CreatePrizeDto } from './dto/create-prize.dto';
+import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
+import { Submission } from './entities/submission.entity';
+import { SubmissionService } from './services/submissions.service';
 
 interface PrizeWithBalance extends Prize {
   balance: number;
 }
 interface PrizeWithBlockchainData extends PrizeWithBalance {
-  submission_time: number;
-  voting_time: number;
+  submission_time_blockchain: number;
+  voting_time_blockchain: number;
 }
 
+interface SubmissionWithBlockchainData extends Submission {
+  voting_blockchain: number;
+}
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
  * InfinityPaginationResultType interface, representing the result of paginated prize proposals with
@@ -64,6 +71,8 @@ export class PrizesController {
     private readonly mailService: MailService,
     private readonly prizeService: PrizesService,
     private readonly blockchainService: BlockchainService,
+    private readonly submissionService: SubmissionService,
+    private readonly userService: UsersService,
   ) {}
 
   @Post('')
@@ -75,6 +84,8 @@ export class PrizesController {
       createPrizeDto.proposal_id,
     );
     const prize = await this.prizeService.create({
+      submissionTime: prizeProposal.submission_time,
+      votingTime: prizeProposal.voting_time,
       title: prizeProposal.title,
       admins: prizeProposal.admins,
       contract_address: createPrizeDto.address,
@@ -162,8 +173,74 @@ export class PrizesController {
     return {
       ...prize,
       balance: parseInt(balance.toString()),
-      submission_time: parseInt(submission_time.toString()),
-      voting_time: parseInt(voting_time.toString()),
+      submission_time_blockchain: parseInt(submission_time.toString()),
+      voting_time_blockchain: parseInt(voting_time.toString()),
+    };
+  }
+
+  @Post('/:id/submission')
+  @UseGuards(AuthGuard)
+  async submit(
+    @TypedParam('id') id: string,
+    @TypedBody() body: CreateSubmissionDto,
+    @Request() req,
+  ): Promise<Http200Response> {
+    const user = await this.userService.findOneByAuthId(req.user.userId);
+    const submission = await this.submissionService.create(body, user);
+    await this.prizeService.addSubmission(submission, id);
+
+    await this.mailService.submission(user.email);
+
+    return {
+      message: `Submission has been sent`,
+    };
+  }
+
+  @Get('/:id/submission')
+  async getSubmissions(
+    @Query('page')
+    page: number = 1,
+    @Query('limit')
+    limit: number = 10,
+    @TypedParam('id') id: string,
+  ): Promise<
+    Readonly<{
+      data: SubmissionWithBlockchainData[];
+      hasNextPage: boolean;
+    }>
+  > {
+    const prize = await this.prizeService.findOne(id);
+    const submissions = await infinityPagination(
+      await this.submissionService.findAllWithPagination({
+        limit,
+        page,
+        where: {
+          prize: {
+            id: id,
+          },
+        },
+      }),
+      {
+        limit,
+        page,
+      },
+    );
+    const finalSubmissions = await Promise.all(
+      submissions.data.map(async (value) => {
+        const votes = await this.blockchainService.getSubmissionVotes(
+          prize.contract_address,
+          value.submissionHash,
+        );
+        return {
+          ...value,
+          voting_blockchain: parseInt(votes.toString()),
+        } as SubmissionWithBlockchainData;
+      }),
+    );
+
+    return {
+      data: finalSubmissions,
+      hasNextPage: submissions.hasNextPage,
     };
   }
 

@@ -4,8 +4,9 @@ import { Paginated, paginate } from 'nestjs-paginate';
 import { User } from 'src/users/entities/user.entity';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { Repository } from 'typeorm';
-import { Prize } from './entities/prize.entity';
-import { PrizePaginateQuery } from './entities/types';
+import { Prize } from '../entities/prize.entity';
+import { Submission } from '../entities/submission.entity';
+import { PrizePaginateQuery } from '../entities/types';
 
 type CreatPrize = {
   title: string;
@@ -19,6 +20,8 @@ type CreatPrize = {
   proficiencies: string[];
   images: string[];
   priorities: string[];
+  submissionTime: number;
+  votingTime: number;
   user: User;
 };
 
@@ -68,8 +71,11 @@ export class PrizesService {
   getSmartContractDetails() {}
 
   async findOne(id: string) {
-    const prize = await this.prizeRepository.findOneByOrFail({
-      id,
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        id,
+      },
+      relations: ['submissions', 'user'],
     });
 
     return prize;
@@ -88,6 +94,17 @@ export class PrizesService {
 
   async create(prizeData: CreatPrize) {
     const prize = this.prizeRepository.create(prizeData);
+    return await this.prizeRepository.save(prize);
+  }
+
+  async addSubmission(submission: Submission, prizeId: string) {
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        id: prizeId,
+      },
+      relations: ['submissions'],
+    });
+    prize.submissions.push(submission);
     return await this.prizeRepository.save(prize);
   }
 

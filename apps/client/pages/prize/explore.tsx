@@ -19,6 +19,7 @@ function ExplorePage({ prizes }: InferGetServerSidePropsType<typeof getServerSid
             profileName={''}
             title={prize.title}
             key={prize.id}
+            id={prize.id}
           />
         ))}
         {/* Add as many ExploreCard components as you need */}

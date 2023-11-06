@@ -7,15 +7,24 @@ import { useAccount } from 'wagmi';
 
 export default function StartSubmission({
   contractAddress,
+  submissionTime,
 }: {
   contractAddress: string;
+  submissionTime: number;
 }) {
   const { address } = useAccount();
   const { config } = usePrepareViaPrizeStartSubmissionPeriod({
     account: address,
     address: contractAddress as `0x${string}`,
+    args: [BigInt(submissionTime)],
   });
-  const { writeAsync, isLoading } = useViaPrizeStartSubmissionPeriod(config);
+
+  const { writeAsync, isLoading } = useViaPrizeStartSubmissionPeriod({
+    ...config,
+    onSuccess(data, variables, context) {
+      window.location.reload();
+    },
+  });
   return (
     <Button
       fullWidth
@@ -23,7 +32,6 @@ export default function StartSubmission({
       onClick={async () => {
         const result = await writeAsync?.();
         console.log(result);
-        window.location.reload();
       }}
     >
       {' '}

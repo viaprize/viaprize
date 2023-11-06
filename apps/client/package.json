@@ -63,6 +63,7 @@
     "fs": "0.0.1-security",
     "hardhat": "^2.19.0",
     "image-size": "^1.0.2",
+    "keccak256": "^1.0.6",
     "next": "13.4.4",
     "novel": "^0.1.20",
     "openai": "^4.6.0",

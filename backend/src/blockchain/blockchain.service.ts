@@ -35,4 +35,19 @@ export class BlockchainService {
     );
     return await contract.get_voting_time();
   }
+
+  async getSubmissionVotes(
+    viaprizeContractAddress: string,
+    hash: string,
+  ): Promise<bigint> {
+    const abi = [
+      'function get_submission_by_hash(bytes32 submissionHash) view returns (uint256)',
+    ];
+    const contract = new ethers.Contract(
+      viaprizeContractAddress,
+      abi,
+      this.provider,
+    );
+    return await contract.get_submission_by_hash(hash);
+  }
 }

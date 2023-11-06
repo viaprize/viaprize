@@ -1,19 +1,18 @@
-/* eslint-disable */
 import {
-  Address,
-  UseContractEventConfig,
+  useContractRead,
   UseContractReadConfig,
+  useContractWrite,
   UseContractWriteConfig,
+  usePrepareContractWrite,
   UsePrepareContractWriteConfig,
   useContractEvent,
-  useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
+  UseContractEventConfig,
+  Address,
 } from 'wagmi';
 import {
-  PrepareWriteContractResult,
   ReadContractResult,
   WriteContractMode,
+  PrepareWriteContractResult,
 } from 'wagmi/actions';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,6 +140,13 @@ export const submissionAvlTreeABI = [
         ],
       },
     ],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'getSubmissionVote',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
@@ -387,6 +393,13 @@ export const viaPrizeABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'get_submission_by_hash',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [],
     name: 'get_submission_time',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -510,7 +523,7 @@ export const viaPrizeABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2)
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
  */
 export const viaPrizeFactoryABI = [
   {
@@ -544,14 +557,14 @@ export const viaPrizeFactoryABI = [
 ] as const;
 
 /**
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2)
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
  */
 export const viaPrizeFactoryAddress = {
-  1: '0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2',
+  1: '0x550055FfB1B0c51c96644D8e3302084403B0d215',
 } as const;
 
 /**
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2)
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
  */
 export const viaPrizeFactoryConfig = {
   address: viaPrizeFactoryAddress,
@@ -819,6 +832,25 @@ export function useSubmissionAvlTreeGetSubmission<
   return useContractRead({
     abi: submissionAvlTreeABI,
     functionName: 'getSubmission',
+    ...config,
+  } as UseContractReadConfig<typeof submissionAvlTreeABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link submissionAvlTreeABI}__ and `functionName` set to `"getSubmissionVote"`.
+ */
+export function useSubmissionAvlTreeGetSubmissionVote<
+  TFunctionName extends 'getSubmissionVote',
+  TSelectData = ReadContractResult<typeof submissionAvlTreeABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof submissionAvlTreeABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: submissionAvlTreeABI,
+    functionName: 'getSubmissionVote',
     ...config,
   } as UseContractReadConfig<typeof submissionAvlTreeABI, TFunctionName, TSelectData>);
 }
@@ -1319,6 +1351,25 @@ export function useViaPrizeGetAllSubmissions<
   return useContractRead({
     abi: viaPrizeABI,
     functionName: 'getAllSubmissions',
+    ...config,
+  } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"get_submission_by_hash"`.
+ */
+export function useViaPrizeGetSubmissionByHash<
+  TFunctionName extends 'get_submission_by_hash',
+  TSelectData = ReadContractResult<typeof viaPrizeABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: viaPrizeABI,
+    functionName: 'get_submission_by_hash',
     ...config,
   } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
 }
@@ -1991,7 +2042,7 @@ export function usePrepareViaPrizeVote(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link viaPrizeFactoryABI}__.
  *
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2)
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
  */
 export function useViaPrizeFactoryWrite<
   TFunctionName extends string,
@@ -2020,7 +2071,7 @@ export function useViaPrizeFactoryWrite<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link viaPrizeFactoryABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2)
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
  */
 export function useViaPrizeFactoryCreateViaPrize<
   TMode extends WriteContractMode = undefined,
@@ -2053,7 +2104,7 @@ export function useViaPrizeFactoryCreateViaPrize<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link viaPrizeFactoryABI}__.
  *
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2)
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
  */
 export function usePrepareViaPrizeFactoryWrite<TFunctionName extends string>(
   config: Omit<
@@ -2071,7 +2122,7 @@ export function usePrepareViaPrizeFactoryWrite<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link viaPrizeFactoryABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2)
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
  */
 export function usePrepareViaPrizeFactoryCreateViaPrize(
   config: Omit<
@@ -2090,7 +2141,7 @@ export function usePrepareViaPrizeFactoryCreateViaPrize(
 /**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link viaPrizeFactoryABI}__.
  *
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2)
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
  */
 export function useViaPrizeFactoryEvent<TEventName extends string>(
   config: Omit<
@@ -2108,7 +2159,7 @@ export function useViaPrizeFactoryEvent<TEventName extends string>(
 /**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link viaPrizeFactoryABI}__ and `eventName` set to `"NewViaPrizeCreated"`.
  *
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0xafa0f403EF2De1965a02f517c2DBec58D62Dd2B2)
+ * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
  */
 export function useViaPrizeFactoryNewViaPrizeCreatedEvent(
   config: Omit<
