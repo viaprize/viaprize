@@ -46,11 +46,11 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
     value: debounced ? parseEther(debounced) : undefined,
   });
   useEffect(() => {
-    refetch();
+    refetch().then(console.log).catch(console.error);
   }, []);
   const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
     ...config,
-    async onSuccess(data, variables, context) {
+    async onSuccess(data) {
       toast.success(`Transaction Sent with Hash ${data?.hash}`, {
         duration: 6000,
       });

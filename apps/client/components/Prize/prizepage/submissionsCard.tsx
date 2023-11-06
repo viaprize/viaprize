@@ -67,7 +67,7 @@ export default function SubmissionsCard({
     account: address,
     args: [hash as `0x${string}`, parseEther(debounced)],
 
-    onSuccess(data, variables, context) {
+    onSuccess(data) {
       toast.success(`Transaction Sent with Hash ${data?.hash}`, {
         duration: 6000,
       });
@@ -106,7 +106,13 @@ export default function SubmissionsCard({
             }}
           />
 
-          <Button onClick={() => write?.()} disabled={!write} loading={sendLoading}>
+          <Button
+            onClick={() => {
+              write?.();
+            }}
+            disabled={!write}
+            loading={sendLoading}
+          >
             Vote!
           </Button>
         </Stack>

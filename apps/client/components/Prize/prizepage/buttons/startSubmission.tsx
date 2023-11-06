@@ -21,7 +21,7 @@ export default function StartSubmission({
 
   const { writeAsync, isLoading } = useViaPrizeStartSubmissionPeriod({
     ...config,
-    onSuccess(data, variables, context) {
+    onSuccess() {
       window.location.reload();
     },
   });

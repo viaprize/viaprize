@@ -10,7 +10,7 @@ export default function EndSubmission({ contractAddress }: { contractAddress: st
   const { writeAsync, isLoading } = useViaPrizeEndSubmissionPeriod({
     account: address,
     address: contractAddress as `0x${string}`,
-    onSuccess(data, variables, context) {
+    onSuccess() {
       window.location.reload();
     },
   });

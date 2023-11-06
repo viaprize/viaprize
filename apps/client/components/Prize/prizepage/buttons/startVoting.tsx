@@ -19,7 +19,7 @@ export default function StartVoting({
     account: address,
     address: contractAddress as `0x${string}`,
     args: [BigInt(votingTime)],
-    onSuccess(data, variables, context) {
+    onSuccess(data) {
       console.log({ data });
       window.location.reload();
     },

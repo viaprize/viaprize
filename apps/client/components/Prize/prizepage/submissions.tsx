@@ -17,7 +17,7 @@ export default function Submissions({
         component="a"
         w="40%"
         className="self-end"
-        href={`/prize/${query.id}/editor?contract=${contractAddress}`}
+        href={`/prize/${query.id as string}/editor?contract=${contractAddress}`}
       >
         Submit your work
       </Button>
@@ -34,6 +34,7 @@ export default function Submissions({
           time={''}
           votes={submission.voting_blockchain}
           submissionId={submission.id}
+          key={submission.id}
         />
       ))}
     </div>

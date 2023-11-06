@@ -26,29 +26,34 @@ function EditorsPage() {
   const { config } = usePrepareViaPrizeAddSubmission({
     account: address,
     address: router.query.contract as `0x${string}`,
-    args: [address ? address : '0x', `${appUser?.id}${router.query.id}`],
+    args: [address ? address : '0x', `${appUser?.id}${router.query.id as string}`],
   });
   console.log({ address });
   const { data, writeAsync } = useViaPrizeAddSubmission({
     ...config,
-    async onSuccess(data) {
+    async onSuccess() {
       const res = await (
         await backendApi()
       ).prizes.submissionCreate(router.query.id as string, {
         submissionDescription: JSON.stringify(content),
-        submissionHash: keccak256(toHex(`${address}${appUser?.id}${router.query.id}`)),
+        submissionHash: keccak256(
+          toHex(`${address}${appUser?.id}${router.query.id as string}`),
+        ),
         submitterAddress: address ?? '0x',
       });
       console.log({ res }, 'ressss');
       alert('Submitted');
-      router.push(`/prize/${router.query.id}`);
+      router
+        .push(`/prize/${router.query.id as string}`)
+        .then(console.log)
+        .catch(console.error);
     },
   });
   const submitToSmartContract = async () => {
     await writeAsync?.();
   };
   console.log({ data }, 'submission hash');
-  const onSumbit = async () => {
+  const onSumbit = () => {
     console.log('on sumbitttt');
     try {
       toast.promise(submitToSmartContract, {
@@ -59,13 +64,6 @@ function EditorsPage() {
     } catch {
       toast.error('Error Submitting Proposal');
     }
-    // console.log({
-    //   submissionDescription: JSON.stringify(content),
-    //   submissionHash: keccak256(
-    //     toHex(`${address}${appUser?.id}${router.query.id}`)
-    //   ),
-    //   submitterAddress: address ?? '0x'
-    // })
   };
   return (
     <div className="w-full flex justify-center my-3 relative">

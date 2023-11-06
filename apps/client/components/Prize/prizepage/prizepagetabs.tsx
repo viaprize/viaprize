@@ -7,7 +7,7 @@ import AboutPrize from './aboutprize';
 import PrizeFunderCard from './prizeFunderCard';
 
 export default function PrizePageTabs({ contractAddress }: { contractAddress: string }) {
-  const { data: balance, refetch } = useBalance({
+  const { data: balance } = useBalance({
     address: contractAddress as `0x${string}`,
   });
   // const interval = useInterval(async () => {
