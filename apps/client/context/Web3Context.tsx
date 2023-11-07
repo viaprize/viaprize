@@ -5,13 +5,13 @@
  *
  * @module components/Web3ContextProvider
  */
-import React, { useState, createContext, useCallback, useEffect, ReactNode } from 'react';
+import config from '@/config';
+import { Loader } from '@mantine/core';
+import BN from 'bignumber.js';
+import React, { ReactNode, createContext, useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Web3 from 'web3';
-import BN from 'bignumber.js';
 import useWeb3Modal from './hooks/useWeb3Modal';
-import { Loader } from '@mantine/core';
-import config from '@/config';
 /**
  * ProviderError is an interface for Ethereum provider errors.
  * It extends the built-in Error object with a `code` property.

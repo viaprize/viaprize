@@ -1,24 +1,18 @@
-import {
-  ActionIcon,
-  Button,
-  Checkbox,
-  NumberInput,
-  SimpleGrid,
-  TextInput,
-} from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
-import type { ReactElement } from 'react';
-import { useState } from 'react';
-
-import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
-import AppShellLayout from '@/components/layout/appshell';
+/* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
+import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import router from 'next/router';
+import type { ReactElement } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 import ImageComponent from '../../components/Prize/dropzone';
 import { TextEditor } from '../../components/richtexteditor/textEditor';
+import useAppUser from '@/context/hooks/useAppUser';
+import AppShellLayout from '@/components/layout/appshell';
+import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
 
 function Prize() {
   const [address, setAddress] = useState(['']);
@@ -28,18 +22,19 @@ function Prize() {
   const [votingTime, setVotingTime] = useState(0);
   const [proposalTime, setProposalTime] = useState(0);
   const { user } = usePrivy();
+  const { appUser } = useAppUser();
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [images, setImages] = useState<string>();
   const { addProposals, uploadImages } = usePrizeProposal();
   const { wallet } = usePrivyWagmi();
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
-  const onAddressChange = (index: number, value: string) => {
-    setAddress((prev) => {
-      prev[index] = value;
-      return [...prev];
-    });
-  };
+  // const onAddressChange = (index: number, value: string) => {
+  //   setAddress((prev) => {
+  //     prev[index] = value;
+  //     return [...prev];
+  //   });
+  // };
   const handleUploadImages = async () => {
     const newImages = await uploadImages(files);
 
@@ -57,13 +52,14 @@ function Prize() {
       description: richtext,
       isAutomatic,
       voting_time: votingTime,
-      proposer_address: wallet?.address,
+      proposer_address: wallet.address,
       priorities: [],
       proficiencies: [],
       submission_time: proposalTime,
       images: newImages ? [newImages] : [],
       title,
     });
+    await router.push(`/profile/${appUser?.username}`);
   };
 
   const handleSubmit = () => {
@@ -84,19 +80,19 @@ function Prize() {
   //   setRichtext(PrizeCreationTemplate);
   // };
 
-  const addAddress = () => {
-    setAddress((prev: string[]) => {
-      return [...prev, ''];
-    });
-  };
+  // const addAddress = () => {
+  //   setAddress((prev: string[]) => {
+  //     return [...prev, ''];
+  //   });
+  // };
 
-  const removeAddress = (index: number) => {
-    setAddress((prev) => {
-      const arr: string[] = JSON.parse(JSON.stringify(prev)) as string[];
-      arr.splice(index, 1);
-      return [...arr];
-    });
-  };
+  // const removeAddress = (index: number) => {
+  //   setAddress((prev) => {
+  //     const arr: string[] = JSON.parse(JSON.stringify(prev)) as string[];
+  //     arr.splice(index, 1);
+  //     return [...arr];
+  //   });
+  // };
   return (
     <div className="shadow-md max-w-screen-lg p-8 m-6">
       <ImageComponent files={files} setFiles={setFiles} />
@@ -140,7 +136,7 @@ function Prize() {
           }}
         />
 
-        {address.map((item, index) => (
+        {/* {address.map((item, index) => (
           <div className="" key={index}>
             <TextInput
               type="text"
@@ -176,10 +172,10 @@ function Prize() {
               </Button>
             )}
           </div>
-        ))}
-        <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
+        ))} */}
+        {/* <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
           <IconPlus />
-        </ActionIcon>
+        </ActionIcon> */}
       </SimpleGrid>
       <Button
         className="mt-3 "

@@ -26,6 +26,7 @@ export default function StartVoting({
   });
   return (
     <Button
+      my="md"
       fullWidth
       loading={isLoading}
       onClick={async () => {

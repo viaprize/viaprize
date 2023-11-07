@@ -127,7 +127,19 @@ function ProfileMenu() {
                 {appUser.username.charAt(0).toUpperCase()}
               </Avatar>
             ) : (
-              <Avatar color="cyan" radius="xl" className="cursor-pointer" />
+              <Button
+                color="green"
+                leftSection={<IconUser size={14} />}
+                onClick={() => {
+                  toast.promise(router.push('/'), {
+                    loading: 'Redirecting Please Wait',
+                    error: 'Error while redirecting ',
+                    success: 'Redirected to Home Page',
+                  });
+                }}
+              >
+                Home
+              </Button>
             )}
           </Menu.Target>
           <Menu.Dropdown p="md" mr="sm">

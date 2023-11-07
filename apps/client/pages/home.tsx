@@ -10,7 +10,8 @@ import { BiLogoLinkedin, BiSolidRightArrowCircle } from 'react-icons/bi';
 import { BsTwitter } from 'react-icons/bs';
 import { ImTelegram } from 'react-icons/im';
 import type { RenderPhotoProps } from 'react-photo-album';
-import { PhotoAlbum } from 'react-photo-album';
+import PhotoAlbum from 'react-photo-album';
+import { toast } from 'sonner';
 
 const photoSizes: number[][] = [
   [2160, 2160],
@@ -378,8 +379,9 @@ function NavBarLinks({ text, link }: { text: string; link: string }) {
 function NavBar() {
   const [opened, { toggle }] = useDisclosure();
   const { user } = usePrivy();
+  const router = useRouter();
 
-  const { loginUser } = useAppUser();
+  const { loginUser, appUser } = useAppUser();
 
   return (
     <>
@@ -401,8 +403,16 @@ function NavBar() {
           ))}
           <Button
             className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
-            component="a"
-            href="/prize/create"
+            onClick={() => {
+              if (!appUser) {
+                toast.error('You need to be logged In to crate a prize');
+              }
+              toast.promise(router.push('/prize/create'), {
+                loading: 'Redirecting Please Wait',
+                error: 'Error while redirecting ',
+                success: 'Redirected to Prize Create Page',
+              });
+            }}
           >
             Create Prize
           </Button>

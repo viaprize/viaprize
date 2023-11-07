@@ -51,13 +51,18 @@ function EditorsPage() {
   });
   const submitToSmartContract = async () => {
     await writeAsync?.();
+    toast.promise(router.push(`/prize/${router.query.id as string}`), {
+      loading: 'Redirecting please wait ',
+      success: 'Submission Submitted',
+      error: 'Error Submitting Proposal',
+    });
   };
   console.log({ data }, 'submission hash');
   const onSumbit = () => {
     console.log('on sumbitttt');
     try {
-      toast.promise(submitToSmartContract, {
-        loading: 'Submitting',
+      toast.promise(submitToSmartContract(), {
+        loading: 'Submission In Progress',
         success: 'Submission Submitted',
         error: 'Error Submitting Proposal',
       });

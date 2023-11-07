@@ -21,6 +21,10 @@ export const NESTIA_CONFIG: INestiaConfig = {
         url: 'http://localhost:3001/api',
         description: 'Local server',
       },
+      {
+        url: 'https://api.pactsmith.com/api',
+        description: 'Prod Server',
+      },
     ],
     security: {
       bearer: {

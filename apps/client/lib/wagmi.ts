@@ -1,4 +1,3 @@
-import { env } from '@env';
 import type { Chain } from 'wagmi';
 import { configureChains, createConfig } from 'wagmi';
 import { optimism, optimismGoerli, polygonMumbai } from 'wagmi/chains';
@@ -44,9 +43,16 @@ const getProvider = (chainName: string) => {
   }
 };
 
-const chain = getChain(env.NEXT_PUBLIC_CHAIN);
-const provider = getProvider(env.NEXT_PUBLIC_CHAIN);
-export const configureChainsConfig = configureChains([chain], [provider]);
+// const chain = getChain(env.NEXT_PUBLIC_CHAIN);
+// const provider = getProvider(env.NEXT_PUBLIC_CHAIN);
+export const configureChainsConfig = configureChains(
+  [polygonMumbai],
+  [
+    alchemyProvider({
+      apiKey: 'XcG0U49rmR40kygsOE2Z2MrqtZxXYjGS',
+    }),
+  ],
+);
 const config = createConfig({
   autoConnect: true,
   publicClient: configureChainsConfig.publicClient,

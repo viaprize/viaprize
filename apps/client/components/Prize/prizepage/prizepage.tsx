@@ -13,16 +13,12 @@ import useAppUser from '@/context/hooks/useAppUser';
 import { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconRefresh } from '@tabler/icons-react';
+import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
-import {
-  useAccount,
-  useBalance,
-  usePrepareSendTransaction,
-  useSendTransaction,
-} from 'wagmi';
+import { useAccount, useBalance, usePrepareSendTransaction } from 'wagmi';
 import EndSubmission from './buttons/endSubmission';
 import EndVoting from './buttons/endVoting';
 import StartSubmission from './buttons/startSubmission';
@@ -32,12 +28,8 @@ import Submissions from './submissions';
 
 function FundCard({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
-  const [value, setValue] = useState('0');
+  const [value, setValue] = useState('');
   const [debounced] = useDebouncedValue(value, 500);
-
-  console.log({ value }, 'value');
-  console.log(address, 'addresssss');
-  console.log(contractAddress, 'contractAddress');
 
   const { data: balance, isLoading, refetch } = useBalance({ address });
 
@@ -45,18 +37,17 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
     to: contractAddress,
     value: debounced ? parseEther(debounced) : undefined,
   });
-  useEffect(() => {
-    refetch().then(console.log).catch(console.error);
-  }, []);
-  const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
-    ...config,
-    async onSuccess(data) {
-      toast.success(`Transaction Sent with Hash ${data?.hash}`, {
-        duration: 6000,
-      });
-      await refetch();
-    },
-  });
+  const [sendLoading, setSendLoading] = useState(false);
+
+  // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
+  //   ...config,
+  //   async onSuccess(data) {
+  //     toast.success(`Transaction Sent with Hash ${data?.hash}`, {
+  //       duration: 6000,
+  //     });
+  //     await refetch();
+  //   },
+  // });
 
   return (
     <Stack my={'md'}>
@@ -70,7 +61,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
         mt="md"
         rightSection={
           <ActionIcon>
-            <IconRefresh onClick={() => refetch()} />
+            <IconRefresh onClick={() => refetch({})} />
           </ActionIcon>
         }
         max={parseInt(balance?.formatted as string)}
@@ -88,10 +79,17 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       />
 
       <Button
-        disabled={!sendTransaction}
+        disabled={!value}
         loading={sendLoading}
-        onClick={() => {
-          sendTransaction?.();
+        onClick={async () => {
+          const config = await prepareSendTransaction({
+            to: contractAddress,
+            value: debounced ? parseEther(debounced) : undefined,
+          });
+          const { hash } = await sendTransaction(config);
+          toast.success(`Transaction Sent with Hash ${hash}`, {
+            duration: 6000,
+          });
         }}
       >
         Donate
@@ -145,7 +143,7 @@ export default function PrizePageComponent({
 
       {appUser &&
         appUser.username === prize.user.username &&
-        prize.submission_time_blockchain > 0 &&
+        prize.submission_time_blockchain === 0 &&
         prize.voting_time_blockchain === 0 && (
           <StartVoting
             contractAddress={prize.contract_address}
@@ -158,7 +156,11 @@ export default function PrizePageComponent({
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 && (
         <EndVoting contractAddress={prize.contract_address} />
       )}
-      <Submissions submissions={submissions} contractAddress={prize.contract_address} />
+      <Submissions
+        allowSubmission={prize.submission_time_blockchain > 0}
+        submissions={submissions}
+        contractAddress={prize.contract_address}
+      />
     </div>
   );
 }

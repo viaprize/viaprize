@@ -2,7 +2,7 @@
 
 import useWeb3Context from '@/context/hooks/useWeb3Context';
 import { useState } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 export default function Contribute({
   address,

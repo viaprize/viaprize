@@ -121,9 +121,9 @@ export default function Details() {
           {!usernameLoading &&
             debouncedUsername.length > 0 &&
             (exists && debouncedUsername.length > 0 ? (
-              <Text color="red">Username already exists</Text>
+              <Text c="red">Username already exists</Text>
             ) : (
-              <Text color="green">{username} Is a Valid Username</Text>
+              <Text c="green">{username} Is a Valid Username</Text>
             ))}
         </Flex>
         <TextInput

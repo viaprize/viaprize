@@ -1,7 +1,7 @@
 import {
-  usePrepareViaPrizeVote,
+  prepareWriteViaPrize,
   useViaPrizeFunders,
-  useViaPrizeVote,
+  writeViaPrize,
 } from '@/lib/smartContract';
 import {
   ActionIcon,
@@ -32,6 +32,7 @@ interface SubmissionsCardProps {
   submissionId: string;
   contractAddress: string;
   hash: string;
+  description: string;
 }
 export default function SubmissionsCard({
   fullname,
@@ -40,9 +41,11 @@ export default function SubmissionsCard({
   time,
   contractAddress,
   hash,
+  description,
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { address } = useAccount();
+  const [sendLoading, setSendLoading] = useState(false);
   const [value, setValue] = useState('0');
   const [debounced] = useDebouncedValue(value, 500);
   const {
@@ -53,26 +56,26 @@ export default function SubmissionsCard({
     address: contractAddress as `0x${string}`,
     args: [address ?? '0x'],
   });
-  const { config } = usePrepareViaPrizeVote({});
-  console.log({ config });
-  console.log([hash as `0x${string}`, parseEther(debounced)], 'hiiii');
+  // const { config } = usePrepareViaPrizeVote({});
+  // console.log({ config });
+  // console.log([hash as `0x${string}`, parseEther(debounced)], 'hiiii');
 
-  console.log({ debounced }, 'debounced');
-  const {
-    isLoading: sendLoading,
-    writeAsync,
-    write,
-  } = useViaPrizeVote({
-    address: contractAddress as `0x${string}`,
-    account: address,
-    args: [hash as `0x${string}`, parseEther(debounced)],
+  // console.log({ debounced }, 'debounced');
+  // const {
+  //   isLoading: sendLoading,
+  //   writeAsync,
+  //   write,
+  // } = useViaPrizeVote({
+  //   address: contractAddress as `0x${string}`,
+  //   account: address,
+  //   args: [hash as `0x${string}`, parseEther(debounced)],
 
-    onSuccess(data) {
-      toast.success(`Transaction Sent with Hash ${data?.hash}`, {
-        duration: 6000,
-      });
-    },
-  });
+  //   onSuccess(data) {
+  //     toast.success(`Transaction Sent with Hash ${data?.hash}`, {
+  //       duration: 6000,
+  //     });
+  //   },
+  // });
 
   return (
     <Card className="flex flex-col justify-center gap-3">
@@ -100,17 +103,32 @@ export default function SubmissionsCard({
             value={value}
             onChange={(v) => {
               console.log('hiiiiiiiiiii');
-              console.log(writeAsync, 'ir');
 
               setValue(v.toString());
             }}
           />
 
           <Button
-            onClick={() => {
-              write?.();
+            onClick={async () => {
+              setSendLoading(true);
+
+              const { request } = await prepareWriteViaPrize({
+                address: contractAddress as `0x${string}`,
+                functionName: 'vote',
+                args: [hash as `0x${string}`, parseEther(debounced)],
+              });
+
+              const { hash: transactionHash } = await writeViaPrize(request);
+
+              console.log({ transactionHash }, 'transactionHash');
+
+              toast.success(`Transaction Sent with Hash ${transactionHash}`);
+
+              setSendLoading(false);
+
+              close();
             }}
-            disabled={!write}
+            disabled={!value}
             loading={sendLoading}
           >
             Vote!
@@ -148,13 +166,7 @@ export default function SubmissionsCard({
       </div>
       <Text lineClamp={3} component="div">
         <TypographyStylesProvider>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt nulla quam
-            aut sed corporis voluptates praesentium inventore, sapiente ex tempore sit
-            consequatur debitis non! Illo cum ipsa reiciendis quidem facere, deserunt eos
-            totam impedit. Vel ab, ipsum veniam aperiam odit molestiae incidunt minus,
-            sint eos iusto earum quaerat vitae perspiciatis.
-          </p>
+          <div dangerouslySetInnerHTML={{ __html: description }} />
         </TypographyStylesProvider>
       </Text>
       <Button rightSection={<IconArrowAutofitUp size="1rem" />}>View Submission</Button>
