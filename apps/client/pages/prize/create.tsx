@@ -65,6 +65,7 @@ function Prize() {
       images: newImages ? [newImages] : [],
       title,
     });
+    router.push(`/profile/${appUser?.username as string}`)
   };
 
   const handleSubmit = () => {
@@ -79,11 +80,6 @@ function Prize() {
     } catch {
       toast.error('Error Submitting Proposal');
     }
-    toast.promise(router.push(`/profile/${appUser?.username as string}`), {
-      loading: 'Redirecting Please Wait',
-      error: 'Error while redirecting ',
-      success: 'Redirected to Profile Page',
-    });
   };
 
   // const useTemplateForDescription = () => {
