@@ -14,6 +14,7 @@ export default function EndVoting({ contractAddress }: { contractAddress: string
   const { writeAsync, isLoading } = useViaPrizeEndVotingPeriod(config);
   return (
     <Button
+      my="md"
       fullWidth
       loading={isLoading}
       onClick={async () => {

@@ -5,7 +5,7 @@
  */
 
 import { getAccessToken } from '@privy-io/react-auth';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {

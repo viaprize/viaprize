@@ -1,7 +1,7 @@
 import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/router';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import useAppUserStore from 'store/app-user';
 import { CreateUserDto } from 'types/app-user';
 

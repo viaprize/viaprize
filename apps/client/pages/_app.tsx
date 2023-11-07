@@ -6,7 +6,7 @@ import '@mantine/tiptap/styles.css';
 import type { AppContext, AppProps } from 'next/app';
 import NextApp from 'next/app';
 import Head from 'next/head';
-import 'react-toastify/dist/ReactToastify.css';
+
 import '../styles/globals.css';
 import '../styles/index.css';
 
@@ -55,9 +55,10 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           additionalChains: [],
           defaultChain: configureChainsConfig.chains[0],
           appearance: {
-            theme: 'light',
+            theme: 'dark',
             accentColor: '#676FFF',
             showWalletLoginFirst: true,
+
             // logo: 'https://your-logo-url',
           },
         }}

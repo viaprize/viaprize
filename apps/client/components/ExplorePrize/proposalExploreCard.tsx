@@ -23,7 +23,7 @@ const ProposalExploreCard: React.FC<ExploreCardProps> = ({
       </Card.Section>
       <Group mb="xs" mt="md" justify="space-between">
         <Text fw={500}>{title}</Text>
-        <Badge color="gray" variant="light">
+        <Badge color="gray" variant="light" my={"sm"}>
           {status}
         </Badge>
       </Group>
@@ -35,11 +35,11 @@ const ProposalExploreCard: React.FC<ExploreCardProps> = ({
         mt="md"
         radius="md"
         variant="light"
-        onClick={() => onStatusClick(status)}
+
       >
         Details
       </Button>
-      {/* <Button onClick={() => onStatusClick}>{status}</Button> */}
+      <Button my={"xs"} onClick={() => onStatusClick(status)}> {status == "approved" ? "Deploy !" : status}</Button>
     </Card>
   );
 };

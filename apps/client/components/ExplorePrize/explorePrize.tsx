@@ -33,7 +33,7 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
       <p className="text-md text-gray-500 max-h-14 overflow-y-auto">{description}</p>
       <Group mb="xs" mt="md" justify="space-between">
         <Text c="green" fw={500}>
-          {money}
+          {money} MATIC
         </Text>
         <Text c="red" fw={500}>
           {deadline}

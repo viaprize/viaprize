@@ -1,10 +1,16 @@
 import { defineConfig } from '@wagmi/cli';
-import { hardhat, react } from '@wagmi/cli/plugins';
+import { actions, hardhat, react } from '@wagmi/cli/plugins';
 
 export default defineConfig({
   out: 'lib/smartContract.ts',
   contracts: [],
   plugins: [
+    actions({
+      getContract: false,
+      readContract: false,
+      watchContractEvent: false,
+
+    }),
     hardhat({
       project: '../contracts',
       deployments: {

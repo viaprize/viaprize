@@ -26,9 +26,11 @@ const useAppUserStore = create(
         set({ user: newUserData });
       },
       uploadUser: async (newUser: CreateUser) => {
-        const res = await (await backendApi()).users.usersCreate({
-          ...newUser
-        })
+        const res = await (
+          await backendApi()
+        ).users.usersCreate({
+          ...newUser,
+        });
         set({ user: res.data });
       },
       clearUser: () => set({ user: undefined }),

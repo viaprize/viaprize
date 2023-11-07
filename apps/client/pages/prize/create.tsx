@@ -1,20 +1,20 @@
 import {
-  ActionIcon,
   Button,
   Checkbox,
   NumberInput,
   SimpleGrid,
-  TextInput,
+  TextInput
 } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
 
 import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
 import AppShellLayout from '@/components/layout/appshell';
+import useAppUser from '@/context/hooks/useAppUser';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import router from 'next/router';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 import ImageComponent from '../../components/Prize/dropzone';
@@ -28,6 +28,7 @@ function Prize() {
   const [votingTime, setVotingTime] = useState(0);
   const [proposalTime, setProposalTime] = useState(0);
   const { user } = usePrivy();
+  const { appUser } = useAppUser()
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [images, setImages] = useState<string>();
   const { addProposals, uploadImages } = usePrizeProposal();
@@ -64,6 +65,7 @@ function Prize() {
       images: newImages ? [newImages] : [],
       title,
     });
+    router.push(`/profile/${appUser?.username as string}`)
   };
 
   const handleSubmit = () => {
@@ -140,7 +142,7 @@ function Prize() {
           }}
         />
 
-        {address.map((item, index) => (
+        {/* {address.map((item, index) => (
           <div className="" key={index}>
             <TextInput
               type="text"
@@ -176,10 +178,10 @@ function Prize() {
               </Button>
             )}
           </div>
-        ))}
-        <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
+        ))} */}
+        {/* <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
           <IconPlus />
-        </ActionIcon>
+        </ActionIcon> */}
       </SimpleGrid>
       <Button
         className="mt-3 "

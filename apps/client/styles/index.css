@@ -1,6 +1,6 @@
 .button-purple {
   color: white;
-  background-color: #BE7DFF;
+  background-color: #be7dff;
   border: none;
   border-radius: 30px;
   position: relative;
@@ -20,7 +20,7 @@
   width: 100px;
   background-color: #fff;
   border-radius: 50%;
-  transition: .6s ease;
+  transition: 0.6s ease;
   z-index: 1;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .button-purple span:nth-child(3) {
-  transform: translate(-.2em, 1.8em);
+  transform: translate(-0.2em, 1.8em);
 }
 
 .button-purple span:nth-child(4) {
@@ -57,5 +57,5 @@
 
 .button-purple:hover span:nth-child(6) {
   transition: 1s ease;
-  color: #BE7DFF;
+  color: #be7dff;
 }
