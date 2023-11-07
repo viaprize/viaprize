@@ -169,12 +169,12 @@ export default function Home() {
             />
             <ReasonCard
               Title="Reason 2"
-              Description="Either the campaign delivers or you receive a refund"
+              Description="With ViaPrize Either the campaign delivers or you receive a refund"
               image="https://img.freepik.com/free-photo/3d-cryptocurrency-rendering-design_23-2149074550.jpg?w=2000&t=st=1699283400~exp=1699284000~hmac=d294cc280e87f50abd42aa22260ba7acd215464ec003659fb7067d535dbc5136"
             />
             <ReasonCard
               Title="Reason 3"
-              Description="Win prizes! and make Money"
+              Description="Win prizes!"
               image="https://img.freepik.com/free-photo/team-working-animation-project_23-2149269903.jpg?w=2000&t=st=1699283321~exp=1699283921~hmac=2c2cb20d21db38dcfcf08834445cc9087d7a33ba58dc0aadd75187156eda9062"
             />
           </div>
@@ -262,7 +262,7 @@ export default function Home() {
             width={1000}
             height={500}
             alt="How it works"
-            className="rounded-md"
+            className="rounded-md max-w-full h-60 sm:h-80 md:h-96 lg:h-120 xl:h-160"
           />
         </section>
         {/* 3 roles in a prize */}
