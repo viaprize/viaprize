@@ -38,7 +38,7 @@ export const getServerSideProps = (async () => {
   return { props: { prizes: data } };
 }) satisfies GetServerSideProps<{
   prizes: PrizeWithBalance[];
-}>
+}>;
 
 ExplorePage.getLayout = function getLayout(page: ReactElement) {
   return <AppShellLayout>{page}</AppShellLayout>;
