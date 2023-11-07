@@ -91,8 +91,7 @@ export default function ProposalsTabs({
                       args: [
                         item?.admins as `0x${string}`[],
                         [
-                          '0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2',
-                          '0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB',
+                          '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
                           '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F'
                         ] as `0x${string}`[],
                         BigInt(10),
