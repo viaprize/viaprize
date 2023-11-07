@@ -110,7 +110,7 @@ export default function Home() {
               Trustworthy crowdfunding
             </h1>
             {/* <p className="text-lg text-gray-600 my-4">
-              Simple and sleek design with users in mind. Viaprize is a platform that
+              Simple and sleek design with users in mind. viaPrize is a platform that
               allows
             </p> */}
             <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
@@ -160,7 +160,7 @@ export default function Home() {
         </section>
         {/* How it works */}
         <div className="flex flex-col items-center">
-          <h1 className="text-black capitalize">Why Viaprize?</h1>
+          <h1 className="text-black ">Why viaPrize?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             <ReasonCard
               Title="Reason 1"
@@ -169,7 +169,7 @@ export default function Home() {
             />
             <ReasonCard
               Title="Reason 2"
-              Description="With ViaPrize Either the campaign delivers or you receive a refund"
+              Description="With viaPrize Either the campaign delivers or you receive a refund"
               image="https://img.freepik.com/free-photo/3d-cryptocurrency-rendering-design_23-2149074550.jpg?w=2000&t=st=1699283400~exp=1699284000~hmac=d294cc280e87f50abd42aa22260ba7acd215464ec003659fb7067d535dbc5136"
             />
             <ReasonCard
@@ -208,7 +208,7 @@ export default function Home() {
         {/* Viaprize’s Core Functions  */}
         {/* <section className="my-24 flex items-center flex-col gap-3">
           <h1 className="text-3xl font-bold text-black">
-            Viaprize&apos;s Core Functions
+            viaPrize&apos;s Core Functions
           </h1>
           <FunctionCard
             Title="Prize"
@@ -260,9 +260,9 @@ export default function Home() {
           <Image
             src="/home/howItWorks.png"
             width={1000}
-            height={500}
+            height={1000}
             alt="How it works"
-            className="rounded-md max-w-full h-60 sm:h-80 md:h-96 lg:h-120 xl:h-160"
+            className="rounded-md max-w-full h-auto"
           />
         </section>
         {/* 3 roles in a prize */}
@@ -273,17 +273,17 @@ export default function Home() {
             width={1000}
             height={500}
             alt="How it works"
-            className="rounded-md"
+            className="rounded-md max-w-full h-auto"
           />
         </section>
         {/* Community */}
         <section className="my-12 gap-3 ">
           <div className=" flex flex-col items-center">
             <h1 className="w-96 text-3xl text-center font-bold text-black">
-              Tons of love who are building and working with Viaprize
+              Tons of love who are building and working with viaPrize
             </h1>
             <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
-              <Link href="https://t.me/viaprize">Join Community</Link>
+              <Link href="https://t.me/viaPrize">Join Community</Link>
             </Button>
           </div>
           <div className="my-4" />
@@ -307,12 +307,12 @@ export default function Home() {
               <Image
                 src="/viaprizeBg.png"
                 className="h-8 mr-3"
-                alt="ViaPrize Logo"
+                alt="viaPrize Logo"
                 width={32}
                 height={32}
               />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                ViaPrize
+                viaPrize
               </span>
             </Link>
             <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
@@ -339,13 +339,13 @@ export default function Home() {
             </ul>
           </div>
           <div className="my-4">
-            <Link href="https://twitter.com/viaprize">
+            <Link href="https://twitter.com/viaPrize">
               <BsTwitter className="inline-block mr-4 text-2xl text-blue-400 " />
             </Link>
-            <Link href="https://www.linkedin.com/company/viaprize/">
+            <Link href="https://www.linkedin.com/company/viaPrize/">
               <BiLogoLinkedin className="inline-block mr-4 text-2xl text-white " />
             </Link>
-            <Link href="https://t.me/viaprize">
+            <Link href="https://t.me/viaPrize">
               <ImTelegram className="inline-block mr-4 text-2xl text-blue-400 bg-white rounded-full" />
             </Link>
           </div>
@@ -387,13 +387,13 @@ function NavBar() {
         <div className="flex gap-3 items-center">
           <Image
             src="/viaprizeBg.png"
-            alt="ViaPrize Logo"
+            alt="viaPrize Logo"
             width={40}
             height={40}
             priority
             className="rounded-full"
           />
-          <h3 className="font-bold text-2xl text-black">ViaPrize</h3>
+          <h3 className="font-bold text-2xl text-black">viaPrize</h3>
         </div>
         <div className="flex gap-10 justify-between items-center">
           {navBarLinks.map((data) => (
@@ -431,7 +431,7 @@ function NavBar() {
       <nav className="md:hidden flex w-full justify-between px-5 py-5">
         <Image
           src="/viaprizeBg.png"
-          alt="ViaPrize Logo"
+          alt="viaPrize Logo"
           width={40}
           height={40}
           priority
