@@ -1,49 +1,47 @@
+import useAppUser from '@/context/hooks/useAppUser';
 import {
   ActionIcon,
   Avatar,
-  Badge,
+  Button,
   Card,
   CopyButton,
   Flex,
   Group,
   Menu,
   Modal,
-  Text,
   Tooltip,
-  useMantineColorScheme,
+  useMantineColorScheme
 } from '@mantine/core';
-import { useState } from 'react';
-import { TbTopologyStarRing2 } from 'react-icons/tb';
-
-import useAppUser from '@/context/hooks/useAppUser';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import {
   IconArrowsLeftRight,
   IconCheck,
   IconCopy,
   IconMoonStars,
-  IconSearch,
   IconSun,
-  IconUser,
+  IconUser
 } from '@tabler/icons-react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { IoExit } from 'react-icons/io5';
 import { toast } from 'sonner';
 import SwitchAccount from './switchWallet';
 
-function getEmailInitials(email: string) {
-  const [username, domain] = email.split('@');
-  if (!username || !domain) {
-    return '??';
-  }
-  const usernameInitial = username.slice(0, 5);
-  const domainInitial = domain.charAt(0);
+// function getEmailInitials(email: string) {
+//   const [username, domain] = email.split('@');
+//   if (!username || !domain) {
+//     return '??';
+//   }
+//   const usernameInitial = username.charAt(0);
+//   const domainInitial = domain.charAt(0);
 
-  return usernameInitial + domainInitial;
-}
+//   return usernameInitial + domainInitial;
+// }
 
 export default function HeaderLayout() {
-  /* eslint-disable  @typescript-eslint/unbound-method -- this method seems to be a mantine color scheme issue */
+   
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   const { wallets } = useWallets();
@@ -52,12 +50,27 @@ export default function HeaderLayout() {
   };
 
   return (
-    <Group justify="space-between" w={'100%'} align="center" pos={'fixed'} px="xl">
-      <div>Image</div>
-
+    <Group justify="space-between" w="100%" align="center" pos="fixed" px="xl">
+      <Flex justify='space-between' align="center" gap={10}>
+      <Link href="/">
+     <Image src="/viaprizeBg.png" width={30} height={30} alt="home"  />
+      </Link>
+     <Link href='/' className='ml-2'>
+     Home
+     </Link>
+      <Link href='/prize/explore' >
+     Prizes
+     </Link>
+     </Flex>
       <Flex align="center" gap="md">
+          <Link href="/prize/create">
+            <Button>
+              Create Prize
+            </Button>
+            </Link>
         <Card py="5px">
           <Group>
+          
             {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
             {wallets[0] ? (
               <CopyButton value={wallets[0].address}>
@@ -116,9 +129,9 @@ function ProfileMenu() {
         <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
           <Menu.Target>
             {appUser ? (
-              <Badge variant="filled" size="xl" radius="sm" className="cursor-pointer">
-                {getEmailInitials(appUser.email)}
-              </Badge>
+              <Avatar color='blue' radius="xl" className="cursor-pointer">
+              {appUser.username.charAt(0).toUpperCase()}
+              </Avatar>
             ) : (
               <Avatar color="cyan" radius="xl" className="cursor-pointer" />
             )}
@@ -138,29 +151,18 @@ function ProfileMenu() {
                 >
                   View Profile
                 </Menu.Item>
-                <Menu.Item
+                {/* <Menu.Item
                   leftSection={<TbTopologyStarRing2 />}
                   onClick={() => {
                     router.push('/prize/create').then(console.log).catch(console.error);
                   }}
                 >
                   Create Prize
-                </Menu.Item>
+                </Menu.Item> */}
               </>
             ) : null}
 
-            {/* <Menu.Item icon={<IconMessageCircle size={14} />}>Messages</Menu.Item>
-          <Menu.Item icon={<IconPhoto size={14} />}>Gallery</Menu.Item> */}
-            <Menu.Item
-              leftSection={<IconSearch size={14} />}
-              rightSection={
-                <Text size="xs" color="dimmed" pl="sm">
-                  ⌘K
-                </Text>
-              }
-            >
-              Search
-            </Menu.Item>
+          
             <Menu.Divider />
 
             {/* <Menu.Label>Danger zone</Menu.Label> */}

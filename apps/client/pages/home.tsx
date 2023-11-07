@@ -160,7 +160,7 @@ export default function Home() {
         </section>
         {/* How it works */}
         <div className="flex flex-col items-center">
-          <h1 className="text-black capitalize">Why Viaprize?</h1>
+          <h1 className="text-black capitalize">Why viaprize?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             <ReasonCard
               Title="Reason 1"
@@ -261,7 +261,7 @@ export default function Home() {
         </section>
         {/* 3 roles in a prize */}
         <section className="flex flex-col items-center my-14">
-          <h1 className="text-3xl font-bold text-black">3 Roles in Prize</h1>
+          <h1 className="text-3xl font-bold text-black">3 Roles in a Prize</h1>
           <Image
             src="/home/rolesInPrize.png"
             width={1000}
@@ -274,7 +274,7 @@ export default function Home() {
         <section className="my-12 gap-3 ">
           <div className=" flex flex-col items-center">
             <h1 className="w-96 text-3xl text-center font-bold text-black">
-              Tons of love who are building and working with Viaprize
+             See what our community is saying
             </h1>
             <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
               <Link href="https://t.me/viaprize">Join Community</Link>
@@ -306,7 +306,7 @@ export default function Home() {
                 height={32}
               />
               <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                ViaPrize
+                viaPrize
               </span>
             </Link>
             <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
@@ -387,7 +387,7 @@ function NavBar() {
             priority
             className="rounded-full"
           />
-          <h3 className="font-bold text-2xl text-black">ViaPrize</h3>
+          <h3 className="font-bold text-2xl text-black">viaPrize</h3>
         </div>
         <div className="flex gap-10 justify-between items-center">
           {navBarLinks.map((data) => (
