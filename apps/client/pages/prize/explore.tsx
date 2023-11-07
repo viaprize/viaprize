@@ -4,6 +4,7 @@ import AppShellLayout from '@/components/layout/appshell';
 import { Api, PrizeWithBalance } from '@/lib/api';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import type { ReactElement } from 'react';
+import { formatEther } from 'viem';
 
 function ExplorePage({ prizes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
@@ -15,7 +16,7 @@ function ExplorePage({ prizes }: InferGetServerSidePropsType<typeof getServerSid
             description={prize.description}
             imageUrl={prize.images[0]}
             deadline=""
-            money={prize.balance.toString()}
+            money={formatEther(BigInt(prize.balance))}
             profileName={''}
             title={prize.title}
             key={prize.id}

@@ -88,7 +88,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       />
 
       <Button
-        disabled={!sendTransaction}
+
         loading={sendLoading}
         onClick={() => {
           sendTransaction?.();
@@ -127,7 +127,7 @@ export default function PrizePageComponent({
         width={1280}
         height={768}
         alt="prize info tumbnail"
-        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+      // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
       <Center my="xl">
         <PrizePageTabs contractAddress={prize.contract_address} />

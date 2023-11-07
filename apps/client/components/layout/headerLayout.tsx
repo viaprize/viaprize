@@ -1,7 +1,7 @@
 import {
   ActionIcon,
   Avatar,
-  Badge,
+  Button,
   Card,
   CopyButton,
   Flex,
@@ -53,7 +53,7 @@ export default function HeaderLayout() {
 
   return (
     <Group justify="space-between" w={'100%'} align="center" pos={'fixed'} px="xl">
-      <div>Image</div>
+      <div>Viaprize</div>
 
       <Flex align="center" gap="md">
         <Card py="5px">
@@ -116,11 +116,21 @@ function ProfileMenu() {
         <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
           <Menu.Target>
             {appUser ? (
-              <Badge variant="filled" size="xl" radius="sm" className="cursor-pointer">
-                {getEmailInitials(appUser.email)}
-              </Badge>
-            ) : (
               <Avatar color="cyan" radius="xl" className="cursor-pointer" />
+            ) : (
+              <Button
+                color="green"
+                leftSection={<IconUser size={14} />}
+                onClick={() => {
+                  toast.promise(router.push('/'), {
+                    loading: 'Redirecting Please Wait',
+                    error: 'Error while redirecting ',
+                    success: 'Redirected to Home Page',
+                  });
+                }}
+              >
+                Home
+              </Button>
             )}
           </Menu.Target>
           <Menu.Dropdown p="md" mr="sm">

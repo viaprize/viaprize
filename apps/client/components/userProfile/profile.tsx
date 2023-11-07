@@ -1,3 +1,4 @@
+import useAppUser from '@/context/hooks/useAppUser';
 import { Avatar, Badge, Box, Button, Group, Text } from '@mantine/core';
 import {
   IconBrandGithubFilled,
@@ -8,15 +9,16 @@ import {
 
 export default function Profile() {
   // const { address } = useAccount();
+  const { appUser } = useAppUser()
   // const { data, isLoading, refetch } = useBalance({ address });
   return (
     <div className="p-8 md:w-1/3">
       <div>
         <Avatar radius="full" size="xl" />
         <Text fw={700} size="xl" className="mb-0 uppercase mt-4">
-          ARYAN TIWARI
+          {appUser?.name}
         </Text>
-        <Text className="lg my-0">@arrytiwari</Text>
+        <Text className="lg my-0">@{appUser?.username}</Text>
         <Group>
           {/* <div>
         <span   className='mr-1 font-bold' >

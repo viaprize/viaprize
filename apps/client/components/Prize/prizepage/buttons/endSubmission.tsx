@@ -17,6 +17,7 @@ export default function EndSubmission({ contractAddress }: { contractAddress: st
   return (
     <Button
       fullWidth
+      my="md"
       loading={isLoading}
       onClick={async () => {
         const result = await writeAsync?.();
