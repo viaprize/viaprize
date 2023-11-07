@@ -9,7 +9,7 @@ import config from '@/config';
 import { Loader } from '@mantine/core';
 import BN from 'bignumber.js';
 import React, { ReactNode, createContext, useCallback, useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from 'react-toastify';
 import Web3 from 'web3';
 import useWeb3Modal from './hooks/useWeb3Modal';
 /**
@@ -83,16 +83,16 @@ export const Web3Context = createContext<Web3ContextType>({
   networkId: undefined,
   blockNumber: undefined,
   account: undefined,
-  connectWallet: async () => {},
-  connectSoul: async () => {},
+  connectWallet: async () => { },
+  connectSoul: async () => { },
   getEthBalance: async () => {
     return '';
   },
-  resetWallet: async () => {},
+  resetWallet: async () => { },
   estimateGas: async () => {
     return 0;
   },
-  sendTx: async () => {},
+  sendTx: async () => { },
   signMessage: async (val) => {
     return '';
   },
