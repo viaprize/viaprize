@@ -17,7 +17,31 @@ export class MailService {
       },
     );
   }
+  async submission(email: string) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Submission was deployed',
+      text: 'Viaprize',
+      templateName: 'submission.hbs',
+      context: {
+        telegramLink: this.telegramLink,
+      },
+    });
+  }
 
+  async prizeDeployed(email: string, name: string, proposalTitle: string) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Your prize was deployed',
+      text: `Viaprize`,
+      templateName: 'prizeDeployed.hbs',
+      context: {
+        name,
+        proposalTitle,
+        telegramLink: this.telegramLink,
+      },
+    });
+  }
   async welcome(email: string, name: string) {
     await this.mailerService.sendMail({
       to: email,

@@ -47,9 +47,55 @@ export type PactNullable = {
   blockHash: string;
 } | null;
 
-export interface ReadonlyType {
-  data: PrizeProposals[];
-  hasNextPage: boolean;
+export interface CreatePrizeDto {
+  address: string;
+  proposal_id: string;
+}
+
+export interface Prize {
+  id: string;
+  description: string;
+  isAutomatic: boolean;
+  submissionTime: number;
+  votingTime: number;
+  /** @format date-time */
+  startVotingDate: string;
+  /** @format date-time */
+  startSubmissionDate: string;
+  proposer_address: string;
+  contract_address: string;
+  admins: string[];
+  proficiencies: string[];
+  priorities: string[];
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  updated_at: string;
+  images: string[];
+  title: string;
+  submissions: Submission[];
+  user: User;
+}
+
+export interface Submission {
+  id: string;
+  submissionDescription: string;
+  submissionHash: string;
+  submitterAddress: string;
+  user: User;
+  prize: Prize;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  authId: string;
+  name: string;
+  username: string;
+  isAdmin: boolean;
+  submissions: Submission[];
+  prizeProposals: PrizeProposals[];
+  prizes: Prize[];
 }
 
 export interface PrizeProposals {
@@ -73,29 +119,19 @@ export interface PrizeProposals {
   user: User;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  authId: string;
-  name: string;
-  username: string;
-  isAdmin: boolean;
-  submissions: Submission[];
-  prizeProposals: PrizeProposals[];
+/** Make all properties in T readonly */
+export interface ReadonlyType {
+  data: PrizeWithBalance[];
+  hasNextPage: boolean;
 }
 
-export interface Submission {
-  id: string;
-  submissionTitle: string;
-  subimissionDescription: string;
-  user: User;
-  prize: Prize;
-}
-
-export interface Prize {
+export interface PrizeWithBalance {
+  balance: number;
   id: string;
   description: string;
   isAutomatic: boolean;
+  submissionTime: number;
+  votingTime: number;
   /** @format date-time */
   startVotingDate: string;
   /** @format date-time */
@@ -109,10 +145,74 @@ export interface Prize {
   created_at: string;
   /** @format date-time */
   updated_at: string;
+  images: string[];
+  title: string;
   submissions: Submission[];
+  user: User;
 }
 
+export interface PrizeWithBlockchainData {
+  submission_time_blockchain: number;
+  voting_time_blockchain: number;
+  balance: number;
+  id: string;
+  description: string;
+  isAutomatic: boolean;
+  submissionTime: number;
+  votingTime: number;
+  /** @format date-time */
+  startVotingDate: string;
+  /** @format date-time */
+  startSubmissionDate: string;
+  proposer_address: string;
+  contract_address: string;
+  admins: string[];
+  proficiencies: string[];
+  priorities: string[];
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  updated_at: string;
+  images: string[];
+  title: string;
+  submissions: Submission[];
+  user: User;
+}
+
+export interface CreateSubmissionDto {
+  submissionDescription: string;
+  submissionHash: string;
+  submitterAddress: string;
+}
+
+export interface Http200Response {
+  message: string;
+}
+
+/** Make all properties in T readonly */
 export interface ReadonlyTypeO1 {
+  data: SubmissionWithBlockchainData[];
+  hasNextPage: boolean;
+}
+
+export interface SubmissionWithBlockchainData {
+  voting_blockchain: number;
+  id: string;
+  submissionDescription: string;
+  submissionHash: string;
+  submitterAddress: string;
+  user: User;
+  prize: Prize;
+}
+
+/** Make all properties in T readonly */
+export interface ReadonlyTypeO2 {
+  data: PrizeProposals[];
+  hasNextPage: boolean;
+}
+
+/** Make all properties in T readonly */
+export interface ReadonlyTypeO3 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
@@ -155,17 +255,14 @@ export interface CreatePrizeProposalDto {
   images: string[];
 }
 
-export interface ReadonlyTypeO2 {
+/** Make all properties in T readonly */
+export interface ReadonlyTypeO4 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
 
 export interface RejectProposalDto {
   comment: string;
-}
-
-export interface Http200Response {
-  message: string;
 }
 
 /** Interface of Create User , using this interface it create a new user in */
@@ -458,6 +555,100 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   };
   prizes = {
     /**
+     * No description
+     *
+     * @name PrizesCreate
+     * @request POST:/prizes
+     */
+    prizesCreate: (data: CreatePrizeDto, params: RequestParams = {}) =>
+      this.request<Prize, any>({
+        path: `/prizes`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the GET request to `/prizes` endpoint. Here's a breakdown of what it does: Gets page
+     *
+     * @name PrizesList
+     * @summary Get all Prizes
+     * @request GET:/prizes
+     */
+    prizesList: (
+      query: {
+        page: number;
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReadonlyType, any>({
+        path: `/prizes`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizesDetail
+     * @request GET:/prizes/{id}
+     */
+    prizesDetail: (id: string, params: RequestParams = {}) =>
+      this.request<PrizeWithBlockchainData, any>({
+        path: `/prizes/${id}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name SubmissionCreate
+     * @request POST:/prizes/{id}/submission
+     */
+    submissionCreate: (
+      id: string,
+      data: CreateSubmissionDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/${id}/submission`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name SubmissionDetail
+     * @request GET:/prizes/{id}/submission
+     */
+    submissionDetail: (
+      id: string,
+      query: {
+        page: number;
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReadonlyTypeO1, any>({
+        path: `/prizes/${id}/submission`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the GET request to `/proposals` endpoint. Here's a breakdown of what it does: Gets page
      *
      * @name ProposalsList
@@ -472,7 +663,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyType, any>({
+      this.request<ReadonlyTypeO2, any>({
         path: `/prizes/proposals`,
         method: 'GET',
         query: query,
@@ -517,7 +708,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO1, any>({
+      this.request<ReadonlyTypeO3, any>({
         path: `/prizes/proposals/accept`,
         method: 'GET',
         query: query,
@@ -541,7 +732,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO2, any>({
+      this.request<ReadonlyTypeO4, any>({
         path: `/prizes/proposals/user/${username}`,
         method: 'GET',
         query: query,

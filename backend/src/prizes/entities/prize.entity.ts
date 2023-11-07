@@ -1,8 +1,11 @@
 import { IsDate } from 'class-validator';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -21,6 +24,12 @@ export class Prize {
 
   @Column('boolean')
   isAutomatic: boolean;
+
+  @Column()
+  submissionTime: number;
+
+  @Column()
+  votingTime: number;
 
   @IsDate()
   @Column({ nullable: true })
@@ -51,8 +60,18 @@ export class Prize {
   @UpdateDateColumn()
   updated_at: Date;
 
+  @Column('simple-array')
+  images: string[];
+
+  @Column({ default: '' })
+  title: string;
+
   @OneToMany(() => Submission, (submission) => submission.prize)
   submissions: Submission[];
+
+  @ManyToOne(() => User, (user) => user.prizeProposals)
+  @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
+  user: User;
 
   /* On Chain Data */
   // total_funds: number;

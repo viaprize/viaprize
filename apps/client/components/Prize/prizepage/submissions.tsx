@@ -1,24 +1,42 @@
+import { SubmissionWithBlockchainData } from '@/lib/api';
 import { Button, Title } from '@mantine/core';
-import React from 'react';
+import { useRouter } from 'next/router';
 import SubmissionsCard from './submissionsCard';
 
-export default function Submissions() {
+export default function Submissions({
+  contractAddress,
+  submissions,
+}: {
+  contractAddress: string;
+  submissions: SubmissionWithBlockchainData[];
+}) {
+  const { query } = useRouter();
   return (
     <div className="w-full flex flex-col gap-3">
-      <Button component="a" w="40%" className="self-end" href="/prize/editor">
+      <Button
+        component="a"
+        w="40%"
+        className="self-end"
+        href={`/prize/${query.id as string}/editor?contract=${contractAddress}`}
+      >
         Submit your work
       </Button>
       <Title order={3} style={{ textAlign: 'left' }}>
         Submissions
       </Title>
-      <SubmissionsCard
-        fullname="testing name"
-        submission="hello thsi sht etex ofdsafljshfkjas"
-        wallet="fasddskjvhksjdvfsda"
-        time="10:2342"
-        votes={0}
-        submissionId="faskj"
-      />
+      {submissions.map((submission: SubmissionWithBlockchainData) => (
+        <SubmissionsCard
+          fullname={submission.user.name}
+          contractAddress={contractAddress}
+          hash={submission.submissionHash}
+          submission={submission.submissionDescription}
+          wallet={submission.submitterAddress}
+          time={''}
+          votes={submission.voting_blockchain}
+          submissionId={submission.id}
+          key={submission.id}
+        />
+      ))}
     </div>
   );
 }

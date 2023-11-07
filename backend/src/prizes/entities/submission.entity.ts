@@ -7,11 +7,14 @@ export class Submission {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  submissionTitle: string;
-
   @Column({ type: 'json' })
-  subimissionDescription: string;
+  submissionDescription: string;
+
+  @Column()
+  submissionHash: string;
+
+  @Column()
+  submitterAddress: string;
 
   @ManyToOne(() => User, (user) => user.submissions)
   user: User;

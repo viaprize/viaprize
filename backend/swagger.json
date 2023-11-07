@@ -153,6 +153,268 @@
         "x-nestia-method": "GET"
       }
     },
+    "/prizes": {
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePrizeDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Prize"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.createPrize",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ">}",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Get all Prizes",
+        "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the GET request to `/prizes` endpoint. Here's a breakdown of what it does:\nGets page",
+        "x-nestia-namespace": "prizes.getPrizes",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Get all Prizes",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:06:45 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "1} this is the page number of the return pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "10} this is the limit of the return type of the pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": ">}",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeWithBlockchainData"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.getPrize",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/{id}/submission": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSubmissionDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.submission.submit",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type.o1"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.submission.getSubmissions",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/prizes/proposals": {
       "get": {
         "tags": [],
@@ -182,7 +444,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type"
+                  "$ref": "#/components/schemas/Readonly__type.o2"
                 }
               }
             },
@@ -379,7 +641,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o1"
+                  "$ref": "#/components/schemas/Readonly__type.o3"
                 }
               }
             },
@@ -504,7 +766,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o2"
+                  "$ref": "#/components/schemas/Readonly__type.o4"
                 }
               }
             },
@@ -1226,10 +1488,252 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type": {
+      "CreatePrizeDto": {
         "type": "object",
         "properties": {
-          "data": {
+          "address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "proposal_id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "address",
+          "proposal_id"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Prize": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAutomatic": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submissionTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "votingTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "startVotingDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "startSubmissionDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "proposer_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "contract_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "admins": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "proficiencies": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissions": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Submission"
+            }
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "description",
+          "isAutomatic",
+          "submissionTime",
+          "votingTime",
+          "startVotingDate",
+          "startSubmissionDate",
+          "proposer_address",
+          "contract_address",
+          "admins",
+          "proficiencies",
+          "priorities",
+          "created_at",
+          "updated_at",
+          "images",
+          "title",
+          "submissions",
+          "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Submission": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionDescription": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submitterAddress": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "prize": {
+            "$ref": "#/components/schemas/Prize"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "submissionDescription",
+          "submissionHash",
+          "submitterAddress",
+          "user",
+          "prize"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "email": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "authId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "name": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "username": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAdmin": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submissions": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Submission"
+            }
+          },
+          "prizeProposals": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "array",
@@ -1237,16 +1741,26 @@
               "$ref": "#/components/schemas/PrizeProposals"
             }
           },
-          "hasNextPage": {
+          "prizes": {
             "x-typia-required": true,
             "x-typia-optional": false,
-            "type": "boolean"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Prize"
+            }
           }
         },
         "nullable": false,
         "required": [
-          "data",
-          "hasNextPage"
+          "id",
+          "email",
+          "authId",
+          "name",
+          "username",
+          "isAdmin",
+          "submissions",
+          "prizeProposals",
+          "prizes"
         ],
         "x-typia-jsDocTags": []
       },
@@ -1370,107 +1884,39 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "User": {
+      "Readonly__type": {
         "type": "object",
         "properties": {
-          "id": {
+          "data": {
             "x-typia-required": true,
             "x-typia-optional": false,
-            "type": "string"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizeWithBalance"
+            }
           },
-          "email": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "authId": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "name": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "username": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "isAdmin": {
+          "hasNextPage": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "boolean"
-          },
-          "submissions": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Submission"
-            }
-          },
-          "prizeProposals": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PrizeProposals"
-            }
           }
         },
         "nullable": false,
         "required": [
-          "id",
-          "email",
-          "authId",
-          "name",
-          "username",
-          "isAdmin",
-          "submissions",
-          "prizeProposals"
+          "data",
+          "hasNextPage"
         ],
+        "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
-      "Submission": {
+      "PrizeWithBalance": {
         "type": "object",
         "properties": {
-          "id": {
+          "balance": {
             "x-typia-required": true,
             "x-typia-optional": false,
-            "type": "string"
+            "type": "number"
           },
-          "submissionTitle": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "subimissionDescription": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          },
-          "prize": {
-            "$ref": "#/components/schemas/Prize"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "id",
-          "submissionTitle",
-          "subimissionDescription",
-          "user",
-          "prize"
-        ],
-        "x-typia-jsDocTags": []
-      },
-      "Prize": {
-        "type": "object",
-        "properties": {
           "id": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -1485,6 +1931,16 @@
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "boolean"
+          },
+          "submissionTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "votingTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
           },
           "startVotingDate": {
             "x-typia-required": true,
@@ -1550,6 +2006,21 @@
             "type": "string",
             "format": "date-time"
           },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "submissions": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -1557,13 +2028,19 @@
             "items": {
               "$ref": "#/components/schemas/Submission"
             }
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
           }
         },
         "nullable": false,
         "required": [
+          "balance",
           "id",
           "description",
           "isAutomatic",
+          "submissionTime",
+          "votingTime",
           "startVotingDate",
           "startSubmissionDate",
           "proposer_address",
@@ -1573,11 +2050,288 @@
           "priorities",
           "created_at",
           "updated_at",
-          "submissions"
+          "images",
+          "title",
+          "submissions",
+          "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "PrizeWithBlockchainData": {
+        "type": "object",
+        "properties": {
+          "submission_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "voting_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "balance": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAutomatic": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submissionTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "votingTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "startVotingDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "startSubmissionDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "proposer_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "contract_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "admins": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "proficiencies": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissions": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Submission"
+            }
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "submission_time_blockchain",
+          "voting_time_blockchain",
+          "balance",
+          "id",
+          "description",
+          "isAutomatic",
+          "submissionTime",
+          "votingTime",
+          "startVotingDate",
+          "startSubmissionDate",
+          "proposer_address",
+          "contract_address",
+          "admins",
+          "proficiencies",
+          "priorities",
+          "created_at",
+          "updated_at",
+          "images",
+          "title",
+          "submissions",
+          "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "CreateSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "submissionDescription": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submitterAddress": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "submissionDescription",
+          "submissionHash",
+          "submitterAddress"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Http200Response": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "message"
         ],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o1": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubmissionWithBlockchainData"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "description": "Make all properties in T readonly",
+        "x-typia-jsDocTags": []
+      },
+      "SubmissionWithBlockchainData": {
+        "type": "object",
+        "properties": {
+          "voting_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionDescription": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submitterAddress": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "prize": {
+            "$ref": "#/components/schemas/Prize"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "voting_blockchain",
+          "id",
+          "submissionDescription",
+          "submissionHash",
+          "submitterAddress",
+          "user",
+          "prize"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Readonly__type.o2": {
         "type": "object",
         "properties": {
           "data": {
@@ -1599,6 +2353,32 @@
           "data",
           "hasNextPage"
         ],
+        "description": "Make all properties in T readonly",
+        "x-typia-jsDocTags": []
+      },
+      "Readonly__type.o3": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizeProposals"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
       "CreatePrizeProposalDto": {
@@ -1725,7 +2505,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o2": {
+      "Readonly__type.o4": {
         "type": "object",
         "properties": {
           "data": {
@@ -1747,6 +2527,7 @@
           "data",
           "hasNextPage"
         ],
+        "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
       "RejectProposalDto": {
@@ -1761,21 +2542,6 @@
         "nullable": false,
         "required": [
           "comment"
-        ],
-        "x-typia-jsDocTags": []
-      },
-      "Http200Response": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "message"
         ],
         "x-typia-jsDocTags": []
       },

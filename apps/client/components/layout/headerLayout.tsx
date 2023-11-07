@@ -52,7 +52,7 @@ export default function HeaderLayout() {
   };
 
   return (
-    <Group justify="space-around" w={'100%'} align="center" pos={'fixed'}>
+    <Group justify="space-between" w={'100%'} align="center" pos={'fixed'} px="xl">
       <div>Image</div>
 
       <Flex align="center" gap="md">
@@ -130,7 +130,10 @@ function ProfileMenu() {
                 <Menu.Item
                   leftSection={<IconUser size={14} />}
                   onClick={() => {
-                    router.push('/profile').then(console.log).catch(console.error);
+                    router
+                      .push(`/profile/${appUser?.username}`)
+                      .then(console.log)
+                      .catch(console.error);
                   }}
                 >
                   View Profile

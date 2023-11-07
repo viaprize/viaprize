@@ -17,6 +17,7 @@ import { PactsModule } from './pacts/pacts.module';
 import { PrizesModule } from './prizes/prizes.module';
 import { UsersModule } from './users/users.module';
 // import { EthersModule } from 'nestjs-ethers';
+import { BlockchainModule } from './blockchain/blockchain.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { UsersModule } from './users/users.module';
     MailModule,
     MailerModule,
     JobsModule,
+    BlockchainModule,
   ],
   providers: [],
   controllers: [],

@@ -125,6 +125,11 @@ contract SubmissionAVLTree {
         return submissions;
     }
 
+    function getSubmissionVote(bytes32 submissionHash) public view returns (uint256){
+        uint256 node = find(root, submissionHash);
+        return submissions[node].votes;
+    }
+
     function find(uint256 node, bytes32 submissionHash) private view returns (uint256) {
         if (node == 0) {
             return 0;

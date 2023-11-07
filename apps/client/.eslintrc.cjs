@@ -32,7 +32,7 @@ const config = {
       },
     },
   },
-  ignorePatterns: ['node_modules/', 'dist/'],
+  ignorePatterns: ['node_modules/', 'dist/', 'lib/smartContract.ts'],
   // add rules configurations here
   rules: {
     'unicorn/filename-case': 'off',
@@ -67,6 +67,7 @@ const config = {
     'no-alert': 'warn',
     'react/button-has-type': 'off',
     '@typescript-eslint/default-param-last': 'off',
+    '@typescript-eslint/non-nullable-type-assertion-style': 'warn',
   },
 };
 

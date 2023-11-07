@@ -7,6 +7,7 @@ interface ExploreCardProps {
   description: string;
   money: string;
   deadline: string;
+  id: string;
 }
 
 const ExploreCard: React.FC<ExploreCardProps> = ({
@@ -16,9 +17,10 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   description,
   money,
   deadline,
+  id,
 }) => {
   return (
-    <Card padding="lg" radius="md" shadow="sm" withBorder>
+    <Card padding="lg" radius="md" shadow="sm" withBorder className="w-full">
       <Card.Section>
         <Image alt="Image" height={160} src={imageUrl} />
       </Card.Section>
@@ -37,7 +39,15 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           {deadline}
         </Text>
       </Group>
-      <Button color="blue" fullWidth mt="md" radius="md" variant="light">
+      <Button
+        color="blue"
+        component="a"
+        fullWidth
+        mt="md"
+        radius="md"
+        variant="light"
+        href={`/prize/${id}`}
+      >
         Details
       </Button>
     </Card>
