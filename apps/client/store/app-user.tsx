@@ -1,5 +1,5 @@
 import { Api, CreateUser, User } from '@/lib/api';
-import myAxios from '@/lib/axios';
+import { backendApi } from '@/lib/backend';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -26,7 +26,9 @@ const useAppUserStore = create(
         set({ user: newUserData });
       },
       uploadUser: async (newUser: CreateUser) => {
-        const res = await myAxios.post('/users', newUser);
+        const res = await (await backendApi()).users.usersCreate({
+          ...newUser
+        })
         set({ user: res.data });
       },
       clearUser: () => set({ user: undefined }),
