@@ -5,7 +5,12 @@ export default defineConfig({
   out: 'lib/smartContract.ts',
   contracts: [],
   plugins: [
-    actions(),
+    actions({
+      getContract: false,
+      readContract: false,
+      watchContractEvent: false,
+
+    }),
     hardhat({
       project: '../contracts',
       deployments: {

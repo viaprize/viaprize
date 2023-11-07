@@ -1,17 +1,10 @@
 import {
-  GetContractArgs,
   PrepareWriteContractConfig,
-  ReadContractConfig,
-  WatchContractEventCallback,
-  WatchContractEventConfig,
   WriteContractArgs,
   WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
-  getContract,
   prepareWriteContract,
-  readContract,
-  watchContractEvent,
   writeContract,
 } from 'wagmi/actions';
 
@@ -592,26 +585,6 @@ export const viaPrizeFactoryConfig = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Wraps __{@link getContract}__ with `abi` set to __{@link ownableABI}__.
- */
-export function getOwnable(config: Omit<GetContractArgs, 'abi'>) {
-  return getContract({ abi: ownableABI, ...config });
-}
-
-/**
- * Wraps __{@link readContract}__ with `abi` set to __{@link ownableABI}__.
- */
-export function readOwnable<
-  TAbi extends readonly unknown[] = typeof ownableABI,
-  TFunctionName extends string = string,
->(config: Omit<ReadContractConfig<TAbi, TFunctionName>, 'abi'>) {
-  return readContract({ abi: ownableABI, ...config } as unknown as ReadContractConfig<
-    TAbi,
-    TFunctionName
-  >);
-}
-
-/**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link ownableABI}__.
  */
 export function writeOwnable<TFunctionName extends string>(
@@ -636,42 +609,6 @@ export function prepareWriteOwnable<
     abi: ownableABI,
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
-}
-
-/**
- * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link ownableABI}__.
- */
-export function watchOwnableEvent<
-  TAbi extends readonly unknown[] = typeof ownableABI,
-  TEventName extends string = string,
->(
-  config: Omit<WatchContractEventConfig<TAbi, TEventName>, 'abi'>,
-  callback: WatchContractEventCallback<TAbi, TEventName>,
-) {
-  return watchContractEvent(
-    { abi: ownableABI, ...config } as WatchContractEventConfig<TAbi, TEventName>,
-    callback,
-  );
-}
-
-/**
- * Wraps __{@link getContract}__ with `abi` set to __{@link submissionAvlTreeABI}__.
- */
-export function getSubmissionAvlTree(config: Omit<GetContractArgs, 'abi'>) {
-  return getContract({ abi: submissionAvlTreeABI, ...config });
-}
-
-/**
- * Wraps __{@link readContract}__ with `abi` set to __{@link submissionAvlTreeABI}__.
- */
-export function readSubmissionAvlTree<
-  TAbi extends readonly unknown[] = typeof submissionAvlTreeABI,
-  TFunctionName extends string = string,
->(config: Omit<ReadContractConfig<TAbi, TFunctionName>, 'abi'>) {
-  return readContract({
-    abi: submissionAvlTreeABI,
-    ...config,
-  } as unknown as ReadContractConfig<TAbi, TFunctionName>);
 }
 
 /**
@@ -705,26 +642,6 @@ export function prepareWriteSubmissionAvlTree<
 }
 
 /**
- * Wraps __{@link getContract}__ with `abi` set to __{@link viaPrizeABI}__.
- */
-export function getViaPrize(config: Omit<GetContractArgs, 'abi'>) {
-  return getContract({ abi: viaPrizeABI, ...config });
-}
-
-/**
- * Wraps __{@link readContract}__ with `abi` set to __{@link viaPrizeABI}__.
- */
-export function readViaPrize<
-  TAbi extends readonly unknown[] = typeof viaPrizeABI,
-  TFunctionName extends string = string,
->(config: Omit<ReadContractConfig<TAbi, TFunctionName>, 'abi'>) {
-  return readContract({ abi: viaPrizeABI, ...config } as unknown as ReadContractConfig<
-    TAbi,
-    TFunctionName
-  >);
-}
-
-/**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link viaPrizeABI}__.
  */
 export function writeViaPrize<TFunctionName extends string>(
@@ -749,23 +666,6 @@ export function prepareWriteViaPrize<
     abi: viaPrizeABI,
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
-}
-
-/**
- * Wraps __{@link getContract}__ with `abi` set to __{@link viaPrizeFactoryABI}__.
- *
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
- */
-export function getViaPrizeFactory(
-  config: Omit<GetContractArgs, 'abi' | 'address'> & {
-    chainId?: keyof typeof viaPrizeFactoryAddress;
-  },
-) {
-  return getContract({
-    abi: viaPrizeFactoryABI,
-    address: viaPrizeFactoryAddress[1],
-    ...config,
-  });
 }
 
 /**
@@ -823,30 +723,6 @@ export function prepareWriteViaPrizeFactory<
     address: viaPrizeFactoryAddress[1],
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
-}
-
-/**
- * Wraps __{@link watchContractEvent}__ with `abi` set to __{@link viaPrizeFactoryABI}__.
- *
- * [__View Contract on Ethereum Etherscan__](https://etherscan.io/address/0x550055FfB1B0c51c96644D8e3302084403B0d215)
- */
-export function watchViaPrizeFactoryEvent<
-  TAbi extends readonly unknown[] = typeof viaPrizeFactoryABI,
-  TEventName extends string = string,
->(
-  config: Omit<WatchContractEventConfig<TAbi, TEventName>, 'abi' | 'address'> & {
-    chainId?: keyof typeof viaPrizeFactoryAddress;
-  },
-  callback: WatchContractEventCallback<TAbi, TEventName>,
-) {
-  return watchContractEvent(
-    {
-      abi: viaPrizeFactoryABI,
-      address: viaPrizeFactoryAddress[1],
-      ...config,
-    } as WatchContractEventConfig<TAbi, TEventName>,
-    callback,
-  );
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
