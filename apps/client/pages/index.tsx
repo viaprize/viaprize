@@ -440,7 +440,8 @@ function NavBar() {
           opened={opened}
           onClick={toggle}
           aria-label="Toggle navigation"
-          className="z-[1000]"
+          className="z-[1000] "
+          color="dark"
         />
         {opened ? (
           <div
@@ -452,6 +453,33 @@ function NavBar() {
             {navBarLinks.map((data) => (
               <NavBarLinks key={data.text} text={data.text} link={data.link} />
             ))}
+            <Button
+              className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
+              component="a"
+              href="/prize/create"
+            >
+              Create Prize
+            </Button>
+            {user ? (
+              <Badge variant="gradient" className="py-4">
+                {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
+              </Badge>
+            ) : (
+              <Button
+                className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
+                onClick={() => {
+                  loginUser()
+                    .then(() => {
+                      console.log('logging in ');
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                    });
+                }}
+              >
+                Login
+              </Button>
+            )}
           </div>
         ) : null}
       </nav>
