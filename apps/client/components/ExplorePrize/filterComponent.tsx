@@ -9,7 +9,7 @@ import {
   Select,
   Stack,
   Text,
-  rem,
+  rem
 } from '@mantine/core';
 import { IconCoin, IconCurrencyDollar } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
@@ -31,14 +31,14 @@ const proficiencyOptions = [
   'AI',
 ];
 
-// const priorityOptions = [
-//   "Climate Change",
-//   "Network Civilizations",
-//   "Open-Source",
-//   "Community Coordination",
-//   "Health",
-//   "Education",
-// ];
+const priorityOptions = [
+  "Climate Change",
+  "Network Civilizations",
+  "Open-Source",
+  "Community Coordination",
+  "Health",
+  "Education",
+];
 
 function toTuple(arr: number[]): [number, number] {
   return [arr[0], arr[1]];
@@ -53,6 +53,7 @@ function Filter() {
   const subCategory = searchParams.subCategory
     ? (searchParams.subCategory as string).split(',')
     : [];
+    console.log(subCategory);
 
   // const range = (
   //   searchParams.range ? (searchParams.range as string).split(",") : [0, 500]
@@ -71,10 +72,14 @@ function Filter() {
       ranges[0] = 0;
     }
 
-    return ranges;
+    const value1 = parseInt(ranges[0]);
+    const value2 = parseInt(ranges[1]);
+    const range = [value1, value2];
+    return range;
   };
 
   const range = RangeValue();
+  console.log(range);
 
   const handlerange = async (value: number[]) => {
     params.set('range', value.join(','));
@@ -84,6 +89,7 @@ function Filter() {
   const handleCategory = async (value: string) => {
     params.set('category', value);
     await router.replace(`?${params.toString()}`, undefined, { shallow: true });
+    await handleSubCategory([]);
   };
 
   const handleSubCategory = async (value: string[]) => {
@@ -109,13 +115,15 @@ function Filter() {
           <IconCurrencyDollar size="1rem" key="1" />,
           <IconCoin size="1rem" key="2" />,
         ]}
-        onChange={(value) => void handlerange(value)}
+        onChange={(value) => {
+          void handlerange(value)
+        }}
       />
-      <Group position="apart">
+      <Group justify="space-between" align='center'>
         <Box my="md" styles={{}}>
           <b>{range[0]}</b>
         </Box>
-        <Box mt="md">
+        <Box my="md">
           <b>{range[1]}</b>
         </Box>
       </Group>
@@ -124,7 +132,6 @@ function Filter() {
         label="Categories"
         placeholder="Pick value"
         data={categoryOptions}
-        defaultValue="Proficiency"
         allowDeselect={false}
         value={selectedCategories}
         onChange={(value) => {
@@ -135,15 +142,26 @@ function Filter() {
       />
       <Checkbox.Group
         defaultValue={[]}
-        label="Sub Categories"
+        label= {selectedCategories &&  "Sub Categories"}
         value={subCategory}
         onChange={(value) => void handleSubCategory(value)}
       >
-        <Stack mt="xs">
+        {selectedCategories === 'Proficiency' &&
+             ( <Stack mt="xs">
           {proficiencyOptions.map((option) => (
             <Checkbox key={option} value={option} label={option} />
           ))}
-        </Stack>
+        </Stack>)}
+         
+         {selectedCategories === 'Priorities' &&
+             ( <Stack mt="xs">
+          {priorityOptions.map((option) => (
+            <Checkbox key={option} value={option} label={option} />
+          ))}
+        </Stack>) }
+        
+        
+    
       </Checkbox.Group>
     </Box>
   );

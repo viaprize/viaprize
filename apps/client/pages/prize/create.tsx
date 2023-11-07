@@ -71,7 +71,7 @@ function Prize() {
     try {
       console.log(images, 'images');
       toast.promise(submit(), {
-        loading: 'Submitting Proposal',
+        loading: 'Submitting Proposal...',
         success: 'Proposal Submitted',
         error: 'Error Submitting Proposal',
       });
@@ -127,7 +127,7 @@ function Prize() {
               setIsAutomatic(e.currentTarget.checked);
             }}
             className="my-2 cursor-pointer"
-            label="Automatically start accepting funds after getting approval from the admin"
+            label="Automatically start campaign when it is accepted by the admin"
           />
         </div>
         <NumberInput

@@ -41,7 +41,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <>
       <Head>
-        <title>ViaPrize</title>
+        <title>viaPrize</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"

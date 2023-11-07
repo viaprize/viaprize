@@ -9,7 +9,7 @@ export default function Example() {
       <div className="w-full max-w-lg flex flex-col justify-center items-center">
         <img alt="viaprize logo" src="/viaprize.png" className="max-w-sm" />
         <Title className="my-4" order={2}>
-          Welcome to Viaprize
+          Welcome to viaPrize
         </Title>
         <Text className="text-center" variant="lead" color="gray" my="md">
           viaPrize is the only platform in the world that allows anyone to launch their
