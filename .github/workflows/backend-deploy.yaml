@@ -32,7 +32,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
           script: |
-            cd ~/viaprize/apps/backend
+            cd ~/viaprize/backend
             echo "${{secrets.BACKEND_ENV}}" > .env
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh   
