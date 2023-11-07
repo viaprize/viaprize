@@ -3,6 +3,7 @@ import { useViaPrizeFactoryCreateViaPrize } from '@/lib/smartContract';
 import { ProposalStatus } from '@/lib/types';
 import { Text } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
+import { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
@@ -16,6 +17,7 @@ export default function ProposalsTabs({
   isSuccess: boolean;
 }) {
   console.log(data, 'data');
+  const router = useRouter()
   const { address } = useAccount();
   const currentTimestamp = useRef(Date.now());
   const { createPrize } = usePrize();
@@ -121,6 +123,11 @@ export default function ProposalsTabs({
                     toast.dismiss(secondToast)
                     console.log(prize, 'prize');
                     toast.success(`Prize Address ${prizeAddress} `)
+                    toast.promise(router.push('/prize/explore'), {
+                      loading: 'Redirecting Please Wait',
+                      error: 'Error while redirecting ',
+                      success: 'Redirected to Prize Explore Page',
+                    });
                     break;
                   }
                   case 'rejected': {

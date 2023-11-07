@@ -152,7 +152,7 @@ export default function PrizePageComponent({
 
       {appUser &&
         appUser.username === prize.user.username &&
-        prize.submission_time_blockchain > 0 &&
+        prize.submission_time_blockchain === 0 &&
         prize.voting_time_blockchain === 0 && (
           <StartVoting
             contractAddress={prize.contract_address}

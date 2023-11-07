@@ -39,6 +39,7 @@ export default function Submissions({
           votes={submission.voting_blockchain}
           submissionId={submission.id}
           key={submission.id}
+          description={submission.submissionDescription}
         />
       ))}
     </div>
