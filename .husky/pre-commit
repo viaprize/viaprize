@@ -39,4 +39,6 @@ if echo "$staged_files" | grep -q "^apps/contracts/"; then
     echo "Changes made to contracts."
 fi
 
+git add .
+
 echo '✅✅✅✅ You win this time... I am committing this now. ✅✅✅✅'
