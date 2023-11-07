@@ -13,16 +13,12 @@ import useAppUser from '@/context/hooks/useAppUser';
 import { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconRefresh } from '@tabler/icons-react';
-import { prepareSendTransaction, sendTransaction } from "@wagmi/core";
+import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
-import {
-  useAccount,
-  useBalance,
-  usePrepareSendTransaction
-} from 'wagmi';
+import { useAccount, useBalance, usePrepareSendTransaction } from 'wagmi';
 import EndSubmission from './buttons/endSubmission';
 import EndVoting from './buttons/endVoting';
 import StartSubmission from './buttons/startSubmission';
@@ -35,14 +31,13 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
   const [value, setValue] = useState('');
   const [debounced] = useDebouncedValue(value, 500);
 
-
-  const { data: balance, isLoading, refetch, } = useBalance({ address });
+  const { data: balance, isLoading, refetch } = useBalance({ address });
 
   const { config } = usePrepareSendTransaction({
     to: contractAddress,
     value: debounced ? parseEther(debounced) : undefined,
   });
-  const [sendLoading, setSendLoading] = useState(false)
+  const [sendLoading, setSendLoading] = useState(false);
 
   // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
   //   ...config,
@@ -66,9 +61,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
         mt="md"
         rightSection={
           <ActionIcon>
-            <IconRefresh onClick={() => refetch({
-
-            })} />
+            <IconRefresh onClick={() => refetch({})} />
           </ActionIcon>
         }
         max={parseInt(balance?.formatted as string)}
@@ -86,19 +79,17 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       />
 
       <Button
-
         disabled={!value}
         loading={sendLoading}
         onClick={async () => {
           const config = await prepareSendTransaction({
             to: contractAddress,
             value: debounced ? parseEther(debounced) : undefined,
-          })
-          const { hash } = await sendTransaction(config)
+          });
+          const { hash } = await sendTransaction(config);
           toast.success(`Transaction Sent with Hash ${hash}`, {
             duration: 6000,
           });
-
         }}
       >
         Donate
@@ -134,7 +125,7 @@ export default function PrizePageComponent({
         width={1280}
         height={768}
         alt="prize info tumbnail"
-      // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
       <Center my="xl">
         <PrizePageTabs contractAddress={prize.contract_address} />
@@ -165,7 +156,11 @@ export default function PrizePageComponent({
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 && (
         <EndVoting contractAddress={prize.contract_address} />
       )}
-      <Submissions allowSubmission={prize.submission_time_blockchain > 0} submissions={submissions} contractAddress={prize.contract_address} />
+      <Submissions
+        allowSubmission={prize.submission_time_blockchain > 0}
+        submissions={submissions}
+        contractAddress={prize.contract_address}
+      />
     </div>
   );
 }

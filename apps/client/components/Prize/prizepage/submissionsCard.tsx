@@ -1,7 +1,7 @@
 import {
   prepareWriteViaPrize,
   useViaPrizeFunders,
-  writeViaPrize
+  writeViaPrize,
 } from '@/lib/smartContract';
 import {
   ActionIcon,
@@ -41,11 +41,11 @@ export default function SubmissionsCard({
   time,
   contractAddress,
   hash,
-  description
+  description,
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { address } = useAccount();
-  const [sendLoading, setSendLoading] = useState(false)
+  const [sendLoading, setSendLoading] = useState(false);
   const [value, setValue] = useState('0');
   const [debounced] = useDebouncedValue(value, 500);
   const {
@@ -86,8 +86,8 @@ export default function SubmissionsCard({
               isLoading
                 ? 'Loading.....'
                 : `Total Votes you can allocate(Max: ${formatEther(
-                  BigInt(funderBalance?.toString() ?? '0'),
-                )} Matic )`
+                    BigInt(funderBalance?.toString() ?? '0'),
+                  )} Matic )`
             }
             placeholder="Enter Value of Votes"
             mt="md"
@@ -104,33 +104,29 @@ export default function SubmissionsCard({
             onChange={(v) => {
               console.log('hiiiiiiiiiii');
 
-
               setValue(v.toString());
             }}
           />
 
           <Button
             onClick={async () => {
-              setSendLoading(true)
+              setSendLoading(true);
 
               const { request } = await prepareWriteViaPrize({
                 address: contractAddress as `0x${string}`,
                 functionName: 'vote',
                 args: [hash as `0x${string}`, parseEther(debounced)],
+              });
 
-              })
-
-              const { hash: transactionHash } = await writeViaPrize(request)
+              const { hash: transactionHash } = await writeViaPrize(request);
 
               console.log({ transactionHash }, 'transactionHash');
 
-              toast.success(`Transaction Sent with Hash ${transactionHash}`)
+              toast.success(`Transaction Sent with Hash ${transactionHash}`);
 
-              setSendLoading(false)
+              setSendLoading(false);
 
-              close()
-
-
+              close();
             }}
             disabled={!value}
             loading={sendLoading}
@@ -169,7 +165,7 @@ export default function SubmissionsCard({
         </Group>
       </div>
       <Text lineClamp={3} component="div">
-        <TypographyStylesProvider >
+        <TypographyStylesProvider>
           <div dangerouslySetInnerHTML={{ __html: description }} />
         </TypographyStylesProvider>
       </Text>

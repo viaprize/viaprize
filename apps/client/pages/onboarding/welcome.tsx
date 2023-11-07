@@ -7,7 +7,7 @@ export default function Example() {
   return (
     <div className="flex py-24 w-full items-center justify-center">
       <div className="w-full max-w-lg flex flex-col justify-center items-center">
-        <img alt="viaprize logo" src="/viaprize.png" className="max-w-sm" />
+        <img alt="viaPrize logo" src="/viaPrize.png" className="max-w-sm" />
         <Title className="my-4" order={2}>
           Welcome to viaPrize
         </Title>

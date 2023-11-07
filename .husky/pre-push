@@ -19,7 +19,6 @@ changes_found=false
 # Iterate through the list of files
 for file in $files_to_push; do
 
-    changes_found=true
     # Check if the file is in the 'backend' directory
     if echo "$file" | grep -q "^backend/"; then
         echo "Building backend..."
@@ -47,6 +46,9 @@ for file in $files_to_push; do
         echo "Changes made to contracts."
         changes_found=true
     fi
+    
+    changes_found=true
+
 done
 
 # If changes are found, push the code

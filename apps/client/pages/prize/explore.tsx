@@ -28,6 +28,7 @@ function ExplorePage({ prizes }: InferGetServerSidePropsType<typeof getServerSid
     </div>
   );
 }
+
 export const getServerSideProps = (async () => {
   const data = (
     await new Api().prizes.prizesList({

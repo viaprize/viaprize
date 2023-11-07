@@ -9,7 +9,7 @@ import {
 
 export default function Profile() {
   // const { address } = useAccount();
-  const { appUser } = useAppUser()
+  const { appUser } = useAppUser();
   // const { data, isLoading, refetch } = useBalance({ address });
   return (
     <div className="p-8 md:w-1/3">

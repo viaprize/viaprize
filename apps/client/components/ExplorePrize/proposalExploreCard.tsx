@@ -23,23 +23,19 @@ const ProposalExploreCard: React.FC<ExploreCardProps> = ({
       </Card.Section>
       <Group mb="xs" mt="md" justify="space-between">
         <Text fw={500}>{title}</Text>
-        <Badge color="gray" variant="light" my={"sm"}>
+        <Badge color="gray" variant="light" my={'sm'}>
           {status}
         </Badge>
       </Group>
       <p className="text-md text-gray-500 max-h-14 overflow-y-auto">{description}</p>
 
-      <Button
-        color="blue"
-        fullWidth
-        mt="md"
-        radius="md"
-        variant="light"
-
-      >
+      <Button color="blue" fullWidth mt="md" radius="md" variant="light">
         Details
       </Button>
-      <Button my={"xs"} onClick={() => onStatusClick(status)}> {status == "approved" ? "Deploy !" : status}</Button>
+      <Button my={'xs'} onClick={() => onStatusClick(status)}>
+        {' '}
+        {status == 'approved' ? 'Deploy !' : status}
+      </Button>
     </Card>
   );
 };

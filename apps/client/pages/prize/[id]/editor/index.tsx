@@ -56,7 +56,6 @@ function EditorsPage() {
       success: 'Submission Submitted',
       error: 'Error Submitting Proposal',
     });
-
   };
   console.log({ data }, 'submission hash');
   const onSumbit = () => {

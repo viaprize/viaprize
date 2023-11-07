@@ -6,7 +6,7 @@ import SubmissionsCard from './submissionsCard';
 export default function Submissions({
   contractAddress,
   submissions,
-  allowSubmission
+  allowSubmission,
 }: {
   contractAddress: string;
   submissions: SubmissionWithBlockchainData[];
@@ -15,8 +15,7 @@ export default function Submissions({
   const { query } = useRouter();
   return (
     <div className="w-full flex flex-col gap-3">
-      {allowSubmission &&
-
+      {allowSubmission && (
         <Button
           component="a"
           w="40%"
@@ -24,7 +23,8 @@ export default function Submissions({
           href={`/prize/${query.id as string}/editor?contract=${contractAddress}`}
         >
           Submit your work
-        </Button>}
+        </Button>
+      )}
       <Title order={3} style={{ textAlign: 'left' }}>
         Submissions
       </Title>
