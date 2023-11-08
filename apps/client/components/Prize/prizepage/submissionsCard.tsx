@@ -90,9 +90,7 @@ export default function SubmissionsCard({
             label={
               isLoading
                 ? 'Loading.....'
-                : `Total Votes you can allocate(Max: ${formatEther(
-                  BigInt(funderBalance?.toString() ?? '0'),
-                )} Matic )`
+                : `Total Votes you can allocate(Max: ${formatEther((BigInt(parseInt(funderBalance?.toString() ?? "1") - 1)))} Matic )`
             }
             placeholder="Enter Value of Votes"
             mt="md"
@@ -118,7 +116,7 @@ export default function SubmissionsCard({
 
               if (
                 parseInt(debounced.toString()) >
-                parseInt(formatEther(BigInt(funderBalance?.toString() ?? 1000)))
+                parseInt(formatEther((BigInt(parseInt(funderBalance?.toString() ?? "1") - 1))))
               ) {
                 toast.error('You cannot vote more than your balance');
                 return;
@@ -163,7 +161,7 @@ export default function SubmissionsCard({
             {time}
           </Text>
           <Group justify="right" gap="0" wrap="nowrap">
-            <Button color="black" mx="5px" onClick={open}>
+            <Button color="black" mx="5px" onClick={open} disabled={!allowVoting}>
               {allowVoting ? 'Vote' : 'Voting Closed'}
             </Button>
             <ActionIcon variant="filled" size="lg" color="blue">
