@@ -140,7 +140,7 @@ export default function PrizePageComponent({
       // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
       <Center my="xl">
-        <PrizePageTabs contractAddress={prize.contract_address} />
+        <PrizePageTabs email={prize.user.email} name={prize.user.name} description={prize.description} contractAddress={prize.contract_address} />
       </Center>
       {appUser ? <FundCard contractAddress={prize.contract_address} /> : null}
 
