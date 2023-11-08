@@ -27,6 +27,7 @@ function Prize() {
   const [images, setImages] = useState<string>();
   const { addProposals, uploadImages } = usePrizeProposal();
   const { wallet } = usePrivyWagmi();
+  const [loading, setLoading] = useState(false);
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
   // const onAddressChange = (index: number, value: string) => {
@@ -59,11 +60,13 @@ function Prize() {
       images: newImages ? [newImages] : [],
       title,
     });
+    setLoading(false)
     await router.push(`/profile/${appUser?.username}`);
   };
 
   const handleSubmit = () => {
     console.log(user);
+    setLoading(true);
     try {
       console.log(images, 'images');
       toast.promise(submit(), {
@@ -180,7 +183,7 @@ function Prize() {
       <Button
         className="mt-3 "
         fullWidth
-        loading={submittingProposal}
+        loading={submittingProposal || loading}
         onClick={handleSubmit}
       >
         Request for Approval

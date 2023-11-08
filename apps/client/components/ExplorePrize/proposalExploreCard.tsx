@@ -27,7 +27,10 @@ const ProposalExploreCard: React.FC<ExploreCardProps> = ({
           {status}
         </Badge>
       </Group>
-      <p className="text-md text-gray-500 max-h-14 overflow-y-auto">{description}</p>
+      <p
+        className="text-md text-gray-500 max-h-14 overflow-y-auto"
+        dangerouslySetInnerHTML={{ __html: description }}
+      ></p>
 
       <Button color="blue" fullWidth mt="md" radius="md" variant="light">
         Details

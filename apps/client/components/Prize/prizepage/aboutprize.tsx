@@ -1,11 +1,12 @@
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { Badge, Group, Title } from '@mantine/core';
-import { PrizeCreationTemplate } from './defaultcontent';
 
 export default function AboutPrize({
   balanceWithDenomation,
+  description
 }: {
   balanceWithDenomation: string;
+  description: string
 }) {
   return (
     <div className="w-full mt-4">
@@ -19,7 +20,7 @@ export default function AboutPrize({
         <Title order={4} className="mb-2">
           About the prize
         </Title>
-        <TextEditor disabled richtext={PrizeCreationTemplate} />
+        <TextEditor disabled richtext={description} />
       </div>
     </div>
   );

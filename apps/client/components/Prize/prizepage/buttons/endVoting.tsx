@@ -3,6 +3,7 @@ import {
   useViaPrizeEndVotingPeriod,
 } from '@/lib/smartContract';
 import { Button } from '@mantine/core';
+import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
 export default function EndVoting({ contractAddress }: { contractAddress: string }) {
@@ -19,6 +20,9 @@ export default function EndVoting({ contractAddress }: { contractAddress: string
       loading={isLoading}
       onClick={async () => {
         const result = await writeAsync?.();
+        toast.success('Rewards Distributed!!!!!', {
+          duration: 7000
+        });
         console.log(result);
         window.location.reload();
       }}

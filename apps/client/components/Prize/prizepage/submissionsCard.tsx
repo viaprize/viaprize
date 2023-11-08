@@ -116,7 +116,7 @@ export default function SubmissionsCard({
 
               if (
                 parseInt(debounced.toString()) >
-                parseInt(formatEther((BigInt(parseInt(funderBalance?.toString() ?? "1") - 1))))
+                parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
               ) {
                 toast.error('You cannot vote more than your balance');
                 return;
@@ -164,8 +164,8 @@ export default function SubmissionsCard({
             <Button color="black" mx="5px" onClick={open} disabled={!allowVoting}>
               {allowVoting ? 'Vote' : 'Voting Closed'}
             </Button>
-            <ActionIcon variant="filled" size="lg" color="blue">
-              <Text>{votes}</Text>
+            <ActionIcon variant="filled" w={"auto"} size="lg" color="blue">
+              <Text>{formatEther(BigInt(votes.toString()))} Matic</Text>
             </ActionIcon>
           </Group>
         </Group>
@@ -178,11 +178,12 @@ export default function SubmissionsCard({
       <Button
         rightSection={<IconArrowAutofitUp size="1rem" />}
         onClick={() => {
-          toast.promise(router.push(`/submission/${submissionId}`), {
-            loading: 'Loading Submission',
-            success: 'Success',
-            error: 'Error',
-          });
+          // toast.promise(router.push(`/submission/${submissionId}`), {
+          //   loading: 'Loading Submission',
+          //   success: 'Success',
+          //   error: 'Error',
+          // });
+          window.open(`/submission/${submissionId}`, '_blank')
         }}
       >
         View Submission
