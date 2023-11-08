@@ -21,6 +21,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { formatEther, parseEther } from 'viem';
 import { useAccount } from 'wagmi';
+import { extractPlainTextFromEditor } from './utils';
 
 interface SubmissionsCardProps {
   fullname: string;
@@ -77,6 +78,7 @@ export default function SubmissionsCard({
   //   },
   // });
 
+  console.log(description);
   return (
     <Card className="flex flex-col justify-center gap-3">
       <Modal opened={opened} onClose={close} title="Voting For this submission">
@@ -166,7 +168,7 @@ export default function SubmissionsCard({
       </div>
       <Text lineClamp={3} component="div">
         <TypographyStylesProvider>
-          <div dangerouslySetInnerHTML={{ __html: description }} />
+          <p>{extractPlainTextFromEditor(description).slice(0, 350)}</p>
         </TypographyStylesProvider>
       </Text>
       <Button rightSection={<IconArrowAutofitUp size="1rem" />}>View Submission</Button>
