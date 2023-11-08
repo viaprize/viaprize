@@ -81,22 +81,24 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
         disabled={!value}
         loading={sendLoading}
         onClick={async () => {
-          setSendLoading(true);
-          try {
-            const config = await prepareSendTransaction({
-              to: contractAddress,
-              value: debounced ? parseEther(debounced) : undefined,
-            });
-            const { hash } = await sendTransaction(config);
-            toast.success(`Transaction Sent with Hash ${hash}`, {
-              duration: 6000,
-            });
-            setSendLoading(false);
-          } catch (e) {
-            console.log(e);
-            toast.error('Error Sending Transaction');
-            setSendLoading(false);
+          await refetch();
+
+          if (parseInt(debounced.toString()) > parseInt(balance?.formatted as string)) {
+            toast.error('Insufficient Balance');
+            return;
           }
+          setSendLoading(true);
+
+          const config = await prepareSendTransaction({
+            to: contractAddress,
+            value: debounced ? parseEther(debounced) : undefined,
+          });
+
+          const { hash } = await sendTransaction(config);
+          toast.success(`Transaction Sent with Hash ${hash}`, {
+            duration: 6000,
+          });
+          setSendLoading(false);
         }}
       >
         Donate
@@ -135,8 +137,7 @@ export default function PrizePageComponent({
         width={1280}
         height={768}
         alt="prize info tumbnail"
-
-        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+      // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
       <Center my="xl">
         <PrizePageTabs contractAddress={prize.contract_address} />
@@ -144,30 +145,31 @@ export default function PrizePageComponent({
       {appUser ? <FundCard contractAddress={prize.contract_address} /> : null}
 
       {appUser &&
-      appUser.username === prize.user.username &&
-      prize.submission_time_blockchain === 0 ? (
-        <StartSubmission
-          contractAddress={prize.contract_address}
-          submissionTime={prize.submissionTime}
-        />
-      ) : null}
+        (appUser.username === prize.user.username || appUser?.isAdmin) &&
+        prize.submission_time_blockchain === 0 && (
+          <StartSubmission
+            contractAddress={prize.contract_address}
+            submissionTime={prize.submissionTime}
+          />
+        )}
 
       {appUser &&
-      appUser.username === prize.user.username &&
-      prize.submission_time_blockchain === 0 &&
-      prize.voting_time_blockchain === 0 ? (
-        <StartVoting
-          contractAddress={prize.contract_address}
-          votingTime={prize.votingTime}
-        />
-      ) : null}
-      {appUser?.isAdmin && prize.submission_time_blockchain > 0 ? (
+        (appUser.username === prize.user.username || appUser?.isAdmin) &&
+        prize.submission_time_blockchain === 0 &&
+        prize.voting_time_blockchain === 0 && (
+          <StartVoting
+            contractAddress={prize.contract_address}
+            votingTime={prize.votingTime}
+          />
+        )}
+      {appUser?.isAdmin && prize.submission_time_blockchain > 0 && (
         <EndSubmission contractAddress={prize.contract_address} />
-      ) : null}
+      )}
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
         <EndVoting contractAddress={prize.contract_address} />
       ) : null}
       <Submissions
+        allowVoting={prize.voting_time_blockchain > 0}
         allowSubmission={prize.submission_time_blockchain > 0}
         submissions={submissions}
         contractAddress={prize.contract_address}

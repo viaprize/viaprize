@@ -7,10 +7,12 @@ export default function Submissions({
   contractAddress,
   submissions,
   allowSubmission,
+  allowVoting,
 }: {
   contractAddress: string;
   submissions: SubmissionWithBlockchainData[];
   allowSubmission: boolean;
+  allowVoting: boolean;
 }) {
   const { query } = useRouter();
   return (
@@ -40,6 +42,7 @@ export default function Submissions({
           submissionId={submission.id}
           key={submission.id}
           description={submission.submissionDescription}
+          allowVoting={allowVoting}
         />
       ))}
     </div>

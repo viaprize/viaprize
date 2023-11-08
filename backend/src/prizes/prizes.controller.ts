@@ -75,6 +75,11 @@ export class PrizesController {
     private readonly userService: UsersService,
   ) {}
 
+  @Get('/submission/:id')
+  async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
+    return await this.submissionService.findSubmissionById(id);
+  }
+
   @Post('')
   @UseGuards(AuthGuard)
   async createPrize(
