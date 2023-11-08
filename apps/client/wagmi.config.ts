@@ -9,7 +9,6 @@ export default defineConfig({
       getContract: false,
       readContract: false,
       watchContractEvent: false,
-
     }),
     hardhat({
       project: '../contracts',

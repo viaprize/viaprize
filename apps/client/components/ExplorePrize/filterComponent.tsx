@@ -9,7 +9,7 @@ import {
   Select,
   Stack,
   Text,
-  rem
+  rem,
 } from '@mantine/core';
 import { IconCoin, IconCurrencyDollar } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
@@ -32,12 +32,12 @@ const proficiencyOptions = [
 ];
 
 const priorityOptions = [
-  "Climate Change",
-  "Network Civilizations",
-  "Open-Source",
-  "Community Coordination",
-  "Health",
-  "Education",
+  'Climate Change',
+  'Network Civilizations',
+  'Open-Source',
+  'Community Coordination',
+  'Health',
+  'Education',
 ];
 
 function toTuple(arr: number[]): [number, number] {
@@ -53,7 +53,7 @@ function Filter() {
   const subCategory = searchParams.subCategory
     ? (searchParams.subCategory as string).split(',')
     : [];
-    console.log(subCategory);
+  console.log(subCategory);
 
   // const range = (
   //   searchParams.range ? (searchParams.range as string).split(",") : [0, 500]
@@ -116,10 +116,10 @@ function Filter() {
           <IconCoin size="1rem" key="2" />,
         ]}
         onChange={(value) => {
-          void handlerange(value)
+          void handlerange(value);
         }}
       />
-      <Group justify="space-between" align='center'>
+      <Group justify="space-between" align="center">
         <Box my="md" styles={{}}>
           <b>{range[0]}</b>
         </Box>
@@ -142,26 +142,25 @@ function Filter() {
       />
       <Checkbox.Group
         defaultValue={[]}
-        label= {selectedCategories &&  "Sub Categories"}
+        label={selectedCategories && 'Sub Categories'}
         value={subCategory}
         onChange={(value) => void handleSubCategory(value)}
       >
-        {selectedCategories === 'Proficiency' &&
-             ( <Stack mt="xs">
-          {proficiencyOptions.map((option) => (
-            <Checkbox key={option} value={option} label={option} />
-          ))}
-        </Stack>)}
-         
-         {selectedCategories === 'Priorities' &&
-             ( <Stack mt="xs">
-          {priorityOptions.map((option) => (
-            <Checkbox key={option} value={option} label={option} />
-          ))}
-        </Stack>) }
-        
-        
-    
+        {selectedCategories === 'Proficiency' && (
+          <Stack mt="xs">
+            {proficiencyOptions.map((option) => (
+              <Checkbox key={option} value={option} label={option} />
+            ))}
+          </Stack>
+        )}
+
+        {selectedCategories === 'Priorities' && (
+          <Stack mt="xs">
+            {priorityOptions.map((option) => (
+              <Checkbox key={option} value={option} label={option} />
+            ))}
+          </Stack>
+        )}
       </Checkbox.Group>
     </Box>
   );

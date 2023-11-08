@@ -1,7 +1,7 @@
 import {
   prepareWriteViaPrize,
   useViaPrizeFunders,
-  writeViaPrize
+  writeViaPrize,
 } from '@/lib/smartContract';
 import {
   ActionIcon,
@@ -17,6 +17,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { IconArrowAutofitUp, IconRefresh } from '@tabler/icons-react';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { formatEther, parseEther } from 'viem';
@@ -33,6 +34,7 @@ interface SubmissionsCardProps {
   contractAddress: string;
   hash: string;
   description: string;
+  allowVoting: boolean;
 }
 export default function SubmissionsCard({
   fullname,
@@ -41,11 +43,13 @@ export default function SubmissionsCard({
   time,
   contractAddress,
   hash,
-  description
+  description,
+  allowVoting,
+  submissionId,
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { address } = useAccount();
-  const [sendLoading, setSendLoading] = useState(false)
+  const [sendLoading, setSendLoading] = useState(false);
   const [value, setValue] = useState('0');
   const [debounced] = useDebouncedValue(value, 500);
   const {
@@ -76,7 +80,7 @@ export default function SubmissionsCard({
   //     });
   //   },
   // });
-
+  const router = useRouter();
   return (
     <Card className="flex flex-col justify-center gap-3">
       <Modal opened={opened} onClose={close} title="Voting For this submission">
@@ -86,8 +90,8 @@ export default function SubmissionsCard({
               isLoading
                 ? 'Loading.....'
                 : `Total Votes you can allocate(Max: ${formatEther(
-                  BigInt(funderBalance?.toString() ?? '0'),
-                )} Matic )`
+                    BigInt(funderBalance?.toString() ?? '0'),
+                  )} Matic )`
             }
             placeholder="Enter Value of Votes"
             mt="md"
@@ -104,33 +108,32 @@ export default function SubmissionsCard({
             onChange={(v) => {
               console.log('hiiiiiiiiiii');
 
-
               setValue(v.toString());
             }}
           />
-
           <Button
             onClick={async () => {
-              setSendLoading(true)
+              await refetch();
+
+              if (
+                parseInt(debounced.toString()) >
+                parseInt(formatEther(BigInt(funderBalance?.toString() ?? 1000)))
+              ) {
+                toast.error('You cannot vote more than your balance');
+                return;
+              }
+              setSendLoading(true);
 
               const { request } = await prepareWriteViaPrize({
                 address: contractAddress as `0x${string}`,
                 functionName: 'vote',
                 args: [hash as `0x${string}`, parseEther(debounced)],
-
-              })
-
-              const { hash: transactionHash } = await writeViaPrize(request)
-
+              });
+              const { hash: transactionHash } = await writeViaPrize(request);
               console.log({ transactionHash }, 'transactionHash');
-
-              toast.success(`Transaction Sent with Hash ${transactionHash}`)
-
-              setSendLoading(false)
-
-              close()
-
-
+              toast.success(`Transaction Sent with Hash ${transactionHash}`);
+              setSendLoading(false);
+              close();
             }}
             disabled={!value}
             loading={sendLoading}
@@ -160,7 +163,7 @@ export default function SubmissionsCard({
           </Text>
           <Group justify="right" gap="0" wrap="nowrap">
             <Button color="black" mx="5px" onClick={open}>
-              vote
+              {allowVoting ? 'Vote' : 'Voting Closed'}
             </Button>
             <ActionIcon variant="filled" size="lg" color="blue">
               <Text>{votes}</Text>
@@ -169,11 +172,22 @@ export default function SubmissionsCard({
         </Group>
       </div>
       <Text lineClamp={3} component="div">
-        <TypographyStylesProvider >
+        <TypographyStylesProvider>
           <div dangerouslySetInnerHTML={{ __html: description }} />
         </TypographyStylesProvider>
       </Text>
-      <Button rightSection={<IconArrowAutofitUp size="1rem" />}>View Submission</Button>
+      <Button
+        rightSection={<IconArrowAutofitUp size="1rem" />}
+        onClick={() => {
+          toast.promise(router.push(`/submission/${submissionId}`), {
+            loading: 'Loading Submission',
+            success: 'Success',
+            error: 'Error',
+          });
+        }}
+      >
+        View Submission
+      </Button>
     </Card>
   );
 }

@@ -10,7 +10,7 @@ import {
   Menu,
   Modal,
   Tooltip,
-  useMantineColorScheme
+  useMantineColorScheme,
 } from '@mantine/core';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import {
@@ -19,7 +19,7 @@ import {
   IconCopy,
   IconMoonStars,
   IconSun,
-  IconUser
+  IconUser,
 } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -41,7 +41,6 @@ import SwitchAccount from './switchWallet';
 // }
 
 export default function HeaderLayout() {
-
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   const { wallets } = useWallets();
@@ -51,26 +50,21 @@ export default function HeaderLayout() {
 
   return (
     <Group justify="space-between" w="100%" align="center" pos="fixed" px="xl">
-      <Flex justify='space-between' align="center" gap={10}>
+      <Flex justify="space-between" align="center" gap={10}>
         <Link href="/">
           <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
         </Link>
-        <Link href='/' className='ml-2'>
+        <Link href="/" className="ml-2">
           Home
         </Link>
-        <Link href='/prize/explore' >
-          Prizes
-        </Link>
+        <Link href="/prize/explore">Prizes</Link>
       </Flex>
       <Flex align="center" gap="md">
         <Link href="/prize/create">
-          <Button>
-            Create Prize
-          </Button>
+          <Button>Create Prize</Button>
         </Link>
         <Card py="5px">
           <Group>
-
             {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
             {wallets[0] ? (
               <CopyButton value={wallets[0].address}>
@@ -129,7 +123,7 @@ function ProfileMenu() {
         <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
           <Menu.Target>
             {appUser ? (
-              <Avatar color='blue' radius="xl" className="cursor-pointer">
+              <Avatar color="blue" radius="xl" className="cursor-pointer">
                 {appUser.username.charAt(0).toUpperCase()}
               </Avatar>
             ) : (
@@ -173,7 +167,6 @@ function ProfileMenu() {
                 </Menu.Item> */}
               </>
             ) : null}
-
 
             <Menu.Divider />
 

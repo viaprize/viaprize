@@ -56,7 +56,6 @@ function EditorsPage() {
       success: 'Submission Submitted',
       error: 'Error Submitting Proposal',
     });
-
   };
   console.log({ data }, 'submission hash');
   const onSumbit = () => {
@@ -76,6 +75,7 @@ function EditorsPage() {
       <div className="relative min-h-[500px] min-w-[70vw] max-w-screen-lg border-stone-200 sm:pb-[calc(10vh)] sm:rounded-lg sm:border sm:shadow-lg">
         <NovalEditor
           className=""
+          disableLocalStorage
           // className="relative min-h-[500px] min-w-[70vw] max-w-screen-lg border-stone-200 bg-white sm:pb-[calc(10vh)] sm:rounded-lg sm:border sm:shadow-lg"
           onUpdate={(e) => {
             setContent(e?.getJSON());

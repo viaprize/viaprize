@@ -16,14 +16,14 @@ export default function StartSubmission({
   contractAddress: string;
   submissionTime: number;
 }) {
-  console.log({ submissionTime }, "submission time ")
+  console.log({ submissionTime }, 'submission time ');
   const { address } = useAccount();
   const { config } = usePrepareViaPrizeStartSubmissionPeriod({
     account: address,
     address: contractAddress as `0x${string}`,
     args: [BigInt(submissionTime)],
   });
-  console.log({ config }, "wtfff");
+  console.log({ config }, 'wtfff');
 
   const { writeAsync, isLoading } = useViaPrizeStartSubmissionPeriod({
     ...config,
@@ -42,15 +42,15 @@ export default function StartSubmission({
           account: address,
           functionName: 'start_submission_period',
           args: [BigInt(submissionTime)],
-        })
-        const { hash } = await writeViaPrize(request)
+        });
+        const { hash } = await writeViaPrize(request);
 
         const waitTransaction = await waitForTransaction({
           confirmations: 1,
           hash,
         });
-        toast.success(`Submission Period Started, Transaction Hash ${hash}`)
-        console.log({ hash }, "hash");
+        toast.success(`Submission Period Started, Transaction Hash ${hash}`);
+        console.log({ hash }, 'hash');
         window.location.reload();
         // const result = await writeAsync?.();
         // console.log(result);

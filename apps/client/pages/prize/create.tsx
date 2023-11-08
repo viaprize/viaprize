@@ -1,10 +1,4 @@
-import {
-  Button,
-  Checkbox,
-  NumberInput,
-  SimpleGrid,
-  TextInput
-} from '@mantine/core';
+import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
 
@@ -28,7 +22,7 @@ function Prize() {
   const [votingTime, setVotingTime] = useState(0);
   const [proposalTime, setProposalTime] = useState(0);
   const { user } = usePrivy();
-  const { appUser } = useAppUser()
+  const { appUser } = useAppUser();
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [images, setImages] = useState<string>();
   const { addProposals, uploadImages } = usePrizeProposal();
@@ -65,7 +59,7 @@ function Prize() {
       images: newImages ? [newImages] : [],
       title,
     });
-    router.push(`/profile/${appUser?.username as string}`)
+    router.push(`/profile/${appUser?.username as string}`);
   };
 
   const handleSubmit = () => {

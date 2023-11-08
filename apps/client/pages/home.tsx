@@ -275,7 +275,7 @@ export default function Home() {
         <section className="my-12 gap-3 ">
           <div className=" flex flex-col items-center">
             <h1 className="w-96 text-3xl text-center font-bold text-black">
-             See what our community is saying
+              See what our community is saying
             </h1>
             <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
               <Link href="https://t.me/viaprize">Join Community</Link>
