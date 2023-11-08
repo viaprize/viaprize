@@ -10,7 +10,14 @@ interface ExploreCardProps {
   id: string;
 }
 
-const ExploreCard: React.FC<ExploreCardProps> = ({
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- will use later
+function htmlToPlainText(html: string): string {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  return doc.body.textContent || '';
+}
+
+function ExploreCard({
   imageUrl,
   profileName,
   title,
@@ -18,11 +25,18 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
   money,
   deadline,
   id,
-}) => {
+}: ExploreCardProps) {
   return (
     <Card padding="lg" radius="md" shadow="sm" withBorder className="w-full">
       <Card.Section>
-        <Image alt="Image" height={160} src={imageUrl} />
+        <Image
+          alt="Image"
+          height={160}
+          src={
+            imageUrl ||
+            'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
+          }
+        />
       </Card.Section>
       <Group mb="xs" mt="md" justify="space-between">
         <Text fw={500}>{title}</Text>
@@ -30,7 +44,11 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
           {profileName}
         </Badge>
       </Group>
-      <p className="text-md text-gray-500 max-h-14 overflow-y-auto">{description}</p>
+      <p
+        className="text-md text-gray-500 max-h-14 overflow-y-auto"
+        dangerouslySetInnerHTML={{ __html: description }}
+      ></p>
+      {/*  >{htmlToPlainText(description)}</p> */}
       <Group mb="xs" mt="md" justify="space-between">
         <Text c="green" fw={500}>
           {money} MATIC
@@ -52,6 +70,6 @@ const ExploreCard: React.FC<ExploreCardProps> = ({
       </Button>
     </Card>
   );
-};
+}
 
 export default ExploreCard;

@@ -27,7 +27,10 @@ export default withBundleAnalyzer({
         pathname: '/**',
       },
       {
-        hostname: 'www.freepik.com',
+        hostname: 'placehold.co',
+      },
+      {
+        hostname: 'placehold.jp',
       },
     ],
   },

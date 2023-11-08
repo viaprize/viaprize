@@ -7,6 +7,7 @@ import type { ReactElement } from 'react';
 import { formatEther } from 'viem';
 
 function ExplorePage({ prizes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  console.log({ prizes });
   return (
     <div className="max-w-screen-xl">
       <SearchFilters />
