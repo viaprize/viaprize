@@ -111,7 +111,7 @@ export default function Home() {
               Trustworthy crowdfunding
             </h1>
             {/* <p className="text-lg text-gray-600 my-4">
-              Simple and sleek design with users in mind. Viaprize is a platform that
+              Simple and sleek design with users in mind. viaPrize is a platform that
               allows
             </p> */}
             <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
@@ -161,17 +161,23 @@ export default function Home() {
         </section>
         {/* How it works */}
         <div className="flex flex-col items-center">
-          <h1 className="text-black capitalize">Why viaprize?</h1>
+          <h1 className="text-black capitalize">Why viaPrize?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             <ReasonCard
               Title="Reason 1"
               Description="30B is wasted annually on crowdfunding campaigns that never deliver"
+              image="https://img.freepik.com/free-photo/piggy-bank-was-thrown-broke-gold-coins-flowed-out_35913-3161.jpg?w=2000&t=st=1699282904~exp=1699283504~hmac=e46f0c2043992af865d65686b9f5f909ec1fe85fc01f83a50ae4b00cd376ccd3"
             />
             <ReasonCard
               Title="Reason 2"
-              Description="Either the campaign delivers or you receive a refund"
+              Description="With viaPrize Either the campaign delivers or you receive a refund"
+              image="https://img.freepik.com/free-photo/3d-cryptocurrency-rendering-design_23-2149074550.jpg?w=2000&t=st=1699283400~exp=1699284000~hmac=d294cc280e87f50abd42aa22260ba7acd215464ec003659fb7067d535dbc5136"
             />
-            <ReasonCard Title="Reason 3" Description="Win prizes! and make Money" />
+            <ReasonCard
+              Title="Reason 3"
+              Description="Win prizes!"
+              image="https://img.freepik.com/free-photo/team-working-animation-project_23-2149269903.jpg?w=2000&t=st=1699283321~exp=1699283921~hmac=2c2cb20d21db38dcfcf08834445cc9087d7a33ba58dc0aadd75187156eda9062"
+            />
           </div>
           {/* <h2 className="text-black mt-6">Some More Stats</h2>
           <Flex
@@ -200,10 +206,10 @@ export default function Home() {
             </div>
           </Flex> */}
         </div>
-        {/* Viaprize’s Core Functions  */}
+        {/* viaPrize’s Core Functions  */}
         {/* <section className="my-24 flex items-center flex-col gap-3">
           <h1 className="text-3xl font-bold text-black">
-            Viaprize&apos;s Core Functions
+            viaPrize&apos;s Core Functions
           </h1>
           <FunctionCard
             Title="Prize"
@@ -257,7 +263,7 @@ export default function Home() {
             width={1000}
             height={500}
             alt="How it works"
-            className="rounded-md"
+            className="rounded-md max-w-full h-60 sm:h-80 md:h-96 lg:h-120 xl:h-160"
           />
         </section>
         {/* 3 roles in a prize */}
@@ -278,7 +284,7 @@ export default function Home() {
               See what our community is saying
             </h1>
             <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
-              <Link href="https://t.me/viaprize">Join Community</Link>
+              <Link href="https://t.me/viaPrize">Join Community</Link>
             </Button>
           </div>
           <div className="my-4" />
@@ -302,7 +308,7 @@ export default function Home() {
               <Image
                 src="/viaprizeBg.png"
                 className="h-8 mr-3"
-                alt="ViaPrize Logo"
+                alt="viaPrize Logo"
                 width={32}
                 height={32}
               />
@@ -334,13 +340,13 @@ export default function Home() {
             </ul>
           </div>
           <div className="my-4">
-            <Link href="https://twitter.com/viaprize">
+            <Link href="https://twitter.com/viaPrize">
               <BsTwitter className="inline-block mr-4 text-2xl text-blue-400 " />
             </Link>
-            <Link href="https://www.linkedin.com/company/viaprize/">
+            <Link href="https://www.linkedin.com/company/viaPrize/">
               <BiLogoLinkedin className="inline-block mr-4 text-2xl text-white " />
             </Link>
-            <Link href="https://t.me/viaprize">
+            <Link href="https://t.me/viaPrize">
               <ImTelegram className="inline-block mr-4 text-2xl text-blue-400 bg-white rounded-full" />
             </Link>
           </div>
@@ -349,7 +355,7 @@ export default function Home() {
           <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
             © 2023{' '}
             <a href="/" className="hover:underline">
-              ViaPrize™
+              viaPrize™
             </a>
             . All Rights Reserved.
           </span>
@@ -383,7 +389,7 @@ function NavBar() {
         <div className="flex gap-3 items-center">
           <Image
             src="/viaprizeBg.png"
-            alt="ViaPrize Logo"
+            alt="viaPrize Logo"
             width={40}
             height={40}
             priority
@@ -435,7 +441,7 @@ function NavBar() {
       <nav className="md:hidden flex w-full justify-between px-5 py-5">
         <Image
           src="/viaprizeBg.png"
-          alt="ViaPrize Logo"
+          alt="viaPrize Logo"
           width={40}
           height={40}
           priority
@@ -463,13 +469,21 @@ function NavBar() {
   );
 }
 
-function ReasonCard({ Title, Description }: { Title: string; Description: string }) {
+function ReasonCard({
+  Title,
+  Description,
+  image,
+}: {
+  Title: string;
+  Description: string;
+  image: string;
+}) {
   return (
     <Card shadow="sm" padding="lg" radius="lg" className="bg-[#486B78]">
       <Card.Section className="p-4 rounded-lg">
         <Image
-          src="/placeholder.jpg"
-          height={160}
+          src={image}
+          height={200}
           alt="Reason 1"
           width={160}
           className="w-full object-cover rounded-lg"

@@ -22,6 +22,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { formatEther, parseEther } from 'viem';
 import { useAccount } from 'wagmi';
+import { extractPlainTextFromEditor } from './utils';
 
 interface SubmissionsCardProps {
   fullname: string;
@@ -90,8 +91,8 @@ export default function SubmissionsCard({
               isLoading
                 ? 'Loading.....'
                 : `Total Votes you can allocate(Max: ${formatEther(
-                    BigInt(funderBalance?.toString() ?? '0'),
-                  )} Matic )`
+                  BigInt(funderBalance?.toString() ?? '0'),
+                )} Matic )`
             }
             placeholder="Enter Value of Votes"
             mt="md"
@@ -131,7 +132,7 @@ export default function SubmissionsCard({
               });
               const { hash: transactionHash } = await writeViaPrize(request);
               console.log({ transactionHash }, 'transactionHash');
-              toast.success(`Transaction Sent with Hash ${transactionHash}`);
+              toast.success(`Transaction Hash ${transactionHash}`);
               setSendLoading(false);
               close();
             }}
@@ -173,7 +174,7 @@ export default function SubmissionsCard({
       </div>
       <Text lineClamp={3} component="div">
         <TypographyStylesProvider>
-          <div dangerouslySetInnerHTML={{ __html: description }} />
+          <p>{extractPlainTextFromEditor(description).slice(0, 350)}</p>
         </TypographyStylesProvider>
       </Text>
       <Button

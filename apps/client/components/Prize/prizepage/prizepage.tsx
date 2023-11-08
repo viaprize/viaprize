@@ -1,3 +1,5 @@
+import useAppUser from '@/context/hooks/useAppUser';
+import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import {
   ActionIcon,
   Button,
@@ -8,9 +10,6 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-
-import useAppUser from '@/context/hooks/useAppUser';
-import { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconRefresh } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
@@ -18,7 +17,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
-import { useAccount, useBalance, usePrepareSendTransaction } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 import EndSubmission from './buttons/endSubmission';
 import EndVoting from './buttons/endVoting';
 import StartSubmission from './buttons/startSubmission';
@@ -33,10 +32,10 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
 
   const { data: balance, isLoading, refetch } = useBalance({ address });
 
-  const { config } = usePrepareSendTransaction({
-    to: contractAddress,
-    value: debounced ? parseEther(debounced) : undefined,
-  });
+  // const { config } = usePrepareSendTransaction({
+  //   to: contractAddress,
+  //   value: debounced ? parseEther(debounced) : undefined,
+  // });
   const [sendLoading, setSendLoading] = useState(false);
 
   // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
@@ -50,7 +49,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
   // });
 
   return (
-    <Stack my={'md'}>
+    <Stack my="md">
       <NumberInput
         label={
           isLoading
@@ -64,7 +63,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
             <IconRefresh onClick={() => refetch({})} />
           </ActionIcon>
         }
-        max={parseInt(balance?.formatted as string)}
+        max={parseInt(balance?.formatted ?? '0')}
         allowDecimal
         defaultValue={0}
         allowNegative={false}
@@ -131,16 +130,19 @@ export default function PrizePageComponent({
       </Group>
       <Image
         className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md"
-        src={prize.images[0]}
+        src={
+          prize.images[0] ||
+          'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
+        }
         width={1280}
         height={768}
         alt="prize info tumbnail"
-        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+      // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
       <Center my="xl">
         <PrizePageTabs contractAddress={prize.contract_address} />
       </Center>
-      {appUser && <FundCard contractAddress={prize.contract_address} />}
+      {appUser ? <FundCard contractAddress={prize.contract_address} /> : null}
 
       {appUser &&
         (appUser.username === prize.user.username || appUser?.isAdmin) &&
@@ -163,9 +165,9 @@ export default function PrizePageComponent({
       {appUser?.isAdmin && prize.submission_time_blockchain > 0 && (
         <EndSubmission contractAddress={prize.contract_address} />
       )}
-      {appUser?.isAdmin && prize.voting_time_blockchain > 0 && (
+      {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
         <EndVoting contractAddress={prize.contract_address} />
-      )}
+      ) : null}
       <Submissions
         allowVoting={prize.voting_time_blockchain > 0}
         allowSubmission={prize.submission_time_blockchain > 0}

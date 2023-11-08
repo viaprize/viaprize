@@ -1,3 +1,4 @@
+
 #!/usr/bin/env sh
 
 # Get the list of files to be pushed
@@ -15,13 +16,15 @@ echo "Files with changes: $files_to_push"
 
 # Flag to track if changes are found
 changes_found=false
+client=true
+backend=true
+contracts=true
 
 # Iterate through the list of files
 for file in $files_to_push; do
 
-    changes_found=true
     # Check if the file is in the 'backend' directory
-    if echo "$file" | grep -q "^backend/"; then
+    if echo "$file" | grep -q "^backend/"  && ["$backend" = true]; then
         echo "Building backend..."
         (cd backend && pnpm run build) || {
             echo '❌👷🔨❌ Better call Bob... Because your backend build failed ❌👷🔨❌
@@ -29,10 +32,11 @@ for file in $files_to_push; do
             exit 1
         }
         changes_found=true
+        backend=false
     fi
 
     # Check if the file is in the 'client' directory
-    if echo "$file" | grep -q "^apps/client/"; then
+    if echo "$file" | grep -q "^apps/client/" && ["$client" = true]; then
         echo "Building client..."
         (cd apps/client && pnpm run build) || {
             echo '❌👷🔨❌ Better call Bob... Because your client build failed ❌👷🔨❌
@@ -40,13 +44,18 @@ for file in $files_to_push; do
             exit 1
         }
         changes_found=true
+        client=false
     fi
 
     # Check if the file is in the 'contracts' directory
-    if echo "$file" | grep -q "^apps/contracts/"; then
+    if echo "$file" | grep -q "^apps/contracts/" && ["$contracts" = true]; then
         echo "Changes made to contracts."
         changes_found=true
+        contracts=true
     fi
+    
+    changes_found=true
+
 done
 
 # If changes are found, push the code

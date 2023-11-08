@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- will use later */
 import type { Chain } from 'wagmi';
 import { configureChains, createConfig } from 'wagmi';
 import { optimism, optimismGoerli, polygonMumbai } from 'wagmi/chains';

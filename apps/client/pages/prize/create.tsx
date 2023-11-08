@@ -1,14 +1,14 @@
-import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
-import type { ReactElement } from 'react';
-import { useState } from 'react';
-
+/* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
 import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
 import AppShellLayout from '@/components/layout/appshell';
 import useAppUser from '@/context/hooks/useAppUser';
+import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import router from 'next/router';
+import type { ReactElement } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 import ImageComponent from '../../components/Prize/dropzone';
@@ -29,12 +29,12 @@ function Prize() {
   const { wallet } = usePrivyWagmi();
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
-  const onAddressChange = (index: number, value: string) => {
-    setAddress((prev) => {
-      prev[index] = value;
-      return [...prev];
-    });
-  };
+  // const onAddressChange = (index: number, value: string) => {
+  //   setAddress((prev) => {
+  //     prev[index] = value;
+  //     return [...prev];
+  //   });
+  // };
   const handleUploadImages = async () => {
     const newImages = await uploadImages(files);
 
@@ -52,14 +52,14 @@ function Prize() {
       description: richtext,
       isAutomatic,
       voting_time: votingTime,
-      proposer_address: wallet?.address,
+      proposer_address: wallet.address,
       priorities: [],
       proficiencies: [],
       submission_time: proposalTime,
       images: newImages ? [newImages] : [],
       title,
     });
-    router.push(`/profile/${appUser?.username as string}`);
+    await router.push(`/profile/${appUser?.username}`);
   };
 
   const handleSubmit = () => {
@@ -80,19 +80,19 @@ function Prize() {
   //   setRichtext(PrizeCreationTemplate);
   // };
 
-  const addAddress = () => {
-    setAddress((prev: string[]) => {
-      return [...prev, ''];
-    });
-  };
+  // const addAddress = () => {
+  //   setAddress((prev: string[]) => {
+  //     return [...prev, ''];
+  //   });
+  // };
 
-  const removeAddress = (index: number) => {
-    setAddress((prev) => {
-      const arr: string[] = JSON.parse(JSON.stringify(prev)) as string[];
-      arr.splice(index, 1);
-      return [...arr];
-    });
-  };
+  // const removeAddress = (index: number) => {
+  //   setAddress((prev) => {
+  //     const arr: string[] = JSON.parse(JSON.stringify(prev)) as string[];
+  //     arr.splice(index, 1);
+  //     return [...arr];
+  //   });
+  // };
   return (
     <div className="shadow-md max-w-screen-lg p-8 m-6">
       <ImageComponent files={files} setFiles={setFiles} />
