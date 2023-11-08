@@ -14,7 +14,7 @@ export default defineConfig({
       project: '../contracts',
       deployments: {
         ViaPrizeFactory: {
-          1: '0x550055FfB1B0c51c96644D8e3302084403B0d215',
+          1: '0x0dd8d97E5b41010F5a47dAA2217aed175Ad15dd4',
         },
       },
     }),
