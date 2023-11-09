@@ -1,5 +1,5 @@
 import { PrizeProposals } from '@/lib/api';
-import { useViaPrizeFactoryCreateViaPrize } from '@/lib/smartContract';
+import { prepareWriteViaPrizeFactory, writeViaPrizeFactory } from '@/lib/smartContract';
 import { ProposalStatus } from '@/lib/types';
 import { Text } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
@@ -21,17 +21,6 @@ export default function ProposalsTabs({
   const { address } = useAccount();
   const currentTimestamp = useRef(Date.now());
   const { createPrize } = usePrize();
-
-  const {
-    data: prizeContract,
-
-    writeAsync,
-  } = useViaPrizeFactoryCreateViaPrize({
-    account: address,
-  });
-
-  console.log(prizeContract, 'prizeContract');
-
   const getProposalStatus = (item: PrizeProposals): ProposalStatus => {
     if (data) {
       if (item.isApproved) {
@@ -44,7 +33,7 @@ export default function ProposalsTabs({
     return 'pending';
   };
 
-  // const finalizeTransaction = (item: PrizeProposals) => {};
+  const finalizeTransaction = (item: PrizeProposals) => { };
   return (
     <div className="p-6 w-full">
       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
@@ -86,8 +75,8 @@ export default function ProposalsTabs({
                       ],
                       'args',
                     );
-
-                    const out = await writeAsync({
+                    const request = await prepareWriteViaPrizeFactory({
+                      functionName: 'createViaPrize',
                       args: [
                         item?.admins as `0x${string}`[],
                         [
@@ -98,8 +87,9 @@ export default function ProposalsTabs({
                         BigInt(10),
                         '0x62e9a8374AE3cdDD0DA7019721CcB091Fed927aE' as `0x${string}`,
                         BigInt(currentTimestamp.current),
-                      ],
-                    });
+                      ]
+                    })
+                    const out = await writeViaPrizeFactory(request);
                     toast.dismiss(firstLoadingToast);
                     const secondToast = toast.loading(
                       'Waiting for transaction Confirmation...',
