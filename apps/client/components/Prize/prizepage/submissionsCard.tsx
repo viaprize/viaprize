@@ -6,6 +6,7 @@ import {
 import {
   ActionIcon,
   Avatar,
+  Badge,
   Button,
   Card,
   Group,
@@ -141,39 +142,34 @@ export default function SubmissionsCard({
           </Button>
         </Stack>
       </Modal>
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
         <Group>
           <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
           <div>
             <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
               {fullname}
             </Text>
-            {/* <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
-            Proposer Email: {email}
-          </Text> */}
-            <Text c="dimmed" fz="sm">
-              {wallet}
-            </Text>
+            {/* <Text c="dimmed" fz="sm">
+              {wallet.slice(0, 10)}...{wallet.slice(-10)}
+            </Text> */}
           </div>
         </Group>
-        <Group>
+        <div>
           <Text c="dimmed" fz="sm">
             {time}
           </Text>
-          <Group justify="right" gap="0" wrap="nowrap">
-            <Button color="black" mx="5px" onClick={open} disabled={!allowVoting}>
+          <div className='flex gap-1 sm:justify-end items-center '>
+            <Button color="black" mr="5px" onClick={open} disabled={!allowVoting}>
               {allowVoting ? 'Vote' : 'Voting Closed'}
             </Button>
-            <ActionIcon variant="filled" w={"auto"} size="lg" color="blue">
-              <Text>{formatEther(BigInt(votes.toString()))} Matic</Text>
-            </ActionIcon>
-          </Group>
-        </Group>
+            <Badge variant="filled" w={"auto"} size="lg" color="blue">
+             {formatEther(BigInt(votes.toString()))} Matic
+            </Badge>
+          </div>
+        </div>
       </div>
-      <Text lineClamp={3} component="div">
-        <TypographyStylesProvider>
-          <p>{extractPlainTextFromEditor(description).slice(0, 350)}</p>
-        </TypographyStylesProvider>
+      <Text lineClamp={3}>
+        {extractPlainTextFromEditor(description).slice(0, 350)}
       </Text>
       <Button
         rightSection={<IconArrowAutofitUp size="1rem" />}

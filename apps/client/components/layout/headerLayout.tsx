@@ -65,9 +65,9 @@ export default function HeaderLayout() {
         <Link href="/prize/explore">Prizes</Link>
       </Flex>
       <Flex align="center" gap="md">
-        <Link href="/prize/create" className="hidden sm:block">
-          <Button>Create Prize</Button>
-        </Link>
+        <Button className="hidden sm:block">
+          <Link href="/prize/create">Create Prize</Link>
+        </Button>
         <Card py="5px" className="hidden sm:block">
           <Group>
             {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
@@ -122,7 +122,6 @@ function ProfileMenu() {
 
   return (
     <>
-      <Group justify="center">
         <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
           <Menu.Target>
             {appUser ? (
@@ -130,45 +129,41 @@ function ProfileMenu() {
                 {appUser.username.charAt(0).toUpperCase()}
               </Avatar>
             ) : (
-              <Link href="/">
-                <Button
-                  color="green"
-                  leftSection={<IconUser size={14} />}
-                  // onClick={() => {
-                  //   toast.promise(router.push('/'), {
-                  //     loading: 'Redirecting Please Wait',
-                  //     error: 'Error while redirecting ',
-                  //     success: 'Redirected to Home Page',
-                  //   });
-                  // }}
-                >
-                  Home
-                </Button>
-              </Link>
+              <Button
+                color="green"
+                leftSection={<IconUser size={14} />}
+                // onClick={() => {
+                //   toast.promise(router.push('/'), {
+                //     loading: 'Redirecting Please Wait',
+                //     error: 'Error while redirecting ',
+                //     success: 'Redirected to Home Page',
+                //   });
+                // }}
+              >
+                <Link href="/">Home</Link>
+              </Button>
             )}
           </Menu.Target>
 
           <Menu.Dropdown p="md" mr="sm">
             <Menu.Label>Profile</Menu.Label>
-            <Link href={`/profile/${appUser?.username}`}>
-              <Menu.Item
-                leftSection={<IconUser size={14} />}
-                // onClick={() => {
-                //   router
-                //     .push(`/profile/${appUser?.username}`)
-                //     .then(console.log)
-                //     .catch(console.error);
-                // }}
-              >
-                View Profile
-              </Menu.Item>
-            </Link>
-            <Link href="/prize/create" className="block sm:hidden">
-              <Menu.Item leftSection={<TbTopologyStarRing2 />}>Create Prize</Menu.Item>
-            </Link>
+            <Menu.Item
+              leftSection={<IconUser size={14} />}
+              // onClick={() => {
+              //   router
+              //     .push(`/profile/${appUser?.username}`)
+              //     .then(console.log)
+              //     .catch(console.error);
+              // }}
+            >
+              <Link href={`/profile/${appUser?.username}`}>View Profile</Link>
+            </Menu.Item>
+            <Menu.Item leftSection={<TbTopologyStarRing2 />}>
+              <Link href="/prize/create" className="block sm:hidden">
+                Create Prize
+              </Link>
+            </Menu.Item>
             <Menu.Divider />
-
-            {/* <Menu.Label>Danger zone</Menu.Label> */}
             <Menu.Item
               onClick={() => {
                 setSwitchWallet(true);
@@ -184,9 +179,8 @@ function ProfileMenu() {
             >
               Logout
             </Menu.Item>
-          </Menu.Dropdown>
+          </Menu.Dropdown> 
         </Menu>
-      </Group>
       <Modal
         size="lg"
         opened={switchWallet}

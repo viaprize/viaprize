@@ -142,18 +142,18 @@ export default function PrizePageComponent({
       <Center my="xl">
         <PrizePageTabs email={prize.user.email} name={prize.user.name} description={prize.description} contractAddress={prize.contract_address} />
       </Center>
-      {appUser ? <FundCard contractAddress={prize.contract_address} /> : null}
+      {/* {appUser ? <FundCard contractAddress={prize.contract_address} /> : null} */}
 
-      {appUser &&
+      {appUser ?
         (appUser.username === prize.user.username || appUser?.isAdmin) &&
         prize.submission_time_blockchain === 0 && (
           <StartSubmission
             contractAddress={prize.contract_address}
             submissionTime={prize.submissionTime}
           />
-        )}
-
-      {appUser &&
+        ): null
+        }
+      {appUser ?
         (appUser.username === prize.user.username || appUser?.isAdmin) &&
         prize.submission_time_blockchain === 0 &&
         prize.voting_time_blockchain === 0 && (
@@ -161,7 +161,7 @@ export default function PrizePageComponent({
             contractAddress={prize.contract_address}
             votingTime={prize.votingTime}
           />
-        )}
+        ):null}
       {appUser?.isAdmin && prize.submission_time_blockchain > 0 && (
         <EndSubmission contractAddress={prize.contract_address} />
       )}
