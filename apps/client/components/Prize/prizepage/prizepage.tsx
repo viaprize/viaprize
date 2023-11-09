@@ -142,10 +142,9 @@ export default function PrizePageComponent({
       <Center my="xl">
         <PrizePageTabs email={prize.user.email} name={prize.user.name} description={prize.description} contractAddress={prize.contract_address} />
       </Center>
-      {/* {appUser ? <FundCard contractAddress={prize.contract_address} /> : null} */}
-
+      {appUser ? <FundCard contractAddress={prize.contract_address} /> : null}
       {appUser ?
-        (appUser.username === prize.user.username || appUser?.isAdmin) &&
+        (appUser.username === prize.user.username || appUser.isAdmin) &&
         prize.submission_time_blockchain === 0 && (
           <StartSubmission
             contractAddress={prize.contract_address}
