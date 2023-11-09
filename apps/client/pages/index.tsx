@@ -445,7 +445,7 @@ function NavBar() {
         />
         {opened ? (
           <div
-            className=" flex flex-col items-center gap-3 absolute top-3 right-3 rounded-lg backdrop-blur-md py-24 px-24 z-[999]"
+            className=" flex flex-col bg-gray-300 items-center gap-3 absolute top-3 right-3 rounded-lg backdrop-blur-md py-24 px-24 z-[999]"
             style={{
               background: `rgba(125, 185, 206, 0.15)`,
             }}
