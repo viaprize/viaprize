@@ -44,7 +44,7 @@ export default function ProposalsTabs({
     return 'pending';
   };
 
-  const finalizeTransaction = (item: PrizeProposals) => {};
+  // const finalizeTransaction = (item: PrizeProposals) => {};
   return (
     <div className="p-6 w-full">
       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">

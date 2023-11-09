@@ -34,7 +34,7 @@ const ProposalExploreCard: React.FC<ExploreCardProps> = ({
       </Button>
       <Button my={'xs'} onClick={() => onStatusClick(status)}>
         {' '}
-        {status == 'approved' ? 'Deploy !' : status}
+        {status === 'approved' ? 'Deploy !' : status}
       </Button>
     </Card>
   );
