@@ -31,7 +31,7 @@ function EditorsPage() {
     args: [address ? address : '0x', `${appUser?.id}${router.query.id as string}`],
   });
   console.log({ address });
-  const { data, writeAsync } = useViaPrizeAddSubmission({
+  const { data:submissionData, writeAsync } = useViaPrizeAddSubmission({
     ...config,
     async onSuccess(data) {
 
@@ -94,7 +94,7 @@ function EditorsPage() {
     });
 
   };
-  console.log({ data }, 'submission hash');
+  console.log({ submissionData }, 'submission hash');
   const onSumbit = () => {
     console.log('on sumbitttt');
     try {

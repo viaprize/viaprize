@@ -12,7 +12,7 @@ import {
   Tooltip,
   useMantineColorScheme,
 } from '@mantine/core';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useWallets } from '@privy-io/react-auth';
 import {
   IconArrowsLeftRight,
   IconCheck,
@@ -23,9 +23,9 @@ import {
 } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { IoExit } from 'react-icons/io5';
+import { TbTopologyStarRing2 } from 'react-icons/tb';
 import { toast } from 'sonner';
 import SwitchAccount from './switchWallet';
 
@@ -115,10 +115,8 @@ export default function HeaderLayout() {
 }
 
 function ProfileMenu() {
-  const { authenticated } = usePrivy();
   const { logoutUser, appUser } = useAppUser();
 
-  const router = useRouter();
   const [switchWallet, setSwitchWallet] = useState(false);
   const handleLogout = () => {
     try {
@@ -134,88 +132,65 @@ function ProfileMenu() {
 
   return (
     <>
-      <Group justify="center">
-        <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
-          <Menu.Target>
-            {appUser ? (
-              <Avatar color="blue" radius="xl" className="cursor-pointer">
-                {appUser.username.charAt(0).toUpperCase()}
-              </Avatar>
-            ) : (
-              <Button
-                color="green"
-                leftSection={<IconUser size={14} />}
-                onClick={() => {
-                  toast.promise(router.push('/'), {
-                    loading: 'Redirecting Please Wait',
-                    error: 'Error while redirecting ',
-                    success: 'Redirected to Home Page',
-                  });
-                }}
-              >
-                Home
-              </Button>
-            )}
-          </Menu.Target>
-          <Menu.Dropdown p="md" mr="sm">
-            <Menu.Label>Profile</Menu.Label>
-            {authenticated ? (
-              <>
-                <Menu.Item
-                  leftSection={<IconUser size={14} />}
-                  onClick={() => {
-                    router
-                      .push(`/profile/${appUser?.username}`)
-                      .then(console.log)
-                      .catch(console.error);
-                  }}
-                >
-                  View Profile
-                </Menu.Item>
-                {/* <Menu.Item
-                  leftSection={<TbTopologyStarRing2 />}
-                  onClick={() => {
-                    router.push('/prize/create').then(console.log).catch(console.error);
-                  }}
-                >
-                  Create Prize
-                </Menu.Item> */}
-              </>
-            ) : null}
-
-            <Menu.Divider />
-
-            {/* <Menu.Label>Danger zone</Menu.Label> */}
-            <Menu.Item
-              onClick={() => {
-                setSwitchWallet(true);
-              }}
-              rightSection={<IconArrowsLeftRight size={14} />}
+      <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
+        <Menu.Target>
+          {appUser ? (
+            <Avatar color="blue" radius="xl" className="cursor-pointer">
+              {appUser.username.charAt(0).toUpperCase()}
+            </Avatar>
+          ) : (
+            <Button
+              color="green"
+              leftSection={<IconUser size={14} />}
+            // onClick={() => {
+            //   toast.promise(router.push('/'), {
+            //     loading: 'Redirecting Please Wait',
+            //     error: 'Error while redirecting ',
+            //     success: 'Redirected to Home Page',
+            //   });
+            // }}
             >
-              Switch Wallet
-            </Menu.Item>
-            {authenticated ? (
-              <Menu.Item
-                color="red"
-                leftSection={<IoExit size={14} />}
-                onClick={handleLogout}
-              >
-                Logout
-              </Menu.Item>
-            ) : (
-              <Menu.Item
-                color="green"
-                leftSection={<IconUser size={14} />}
-                onClick={() => {
-                  router.push('/').then(console.log).catch(console.error);
-                }}
-              >
-                Login
-              </Menu.Item>
-            )}
-          </Menu.Dropdown>
-        </Menu>
-      </Group>
+              <Link href="/">Home</Link>
+            </Button>
+          )}
+        </Menu.Target>
+
+        <Menu.Dropdown p="md" mr="sm">
+          <Menu.Label>Profile</Menu.Label>
+          <Menu.Item
+            leftSection={<IconUser size={14} />}
+          // onClick={() => {
+          //   router
+          //     .push(`/profile/${appUser?.username}`)
+          //     .then(console.log)
+          //     .catch(console.error);
+          // }}
+          >
+            <Link href={`/profile/${appUser?.username}`}>View Profile</Link>
+          </Menu.Item>
+          <Menu.Item leftSection={<TbTopologyStarRing2 />}>
+            <Link href="/prize/create" className="block sm:hidden">
+              Create Prize
+            </Link>
+          </Menu.Item>
+          <Menu.Divider />
+          <Menu.Item
+            onClick={() => {
+              setSwitchWallet(true);
+            }}
+            rightSection={<IconArrowsLeftRight size={14} />}
+          >
+            Switch Wallet
+          </Menu.Item>
+          <Menu.Item
+            color="red"
+            leftSection={<IoExit size={14} />}
+            onClick={handleLogout}
+          >
+            Logout
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
       <Modal
         size="lg"
         opened={switchWallet}

@@ -58,6 +58,7 @@ const config = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     'eslint-comments/require-description': 'warn',
     'import/no-extraneous-dependencies': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
     // "unicorn/filename-case": [
     //   "error",
     //   {
