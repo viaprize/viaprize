@@ -12,7 +12,12 @@ export default function EndVoting({ contractAddress }: { contractAddress: string
     account: address,
     address: contractAddress as `0x${string}`,
   });
-  const { writeAsync, isLoading } = useViaPrizeEndVotingPeriod(config);
+  const { writeAsync, isLoading } = useViaPrizeEndVotingPeriod({
+    ...config,
+    onError(error) {
+      toast.error(`Failed With Error ${error.name}`)
+    }
+  });
   return (
     <Button
       my="md"

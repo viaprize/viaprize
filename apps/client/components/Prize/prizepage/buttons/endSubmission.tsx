@@ -1,5 +1,6 @@
 import { useViaPrizeEndSubmissionPeriod } from '@/lib/smartContract';
 import { Button } from '@mantine/core';
+import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 
 export default function EndSubmission({ contractAddress }: { contractAddress: string }) {
@@ -13,6 +14,9 @@ export default function EndSubmission({ contractAddress }: { contractAddress: st
     onSuccess() {
       window.location.reload();
     },
+    onError(error) {
+      toast.error(`Failed With Error ${error.name}`)
+    }
   });
   return (
     <Button

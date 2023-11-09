@@ -11,7 +11,7 @@ export default function AboutPrize({
   return (
     <div className="w-full mt-4">
       <Group justify="space-between">
-        <h3>Deadline: 30 March 2023</h3>
+
         <Badge color="green" className="h-8 font-bold">
           {balanceWithDenomation}
         </Badge>

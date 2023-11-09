@@ -95,10 +95,11 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
           });
 
           const { hash } = await sendTransaction(config);
-          toast.success(`Transaction Sent with Hash ${hash}`, {
+          toast.success(`Transaction ${hash}`, {
             duration: 6000,
           });
           setSendLoading(false);
+          window.location.reload();
         }}
       >
         Donate
