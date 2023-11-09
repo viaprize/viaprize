@@ -8,8 +8,10 @@ import AppShellLayout from '@/components/layout/appshell';
 import useAppUser from '@/context/hooks/useAppUser';
 import { backendApi } from '@/lib/backend';
 import {
+  prepareWriteViaPrize,
   usePrepareViaPrizeAddSubmission,
   useViaPrizeAddSubmission,
+  writeViaPrize,
 } from '@/lib/smartContract';
 import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/router';
@@ -59,7 +61,37 @@ function EditorsPage() {
     },
   });
   const submitToSmartContract = async () => {
-    await writeAsync?.();
+    // await writeAsync?.();
+    const request = await prepareWriteViaPrize({
+      account: address,
+      address: router.query.contract as `0x${string}`,
+      args: [address ? address : '0x', `${appUser?.id}${router.query.id as string}`],
+      functionName: 'addSubmission'
+    })
+    const { hash } = await writeViaPrize(request);
+    const waitForTransactionOut = await waitForTransaction({
+      hash: hash,
+      confirmations: 1,
+    });
+    console.log(waitForTransactionOut.logs[0].topics[2]);
+    const submissionHash = waitForTransactionOut.logs[0].topics[2];
+    if (!submissionHash) {
+      throw Error('Hash is undefined');
+    }
+    const res = await (
+      await backendApi()
+    ).prizes.submissionCreate(router.query.id as string, {
+      submissionDescription: JSON.stringify(content),
+      submissionHash: submissionHash as string,
+      submitterAddress: address ?? '0x',
+    });
+    console.log({ res }, 'ressss');
+
+    toast.promise(router.push(`/prize/${router.query.id as string}`), {
+      loading: 'Redirecting please wait ',
+      success: 'Submission Submitted',
+      error: 'Error Submitting Proposal',
+    });
 
   };
   console.log({ data }, 'submission hash');
@@ -90,7 +122,7 @@ function EditorsPage() {
         />
         <button
           onClick={onSumbit}
-          disabled={!writeAsync}
+
           className="py-3 px-4 bg-gray-800 text-white absolute bottom-5 right-5 rounded-md"
         >
           Submit
