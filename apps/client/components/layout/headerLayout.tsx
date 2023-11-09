@@ -49,7 +49,12 @@ export default function HeaderLayout() {
   };
 
   return (
-    <Group justify="space-between" w="100%" align="center" pos="fixed" px="xl">
+    <Group
+      justify="space-between"
+      align="center"
+      pos="fixed"
+      className="sm:px-12 px-3 sm:w-full w-[90%]"
+    >
       <Flex justify="space-between" align="center" gap={10}>
         <Link href="/">
           <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
@@ -60,17 +65,26 @@ export default function HeaderLayout() {
         <Link href="/prize/explore">Prizes</Link>
       </Flex>
       <Flex align="center" gap="md">
-        <Link href="/prize/create">
-          <Button>Create Prize</Button>
-        </Link>
-        <Card py="5px">
+        <Button
+          className="hidden sm:block bg-blue-500 text-white"
+          style={{
+            backgroundColor: '#3d4070',
+          }}
+        >
+          <Link href="/prize/create">Create Prize</Link>
+        </Button>
+        <Card py="5px" className="hidden sm:block">
           <Group>
             {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
             {wallets[0] ? (
               <CopyButton value={wallets[0].address}>
                 {({ copied, copy }) => (
                   <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
-                    <ActionIcon color={copied ? 'teal' : 'gray'} onClick={copy}>
+                    <ActionIcon onClick={copy}
+                      style={{
+                        backgroundColor: copied ? '#3d4070' : '#3d4070',
+                      }}
+                    >
                       {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
                     </ActionIcon>
                   </Tooltip>
@@ -97,6 +111,7 @@ export default function HeaderLayout() {
       </Flex>
     </Group>
   );
+
 }
 
 function ProfileMenu() {
