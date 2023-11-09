@@ -47,36 +47,6 @@ export type PactNullable = {
   blockHash: string;
 } | null;
 
-export interface CreatePrizeDto {
-  address: string;
-  proposal_id: string;
-}
-
-export interface Prize {
-  id: string;
-  description: string;
-  isAutomatic: boolean;
-  submissionTime: number;
-  votingTime: number;
-  /** @format date-time */
-  startVotingDate: string;
-  /** @format date-time */
-  startSubmissionDate: string;
-  proposer_address: string;
-  contract_address: string;
-  admins: string[];
-  proficiencies: string[];
-  priorities: string[];
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
-  images: string[];
-  title: string;
-  submissions: Submission[];
-  user: User;
-}
-
 export interface Submission {
   id: string;
   submissionDescription: string;
@@ -117,6 +87,36 @@ export interface PrizeProposals {
   priorities: string[];
   images: string[];
   user: User;
+}
+
+export interface Prize {
+  id: string;
+  description: string;
+  isAutomatic: boolean;
+  submissionTime: number;
+  votingTime: number;
+  /** @format date-time */
+  startVotingDate: string;
+  /** @format date-time */
+  startSubmissionDate: string;
+  proposer_address: string;
+  contract_address: string;
+  admins: string[];
+  proficiencies: string[];
+  priorities: string[];
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  updated_at: string;
+  images: string[];
+  title: string;
+  submissions: Submission[];
+  user: User;
+}
+
+export interface CreatePrizeDto {
+  address: string;
+  proposal_id: string;
 }
 
 /** Make all properties in T readonly */
@@ -557,6 +557,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name SubmissionDetail
+     * @request GET:/prizes/submission/{id}
+     */
+    submissionDetail: (id: string, params: RequestParams = {}) =>
+      this.request<Submission, any>({
+        path: `/prizes/submission/${id}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @name PrizesCreate
      * @request POST:/prizes
      */
@@ -629,10 +643,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name SubmissionDetail
+     * @name SubmissionDetail2
      * @request GET:/prizes/{id}/submission
+     * @originalName submissionDetail
+     * @duplicate
      */
-    submissionDetail: (
+    submissionDetail2: (
       id: string,
       query: {
         page: number;

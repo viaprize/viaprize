@@ -97,6 +97,8 @@ contract ViaPrize {
     /// @notice error for trying to claim a refund when the voting period is still active
     error VotingPeriodActive();
 
+    event SubmissionCreated(address indexed submitter, bytes32 indexed submissionHash);
+
 
     constructor(address[] memory _admins, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress) {
         /// @notice add as many admins as you need to -- replace msg.sender with the address of the admin(s) for now this means the deployer will be the sole admin
@@ -198,7 +200,7 @@ contract ViaPrize {
         if (block.timestamp > submission_time) revert SubmissionPeriodNotActive();
         bytes32 submissionHash = keccak256(abi.encodePacked(submitter, submissionText));
         submissionTree.add_submission(submitter, submissionHash, submissionText);
-
+        emit SubmissionCreated(submitter, submissionHash);
         return submissionHash;
     }
 
@@ -221,6 +223,7 @@ contract ViaPrize {
         if (submission.votes > 0) {
         submissionTree.setFundedTrue(_submissionHash, true);
         }
+
 
 
     }

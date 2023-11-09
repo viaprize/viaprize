@@ -1,4 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
+import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
+import AppShellLayout from '@/components/layout/appshell';
+import useAppUser from '@/context/hooks/useAppUser';
 import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
@@ -10,9 +13,6 @@ import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 import ImageComponent from '../../components/Prize/dropzone';
 import { TextEditor } from '../../components/richtexteditor/textEditor';
-import useAppUser from '@/context/hooks/useAppUser';
-import AppShellLayout from '@/components/layout/appshell';
-import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
 
 function Prize() {
   const [address, setAddress] = useState(['']);
@@ -27,6 +27,7 @@ function Prize() {
   const [images, setImages] = useState<string>();
   const { addProposals, uploadImages } = usePrizeProposal();
   const { wallet } = usePrivyWagmi();
+  const [loading, setLoading] = useState(false);
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
   // const onAddressChange = (index: number, value: string) => {
@@ -59,11 +60,13 @@ function Prize() {
       images: newImages ? [newImages] : [],
       title,
     });
+    setLoading(false)
     await router.push(`/profile/${appUser?.username}`);
   };
 
   const handleSubmit = () => {
     console.log(user);
+    setLoading(true);
     try {
       console.log(images, 'images');
       toast.promise(submit(), {
@@ -180,7 +183,7 @@ function Prize() {
       <Button
         className="mt-3 "
         fullWidth
-        loading={submittingProposal}
+        loading={submittingProposal || loading}
         onClick={handleSubmit}
       >
         Request for Approval

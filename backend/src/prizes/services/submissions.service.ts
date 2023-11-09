@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
@@ -37,5 +37,16 @@ export class SubmissionService {
       where: paginationOptions.where,
       relations: ['user'],
     });
+  }
+
+  async findSubmissionById(id: string) {
+    const submission = await this.submissionRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+    if (!submission) {
+      throw new HttpException('Submission not found', 404);
+    }
+    return submission;
   }
 }

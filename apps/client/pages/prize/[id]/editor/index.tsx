@@ -11,9 +11,9 @@ import {
   usePrepareViaPrizeAddSubmission,
   useViaPrizeAddSubmission,
 } from '@/lib/smartContract';
+import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/router';
 import { toast } from 'sonner';
-import { keccak256, toHex } from 'viem';
 import { useAccount } from 'wagmi';
 
 function EditorsPage() {
@@ -31,31 +31,36 @@ function EditorsPage() {
   console.log({ address });
   const { data, writeAsync } = useViaPrizeAddSubmission({
     ...config,
-    async onSuccess() {
+    async onSuccess(data) {
+
+      const waitForTransactionOut = await waitForTransaction({
+        hash: data.hash,
+        confirmations: 1,
+      });
+      console.log(waitForTransactionOut.logs[0].topics[2]);
+      const hash = waitForTransactionOut.logs[0].topics[2];
+      if (!hash) {
+        throw Error('Hash is undefined');
+      }
       const res = await (
         await backendApi()
       ).prizes.submissionCreate(router.query.id as string, {
         submissionDescription: JSON.stringify(content),
-        submissionHash: keccak256(
-          toHex(`${address}${appUser?.id}${router.query.id as string}`),
-        ),
+        submissionHash: hash as string,
         submitterAddress: address ?? '0x',
       });
       console.log({ res }, 'ressss');
-      alert('Submitted');
-      router
-        .push(`/prize/${router.query.id as string}`)
-        .then(console.log)
-        .catch(console.error);
+
+      toast.promise(router.push(`/prize/${router.query.id as string}`), {
+        loading: 'Redirecting please wait ',
+        success: 'Submission Submitted',
+        error: 'Error Submitting Proposal',
+      });
     },
   });
   const submitToSmartContract = async () => {
     await writeAsync?.();
-    toast.promise(router.push(`/prize/${router.query.id as string}`), {
-      loading: 'Redirecting please wait ',
-      success: 'Submission Submitted',
-      error: 'Error Submitting Proposal',
-    });
+
   };
   console.log({ data }, 'submission hash');
   const onSumbit = () => {
@@ -75,6 +80,7 @@ function EditorsPage() {
       <div className="relative min-h-[500px] min-w-[70vw] max-w-screen-lg border-stone-200 sm:pb-[calc(10vh)] sm:rounded-lg sm:border sm:shadow-lg">
         <NovalEditor
           className=""
+          disableLocalStorage
           // className="relative min-h-[500px] min-w-[70vw] max-w-screen-lg border-stone-200 bg-white sm:pb-[calc(10vh)] sm:rounded-lg sm:border sm:shadow-lg"
           onUpdate={(e) => {
             setContent(e?.getJSON());
@@ -84,6 +90,7 @@ function EditorsPage() {
         />
         <button
           onClick={onSumbit}
+          disabled={!writeAsync}
           className="py-3 px-4 bg-gray-800 text-white absolute bottom-5 right-5 rounded-md"
         >
           Submit

@@ -40,8 +40,8 @@ const AdminCard: React.FC<AdminCardProps> = ({
         <Card.Section>
           {images.length > 0
             ? images.map((image) => (
-                <Image src={image} height={160} alt="Image" key={image} width={346} />
-              ))
+              <Image src={image} height={160} alt="Image" key={image} width={346} />
+            ))
             : null}
         </Card.Section>
         <Group justify="space-between" mt="md" mb="xs">
@@ -94,6 +94,7 @@ const AdminCard: React.FC<AdminCardProps> = ({
           </Button>
           <Button
             color="green"
+            loading={acceptProposalMutation.isLoading}
             onClick={async () => {
               await acceptProposalMutation.mutateAsync(id);
               window.location.reload();

@@ -69,3 +69,5 @@ export const getAccessTokenWithFallback = async (): Promise<string | null> => {
     return null;
   }
 };
+
+export const ADMINS = [];

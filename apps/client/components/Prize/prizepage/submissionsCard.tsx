@@ -17,6 +17,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { IconArrowAutofitUp, IconRefresh } from '@tabler/icons-react';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { formatEther, parseEther } from 'viem';
@@ -34,6 +35,7 @@ interface SubmissionsCardProps {
   contractAddress: string;
   hash: string;
   description: string;
+  allowVoting: boolean;
 }
 export default function SubmissionsCard({
   fullname,
@@ -43,6 +45,8 @@ export default function SubmissionsCard({
   contractAddress,
   hash,
   description,
+  allowVoting,
+  submissionId,
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { address } = useAccount();
@@ -77,8 +81,7 @@ export default function SubmissionsCard({
   //     });
   //   },
   // });
-
-  console.log(description);
+  const router = useRouter();
   return (
     <Card className="flex flex-col justify-center gap-3">
       <Modal opened={opened} onClose={close} title="Voting For this submission">
@@ -87,9 +90,7 @@ export default function SubmissionsCard({
             label={
               isLoading
                 ? 'Loading.....'
-                : `Total Votes you can allocate(Max: ${formatEther(
-                    BigInt(funderBalance?.toString() ?? '0'),
-                  )} Matic )`
+                : `Total Votes you can allocate(Max: ${formatEther((BigInt(parseInt(funderBalance?.toString() ?? "1") - 1)))} Matic )`
             }
             placeholder="Enter Value of Votes"
             mt="md"
@@ -109,9 +110,17 @@ export default function SubmissionsCard({
               setValue(v.toString());
             }}
           />
-
           <Button
             onClick={async () => {
+              await refetch();
+
+              if (
+                parseInt(debounced.toString()) >
+                parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
+              ) {
+                toast.error('You cannot vote more than your balance');
+                return;
+              }
               setSendLoading(true);
 
               const { request } = await prepareWriteViaPrize({
@@ -119,15 +128,10 @@ export default function SubmissionsCard({
                 functionName: 'vote',
                 args: [hash as `0x${string}`, parseEther(debounced)],
               });
-
               const { hash: transactionHash } = await writeViaPrize(request);
-
               console.log({ transactionHash }, 'transactionHash');
-
-              toast.success(`Transaction Sent with Hash ${transactionHash}`);
-
+              toast.success(`Transaction Hash ${transactionHash}`);
               setSendLoading(false);
-
               close();
             }}
             disabled={!value}
@@ -157,11 +161,11 @@ export default function SubmissionsCard({
             {time}
           </Text>
           <Group justify="right" gap="0" wrap="nowrap">
-            <Button color="black" mx="5px" onClick={open}>
-              vote
+            <Button color="black" mx="5px" onClick={open} disabled={!allowVoting}>
+              {allowVoting ? 'Vote' : 'Voting Closed'}
             </Button>
-            <ActionIcon variant="filled" size="lg" color="blue">
-              <Text>{votes}</Text>
+            <ActionIcon variant="filled" w={"auto"} size="lg" color="blue">
+              <Text>{formatEther(BigInt(votes.toString()))} Matic</Text>
             </ActionIcon>
           </Group>
         </Group>
@@ -171,7 +175,19 @@ export default function SubmissionsCard({
           <p>{extractPlainTextFromEditor(description).slice(0, 350)}</p>
         </TypographyStylesProvider>
       </Text>
-      <Button rightSection={<IconArrowAutofitUp size="1rem" />}>View Submission</Button>
+      <Button
+        rightSection={<IconArrowAutofitUp size="1rem" />}
+        onClick={() => {
+          // toast.promise(router.push(`/submission/${submissionId}`), {
+          //   loading: 'Loading Submission',
+          //   success: 'Success',
+          //   error: 'Error',
+          // });
+          window.open(`/submission/${submissionId}`, '_blank')
+        }}
+      >
+        View Submission
+      </Button>
     </Card>
   );
 }

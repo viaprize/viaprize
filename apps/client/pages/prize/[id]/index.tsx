@@ -18,7 +18,7 @@ export default function PrizePage({
 export const getServerSideProps = (async (context) => {
   const data = (await new Api().prizes.prizesDetail(context.query.id as string)).data;
   const submissionsUptoFive = (
-    await new Api().prizes.submissionDetail(context.query.id as string, {
+    await new Api().prizes.submissionDetail2(context.query.id as string, {
       limit: 5,
       page: 1,
     })
