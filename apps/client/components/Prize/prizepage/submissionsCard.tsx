@@ -17,7 +17,6 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { IconArrowAutofitUp, IconRefresh } from '@tabler/icons-react';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { formatEther, parseEther } from 'viem';
@@ -81,7 +80,6 @@ export default function SubmissionsCard({
   //     });
   //   },
   // });
-  const router = useRouter();
   return (
     <Card className="flex flex-col justify-center gap-3">
       <Modal opened={opened} onClose={close} title="Voting For this submission">
@@ -112,28 +110,41 @@ export default function SubmissionsCard({
           />
           <Button
             onClick={async () => {
-              await refetch();
+              try {
+                await refetch();
 
-              if (
-                parseInt(debounced.toString()) >
-                parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
-              ) {
-                toast.error('You cannot vote more than your balance');
-                return;
+                if (
+                  parseInt(debounced.toString()) >
+                  parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
+                ) {
+                  toast.error('You cannot vote more than your balance');
+                  return;
+                }
+                setSendLoading(true);
+
+                const { request } = await prepareWriteViaPrize({
+                  address: contractAddress as `0x${string}`,
+                  functionName: 'vote',
+                  args: [hash as `0x${string}`, parseEther(debounced)],
+                });
+                const { hash: transactionHash } = await writeViaPrize(request);
+                console.log({ transactionHash }, 'transactionHash');
+                toast.success(`Transaction Hash ${transactionHash}`);
+                setSendLoading(false);
+                close();
               }
-              setSendLoading(true);
+              catch (e) {
+                console.log(e, 'error');
+                toast.error('Error while voting');
 
-              const { request } = await prepareWriteViaPrize({
-                address: contractAddress as `0x${string}`,
-                functionName: 'vote',
-                args: [hash as `0x${string}`, parseEther(debounced)],
-              });
-              const { hash: transactionHash } = await writeViaPrize(request);
-              console.log({ transactionHash }, 'transactionHash');
-              toast.success(`Transaction Hash ${transactionHash}`);
-              setSendLoading(false);
-              close();
-            }}
+              }
+              finally {
+                setSendLoading(false);
+                window.location.reload();
+              }
+            }
+            }
+
             disabled={!value}
             loading={sendLoading}
           >
