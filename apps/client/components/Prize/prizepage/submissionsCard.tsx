@@ -13,8 +13,7 @@ import {
   Modal,
   NumberInput,
   Stack,
-  Text,
-  TypographyStylesProvider,
+  Text
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { IconArrowAutofitUp, IconRefresh } from '@tabler/icons-react';
@@ -131,6 +130,7 @@ export default function SubmissionsCard({
                 const { hash: transactionHash } = await writeViaPrize(request);
                 console.log({ transactionHash }, 'transactionHash');
                 toast.success(`Transaction Hash ${transactionHash}`);
+                window.location.reload();
                 setSendLoading(false);
                 close();
               }
@@ -141,7 +141,7 @@ export default function SubmissionsCard({
               }
               finally {
                 setSendLoading(false);
-                window.location.reload();
+
               }
             }
             }
@@ -174,7 +174,7 @@ export default function SubmissionsCard({
               {allowVoting ? 'Vote' : 'Voting Closed'}
             </Button>
             <Badge variant="filled" w={"auto"} size="lg" color="blue">
-             {formatEther(BigInt(votes.toString()))} Matic
+              {formatEther(BigInt(votes.toString()))} Matic
             </Badge>
           </div>
         </div>
