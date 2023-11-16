@@ -80,7 +80,8 @@ export default function HeaderLayout() {
               <CopyButton value={wallets[0].address}>
                 {({ copied, copy }) => (
                   <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
-                    <ActionIcon onClick={copy}
+                    <ActionIcon
+                      onClick={copy}
                       style={{
                         backgroundColor: copied ? '#3d4070' : '#3d4070',
                       }}
@@ -111,7 +112,6 @@ export default function HeaderLayout() {
       </Flex>
     </Group>
   );
-
 }
 
 function ProfileMenu() {
@@ -142,13 +142,13 @@ function ProfileMenu() {
             <Button
               color="green"
               leftSection={<IconUser size={14} />}
-            // onClick={() => {
-            //   toast.promise(router.push('/'), {
-            //     loading: 'Redirecting Please Wait',
-            //     error: 'Error while redirecting ',
-            //     success: 'Redirected to Home Page',
-            //   });
-            // }}
+              // onClick={() => {
+              //   toast.promise(router.push('/'), {
+              //     loading: 'Redirecting Please Wait',
+              //     error: 'Error while redirecting ',
+              //     success: 'Redirected to Home Page',
+              //   });
+              // }}
             >
               <Link href="/">Home</Link>
             </Button>
@@ -159,12 +159,12 @@ function ProfileMenu() {
           <Menu.Label>Profile</Menu.Label>
           <Menu.Item
             leftSection={<IconUser size={14} />}
-          // onClick={() => {
-          //   router
-          //     .push(`/profile/${appUser?.username}`)
-          //     .then(console.log)
-          //     .catch(console.error);
-          // }}
+            // onClick={() => {
+            //   router
+            //     .push(`/profile/${appUser?.username}`)
+            //     .then(console.log)
+            //     .catch(console.error);
+            // }}
           >
             <Link href={`/profile/${appUser?.username}`}>View Profile</Link>
           </Menu.Item>

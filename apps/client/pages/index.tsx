@@ -117,7 +117,7 @@ export default function Home() {
               <Link href="/prize/explore">Explore Prizes</Link>
             </Button>
             <Flex
-              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 text-black w-[70%]"
+              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 text-black sm:w-[70%]"
               style={{
                 background: `rgba(125, 185, 206, 0.15)`,
               }}
@@ -129,11 +129,11 @@ export default function Home() {
                 <p className="my-0">Total contributions</p>
               </div>
               <div>
-                <h3 className="my-0">62</h3>
+                <h3 className="my-0">63</h3>
                 <p className="my-0">Prize winners</p>
               </div>
               <div>
-                <h3 className="my-0">16</h3>
+                <h3 className="my-0">17</h3>
                 <p className="my-0">Prizes won</p>
               </div>
             </Flex>
@@ -165,17 +165,17 @@ export default function Home() {
             <ReasonCard
               Title="Reason 1"
               Description="30B is wasted annually on crowdfunding campaigns that never deliver"
-              image="https://img.freepik.com/free-photo/piggy-bank-was-thrown-broke-gold-coins-flowed-out_35913-3161.jpg?w=2000&t=st=1699282904~exp=1699283504~hmac=e46f0c2043992af865d65686b9f5f909ec1fe85fc01f83a50ae4b00cd376ccd3"
+              image="/home/piggy-bank-was-thrown-broke-gold-coins-flowed-out.jpg"
             />
             <ReasonCard
               Title="Reason 2"
               Description="With viaPrize Either the campaign delivers or you receive a refund"
-              image="https://img.freepik.com/free-photo/3d-cryptocurrency-rendering-design_23-2149074550.jpg?w=2000&t=st=1699283400~exp=1699284000~hmac=d294cc280e87f50abd42aa22260ba7acd215464ec003659fb7067d535dbc5136"
+              image="/home/3d-cryptocurrency-rendering-design.jpg"
             />
             <ReasonCard
               Title="Reason 3"
               Description="Win prizes!"
-              image="https://img.freepik.com/free-photo/team-working-animation-project_23-2149269903.jpg?w=2000&t=st=1699283321~exp=1699283921~hmac=2c2cb20d21db38dcfcf08834445cc9087d7a33ba58dc0aadd75187156eda9062"
+              image="/home/team-working-animation-project.jpg"
             />
           </div>
           {/* <h2 className="text-black mt-6">Some More Stats</h2>
@@ -445,10 +445,10 @@ function NavBar() {
         />
         {opened ? (
           <div
-            className=" flex flex-col bg-gray-300 items-center gap-3 absolute top-3 right-3 rounded-lg backdrop-blur-md py-24 px-24 z-[999]"
-            style={{
-              background: `rgba(125, 185, 206, 0.15)`,
-            }}
+            className=" flex flex-col bg-gray-100 items-center gap-3 absolute top-3 right-3 rounded-lg  py-24 px-24 z-[999]"
+            // style={{
+            //   background: `rgba(125, 185, 206, 0.15)`,
+            // }}
           >
             {navBarLinks.map((data) => (
               <NavBarLinks key={data.text} text={data.text} link={data.link} />

@@ -31,10 +31,9 @@ function EditorsPage() {
     args: [address ? address : '0x', `${appUser?.id}${router.query.id as string}`],
   });
   console.log({ address });
-  const { data:submissionData, writeAsync } = useViaPrizeAddSubmission({
+  const { data: submissionData, writeAsync } = useViaPrizeAddSubmission({
     ...config,
     async onSuccess(data) {
-
       const waitForTransactionOut = await waitForTransaction({
         hash: data.hash,
         confirmations: 1,
@@ -66,8 +65,8 @@ function EditorsPage() {
       account: address,
       address: router.query.contract as `0x${string}`,
       args: [address ? address : '0x', `${appUser?.id}${router.query.id as string}`],
-      functionName: 'addSubmission'
-    })
+      functionName: 'addSubmission',
+    });
     const { hash } = await writeViaPrize(request);
     const waitForTransactionOut = await waitForTransaction({
       hash: hash,
@@ -92,7 +91,6 @@ function EditorsPage() {
       success: 'Submission Submitted',
       error: 'Error Submitting Proposal',
     });
-
   };
   console.log({ submissionData }, 'submission hash');
   const onSumbit = () => {
@@ -122,7 +120,6 @@ function EditorsPage() {
         />
         <button
           onClick={onSumbit}
-
           className="py-3 px-4 bg-gray-800 text-white absolute bottom-5 right-5 rounded-md"
         >
           Submit
