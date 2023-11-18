@@ -6,7 +6,17 @@ import { useBalance } from 'wagmi';
 import AboutPrize from './aboutprize';
 import PrizeFunderCard from './prizeFunderCard';
 
-export default function PrizePageTabs({ contractAddress, description, name, email }: { contractAddress: string, description: string, name: string, email: string }) {
+export default function PrizePageTabs({
+  contractAddress,
+  description,
+  name,
+  email,
+}: {
+  contractAddress: string;
+  description: string;
+  name: string;
+  email: string;
+}) {
   const { data: balance } = useBalance({
     address: contractAddress as `0x${string}`,
   });
@@ -30,7 +40,10 @@ export default function PrizePageTabs({ contractAddress, description, name, emai
         </Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="about">
-        <AboutPrize description={description} balanceWithDenomation={`${balance?.formatted} ${balance?.symbol}`} />
+        <AboutPrize
+          description={description}
+          balanceWithDenomation={`${balance?.formatted} ${balance?.symbol}`}
+        />
       </Tabs.Panel>
       <Tabs.Panel value="creators">
         <PrizeFunderCard name={name} email={email} />

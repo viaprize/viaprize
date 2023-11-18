@@ -15,8 +15,8 @@ export default function EndVoting({ contractAddress }: { contractAddress: string
   const { writeAsync, isLoading } = useViaPrizeEndVotingPeriod({
     ...config,
     onError(error) {
-      toast.error(`Failed With Error ${error.name}`)
-    }
+      toast.error(`Failed With Error ${error.name}`);
+    },
   });
   return (
     <Button
@@ -26,7 +26,7 @@ export default function EndVoting({ contractAddress }: { contractAddress: string
       onClick={async () => {
         const result = await writeAsync?.();
         toast.success('Rewards Distributed!!!!!', {
-          duration: 7000
+          duration: 7000,
         });
         console.log(result);
         window.location.reload();

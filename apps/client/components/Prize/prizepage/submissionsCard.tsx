@@ -89,7 +89,9 @@ export default function SubmissionsCard({
             label={
               isLoading
                 ? 'Loading.....'
-                : `Total Votes you can allocate(Max: ${formatEther((BigInt(parseInt(funderBalance?.toString() ?? "1") - 1)))} Matic )`
+                : `Total Votes you can allocate(Max: ${formatEther(
+                    BigInt(parseInt(funderBalance?.toString() ?? '1') - 1),
+                  )} Matic )`
             }
             placeholder="Enter Value of Votes"
             mt="md"
@@ -133,19 +135,14 @@ export default function SubmissionsCard({
                 toast.success(`Transaction Hash ${transactionHash}`);
                 setSendLoading(false);
                 close();
-              }
-              catch (e) {
+              } catch (e) {
                 console.log(e, 'error');
                 toast.error('Error while voting');
-
-              }
-              finally {
+              } finally {
                 setSendLoading(false);
                 window.location.reload();
               }
-            }
-            }
-
+            }}
             disabled={!value}
             loading={sendLoading}
           >
@@ -169,19 +166,17 @@ export default function SubmissionsCard({
           <Text c="dimmed" fz="sm">
             {time}
           </Text>
-          <div className='flex gap-1 sm:justify-end items-center '>
+          <div className="flex gap-1 sm:justify-end items-center ">
             <Button color="black" mr="5px" onClick={open} disabled={!allowVoting}>
               {allowVoting ? 'Vote' : 'Voting Closed'}
             </Button>
-            <Badge variant="filled" w={"auto"} size="lg" color="blue">
-             {formatEther(BigInt(votes.toString()))} Matic
+            <Badge variant="filled" w={'auto'} size="lg" color="blue">
+              {formatEther(BigInt(votes.toString()))} Matic
             </Badge>
           </div>
         </div>
       </div>
-      <Text lineClamp={3}>
-        {extractPlainTextFromEditor(description).slice(0, 350)}
-      </Text>
+      <Text lineClamp={3}>{extractPlainTextFromEditor(description).slice(0, 350)}</Text>
       <Button
         rightSection={<IconArrowAutofitUp size="1rem" />}
         onClick={() => {
@@ -190,7 +185,7 @@ export default function SubmissionsCard({
           //   success: 'Success',
           //   error: 'Error',
           // });
-          window.open(`/submission/${submissionId}`, '_blank')
+          window.open(`/submission/${submissionId}`, '_blank');
         }}
       >
         View Submission

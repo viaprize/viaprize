@@ -15,8 +15,8 @@ export default function EndSubmission({ contractAddress }: { contractAddress: st
       window.location.reload();
     },
     onError(error) {
-      toast.error(`Failed With Error ${error.name}`)
-    }
+      toast.error(`Failed With Error ${error.name}`);
+    },
   });
   return (
     <Button

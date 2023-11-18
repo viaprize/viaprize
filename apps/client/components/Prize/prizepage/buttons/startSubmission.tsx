@@ -1,7 +1,7 @@
 import {
   prepareWriteViaPrize,
   usePrepareViaPrizeStartSubmissionPeriod,
-  writeViaPrize
+  writeViaPrize,
 } from '@/lib/smartContract';
 import { Button } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
@@ -49,15 +49,11 @@ export default function StartSubmission({
           toast.success(`Submission Period Started, Transaction Hash ${hash}`);
           console.log({ hash }, 'hash');
         } catch (error) {
-          toast.error(`Failed With Error`)
-        }
-        finally {
+          toast.error(`Failed With Error`);
+        } finally {
           setIsLoading(false);
           window.location.reload();
-
         }
-
-
       }}
     >
       {' '}

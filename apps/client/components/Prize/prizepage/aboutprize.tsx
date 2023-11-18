@@ -3,15 +3,14 @@ import { Badge, Group, Title } from '@mantine/core';
 
 export default function AboutPrize({
   balanceWithDenomation,
-  description
+  description,
 }: {
   balanceWithDenomation: string;
-  description: string
+  description: string;
 }) {
   return (
     <div className="w-full mt-4">
       <Group justify="space-between">
-
         <Badge color="green" className="h-8 font-bold">
           {balanceWithDenomation}
         </Badge>

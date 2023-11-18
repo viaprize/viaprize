@@ -33,7 +33,8 @@ export default function ProposalsTabs({
     return 'pending';
   };
 
-  const finalizeTransaction = (item: PrizeProposals) => { };
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  const finalizeTransaction = (item: PrizeProposals) => {};
   return (
     <div className="p-6 w-full">
       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
@@ -87,8 +88,8 @@ export default function ProposalsTabs({
                         BigInt(10),
                         '0x62e9a8374AE3cdDD0DA7019721CcB091Fed927aE' as `0x${string}`,
                         BigInt(currentTimestamp.current),
-                      ]
-                    })
+                      ],
+                    });
                     const out = await writeViaPrizeFactory(request);
                     toast.dismiss(firstLoadingToast);
                     const secondToast = toast.loading(

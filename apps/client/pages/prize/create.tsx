@@ -60,7 +60,7 @@ function Prize() {
       images: newImages ? [newImages] : [],
       title,
     });
-    setLoading(false)
+    setLoading(false);
     await router.push(`/profile/${appUser?.username}`);
   };
 
