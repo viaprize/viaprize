@@ -113,9 +113,11 @@ export default function Home() {
               Simple and sleek design with users in mind. viaPrize is a platform that
               allows
             </p> */}
-            <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
-              <Link href="/prize/explore">Explore Prizes</Link>
-            </Button>
+            <Link href="/prize/explore">
+              <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
+                Explore Prizes
+              </Button>
+            </Link>
             <Flex
               className="backdrop-blur-md rounded-lg py-6 px-5 my-4 text-black sm:w-[70%]"
               style={{
