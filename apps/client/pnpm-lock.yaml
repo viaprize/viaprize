@@ -77,6 +77,9 @@ dependencies:
   '@tiptap/starter-kit':
     specifier: ^2.1.8
     version: 2.1.12(@tiptap/pm@2.1.12)
+  '@uiball/loaders':
+    specifier: ^1.3.1
+    version: 1.3.1(react-dom@18.2.0)(react@18.2.0)
   '@wagmi/chains':
     specifier: ^1.8.0
     version: 1.8.0(typescript@5.0.4)
@@ -137,6 +140,9 @@ dependencies:
   keccak256:
     specifier: ^1.0.6
     version: 1.0.6
+  ldrs:
+    specifier: ^1.0.1
+    version: 1.0.1
   next:
     specifier: 13.4.4
     version: 13.4.4(@babel/core@7.23.2)(react-dom@18.2.0)(react@18.2.0)
@@ -7939,6 +7945,17 @@ packages:
       '@typescript-eslint/types': 6.9.0
       eslint-visitor-keys: 3.4.3
     dev: true
+
+  /@uiball/loaders@1.3.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-1vLUoW1aux5CDJedCkW+TYxsnX0WKmmUJMi+wRR4DPEKdTZ2/KP8gQSv/LJu6oc2I0sJceKHFWLeAWO3/og98A==}
+    deprecated: This package has been superceded by https://www.npmjs.com/package/ldrs
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
 
   /@ungap/structured-clone@1.2.0:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
@@ -16293,6 +16310,10 @@ packages:
       dotenv: 16.3.1
       dotenv-expand: 10.0.0
     dev: true
+
+  /ldrs@1.0.1:
+    resolution: {integrity: sha512-eeCP1XEG72Yz6JX50zlYWRJcEfNBrpp8QSzyjD3HHhxrnt4steLX4iDHF3Dezjbnnj5qtuJn7lr1nln+/kpUIQ==}
+    dev: false
 
   /less-loader@11.1.3(less@4.2.0)(webpack@5.89.0):
     resolution: {integrity: sha512-A5b7O8dH9xpxvkosNrP0dFp2i/dISOJa9WwGF3WJflfqIERE2ybxh1BFDj5CovC2+jCE4M354mk90hN6ziXlVw==}
