@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { BiLogoLinkedin, BiSolidRightArrowCircle } from 'react-icons/bi';
 import { BsTwitter } from 'react-icons/bs';
+import { FaTelegramPlane } from 'react-icons/fa';
 import { ImTelegram } from 'react-icons/im';
 import type { RenderPhotoProps } from 'react-photo-album';
 import { PhotoAlbum } from 'react-photo-album';
@@ -280,12 +281,15 @@ export default function Home() {
         </section>
         {/* Community */}
         <section className="my-12 gap-3 ">
-          <div className=" flex flex-col items-center">
-            <h1 className="w-96 text-3xl text-center font-bold text-black">
+          <div className=" flex flex-col items-center mb-8">
+            {/* <h1 className="w-96 text-3xl text-center font-bold text-black">
               Tons of love who are building and working with viaPrize
-            </h1>
-            <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
-              <Link href="https://t.me/viaPrize">Join Community</Link>
+            </h1> */}
+            <Button
+              rightSection={<FaTelegramPlane size={20} />}
+              className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]  w-[15%] h-[30%] py-3 text-lg"
+            >
+              <Link href="https://t.me/viaPrize">Join Community </Link>
             </Button>
           </div>
           <div className="my-4" />
