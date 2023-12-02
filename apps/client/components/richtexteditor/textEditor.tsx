@@ -1,12 +1,13 @@
 import { Button } from '@mantine/core';
 import { Link, RichTextEditor } from '@mantine/tiptap';
-import Highlight from '@tiptap/extension-highlight';
+import { Highlight } from '@tiptap/extension-highlight';
 import SubScript from '@tiptap/extension-subscript';
-import Superscript from '@tiptap/extension-superscript';
-import TextAlign from '@tiptap/extension-text-align';
-import Underline from '@tiptap/extension-underline';
+import { Superscript } from '@tiptap/extension-superscript';
+import { TextAlign } from '@tiptap/extension-text-align';
+import { Underline } from '@tiptap/extension-underline';
+import type { AnyExtension } from '@tiptap/react';
 import { useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { StarterKit } from '@tiptap/starter-kit';
 import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
 
 interface TextEditorProps {
@@ -25,7 +26,7 @@ export function TextEditor({
   const editor = useEditor({
     editable: !disabled,
     extensions: [
-      StarterKit,
+      StarterKit as AnyExtension,
       Underline,
       Link,
       Superscript,
