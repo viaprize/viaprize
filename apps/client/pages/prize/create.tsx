@@ -28,6 +28,7 @@ function Prize() {
   const { addProposals, uploadImages } = usePrizeProposal();
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
+
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
   // const onAddressChange = (index: number, value: string) => {

@@ -172,7 +172,7 @@ export default function Home() {
             />
             <ReasonCard
               Title="Reason 2"
-              Description="With viaPrize Either the campaign delivers or you receive a refund"
+              Description="With viaPrize either the campaign delivers or you receive a refund"
               image="/home/3d-cryptocurrency-rendering-design.jpg"
             />
             <ReasonCard
@@ -259,7 +259,7 @@ export default function Home() {
 
         {/* How it works */}
         <section className="flex flex-col items-center my-14">
-          <h1 className="text-3xl font-bold text-black">How it works</h1>
+          {/* <h1 className="text-3xl font-bold text-black">How it works</h1> */}
           <Image
             src="/home/howItWorks.png"
             width={1000}
@@ -270,7 +270,7 @@ export default function Home() {
         </section>
         {/* 3 roles in a prize */}
         <section className="flex flex-col items-center my-14">
-          <h1 className="text-3xl font-bold text-black">3 Roles in Prize</h1>
+          <h1 className="text-3xl font-bold text-black">3 Roles in a Prize</h1>
           <Image
             src="/home/rolesInPrize.png"
             width={1000}

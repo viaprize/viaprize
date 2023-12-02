@@ -1,4 +1,4 @@
-import {  MantineProvider, createTheme } from '@mantine/core';
+import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 import '@mantine/tiptap/styles.css';
@@ -41,7 +41,7 @@ function HourLoader() {
     }
     void getLoader();
   }, []);
-  return <l-hourglass color="black"/>;
+  return <l-hourglass color="black" />;
 }
 
 function OwnLoader() {
