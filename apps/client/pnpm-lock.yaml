@@ -48,13 +48,13 @@ dependencies:
     specifier: ^0.6.1
     version: 0.6.1(typescript@5.0.4)(zod@3.22.4)
   '@tabler/icons-react':
-    specifier: ^2.34.0
+    specifier: ^2.40.0
     version: 2.40.0(react@18.2.0)
   '@tiptap/extension-highlight':
     specifier: ^2.1.8
     version: 2.1.12(@tiptap/core@2.1.13)
   '@tiptap/extension-link':
-    specifier: ^2.1.8
+    specifier: ^2.1.12
     version: 2.1.12(@tiptap/core@2.1.13)(@tiptap/pm@2.1.12)
   '@tiptap/extension-subscript':
     specifier: ^2.1.8
@@ -69,13 +69,13 @@ dependencies:
     specifier: ^2.1.8
     version: 2.1.12(@tiptap/core@2.1.13)
   '@tiptap/pm':
-    specifier: ^2.1.8
+    specifier: ^2.1.12
     version: 2.1.12
   '@tiptap/react':
-    specifier: ^2.1.8
+    specifier: ^2.1.12
     version: 2.1.12(@tiptap/core@2.1.13)(@tiptap/pm@2.1.12)(react-dom@18.2.0)(react@18.2.0)
   '@tiptap/starter-kit':
-    specifier: ^2.1.8
+    specifier: ^2.1.12
     version: 2.1.12(@tiptap/pm@2.1.12)
   '@uiball/loaders':
     specifier: ^1.3.1

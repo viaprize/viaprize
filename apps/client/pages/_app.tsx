@@ -1,4 +1,4 @@
-import { MantineProvider, createTheme } from '@mantine/core';
+import { MantineProvider, createTheme, useMantineColorScheme } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 import '@mantine/tiptap/styles.css';
@@ -16,6 +16,7 @@ import { useEffect, useState, type ReactElement, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { configureChainsConfig } from '@/lib/wagmi';
+
 const queryClient = new QueryClient();
 
 // Default values shown
@@ -34,6 +35,8 @@ const theme = createTheme({
 });
 
 function HourLoader() {
+  const { colorScheme } = useMantineColorScheme();
+
   useEffect(() => {
     async function getLoader() {
       const { hourglass } = await import('ldrs');
@@ -41,7 +44,7 @@ function HourLoader() {
     }
     void getLoader();
   }, []);
-  return <l-hourglass color="black" />;
+  return <l-hourglass color={colorScheme === 'dark' ? 'white' : 'black'} />;
 }
 
 function OwnLoader() {
