@@ -684,7 +684,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
+        "summary": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
         "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
         "security": [
           {
@@ -697,7 +697,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
+                "text": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
                 "kind": "text"
               }
             ]
@@ -1285,6 +1285,70 @@
             ]
           }
         ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/users/username/{username}/submissions": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "users.username.submissions.getSubmissions",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/users/username/{username}/prizes": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "users.username.prizes.getProposals",
+        "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
       }
     }

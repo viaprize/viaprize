@@ -1,18 +1,16 @@
 import { TypedBody, TypedParam } from '@nestia/core';
 import { Controller, Get, Post } from '@nestjs/common';
 import { MailService } from 'src/mail/mail.service';
-import typia from 'typia';
+import { Prize } from 'src/prizes/entities/prize.entity';
+import { Submission } from 'src/prizes/entities/submission.entity';
 import { CreateUser } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 /**
- * This is the users controller class.
- * it handles the documentation of routes and implementation of services related to the route.
- * @tag {users}
+ * The Users controller is responsible for handling requests from the client related to user data.
+ * This includes creating a new user, getting a user by ID, and getting a user by username.
  */
-const assertSubmission = typia.json.createAssertStringify<User>();
-
 @Controller('users')
 export class UsersController {
   constructor(
@@ -59,11 +57,7 @@ export class UsersController {
   ): Promise<User> {
     console.log('here is the user: ', username);
     const user = await this.usersService.findOneByUsername(username);
-    user.submissions = user.submissions.filter(
-      (submission) => submission !== null && submission !== undefined,
-    );
 
-    assertSubmission(user);
     return user;
   }
   /**
@@ -74,5 +68,30 @@ export class UsersController {
   @Get('exists/:username')
   async exists(@TypedParam('username') username: string): Promise<boolean> {
     return this.usersService.exists(username);
+  }
+  /**
+   * Endpoint for getting submission of a specified username.
+   * @param username The username to check.
+   * @returns {Promise<Submission[]>} The submission object.
+   */
+  @Get('username/:username/submissions')
+  async getSubmissions(
+    @TypedParam('username') username: string,
+  ): Promise<Submission[]> {
+    const submissions = await this.usersService.findUserSubmissionsByUsername(
+      username,
+    );
+    return submissions;
+  }
+
+  /**
+   * Endpoint for getting prizes of a specified username.
+   * @param username The username to check.
+   * @returns {Promise<Prize[]>} The prize object.
+   */
+  @Get('username/:username/prizes')
+  async getPrizes(@TypedParam('username') username: string): Promise<Prize[]> {
+    const prizes = await this.usersService.findUserPrizesByUsername(username);
+    return prizes;
   }
 }

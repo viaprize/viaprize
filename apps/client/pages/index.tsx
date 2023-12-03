@@ -2,6 +2,7 @@ import useAppUser from '@/context/hooks/useAppUser';
 import { Badge, Burger, Button, Card, Flex } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { usePrivy } from '@privy-io/react-auth';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -384,6 +385,7 @@ function NavBarLinks({ text, link }: { text: string; link: string }) {
 function NavBar() {
   const [opened, { toggle }] = useDisclosure();
   const { user } = usePrivy();
+  const { wallet } = usePrivyWagmi()
 
   const { loginUser } = useAppUser();
 
@@ -414,7 +416,7 @@ function NavBar() {
           </Button>
           {user ? (
             <Badge variant="gradient" className="py-4">
-              {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
+              {wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
             </Badge>
           ) : (
             <Button
@@ -452,9 +454,9 @@ function NavBar() {
         {opened ? (
           <div
             className=" flex flex-col bg-gray-100 items-center gap-3 absolute top-3 right-3 rounded-lg  py-24 px-24 z-[999]"
-            // style={{
-            //   background: `rgba(125, 185, 206, 0.15)`,
-            // }}
+          // style={{
+          //   background: `rgba(125, 185, 206, 0.15)`,
+          // }}
           >
             {navBarLinks.map((data) => (
               <NavBarLinks key={data.text} text={data.text} link={data.link} />

@@ -1,5 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Prize } from 'src/prizes/entities/prize.entity';
+import { Submission } from 'src/prizes/entities/submission.entity';
 import { Repository } from 'typeorm';
 import { CreateUser } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
@@ -67,7 +69,7 @@ export class UsersService {
       where: {
         username: username,
       },
-      relations: ['submissions', 'prizeProposals'],
+      relations: [],
     });
     if (!user)
       throw new HttpException(
@@ -75,6 +77,46 @@ export class UsersService {
         HttpStatus.BAD_REQUEST,
       );
     return user;
+  }
+  /**
+   * Get User Submissions by username.
+   * @async
+   * @param {string} username - The username
+   * @returns {Promise<Submission[]>} Array of Submissions.
+   */
+  async findUserSubmissionsByUsername(username: string): Promise<Submission[]> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username: username,
+      },
+      relations: ['submissions'],
+    });
+    if (!user)
+      throw new HttpException(
+        `User not found with username ${username}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    return user.submissions;
+  }
+  /**
+   * Get User Prizes by username.
+   * @async
+   * @param {string} username - The username
+   * @returns {Promise<Prize[]>} Array of Prizes
+   */
+  async findUserPrizesByUsername(username: string): Promise<Prize[]> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username: username,
+      },
+      relations: ['prizes'],
+    });
+    if (!user)
+      throw new HttpException(
+        `User not found with username ${username}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    return user.prizes;
   }
 
   /**
@@ -89,6 +131,7 @@ export class UsersService {
       where: {
         username: username,
       },
+      relations: [],
     });
     return !!user;
   }
