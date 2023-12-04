@@ -1,15 +1,26 @@
 import useAppUser from '@/context/hooks/useAppUser';
-import { Avatar, Badge, Box, Button, Group, Text } from '@mantine/core';
-import {
-  IconBrandGithubFilled,
-  IconBrandLinkedin,
-  IconBrandTelegram,
-  IconBrandX,
-} from '@tabler/icons-react';
+import { Avatar, Badge, Box, Button, Group, Input, NumberInput, Stack, Text } from '@mantine/core';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { prepareSendTransaction, sendTransaction, waitForTransaction } from '@wagmi/core';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { isAddress, parseEther } from 'viem';
+import { useBalance } from 'wagmi';
 
 export default function Profile() {
   // const { address } = useAccount();
   const { appUser } = useAppUser();
+  const [recieverAddress, setRecieverAddress] = useState<string>("")
+  const [amount, setAmount] = useState<string>("0")
+  const { wallet } = usePrivyWagmi()
+  const { data: balance, refetch } = useBalance({ address: wallet?.address as `0x${string}` });
+  useEffect(() => {
+    if (!balance) {
+      refetch()
+    }
+  }, [balance])
+  const [loading, setLoading] = useState(false)
+  // console.log(isAddress(recieverAddress), "ksdjf")
   // const { data, isLoading, refetch } = useBalance({ address });
   return (
     <div className="p-8 md:w-1/3">
@@ -20,23 +31,9 @@ export default function Profile() {
         </Text>
         <Text className="lg my-0">@{appUser?.username}</Text>
         <Group>
-          {/* <div>
-        <span   className='mr-1 font-bold' >
-            200
-        </span> 
-        <span>
-        Followers
-        </span>
-      </div>
-       <Text fw={200}   className='flex flex-cols'>
-        <Text fw={500}  className='mr-1 ml-6'>
-            200
-        </Text> 
-        Following
-      </Text> */}
         </Group>
         <Group mt="sm">
-          <Avatar radius="xl" size="sm">
+          {/* <Avatar radius="xl" size="sm">
             <IconBrandX />
           </Avatar>
           <Avatar radius="xl" size="sm">
@@ -47,9 +44,64 @@ export default function Profile() {
           </Avatar>
           <Avatar radius="xl" size="sm">
             <IconBrandTelegram />
-          </Avatar>
+          </Avatar> */}
+          {
+            (appUser && balance) && <>
+              <Stack>
+                <Text>
+                  Address : {wallet?.address}
+                </Text>
+                <Text>
+                  Balance : {balance?.formatted} {balance?.symbol}
+                </Text>
+
+                <Input placeholder="Reciever Address" value={recieverAddress} onChange={(e) => setRecieverAddress(e.currentTarget.value)} />
+
+                <NumberInput
+                  label=""
+                  placeholder="Enter amount"
+                  allowDecimal={true}
+                  allowNegative={false}
+                  defaultValue={0}
+                  value={amount}
+                  max={parseInt(balance!.value.toString())}
+                  onChange={(value) => setAmount(value.toString())}
+                />
+                <Button disabled={!isAddress(recieverAddress)} onClick={async () => {
+                  setLoading(true)
+                  if (parseEther(amount) > balance!.value) {
+                    toast.error("Insufficient Balance")
+                    setLoading(false)
+                    return
+                  }
+                  try {
+                    const config = await prepareSendTransaction({
+                      to: recieverAddress,
+                      value: parseEther(amount),
+                    })
+                    const { hash } = await sendTransaction(config)
+                    toast.promise(waitForTransaction({
+                      hash
+                    }), {
+
+                      loading: "Sending Transaction",
+                      success: "Transaction Sent",
+                      error: "Error Sending Transaction"
+                    })
+                  }
+                  catch (e: any) {
+                    toast.error(e.message)
+                  }
+                  setLoading(false)
+                }}>Send </Button>
+
+
+              </Stack>
+            </>
+          }
+
         </Group>
-        <Button my="sm">Edit Profile</Button>
+        {/* <Button my="sm">Edit Profile</Button> */}
       </div>
 
       <div>

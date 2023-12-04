@@ -684,7 +684,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
+        "summary": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
         "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
         "security": [
           {
@@ -697,7 +697,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
+                "text": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
                 "kind": "text"
               }
             ]
@@ -1298,25 +1298,57 @@
             "schema": {
               "type": "string"
             },
-            "description": "",
+            "description": "The username to check.",
             "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "The submission object.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Submission"
+                  }
                 }
               }
             },
             "x-nestia-encrypted": false
           }
         },
+        "summary": "Endpoint for getting submission of a specified username",
+        "description": "Endpoint for getting submission of a specified username.",
         "x-nestia-namespace": "users.username.submissions.getSubmissions",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "username",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "The username to check.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "The submission object.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "GET"
       }
     },
@@ -1330,25 +1362,57 @@
             "schema": {
               "type": "string"
             },
-            "description": "",
+            "description": "The username to check.",
             "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "The prize object.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Prize"
+                  }
                 }
               }
             },
             "x-nestia-encrypted": false
           }
         },
-        "x-nestia-namespace": "users.username.prizes.getProposals",
-        "x-nestia-jsDocTags": [],
+        "summary": "Endpoint for getting prizes of a specified username",
+        "description": "Endpoint for getting prizes of a specified username.",
+        "x-nestia-namespace": "users.username.prizes.getPrizes",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "username",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "The username to check.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "The prize object.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "GET"
       }
     }
