@@ -290,7 +290,7 @@ export default function Home() {
               rightSection={<FaTelegramPlane size={20} />}
               className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]  w-[15%] h-[30%] py-3 text-lg"
             >
-              <Link href="https://t.me/viaPrize">Join Community </Link>
+              <Link href="https://t.me/viaPrize">Join the Community </Link>
             </Button>
           </div>
           <div className="my-4" />
@@ -385,7 +385,7 @@ function NavBarLinks({ text, link }: { text: string; link: string }) {
 function NavBar() {
   const [opened, { toggle }] = useDisclosure();
   const { user } = usePrivy();
-  const { wallet } = usePrivyWagmi()
+  const { wallet } = usePrivyWagmi();
 
   const { loginUser } = useAppUser();
 
@@ -454,9 +454,9 @@ function NavBar() {
         {opened ? (
           <div
             className=" flex flex-col bg-gray-100 items-center gap-3 absolute top-3 right-3 rounded-lg  py-24 px-24 z-[999]"
-          // style={{
-          //   background: `rgba(125, 185, 206, 0.15)`,
-          // }}
+            // style={{
+            //   background: `rgba(125, 185, 206, 0.15)`,
+            // }}
           >
             {navBarLinks.map((data) => (
               <NavBarLinks key={data.text} text={data.text} link={data.link} />
