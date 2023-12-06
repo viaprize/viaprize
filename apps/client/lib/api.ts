@@ -336,7 +336,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'http://localhost:3001/api';
+  public baseUrl: string = 'https://api.pactsmith.com/api';
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -396,8 +396,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-            ? JSON.stringify(property)
-            : `${property}`,
+              ? JSON.stringify(property)
+              : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -477,18 +477,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-            .then((data) => {
-              if (r.ok) {
-                r.data = data;
-              } else {
-                r.error = data;
-              }
-              return r;
-            })
-            .catch((e) => {
-              r.error = e;
-              return r;
-            });
+          .then((data) => {
+            if (r.ok) {
+              r.data = data;
+            } else {
+              r.error = data;
+            }
+            return r;
+          })
+          .catch((e) => {
+            r.error = e;
+            return r;
+          });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
