@@ -95,7 +95,7 @@ export default function Details() {
   );
 
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value.toLowerCase().replace(/\s/g, "");
+    const value = event.currentTarget.value.toLowerCase().replace(/\s/g, '');
     setUsernameLoading(true);
     setUsername(value);
     sleep(1000)
