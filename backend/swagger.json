@@ -1675,6 +1675,12 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           },
@@ -1688,6 +1694,7 @@
           "submissionDescription",
           "submissionHash",
           "submitterAddress",
+          "created_at",
           "user",
           "prize"
         ],
@@ -1702,6 +1709,11 @@
             "type": "string"
           },
           "email": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "bio": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
@@ -1755,6 +1767,7 @@
         "required": [
           "id",
           "email",
+          "bio",
           "authId",
           "name",
           "username",
@@ -2476,6 +2489,12 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           },
@@ -2490,6 +2509,7 @@
           "submissionDescription",
           "submissionHash",
           "submitterAddress",
+          "created_at",
           "user",
           "prize"
         ],
@@ -2804,6 +2824,23 @@
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
+          },
+          "bio": {
+            "description": "The user bio which is gotten from the onboarding process or page",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "Hi I am Johnny Sins",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
           }
         },
         "nullable": false,
@@ -2811,7 +2848,8 @@
           "email",
           "authId",
           "name",
-          "username"
+          "username",
+          "bio"
         ],
         "description": "Interface of Create User , using this interface it create a new user in",
         "x-typia-jsDocTags": [

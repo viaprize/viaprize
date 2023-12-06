@@ -7,6 +7,7 @@ import {
   Loader,
   Text,
   TextInput,
+  Textarea,
 } from '@mantine/core';
 
 import useAppUser from '@/context/hooks/useAppUser';
@@ -27,6 +28,8 @@ export default function Details() {
   const [data, setData] = useState<string[]>([]);
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
+  const [bio, setBio] = useState('');
+
   const { createNewUser } = useAppUser();
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: () => {
@@ -62,6 +65,7 @@ export default function Details() {
           email,
           name,
           username,
+          bio
         }),
         {
           loading: 'Logging In',
@@ -142,6 +146,16 @@ export default function Details() {
           placeholder="Enter your email"
           data={data}
           my="sm"
+        />
+        <Textarea
+          size="lg"
+          radius="xs"
+          label="User Bio"
+          withAsterisk
+          description="Type in something about yourself"
+          value={bio}
+          onChange={(e) => setBio(e.currentTarget.value)}
+
         />
         <Button
           onClick={handleLogin}

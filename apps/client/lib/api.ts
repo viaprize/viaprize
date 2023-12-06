@@ -52,6 +52,8 @@ export interface Submission {
   submissionDescription: string;
   submissionHash: string;
   submitterAddress: string;
+  /** @format date-time */
+  created_at: string;
   user: User;
   prize: Prize;
 }
@@ -59,6 +61,7 @@ export interface Submission {
 export interface User {
   id: string;
   email: string;
+  bio: string;
   authId: string;
   name: string;
   username: string;
@@ -201,6 +204,8 @@ export interface SubmissionWithBlockchainData {
   submissionDescription: string;
   submissionHash: string;
   submitterAddress: string;
+  /** @format date-time */
+  created_at: string;
   user: User;
   prize: Prize;
 }
@@ -281,6 +286,8 @@ export interface CreateUser {
   name: string;
   /** The username which is gotten from the onboarding process or page and it is unique */
   username: string;
+  /** The user bio which is gotten from the onboarding process or page */
+  bio: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -329,7 +336,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'https://api.pactsmith.com/api';
+  public baseUrl: string = 'http://localhost:3001/api';
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -389,8 +396,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-              ? JSON.stringify(property)
-              : `${property}`,
+            ? JSON.stringify(property)
+            : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -470,18 +477,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-          .then((data) => {
-            if (r.ok) {
-              r.data = data;
-            } else {
-              r.error = data;
-            }
-            return r;
-          })
-          .catch((e) => {
-            r.error = e;
-            return r;
-          });
+            .then((data) => {
+              if (r.ok) {
+                r.data = data;
+              } else {
+                r.error = data;
+              }
+              return r;
+            })
+            .catch((e) => {
+              r.error = e;
+              return r;
+            });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);

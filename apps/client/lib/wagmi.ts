@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- will use later */
+import { env } from '@env';
 import type { Chain } from 'wagmi';
 import { configureChains, createConfig } from 'wagmi';
 import { optimism, optimismGoerli, polygonMumbai } from 'wagmi/chains';
@@ -44,14 +45,12 @@ const getProvider = (chainName: string) => {
   }
 };
 
-// const chain = getChain(env.NEXT_PUBLIC_CHAIN);
-// const provider = getProvider(env.NEXT_PUBLIC_CHAIN);
+const chain = getChain(env.NEXT_PUBLIC_CHAIN);
+const provider = getProvider(env.NEXT_PUBLIC_CHAIN);
 export const configureChainsConfig = configureChains(
-  [polygonMumbai],
+  [chain],
   [
-    alchemyProvider({
-      apiKey: 'XcG0U49rmR40kygsOE2Z2MrqtZxXYjGS',
-    }),
+    provider
   ],
 );
 const config = createConfig({

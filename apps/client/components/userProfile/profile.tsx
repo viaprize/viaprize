@@ -16,7 +16,7 @@ export default function Profile() {
   const { data: balance, refetch } = useBalance({ address: wallet?.address as `0x${string}` });
   useEffect(() => {
     if (!balance) {
-      refetch()
+      void refetch()
     }
   }, [balance])
   const [loading, setLoading] = useState(false)
@@ -64,12 +64,12 @@ export default function Profile() {
                   allowNegative={false}
                   defaultValue={0}
                   value={amount}
-                  max={parseInt(balance!.value.toString())}
+                  max={parseInt(balance.value.toString() ?? "1000")}
                   onChange={(value) => setAmount(value.toString())}
                 />
                 <Button disabled={!isAddress(recieverAddress)} onClick={async () => {
                   setLoading(true)
-                  if (parseEther(amount) > balance!.value) {
+                  if (parseEther(amount) > balance.value) {
                     toast.error("Insufficient Balance")
                     setLoading(false)
                     return
@@ -89,7 +89,9 @@ export default function Profile() {
                       error: "Error Sending Transaction"
                     })
                   }
+                  /* eslint-disable */
                   catch (e: any) {
+
                     toast.error(e.message)
                   }
                   setLoading(false)
@@ -161,6 +163,6 @@ export default function Profile() {
           </Badge>
         </div>
       </Box>
-    </div>
+    </div >
   );
 }
