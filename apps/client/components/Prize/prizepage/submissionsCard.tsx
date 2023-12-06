@@ -3,6 +3,7 @@ import {
   useViaPrizeFunders,
   writeViaPrize,
 } from '@/lib/smartContract';
+import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
   Avatar,
@@ -91,7 +92,7 @@ export default function SubmissionsCard({
                 ? 'Loading.....'
                 : `Total Votes you can allocate(Max: ${formatEther(
                   BigInt(parseInt(funderBalance?.toString() ?? '1') - 1),
-                )} Matic )`
+                )} ${chain.nativeCurrency.symbol} )`
             }
             placeholder="Enter Value of Votes"
             mt="md"
@@ -172,7 +173,7 @@ export default function SubmissionsCard({
               {allowVoting && showVote ? 'Vote' : ''}
             </Button>
             {allowVoting && showVote && (<Badge variant="filled" w={'auto'} size="lg" color="blue">
-              {formatEther(BigInt(votes.toString()))} Matic
+              {formatEther(BigInt(votes.toString()))} {chain.nativeCurrency.symbol}
             </Badge>)}
           </div>
         </div>
