@@ -15,7 +15,7 @@ if (!NETWORK_TYPE) {
 }
 
 const myAxios: AxiosInstance = axios.create({
-  baseURL: 'http://localhost:3001/api',
+  baseURL: 'https://api.pactsmith.com/api',
   headers: {
     'Network-Type': 'mainnet',
     'Access-Control-Allow-Origin': '*',

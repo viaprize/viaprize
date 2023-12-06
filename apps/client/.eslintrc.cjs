@@ -69,6 +69,7 @@ const config = {
     'react/button-has-type': 'off',
     '@typescript-eslint/default-param-last': 'off',
     '@typescript-eslint/non-nullable-type-assertion-style': 'warn',
+    '@typescript-eslint/no-confusing-void-expression': 'warn',
   },
 };
 

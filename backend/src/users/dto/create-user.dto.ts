@@ -27,4 +27,10 @@ export interface CreateUser {
    * @example sins
    */
   username: string;
+
+  /**
+   * The user bio which is gotten from the onboarding process or page
+   * @example Hi I am Johnny Sins
+   */
+  bio: string;
 }

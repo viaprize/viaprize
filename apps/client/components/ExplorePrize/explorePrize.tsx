@@ -27,7 +27,7 @@ function ExploreCard({
   id,
 }: ExploreCardProps) {
   return (
-    <Card padding="lg" radius="md" shadow="sm" withBorder className="w-full">
+    <Card padding="lg" radius="md" shadow="sm" withBorder className="w-full my-4">
       <Card.Section>
         <Image
           alt="Image"
