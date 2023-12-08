@@ -16,6 +16,7 @@ import { useEffect, useState, type ReactElement, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { configureChainsConfig } from '@/lib/wagmi';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const queryClient = new QueryClient();
 
@@ -95,6 +96,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         />
         <link rel="shortcut icon" href="/viaprizeBg.png" />
       </Head>
+      <SpeedInsights />
       <PrivyProvider
         appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
         config={{

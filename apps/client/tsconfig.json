@@ -21,29 +21,21 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@/components/*": [
-        "components/*"
-      ],
-      "@/config": [
-        "config/index.ts"
-      ],
-      "@/context/*": [
-        "context/*"
-      ],
-      "@/lib/*": [
-        "lib/*"
-      ],
-      "@/contract/*": [
-        "contract/*"
-      ],
-      "@env": [
-        "env.mjs"
-      ],
-      "@/backend/*": [
-        "../backend/dist/*"
-      ]
+      "@/*": ["./src/*"],
+      "@/components/*": ["components/*"],
+      "@/config": ["config/index.ts"],
+      "@/context/*": ["context/*"],
+      "@/lib/*": ["lib/*"],
+      "@/contract/*": ["contract/*"],
+      "@env": ["env.mjs"],
+      "@/backend/*": ["../backend/dist/*"]
     },
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     ".eslintrc.cjs",
