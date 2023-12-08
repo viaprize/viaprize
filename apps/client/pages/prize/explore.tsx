@@ -7,23 +7,24 @@ import type { ReactElement } from 'react';
 import { formatEther } from 'viem';
 
 function ExplorePage({ prizes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log({ prizes });
   return (
     <div className="max-w-screen-xl">
       <SearchFilters />
       <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
-        {prizes.map((prize) => (
-          <ExploreCard
-            description={prize.description}
-            imageUrl={prize.images[0]}
-            deadline=""
-            money={formatEther(BigInt(prize.balance))}
-            profileName={''}
-            title={prize.title}
-            key={prize.id}
-            id={prize.id}
-          />
-        ))}
+        {prizes.map((prize) => {
+          return (
+            <ExploreCard
+              description={prize.description}
+              imageUrl={prize.images[0]}
+              deadline=""
+              money={formatEther(BigInt(prize.balance))}
+              profileName={prize.user ? prize.user.name : ''}
+              title={prize.title}
+              key={prize.id}
+              id={prize.id}
+            />
+          );
+        })}
         {/* Add as many ExploreCard components as you need */}
       </div>
     </div>
