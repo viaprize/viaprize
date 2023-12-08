@@ -1,4 +1,4 @@
-import type { CreateUser } from "@/lib/api";
+import type { CreateUser } from '@/lib/api';
 import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/navigation';
@@ -42,9 +42,8 @@ export default function useAppUser() {
       }
 
       if (isNewUser && !wasAlreadyAuthenticated) {
-
         router.push('/onboarding'),
-        toast('Welcome to Viaprize! Please complete your profile to continue');
+          toast('Welcome to Viaprize! Please complete your profile to continue');
       }
     },
     onError(error) {
@@ -62,7 +61,6 @@ export default function useAppUser() {
     return uploadUser({
       ...userWithoutUserId,
       authId: user.id,
-
     });
   };
 

@@ -29,6 +29,20 @@ export class MailService {
     });
   }
 
+  async portalDeployed(email: string, name: string, title: string) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Your portal was deployed',
+      text: `Viaprize`,
+      templateName: 'portalDeployed.hbs',
+      context: {
+        name,
+        title,
+        telegramLink: this.telegramLink,
+      },
+    });
+  }
+
   async prizeDeployed(email: string, name: string, proposalTitle: string) {
     await this.mailerService.sendMail({
       to: email,
@@ -62,13 +76,7 @@ export class MailService {
       text: 'testing',
     });
   }
-  async approved(
-    to: string,
-    name: string,
-    proposalTitle: string,
-    proposalDescription: string,
-    proposalLink: string,
-  ) {
+  async approved(to: string, name: string, proposalTitle: string) {
     await this.mailerService.sendMail({
       to: to,
       subject: 'Hi your proposal was approved',
@@ -77,8 +85,7 @@ export class MailService {
       context: {
         name,
         proposalTitle,
-        proposalDescription,
-        proposalLink,
+
         telegramLink: this.telegramLink,
       },
     });
@@ -96,21 +103,14 @@ export class MailService {
       },
     });
   }
-  async proposalSent(
-    to: string,
-    name: string,
-    proposalTitle: string,
-    proposalDescription: string,
-    submissionDate: string,
-  ) {
+  async proposalSent(to: string, name: string, proposalTitle: string) {
     await this.mailerService.sendMail({
       to: to,
       subject: 'Hi your proposal is sent',
       context: {
         name,
         proposalTitle,
-        proposalDescription,
-        submissionDate,
+
         telegramLink: this.telegramLink,
       },
       templateName: 'proposalSent.hbs',
