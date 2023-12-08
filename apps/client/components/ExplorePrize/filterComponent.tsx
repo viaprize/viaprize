@@ -12,7 +12,8 @@ import {
   rem,
 } from '@mantine/core';
 import { IconCoin, IconCurrencyDollar } from '@tabler/icons-react';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const categoryOptions = ['Proficiency', 'Priorities'];
 const proficiencyOptions = [
@@ -46,12 +47,12 @@ function toTuple(arr: number[]): [number, number] {
 
 function Filter() {
   const router = useRouter();
-  const searchParams = router.query;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix
+  const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams as any as string);
-  const selectedCategories = (searchParams.category || '') as string;
-  const subCategory = searchParams.subCategory
-    ? (searchParams.subCategory as string).split(',')
+  const selectedCategories = (searchParams.get('category') || '') as string;
+  const subCategory = searchParams?.get('subCategory')
+    ? (searchParams.get('subCategory') as string).split(',')
     : [];
   console.log(subCategory);
 
@@ -61,7 +62,7 @@ function Filter() {
 
   const RangeValue = () => {
     const ranges = (
-      searchParams.range ? (searchParams.range as string).split(',') : [0, 500]
+      searchParams.get('range') ? (searchParams.get('range') as string).split(',') : [0, 500]
     ) as number[];
 
     if (ranges[1] > 500) {
@@ -81,20 +82,20 @@ function Filter() {
   const range = RangeValue();
   console.log(range);
 
-  const handlerange = async (value: number[]) => {
+  const handlerange = (value: number[]) => {
     params.set('range', value.join(','));
-    await router.replace(`?${params.toString()}`, undefined, { shallow: true });
+    router.replace(`?${params.toString()}`);
   };
 
-  const handleCategory = async (value: string) => {
+  const handleCategory =  (value: string) => {
     params.set('category', value);
-    await router.replace(`?${params.toString()}`, undefined, { shallow: true });
-    await handleSubCategory([]);
+    router.replace(`?${params.toString()}`);
+    handleSubCategory([]);
   };
 
-  const handleSubCategory = async (value: string[]) => {
+  const handleSubCategory = (value: string[]) => {
     params.set('subCategory', value.join(','));
-    await router.replace(`?${params.toString()}`, undefined, {
+    router.push(`?${params.toString()}`, undefined, {
       shallow: true,
     });
   };

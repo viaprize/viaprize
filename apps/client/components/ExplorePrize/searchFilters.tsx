@@ -1,10 +1,11 @@
 //eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: fix
 // @ts-nocheck
+'use client';
 
 import { Button, Drawer, Group, Menu, Text, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Filter from './filterComponent';
 
 // import Filter from "./filterComponent";
@@ -29,13 +30,13 @@ export default function SearchFilters() {
   const [opened, { open, close }] = useDisclosure(false);
 
   const router = useRouter();
-  const searchParams = router.query;
+  const searchParams = useSearchParams();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix
   const params = new URLSearchParams(searchParams as any as string);
 
   const handleSort = async (value: string) => {
     params.set('sort', value);
-    await router.replace({ query: params.toString() });
+    router.replace({ query: params.toString() });
   };
 
   return (
