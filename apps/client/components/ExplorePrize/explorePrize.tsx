@@ -11,7 +11,6 @@ interface ExploreCardProps {
   id: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- will use later
 function htmlToPlainText(html: string): string {
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
@@ -46,11 +45,13 @@ function ExploreCard({
         </Badge>
       </Group>
       <p
-        className="text-md text-gray-500 max-h-14 overflow-y-auto"
-        dangerouslySetInnerHTML={{ __html: description }}
-      ></p>
+        className="text-md text-gray-500 h-20 overflow-y-auto"
+        // dangerouslySetInnerHTML={{ __html: description }}
+      >
+        {htmlToPlainText(description)}
+      </p>
       {/*  >{htmlToPlainText(description)}</p> */}
-      <Group mb="xs" mt="md" justify="space-between">
+      <Group mb="xs" mt="sm" justify="space-between">
         <Text c="green" fw={500}>
           {money} {chain.nativeCurrency.symbol}
         </Text>
