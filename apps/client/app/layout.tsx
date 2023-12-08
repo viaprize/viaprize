@@ -1,18 +1,21 @@
-'use client'
+'use client';
 
+import { OwnLoader } from '@/components/custom/loader';
+import { configureChainsConfig } from '@/lib/wagmi';
+import { env } from '@env';
 import { MantineProvider, createTheme } from '@mantine/core';
-import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
-import { PrivyProvider } from '@privy-io/react-auth';
 import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 import '@mantine/tiptap/styles.css';
-import '../styles/globals.css';
-import '../styles/index.css';
+import { PrivyProvider } from '@privy-io/react-auth';
+import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Router } from 'next/router';
+import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
-import { env } from '@env';
-import { configureChainsConfig } from '@/lib/wagmi';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import '../styles/globals.css';
+import '../styles/index.css';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +30,30 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      console.log('Route change started');
+      // Set your loading state here
+      setLoading(true);
+    };
+
+    const handleRouteChangeComplete = () => {
+      console.log('Route change completed');
+      // Unset your loading state here
+      setLoading(false);
+    };
+
+    Router.events.on('routeChangeStart', handleRouteChangeStart);
+    Router.events.on('routeChangeComplete', handleRouteChangeComplete);
+
+    return () => {
+      Router.events.off('routeChangeStart', handleRouteChangeStart);
+      Router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
+  }, []);
+
   return (
     <html lang="en">
       <body>
@@ -50,7 +77,8 @@ export default function RootLayout({
             <QueryClientProvider client={queryClient}>
               <MantineProvider theme={theme} defaultColorScheme="auto">
                 <Toaster />
-                {children}
+
+                {loading ? <OwnLoader /> : children}
               </MantineProvider>
             </QueryClientProvider>
           </PrivyWagmiConnector>

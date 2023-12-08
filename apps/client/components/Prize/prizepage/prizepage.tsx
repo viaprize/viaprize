@@ -1,3 +1,4 @@
+'use client'
 import useAppUser from '@/context/hooks/useAppUser';
 import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import {
