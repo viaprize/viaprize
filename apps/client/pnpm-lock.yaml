@@ -77,6 +77,9 @@ dependencies:
   '@tiptap/starter-kit':
     specifier: ^2.1.12
     version: 2.1.12(@tiptap/pm@2.1.12)
+  '@vercel/speed-insights':
+    specifier: ^1.0.1
+    version: 1.0.1
   '@wagmi/chains':
     specifier: ^1.8.0
     version: 1.8.0(typescript@5.0.4)
@@ -8088,6 +8091,11 @@ packages:
       '@upstash/redis': 1.22.0
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /@vercel/speed-insights@1.0.1:
+    resolution: {integrity: sha512-cm8KTTsDgS1AbWsgIEZuMoyPUjclzeqJihyLp0tnA21B/x9iTE8hu2S5zM+/DBzihuHxWL1dx9pCWk22ctMFWQ==}
+    requiresBuild: true
     dev: false
 
   /@vercel/style-guide@5.0.1(@next/eslint-plugin-next@14.0.4)(eslint@8.52.0)(jest@29.7.0)(prettier@3.0.3)(typescript@5.0.4):
