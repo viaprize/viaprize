@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { MantineProvider, createTheme } from '@mantine/core';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';

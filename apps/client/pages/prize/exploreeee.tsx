@@ -6,17 +6,22 @@ import { Api, PrizeWithBalance } from '@/lib/api';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useEffect, type ReactElement } from 'react';
 import { formatEther } from 'viem';
-
+import { Text } from '@mantine/core';
 function ExplorePage({ prizes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      <OwnLoader />
+      <OwnLoader />;
     }
-  },[])
+  }, []);
 
   return (
     <div className="max-w-screen-xl">
+      <Text size="25px" weight={500}>
+        Explore Prizes
+      </Text>
+      <Text size="sm" weight={300}>
+        you can explore prizes and work on them
+      </Text>
       <SearchFilters />
       <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
         {prizes.map((prize) => {

@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { AppShell, Center, useComputedColorScheme, useMantineTheme } from '@mantine/core';
 import type { ReactNode } from 'react';
 import HeaderLayout from './headerLayout';

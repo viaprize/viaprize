@@ -1,8 +1,7 @@
-'use client'
+'use client';
 import { chain } from '@/lib/wagmi';
-import { Badge, Button, Card, Group, Image, Text } from '@mantine/core';
+import { Badge, Button, Card, Group, Text, Image } from '@mantine/core';
 import { Parser } from 'htmlparser2';
-
 
 interface ExploreCardProps {
   imageUrl: string;
