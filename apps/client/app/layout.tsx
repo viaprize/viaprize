@@ -1,12 +1,14 @@
+'use client'
+
 import { MantineProvider, createTheme } from '@mantine/core';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import { PrivyProvider } from '@privy-io/react-auth';
-import '@styles/global.css';
+import '../styles/globals.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { env } from '@env';
 import { configureChainsConfig } from '@/lib/wagmi';
-
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <SpeedInsights />
         <PrivyProvider
           appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
           config={{
