@@ -1,7 +1,9 @@
+'use client'
+
 import { MantineProvider, createTheme } from '@mantine/core';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import { PrivyProvider } from '@privy-io/react-auth';
-import '@styles/global.css';
+import '../styles/globals.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { env } from '@env';
