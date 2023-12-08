@@ -1,7 +1,7 @@
 import type { CreateUser } from "@/lib/api";
 import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import useAppUserStore from 'store/app-user';
 
@@ -42,10 +42,9 @@ export default function useAppUser() {
       }
 
       if (isNewUser && !wasAlreadyAuthenticated) {
-        toast.promise(
-          router.push('/onboarding'),
-          { loading: 'Redirecting to onboarding', success: 'Redirected to onboarding', error: 'Error while redirecting to onboarding' }
-        );
+
+        router.push('/onboarding'),
+        toast('Welcome to Viaprize! Please complete your profile to continue');
       }
     },
     onError(error) {
@@ -55,7 +54,7 @@ export default function useAppUser() {
 
   const createNewUser = async (
     userWithoutUserId: Omit<CreateUser, 'authId'>,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix any
   ): Promise<any> => {
     if (!user) {
       throw new Error('User is not logged in');

@@ -1,12 +1,20 @@
 import ExploreCard from '@/components/ExplorePrize/explorePrize';
 import SearchFilters from '@/components/ExplorePrize/searchFilters';
+import { OwnLoader } from '@/components/custom/loader';
 import AppShellLayout from '@/components/layout/appshell';
 import { Api, PrizeWithBalance } from '@/lib/api';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import type { ReactElement } from 'react';
+import { useEffect, type ReactElement } from 'react';
 import { formatEther } from 'viem';
 
 function ExplorePage({ prizes }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      <OwnLoader />
+    }
+  },[])
+
   return (
     <div className="max-w-screen-xl">
       <SearchFilters />
