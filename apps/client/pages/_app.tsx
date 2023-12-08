@@ -1,23 +1,23 @@
-import { MantineProvider, createTheme, useMantineColorScheme } from '@mantine/core';
+import { env } from '@env';
+import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 import '@mantine/tiptap/styles.css';
+import { PrivyProvider } from '@privy-io/react-auth';
+import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import type { NextPage } from 'next';
 import type { AppContext, AppProps } from 'next/app';
 import NextApp from 'next/app';
 import Head from 'next/head';
-import '../styles/globals.css';
-import '../styles/index.css';
-import { env } from '@env';
-import { PrivyProvider } from '@privy-io/react-auth';
-import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
-import type { NextPage } from 'next';
 import { Router } from 'next/router';
 import { useEffect, useState, type ReactElement, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
-import { configureChainsConfig } from '@/lib/wagmi';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { OwnLoader } from '@/components/custom/loader';
+import { configureChainsConfig } from '@/lib/wagmi';
+import '../styles/globals.css';
+import '../styles/index.css';
 
 const queryClient = new QueryClient();
 

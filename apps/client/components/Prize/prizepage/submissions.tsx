@@ -1,6 +1,6 @@
 import { SubmissionWithBlockchainData } from '@/lib/api';
 import { Button, Title } from '@mantine/core';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 import SubmissionsCard from './submissionsCard';
 
 export default function Submissions({
@@ -14,7 +14,8 @@ export default function Submissions({
   allowSubmission: boolean;
   allowVoting: boolean;
 }) {
-  const { query } = useRouter();
+  const id = usePathname();
+
   return (
     <div className="w-full flex flex-col gap-3">
       {allowSubmission && (
@@ -23,7 +24,7 @@ export default function Submissions({
           w="40%"
           className="self-end"
           target="_blank"
-          href={`/prize/${query.id as string}/editor?contract=${contractAddress}`}
+          href={`/prize/${id as string}/editor?contract=${contractAddress}`}
         >
           Submit your work
         </Button>

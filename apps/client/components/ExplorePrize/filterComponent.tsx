@@ -47,10 +47,9 @@ function toTuple(arr: number[]): [number, number] {
 
 function Filter() {
   const router = useRouter();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams as any as string);
-  const selectedCategories = (searchParams.get('category') || '') as string;
+  const params = new URLSearchParams(searchParams as string);
+  const selectedCategories = (searchParams.get('category') || '');
   const subCategory = searchParams?.get('subCategory')
     ? (searchParams.get('subCategory') as string).split(',')
     : [];
@@ -119,7 +118,7 @@ function Filter() {
           <IconCoin size="1rem" key="2" />,
         ]}
         onChange={(value) => {
-          void handlerange(value);
+          handlerange(value);
         }}
       />
       <Group justify="space-between" align="center">
@@ -139,7 +138,7 @@ function Filter() {
         value={selectedCategories}
         onChange={(value) => {
           if (value) {
-            void handleCategory(value);
+            handleCategory(value);
           }
         }}
       />
@@ -147,7 +146,7 @@ function Filter() {
         defaultValue={[]}
         label={selectedCategories && 'Sub Categories'}
         value={subCategory}
-        onChange={(value) => void handleSubCategory(value)}
+        onChange={(value) => {handleSubCategory(value)}}
       >
         {selectedCategories === 'Proficiency' && (
           <Stack mt="xs">

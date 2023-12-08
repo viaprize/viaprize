@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
+'use client';
+import ImageComponent from '@/components/Prize/dropzone';
 import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
-import AppShellLayout from '@/components/layout/appshell';
+import { TextEditor } from '@/components/richtexteditor/textEditor';
 import useAppUser from '@/context/hooks/useAppUser';
 import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import router from 'next/router';
-import type { ReactElement } from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
-import ImageComponent from '../../components/Prize/dropzone';
-import { TextEditor } from '../../components/richtexteditor/textEditor';
 
 function Prize() {
   const [address, setAddress] = useState(['']);
@@ -193,8 +192,8 @@ function Prize() {
   );
 }
 
-Prize.getLayout = function getLayout(page: ReactElement) {
-  return <AppShellLayout>{page}</AppShellLayout>;
-};
+// Prize.getLayout = function getLayout(page: ReactElement) {
+//   return <AppShellLayout>{page}</AppShellLayout>;
+// };
 
 export default Prize;
