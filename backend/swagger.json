@@ -157,6 +157,785 @@
         "x-nestia-method": "GET"
       }
     },
+    "/portals": {
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePortalDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Portals"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.createPortal",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ">}",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Get all Portals",
+        "description": "The code snippet you provided is a method in the `PortalsController` class. It is a route handler\nfor the GET request to `/portals` endpoint. Here's a breakdown of what it does:\nGets page",
+        "x-nestia-namespace": "portals.getPortals",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Get all Portals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:06:45 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "1} this is the page number of the return pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "10} this is the limit of the return type of the pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": ">}",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortalWithBalance"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.getPortal",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/proposals": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type.o1"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Get all Pending proposals",
+        "description": "The code snippet you provided is a method in the `PortalsController` class. It is a route handler\nfor the GET request to `/proposals` endpoint. Here's a breakdown of what it does:\nGets page",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.proposals.getPendingProposals",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Get all Pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:06:45 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "1} this is the page number of the return pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "10} this is the limit of the return type of the pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      },
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePortalProposalDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortalProposals"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Create a new proposal using user auth token to know which user is calling this function and sends email to user",
+        "description": "The code snippet you provided is a method in the `PortalsController` class. It is a route handler\nfor the POST request to `/proposals` endpoint. Here's a breakdown of what it does:",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.proposals.create",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Create a new proposal using user auth token to know which user is calling this function and sends email to user",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:44:05 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "createPortalProposalDto",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/portals/proposals/accept": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type.o2"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Retrieve a list of accepted Portal proposals\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\nparameters",
+        "description": "The code snippet you provided is a method in the `PortalsController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.proposals.accept.getAcceptedProposals",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Retrieve a list of accepted Portal proposals\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\nparameters",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:06:45 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "1} this is the page number of the return pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "10} this is the limit of the return type of the pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/proposals/user/{username}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "number"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readonly__type.o3"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Get all proposals of users by username,",
+        "description": "Get all proposals  of user  by username",
+        "x-nestia-namespace": "portals.proposals.user.getProposalsByUsername",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 4:47:51 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Get all proposals of users by username,",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "1} this is the page number of the return pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "10} this is the limit of the return type of the pending proposals",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "userId",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/proposals/reject/{id}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectProposalDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Reject Proposal,",
+        "description": "Admin Reject proposal",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.proposals.reject.rejectProposal",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:19:58 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "summary",
+            "text": [
+              {
+                "text": "Reject Proposal,",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "rejectProposalDto",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/portals/proposals/accept/{id}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `portalProposalsService` with the given `id`",
+        "description": "The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls\nthe `approve` method of the `portalProposalsService` with the given `id`. and it approves the proposal\nand sends an email of approval",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.proposals.accept.approveProposal",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
     "/prizes/submission/{id}": {
       "get": {
         "tags": [],
@@ -249,7 +1028,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type"
+                  "$ref": "#/components/schemas/Readonly__type.o4"
                 }
               }
             },
@@ -439,7 +1218,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o1"
+                  "$ref": "#/components/schemas/Readonly__type.o5"
                 }
               }
             },
@@ -480,7 +1259,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o2"
+                  "$ref": "#/components/schemas/Readonly__type.o6"
                 }
               }
             },
@@ -677,7 +1456,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o3"
+                  "$ref": "#/components/schemas/Readonly__type.o7"
                 }
               }
             },
@@ -802,7 +1581,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o4"
+                  "$ref": "#/components/schemas/Readonly__type.o8"
                 }
               }
             },
@@ -1652,7 +2431,28 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Submission": {
+      "CreatePortalDto": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "proposal_id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "address",
+          "proposal_id"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Portals": {
         "type": "object",
         "properties": {
           "id": {
@@ -1660,43 +2460,122 @@
             "x-typia-optional": false,
             "type": "string"
           },
-          "submissionDescription": {
+          "description": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
           },
-          "submissionHash": {
+          "slug": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
           },
-          "submitterAddress": {
+          "fundingGoal": {
             "x-typia-required": true,
             "x-typia-optional": false,
-            "type": "string"
+            "type": "number"
           },
-          "created_at": {
+          "isMultiSignatureReciever": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "deadline": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string",
             "format": "date-time"
           },
+          "allowDonationAboveThreshold": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "termsAndCondition": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "proposer_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "contract_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "treasurers": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "tags": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "user": {
             "$ref": "#/components/schemas/User"
-          },
-          "prize": {
-            "$ref": "#/components/schemas/Prize"
           }
         },
         "nullable": false,
         "required": [
           "id",
-          "submissionDescription",
-          "submissionHash",
-          "submitterAddress",
-          "created_at",
-          "user",
-          "prize"
+          "description",
+          "slug",
+          "fundingGoal",
+          "isMultiSignatureReciever",
+          "deadline",
+          "allowDonationAboveThreshold",
+          "termsAndCondition",
+          "proposer_address",
+          "contract_address",
+          "treasurers",
+          "tags",
+          "createdAt",
+          "updatedAt",
+          "images",
+          "title",
+          "user"
         ],
         "x-typia-jsDocTags": []
       },
@@ -1761,6 +2640,22 @@
             "items": {
               "$ref": "#/components/schemas/Prize"
             }
+          },
+          "portals": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Portals"
+            }
+          },
+          "portalProposals": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalProposals"
+            }
           }
         },
         "nullable": false,
@@ -1774,11 +2669,13 @@
           "isAdmin",
           "submissions",
           "prizeProposals",
-          "prizes"
+          "prizes",
+          "portals",
+          "portalProposals"
         ],
         "x-typia-jsDocTags": []
       },
-      "PrizeProposals": {
+      "Submission": {
         "type": "object",
         "properties": {
           "id": {
@@ -1786,115 +2683,43 @@
             "x-typia-optional": false,
             "type": "string"
           },
-          "voting_time": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "submission_time": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "admins": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "isApproved": {
-            "description": "The Columns here are not part of the smart contract",
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "boolean"
-          },
-          "isRejected": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "boolean"
-          },
-          "title": {
+          "submissionDescription": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
           },
-          "description": {
+          "submissionHash": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
           },
-          "isAutomatic": {
+          "submitterAddress": {
             "x-typia-required": true,
             "x-typia-optional": false,
-            "type": "boolean"
+            "type": "string"
           },
-          "startVotingDate": {
+          "created_at": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string",
             "format": "date-time"
-          },
-          "startSubmissionDate": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          "proficiencies": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "priorities": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "images": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
           },
           "user": {
             "$ref": "#/components/schemas/User"
+          },
+          "prize": {
+            "$ref": "#/components/schemas/Prize"
           }
         },
         "nullable": false,
         "required": [
           "id",
-          "voting_time",
-          "submission_time",
-          "admins",
-          "isApproved",
-          "isRejected",
-          "title",
-          "description",
-          "isAutomatic",
-          "startVotingDate",
-          "startSubmissionDate",
-          "proficiencies",
-          "priorities",
-          "images",
-          "user"
+          "submissionDescription",
+          "submissionHash",
+          "submitterAddress",
+          "created_at",
+          "user",
+          "prize"
         ],
         "x-typia-jsDocTags": []
       },
@@ -2040,6 +2865,613 @@
         ],
         "x-typia-jsDocTags": []
       },
+      "PrizeProposals": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "voting_time": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "submission_time": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "admins": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "isApproved": {
+            "description": "The Columns here are not part of the smart contract",
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "isRejected": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAutomatic": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "startVotingDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "startSubmissionDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "proficiencies": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "voting_time",
+          "submission_time",
+          "admins",
+          "isApproved",
+          "isRejected",
+          "title",
+          "description",
+          "isAutomatic",
+          "startVotingDate",
+          "startSubmissionDate",
+          "proficiencies",
+          "priorities",
+          "images",
+          "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "PortalProposals": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "fundingGoal": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "isMultiSignatureReciever": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "deadline": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "allowDonationAboveThreshold": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "termsAndCondition": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "proposerAddress": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "treasurers": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "tags": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "isApproved": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "isRejected": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "createdAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "description",
+          "slug",
+          "fundingGoal",
+          "isMultiSignatureReciever",
+          "deadline",
+          "allowDonationAboveThreshold",
+          "termsAndCondition",
+          "proposerAddress",
+          "treasurers",
+          "tags",
+          "isApproved",
+          "isRejected",
+          "createdAt",
+          "updatedAt",
+          "images",
+          "title",
+          "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Readonly__type": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalWithBalance"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "description": "Make all properties in T readonly",
+        "x-typia-jsDocTags": []
+      },
+      "PortalWithBalance": {
+        "type": "object",
+        "properties": {
+          "balance": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "fundingGoal": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "isMultiSignatureReciever": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "deadline": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "allowDonationAboveThreshold": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "termsAndCondition": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "proposer_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "contract_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "treasurers": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "tags": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "balance",
+          "id",
+          "description",
+          "slug",
+          "fundingGoal",
+          "isMultiSignatureReciever",
+          "deadline",
+          "allowDonationAboveThreshold",
+          "termsAndCondition",
+          "proposer_address",
+          "contract_address",
+          "treasurers",
+          "tags",
+          "createdAt",
+          "updatedAt",
+          "images",
+          "title",
+          "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Readonly__type.o1": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalProposals"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "description": "Make all properties in T readonly",
+        "x-typia-jsDocTags": []
+      },
+      "Readonly__type.o2": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalProposals"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "description": "Make all properties in T readonly",
+        "x-typia-jsDocTags": []
+      },
+      "CreatePortalProposalDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "fundingGoal": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "isMultiSignatureReciever": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "deadline": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "allowDonationAboveThreshold": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "termsAndCondition": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "proposerAddress": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "treasurers": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "tags": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "description",
+          "fundingGoal",
+          "isMultiSignatureReciever",
+          "deadline",
+          "allowDonationAboveThreshold",
+          "termsAndCondition",
+          "proposerAddress",
+          "treasurers",
+          "tags",
+          "images",
+          "title"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Readonly__type.o3": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalProposals"
+            }
+          },
+          "hasNextPage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
+        "description": "Make all properties in T readonly",
+        "x-typia-jsDocTags": []
+      },
+      "RejectProposalDto": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "comment"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Http200Response": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "message"
+        ],
+        "x-typia-jsDocTags": []
+      },
       "CreatePrizeDto": {
         "type": "object",
         "properties": {
@@ -2061,7 +3493,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type": {
+      "Readonly__type.o4": {
         "type": "object",
         "properties": {
           "data": {
@@ -2421,22 +3853,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Http200Response": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "message"
-        ],
-        "x-typia-jsDocTags": []
-      },
-      "Readonly__type.o1": {
+      "Readonly__type.o5": {
         "type": "object",
         "properties": {
           "data": {
@@ -2515,7 +3932,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o2": {
+      "Readonly__type.o6": {
         "type": "object",
         "properties": {
           "data": {
@@ -2540,7 +3957,7 @@
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o3": {
+      "Readonly__type.o7": {
         "type": "object",
         "properties": {
           "data": {
@@ -2689,7 +4106,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o4": {
+      "Readonly__type.o8": {
         "type": "object",
         "properties": {
           "data": {
@@ -2712,21 +4129,6 @@
           "hasNextPage"
         ],
         "description": "Make all properties in T readonly",
-        "x-typia-jsDocTags": []
-      },
-      "RejectProposalDto": {
-        "type": "object",
-        "properties": {
-          "comment": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "comment"
-        ],
         "x-typia-jsDocTags": []
       },
       "CreateUser": {

@@ -364,10 +364,6 @@ export class PrizesController {
       proposals.user.email,
       proposals.user.name,
       proposals.title,
-      proposals.description,
-      proposals.startSubmissionDate
-        ? proposals.startSubmissionDate.toDateString()
-        : 'No Submission Date has been set',
     );
     return proposals;
   }
@@ -459,8 +455,6 @@ export class PrizesController {
       proposal.user.email,
       proposal.user.name,
       proposal.title,
-      proposal.description,
-      `Link is not implemented yet`,
     );
     return {
       message: `Proposal with id ${id} has been accepted`,
