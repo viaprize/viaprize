@@ -1,3 +1,4 @@
+import { Portal } from 'src/portals/entities/portal.entity';
 import { PrizeProposals } from 'src/prizes/entities/prize-proposals.entity';
 import { Prize } from 'src/prizes/entities/prize.entity';
 import { Submission } from 'src/prizes/entities/submission.entity';
@@ -41,4 +42,7 @@ export class User {
 
   @OneToMany(() => Prize, (prize) => prize.user)
   prizes: Prize[];
+
+  @OneToMany(() => Portal, (portal) => portal.user)
+  portals: Portal[];
 }
