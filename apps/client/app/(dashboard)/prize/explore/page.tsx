@@ -3,6 +3,7 @@ import SearchFilters from '@/components/ExplorePrize/searchFilters';
 import { Api } from '@/lib/api';
 import { Suspense } from 'react';
 import { formatEther } from 'viem';
+import { Text } from '@mantine/core';
 
 async function ExplorePage() {
   const prizes = (
@@ -14,6 +15,12 @@ async function ExplorePage() {
 
   return (
     <div className="max-w-screen-xl">
+      <Text size="25px" fw="bolder" mt="md" ml="md">
+        Explore Prizes
+      </Text>
+      <Text size="md" fw="initial" mt="xs" ml="md">
+        you can explore prizes and work on them
+      </Text>
       <SearchFilters />
       <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
         <Suspense fallback={<div>Loading...</div>}>

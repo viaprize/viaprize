@@ -65,7 +65,7 @@ export default function Details() {
           email,
           name,
           username,
-          bio
+          bio,
         }),
         {
           loading: 'Logging In',
@@ -155,7 +155,6 @@ export default function Details() {
           description="Type in something about yourself"
           value={bio}
           onChange={(e) => setBio(e.currentTarget.value)}
-
         />
         <Button
           onClick={handleLogin}

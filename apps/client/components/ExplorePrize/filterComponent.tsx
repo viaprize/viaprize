@@ -62,7 +62,9 @@ function Filter() {
 
   const RangeValue = () => {
     const ranges = (
-      searchParams.get('range') ? (searchParams.get('range') as string).split(',') : [0, 500]
+      searchParams.get('range')
+        ? (searchParams.get('range') as string).split(',')
+        : [0, 500]
     ) as number[];
 
     if (ranges[1] > 500) {
@@ -87,7 +89,7 @@ function Filter() {
     router.replace(`?${params.toString()}`);
   };
 
-  const handleCategory =  (value: string) => {
+  const handleCategory = (value: string) => {
     params.set('category', value);
     router.replace(`?${params.toString()}`);
     handleSubCategory([]);
