@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./SubmissionAVLTree.sol";
+import "../helperContracts/safemath.sol";
 
 library SubmissionLibrary {
     function deploySubmission() external returns(address) {
@@ -9,10 +10,10 @@ library SubmissionLibrary {
         return address(new_SubmissionAVLTree);
     }
 }
-
+ 
 
 contract ViaPrize {
-        /// @notice this will be the total amount of funds raised
+    /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
     /// @notice this will be the total amount of rewards available
     uint256 public total_rewards; 
@@ -39,6 +40,7 @@ contract ViaPrize {
     /// @notice add a new refund mapping for address to bool
     mapping(address => bool) public addressRefunded;
 
+    using SafeMath for uint256;
     uint proposerFee;
     uint platformFee;
 
@@ -163,6 +165,7 @@ contract ViaPrize {
     function end_voting_period() public onlyPlatformAdmin {
         if(voting_time == 0) revert VotingPeriodNotActive();
         voting_time = 0;
+        distribute_use_unused_votes_v2();
         distributeRewards();
     }
 
@@ -176,7 +179,7 @@ contract ViaPrize {
         /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
         for (uint256 i = 0; i < allSubmissions.length;) {
             if (allSubmissions[i].funded) {
-                uint256 reward = (allSubmissions[i].votes * (100-proposerFee-platformFee)) / 100;
+                uint256 reward = (allSubmissions[i].votes);
                 total_rewards -= reward;
                 payable(allSubmissions[i].submitter).transfer(reward);
             } 
@@ -260,7 +263,7 @@ contract ViaPrize {
         return submissionTree.inOrderTraversal();
     }
 
-    /// @notice i hate my life
+    /// @notice get submission by submissionHash
     function get_submission_by_hash(bytes32 submissionHash) public view returns (uint256){
         return submissionTree.getSubmissionVote(submissionHash);
 
@@ -271,36 +274,42 @@ contract ViaPrize {
         if (msg.value == 0) revert NotEnoughFunds();
             funders[msg.sender] += msg.value;
             total_funds += msg.value;
-            total_rewards += (msg.value * (100-platformFee)) / 100; /// @notice  platform fee will depend on the prize
+            total_rewards += (msg.value * (100-platformFee-proposerFee)) / 100; /// @notice  platform fee will depend on the prize
     }
 
     receive () external payable {
         addFunds();
     }
 
-    /// @notice create function to allow admins to withdraw funds to the submission winners and the platform but do not iterate through an unknown length array
-    function use_unused_votes(bytes32 _submissionHash) public {
-        if(isAdmin[msg.sender] == false) revert NotAdmin();
-        if (block.timestamp > voting_time) revert VotingPeriodNotActive();
-
-        uint256 unused_admin_votes = total_funds - total_rewards;
-        submissionTree.addVotes(_submissionHash, unused_admin_votes);
-        unused_admin_votes = 0;
-    }
-
-    // function distribute_use_unused_votes_v2() public view {
+    // /// @notice create function to allow admins to withdraw funds to the submission winners and the platform but do not iterate through an unknown length array
+    // function use_unused_votes(bytes32 _submissionHash) public {
     //     if(isAdmin[msg.sender] == false) revert NotAdmin();
     //     if (block.timestamp > voting_time) revert VotingPeriodNotActive();
 
-    //     uint256 total_unused_votes = total_funds - total_rewards;
-    //     uint256 total_votes = 0;
-
-    //     SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-    //     for(uint256 i=0; i<allSubmissions.length; i++) {
-    //         total_votes += allSubmissions[i].votes;
-    //     }
-
+    //     uint256 unused_admin_votes = total_funds - total_rewards;
+    //     submissionTree.addVotes(_submissionHash, unused_admin_votes);
+    //     unused_admin_votes = 0;
     // }
+
+   /// @notice this fn sends the unused votes to the submitters based on their previous votes.
+    function distribute_use_unused_votes_v2() public returns(uint256, uint256, uint256){
+       if(isAdmin[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+
+       uint256 total_votes = 0;
+
+       SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+       for(uint256 i=0; i<allSubmissions.length; i++) {
+           total_votes += allSubmissions[i].votes;
+       }
+       uint256 total_unused_votes = total_rewards.sub(total_votes);
+       for(uint256 i=0; i<allSubmissions.length; i++) {
+           uint256 individual_percentage = (allSubmissions[i].votes.mul(100)).div(total_votes); 
+           uint256 transferable_amount = (total_unused_votes.mul(individual_percentage)).div(100);
+           payable(allSubmissions[i].submitter).transfer(transferable_amount);
+       }
+
+       return (total_votes, total_unused_votes, total_rewards);
+   }
 
     /// @notice Allows users to withdraw funds that they have voted for but did not cross threshhold as well as unused funds 
     function claimRefund(address recipient) public {
