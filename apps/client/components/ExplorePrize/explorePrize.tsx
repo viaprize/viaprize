@@ -1,3 +1,4 @@
+import { chain } from '@/lib/wagmi';
 import { Badge, Button, Card, Group, Image, Text } from '@mantine/core';
 
 interface ExploreCardProps {
@@ -26,7 +27,7 @@ function ExploreCard({
   id,
 }: ExploreCardProps) {
   return (
-    <Card padding="lg" radius="md" shadow="sm" withBorder className="w-full">
+    <Card padding="lg" radius="md" shadow="sm" withBorder className="w-full my-4">
       <Card.Section>
         <Image
           alt="Image"
@@ -52,7 +53,7 @@ function ExploreCard({
       {/*  >{htmlToPlainText(description)}</p> */}
       <Group mb="xs" mt="sm" justify="space-between">
         <Text c="green" fw={500}>
-          {money} MATIC
+          {money} {chain.nativeCurrency.symbol}
         </Text>
         <Text c="red" fw={500}>
           {deadline}

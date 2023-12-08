@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+import { env } from "@env";
+
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
   /** Name of the pact i.e the title, which is gotten in the pact form */
@@ -52,6 +54,8 @@ export interface Submission {
   submissionDescription: string;
   submissionHash: string;
   submitterAddress: string;
+  /** @format date-time */
+  created_at: string;
   user: User;
   prize: Prize;
 }
@@ -59,6 +63,7 @@ export interface Submission {
 export interface User {
   id: string;
   email: string;
+  bio: string;
   authId: string;
   name: string;
   username: string;
@@ -201,6 +206,8 @@ export interface SubmissionWithBlockchainData {
   submissionDescription: string;
   submissionHash: string;
   submitterAddress: string;
+  /** @format date-time */
+  created_at: string;
   user: User;
   prize: Prize;
 }
@@ -281,6 +288,8 @@ export interface CreateUser {
   name: string;
   /** The username which is gotten from the onboarding process or page and it is unique */
   username: string;
+  /** The user bio which is gotten from the onboarding process or page */
+  bio: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -310,14 +319,11 @@ export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>;
-  securityWorker?: (
-    securityData: SecurityDataType | null,
-  ) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown>
-  extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
   data: D;
   error: E;
 }
@@ -332,12 +338,11 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'https://api.pactsmith.com/api';
+  public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
-    fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: 'same-origin',
@@ -356,9 +361,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key);
-    return `${encodedKey}=${encodeURIComponent(
-      typeof value === 'number' ? value : `${value}`,
-    )}`;
+    return `${encodedKey}=${encodeURIComponent(typeof value === 'number' ? value : `${value}`)}`;
   }
 
   protected addQueryParam(query: QueryParamsType, key: string) {
@@ -374,11 +377,7 @@ export class HttpClient<SecurityDataType = unknown> {
     const query = rawQuery || {};
     const keys = Object.keys(query).filter((key) => 'undefined' !== typeof query[key]);
     return keys
-      .map((key) =>
-        Array.isArray(query[key])
-          ? this.addArrayQueryParam(query, key)
-          : this.addQueryParam(query, key),
-      )
+      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
       .join('&');
   }
 
@@ -389,11 +388,8 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === 'object' || typeof input === 'string')
-        ? JSON.stringify(input)
-        : input,
-    [ContentType.Text]: (input: any) =>
-      input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
+      input !== null && (typeof input === 'object' || typeof input === 'string') ? JSON.stringify(input) : input,
+    [ContentType.Text]: (input: any) => (input !== null && typeof input !== 'string' ? JSON.stringify(input) : input),
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -402,18 +398,15 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-            ? JSON.stringify(property)
-            : `${property}`,
+              ? JSON.stringify(property)
+              : `${property}`,
         );
         return formData;
       }, new FormData()),
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(
-    params1: RequestParams,
-    params2?: RequestParams,
-  ): RequestParams {
+  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -470,21 +463,15 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(
-      `${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`,
-      {
-        ...requestParams,
-        headers: {
-          ...(requestParams.headers || {}),
-          ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
-        },
-        signal:
-          (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) ||
-          null,
-        body:
-          typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
+    return this.customFetch(`${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`, {
+      ...requestParams,
+      headers: {
+        ...(requestParams.headers || {}),
+        ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
       },
-    ).then(async (response) => {
+      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
+      body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
+    }).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -492,18 +479,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-            .then((data) => {
-              if (r.ok) {
-                r.data = data;
-              } else {
-                r.error = data;
-              }
-              return r;
-            })
-            .catch((e) => {
-              r.error = e;
-              return r;
-            });
+          .then((data) => {
+            if (r.ok) {
+              r.data = data;
+            } else {
+              r.error = data;
+            }
+            return r;
+          })
+          .catch((e) => {
+            r.error = e;
+            return r;
+          });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
@@ -626,11 +613,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name SubmissionCreate
      * @request POST:/prizes/{id}/submission
      */
-    submissionCreate: (
-      id: string,
-      data: CreateSubmissionDto,
-      params: RequestParams = {},
-    ) =>
+    submissionCreate: (id: string, data: CreateSubmissionDto, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/prizes/${id}/submission`,
         method: 'POST',
@@ -764,11 +747,7 @@ parameters
      * @request POST:/prizes/proposals/reject/{id}
      * @secure
      */
-    proposalsRejectCreate: (
-      id: string,
-      data: RejectProposalDto,
-      params: RequestParams = {},
-    ) =>
+    proposalsRejectCreate: (id: string, data: RejectProposalDto, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/prizes/proposals/reject/${id}`,
         method: 'POST',
@@ -855,6 +834,36 @@ the `approve` method of the `prizeProposalsService` with the given `id`
     existsDetail: (username: string, params: RequestParams = {}) =>
       this.request<boolean, any>({
         path: `/users/exists/${username}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Endpoint for getting submission of a specified username.
+     *
+     * @name UsernameSubmissionsDetail
+     * @summary Endpoint for getting submission of a specified username
+     * @request GET:/users/username/{username}/submissions
+     */
+    usernameSubmissionsDetail: (username: string, params: RequestParams = {}) =>
+      this.request<Submission[], any>({
+        path: `/users/username/${username}/submissions`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Endpoint for getting prizes of a specified username.
+     *
+     * @name UsernamePrizesDetail
+     * @summary Endpoint for getting prizes of a specified username
+     * @request GET:/users/username/{username}/prizes
+     */
+    usernamePrizesDetail: (username: string, params: RequestParams = {}) =>
+      this.request<Prize[], any>({
+        path: `/users/username/${username}/prizes`,
         method: 'GET',
         format: 'json',
         ...params,

@@ -17,6 +17,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({ default: '' })
+  bio: string;
+
   @Column({ unique: true })
   @Index({ unique: true })
   authId!: string;

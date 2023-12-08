@@ -36,7 +36,7 @@ export default function Submissions({
           fullname={submission.user.name}
           contractAddress={contractAddress}
           hash={submission.submissionHash}
-          submission={submission.submissionDescription}
+          showVote={true}
           wallet={submission.submitterAddress}
           time={''}
           votes={submission.voting_blockchain}

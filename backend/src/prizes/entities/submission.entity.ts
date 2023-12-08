@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Prize } from './prize.entity';
 
@@ -15,6 +21,9 @@ export class Submission {
 
   @Column()
   submitterAddress: string;
+
+  @CreateDateColumn()
+  created_at: Date;
 
   @ManyToOne(() => User, (user) => user.submissions)
   user: User;

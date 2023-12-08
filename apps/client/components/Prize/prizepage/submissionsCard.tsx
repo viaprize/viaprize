@@ -3,6 +3,7 @@ import {
   useViaPrizeFunders,
   writeViaPrize,
 } from '@/lib/smartContract';
+import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
   Avatar,
@@ -13,8 +14,7 @@ import {
   Modal,
   NumberInput,
   Stack,
-  Text,
-  TypographyStylesProvider,
+  Text
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { IconArrowAutofitUp, IconRefresh } from '@tabler/icons-react';
@@ -26,7 +26,6 @@ import { extractPlainTextFromEditor } from './utils';
 
 interface SubmissionsCardProps {
   fullname: string;
-  submission: string;
   wallet: string;
   time: string;
   votes: number;
@@ -36,6 +35,7 @@ interface SubmissionsCardProps {
   hash: string;
   description: string;
   allowVoting: boolean;
+  showVote: boolean;
 }
 export default function SubmissionsCard({
   fullname,
@@ -47,6 +47,7 @@ export default function SubmissionsCard({
   description,
   allowVoting,
   submissionId,
+  showVote = true
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { address } = useAccount();
@@ -82,7 +83,7 @@ export default function SubmissionsCard({
   //   },
   // });
   return (
-    <Card className="flex flex-col justify-center gap-3">
+    <Card className="flex flex-col justify-center gap-3 my-2">
       <Modal opened={opened} onClose={close} title="Voting For this submission">
         <Stack>
           <NumberInput
@@ -90,8 +91,8 @@ export default function SubmissionsCard({
               isLoading
                 ? 'Loading.....'
                 : `Total Votes you can allocate(Max: ${formatEther(
-                    BigInt(parseInt(funderBalance?.toString() ?? '1') - 1),
-                  )} Matic )`
+                  BigInt(parseInt(funderBalance?.toString() ?? '1') - 1),
+                )} ${chain.nativeCurrency.symbol} )`
             }
             placeholder="Enter Value of Votes"
             mt="md"
@@ -111,7 +112,8 @@ export default function SubmissionsCard({
               setValue(v.toString());
             }}
           />
-          <Button
+          {showVote && <Button
+
             onClick={async () => {
               try {
                 await refetch();
@@ -147,7 +149,7 @@ export default function SubmissionsCard({
             loading={sendLoading}
           >
             Vote!
-          </Button>
+          </Button>}
         </Stack>
       </Modal>
       <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
@@ -168,11 +170,11 @@ export default function SubmissionsCard({
           </Text>
           <div className="flex gap-1 sm:justify-end items-center ">
             <Button color="black" mr="5px" onClick={open} disabled={!allowVoting}>
-              {allowVoting ? 'Vote' : 'Voting Closed'}
+              {allowVoting && showVote ? 'Vote' : ''}
             </Button>
-            <Badge variant="filled" w={'auto'} size="lg" color="blue">
-              {formatEther(BigInt(votes.toString()))} Matic
-            </Badge>
+            {allowVoting && showVote && (<Badge variant="filled" w={'auto'} size="lg" color="blue">
+              {formatEther(BigInt(votes.toString()))} {chain.nativeCurrency.symbol}
+            </Badge>)}
           </div>
         </div>
       </div>
