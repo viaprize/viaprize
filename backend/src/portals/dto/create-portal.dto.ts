@@ -1,1 +1,4 @@
-export class CreatePortalDto {}
+export class CreatePortalDto {
+  address: string;
+  proposal_id: string;
+}

@@ -12,7 +12,7 @@ import {
 /* The Prize class represents a prize in a TypeScript application, with various properties such as
 description, start dates, addresses, and arrays of admins, proficiencies, and priorities. */
 @Entity()
-export class Portals {
+export class PortalProposals {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -40,16 +40,19 @@ export class Portals {
   termsAndCondition: string;
 
   @Column()
-  proposer_address: string;
-
-  @Column()
-  contract_address: string;
+  proposerAddress: string;
 
   @Column('simple-array')
   treasurers: string[];
 
   @Column('simple-array')
   tags: string[];
+
+  @Column({ default: false })
+  isApproved: boolean;
+
+  @Column({ default: false })
+  isRejected: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
