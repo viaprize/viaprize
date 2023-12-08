@@ -4,7 +4,7 @@ import ImageComponent from '@/components/Prize/dropzone';
 import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import useAppUser from '@/context/hooks/useAppUser';
-import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
+import { Button, Card, Checkbox, NumberInput, SimpleGrid, TextInput, Title } from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
@@ -97,11 +97,15 @@ function Prize() {
   //   });
   // };
   return (
-    <div className="shadow-md max-w-screen-lg p-8 m-6">
+    <Card shadow='md' withBorder className="w-full p-8 m-6">
+      <Title order={1} className="my-2">
+        Create a Prize
+      </Title>
       <ImageComponent files={files} setFiles={setFiles} />
       <TextInput
         className="my-2"
-        placeholder="Title"
+        placeholder="Waster Management System"
+        label="Enter the title of your proposal"
         value={title}
         onChange={(e) => {
           setTitle(e.target.value);
@@ -188,7 +192,7 @@ function Prize() {
       >
         Request for Approval
       </Button>
-    </div>
+    </Card>
   );
 }
 

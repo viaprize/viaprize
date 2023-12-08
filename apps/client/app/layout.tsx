@@ -1,10 +1,9 @@
 'use client';
 
-import { OwnLoader } from '@/components/custom/loader';
-import { configureChainsConfig } from '@/lib/wagmi';
 import { env } from '@env';
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import '@mantine/dropzone/styles.css';
 import '@mantine/tiptap/styles.css';
 import { PrivyProvider } from '@privy-io/react-auth';
@@ -14,6 +13,8 @@ import { Router } from 'next/router';
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
+import { OwnLoader } from '@/components/custom/loader';
+import { configureChainsConfig } from '@/lib/wagmi';
 import '../styles/globals.css';
 import '../styles/index.css';
 
