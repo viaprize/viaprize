@@ -1,4 +1,4 @@
-import { Card } from '@mantine/core';
+import { Card, Title } from '@mantine/core';
 import PortalForm from './form';
 
 export default function CreatePortal() {
@@ -10,6 +10,7 @@ export default function CreatePortal() {
 
   return (
     <Card className="w-full p-8 m-6" mt="md" withBorder shadow="sm">
+      <Title my="md" order={1}>Create a Portal</Title>
       <PortalForm />
     </Card>
   );

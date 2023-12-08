@@ -33,8 +33,8 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
       </AppShell.Header>
 
       <AppShell.Main>
-        <div className="w-full grid place-content-center">
-          <Center className="max-w-screen-xl">{children}</Center>
+        <div className="w-full flex justify-center">
+          <Center className="max-w-screen-xl w-full">{children}</Center>
         </div>
       </AppShell.Main>
     </AppShell>
