@@ -8,8 +8,6 @@ const config = {
     '@vercel/style-guide/eslint/react',
     '@vercel/style-guide/eslint/next',
     'eslint-config-turbo',
-    'next/babel',
-    'next/core-web-vitals',
   ].map((path) => require.resolve(path)), // specify the type of 'path' parameter explicitly
   overrides: [
     {
@@ -34,7 +32,7 @@ const config = {
       },
     },
   },
-  ignorePatterns: ['node_modules/', 'dist/', 'lib/smartContract.ts'],
+  ignorePatterns: ['node_modules/', 'dist/', 'lib/smartContract.ts','next/babel'],
   // add rules configurations here
   rules: {
     'unicorn/filename-case': 'off',

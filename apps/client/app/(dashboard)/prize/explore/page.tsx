@@ -1,9 +1,9 @@
-import SearchFilters from '@/components/ExplorePrize/searchFilters';
 import { Suspense } from 'react';
 import FetchPrizes from './fetchprizes';
 import SkeletonLoad from './loading';
+import SearchFilters from '@/components/ExplorePrize/searchFilters';
 
-async function ExplorePage() {
+function ExplorePage() {
   return (
     <div className="max-w-screen-xl">
       <SearchFilters />
