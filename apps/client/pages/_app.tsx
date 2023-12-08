@@ -17,6 +17,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { configureChainsConfig } from '@/lib/wagmi';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { OwnLoader } from '@/components/custom/loader';
 
 const queryClient = new QueryClient();
 
@@ -34,28 +35,6 @@ type AppPropsWithLayout = AppProps & {
 const theme = createTheme({
   /** Your theme override here */
 });
-
-function HourLoader() {
-  const { colorScheme } = useMantineColorScheme();
-
-  useEffect(() => {
-    async function getLoader() {
-      const { hourglass } = await import('ldrs');
-      hourglass.register();
-    }
-    void getLoader();
-  }, []);
-  return <l-hourglass color={colorScheme === 'dark' ? 'white' : 'black'} />;
-}
-
-function OwnLoader() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      {/* <Loader size="md" /> */}
-      <HourLoader />
-    </div>
-  );
-}
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);

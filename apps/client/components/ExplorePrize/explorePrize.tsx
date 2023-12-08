@@ -1,5 +1,8 @@
+'use client'
 import { chain } from '@/lib/wagmi';
 import { Badge, Button, Card, Group, Image, Text } from '@mantine/core';
+import { Parser } from 'htmlparser2';
+
 
 interface ExploreCardProps {
   imageUrl: string;
@@ -12,9 +15,21 @@ interface ExploreCardProps {
 }
 
 function htmlToPlainText(html: string): string {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  return doc.body.textContent || '';
+  let textContent = '';
+
+  const parser = new Parser(
+    {
+      ontext: (text) => {
+        textContent += text;
+      },
+    },
+    { decodeEntities: true },
+  );
+
+  parser.write(html);
+  parser.end();
+
+  return textContent;
 }
 
 function ExploreCard({

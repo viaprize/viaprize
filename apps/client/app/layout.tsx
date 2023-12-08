@@ -3,7 +3,11 @@
 import { MantineProvider, createTheme } from '@mantine/core';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import { PrivyProvider } from '@privy-io/react-auth';
+import '@mantine/core/styles.css';
+import '@mantine/dropzone/styles.css';
+import '@mantine/tiptap/styles.css';
 import '../styles/globals.css';
+import '../styles/index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { env } from '@env';
