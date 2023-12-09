@@ -2,8 +2,8 @@
 pragma solidity 0.8.19;
 
 contract portal {
-    address[] public owners;// threseurue
-    mapping(address => bool) public isOwner; // iseasuruers
+    address[] public treasurer;
+    mapping(address => bool) public isTreasurer; 
     address public receiverAddress;
     uint256 public goalAmount = 0;
     uint256 public deadline = 0;
@@ -40,18 +40,18 @@ contract portal {
     );
 
     constructor(
-        address[] memory _owners,
+        address[] memory _treasurer,
         uint256 _goal,
         uint256 _deadline,
         bool _allowDonationAboveGoalAmount,
         uint256 _platformFee,
         bool _allowImmediately
     ) {
-        for (uint256 i = 0; i < _owners.length; i++) {
-            owners.push(_owners[i]);
-            isOwner[_owners[i]] = true;
+        for (uint256 i = 0; i < _treasurer.length; i++) {
+            treasurer.push(_treasurer[i]);
+            isTreasurer[_treasurer[i]] = true;
         }
-        receiverAddress = owners[0];
+        receiverAddress = treasurer[0];
         platformFee = _platformFee;
         allowImmediately = _allowImmediately;
 
@@ -173,12 +173,12 @@ contract portal {
     }
 
     function closeCampaign() public {
-        require(isOwner[msg.sender] == true, "you are not an owner to close the campaign");
+        require(isTreasurer[msg.sender] == true, "you are not an owner to close the campaign");
         isActive = false;
     }
 
     // function withdrawAmount() public {
-    //     require(isOwner[msg.sender] == true, "you are not an owner to close the campaign");
+    //     require(isTreasurer[msg.sender] == true, "you are not an owner to close the campaign");
     //     payable(receiverAddress).transfer(totalRewards);
     //     payable(platformAddress).transfer(totalFunds - totalRewards);
     //     totalRewards = 0;
