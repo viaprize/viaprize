@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./SubmissionAVLTree.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 library SubmissionLibrary {
     function deploySubmission() external returns(address) {
@@ -9,10 +10,10 @@ library SubmissionLibrary {
         return address(new_SubmissionAVLTree);
     }
 }
-
+ 
 
 contract ViaPrize {
-        /// @notice this will be the total amount of funds raised
+    /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
     /// @notice this will be the total amount of rewards available
     uint256 public total_rewards; 
@@ -26,19 +27,20 @@ contract ViaPrize {
     uint256 voting_time; 
     /// @notice this will be the time that the submission period ends
     uint256 submission_time;
-    /// @notice  this will be a mapping of the addresses of the admins to a boolean value of true or false
-    mapping (address => bool) public isAdmin;
-    /// @notice array of admins;
-    address[] public admins;
-    /// @notice this will be a mapping of the addresses of the funders to the amount of eth they have contributed
-    mapping (address => uint256) public funders;
-    /// @notice Add a new mapping to store each funder's votes on each submission
-    mapping(address => mapping(bytes32 => uint256)) public funderVotes;
+    /// @notice  this will be a mapping of the addresses of the proposers to a boolean value of true or false
+    mapping (address => bool) public isProposer;
+    /// @notice array of proposers;
+    address[] public proposers;
+    /// @notice this will be a mapping of the addresses of the patrons to the amount of eth they have contributed
+    mapping (address => uint256) public patrons;
+    /// @notice Add a new mapping to store each patrons's votes on each submission
+    mapping(address => mapping(bytes32 => uint256)) public patronVotes;
     /// @notice Add a new mapping to check if a funder has received their refunds
     mapping(bytes32 => mapping(address => bool)) public refunded;
     /// @notice add a new refund mapping for address to bool
     mapping(address => bool) public addressRefunded;
 
+    using SafeMath for uint256;
     uint proposerFee;
     uint platformFee;
 
@@ -100,14 +102,14 @@ contract ViaPrize {
     event SubmissionCreated(address indexed submitter, bytes32 indexed submissionHash);
 
 
-    constructor(address[] memory _admins, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress) {
-        /// @notice add as many admins as you need to -- replace msg.sender with the address of the admin(s) for now this means the deployer will be the sole admin
+    constructor(address[] memory _proposers, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress) {
+        /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
         
-        for(uint i=0; i<_admins.length; i++) {
-            admins.push(_admins[i]);
-            isAdmin[_admins[i]] = true;
+        for(uint i=0; i<_proposers.length; i++) {
+            proposers.push(_proposers[i]);
+            isProposer[_proposers[i]] = true;
         }
-        proposerAddress = admins[0];
+        proposerAddress = proposers[0];
         platformAddress = _platformAddress;
         for (uint i = 0; i < _platformAdmins.length; i++) {
             platformAdmins.push(_platformAdmins[i]);
@@ -127,7 +129,7 @@ contract ViaPrize {
 
     /// @notice create a function to start the submission period
     function start_submission_period(uint256 _submission_time) public {
-        if(isAdmin[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+        if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
 
         /// @notice submission time will be in days
         submission_time = block.timestamp + _submission_time * 1 days;
@@ -151,7 +153,7 @@ contract ViaPrize {
 
     /// @notice start the voting period 
     function start_voting_period(uint256 _voting_time) public {
-        if(isAdmin[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+        if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(block.timestamp < submission_time) revert SubmissionPeriodActive();
 
         /// @notice voting time also in days
@@ -163,12 +165,13 @@ contract ViaPrize {
     function end_voting_period() public onlyPlatformAdmin {
         if(voting_time == 0) revert VotingPeriodNotActive();
         voting_time = 0;
+        distribute_use_unused_votes_v2();
         distributeRewards();
     }
 
     /// @notice Distribute rewards
     function distributeRewards() private {
-        if(isAdmin[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+        if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(distributed == true) revert RewardsAlreadyDistributed();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         platform_reward = (total_funds * platformFee ) / 100;
@@ -176,7 +179,7 @@ contract ViaPrize {
         /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
         for (uint256 i = 0; i < allSubmissions.length;) {
             if (allSubmissions[i].funded) {
-                uint256 reward = (allSubmissions[i].votes * (100-proposerFee-platformFee)) / 100;
+                uint256 reward = (allSubmissions[i].votes);
                 total_rewards -= reward;
                 payable(allSubmissions[i].submitter).transfer(reward);
             } 
@@ -204,21 +207,21 @@ contract ViaPrize {
         return submissionHash;
     }
 
-    /// @notice create a function to allow funders to vote for a submission
+    /// @notice create a function to allow patrons to vote for a submission
     /// @notice  Update the vote function
     function vote(bytes32 _submissionHash, uint256 amount) public {
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
-        if (amount > funders[msg.sender]) revert NotEnoughFunds();
+        if (amount > patrons[msg.sender]) revert NotEnoughFunds();
 
-        funders[msg.sender] -= amount;
+        patrons[msg.sender] -= amount;
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = submissionTree.getSubmission(_submissionHash);
         /// @notice submission should return a struct with the submissionHash, the submitter, the submissionText, the threshhold, the votes, and the funded status 
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
         submissionTree.addVotes(_submissionHash, amount);
-        funderVotes[msg.sender][_submissionHash] += amount;
-        submissionTree.updateFunderBalance(_submissionHash, msg.sender, (funderVotes[msg.sender][_submissionHash]*(100-platformFee))/100);
+        patronVotes[msg.sender][_submissionHash] += amount;
+        submissionTree.updateFunderBalance(_submissionHash, msg.sender, (patronVotes[msg.sender][_submissionHash]*(100-platformFee))/100);
         SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
         if (submission.votes > 0) {
         submissionTree.setFundedTrue(_submissionHash, true);
@@ -231,14 +234,14 @@ contract ViaPrize {
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
     function change_vote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount) public {
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
-        if (funderVotes[msg.sender][_previous_submissionHash] < amount) revert NotYourVote();
+        if (patronVotes[msg.sender][_previous_submissionHash] < amount) revert NotYourVote();
 
         submissionTree.subVotes(_previous_submissionHash, amount);
         submissionTree.addVotes(_new_submissionHash, amount);
-        submissionTree.updateFunderBalance(_previous_submissionHash, msg.sender, (funderVotes[msg.sender][_previous_submissionHash]*(100-platformFee))/100);
-        submissionTree.updateFunderBalance(_new_submissionHash, msg.sender, (funderVotes[msg.sender][_new_submissionHash]*(100-platformFee))/100);
-        funderVotes[msg.sender][_previous_submissionHash] -= amount;
-        funderVotes[msg.sender][_new_submissionHash] += amount;
+        submissionTree.updateFunderBalance(_previous_submissionHash, msg.sender, (patronVotes[msg.sender][_previous_submissionHash]*(100-platformFee))/100);
+        submissionTree.updateFunderBalance(_new_submissionHash, msg.sender, (patronVotes[msg.sender][_new_submissionHash]*(100-platformFee))/100);
+        patronVotes[msg.sender][_previous_submissionHash] -= amount;
+        patronVotes[msg.sender][_new_submissionHash] += amount;
 
         SubmissionAVLTree.SubmissionInfo memory previousSubmission = submissionTree.getSubmission(_previous_submissionHash);
 
@@ -260,54 +263,60 @@ contract ViaPrize {
         return submissionTree.inOrderTraversal();
     }
 
-    /// @notice i hate my life
+    /// @notice get submission by submissionHash
     function get_submission_by_hash(bytes32 submissionHash) public view returns (uint256){
         return submissionTree.getSubmissionVote(submissionHash);
 
     }
     
-    /// @notice function to allow funders to add funds to the contract
+    /// @notice function to allow patrons to add funds to the contract
     function addFunds() public payable {
         if (msg.value == 0) revert NotEnoughFunds();
-            funders[msg.sender] += msg.value;
+            patrons[msg.sender] += msg.value;
             total_funds += msg.value;
-            total_rewards += (msg.value * (100-platformFee)) / 100; /// @notice  platform fee will depend on the prize
+            total_rewards += (msg.value * (100-platformFee-proposerFee)) / 100; /// @notice  platform fee will depend on the prize
     }
 
     receive () external payable {
         addFunds();
     }
 
-    /// @notice create function to allow admins to withdraw funds to the submission winners and the platform but do not iterate through an unknown length array
-    function use_unused_votes(bytes32 _submissionHash) public {
-        if(isAdmin[msg.sender] == false) revert NotAdmin();
-        if (block.timestamp > voting_time) revert VotingPeriodNotActive();
-
-        uint256 unused_admin_votes = total_funds - total_rewards;
-        submissionTree.addVotes(_submissionHash, unused_admin_votes);
-        unused_admin_votes = 0;
-    }
-
-    // function distribute_use_unused_votes_v2() public view {
-    //     if(isAdmin[msg.sender] == false) revert NotAdmin();
+    // /// @notice create function to allow proposers to withdraw funds to the submission winners and the platform but do not iterate through an unknown length array
+    // function use_unused_votes(bytes32 _submissionHash) public {
+    //     if(isProposer[msg.sender] == false) revert NotAdmin();
     //     if (block.timestamp > voting_time) revert VotingPeriodNotActive();
 
-    //     uint256 total_unused_votes = total_funds - total_rewards;
-    //     uint256 total_votes = 0;
-
-    //     SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-    //     for(uint256 i=0; i<allSubmissions.length; i++) {
-    //         total_votes += allSubmissions[i].votes;
-    //     }
-
+    //     uint256 unused_admin_votes = total_funds - total_rewards;
+    //     submissionTree.addVotes(_submissionHash, unused_admin_votes);
+    //     unused_admin_votes = 0;
     // }
+
+   /// @notice this fn sends the unused votes to the submitter based on their previous votes.
+    function distribute_use_unused_votes_v2() public returns(uint256, uint256, uint256){
+       if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+
+       uint256 total_votes = 0;
+
+       SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+       for(uint256 i=0; i<allSubmissions.length; i++) {
+           total_votes += allSubmissions[i].votes;
+       }
+       uint256 total_unused_votes = total_rewards.sub(total_votes);
+       for(uint256 i=0; i<allSubmissions.length; i++) {
+           uint256 individual_percentage = (allSubmissions[i].votes.mul(100)).div(total_votes); 
+           uint256 transferable_amount = (total_unused_votes.mul(individual_percentage)).div(100);
+           payable(allSubmissions[i].submitter).transfer(transferable_amount);
+       }
+
+       return (total_votes, total_unused_votes, total_rewards);
+   }
 
     /// @notice Allows users to withdraw funds that they have voted for but did not cross threshhold as well as unused funds 
     function claimRefund(address recipient) public {
         if (block.timestamp < voting_time) revert VotingPeriodActive();
         if (addressRefunded[recipient] == true) revert RefundAlreadyClaimed();
         if (recipient != msg.sender) revert NotYourVote();
-        if (funders[recipient] <= 0) revert RefundDoesntExist();
+        if (patrons[recipient] <= 0) revert RefundDoesntExist();
         if (distributed != true) revert RewardsNotDistributed();
 
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
@@ -329,7 +338,7 @@ contract ViaPrize {
 
         /// @notice - remember that 5% of the fees go to the platform as a reward. 
 
-        totalRefundAmount += (funders[recipient]*(100-platformFee))/100;
+        totalRefundAmount += (patrons[recipient]*(100-platformFee))/100;
         totalRefundAmount -= tx.gasprice;
 
         addressRefunded[recipient] = true;
@@ -342,7 +351,7 @@ contract ViaPrize {
 
     /// @notice Simple view functions to check the refund amount
     function check_refund_amount(address recipient) public view returns (uint256 _refundAmount) {
-        if(isAdmin[msg.sender] == false) revert NotAdmin();
+        if(isProposer[msg.sender] == false) revert NotAdmin();
         if(block.timestamp < voting_time) revert VotingPeriodActive();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
 
