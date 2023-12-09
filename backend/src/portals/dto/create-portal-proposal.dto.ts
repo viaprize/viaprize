@@ -18,7 +18,7 @@ export class CreatePortalProposalDto {
   @Expose()
   @IsNumber()
   @IsOptional()
-  fundingGoal: number;
+  fundingGoal?: number;
 
   @Expose()
   @IsBoolean()
@@ -27,7 +27,7 @@ export class CreatePortalProposalDto {
   @Expose()
   @IsDate()
   @IsOptional()
-  deadline: Date;
+  deadline?: Date;
 
   @Expose()
   @IsBoolean()

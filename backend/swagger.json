@@ -3335,8 +3335,8 @@
             "type": "string"
           },
           "fundingGoal": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "isMultiSignatureReciever": {
@@ -3345,8 +3345,8 @@
             "type": "boolean"
           },
           "deadline": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "string",
             "format": "date-time"
           },
@@ -3404,9 +3404,7 @@
         "nullable": false,
         "required": [
           "description",
-          "fundingGoal",
           "isMultiSignatureReciever",
-          "deadline",
           "allowDonationAboveThreshold",
           "termsAndCondition",
           "proposerAddress",
