@@ -74,10 +74,7 @@ export default function PortalCards({
       </Badge>
 
       <Text size="sm" c="gray">
-        Raised from{' '}
-        <span>
-          <Text c="dark"> {totalContributors}</Text>{' '}
-        </span>{' '}
+        Raised from <span className="text-gray font-bold">{totalContributors} </span>
         contributions
       </Text>
       <Button

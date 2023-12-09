@@ -1,9 +1,6 @@
 'use client';
 
-import ImageComponent from '@/components/Prize/dropzone';
-import usePortalProposal from '@/components/hooks/usePortalProposal';
-import { TextEditor } from '@/components/richtexteditor/textEditor';
-import useAppUser from '@/context/hooks/useAppUser';
+
 import {
   ActionIcon,
   Button,
@@ -24,6 +21,10 @@ import { useState } from 'react';
 import { FaCalendar } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
+import ImageComponent from '@/components/Prize/dropzone';
+import usePortalProposal from '@/components/hooks/usePortalProposal';
+import { TextEditor } from '@/components/richtexteditor/textEditor';
+import useAppUser from '@/context/hooks/useAppUser';
 
 export default function PortalForm() {
   const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -53,6 +54,7 @@ export default function PortalForm() {
     setImages(newImages);
     return newImages;
   };
+  
   const onAddressChange = (index: number, funcaddress: string) => {
     setAddress((prev) => {
       prev[index] = funcaddress;
@@ -190,7 +192,7 @@ export default function PortalForm() {
       <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
         <IconPlus />
       </ActionIcon>
-      <div className='my-2'>
+      <div className="my-2">
         <Checkbox
           checked={haveFundingGoal}
           onChange={(event) => {
@@ -213,7 +215,7 @@ export default function PortalForm() {
           </div>
         ) : null}
       </div>
-      <div className='my-2'>
+      <div className="my-2">
         <Checkbox
           checked={haveDeadline}
           onChange={(event) => {
@@ -230,7 +232,7 @@ export default function PortalForm() {
           />
         ) : null}
       </div>
-      {(haveFundingGoal && haveDeadline) ? (
+      {haveFundingGoal && haveDeadline ? (
         <Checkbox
           my="md"
           checked={allowFundsAboveGoal}
@@ -240,8 +242,13 @@ export default function PortalForm() {
           label="Allow funds above goal"
         />
       ) : null}
-      <Button color="blue" variant="light" radius="md" loading={submittingProposal || loading}
-        onClick={handleSubmit}>
+      <Button
+        color="primary"
+        variant="light"
+        radius="md"
+        loading={submittingProposal || loading}
+        onClick={handleSubmit}
+      >
         Create Portal
       </Button>
     </div>

@@ -184,6 +184,7 @@ function Prize() {
         fullWidth
         loading={submittingProposal || loading}
         onClick={handleSubmit}
+        color="primary"
       >
         Request for Approval
       </Button>

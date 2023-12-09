@@ -18,6 +18,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import '../styles/globals.css';
 import '../styles/index.css';
+import { theme } from 'utils/theme';
 
 const queryClient = new QueryClient();
 
@@ -32,9 +33,6 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-const theme = createTheme({
-  /** Your theme override here */
-});
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
