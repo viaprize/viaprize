@@ -6,7 +6,7 @@ import DonationInfo from './donation-info';
 
 export default function PortalTabs() {
   return (
-    <Tabs variant="outline" defaultValue="about" mt="md">
+    <Tabs variant="pills" defaultValue="about" mt="md" >
       <div className="bg-white">
         <Tabs.List grow>
           <Tabs.Tab value="about" className="">
