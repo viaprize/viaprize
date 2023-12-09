@@ -1,6 +1,6 @@
+import { formatEther } from 'viem';
 import ExploreCard from '@/components/ExplorePrize/explorePrize';
 import { Api } from '@/lib/api';
-import { formatEther } from 'viem';
 
 export default async function FetchPrizes() {
   const prizes = (
