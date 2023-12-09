@@ -2,6 +2,7 @@
 import SearchFilters from '@/components/ExplorePrize/searchFilters';
 import { Text } from '@mantine/core';
 import PortalCards from './portal-card';
+import SearchFiltersPortals from './search-filters-portals';
 export default function ExplorePortal() {
   return (
     <div className="max-w-screen-xl">
@@ -11,7 +12,7 @@ export default function ExplorePortal() {
       <Text size="md" fw="initial" mt="xs" ml="md">
         you can explore portal and work on them
       </Text>
-      <SearchFilters />
+      <SearchFiltersPortals />
       <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
         <PortalCards
           imageUrl={''}
