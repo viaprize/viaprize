@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-contract portal {
+contract Portal {
     address[] public owners;
     mapping(address => bool) public isOwner;
     address public receiverAddress;
@@ -20,9 +20,6 @@ contract portal {
 
     error NotEnoughFunds();
     error FundingToContractEnded();
-    error oneError();
-    error twoError();
-    error threeError();
 
     event Values(
         address receiverAddress,
