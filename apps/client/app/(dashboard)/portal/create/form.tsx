@@ -85,7 +85,6 @@ export default function PortalForm() {
       throw Error('Wallet is undefined');
     }
     const newImages = await handleUploadImages();
-    const finalAddress = address.filter((x) => x);
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
       deadline: deadline?.toDateString() ?? undefined,
