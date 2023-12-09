@@ -79,7 +79,26 @@ export default function PortalForm() {
   //     return [...arr];
   //   });
   // };
-
+  const generateTags = ()=>{
+    const tags = [];
+    const sendNow = portalType =="gofundme" ? true:false;
+    if(!sendNow){
+      tags.push(
+        "Refundable"
+      )
+    }
+    if(deadline){
+      tags.push(
+        "Deadline"
+      )
+    }
+    if(fundingGoal){
+      tags.push(
+        "Funding Goal"
+      )
+    }
+    return tags
+  }
   const submit = async () => {
     if (!wallet) {
       throw Error('Wallet is undefined');
@@ -87,16 +106,19 @@ export default function PortalForm() {
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
-      deadline: deadline?.toDateString() ?? undefined,
+      deadline: deadline ?? undefined,
       description: richtext,
-      tags: [],
+      tags: generateTags(),
       images: [newImages],
       title: value,
       proposerAddress: wallet.address,
       termsAndCondition: '',
       isMultiSignatureReciever: false,
       treasurers: [address],
-      fundingGoal: fundingGoal ? fundingGoal : undefined,
+      fundingGoal: fundingGoal ? convertUSDTOETH(fundingGoal): undefined,
+      sendImmediately: portalType =="gofundme" ? true:false
+
+
     });
     setLoading(false);
     router.push(`/profile/${appUser?.username}`);

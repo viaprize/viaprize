@@ -1,7 +1,7 @@
 import {
   PrepareWriteContractConfig,
+  ReadContractResult,
   WriteContractArgs,
-  WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
   prepareWriteContract,
@@ -23,7 +23,7 @@ import {
 } from 'wagmi';
 import {
   PrepareWriteContractResult,
-  ReadContractResult,
+  WriteContractMode,
 } from 'wagmi/actions';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

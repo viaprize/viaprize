@@ -1,7 +1,9 @@
 'use client'
-import { Text } from '@mantine/core';
-import PortalCards from './portal-card';
 import SearchFilters from '@/components/ExplorePrize/searchFilters';
+import { Text } from '@mantine/core';
+import { Suspense } from 'react';
+import FetchPortals from './fetchportals';
+import SkeletonLoad from './loading';
 
 
 export default function ExplorePortal() {
@@ -15,16 +17,11 @@ export default function ExplorePortal() {
       </Text>
       <SearchFilters />
       <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
-        <PortalCards
-          imageUrl=""
-          title="some random project"
-          authorName="Swaraj Bachu"
-          description="skajhfkj asdkjhf skajdhf kjsdahf kjsdha fkjhads fh sakdjhf ksajdhf kj "
-          amountRaised="100"
-          totalContributors="500"
-          shareUrl="https://www.google.com"
-          id="portalsdude"
-        />
+        <Suspense fallback={<SkeletonLoad />}>
+          {/* @ts-expect-error Server Component */}
+          <FetchPortals/>
+        </Suspense>
+        
       </div>
     </div>
   );

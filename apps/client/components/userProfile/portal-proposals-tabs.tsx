@@ -77,7 +77,7 @@ export default function PortalProposalsTabs({
                                             args:[
                                                 item?.treasurers as `0x${string}`[],
                                                 BigInt(item.fundingGoal ?? 0) ,
-                                                BigInt(item.deadline ?? 0),
+                                                BigInt( (new Date(item.deadline).getTime()/1000) ?? 0),
                                                 item.allowDonationAboveThreshold,
                                                 BigInt(5),
                                                 item.sendImmediately  
