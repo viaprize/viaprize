@@ -1,7 +1,7 @@
 import {
   prepareWriteViaPrize,
-  useViaPrizeFunders,
-  writeViaPrize,
+  useViaPrizePatrons,
+  writeViaPrize
 } from '@/lib/smartContract';
 import { chain } from '@/lib/wagmi';
 import {
@@ -58,7 +58,7 @@ export default function SubmissionsCard({
     data: funderBalance,
     refetch,
     isLoading,
-  } = useViaPrizeFunders({
+  } = useViaPrizePatrons({
     address: contractAddress as `0x${string}`,
     args: [address ?? '0x'],
   });

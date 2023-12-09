@@ -58,6 +58,7 @@ export interface Portals {
   id: string;
   description: string;
   slug: string;
+  sendImmediately: boolean;
   fundingGoal: number;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
@@ -157,6 +158,7 @@ export interface PortalProposals {
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
+  sendImmediately: boolean;
   allowDonationAboveThreshold: boolean;
   termsAndCondition: string;
   proposerAddress: string;
@@ -184,6 +186,7 @@ export interface PortalWithBalance {
   id: string;
   description: string;
   slug: string;
+  sendImmediately: boolean;
   fundingGoal: number;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
@@ -219,6 +222,7 @@ export interface CreatePortalProposalDto {
   description: string;
   fundingGoal?: number;
   isMultiSignatureReciever: boolean;
+  sendImmediately: boolean;
   /** @format date-time */
   deadline?: string;
   allowDonationAboveThreshold: boolean;
@@ -455,7 +459,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
+  public baseUrl: string =env.NEXT_PUBLIC_BACKEND_URL;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -515,8 +519,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-              ? JSON.stringify(property)
-              : `${property}`,
+            ? JSON.stringify(property)
+            : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -596,18 +600,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-          .then((data) => {
-            if (r.ok) {
-              r.data = data;
-            } else {
-              r.error = data;
-            }
-            return r;
-          })
-          .catch((e) => {
-            r.error = e;
-            return r;
-          });
+            .then((data) => {
+              if (r.ok) {
+                r.data = data;
+              } else {
+                r.error = data;
+              }
+              return r;
+            })
+            .catch((e) => {
+              r.error = e;
+              return r;
+            });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);

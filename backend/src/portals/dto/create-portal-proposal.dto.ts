@@ -2,11 +2,11 @@ import { Expose } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
-  IsDate,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsString,
+  IsString
 } from 'class-validator';
 
 export class CreatePortalProposalDto {
@@ -25,7 +25,11 @@ export class CreatePortalProposalDto {
   isMultiSignatureReciever: boolean;
 
   @Expose()
-  @IsDate()
+  @IsBoolean()
+  sendImmediately: boolean;
+
+  @Expose()
+  @IsDateString()
   @IsOptional()
   deadline?: Date;
 

@@ -2470,6 +2470,11 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "sendImmediately": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
           "fundingGoal": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -2562,6 +2567,7 @@
           "id",
           "description",
           "slug",
+          "sendImmediately",
           "fundingGoal",
           "isMultiSignatureReciever",
           "deadline",
@@ -3019,6 +3025,11 @@
             "type": "string",
             "format": "date-time"
           },
+          "sendImmediately": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
           "allowDonationAboveThreshold": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3103,6 +3114,7 @@
           "fundingGoal",
           "isMultiSignatureReciever",
           "deadline",
+          "sendImmediately",
           "allowDonationAboveThreshold",
           "termsAndCondition",
           "proposerAddress",
@@ -3165,6 +3177,11 @@
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
+          },
+          "sendImmediately": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
           },
           "fundingGoal": {
             "x-typia-required": true,
@@ -3259,6 +3276,7 @@
           "id",
           "description",
           "slug",
+          "sendImmediately",
           "fundingGoal",
           "isMultiSignatureReciever",
           "deadline",
@@ -3344,6 +3362,11 @@
             "x-typia-optional": false,
             "type": "boolean"
           },
+          "sendImmediately": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
           "deadline": {
             "x-typia-required": false,
             "x-typia-optional": true,
@@ -3405,6 +3428,7 @@
         "required": [
           "description",
           "isMultiSignatureReciever",
+          "sendImmediately",
           "allowDonationAboveThreshold",
           "termsAndCondition",
           "proposerAddress",

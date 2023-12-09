@@ -6,15 +6,22 @@ import { formatEther } from 'viem';
 import { usePublicClient, useQuery } from 'wagmi';
 import ExploreCard from '../ExplorePrize/explorePrize';
 import SubmissionsCard from '../Prize/prizepage/submissionsCard';
+import usePortalProposal from '../hooks/usePortalProposal';
 import usePrizeProposal from '../hooks/usePrizeProposal';
+import PortalProposalsTabs from './portal-proposals-tabs';
 import ProposalsTabs from './proposals-tabs';
 
 export default function MainTabsUserProfile() {
   const { getProposalsOfUser } = usePrizeProposal();
+  const { getProposalsOfUser: getPortalProposalsOfUser } = usePortalProposal()
   const { query } = useRouter();
-  const getProposalsOfUserMutation = useQuery(['getProposalsOfUser', undefined], () => {
+  const getPrizeProposalOfUserMutation = useQuery(['getProposalsOfUser', undefined], () => {
     return getProposalsOfUser({ limit: 10, page: 1 }, query.id as string);
   });
+  const getPortalProposalsOfUserMutation = useQuery(['getPortalProposals', undefined], () => {
+    return getPortalProposalsOfUser({ limit: 10, page: 1 }, query.id as string)
+  });
+  console.log(getPortalProposalsOfUserMutation.data, "dataaaa")
   const client = usePublicClient();
   const getPrizesOfUserMutation = useQuery(['getPrizesOfUser', undefined], async () => {
     const prizes = await (
@@ -41,11 +48,14 @@ export default function MainTabsUserProfile() {
       return (await backendApi()).users.usernameSubmissionsDetail(query.id as string);
     },
   );
+
+
   return (
     <Tabs defaultValue="proposals" variant="pills" m="lg" className="md:w-2/3">
       <Tabs.List grow justify="center">
         <Tabs.Tab value="prizes">Prize</Tabs.Tab>
-        <Tabs.Tab value="proposals">Proposals</Tabs.Tab>
+        <Tabs.Tab value="prize-proposals">Prize Proposals</Tabs.Tab>
+        <Tabs.Tab value='portal-proposals'>Portal Proposals</Tabs.Tab>
         <Tabs.Tab value="submissions">Submissions</Tabs.Tab>
       </Tabs.List>
       <Divider my="sm" />
@@ -68,10 +78,16 @@ export default function MainTabsUserProfile() {
           ))}
         </Skeleton>
       </Tabs.Panel>
-      <Tabs.Panel value="proposals">
+      <Tabs.Panel value="prize-proposals">
         <ProposalsTabs
-          data={getProposalsOfUserMutation.data}
-          isSuccess={getProposalsOfUserMutation.isSuccess}
+          data={getPrizeProposalOfUserMutation.data}
+          isSuccess={getPrizeProposalOfUserMutation.isSuccess}
+        />
+      </Tabs.Panel>
+      <Tabs.Panel value="portal-proposals">
+        <PortalProposalsTabs
+          data={getPortalProposalsOfUserMutation.data}
+          isSuccess={getPortalProposalsOfUserMutation.isSuccess}
         />
       </Tabs.Panel>
       <Tabs.Panel value="submissions">
