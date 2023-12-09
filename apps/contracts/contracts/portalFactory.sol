@@ -9,10 +9,10 @@ contract portalFactory {
         uint256 _goal,
         uint256 _deadline,
         bool _allowDonationAboveGoalAmount,
-        uint256 _platformFee
+        uint256 _platformFee,
+        bool _allowImmediately
     ) public returns (address) {
-        
-        Portal newPortal = new Portal(_owners, _goal, _deadline, _allowDonationAboveGoalAmount, _platformFee);
+        Portal newPortal = new Portal(_owners, _goal, _deadline, _allowDonationAboveGoalAmount, _platformFee,_allowImmediately);
         emit NewPortalCreated(address(newPortal));
         return address(newPortal);
     }

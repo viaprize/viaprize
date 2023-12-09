@@ -57,6 +57,7 @@ export class PortalsController {
       treasurers: portalProposal.treasurers,
       user: portalProposal.user,
       sendImmediately: portalProposal.sendImmediately
+
     });
     await this.portalProposalsService.remove(portalProposal.id);
     await this.mailService.portalDeployed(

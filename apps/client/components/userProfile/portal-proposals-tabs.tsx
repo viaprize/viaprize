@@ -1,7 +1,12 @@
 import { PortalProposals } from "@/lib/api";
+import { prepareWritePortalFactory, writePortalFactory } from "@/lib/smartContract";
 import { ProposalStatus } from "@/lib/types";
 import { Text } from "@mantine/core";
+import { waitForTransaction } from "@wagmi/core";
+import { useRouter } from "next/router";
+import { toast } from "sonner";
 import ProposalExploreCard from "../ExplorePrize/proposalExploreCard";
+import { usePortal } from "../hooks/usePortal";
 const getProposalStatus = (item: PortalProposals): ProposalStatus => {
 
     if (item.isApproved) {
@@ -22,6 +27,8 @@ export default function PortalProposalsTabs({
 }) {
     console.log({ isSuccess })
     console.log({ data }, "datatatatata")
+    const  router = useRouter()
+    const { createPortal } = usePortal()
     return (
         <div className="p-6 w-full">
 
@@ -41,15 +48,16 @@ export default function PortalProposalsTabs({
                                         break;
                                     }
                                     case 'approved': {
-                                        // const firstLoadingToast = toast.loading(
-                                        //     'Trasnaction Waiting To Be approved',
-                                        //     {
-                                        //         delete: false,
-                                        //         dismissible: false,
-                                        //     },
-                                        // );
+                                        const firstLoadingToast = toast.loading(
+                                            'Trasnaction Waiting To Be approved',
+                                            {
+                                                delete: false,
+                                                dismissible: false,
+                                            },
+                                        );
 
-                                        // console.log('approved');
+
+                                        console.log('approved');
                                         // console.log(
                                         //     [
                                         //         item?.admins as `0x${string}`[],
@@ -64,50 +72,48 @@ export default function PortalProposalsTabs({
                                         //     ],
                                         //     'args',
                                         // );
-                                        // const request = await prepareWriteViaPrizeFactory({
-                                        //     functionName: 'createViaPrize',
-                                        //     args: [
-                                        //         item?.admins as `0x${string}`[],
-                                        //         [
-                                        //             '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-                                        //             '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-                                        //         ] as `0x${string}`[],
-                                        //         BigInt(5),
-                                        //         BigInt(5),
-                                        //         '0x62e9a8374AE3cdDD0DA7019721CcB091Fed927aE' as `0x${string}`,
-                                        //         BigInt(currentTimestamp.current),
-                                        //     ],
-                                        // });
+                                        const request = await prepareWritePortalFactory({
+                                            functionName:'createPortal',
+                                            args:[
+                                                item?.treasurers as `0x${string}`[],
+                                                BigInt(item.fundingGoal ?? 0) ,
+                                                BigInt(item.deadline ?? 0),
+                                                item.allowDonationAboveThreshold,
+                                                BigInt(5),
+                                                item.sendImmediately  
+                                            ]
+                                        })
+                                        const transaction = await writePortalFactory(request);
                                         // const out = await writeViaPrizeFactory(request);
-                                        // toast.dismiss(firstLoadingToast);
-                                        // const secondToast = toast.loading(
-                                        //     'Waiting for transaction Confirmation...',
-                                        //     {
-                                        //         dismissible: false,
-                                        //         delete: false,
-                                        //     },
-                                        // );
-                                        // console.log(out, 'out');
-                                        // const waitForTransactionOut = await waitForTransaction({
-                                        //     hash: out.hash,
-                                        //     confirmations: 1,
-                                        // });
-                                        // console.log(waitForTransactionOut.logs[0].topics[2]);
-                                        // const prizeAddress =
-                                        //     '0x' + waitForTransactionOut.logs[0].topics[2]?.slice(-40);
-                                        // console.log(prizeAddress, 'prizeAddress');
-                                        // const prize = await createPrize({
-                                        //     address: prizeAddress,
-                                        //     proposal_id: item.id,
-                                        // });
-                                        // toast.dismiss(secondToast);
-                                        // console.log(prize, 'prize');
-                                        // toast.success(`Prize Address ${prizeAddress} `);
-                                        // toast.promise(router.push('/prize/explore'), {
-                                        //     loading: 'Redirecting Please Wait',
-                                        //     error: 'Error while redirecting ',
-                                        //     success: 'Redirected to Prize Explore Page',
-                                        // });
+                                        toast.dismiss(firstLoadingToast);
+                                        const secondToast = toast.loading(
+                                            'Waiting for transaction Confirmation...',
+                                            {
+                                                dismissible: false,
+                                                delete: false,
+                                            },
+                                        );
+                                        console.log(transaction, 'out');
+                                        const waitForTransactionOut = await waitForTransaction({
+                                            hash: transaction.hash,
+                                            confirmations: 1,
+                                        });
+                                        console.log(waitForTransactionOut.logs[0].topics[2]);
+                                        const portalAddress =
+                                            '0x' + waitForTransactionOut.logs[0].topics[2]?.slice(-40);
+                                        console.log(portalAddress, 'portalAddress');
+                                        const portal = await createPortal({
+                                            address:portalAddress,
+                                            proposal_id:item.id
+                                        })
+                                        toast.dismiss(secondToast);
+                                        console.log(portal, 'portal');
+                                        toast.success(`portal Address ${portalAddress} `);
+                                        toast.promise(router.push('/portal/explore'), {
+                                            loading: 'Redirecting Please Wait',
+                                            error: 'Error while redirecting ',
+                                            success: 'Redirected to portal Explore Page',
+                                        });
                                         break;
                                     }
                                     case 'rejected': {

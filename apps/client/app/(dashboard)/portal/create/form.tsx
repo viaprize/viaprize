@@ -1,6 +1,10 @@
 'use client';
 
 
+import ImageComponent from '@/components/Prize/dropzone';
+import usePortalProposal from '@/components/hooks/usePortalProposal';
+import { TextEditor } from '@/components/richtexteditor/textEditor';
+import useAppUser from '@/context/hooks/useAppUser';
 import {
   ActionIcon,
   Button,
@@ -21,10 +25,6 @@ import { useState } from 'react';
 import { FaCalendar } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
-import ImageComponent from '@/components/Prize/dropzone';
-import usePortalProposal from '@/components/hooks/usePortalProposal';
-import { TextEditor } from '@/components/richtexteditor/textEditor';
-import useAppUser from '@/context/hooks/useAppUser';
 
 export default function PortalForm() {
   const [files, setFiles] = useState<FileWithPath[]>([]);
