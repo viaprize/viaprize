@@ -1,36 +1,35 @@
 'use client';
 
-
-import {
-  ActionIcon,
-  Button,
-  Checkbox,
-  CloseButton,
-  NumberInput,
-  SimpleGrid,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
-import { DateTimePicker } from '@mantine/dates';
-import type { FileWithPath } from '@mantine/dropzone';
-import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { IconPlus } from '@tabler/icons-react';
-import { useRouter } from "next/navigation";
-import { useState } from 'react';
-import { FaCalendar } from 'react-icons/fa';
-import { toast } from 'sonner';
-import { useMutation } from 'wagmi';
 import ImageComponent from '@/components/Prize/dropzone';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import useAppUser from '@/context/hooks/useAppUser';
+import {
+  Button,
+  Checkbox,
+  CloseButton,
+  Group,
+  NumberInput,
+  Radio,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
+import type { FileWithPath } from '@mantine/dropzone';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { FaCalendar } from 'react-icons/fa';
+import { toast } from 'sonner';
+import { useMutation } from 'wagmi';
 
 export default function PortalForm() {
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [value, setValue] = useState('');
   const [richtext, setRichtext] = useState('');
-  const [address, setAddress] = useState(['']);
+  const [address, setAddress] = useState('');
   const [haveFundingGoal, setHaveFundingGoal] = useState(false);
   const [haveDeadline, setHaveDeadline] = useState(false);
   const [fundingGoal, setFundingGoal] = useState(0);
@@ -39,14 +38,16 @@ export default function PortalForm() {
   const [images, setImages] = useState<string>();
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
+    const [portalType, setPortalType] = useState('gofundme');
 
-  const { addProposals, uploadImages } = usePortalProposal()
+
+  const { addProposals, uploadImages } = usePortalProposal();
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
-    useMutation(addProposals)
+    useMutation(addProposals);
 
   const { appUser } = useAppUser();
-  const router = useRouter()
+  const router = useRouter();
 
   const handleUploadImages = async () => {
     const newImages = await uploadImages(files);
@@ -54,13 +55,27 @@ export default function PortalForm() {
     setImages(newImages);
     return newImages;
   };
-  
-  const onAddressChange = (index: number, funcaddress: string) => {
-    setAddress((prev) => {
-      prev[index] = funcaddress;
-      return [...prev];
-    });
-  };
+
+  // const onAddressChange = (index: number, funcaddress: string) => {
+  //   setAddress((prev) => {
+  //     prev[index] = funcaddress;
+  //     return [...prev];
+  //   });
+  // };
+  // const addAddress = () => {
+  //   setAddress((prev: string[]) => {
+  //     return [...prev, ''];
+  //   });
+  // };
+
+  // const removeAddress = (index: number) => {
+  //   setAddress((prev) => {
+  //     const arr: string[] = JSON.parse(JSON.stringify(prev)) as string[];
+  //     arr.splice(index, 1);
+  //     return [...arr];
+  //   });
+  // };
+
   const submit = async () => {
     if (!wallet) {
       throw Error('Wallet is undefined');
@@ -77,21 +92,14 @@ export default function PortalForm() {
       proposerAddress: wallet.address,
       termsAndCondition: '',
       isMultiSignatureReciever: false,
-      treasurers: address,
-      fundingGoal: fundingGoal ? fundingGoal : undefined
-
+      treasurers: [address],
+      fundingGoal: fundingGoal ? fundingGoal : undefined,
     });
     setLoading(false);
-    await router.push(`/profile/${appUser?.username}`);
-  };
-  const addAddress = () => {
-    setAddress((prev: string[]) => {
-      return [...prev, ''];
-    });
+    router.push(`/profile/${appUser?.username}`);
   };
 
   const handleSubmit = () => {
-
     setLoading(true);
     try {
       console.log(images, 'images');
@@ -103,15 +111,6 @@ export default function PortalForm() {
     } catch {
       toast.error('Error Submitting Proposal');
     }
-  };
-
-
-  const removeAddress = (index: number) => {
-    setAddress((prev) => {
-      const arr: string[] = JSON.parse(JSON.stringify(prev)) as string[];
-      arr.splice(index, 1);
-      return [...arr];
-    });
   };
 
   return (
@@ -150,19 +149,18 @@ export default function PortalForm() {
           multiple addresses.
         </p>
       </div>
-      <SimpleGrid cols={2}>
+      {/* <SimpleGrid cols={2}>
         {address.map((item, index) => (
-          <div className="flex gap-1 justify-start items-center w-full" key={item}>
-            <TextInput
-              type="text"
-              placeholder="Enter Admin Address"
-              className="w-full"
-              value={item}
-              onChange={(e) => {
-                onAddressChange(index, e.target.value);
-              }}
-            />
-            {address.length > 1 && (
+          <div className="flex gap-1 justify-start items-center w-full" key={item}> */}
+      <TextInput
+        type="text"
+        placeholder="Enter Admin Address"
+        className="w-full"
+        onChange={(e) => {
+          setAddress(e.target.value);
+        }}
+      />
+      {/* {address.length > 1 && (
               <Button
                 color="red"
                 className="my-2"
@@ -188,10 +186,22 @@ export default function PortalForm() {
             )}
           </div>
         ))}
-      </SimpleGrid>
-      <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
+      </SimpleGrid> */}
+      {/* <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
         <IconPlus />
-      </ActionIcon>
+      </ActionIcon> */}
+      <Radio.Group name="favoriteFramework" label="Select your portal type" withAsterisk
+      onChange={setPortalType} value={portalType}
+      >
+        <Group mt="xs">
+          <Tooltip label="A little description about kickstarter" refProp="rootRef">
+            <Radio value="kickstarter" label="Kick Starter" />
+          </Tooltip>
+          <Tooltip label="A little description about go fund me" refProp="rootRef">
+            <Radio value="gofundme" label="Go Fund Me" />
+          </Tooltip>
+        </Group>
+      </Radio.Group>
       <div className="my-2">
         <Checkbox
           checked={haveFundingGoal}
@@ -244,7 +254,6 @@ export default function PortalForm() {
       ) : null}
       <Button
         color="primary"
-        variant="light"
         radius="md"
         loading={submittingProposal || loading}
         onClick={handleSubmit}
