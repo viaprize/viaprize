@@ -59,7 +59,7 @@ contract Portal {
         allowDonationAboveGoalAmount = _allowDonationAboveGoalAmount;
         isActive = true;
 
-        if(goalAmount > 0 && deadline1 > 0 && allowImmediately) revert AllowImmediatelyCantBeTrue();
+        if(goalAmount > 0 && deadline1 > 0 && !allowImmediately) revert AllowImmediatelyCantBeTrue();
     }
 
     function addFunds() public payable returns (uint256, uint256, uint256, bool, bool, bool)
