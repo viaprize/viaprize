@@ -1,15 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
 'use client';
-
-import {
-  Button,
-  Card,
-  Checkbox,
-  NumberInput,
-  SimpleGrid,
-  TextInput,
-  Title,
-} from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
