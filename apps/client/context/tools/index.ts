@@ -1,3 +1,5 @@
+import { makeStorageClient } from "@/components/_providers/WebClient";
+
 /**
  * Sleep for a given number of milliseconds.
  * @param ms - The number of milliseconds to sleep.
@@ -50,3 +52,15 @@ export function copyToClipboard(text: string): void {
 export const formatIPFS = (url: string): string => {
   return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
 };
+
+export const storeFiles = async (files: File[]) => {
+  const client = makeStorageClient();
+  const cid = await client.put(files);
+  console.log('stored files with cid:', cid);
+  if (!files[0]) {
+    return '';
+  }
+  const url = `https://dweb.link/ipfs/${cid}/${files[0].name}`;
+  console.log('URL of the uploaded image:', url);
+  return url;
+}
