@@ -107,7 +107,7 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
                         </Group>
                     </Modal>
                     {
-                        disableButton && (<Group>
+                        !disableButton && (<Group>
 
                             <Button
                                 color="red"

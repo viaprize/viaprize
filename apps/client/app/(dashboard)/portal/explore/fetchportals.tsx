@@ -23,6 +23,7 @@ export default async function FetchPortals() {
             key={portal.id}
             id={portal.id}
           />
+          
         );
       })}
     </>
