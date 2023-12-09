@@ -242,8 +242,13 @@ export default function PortalForm() {
           label="Allow funds above goal"
         />
       ) : null}
-      <Button color="blue" variant="light" radius="md" loading={submittingProposal || loading}
-        onClick={handleSubmit}>
+      <Button
+        color="primary"
+        variant="light"
+        radius="md"
+        loading={submittingProposal || loading}
+        onClick={handleSubmit}
+      >
         Create Portal
       </Button>
     </div>

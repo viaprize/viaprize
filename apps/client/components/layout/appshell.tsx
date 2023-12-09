@@ -2,6 +2,7 @@
 import { AppShell, Center, useComputedColorScheme, useMantineTheme } from '@mantine/core';
 import type { ReactNode } from 'react';
 import HeaderLayout from './headerLayout';
+import Footer from './footer';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
@@ -36,6 +37,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         <div className="w-full flex justify-center">
           <Center className="max-w-screen-xl w-full">{children}</Center>
         </div>
+        <Footer />
       </AppShell.Main>
     </AppShell>
   );

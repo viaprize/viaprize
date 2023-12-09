@@ -66,12 +66,7 @@ export default function HeaderLayout() {
         <Link href="/prize/explore">Prizes</Link>
       </Flex>
       <Flex align="center" gap="md">
-        <Button
-          className="hidden sm:block bg-blue-500 text-white"
-          style={{
-            backgroundColor: '#3d4070',
-          }}
-        >
+        <Button className="hidden sm:block " color="primary">
           <Link href="/prize/create">Create Prize</Link>
         </Button>
         {appUser ? (
@@ -101,6 +96,7 @@ export default function HeaderLayout() {
             </Group>
           </Card>
         ) : null}
+        <ProfileMenu />
         <ActionIcon
           variant="outline"
           color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}
@@ -115,7 +111,6 @@ export default function HeaderLayout() {
             <IconMoonStars size="1.1rem" />
           )}
         </ActionIcon>
-        <ProfileMenu />
       </Flex>
     </Group>
   );
@@ -196,7 +191,7 @@ function ProfileMenu() {
         </>
       ) : (
         <Button
-          color="blue"
+          color="primary"
           onClick={() => {
             void loginUser();
           }}

@@ -17,6 +17,7 @@ export default function Example() {
         </Text>
         <Button
           //   className="btn text-white btn-primary btn-wide my-3"
+          color="primary"
           onClick={async () => {
             await router.push('/onboarding/details');
           }}

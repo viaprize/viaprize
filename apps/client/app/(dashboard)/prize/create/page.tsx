@@ -201,6 +201,7 @@ function Prize() {
       <Button
         className="mt-3 "
         fullWidth
+        color="primary"
         loading={submittingProposal || loading}
         onClick={handleSubmit}
       >
