@@ -1,5 +1,3 @@
-import AppShellLayout from '@/components/layout/appshell';
-import useAppUser from '@/context/hooks/useAppUser';
 import { Badge, Burger, Button, Card, Flex } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { usePrivy } from '@privy-io/react-auth';
@@ -13,6 +11,8 @@ import { BiSolidRightArrowCircle } from 'react-icons/bi';
 import { FaTelegramPlane } from 'react-icons/fa';
 import type { RenderPhotoProps } from 'react-photo-album';
 import { PhotoAlbum } from 'react-photo-album';
+import AppShellLayout from '@/components/layout/appshell';
+import useAppUser from '@/context/hooks/useAppUser';
 
 const photoSizes: number[][] = [
   [2160, 2160],

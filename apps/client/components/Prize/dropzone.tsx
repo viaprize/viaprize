@@ -92,7 +92,7 @@ export default function ImageComponent(props: ImageComponentProps) {
           </Group>
         </Dropzone>
       ) : (
-        <div className="aspect-video">
+        <div>
           {previews}
           <Button
             fullWidth
