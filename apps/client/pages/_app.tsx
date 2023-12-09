@@ -1,3 +1,5 @@
+import { OwnLoader } from '@/components/custom/loader';
+import { configureChainsConfig } from '@/lib/wagmi';
 import { env } from '@env';
 import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
@@ -14,8 +16,6 @@ import { Router } from 'next/router';
 import { useEffect, useState, type ReactElement, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
-import { OwnLoader } from '@/components/custom/loader';
-import { configureChainsConfig } from '@/lib/wagmi';
 import '../styles/globals.css';
 import '../styles/index.css';
 

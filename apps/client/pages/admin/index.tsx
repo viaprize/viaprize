@@ -1,23 +1,30 @@
 import AdminAcceptedCard from '@/components/Admin/acceptedCard';
 import AdminCard from '@/components/Admin/card';
+import PortalAdminCard from '@/components/Admin/portalAdminCard';
+import usePortalProposal from '@/components/hooks/usePortalProposal';
 import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import AppShellLayout from '@/components/layout/appshell';
-import { PrizeProposals } from '@/lib/api';
+import { PortalProposals, PrizeProposals } from '@/lib/api';
 import { Loader, Tabs, Text } from '@mantine/core';
 import type { ReactElement } from 'react';
 import { useQuery } from 'react-query';
+
+
 
 const Proposals = ({
   isSuccess,
   data,
 }: {
   isSuccess: boolean;
-  data: PrizeProposals[] | undefined;
+  data: {
+    prizesProposals: PrizeProposals[] | undefined,
+    portalsProposals: PortalProposals[] | undefined
+  };
 }) => {
   return (
     <>
       {isSuccess ? (
-        data?.map((proposal: PrizeProposals) => (
+        <> {data.prizesProposals?.map((proposal: PrizeProposals) => (
           <AdminCard
             key={proposal.id}
             id={proposal.id}
@@ -29,7 +36,23 @@ const Proposals = ({
             user={proposal.user}
             voting={proposal.voting_time}
           />
-        ))
+        ))}
+          {
+            data.portalsProposals?.map((portalProposal: PortalProposals) => (
+              <PortalAdminCard
+                tresurers={portalProposal.treasurers}
+                allowAboveFundingGoal={portalProposal.allowDonationAboveThreshold}
+                deadline={portalProposal.deadline}
+                description={portalProposal.description}
+                images={portalProposal.images}
+                title={portalProposal.title}
+                user={portalProposal.user}
+                fundingGoal={portalProposal.fundingGoal}
+                id={portalProposal.id}
+              />
+            ))
+          }
+        </>
       ) : (
         <Text>Error</Text>
       )}
@@ -67,11 +90,15 @@ const AccpetedProposals = ({
 };
 
 export default function AdminPage() {
-  const { getAllProposals, getAcceptedProposals } = usePrizeProposal();
-
-  const getAllProposalsMutation = useQuery(['all-proposals', undefined], () => {
-    return getAllProposals();
+  const { getAllProposals: getAllPrizeProposals, getAcceptedProposals } = usePrizeProposal();
+  const { getAllProposals: getAllPortalProposal } = usePortalProposal()
+  const getAllPrizeProposalsMutation = useQuery(['all-prize-proposals', undefined], () => {
+    return getAllPrizeProposals()
   });
+  const getAllPortalProposalsMutation = useQuery(['all-portal-proposals', undefined], () => {
+    return getAllPortalProposal()
+  })
+
   const getAcceptedProposalsMutation = useQuery(['accepted-proposals', undefined], () => {
     return getAcceptedProposals();
   });
@@ -87,12 +114,16 @@ export default function AdminPage() {
       </Tabs.List>
 
       <Tabs.Panel value="pending" pt="xs">
-        {getAllProposalsMutation.isLoading ? (
+        {getAllPrizeProposalsMutation.isLoading ? (
           <Loader size="xl" variant="bars" />
         ) : (
           <Proposals
-            isSuccess={getAllProposalsMutation.isSuccess}
-            data={getAllProposalsMutation.data}
+            isSuccess={getAllPrizeProposalsMutation.isSuccess && getAllPrizeProposalsMutation.isSuccess}
+            data={{
+              portalsProposals: getAllPortalProposalsMutation.data,
+              prizesProposals: getAllPrizeProposalsMutation.data
+
+            }}
           />
         )}
       </Tabs.Panel>
