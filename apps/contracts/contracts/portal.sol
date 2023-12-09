@@ -15,9 +15,6 @@ contract portal {
     uint256 totalRewards;
     bool allowDonationAboveGoalAmount;
     bool isActive;
-    bool one;
-    bool two;
-    bool three;
     uint256 public currentTimestamp = block.timestamp;
     uint256 deadline1;
 
@@ -58,20 +55,12 @@ contract portal {
         deadline1 = _deadline;
         allowDonationAboveGoalAmount = _allowDonationAboveGoalAmount;
         isActive = true;
-        one = true;
-        two = true;
-        three = true;
     }
 
     function addFunds() public payable returns (uint256, uint256, uint256, bool, bool, bool)
     {
         if (msg.value == 0) revert NotEnoughFunds();
         if (!isActive) revert FundingToContractEnded();
-        if (!one) revert oneError();
-
-        if (!two) revert twoError();
-
-        if (!three) revert threeError();
 
         patrons[msg.sender] += msg.value;
         totalFunds += msg.value;
@@ -95,21 +84,21 @@ contract portal {
             if (metDeadline ||(!allowDonationAboveGoalAmount && totalRewards >= goalAmount)) {
                 payable(receiverAddress).transfer(totalRewards);
                 payable(platformAddress).transfer(totalFunds - totalRewards);
-                one = false;
+                isActive = false;
             }
         }
         if (goalAmountAvailable && !deadlineAvailable) {
             if (metGoal) {
                 payable(receiverAddress).transfer(totalRewards);
                 payable(platformAddress).transfer(totalFunds - totalRewards);
-                two = false;
+                isActive = false;
             }
         }
         if (!goalAmountAvailable && deadlineAvailable) {
             if (metDeadline) {
                 payable(receiverAddress).transfer(totalRewards);
                 payable(platformAddress).transfer(totalFunds - totalRewards);
-                three = false;
+                isActive = false;
             }
         }
 
