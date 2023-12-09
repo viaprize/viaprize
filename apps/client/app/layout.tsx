@@ -17,12 +17,9 @@ import { OwnLoader } from '@/components/custom/loader';
 import { configureChainsConfig } from '@/lib/wagmi';
 import '../styles/globals.css';
 import '../styles/index.css';
+import { theme } from 'utils/theme';
 
 const queryClient = new QueryClient();
-
-const theme = createTheme({
-  /** Your theme override here */
-});
 
 export default function RootLayout({
   // Layouts must accept a children prop.

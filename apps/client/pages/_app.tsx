@@ -18,6 +18,7 @@ import { OwnLoader } from '@/components/custom/loader';
 import { configureChainsConfig } from '@/lib/wagmi';
 import '../styles/globals.css';
 import '../styles/index.css';
+import { theme } from 'utils/theme';
 
 const queryClient = new QueryClient();
 
@@ -31,10 +32,6 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
-
-const theme = createTheme({
-  /** Your theme override here */
-});
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);

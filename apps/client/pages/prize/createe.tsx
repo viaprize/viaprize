@@ -1,13 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
-import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
-import AppShellLayout from '@/components/layout/appshell';
+import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import useAppUser from '@/context/hooks/useAppUser';
 import { Button, Checkbox, NumberInput, SimpleGrid, TextInput } from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import router from 'next/router';
-import type { ReactElement } from 'react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
@@ -186,6 +184,7 @@ function Prize() {
         fullWidth
         loading={submittingProposal || loading}
         onClick={handleSubmit}
+        color="primary"
       >
         Request for Approval
       </Button>

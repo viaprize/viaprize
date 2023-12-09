@@ -1,6 +1,6 @@
 import AdminAcceptedCard from '@/components/Admin/acceptedCard';
 import AdminCard from '@/components/Admin/card';
-import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
+import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import AppShellLayout from '@/components/layout/appshell';
 import { PrizeProposals } from '@/lib/api';
 import { Loader, Tabs, Text } from '@mantine/core';

@@ -1,49 +1,14 @@
-import { makeStorageClient } from '@/components/_providers/WebClient';
-import { CreatePrizeProposalDto, PrizeProposals } from '@/lib/api';
+import { storeFiles } from '@/context/tools';
+import { CreatePortalProposalDto, PortalProposals } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
+import { Query } from '@/lib/types';
 import { useState } from 'react';
 
-async function storeFiles(files: File[]) {
-  const client = makeStorageClient();
-  const cid = await client.put(files);
-  console.log('stored files with cid:', cid);
-  if (!files[0]) {
-    return '';
-  }
-  const url = `https://dweb.link/ipfs/${cid}/${files[0].name}`;
-  console.log('URL of the uploaded image:', url);
-  return url;
-}
-interface PrzieQuery {
-  limit: number;
-  page: number;
-}
+export default function usePortalProposal() {
+  const [proposals] = useState<PortalProposals[]>();
 
-// const addProsposal = async (data: Proposal) => {
-
-//   const finalData = {
-//       ...data,
-//       // files: await storeFiles(data.files),
-//       files: ''
-//       };
-//   const response = await myAxios.post('/prizes/proposals', finalData);
-
-//   return response.data;
-
-//   // const files = await storeFiles(data.files);
-//   // return files;
-
-// };
-
-// export const useAddProposal = () => {
-//   return useMutation(addProsposal);
-// };
-
-export default function usePrizeProposal() {
-  const [proposals] = useState<PrizeProposals[]>();
-
-  const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
-    const res = await (await backendApi()).prizes.proposalsCreate(proposalDto);
+  const addProposals = async (proposalDto: CreatePortalProposalDto) => {
+    const res = await (await backendApi()).portals.proposalsCreate(proposalDto);
     return res;
   };
 
@@ -61,20 +26,20 @@ export default function usePrizeProposal() {
   ) => {
     const res = await (
       await backendApi()
-    ).prizes.proposalsUserDetail(username, queryParams);
+    ).portals.proposalsUserDetail(username, queryParams);
     console.log('res', 'acxi0', res);
     return res.data.data;
   };
 
   const getAllProposals = async (
-    queryParam: PrzieQuery = {
+    queryParam: Query = {
       limit: 10,
       page: 1,
     },
   ) => {
     const res = await (
       await backendApi()
-    ).prizes.proposalsList({
+    ).portals.proposalsList({
       limit: queryParam.limit,
       page: queryParam.page,
     });
@@ -84,7 +49,7 @@ export default function usePrizeProposal() {
   };
 
   const acceptProposal = async (proposalId: string) => {
-    const res = await (await backendApi()).prizes.proposalsAcceptCreate(proposalId);
+    const res = await (await backendApi()).portals.proposalsAcceptCreate(proposalId);
     return res.data;
   };
   const rejectProposal = async ({
@@ -97,7 +62,7 @@ export default function usePrizeProposal() {
     console.log('loggg reject');
     const res = await (
       await backendApi()
-    ).prizes.proposalsRejectCreate(proposalId, {
+    ).portals.proposalsRejectCreate(proposalId, {
       comment,
     });
     console.log({ res }, 'res isn ajfslj');
@@ -105,14 +70,14 @@ export default function usePrizeProposal() {
   };
 
   const getAcceptedProposals = async (
-    queryParam: PrzieQuery = {
+    queryParam: Query = {
       limit: 10,
       page: 1,
     },
   ) => {
     const res = await (
       await backendApi()
-    ).prizes.proposalsAcceptList({
+    ).portals.proposalsAcceptList({
       limit: queryParam.limit,
       page: queryParam.page,
     });

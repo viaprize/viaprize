@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import { formatEther } from 'viem';
 import { usePublicClient, useQuery } from 'wagmi';
 import ExploreCard from '../ExplorePrize/explorePrize';
-import usePrizeProposal from '../Prize/hooks/usePrizeProposal';
 import SubmissionsCard from '../Prize/prizepage/submissionsCard';
+import usePrizeProposal from '../hooks/usePrizeProposal';
 import ProposalsTabs from './proposals-tabs';
 
 export default function MainTabsUserProfile() {

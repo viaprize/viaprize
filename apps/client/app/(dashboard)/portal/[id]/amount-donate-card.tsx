@@ -26,7 +26,7 @@ export default function AmountDonateCard() {
           quas, quae, quos voluptatem amet voluptatum dolorum
         </Text>
       </div>
-      <Button>Donate</Button>
+      <Button color="primary">Donate</Button>
     </Card>
   );
 }

@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
 'use client';
+
 import ImageComponent from '@/components/Prize/dropzone';
-import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
+import ShouldLogin from '@/components/custom/should-login';
+import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import useAppUser from '@/context/hooks/useAppUser';
 import {
@@ -104,6 +106,10 @@ function Prize() {
   //     return [...arr];
   //   });
   // };
+  if (!appUser) {
+    return <ShouldLogin text="Please, login to create a prize" />;
+  }
+
   return (
     <Card shadow="md" withBorder className="w-full p-8 m-6">
       <Title order={1} className="my-2">
@@ -195,6 +201,7 @@ function Prize() {
       <Button
         className="mt-3 "
         fullWidth
+        color="primary"
         loading={submittingProposal || loading}
         onClick={handleSubmit}
       >

@@ -2,7 +2,7 @@ import { User } from '@/lib/api';
 import { Badge, Button, Card, Group, Image, Modal, Text, Textarea } from '@mantine/core';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
-import usePrizeProposal from '../Prize/hooks/usePrizeProposal';
+import usePrizeProposal from '../hooks/usePrizeProposal';
 import ViewDetails from './details';
 
 interface AdminCardProps {
