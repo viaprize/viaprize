@@ -1,28 +1,30 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-contract Portal {
-    address[] public owners;
-    mapping(address => bool) public isOwner;
+contract portal {
+    address[] public owners;// threseurue
+    mapping(address => bool) public isOwner; // iseasuruers
     address public receiverAddress;
     uint256 public goalAmount = 0;
-    uint256 public deadline;
+    uint256 public deadline = 0;
     uint256 public platformFee;
     address public platformAddress = 0xdD870fA1b7C4700F2BD7f44238821C26f7392148;
-    mapping(address => uint256) public patrons;
+    address[] public patrons; 
+    mapping(address => uint256) public patronAmount;
     uint256 totalFunds;
     uint256 totalRewards;
     bool allowDonationAboveGoalAmount;
     bool isActive;
-    uint256 public currentTimestamp = block.timestamp;
-    uint256 deadline1;
     bool allowImmediately;
+
+    uint256 deadline1;
+    
 
     error NotEnoughFunds();
     error FundingToContractEnded();
     error oneError();
     error twoError();
-    error threeError();
+    error threeError(); 
     error AllowImmediatelyCantBeTrue();
 
     event Values(
@@ -59,7 +61,7 @@ contract Portal {
         allowDonationAboveGoalAmount = _allowDonationAboveGoalAmount;
         isActive = true;
 
-        if(goalAmount > 0 && deadline1 > 0 && allowImmediately) revert AllowImmediatelyCantBeTrue();
+        if((!allowImmediately) && goalAmount == 0 && deadline1 == 0 ) revert AllowImmediatelyCantBeTrue();
     }
 
     function addFunds() public payable returns (uint256, uint256, uint256, bool, bool, bool)
@@ -67,7 +69,7 @@ contract Portal {
         if (msg.value == 0) revert NotEnoughFunds();
         if (!isActive) revert FundingToContractEnded();
 
-        patrons[msg.sender] += msg.value;
+        patronAmount[msg.sender] += msg.value;
         totalFunds += msg.value;
         totalRewards += (msg.value * (100 - platformFee)) / 100;
 
@@ -78,7 +80,7 @@ contract Portal {
 
         if (!goalAmountAvailable && !deadlineAvailable) {
             payable(receiverAddress).transfer(
-                (msg.value * (100 - platformFee)) / 100
+            (msg.value * (100 - platformFee)) / 100
             );
             payable(platformAddress).transfer(
                 (msg.value * (platformFee)) / 100
@@ -86,7 +88,14 @@ contract Portal {
         }
 
         if (goalAmountAvailable && deadlineAvailable) {
-            if(allowImmediately) revert AllowImmediatelyCantBeTrue();
+            if(allowImmediately) {
+                payable(receiverAddress).transfer(
+                (msg.value * (100 - platformFee)) / 100
+                );
+                payable(platformAddress).transfer(
+                    (msg.value * (platformFee)) / 100
+                );
+            }
             if(!allowImmediately) {
                 if (metDeadline ||(!allowDonationAboveGoalAmount && totalRewards >= goalAmount)) {
                     payable(receiverAddress).transfer(totalRewards);
@@ -98,8 +107,12 @@ contract Portal {
 
         if (goalAmountAvailable && !deadlineAvailable) {
             if (allowImmediately && metGoal) {
-                payable(receiverAddress).transfer(totalRewards);
-                payable(platformAddress).transfer(totalFunds - totalRewards);
+                payable(receiverAddress).transfer(
+                (msg.value * (100 - platformFee)) / 100
+                );
+                payable(platformAddress).transfer(
+                    (msg.value * (platformFee)) / 100
+                );
                 isActive = false;
                 allowImmediately = false;
             }
@@ -111,12 +124,15 @@ contract Portal {
                     (msg.value * (platformFee)) / 100
                 );
             }
-            
         }
         if (!goalAmountAvailable && deadlineAvailable) {
             if (allowImmediately && metDeadline) {
-                payable(receiverAddress).transfer(totalRewards);
-                payable(platformAddress).transfer(totalFunds - totalRewards);
+                payable(receiverAddress).transfer(
+                (msg.value * (100 - platformFee)) / 100
+                );
+                payable(platformAddress).transfer(
+                    (msg.value * (platformFee)) / 100
+                );
                 isActive = false;
                 allowImmediately = false;
             }
@@ -128,6 +144,7 @@ contract Portal {
                     (msg.value * (platformFee)) / 100
                 );
             }
+           
         }
 
         emit Values(
@@ -159,4 +176,15 @@ contract Portal {
         require(isOwner[msg.sender] == true, "you are not an owner to close the campaign");
         isActive = false;
     }
+
+    // function withdrawAmount() public {
+    //     require(isOwner[msg.sender] == true, "you are not an owner to close the campaign");
+    //     payable(receiverAddress).transfer(totalRewards);
+    //     payable(platformAddress).transfer(totalFunds - totalRewards);
+    //     totalRewards = 0;
+    //     totalFunds = 0;
+
+    // }
+
+    // // function refundAmount
 }
