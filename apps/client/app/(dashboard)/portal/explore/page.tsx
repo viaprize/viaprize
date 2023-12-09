@@ -1,7 +1,7 @@
 'use client';
 import SearchFilters from '@/components/ExplorePrize/searchFilters';
 import { Text } from '@mantine/core';
-import PortalCards from './portalcards';
+import PortalCards from './portal-card';
 export default function ExplorePortal() {
   return (
     <div className="max-w-screen-xl">
