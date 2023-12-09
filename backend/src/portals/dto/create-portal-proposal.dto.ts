@@ -2,11 +2,11 @@ import { Expose } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
-  IsDate,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsString,
+  IsString
 } from 'class-validator';
 
 export class CreatePortalProposalDto {
@@ -29,7 +29,7 @@ export class CreatePortalProposalDto {
   sendImmediately: boolean;
 
   @Expose()
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   deadline?: Date;
 
