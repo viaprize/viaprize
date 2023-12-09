@@ -1,5 +1,6 @@
 import { TypedBody, TypedParam } from '@nestia/core';
 import {
+  Body,
   Controller,
   Get,
   Post,
@@ -232,7 +233,7 @@ export class PortalsController {
   @Post('/proposals')
   @UseGuards(AuthGuard)
   async create(
-    @TypedBody() createPortalProposal: CreatePortalProposalDto,
+    @Body() createPortalProposal: CreatePortalProposalDto,
     @Request() req,
   ): Promise<PortalProposals> {
     console.log({ createPortalProposal });
