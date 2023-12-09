@@ -1,7 +1,9 @@
 'use client';
 
 import ImageComponent from '@/components/Prize/dropzone';
+import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
+import useAppUser from '@/context/hooks/useAppUser';
 import {
   ActionIcon,
   Button,
@@ -15,9 +17,13 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconPlus } from '@tabler/icons-react';
+import { useRouter } from "next/navigation";
 import { useState } from 'react';
 import { FaCalendar } from 'react-icons/fa';
+import { toast } from 'sonner';
+import { useMutation } from 'wagmi';
 
 export default function PortalForm() {
   const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -29,19 +35,74 @@ export default function PortalForm() {
   const [fundingGoal, setFundingGoal] = useState(0);
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [allowFundsAboveGoal, setAllowFundsAboveGoal] = useState(false);
+  const [images, setImages] = useState<string>();
+  const { wallet } = usePrivyWagmi();
+  const [loading, setLoading] = useState(false);
 
+  const { addProposals, uploadImages } = usePortalProposal()
+
+  const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
+    useMutation(addProposals)
+
+  const { appUser } = useAppUser();
+  const router = useRouter()
+
+  const handleUploadImages = async () => {
+    const newImages = await uploadImages(files);
+
+    setImages(newImages);
+    return newImages;
+  };
   const onAddressChange = (index: number, funcaddress: string) => {
     setAddress((prev) => {
       prev[index] = funcaddress;
       return [...prev];
     });
   };
+  const submit = async () => {
+    if (!wallet) {
+      throw Error('Wallet is undefined');
+    }
+    const newImages = await handleUploadImages();
+    const finalAddress = address.filter((x) => x);
+    await addProposalsMutation({
+      allowDonationAboveThreshold: allowFundsAboveGoal,
+      deadline: deadline?.toDateString() ?? undefined,
+      description: richtext,
+      tags: [],
+      images: [newImages],
+      title: value,
+      proposerAddress: wallet.address,
+      termsAndCondition: '',
+      isMultiSignatureReciever: false,
+      treasurers: address,
+      fundingGoal: fundingGoal ? fundingGoal : undefined
 
+    });
+    setLoading(false);
+    await router.push(`/profile/${appUser?.username}`);
+  };
   const addAddress = () => {
     setAddress((prev: string[]) => {
       return [...prev, ''];
     });
   };
+
+  const handleSubmit = () => {
+
+    setLoading(true);
+    try {
+      console.log(images, 'images');
+      toast.promise(submit(), {
+        loading: 'Submitting Proposal...',
+        success: 'Proposal Submitted',
+        error: 'Error Submitting Proposal',
+      });
+    } catch {
+      toast.error('Error Submitting Proposal');
+    }
+  };
+
 
   const removeAddress = (index: number) => {
     setAddress((prev) => {
@@ -179,7 +240,8 @@ export default function PortalForm() {
           label="Allow funds above goal"
         />
       ) : null}
-      <Button color="blue" variant="light" radius="md">
+      <Button color="blue" variant="light" radius="md" loading={submittingProposal || loading}
+        onClick={handleSubmit}>
         Create Portal
       </Button>
     </div>

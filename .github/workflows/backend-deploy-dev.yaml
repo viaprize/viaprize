@@ -2,7 +2,7 @@ name: Deploy to server
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   deploy:
@@ -23,7 +23,8 @@ jobs:
             sudo chown -R ubuntu .
             git add -A 
             git stash 
-            git pull origin main
+            git pull origin
+            git checkout dev
             exit
       - name: Copy Env
         uses: appleboy/ssh-action@master
