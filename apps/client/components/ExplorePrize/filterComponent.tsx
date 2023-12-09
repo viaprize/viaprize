@@ -49,7 +49,7 @@ function Filter() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams as string);
-  const selectedCategories = (searchParams.get('category') || '');
+  const selectedCategories = searchParams.get('category') || '';
   const subCategory = searchParams?.get('subCategory')
     ? (searchParams.get('subCategory') as string).split(',')
     : [];
@@ -146,7 +146,9 @@ function Filter() {
         defaultValue={[]}
         label={selectedCategories && 'Sub Categories'}
         value={subCategory}
-        onChange={(value) => {handleSubCategory(value)}}
+        onChange={(value) => {
+          handleSubCategory(value);
+        }}
       >
         {selectedCategories === 'Proficiency' && (
           <Stack mt="xs">

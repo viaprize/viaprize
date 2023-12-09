@@ -34,6 +34,7 @@ export default function SearchFilters() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix
   const params = new URLSearchParams(searchParams as any as string);
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   const handleSort = async (value: string) => {
     params.set('sort', value);
     router.replace({ query: params.toString() });

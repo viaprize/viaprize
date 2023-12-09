@@ -190,7 +190,7 @@ export default function PortalForm() {
       <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
         <IconPlus />
       </ActionIcon>
-      <div className='my-2'>
+      <div className="my-2">
         <Checkbox
           checked={haveFundingGoal}
           onChange={(event) => {
@@ -213,7 +213,7 @@ export default function PortalForm() {
           </div>
         ) : null}
       </div>
-      <div className='my-2'>
+      <div className="my-2">
         <Checkbox
           checked={haveDeadline}
           onChange={(event) => {
@@ -230,7 +230,7 @@ export default function PortalForm() {
           />
         ) : null}
       </div>
-      {(haveFundingGoal && haveDeadline) ? (
+      {haveFundingGoal && haveDeadline ? (
         <Checkbox
           my="md"
           checked={allowFundsAboveGoal}
