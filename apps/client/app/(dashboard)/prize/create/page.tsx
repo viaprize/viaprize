@@ -1,5 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
 'use client';
+
+import ImageComponent from '@/components/Prize/dropzone';
+import ShouldLogin from '@/components/custom/should-login';
+import usePrizeProposal from '@/components/hooks/usePrizeProposal';
+import { TextEditor } from '@/components/richtexteditor/textEditor';
+import useAppUser from '@/context/hooks/useAppUser';
+import {
+  Button,
+  Card,
+  Checkbox,
+  NumberInput,
+  SimpleGrid,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
@@ -7,10 +22,6 @@ import router from 'next/router';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
-import ImageComponent from '@/components/Prize/dropzone';
-import usePrizeProposal from '@/components/hooks/usePrizeProposal';
-import { TextEditor } from '@/components/richtexteditor/textEditor';
-import useAppUser from '@/context/hooks/useAppUser';
 
 function Prize() {
   const [address, setAddress] = useState(['']);
@@ -95,6 +106,10 @@ function Prize() {
   //     return [...arr];
   //   });
   // };
+  if (!appUser) {
+    return <ShouldLogin text="Please, login to create a prize" />;
+  }
+
   return (
     <Card shadow="md" withBorder className="w-full p-8 m-6">
       <Title order={1} className="my-2">
