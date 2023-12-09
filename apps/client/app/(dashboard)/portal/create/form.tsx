@@ -106,7 +106,7 @@ export default function PortalForm() {
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
-      deadline: deadline ?? undefined,
+      deadline: deadline?.toDateString() ?? undefined,
       description: richtext,
       tags: generateTags(),
       images: [newImages],
