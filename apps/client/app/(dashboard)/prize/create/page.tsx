@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
 'use client';
 import ImageComponent from '@/components/Prize/dropzone';
-import usePrizeProposal from '@/components/Prize/hooks/usePrizeProposal';
+import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import useAppUser from '@/context/hooks/useAppUser';
 import { Button, Card, Checkbox, NumberInput, SimpleGrid, TextInput, Title } from '@mantine/core';
