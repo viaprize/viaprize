@@ -25,6 +25,10 @@ export class CreatePortalProposalDto {
   isMultiSignatureReciever: boolean;
 
   @Expose()
+  @IsBoolean()
+  sendImmediately: boolean;
+
+  @Expose()
   @IsDate()
   @IsOptional()
   deadline?: Date;

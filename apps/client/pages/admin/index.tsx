@@ -65,12 +65,16 @@ const AccpetedProposals = ({
   data,
 }: {
   isSuccess: boolean;
-  data: PrizeProposals[] | undefined;
+  data: {
+    prizesProposals: PrizeProposals[] | undefined,
+    portalsProposals: PortalProposals[] | undefined
+  };
 }) => {
+  console.log({ data }, "hiii")
   return (
     <>
       {isSuccess ? (
-        data?.map((proposal: PrizeProposals) => (
+        <>{data.prizesProposals?.map((proposal: PrizeProposals) => (
           <AdminAcceptedCard
             key={proposal.id}
             admins={proposal.admins}
@@ -82,6 +86,24 @@ const AccpetedProposals = ({
             voting={proposal.voting_time}
           />
         ))
+        }
+          {data.portalsProposals?.map((portalProposal: PortalProposals) => (
+            <PortalAdminCard
+              key={portalProposal.id}
+              tresurers={portalProposal.treasurers}
+              allowAboveFundingGoal={portalProposal.allowDonationAboveThreshold}
+              deadline={portalProposal.deadline}
+              description={portalProposal.description}
+              images={portalProposal.images}
+              title={portalProposal.title}
+              user={portalProposal.user}
+              fundingGoal={portalProposal.fundingGoal}
+              id={portalProposal.id}
+            />
+          ))
+          }
+        </>
+
       ) : (
         <Text>Error</Text>
       )}
@@ -91,7 +113,7 @@ const AccpetedProposals = ({
 
 export default function AdminPage() {
   const { getAllProposals: getAllPrizeProposals, getAcceptedProposals } = usePrizeProposal();
-  const { getAllProposals: getAllPortalProposal } = usePortalProposal()
+  const { getAllProposals: getAllPortalProposal, getAcceptedProposals: getAcceptedPortalProposal } = usePortalProposal()
   const getAllPrizeProposalsMutation = useQuery(['all-prize-proposals', undefined], () => {
     return getAllPrizeProposals()
   });
@@ -99,9 +121,13 @@ export default function AdminPage() {
     return getAllPortalProposal()
   })
 
-  const getAcceptedProposalsMutation = useQuery(['accepted-proposals', undefined], () => {
+
+  const getAcceptedPrizeProposalMutation = useQuery(['accepted-proposals', undefined], () => {
     return getAcceptedProposals();
   });
+  const getAcceptedPortalProposalMutation = useQuery(['accpeted-proposals', undefined], () => {
+    return getAcceptedPortalProposal();
+  })
 
   return (
     <Tabs variant="pills" defaultValue="pending">
@@ -129,12 +155,15 @@ export default function AdminPage() {
       </Tabs.Panel>
 
       <Tabs.Panel value="accepted" pt="xs">
-        {getAcceptedProposalsMutation.isLoading ? (
+        {getAcceptedPrizeProposalMutation.isLoading ? (
           <Loader size="xl" variant="bars" />
         ) : (
           <AccpetedProposals
-            isSuccess={getAcceptedProposalsMutation.isSuccess}
-            data={getAcceptedProposalsMutation.data}
+            isSuccess={getAcceptedPrizeProposalMutation.isSuccess && getAcceptedPortalProposalMutation.isSuccess}
+            data={{
+              portalsProposals: getAcceptedPortalProposalMutation.data,
+              prizesProposals: getAcceptedPrizeProposalMutation.data
+            }}
           />
         )}
       </Tabs.Panel>

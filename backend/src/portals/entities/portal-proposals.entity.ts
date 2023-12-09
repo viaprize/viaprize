@@ -33,6 +33,9 @@ export class PortalProposals {
   @Column({ nullable: true })
   deadline: Date;
 
+  @Column({ default: false })
+  sendImmediately: boolean;
+
   @Column('boolean')
   allowDonationAboveThreshold: boolean;
 

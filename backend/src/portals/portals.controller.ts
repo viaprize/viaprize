@@ -31,7 +31,7 @@ export class PortalsController {
     private readonly mailService: MailService,
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
-  ) {}
+  ) { }
 
   @Post('')
   @UseGuards(AuthGuard)
@@ -56,6 +56,7 @@ export class PortalsController {
       title: portalProposal.title,
       treasurers: portalProposal.treasurers,
       user: portalProposal.user,
+      sendImmediately: portalProposal.sendImmediately
     });
     await this.portalProposalsService.remove(portalProposal.id);
     await this.mailService.portalDeployed(

@@ -13,7 +13,8 @@ interface AdminCardProps {
     tresurers: string[];
     fundingGoal?: number;
     deadline: string;
-    allowAboveFundingGoal: boolean
+    allowAboveFundingGoal: boolean;
+    disableButton?: boolean;
 }
 
 const PortalAdminCard: React.FC<AdminCardProps> = ({
@@ -25,7 +26,8 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
     fundingGoal,
     id,
     deadline,
-    allowAboveFundingGoal
+    allowAboveFundingGoal,
+    disableButton = false
 }) => {
     const { acceptProposal, rejectProposal } = usePortalProposal();
     const acceptProposalMutation = useMutation(acceptProposal);
@@ -54,6 +56,12 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
                     <Text> {(deadline && deadline.length > 0) ? `Date is ${new Date(deadline).toDateString()} \n` : `No Deadline Set \n`}</Text>
                     <Text>{allowAboveFundingGoal ? 'This Portal can be funded above funding goal \n' : `This Portal can't be funded above funding goal \n`}</Text>
                 </p>
+
+                <p className="text-md text-gray-500 max-h-14 overflow-y-auto">
+                    <Text>{description}</Text>
+                </p>
+
+
                 <Group justify="space-evenly" mt="md" mb="xs">
                     <Modal
                         opened={rejectOpen}
@@ -98,27 +106,29 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
                             </Button>
                         </Group>
                     </Modal>
+                    {
+                        disableButton && (<Group>
 
-                    <Group>
-                        <Button
-                            color="red"
-                            onClick={() => {
-                                setRejectOpen(true);
-                            }}
-                        >
-                            Reject
-                        </Button>
-                        <Button
-                            color="green"
-                            loading={acceptProposalMutation.isLoading}
-                            onClick={async () => {
-                                await acceptProposalMutation.mutateAsync(id);
-                                window.location.reload();
-                            }}
-                        >
-                            Accept
-                        </Button>
-                    </Group>
+                            <Button
+                                color="red"
+                                onClick={() => {
+                                    setRejectOpen(true);
+                                }}
+                            >
+                                Reject
+                            </Button>
+                            <Button
+                                color="green"
+                                loading={acceptProposalMutation.isLoading}
+                                onClick={async () => {
+                                    await acceptProposalMutation.mutateAsync(id);
+                                    window.location.reload();
+                                }}
+                            >
+                                Accept
+                            </Button>
+                        </Group>)
+                    }
                 </Group>
             </Card >
 
