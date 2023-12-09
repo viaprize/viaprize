@@ -1,7 +1,7 @@
-import { Button, Flex, Group, TagsInput, TextInput } from '@mantine/core'
-import React from 'react'
+import { Button, Flex, Group, TagsInput, TextInput } from '@mantine/core';
+import React from 'react';
 
-export default function EditProfileModal  ()  {
+export default function EditProfileModal() {
   return (
     <div>
       <TextInput label="Name" data-autoFocus placeholder="Enter your name" />
@@ -39,8 +39,8 @@ export default function EditProfileModal  ()  {
         className="my-2"
       />
       <Flex gap={5}>
-        <Button my="md" className="w-full" variant='outline'>
-            Cancel
+        <Button my="md" className="w-full" variant="outline">
+          Cancel
         </Button>
         <Button my="md" className="w-full">
           Save
