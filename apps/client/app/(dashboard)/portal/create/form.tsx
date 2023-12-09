@@ -21,7 +21,7 @@ import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { FaCalendar } from 'react-icons/fa';
+import { FaCalendar, FaEthereum } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 
@@ -30,21 +30,25 @@ export default function PortalForm() {
   const [value, setValue] = useState('');
   const [richtext, setRichtext] = useState('');
   const [address, setAddress] = useState('');
-  const [haveFundingGoal, setHaveFundingGoal] = useState(false);
-  const [haveDeadline, setHaveDeadline] = useState(false);
-  const [fundingGoal, setFundingGoal] = useState(0);
+  const [fundingGoal, setFundingGoal] = useState<number>();
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [allowFundsAboveGoal, setAllowFundsAboveGoal] = useState(false);
   const [images, setImages] = useState<string>();
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
-    const [portalType, setPortalType] = useState('gofundme');
-
+  const [portalType, setPortalType] = useState('gofundme');
+  const [haveFundingGoal, setHaveFundingGoal] = useState(false);
+  const [haveDeadline, setHaveDeadline] = useState(false);
 
   const { addProposals, uploadImages } = usePortalProposal();
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
+
+  function convertUSDTOETH(usd: number) {
+    const eth = usd * 0.00042;
+    return parseFloat(eth.toFixed(4));
+  }
 
   const { appUser } = useAppUser();
   const router = useRouter();
@@ -190,8 +194,12 @@ export default function PortalForm() {
       {/* <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
         <IconPlus />
       </ActionIcon> */}
-      <Radio.Group name="favoriteFramework" label="Select your portal type" withAsterisk
-      onChange={setPortalType} value={portalType}
+      <Radio.Group
+        name="favoriteFramework"
+        label="Select your portal type"
+        withAsterisk
+        onChange={setPortalType}
+        value={portalType}
       >
         <Group mt="xs">
           <Tooltip label="A little description about kickstarter" refProp="rootRef">
@@ -204,18 +212,23 @@ export default function PortalForm() {
       </Radio.Group>
       <div className="my-2">
         <Checkbox
-          checked={haveFundingGoal}
+          checked={haveFundingGoal || portalType === 'kickstarter'}
           onChange={(event) => {
             setHaveFundingGoal(event.currentTarget.checked);
           }}
           label="I have a funding goal"
         />
-        {haveFundingGoal ? (
+        {haveFundingGoal || portalType === 'kickstarter' ? (
           <div>
+            <div className="flex gap-1 items-center justify-start mt-3 mb-1">
+              <Text>Funding Goal in USD {`( ${convertUSDTOETH(fundingGoal ?? 0)}`}</Text>
+              <FaEthereum />
+              {')'}
+            </div>
             <NumberInput
-              label="Funding Goal in ETH"
               min={0}
-              placeholder="Enter Funding Goal"
+              leftSection="$"
+              placeholder="Enter Funding Goal in USD"
               className="w-full"
               value={fundingGoal}
               onChange={(e) => {
@@ -227,13 +240,13 @@ export default function PortalForm() {
       </div>
       <div className="my-2">
         <Checkbox
-          checked={haveDeadline}
+          checked={haveDeadline || portalType === 'kickstarter'}
           onChange={(event) => {
             setHaveDeadline(event.currentTarget.checked);
           }}
           label="I have a Deadline"
         />
-        {haveDeadline ? (
+        {haveDeadline || portalType === 'kickstarter' ? (
           <DateTimePicker
             label="Deadline"
             value={deadline}
@@ -242,7 +255,7 @@ export default function PortalForm() {
           />
         ) : null}
       </div>
-      {haveFundingGoal && haveDeadline ? (
+      {(haveFundingGoal && haveDeadline) || portalType === 'kickstarter' ? (
         <Checkbox
           my="md"
           checked={allowFundsAboveGoal}
