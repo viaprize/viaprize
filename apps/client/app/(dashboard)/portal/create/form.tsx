@@ -79,26 +79,20 @@ export default function PortalForm() {
   //     return [...arr];
   //   });
   // };
-  const generateTags = ()=>{
+  const generateTags = () => {
     const tags = [];
-    const sendNow = portalType =="gofundme" ? true:false;
-    if(!sendNow){
-      tags.push(
-        "Refundable"
-      )
+    const sendNow = portalType == 'gofundme' ? true : false;
+    if (!sendNow) {
+      tags.push('Refundable');
     }
-    if(deadline){
-      tags.push(
-        "Deadline"
-      )
+    if (deadline) {
+      tags.push('Deadline');
     }
-    if(fundingGoal){
-      tags.push(
-        "Funding Goal"
-      )
+    if (fundingGoal) {
+      tags.push('Funding Goal');
     }
-    return tags
-  }
+    return tags;
+  };
   const submit = async () => {
     if (!wallet) {
       throw Error('Wallet is undefined');
@@ -115,10 +109,8 @@ export default function PortalForm() {
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
-      fundingGoal: fundingGoal ? convertUSDTOETH(fundingGoal): undefined,
-      sendImmediately: portalType =="gofundme" ? true:false
-
-
+      fundingGoal: fundingGoal ? convertUSDTOETH(fundingGoal) : undefined,
+      sendImmediately: portalType == 'gofundme' ? true : false,
     });
     setLoading(false);
     router.push(`/profile/${appUser?.username}`);

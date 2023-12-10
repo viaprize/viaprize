@@ -108,7 +108,7 @@ export default function Home() {
             {/* <h2 className="font-normal text-lg text-black uppercase my-0">
               Crowdfund the future
             </h2> */}
-            <h1 className="font-bold text-5xl  my-6">Trustworthy crowdfunding</h1>
+            <h1 className="font-bold text-5xl  my-6">Trustworthy Crowdfunding</h1>
             {/* <p className="text-lg text-gray-600 my-4">
               Simple and sleek design with users in mind. viaPrize is a platform that
               allows

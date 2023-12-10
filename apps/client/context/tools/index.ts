@@ -1,4 +1,4 @@
-import { makeStorageClient } from "@/components/_providers/WebClient";
+import { makeStorageClient } from '@/components/_providers/WebClient';
 
 /**
  * Sleep for a given number of milliseconds.
@@ -63,4 +63,4 @@ export const storeFiles = async (files: File[]) => {
   const url = `https://dweb.link/ipfs/${cid}/${files[0].name}`;
   console.log('URL of the uploaded image:', url);
   return url;
-}
+};

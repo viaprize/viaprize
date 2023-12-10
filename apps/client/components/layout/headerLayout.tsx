@@ -60,12 +60,20 @@ export default function HeaderLayout() {
         <Link href="/">
           <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
         </Link>
-        <Link href="/" className="ml-2">
-          Home
+        <Link href="/" className="pl-5 font-bold">
+          HOME
         </Link>
-        <Link href="/prize/explore">Prizes</Link>
+        <Link href="/prize/explore" className="pl-3 font-bold">
+          PRIZES
+        </Link>
+        <Link href="/portal/explore" className="pl-3 font-bold">
+          PORTALS
+        </Link>
       </Flex>
       <Flex align="center" gap="md">
+        <Button className="hidden sm:block " color="primary">
+          <Link href="/prize/create">Create Portals</Link>
+        </Button>
         <Button className="hidden sm:block " color="primary">
           <Link href="/prize/create">Create Prize</Link>
         </Button>
@@ -96,7 +104,7 @@ export default function HeaderLayout() {
             </Group>
           </Card>
         ) : null}
-        <ProfileMenu />
+
         <ActionIcon
           variant="outline"
           color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}
@@ -111,6 +119,7 @@ export default function HeaderLayout() {
             <IconMoonStars size="1.1rem" />
           )}
         </ActionIcon>
+        <ProfileMenu />
       </Flex>
     </Group>
   );
