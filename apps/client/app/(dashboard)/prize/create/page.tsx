@@ -115,7 +115,7 @@ function Prize() {
       <Title order={1} className="my-2">
         Create a Prize
       </Title>
-      <ImageComponent files={files} setFiles={setFiles} />
+      <ImageComponent files={files} setfiles={setFiles} />
       <TextInput
         className="my-2"
         placeholder="Waster Management System"
