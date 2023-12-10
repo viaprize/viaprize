@@ -85,7 +85,7 @@ export default function PortalCard({
         variant="light"
         href={`/portal/${id}`}
       >
-       Details
+        Details
       </Button>
       <div className="absolute top-2 right-2">
         <CopyButton value={`https://pactsmith.com/portal/${id}`}>

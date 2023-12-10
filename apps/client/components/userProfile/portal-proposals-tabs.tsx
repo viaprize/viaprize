@@ -77,7 +77,6 @@ export default function PortalProposalsTabs({
                     const request = await prepareWritePortalFactory({
                       functionName: 'createPortal',
                       args: [
-              
                         item?.treasurers as `0x${string}`[],
                         finalFundingGoal,
                         BigInt(Math.floor(new Date(item.deadline).getTime() / 1000) ?? 0),

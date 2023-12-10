@@ -16,11 +16,11 @@ export default async function CreatePortal({ params }: { params: { id: string } 
         />
         <AmountDonateCard
           amountRaised={portal.balance.toString()}
-          recipientAddress={portal.proposer_address}
+          recipientAddress={portal.contract_address}
           totalContributors="0"
         />
       </div>
-      <PortalTabs />
+      <PortalTabs description={portal.description} />
     </div>
   );
 }
