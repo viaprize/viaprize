@@ -76,7 +76,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
       <PrivyProvider
         appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
         config={{
-          loginMethods: ['email', 'wallet'],
+          loginMethods: ['email', 'wallet', 'google'],
           additionalChains: [],
           defaultChain: configureChainsConfig.chains[0],
           appearance: {

@@ -41,7 +41,7 @@ export default function AmountDonateCard({
       </div>
       <Text>Project Recipient Address</Text>
       <Divider />
-      <Badge  color="gray" p="md">
+      <Badge color="gray" p="md">
         <Flex gap="md">
           <Text size="sm">{recipientAddress.slice(0,5)}....{recipientAddress.slice(-5)}</Text>
           <IconCurrencyEthereum size={20} />

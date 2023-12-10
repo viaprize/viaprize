@@ -1,6 +1,7 @@
-'use client'
+'use client';
 import { OwnLoader } from '@/components/custom/loader';
 
-export default function Loader() {
-  return <OwnLoader />
+
+export default function SkeletonLoad() {
+  return <OwnLoader />;
 }
