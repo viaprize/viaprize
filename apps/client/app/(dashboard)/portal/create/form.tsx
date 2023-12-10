@@ -224,22 +224,23 @@ export default function PortalForm() {
       >
         <Group mt="xs">
           <Tooltip label="A little description about kickstarter" refProp="rootRef">
-            <Radio value="kickstarter" label="Kick Starter" />
+            <Radio value="kickstarter" label="Send all the contributions at once automatically if a funding goal is met and refund contributors if the funding goal is not met by the deadline " />
           </Tooltip>
           <Tooltip label="A little description about go fund me" refProp="rootRef">
-            <Radio value="gofundme" label="Go Fund Me" />
+            <Radio value="gofundme" label="Immediately forward contributions to the recipient and end campaigns manually (GoFundMe styles)" />
           </Tooltip>
         </Group>
       </Radio.Group>
       <div className="my-2">
-        <Checkbox
+        {portalType=='kickstarter' && <Checkbox
           checked={haveFundingGoal || portalType === 'kickstarter'}
           onChange={(event) => {
             setHaveFundingGoal(event.currentTarget.checked);
           }}
           label="I have a funding goal"
         />
-        {haveFundingGoal || portalType === 'kickstarter' ? (
+        } 
+        {portalType === 'kickstarter' ? (
           <div>
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
               <Text>Funding Goal in USD {`( ${convertUSDTOETH(fundingGoal ?? 0)}`}</Text>
@@ -260,14 +261,14 @@ export default function PortalForm() {
         ) : null}
       </div>
       <div className="my-2">
-        <Checkbox
+        {portalType=='kickstarter' && <Checkbox
           checked={haveDeadline || portalType === 'kickstarter'}
           onChange={(event) => {
             setHaveDeadline(event.currentTarget.checked);
           }}
           label="I have a Deadline"
-        />
-        {haveDeadline || portalType === 'kickstarter' ? (
+        />}
+        {portalType === 'kickstarter' ? (
           <DateTimePicker
             label="Deadline"
             value={deadline}
@@ -276,7 +277,7 @@ export default function PortalForm() {
           />
         ) : null}
       </div>
-      {(haveFundingGoal && haveDeadline) || portalType === 'kickstarter' ? (
+      {portalType === 'kickstarter' ? (
         <Checkbox
           my="md"
           checked={allowFundsAboveGoal}

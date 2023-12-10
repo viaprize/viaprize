@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-contract portal {
-    address[] public treasurer;
-    mapping(address => bool) public isTreasurer; 
+contract Portal {
+    address[] public proposer;
+    mapping(address => bool) public isProposers; 
     address public receiverAddress;
     uint256 public goalAmount = 0;
     uint256 public deadline = 0;
@@ -22,10 +22,10 @@ contract portal {
 
     error NotEnoughFunds();
     error FundingToContractEnded();
-    error oneError();
-    error twoError();
-    error threeError(); 
-    error AllowImmediatelyCantBeTrue();
+    // error oneError();
+    // error twoError();
+    // error threeError(); 
+    error RequireGoalAndDeadline();
 
     event Values(
         address receiverAddress,
@@ -40,18 +40,18 @@ contract portal {
     );
 
     constructor(
-        address[] memory _treasurer,
+        address[] memory _proposer,
         uint256 _goal,
         uint256 _deadline,
         bool _allowDonationAboveGoalAmount,
         uint256 _platformFee,
         bool _allowImmediately
     ) {
-        for (uint256 i = 0; i < _treasurer.length; i++) {
-            treasurer.push(_treasurer[i]);
-            isTreasurer[_treasurer[i]] = true;
+        for (uint256 i = 0; i < _proposer.length; i++) {
+            proposer.push(_proposer[i]);
+            isProposers[_proposer[i]] = true;
         }
-        receiverAddress = treasurer[0];
+        receiverAddress = proposer[0];
         platformFee = _platformFee;
         allowImmediately = _allowImmediately;
 
@@ -61,7 +61,7 @@ contract portal {
         allowDonationAboveGoalAmount = _allowDonationAboveGoalAmount;
         isActive = true;
 
-        if((!allowImmediately) && goalAmount == 0 && deadline1 == 0 ) revert AllowImmediatelyCantBeTrue();
+        if((!allowImmediately) && goalAmount == 0 || deadline1 == 0 ) revert RequireGoalAndDeadline();
     }
 
     function addFunds() public payable returns (uint256, uint256, uint256, bool, bool, bool)
@@ -78,24 +78,25 @@ contract portal {
         bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
         bool metGoal = totalRewards >= goalAmount;
 
-        if (!goalAmountAvailable && !deadlineAvailable) {
+        if (allowImmediately) {
             payable(receiverAddress).transfer(
             (msg.value * (100 - platformFee)) / 100
             );
             payable(platformAddress).transfer(
                 (msg.value * (platformFee)) / 100
             );
+
         }
 
         if (goalAmountAvailable && deadlineAvailable) {
-            if(allowImmediately) {
-                payable(receiverAddress).transfer(
-                (msg.value * (100 - platformFee)) / 100
-                );
-                payable(platformAddress).transfer(
-                    (msg.value * (platformFee)) / 100
-                );
-            }
+            // if(allowImmediately) {
+            //     payable(receiverAddress).transfer(
+            //     (msg.value * (100 - platformFee)) / 100
+            //     );
+            //     payable(platformAddress).transfer(
+            //         (msg.value * (platformFee)) / 100
+            //     );
+            // }
             if(!allowImmediately) {
                 if (metDeadline ||(!allowDonationAboveGoalAmount && totalRewards >= goalAmount)) {
                     payable(receiverAddress).transfer(totalRewards);
@@ -105,47 +106,47 @@ contract portal {
             }
         }
 
-        if (goalAmountAvailable && !deadlineAvailable) {
-            if (allowImmediately && metGoal) {
-                payable(receiverAddress).transfer(
-                (msg.value * (100 - platformFee)) / 100
-                );
-                payable(platformAddress).transfer(
-                    (msg.value * (platformFee)) / 100
-                );
-                isActive = false;
-                allowImmediately = false;
-            }
-            if(allowImmediately) {
-                payable(receiverAddress).transfer(
-                (msg.value * (100 - platformFee)) / 100
-                );
-                payable(platformAddress).transfer(
-                    (msg.value * (platformFee)) / 100
-                );
-            }
-        }
-        if (!goalAmountAvailable && deadlineAvailable) {
-            if (allowImmediately && metDeadline) {
-                payable(receiverAddress).transfer(
-                (msg.value * (100 - platformFee)) / 100
-                );
-                payable(platformAddress).transfer(
-                    (msg.value * (platformFee)) / 100
-                );
-                isActive = false;
-                allowImmediately = false;
-            }
-            if(allowImmediately) {
-                payable(receiverAddress).transfer(
-                (msg.value * (100 - platformFee)) / 100
-                );
-                payable(platformAddress).transfer(
-                    (msg.value * (platformFee)) / 100
-                );
-            }
+        // if (goalAmountAvailable && !deadlineAvailable) {
+        //     if (allowImmediately && metGoal) {
+        //         payable(receiverAddress).transfer(
+        //         (msg.value * (100 - platformFee)) / 100
+        //         );
+        //         payable(platformAddress).transfer(
+        //             (msg.value * (platformFee)) / 100
+        //         );
+        //         isActive = false;
+        //         allowImmediately = false;
+        //     }
+        //     if(allowImmediately) {
+        //         payable(receiverAddress).transfer(
+        //         (msg.value * (100 - platformFee)) / 100
+        //         );
+        //         payable(platformAddress).transfer(
+        //             (msg.value * (platformFee)) / 100
+        //         );
+        //     }
+        // }
+        // if (!goalAmountAvailable && deadlineAvailable) {
+        //     if (allowImmediately && metDeadline) {
+        //         payable(receiverAddress).transfer(
+        //         (msg.value * (100 - platformFee)) / 100
+        //         );
+        //         payable(platformAddress).transfer(
+        //             (msg.value * (platformFee)) / 100
+        //         );
+        //         isActive = false;
+        //         allowImmediately = false;
+        //     }
+        //     if(allowImmediately) {
+        //         payable(receiverAddress).transfer(
+        //         (msg.value * (100 - platformFee)) / 100
+        //         );
+        //         payable(platformAddress).transfer(
+        //             (msg.value * (platformFee)) / 100
+        //         );
+        //     }
            
-        }
+        // }
 
         emit Values(
             receiverAddress, 
@@ -173,12 +174,12 @@ contract portal {
     }
 
     function closeCampaign() public {
-        require(isTreasurer[msg.sender] == true, "you are not an owner to close the campaign");
+        require(isProposers[msg.sender] == true, "you are not an owner to close the campaign");
         isActive = false;
     }
 
     // function withdrawAmount() public {
-    //     require(isTreasurer[msg.sender] == true, "you are not an owner to close the campaign");
+    //     require(isproposer[msg.sender] == true, "you are not an owner to close the campaign");
     //     payable(receiverAddress).transfer(totalRewards);
     //     payable(platformAddress).transfer(totalFunds - totalRewards);
     //     totalRewards = 0;
