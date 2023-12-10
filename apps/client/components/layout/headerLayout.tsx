@@ -49,7 +49,6 @@ export default function HeaderLayout() {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
   const { appUser } = useAppUser();
- 
 
   return (
     <Group

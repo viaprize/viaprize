@@ -1,5 +1,12 @@
 'use client';
-import { AppShell, Burger, Center, Group, useComputedColorScheme, useMantineTheme } from '@mantine/core';
+import {
+  AppShell,
+  Burger,
+  Center,
+  Group,
+  useComputedColorScheme,
+  useMantineTheme,
+} from '@mantine/core';
 import type { ReactNode } from 'react';
 import Footer from './footer';
 import HeaderLayout from './headerLayout';
@@ -10,7 +17,7 @@ import Image from 'next/image';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
- const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle }] = useDisclosure();
   const computedColorScheme = useComputedColorScheme('light');
 
   return (
