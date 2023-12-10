@@ -15,7 +15,10 @@ export default defineConfig({
       deployments: {
         ViaPrizeFactory: {
           80001: '0x0dd8d97E5b41010F5a47dAA2217aed175Ad15dd4',
-          10: '0xd44147cD5b8CE47264791F1A331A72Ff5fE12d3D'
+          10: '0xd44147cD5b8CE47264791F1A331A72Ff5fE12d3D',
+        },
+        portalFactory: {
+          80001: '0x243016538AD59103A67dD79ccE7196628fC425A4',
         },
       },
     }),

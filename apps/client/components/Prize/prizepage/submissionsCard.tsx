@@ -1,6 +1,6 @@
 import {
   prepareWriteViaPrize,
-  useViaPrizeFunders,
+  useViaPrizePatrons,
   writeViaPrize,
 } from '@/lib/smartContract';
 import { chain } from '@/lib/wagmi';
@@ -14,7 +14,7 @@ import {
   Modal,
   NumberInput,
   Stack,
-  Text
+  Text,
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { IconArrowAutofitUp, IconRefresh } from '@tabler/icons-react';
@@ -47,7 +47,7 @@ export default function SubmissionsCard({
   description,
   allowVoting,
   submissionId,
-  showVote = true
+  showVote = true,
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { address } = useAccount();
@@ -58,7 +58,7 @@ export default function SubmissionsCard({
     data: funderBalance,
     refetch,
     isLoading,
-  } = useViaPrizeFunders({
+  } = useViaPrizePatrons({
     address: contractAddress as `0x${string}`,
     args: [address ?? '0x'],
   });
@@ -91,8 +91,8 @@ export default function SubmissionsCard({
               isLoading
                 ? 'Loading.....'
                 : `Total Votes you can allocate(Max: ${formatEther(
-                  BigInt(parseInt(funderBalance?.toString() ?? '1') - 1),
-                )} ${chain.nativeCurrency.symbol} )`
+                    BigInt(parseInt(funderBalance?.toString() ?? '1') - 1),
+                  )} ${chain.nativeCurrency.symbol} )`
             }
             placeholder="Enter Value of Votes"
             mt="md"
@@ -112,44 +112,45 @@ export default function SubmissionsCard({
               setValue(v.toString());
             }}
           />
-          {showVote && <Button
+          {showVote && (
+            <Button
+              onClick={async () => {
+                try {
+                  await refetch();
 
-            onClick={async () => {
-              try {
-                await refetch();
+                  if (
+                    parseInt(debounced.toString()) >
+                    parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
+                  ) {
+                    toast.error('You cannot vote more than your balance');
+                    return;
+                  }
+                  setSendLoading(true);
 
-                if (
-                  parseInt(debounced.toString()) >
-                  parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
-                ) {
-                  toast.error('You cannot vote more than your balance');
-                  return;
+                  const { request } = await prepareWriteViaPrize({
+                    address: contractAddress as `0x${string}`,
+                    functionName: 'vote',
+                    args: [hash as `0x${string}`, parseEther(debounced)],
+                  });
+                  const { hash: transactionHash } = await writeViaPrize(request);
+                  console.log({ transactionHash }, 'transactionHash');
+                  toast.success(`Transaction Hash ${transactionHash}`);
+                  setSendLoading(false);
+                  close();
+                } catch (e) {
+                  console.log(e, 'error');
+                  toast.error('Error while voting');
+                } finally {
+                  setSendLoading(false);
+                  window.location.reload();
                 }
-                setSendLoading(true);
-
-                const { request } = await prepareWriteViaPrize({
-                  address: contractAddress as `0x${string}`,
-                  functionName: 'vote',
-                  args: [hash as `0x${string}`, parseEther(debounced)],
-                });
-                const { hash: transactionHash } = await writeViaPrize(request);
-                console.log({ transactionHash }, 'transactionHash');
-                toast.success(`Transaction Hash ${transactionHash}`);
-                setSendLoading(false);
-                close();
-              } catch (e) {
-                console.log(e, 'error');
-                toast.error('Error while voting');
-              } finally {
-                setSendLoading(false);
-                window.location.reload();
-              }
-            }}
-            disabled={!value}
-            loading={sendLoading}
-          >
-            Vote!
-          </Button>}
+              }}
+              disabled={!value}
+              loading={sendLoading}
+            >
+              Vote!
+            </Button>
+          )}
         </Stack>
       </Modal>
       <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
@@ -172,9 +173,11 @@ export default function SubmissionsCard({
             <Button color="black" mr="5px" onClick={open} disabled={!allowVoting}>
               {allowVoting && showVote ? 'Vote' : ''}
             </Button>
-            {allowVoting && showVote && (<Badge variant="filled" w={'auto'} size="lg" color="blue">
-              {formatEther(BigInt(votes.toString()))} {chain.nativeCurrency.symbol}
-            </Badge>)}
+            {allowVoting && showVote && (
+              <Badge variant="filled" w={'auto'} size="lg" color="blue">
+                {formatEther(BigInt(votes.toString()))} {chain.nativeCurrency.symbol}
+              </Badge>
+            )}
           </div>
         </div>
       </div>

@@ -1,37 +1,62 @@
 import useAppUser from '@/context/hooks/useAppUser';
-import { Avatar, Badge, Box, Button, Group, Input, NumberInput, Stack, Text } from '@mantine/core';
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Group,
+  Input,
+  Modal,
+  NumberInput,
+  Stack,
+  Text,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { prepareSendTransaction, sendTransaction, waitForTransaction } from '@wagmi/core';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { isAddress, parseEther } from 'viem';
 import { useBalance } from 'wagmi';
+import EditProfileModal from './edit-profile-modal';
 
 export default function Profile() {
   // const { address } = useAccount();
+  const [opened, { open, close }] = useDisclosure(false);
   const { appUser } = useAppUser();
-  const [recieverAddress, setRecieverAddress] = useState<string>("")
-  const [amount, setAmount] = useState<string>("0")
-  const { wallet } = usePrivyWagmi()
-  const { data: balance, refetch } = useBalance({ address: wallet?.address as `0x${string}` });
+  const [recieverAddress, setRecieverAddress] = useState<string>('');
+  const [amount, setAmount] = useState<string>('0');
+  const { wallet } = usePrivyWagmi();
+  const { data: balance, refetch } = useBalance({
+    address: wallet?.address as `0x${string}`,
+  });
   useEffect(() => {
     if (!balance) {
-      void refetch()
+      void refetch();
     }
-  }, [balance])
-  const [loading, setLoading] = useState(false)
+  }, [balance]);
+  const [loading, setLoading] = useState(false);
   // console.log(isAddress(recieverAddress), "ksdjf")
   // const { data, isLoading, refetch } = useBalance({ address });
   return (
     <div className="p-8 md:w-1/3">
       <div>
         <Avatar radius="full" size="xl" />
+
         <Text fw={700} size="xl" className="mb-0 uppercase mt-4">
           {appUser?.name}
         </Text>
-        <Text className="lg my-0">@{appUser?.username}</Text>
-        <Group>
+
+        <Group justify="space-between">
+          <Text className="lg my-0">@{appUser?.username}</Text>
+          <Button size="xs" onClick={open}>
+            Edit Profile
+          </Button>
+          <Modal opened={opened} onClose={close} title="Edit Profile">
+            <EditProfileModal />
+          </Modal>
         </Group>
+
         <Group mt="sm">
           {/* <Avatar radius="xl" size="sm">
             <IconBrandX />
@@ -45,63 +70,70 @@ export default function Profile() {
           <Avatar radius="xl" size="sm">
             <IconBrandTelegram />
           </Avatar> */}
-          {
-            (appUser && balance) && <>
-              <Stack>
-                <Text>
-                  Address : {wallet?.address}
-                </Text>
-                <Text>
-                  Balance : {balance?.formatted} {balance?.symbol}
-                </Text>
+          {appUser && balance ? (
+            <Stack>
+              <Text>Address : {wallet?.address}</Text>
+              <Text>
+                Balance : {balance.formatted} {balance.symbol}
+              </Text>
 
-                <Input placeholder="Reciever Address" value={recieverAddress} onChange={(e) => setRecieverAddress(e.currentTarget.value)} />
+              <Input
+                placeholder="Reciever Address"
+                value={recieverAddress}
+                onChange={(e) => {
+                  setRecieverAddress(e.currentTarget.value);
+                }}
+              />
 
-                <NumberInput
-                  label=""
-                  placeholder="Enter amount"
-                  allowDecimal={true}
-                  allowNegative={false}
-                  defaultValue={0}
-                  value={amount}
-                  max={parseInt(balance.value.toString() ?? "1000")}
-                  onChange={(value) => setAmount(value.toString())}
-                />
-                <Button disabled={!isAddress(recieverAddress)} onClick={async () => {
-                  setLoading(true)
+              <NumberInput
+                label=""
+                placeholder="Enter amount"
+                allowDecimal
+                allowNegative={false}
+                defaultValue={0}
+                value={amount}
+                max={parseInt(balance.value.toString() ?? '1000')}
+                onChange={(value) => {
+                  setAmount(value.toString());
+                }}
+              />
+              <Button
+                disabled={!isAddress(recieverAddress)}
+                onClick={async () => {
+                  setLoading(true);
                   if (parseEther(amount) > balance.value) {
-                    toast.error("Insufficient Balance")
-                    setLoading(false)
-                    return
+                    toast.error('Insufficient Balance');
+                    setLoading(false);
+                    return;
                   }
                   try {
                     const config = await prepareSendTransaction({
                       to: recieverAddress,
                       value: parseEther(amount),
-                    })
-                    const { hash } = await sendTransaction(config)
-                    toast.promise(waitForTransaction({
-                      hash
-                    }), {
-
-                      loading: "Sending Transaction",
-                      success: "Transaction Sent",
-                      error: "Error Sending Transaction"
-                    })
+                    });
+                    const { hash } = await sendTransaction(config);
+                    toast.promise(
+                      waitForTransaction({
+                        hash,
+                      }),
+                      {
+                        loading: 'Sending Transaction',
+                        success: 'Transaction Sent',
+                        error: 'Error Sending Transaction',
+                      },
+                    );
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  } catch (e: any) {
+                    /* eslint-disable */
+                    toast.error(e.message);
                   }
-                  /* eslint-disable */
-                  catch (e: any) {
-
-                    toast.error(e.message)
-                  }
-                  setLoading(false)
-                }}>Send </Button>
-
-
-              </Stack>
-            </>
-          }
-
+                  setLoading(false);
+                }}
+              >
+                Send{' '}
+              </Button>
+            </Stack>
+          ) : null}
         </Group>
         {/* <Button my="sm">Edit Profile</Button> */}
       </div>
@@ -134,7 +166,7 @@ export default function Profile() {
 
       <Box mt="md">
         <Text fw={700} mb="sm" mt="md" className="pl-1">
-          Skills
+          Proficiencies
         </Text>
         <div className="flex flex-wrap gap-1">
           <Badge variant="light" color="green">
@@ -149,7 +181,7 @@ export default function Profile() {
         </div>
 
         <Text fw={700} mb="sm" mt="md" className="pl-1">
-          Values
+          Priorities
         </Text>
         <div className="flex flex-wrap gap-1">
           <Badge variant="light" color="green">
@@ -163,6 +195,6 @@ export default function Profile() {
           </Badge>
         </div>
       </Box>
-    </div >
+    </div>
   );
 }

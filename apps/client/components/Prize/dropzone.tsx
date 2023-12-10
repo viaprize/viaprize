@@ -13,7 +13,7 @@ import Image from 'next/image';
 
 interface ImageComponentProps extends Partial<DropzoneProps> {
   files: FileWithPath[];
-  setFiles: (files: FileWithPath[]) => void;
+  setfiles: (files: FileWithPath[]) => void;
 }
 
 export default function ImageComponent(props: ImageComponentProps) {
@@ -39,7 +39,7 @@ export default function ImageComponent(props: ImageComponentProps) {
     <div className="overflow-hidden">
       {props.files.length === 0 ? (
         <Dropzone
-          onDrop={props.setFiles}
+          onDrop={props.setfiles}
           onReject={(files) => {
             console.log('rejected files', files);
           }}
@@ -92,12 +92,12 @@ export default function ImageComponent(props: ImageComponentProps) {
           </Group>
         </Dropzone>
       ) : (
-        <div className="aspect-video">
+        <div>
           {previews}
           <Button
             fullWidth
             onClick={() => {
-              props.setFiles([]);
+              props.setfiles([]);
             }}
             my="md"
           >

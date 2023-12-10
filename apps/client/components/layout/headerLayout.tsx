@@ -47,6 +47,7 @@ export default function HeaderLayout() {
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
+  const { appUser } = useAppUser();
 
   return (
     <Group
@@ -59,41 +60,51 @@ export default function HeaderLayout() {
         <Link href="/">
           <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
         </Link>
-        <Link href="/" className="ml-2">
-          Home
+        <Link href="/" className="pl-5 font-bold">
+          HOME
         </Link>
-        <Link href="/prize/explore">Prizes</Link>
+        <Link href="/prize/explore" className="pl-3 font-bold">
+          PRIZES
+        </Link>
+        <Link href="/portal/explore" className="pl-3 font-bold">
+          PORTALS
+        </Link>
       </Flex>
       <Flex align="center" gap="md">
-        <Button
-          className="hidden sm:block bg-blue-500 text-white"
-          style={{
-            backgroundColor: '#3d4070',
-          }}
-        >
+        <Button className="hidden sm:block " color="primary">
+          <Link href="/portal/create">Create Portals</Link>
+        </Button>
+        <Button className="hidden sm:block " color="primary">
           <Link href="/prize/create">Create Prize</Link>
         </Button>
-        <Card py="5px" className="hidden sm:block">
-          <Group>
-            {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
-            {wallets[0] ? (
-              <CopyButton value={wallets[0].address}>
-                {({ copied, copy }) => (
-                  <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
-                    <ActionIcon
-                      onClick={copy}
-                      style={{
-                        backgroundColor: copied ? '#3d4070' : '#3d4070',
-                      }}
+        {appUser ? (
+          <Card py="5px" className="hidden sm:block">
+            <Group>
+              {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
+              {wallets[0] ? (
+                <CopyButton value={wallets[0].address}>
+                  {({ copied, copy }) => (
+                    <Tooltip
+                      label={copied ? 'Copied' : 'Copy'}
+                      withArrow
+                      position="right"
                     >
-                      {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-              </CopyButton>
-            ) : null}
-          </Group>
-        </Card>
+                      <ActionIcon
+                        onClick={copy}
+                        style={{
+                          backgroundColor: copied ? '#3d4070' : '#3d4070',
+                        }}
+                      >
+                        {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                </CopyButton>
+              ) : null}
+            </Group>
+          </Card>
+        ) : null}
+
         <ActionIcon
           variant="outline"
           color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}
@@ -115,7 +126,7 @@ export default function HeaderLayout() {
 }
 
 function ProfileMenu() {
-  const { logoutUser, appUser } = useAppUser();
+  const { logoutUser, appUser, loginUser } = useAppUser();
 
   const [switchWallet, setSwitchWallet] = useState(false);
   const handleLogout = () => {
@@ -132,75 +143,71 @@ function ProfileMenu() {
 
   return (
     <>
-      <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
-        <Menu.Target>
-          {appUser ? (
-            <Avatar color="blue" radius="xl" className="cursor-pointer">
-              {appUser.username.charAt(0).toUpperCase()}
-            </Avatar>
-          ) : (
-            <Button
-              color="green"
-              leftSection={<IconUser size={14} />}
-              // onClick={() => {
-              //   toast.promise(router.push('/'), {
-              //     loading: 'Redirecting Please Wait',
-              //     error: 'Error while redirecting ',
-              //     success: 'Redirected to Home Page',
-              //   });
-              // }}
-            >
-              <Link href="/">Home</Link>
-            </Button>
-          )}
-        </Menu.Target>
-
-        <Menu.Dropdown p="md" mr="sm">
-          <Menu.Label>Profile</Menu.Label>
-          <Menu.Item
-            leftSection={<IconUser size={14} />}
-            // onClick={() => {
-            //   router
-            //     .push(`/profile/${appUser?.username}`)
-            //     .then(console.log)
-            //     .catch(console.error);
-            // }}
-          >
-            <Link href={`/profile/${appUser?.username}`}>View Profile</Link>
-          </Menu.Item>
-          <Menu.Item leftSection={<TbTopologyStarRing2 />} className="sm:hidden">
-            <Link href="/prize/create" className="block">
-              Create Prize
-            </Link>
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Item
-            onClick={() => {
-              setSwitchWallet(true);
+      {appUser ? (
+        <>
+          <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
+            <Menu.Target>
+              <Avatar color="blue" radius="xl" className="cursor-pointer">
+                {appUser.username.charAt(0).toUpperCase()}
+              </Avatar>
+            </Menu.Target>
+            <Menu.Dropdown p="md" mr="sm">
+              <Menu.Label>Profile</Menu.Label>
+              <Menu.Item
+                leftSection={<IconUser size={14} />}
+                // onClick={() => {
+                //   router
+                //     .push(`/profile/${appUser?.username}`)
+                //     .then(console.log)
+                //     .catch(console.error);
+                // }}
+              >
+                <Link href={`/profile/${appUser.username}`}>View Profile</Link>
+              </Menu.Item>
+              <Menu.Item leftSection={<TbTopologyStarRing2 />} className="sm:hidden">
+                <Link href="/prize/create" className="block">
+                  Create Prize
+                </Link>
+              </Menu.Item>
+              <Menu.Divider />
+              <Menu.Item
+                onClick={() => {
+                  setSwitchWallet(true);
+                }}
+                rightSection={<IconArrowsLeftRight size={14} />}
+              >
+                Switch Wallet
+              </Menu.Item>
+              <Menu.Item
+                color="red"
+                leftSection={<IoExit size={14} />}
+                onClick={handleLogout}
+              >
+                Logout
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+          <Modal
+            size="lg"
+            opened={switchWallet}
+            onClose={() => {
+              setSwitchWallet(false);
             }}
-            rightSection={<IconArrowsLeftRight size={14} />}
+            title="Switch Wallets"
           >
-            Switch Wallet
-          </Menu.Item>
-          <Menu.Item
-            color="red"
-            leftSection={<IoExit size={14} />}
-            onClick={handleLogout}
-          >
-            Logout
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
-      <Modal
-        size="lg"
-        opened={switchWallet}
-        onClose={() => {
-          setSwitchWallet(false);
-        }}
-        title="Switch Wallets"
-      >
-        <SwitchAccount />
-      </Modal>
+            <SwitchAccount />
+          </Modal>
+        </>
+      ) : (
+        <Button
+          color="primary"
+          onClick={() => {
+            void loginUser();
+          }}
+        >
+          Login
+        </Button>
+      )}
     </>
   );
 }

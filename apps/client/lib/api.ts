@@ -9,7 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { env } from "@env";
+import { env } from '@env';
+
 
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
@@ -49,15 +50,33 @@ export type PactNullable = {
   blockHash: string;
 } | null;
 
-export interface Submission {
+export interface CreatePortalDto {
+  address: string;
+  proposal_id: string;
+}
+
+export interface Portals {
   id: string;
-  submissionDescription: string;
-  submissionHash: string;
-  submitterAddress: string;
+  description: string;
+  slug: string;
+  sendImmediately: boolean;
+  fundingGoal: number;
+  isMultiSignatureReciever: boolean;
   /** @format date-time */
-  created_at: string;
+  deadline: string;
+  allowDonationAboveThreshold: boolean;
+  termsAndCondition: string;
+  proposer_address: string;
+  contract_address: string;
+  treasurers: string[];
+  tags: string[];
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  images: string[];
+  title: string;
   user: User;
-  prize: Prize;
 }
 
 export interface User {
@@ -71,27 +90,19 @@ export interface User {
   submissions: Submission[];
   prizeProposals: PrizeProposals[];
   prizes: Prize[];
+  portals: Portals[];
+  portalProposals: PortalProposals[];
 }
 
-export interface PrizeProposals {
+export interface Submission {
   id: string;
-  voting_time: number;
-  submission_time: number;
-  admins: string[];
-  /** The Columns here are not part of the smart contract */
-  isApproved: boolean;
-  isRejected: boolean;
-  title: string;
-  description: string;
-  isAutomatic: boolean;
+  submissionDescription: string;
+  submissionHash: string;
+  submitterAddress: string;
   /** @format date-time */
-  startVotingDate: string;
-  /** @format date-time */
-  startSubmissionDate: string;
-  proficiencies: string[];
-  priorities: string[];
-  images: string[];
+  created_at: string;
   user: User;
+  prize: Prize;
 }
 
 export interface Prize {
@@ -119,13 +130,132 @@ export interface Prize {
   user: User;
 }
 
+export interface PrizeProposals {
+  id: string;
+  voting_time: number;
+  submission_time: number;
+  admins: string[];
+  /** The Columns here are not part of the smart contract */
+  isApproved: boolean;
+  isRejected: boolean;
+  title: string;
+  description: string;
+  isAutomatic: boolean;
+  /** @format date-time */
+  startVotingDate: string;
+  /** @format date-time */
+  startSubmissionDate: string;
+  proficiencies: string[];
+  priorities: string[];
+  images: string[];
+  user: User;
+}
+
+export interface PortalProposals {
+  id: string;
+  description: string;
+  slug: string;
+  fundingGoal: number;
+  isMultiSignatureReciever: boolean;
+  /** @format date-time */
+  deadline: string;
+  sendImmediately: boolean;
+  allowDonationAboveThreshold: boolean;
+  termsAndCondition: string;
+  proposerAddress: string;
+  treasurers: string[];
+  tags: string[];
+  isApproved: boolean;
+  isRejected: boolean;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  images: string[];
+  title: string;
+  user: User;
+}
+
+/** Make all properties in T readonly */
+export interface ReadonlyType {
+  data: PortalWithBalance[];
+  hasNextPage: boolean;
+}
+
+export interface PortalWithBalance {
+  balance: number;
+  id: string;
+  description: string;
+  slug: string;
+  sendImmediately: boolean;
+  fundingGoal: number;
+  isMultiSignatureReciever: boolean;
+  /** @format date-time */
+  deadline: string;
+  allowDonationAboveThreshold: boolean;
+  termsAndCondition: string;
+  proposer_address: string;
+  contract_address: string;
+  treasurers: string[];
+  tags: string[];
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  images: string[];
+  title: string;
+  user: User;
+}
+
+/** Make all properties in T readonly */
+export interface ReadonlyTypeO1 {
+  data: PortalProposals[];
+  hasNextPage: boolean;
+}
+
+/** Make all properties in T readonly */
+export interface ReadonlyTypeO2 {
+  data: PortalProposals[];
+  hasNextPage: boolean;
+}
+
+export interface CreatePortalProposalDto {
+  description: string;
+  fundingGoal?: number;
+  isMultiSignatureReciever: boolean;
+  sendImmediately: boolean;
+  /** @format date-time */
+  deadline?: string;
+  allowDonationAboveThreshold: boolean;
+  termsAndCondition: string;
+  proposerAddress: string;
+  treasurers: string[];
+  tags: string[];
+  images: string[];
+  title: string;
+}
+
+/** Make all properties in T readonly */
+export interface ReadonlyTypeO3 {
+  data: PortalProposals[];
+  hasNextPage: boolean;
+}
+
+export interface RejectProposalDto {
+  comment: string;
+}
+
+export interface Http200Response {
+  message: string;
+}
+
 export interface CreatePrizeDto {
   address: string;
   proposal_id: string;
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyType {
+export interface ReadonlyTypeO4 {
   data: PrizeWithBalance[];
   hasNextPage: boolean;
 }
@@ -190,12 +320,8 @@ export interface CreateSubmissionDto {
   submitterAddress: string;
 }
 
-export interface Http200Response {
-  message: string;
-}
-
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO1 {
+export interface ReadonlyTypeO5 {
   data: SubmissionWithBlockchainData[];
   hasNextPage: boolean;
 }
@@ -213,13 +339,13 @@ export interface SubmissionWithBlockchainData {
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO2 {
+export interface ReadonlyTypeO6 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO3 {
+export interface ReadonlyTypeO7 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
@@ -263,13 +389,9 @@ export interface CreatePrizeProposalDto {
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO4 {
+export interface ReadonlyTypeO8 {
   data: PrizeProposals[];
   hasNextPage: boolean;
-}
-
-export interface RejectProposalDto {
-  comment: string;
 }
 
 /** Interface of Create User , using this interface it create a new user in */
@@ -319,11 +441,14 @@ export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D;
   error: E;
 }
@@ -342,7 +467,8 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: 'same-origin',
@@ -361,7 +487,9 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key);
-    return `${encodedKey}=${encodeURIComponent(typeof value === 'number' ? value : `${value}`)}`;
+    return `${encodedKey}=${encodeURIComponent(
+      typeof value === 'number' ? value : `${value}`,
+    )}`;
   }
 
   protected addQueryParam(query: QueryParamsType, key: string) {
@@ -377,7 +505,11 @@ export class HttpClient<SecurityDataType = unknown> {
     const query = rawQuery || {};
     const keys = Object.keys(query).filter((key) => 'undefined' !== typeof query[key]);
     return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key),
+      )
       .join('&');
   }
 
@@ -388,8 +520,11 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === 'object' || typeof input === 'string') ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== 'string' ? JSON.stringify(input) : input),
+      input !== null && (typeof input === 'object' || typeof input === 'string')
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -406,7 +541,10 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams,
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -463,15 +601,21 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
+        },
+        signal:
+          (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) ||
+          null,
+        body:
+          typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
       },
-      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-      body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
+    ).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -540,6 +684,192 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   };
+  portals = {
+    /**
+     * No description
+     *
+     * @name PortalsCreate
+     * @request POST:/portals
+     */
+    portalsCreate: (data: CreatePortalDto, params: RequestParams = {}) =>
+      this.request<Portals, any>({
+        path: `/portals`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the GET request to `/portals` endpoint. Here's a breakdown of what it does: Gets page
+     *
+     * @name PortalsList
+     * @summary Get all Portals
+     * @request GET:/portals
+     */
+    portalsList: (
+      query: {
+        page: number;
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReadonlyType, any>({
+        path: `/portals`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PortalsDetail
+     * @request GET:/portals/{id}
+     */
+    portalsDetail: (id: string, params: RequestParams = {}) =>
+      this.request<PortalWithBalance, any>({
+        path: `/portals/${id}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the GET request to `/proposals` endpoint. Here's a breakdown of what it does: Gets page
+     *
+     * @name ProposalsList
+     * @summary Get all Pending proposals
+     * @request GET:/portals/proposals
+     * @secure
+     */
+    proposalsList: (
+      query: {
+        page: number;
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReadonlyTypeO1, any>({
+        path: `/portals/proposals`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the POST request to `/proposals` endpoint. Here's a breakdown of what it does:
+     *
+     * @name ProposalsCreate
+     * @summary Create a new proposal using user auth token to know which user is calling this function and sends email to user
+     * @request POST:/portals/proposals
+     * @secure
+     */
+    proposalsCreate: (data: CreatePortalProposalDto, params: RequestParams = {}) =>
+      this.request<PortalProposals, any>({
+        path: `/portals/proposals`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does: Gets page
+ *
+ * @name ProposalsAcceptList
+ * @summary Retrieve a list of accepted Portal proposals
+description: Retrieve a list of accepted Portal proposals. The list supports pagination.
+parameters
+ * @request GET:/portals/proposals/accept
+ * @secure
+ */
+    proposalsAcceptList: (
+      query: {
+        page: number;
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReadonlyTypeO2, any>({
+        path: `/portals/proposals/accept`,
+        method: 'GET',
+        query: query,
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get all proposals  of user  by username
+     *
+     * @name ProposalsUserDetail
+     * @summary Get all proposals of users by username,
+     * @request GET:/portals/proposals/user/{username}
+     */
+    proposalsUserDetail: (
+      username: string,
+      query: {
+        page: number;
+        limit: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<ReadonlyTypeO3, any>({
+        path: `/portals/proposals/user/${username}`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Admin Reject proposal
+     *
+     * @name ProposalsRejectCreate
+     * @summary Reject Proposal,
+     * @request POST:/portals/proposals/reject/{id}
+     * @secure
+     */
+    proposalsRejectCreate: (
+      id: string,
+      data: RejectProposalDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<Http200Response, any>({
+        path: `/portals/proposals/reject/${id}`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls the `approve` method of the `portalProposalsService` with the given `id`. and it approves the proposal and sends an email of approval
+ *
+ * @name ProposalsAcceptCreate
+ * @summary The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls
+the `approve` method of the `portalProposalsService` with the given `id`
+ * @request POST:/portals/proposals/accept/{id}
+ * @secure
+ */
+    proposalsAcceptCreate: (id: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/proposals/accept/${id}`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+  };
   prizes = {
     /**
      * No description
@@ -585,7 +915,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyType, any>({
+      this.request<ReadonlyTypeO4, any>({
         path: `/prizes`,
         method: 'GET',
         query: query,
@@ -613,7 +943,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name SubmissionCreate
      * @request POST:/prizes/{id}/submission
      */
-    submissionCreate: (id: string, data: CreateSubmissionDto, params: RequestParams = {}) =>
+    submissionCreate: (
+      id: string,
+      data: CreateSubmissionDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/prizes/${id}/submission`,
         method: 'POST',
@@ -639,7 +973,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO1, any>({
+      this.request<ReadonlyTypeO5, any>({
         path: `/prizes/${id}/submission`,
         method: 'GET',
         query: query,
@@ -662,7 +996,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO2, any>({
+      this.request<ReadonlyTypeO6, any>({
         path: `/prizes/proposals`,
         method: 'GET',
         query: query,
@@ -707,7 +1041,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO3, any>({
+      this.request<ReadonlyTypeO7, any>({
         path: `/prizes/proposals/accept`,
         method: 'GET',
         query: query,
@@ -731,7 +1065,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO4, any>({
+      this.request<ReadonlyTypeO8, any>({
         path: `/prizes/proposals/user/${username}`,
         method: 'GET',
         query: query,
@@ -747,7 +1081,11 @@ parameters
      * @request POST:/prizes/proposals/reject/{id}
      * @secure
      */
-    proposalsRejectCreate: (id: string, data: RejectProposalDto, params: RequestParams = {}) =>
+    proposalsRejectCreate: (
+      id: string,
+      data: RejectProposalDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/prizes/proposals/reject/${id}`,
         method: 'POST',

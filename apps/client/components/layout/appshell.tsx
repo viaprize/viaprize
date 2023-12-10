@@ -1,6 +1,8 @@
+'use client';
 import { AppShell, Center, useComputedColorScheme, useMantineTheme } from '@mantine/core';
 import type { ReactNode } from 'react';
 import HeaderLayout from './headerLayout';
+import Footer from './footer';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
@@ -32,9 +34,10 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
       </AppShell.Header>
 
       <AppShell.Main>
-        <div className="w-full grid place-content-center">
-          <Center className="max-w-screen-xl">{children}</Center>
+        <div className="w-full flex justify-center">
+          <Center className="max-w-screen-xl w-full">{children}</Center>
         </div>
+        <Footer />
       </AppShell.Main>
     </AppShell>
   );

@@ -25,7 +25,7 @@ export const env = createEnv({
       .default('https://api.pactsmith.com/api'),
   },
   /*
-   * Due to how Next.js bundles environment variables on Edge and Client,
+   * Due to how Next.js bundles enironment variables on Edge and Client,
    * we need to manually destructure them to make sure all are included in bundle.
    *
    * 💡 You'll get type errors if not all variables from `server` & `client` are included here.

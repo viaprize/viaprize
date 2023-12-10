@@ -68,6 +68,7 @@
     "reflect-metadata": "0.1.13",
     "rimraf": "5.0.1",
     "rxjs": "7.8.1",
+    "slugify": "^1.6.6",
     "source-map-support": "0.5.21",
     "swagger-ui-express": "5.0.0",
     "typedoc-theme-hierarchy": "^4.1.1",

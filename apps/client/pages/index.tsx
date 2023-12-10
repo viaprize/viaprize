@@ -1,4 +1,3 @@
-import useAppUser from '@/context/hooks/useAppUser';
 import { Badge, Burger, Button, Card, Flex } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { usePrivy } from '@privy-io/react-auth';
@@ -6,13 +5,14 @@ import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import type { ReactElement } from 'react';
 import { useEffect } from 'react';
-import { BiLogoLinkedin, BiSolidRightArrowCircle } from 'react-icons/bi';
-import { BsTwitter } from 'react-icons/bs';
+import { BiSolidRightArrowCircle } from 'react-icons/bi';
 import { FaTelegramPlane } from 'react-icons/fa';
-import { ImTelegram } from 'react-icons/im';
 import type { RenderPhotoProps } from 'react-photo-album';
 import { PhotoAlbum } from 'react-photo-album';
+import AppShellLayout from '@/components/layout/appshell';
+import useAppUser from '@/context/hooks/useAppUser';
 
 const photoSizes: number[][] = [
   [2160, 2160],
@@ -95,12 +95,12 @@ export default function Home() {
   return (
     <div
       className="w-full min-h-screen flex flex-col items-center relative overflow-clip"
-      style={{
-        background: `radial-gradient(243.55% 153.69% at 23.48% -1.07%, #EBF3F5 6.99%, #C5E2F0 100%)`,
-      }}
+      // style={{
+      //   background: `radial-gradient(243.55% 153.69% at 23.48% -1.07%, #EBF3F5 6.99%, #C5E2F0 100%)`,
+      // }}
     >
       {/*Nav bar*/}
-      <NavBar />
+      {/* <NavBar /> */}
       <div className="max-w-screen-2xl px-8 pt-4 pb-8 w-full bg-transparent">
         {/* Hero Section */}
         <section className="md:flex justify-betweem items-center h-screen">
@@ -108,20 +108,21 @@ export default function Home() {
             {/* <h2 className="font-normal text-lg text-black uppercase my-0">
               Crowdfund the future
             </h2> */}
-            <h1 className="font-bold text-5xl text-black my-6">
-              Trustworthy crowdfunding
-            </h1>
+            <h1 className="font-bold text-5xl  my-6">Trustworthy Crowdfunding</h1>
             {/* <p className="text-lg text-gray-600 my-4">
               Simple and sleek design with users in mind. viaPrize is a platform that
               allows
             </p> */}
             <Link href="/prize/explore">
-              <Button className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]">
+              <Button
+                className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]"
+                color="primary"
+              >
                 Explore Prizes
               </Button>
             </Link>
             <Flex
-              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 text-black sm:w-[70%]"
+              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[80%]"
               style={{
                 background: `rgba(125, 185, 206, 0.15)`,
               }}
@@ -164,7 +165,7 @@ export default function Home() {
         </section>
         {/* How it works */}
         <div className="flex flex-col items-center">
-          <h1 className="text-black ">Why viaPrize?</h1>
+          <h1>Why viaPrize?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             <ReasonCard
               Title="Reason 1"
@@ -271,7 +272,7 @@ export default function Home() {
         </section>
         {/* 3 roles in a prize */}
         <section className="flex flex-col items-center my-14">
-          <h1 className="text-3xl font-bold text-black">3 Roles in a Prize</h1>
+          <h1 className="text-3xl font-bold">3 Roles in a Prize</h1>
           <Image
             src="/home/rolesInPrize.png"
             width={1000}
@@ -288,9 +289,10 @@ export default function Home() {
             </h1> */}
             <Button
               rightSection={<FaTelegramPlane size={20} />}
-              className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]  w-[15%] h-[30%] py-3 text-lg"
+              color="primary"
+              className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]  h-[30%] py-3 text-lg"
             >
-              <Link href="https://t.me/viaPrize">Join the Community </Link>
+              <Link href="https://t.me/viaPrize">Join the Community</Link>
             </Button>
           </div>
           <div className="my-4" />
@@ -307,66 +309,6 @@ export default function Home() {
         </section>
         {/* Footer */}
       </div>
-      <footer className="text-white w-full bg-slate-950">
-        <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
-          <div className="sm:flex sm:items-center sm:justify-between">
-            <Link href="/" className="flex items-center mb-4 sm:mb-0">
-              <Image
-                src="/viaprizeBg.png"
-                className="h-8 mr-3"
-                alt="viaPrize Logo"
-                width={32}
-                height={32}
-              />
-              <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-                viaPrize
-              </span>
-            </Link>
-            <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
-              <li>
-                <Link href="#" className="mr-4 hover:underline md:mr-6 ">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="mr-4 hover:underline md:mr-6">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="mr-4 hover:underline md:mr-6 ">
-                  Licensing
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:underline">
-                  Support
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="my-4">
-            <Link href="https://twitter.com/viaPrize">
-              <BsTwitter className="inline-block mr-4 text-2xl text-blue-400 " />
-            </Link>
-            <Link href="https://www.linkedin.com/company/viaPrize/">
-              <BiLogoLinkedin className="inline-block mr-4 text-2xl text-white " />
-            </Link>
-            <Link href="https://t.me/viaPrize">
-              <ImTelegram className="inline-block mr-4 text-2xl text-blue-400 bg-white rounded-full" />
-            </Link>
-          </div>
-
-          <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-          <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
-            © 2023{' '}
-            <a href="/" className="hover:underline">
-              ViaPrize™
-            </a>
-            . All Rights Reserved.
-          </span>
-        </div>
-      </footer>
     </div>
   );
 }
@@ -581,3 +523,7 @@ function NextJsImage({
     </div>
   );
 }
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return <AppShellLayout>{page}</AppShellLayout>;
+};

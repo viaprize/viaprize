@@ -1,21 +1,24 @@
-import { MantineProvider, createTheme, useMantineColorScheme } from '@mantine/core';
+import { OwnLoader } from '@/components/custom/loader';
+import { configureChainsConfig } from '@/lib/wagmi';
+import { env } from '@env';
+import { MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 import '@mantine/tiptap/styles.css';
+import { PrivyProvider } from '@privy-io/react-auth';
+import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import type { NextPage } from 'next';
 import type { AppContext, AppProps } from 'next/app';
 import NextApp from 'next/app';
 import Head from 'next/head';
-import '../styles/globals.css';
-import '../styles/index.css';
-import { env } from '@env';
-import { PrivyProvider } from '@privy-io/react-auth';
-import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
-import type { NextPage } from 'next';
 import { Router } from 'next/router';
 import { useEffect, useState, type ReactElement, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
-import { configureChainsConfig } from '@/lib/wagmi';
+import '../styles/globals.css';
+import '../styles/index.css';
+import { theme } from 'utils/theme';
 
 const queryClient = new QueryClient();
 
@@ -29,32 +32,6 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
-
-const theme = createTheme({
-  /** Your theme override here */
-});
-
-function HourLoader() {
-  const { colorScheme } = useMantineColorScheme();
-
-  useEffect(() => {
-    async function getLoader() {
-      const { hourglass } = await import('ldrs');
-      hourglass.register();
-    }
-    void getLoader();
-  }, []);
-  return <l-hourglass color={colorScheme === 'dark' ? 'white' : 'black'} />;
-}
-
-function OwnLoader() {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      {/* <Loader size="md" /> */}
-      <HourLoader />
-    </div>
-  );
-}
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   // console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
@@ -95,10 +72,11 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         />
         <link rel="shortcut icon" href="/viaprizeBg.png" />
       </Head>
+      <SpeedInsights />
       <PrivyProvider
         appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
         config={{
-          loginMethods: ['email', 'wallet'],
+          loginMethods: ['email', 'wallet', 'google'],
           additionalChains: [],
           defaultChain: configureChainsConfig.chains[0],
           appearance: {

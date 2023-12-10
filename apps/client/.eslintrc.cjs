@@ -32,7 +32,7 @@ const config = {
       },
     },
   },
-  ignorePatterns: ['node_modules/', 'dist/', 'lib/smartContract.ts'],
+  ignorePatterns: ['node_modules/', 'dist/', 'lib/smartContract.ts','next/babel'],
   // add rules configurations here
   rules: {
     'unicorn/filename-case': 'off',

@@ -13,6 +13,7 @@ export class BlockchainService {
   }
 
   getBalanceOfAddress(address: string) {
+    console.log({ address });
     return this.provider.getBalance(address);
   }
 

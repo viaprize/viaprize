@@ -1,7 +1,7 @@
-import { CreateUser } from "@/lib/api";
+import type { CreateUser } from '@/lib/api';
 import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import useAppUserStore from 'store/app-user';
 
@@ -18,11 +18,11 @@ export default function useAppUser() {
   const { user, logout } = usePrivy();
 
   const { login } = useLogin({
-    async onComplete(user, isNewUser, wasAlreadyAuthenticated) {
+    async onComplete(loginUser, isNewUser, wasAlreadyAuthenticated) {
       const token = await getAccessToken();
       await refreshUser().catch((error) => {
         console.log({ error }, 'errror');
-        if (error && error.status) {
+        if (error?.status) {
           if (error.status === 404) {
             router.push('/onboarding');
           }
@@ -30,19 +30,20 @@ export default function useAppUser() {
       });
       console.log({ token });
       if (wasAlreadyAuthenticated || isNewUser) {
-        const walletAddress = user.wallet?.address;
+        const walletAddress = loginUser.wallet?.address;
         if (!walletAddress) {
           toast('Wallet address not found, please try again');
           return;
         }
-        wallets.forEach((wallet) => {
-          setActiveWallet(wallet);
+        wallets.forEach((wallet) => async () => {
+          await setActiveWallet(wallet);
         });
         console.log({ user });
       }
 
       if (isNewUser && !wasAlreadyAuthenticated) {
-        router.push('/onboarding');
+        router.push('/onboarding'),
+          toast('Welcome to Viaprize! Please complete your profile to continue');
       }
     },
     onError(error) {
@@ -52,6 +53,7 @@ export default function useAppUser() {
 
   const createNewUser = async (
     userWithoutUserId: Omit<CreateUser, 'authId'>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix any
   ): Promise<any> => {
     if (!user) {
       throw new Error('User is not logged in');
@@ -59,10 +61,10 @@ export default function useAppUser() {
     return uploadUser({
       ...userWithoutUserId,
       authId: user.id,
-
     });
   };
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- its being waited in the hook
   const loginUser = async (): Promise<void> => {
     login();
   };
@@ -70,7 +72,7 @@ export default function useAppUser() {
   const logoutUser = async (): Promise<void> => {
     await logout();
     clearUser();
-    router.push('/');
+    await router.push('/');
   };
 
   const refreshUser = async (): Promise<void> => {

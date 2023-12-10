@@ -1,10 +1,12 @@
 //eslint-disable-next-line @typescript-eslint/ban-ts-comment -- TODO: fix
 // @ts-nocheck
 
-import { Button, Drawer, Group, Menu, Text, TextInput } from '@mantine/core';
+'use client';
+
+import { Button, Drawer, Group, Menu, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
-import { useRouter } from 'next/router';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Filter from './filterComponent';
 
 // import Filter from "./filterComponent";
@@ -29,26 +31,20 @@ export default function SearchFilters() {
   const [opened, { open, close }] = useDisclosure(false);
 
   const router = useRouter();
-  const searchParams = router.query;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix
+  const searchParams = useSearchParams();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- its needed
   const params = new URLSearchParams(searchParams as any as string);
 
-  const handleSort = async (value: string) => {
+  const handleSort = (value: string) => {
     params.set('sort', value);
-    await router.replace({ query: params.toString() });
+    router.replace({ query: params.toString() });
   };
 
   return (
     <div className="p-5">
-      <Text size="25px" weight={500}>
-        Explore Prizes
-      </Text>
-      <Text size="sm" weight={300}>
-        you can explore prizes and work on them
-      </Text>
       <Group mb="xs" mt="md" justify="space-between">
         <TextInput
-          icon={<IconSearch size="1rem" />}
+          rightSection={<IconSearch size="1rem" />}
           placeholder="Search"
           className="sm:w-[500px]"
         />
@@ -67,9 +63,13 @@ export default function SearchFilters() {
                 return (
                   <Menu.Item
                     key={key.value}
-                    onClick={() => void handleSort(key.value)}
+                    onClick={() => {
+                      handleSort(key.value);
+                    }}
                     className={`${
-                      key.value === searchParams.sort ? 'font-bold' : 'font-normal'
+                      key.value === searchParams?.get('sort')
+                        ? 'font-bold'
+                        : 'font-normal'
                     }`}
                   >
                     {key.label}

@@ -1,7 +1,6 @@
 import {
   PrepareWriteContractConfig,
   WriteContractArgs,
-  WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
   prepareWriteContract,
@@ -24,6 +23,7 @@ import {
 import {
   PrepareWriteContractResult,
   ReadContractResult,
+  WriteContractMode,
 } from 'wagmi/actions';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,6 +71,142 @@ export const ownableABI = [
     name: 'transferOwnership',
     outputs: [],
   },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Portal
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const portalABI = [
+  {
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+    inputs: [
+      { name: '_owners', internalType: 'address[]', type: 'address[]' },
+      { name: '_goal', internalType: 'uint256', type: 'uint256' },
+      { name: '_deadline', internalType: 'uint256', type: 'uint256' },
+      { name: '_allowDonationAboveGoalAmount', internalType: 'bool', type: 'bool' },
+      { name: '_platformFee', internalType: 'uint256', type: 'uint256' },
+      { name: '_allowImmediately', internalType: 'bool', type: 'bool' },
+    ],
+  },
+  { type: 'error', inputs: [], name: 'AllowImmediatelyCantBeTrue' },
+  { type: 'error', inputs: [], name: 'FundingToContractEnded' },
+  { type: 'error', inputs: [], name: 'NotEnoughFunds' },
+  { type: 'error', inputs: [], name: 'oneError' },
+  { type: 'error', inputs: [], name: 'threeError' },
+  { type: 'error', inputs: [], name: 'twoError' },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'receiverAddress',
+        internalType: 'address',
+        type: 'address',
+        indexed: false,
+      },
+      { name: 'totalFunds', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'totalRewards', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'goalMet', internalType: 'bool', type: 'bool', indexed: false },
+      {
+        name: 'allowDonationsAboveGoalAmount',
+        internalType: 'bool',
+        type: 'bool',
+        indexed: false,
+      },
+      { name: 'deadline', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'goalAmount', internalType: 'uint256', type: 'uint256', indexed: false },
+      { name: 'deadlineAvailable', internalType: 'bool', type: 'bool', indexed: false },
+      { name: 'goalAmountAvailable', internalType: 'bool', type: 'bool', indexed: false },
+    ],
+    name: 'Values',
+  },
+  {
+    stateMutability: 'payable',
+    type: 'function',
+    inputs: [],
+    name: 'addFunds',
+    outputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'bool', type: 'bool' },
+      { name: '', internalType: 'bool', type: 'bool' },
+      { name: '', internalType: 'bool', type: 'bool' },
+    ],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'closeCampaign',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'currentTimestamp',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'deadline',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'goalAmount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isOwner',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'owners',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'patrons',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'platformAddress',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'platformFee',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'receiverAddress',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  { stateMutability: 'payable', type: 'receive' },
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +400,7 @@ export const viaPrizeABI = [
     stateMutability: 'nonpayable',
     type: 'constructor',
     inputs: [
-      { name: '_admins', internalType: 'address[]', type: 'address[]' },
+      { name: '_proposers', internalType: 'address[]', type: 'address[]' },
       { name: '_platformAdmins', internalType: 'address[]', type: 'address[]' },
       { name: '_platFormFee', internalType: 'uint256', type: 'uint256' },
       { name: '_proposerFee', internalType: 'uint256', type: 'uint256' },
@@ -318,13 +454,6 @@ export const viaPrizeABI = [
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'admins',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
@@ -350,6 +479,17 @@ export const viaPrizeABI = [
     outputs: [],
   },
   {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'distribute_use_unused_votes_v2',
+    outputs: [
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+      { name: '', internalType: 'uint256', type: 'uint256' },
+    ],
+  },
+  {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
@@ -369,23 +509,6 @@ export const viaPrizeABI = [
     inputs: [],
     name: 'end_voting_period',
     outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [
-      { name: '', internalType: 'address', type: 'address' },
-      { name: '', internalType: 'bytes32', type: 'bytes32' },
-    ],
-    name: 'funderVotes',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'funders',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
@@ -435,15 +558,32 @@ export const viaPrizeABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'isAdmin',
+    name: 'isPlatformAdmin',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'isPlatformAdmin',
+    name: 'isProposer',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'patronVotes',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'patrons',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
@@ -483,6 +623,13 @@ export const viaPrizeABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'proposers',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [
       { name: '', internalType: 'bytes32', type: 'bytes32' },
       { name: '', internalType: 'address', type: 'address' },
@@ -517,13 +664,6 @@ export const viaPrizeABI = [
     inputs: [],
     name: 'total_rewards',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: '_submissionHash', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'use_unused_votes',
-    outputs: [],
   },
   {
     stateMutability: 'nonpayable',
@@ -596,6 +736,53 @@ export const viaPrizeFactoryConfig = {
 } as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// portalFactory
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export const portalFactoryABI = [
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'portalAddress', internalType: 'address', type: 'address', indexed: true },
+    ],
+    name: 'NewPortalCreated',
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_owners', internalType: 'address[]', type: 'address[]' },
+      { name: '_goal', internalType: 'uint256', type: 'uint256' },
+      { name: '_deadline', internalType: 'uint256', type: 'uint256' },
+      { name: '_allowDonationAboveGoalAmount', internalType: 'bool', type: 'bool' },
+      { name: '_platformFee', internalType: 'uint256', type: 'uint256' },
+      { name: '_allowImmediately', internalType: 'bool', type: 'bool' },
+    ],
+    name: 'createPortal',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+] as const;
+
+/**
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export const portalFactoryAddress = {
+  80001: '0x243016538AD59103A67dD79ccE7196628fC425A4',
+} as const;
+
+/**
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export const portalFactoryConfig = {
+  address: portalFactoryAddress,
+  abi: portalFactoryABI,
+} as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Core
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -627,15 +814,42 @@ export function prepareWriteOwnable<
 }
 
 /**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link portalABI}__.
+ */
+export function writePortal<TFunctionName extends string>(
+  config:
+    | Omit<WriteContractPreparedArgs<typeof portalABI, TFunctionName>, 'abi'>
+    | Omit<WriteContractUnpreparedArgs<typeof portalABI, TFunctionName>, 'abi'>,
+) {
+  return writeContract({ abi: portalABI, ...config } as unknown as WriteContractArgs<
+    typeof portalABI,
+    TFunctionName
+  >);
+}
+
+/**
+ * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link portalABI}__.
+ */
+export function prepareWritePortal<
+  TAbi extends readonly unknown[] = typeof portalABI,
+  TFunctionName extends string = string,
+>(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
+  return prepareWriteContract({
+    abi: portalABI,
+    ...config,
+  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
+}
+
+/**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link submissionAvlTreeABI}__.
  */
 export function writeSubmissionAvlTree<TFunctionName extends string>(
   config:
     | Omit<WriteContractPreparedArgs<typeof submissionAvlTreeABI, TFunctionName>, 'abi'>
     | Omit<
-      WriteContractUnpreparedArgs<typeof submissionAvlTreeABI, TFunctionName>,
-      'abi'
-    >,
+        WriteContractUnpreparedArgs<typeof submissionAvlTreeABI, TFunctionName>,
+        'abi'
+      >,
 ) {
   return writeContract({
     abi: submissionAvlTreeABI,
@@ -696,23 +910,23 @@ export function writeViaPrizeFactory<
 >(
   config:
     | (Omit<
-      WriteContractPreparedArgs<typeof viaPrizeFactoryABI, TFunctionName>,
-      'abi' | 'address'
-    > & {
-      mode: TMode;
-      chainId?: TMode extends 'prepared'
-      ? TChainId
-      : keyof typeof viaPrizeFactoryAddress;
-    })
+        WriteContractPreparedArgs<typeof viaPrizeFactoryABI, TFunctionName>,
+        'abi' | 'address'
+      > & {
+        mode: TMode;
+        chainId?: TMode extends 'prepared'
+          ? TChainId
+          : keyof typeof viaPrizeFactoryAddress;
+      })
     | (Omit<
-      WriteContractUnpreparedArgs<typeof viaPrizeFactoryABI, TFunctionName>,
-      'abi' | 'address'
-    > & {
-      mode: TMode;
-      chainId?: TMode extends 'prepared'
-      ? TChainId
-      : keyof typeof viaPrizeFactoryAddress;
-    }),
+        WriteContractUnpreparedArgs<typeof viaPrizeFactoryABI, TFunctionName>,
+        'abi' | 'address'
+      > & {
+        mode: TMode;
+        chainId?: TMode extends 'prepared'
+          ? TChainId
+          : keyof typeof viaPrizeFactoryAddress;
+      }),
 ) {
   return writeContract({
     abi: viaPrizeFactoryABI,
@@ -740,6 +954,59 @@ export function prepareWriteViaPrizeFactory<
     abi: viaPrizeFactoryABI,
     address:
       viaPrizeFactoryAddress[config.chainId as keyof typeof viaPrizeFactoryAddress],
+    ...config,
+  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link portalFactoryABI}__.
+ *
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export function writePortalFactory<
+  TFunctionName extends string,
+  TMode extends WriteContractMode,
+  TChainId extends number = keyof typeof portalFactoryAddress,
+>(
+  config:
+    | (Omit<
+        WriteContractPreparedArgs<typeof portalFactoryABI, TFunctionName>,
+        'abi' | 'address'
+      > & {
+        mode: TMode;
+        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
+      })
+    | (Omit<
+        WriteContractUnpreparedArgs<typeof portalFactoryABI, TFunctionName>,
+        'abi' | 'address'
+      > & {
+        mode: TMode;
+        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
+      }),
+) {
+  return writeContract({
+    abi: portalFactoryABI,
+    address: portalFactoryAddress[80001],
+    ...config,
+  } as unknown as WriteContractArgs<typeof portalFactoryABI, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link portalFactoryABI}__.
+ *
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export function prepareWritePortalFactory<
+  TAbi extends readonly unknown[] = typeof portalFactoryABI,
+  TFunctionName extends string = string,
+>(
+  config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi' | 'address'> & {
+    chainId?: keyof typeof portalFactoryAddress;
+  },
+) {
+  return prepareWriteContract({
+    abi: portalFactoryABI,
+    address: portalFactoryAddress[80001],
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
 }
@@ -795,13 +1062,13 @@ export function useOwnableWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<typeof ownableABI, string>['request']['abi'],
-      TFunctionName,
-      TMode
-    >
+        PrepareWriteContractResult<typeof ownableABI, string>['request']['abi'],
+        TFunctionName,
+        TMode
+      >
     : UseContractWriteConfig<typeof ownableABI, TFunctionName, TMode> & {
-      abi?: never;
-    } = {} as any,
+        abi?: never;
+      } = {} as any,
 ) {
   return useContractWrite<typeof ownableABI, TFunctionName, TMode>({
     abi: ownableABI,
@@ -815,17 +1082,17 @@ export function useOwnableWrite<
 export function useOwnableRenounceOwnership<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof ownableABI,
-        'renounceOwnership'
-      >['request']['abi'],
-      'renounceOwnership',
-      TMode
-    > & { functionName?: 'renounceOwnership' }
+        PrepareWriteContractResult<
+          typeof ownableABI,
+          'renounceOwnership'
+        >['request']['abi'],
+        'renounceOwnership',
+        TMode
+      > & { functionName?: 'renounceOwnership' }
     : UseContractWriteConfig<typeof ownableABI, 'renounceOwnership', TMode> & {
-      abi?: never;
-      functionName?: 'renounceOwnership';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'renounceOwnership';
+      } = {} as any,
 ) {
   return useContractWrite<typeof ownableABI, 'renounceOwnership', TMode>({
     abi: ownableABI,
@@ -840,17 +1107,17 @@ export function useOwnableRenounceOwnership<TMode extends WriteContractMode = un
 export function useOwnableTransferOwnership<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof ownableABI,
-        'transferOwnership'
-      >['request']['abi'],
-      'transferOwnership',
-      TMode
-    > & { functionName?: 'transferOwnership' }
+        PrepareWriteContractResult<
+          typeof ownableABI,
+          'transferOwnership'
+        >['request']['abi'],
+        'transferOwnership',
+        TMode
+      > & { functionName?: 'transferOwnership' }
     : UseContractWriteConfig<typeof ownableABI, 'transferOwnership', TMode> & {
-      abi?: never;
-      functionName?: 'transferOwnership';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'transferOwnership';
+      } = {} as any,
 ) {
   return useContractWrite<typeof ownableABI, 'transferOwnership', TMode>({
     abi: ownableABI,
@@ -932,6 +1199,338 @@ export function useOwnableOwnershipTransferredEvent(
     eventName: 'OwnershipTransferred',
     ...config,
   } as UseContractEventConfig<typeof ownableABI, 'OwnershipTransferred'>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__.
+ */
+export function usePortalRead<
+  TFunctionName extends string,
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi'
+  > = {} as any,
+) {
+  return useContractRead({ abi: portalABI, ...config } as UseContractReadConfig<
+    typeof portalABI,
+    TFunctionName,
+    TSelectData
+  >);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"currentTimestamp"`.
+ */
+export function usePortalCurrentTimestamp<
+  TFunctionName extends 'currentTimestamp',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'currentTimestamp',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"deadline"`.
+ */
+export function usePortalDeadline<
+  TFunctionName extends 'deadline',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'deadline',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"goalAmount"`.
+ */
+export function usePortalGoalAmount<
+  TFunctionName extends 'goalAmount',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'goalAmount',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"isOwner"`.
+ */
+export function usePortalIsOwner<
+  TFunctionName extends 'isOwner',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'isOwner',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"owners"`.
+ */
+export function usePortalOwners<
+  TFunctionName extends 'owners',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'owners',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"patrons"`.
+ */
+export function usePortalPatrons<
+  TFunctionName extends 'patrons',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'patrons',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"platformAddress"`.
+ */
+export function usePortalPlatformAddress<
+  TFunctionName extends 'platformAddress',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'platformAddress',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"platformFee"`.
+ */
+export function usePortalPlatformFee<
+  TFunctionName extends 'platformFee',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'platformFee',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"receiverAddress"`.
+ */
+export function usePortalReceiverAddress<
+  TFunctionName extends 'receiverAddress',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'receiverAddress',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalABI}__.
+ */
+export function usePortalWrite<
+  TFunctionName extends string,
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof portalABI, string>['request']['abi'],
+        TFunctionName,
+        TMode
+      >
+    : UseContractWriteConfig<typeof portalABI, TFunctionName, TMode> & {
+        abi?: never;
+      } = {} as any,
+) {
+  return useContractWrite<typeof portalABI, TFunctionName, TMode>({
+    abi: portalABI,
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"addFunds"`.
+ */
+export function usePortalAddFunds<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof portalABI, 'addFunds'>['request']['abi'],
+        'addFunds',
+        TMode
+      > & { functionName?: 'addFunds' }
+    : UseContractWriteConfig<typeof portalABI, 'addFunds', TMode> & {
+        abi?: never;
+        functionName?: 'addFunds';
+      } = {} as any,
+) {
+  return useContractWrite<typeof portalABI, 'addFunds', TMode>({
+    abi: portalABI,
+    functionName: 'addFunds',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"closeCampaign"`.
+ */
+export function usePortalCloseCampaign<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof portalABI, 'closeCampaign'>['request']['abi'],
+        'closeCampaign',
+        TMode
+      > & { functionName?: 'closeCampaign' }
+    : UseContractWriteConfig<typeof portalABI, 'closeCampaign', TMode> & {
+        abi?: never;
+        functionName?: 'closeCampaign';
+      } = {} as any,
+) {
+  return useContractWrite<typeof portalABI, 'closeCampaign', TMode>({
+    abi: portalABI,
+    functionName: 'closeCampaign',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalABI}__.
+ */
+export function usePreparePortalWrite<TFunctionName extends string>(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof portalABI, TFunctionName>,
+    'abi'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: portalABI,
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof portalABI, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"addFunds"`.
+ */
+export function usePreparePortalAddFunds(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof portalABI, 'addFunds'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: portalABI,
+    functionName: 'addFunds',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof portalABI, 'addFunds'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"closeCampaign"`.
+ */
+export function usePreparePortalCloseCampaign(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof portalABI, 'closeCampaign'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: portalABI,
+    functionName: 'closeCampaign',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof portalABI, 'closeCampaign'>);
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link portalABI}__.
+ */
+export function usePortalEvent<TEventName extends string>(
+  config: Omit<UseContractEventConfig<typeof portalABI, TEventName>, 'abi'> = {} as any,
+) {
+  return useContractEvent({ abi: portalABI, ...config } as UseContractEventConfig<
+    typeof portalABI,
+    TEventName
+  >);
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link portalABI}__ and `eventName` set to `"Values"`.
+ */
+export function usePortalValuesEvent(
+  config: Omit<
+    UseContractEventConfig<typeof portalABI, 'Values'>,
+    'abi' | 'eventName'
+  > = {} as any,
+) {
+  return useContractEvent({
+    abi: portalABI,
+    eventName: 'Values',
+    ...config,
+  } as UseContractEventConfig<typeof portalABI, 'Values'>);
 }
 
 /**
@@ -1132,13 +1731,13 @@ export function useSubmissionAvlTreeWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<typeof submissionAvlTreeABI, string>['request']['abi'],
-      TFunctionName,
-      TMode
-    >
+        PrepareWriteContractResult<typeof submissionAvlTreeABI, string>['request']['abi'],
+        TFunctionName,
+        TMode
+      >
     : UseContractWriteConfig<typeof submissionAvlTreeABI, TFunctionName, TMode> & {
-      abi?: never;
-    } = {} as any,
+        abi?: never;
+      } = {} as any,
 ) {
   return useContractWrite<typeof submissionAvlTreeABI, TFunctionName, TMode>({
     abi: submissionAvlTreeABI,
@@ -1152,17 +1751,17 @@ export function useSubmissionAvlTreeWrite<
 export function useSubmissionAvlTreeAddVotes<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof submissionAvlTreeABI,
-        'addVotes'
-      >['request']['abi'],
-      'addVotes',
-      TMode
-    > & { functionName?: 'addVotes' }
+        PrepareWriteContractResult<
+          typeof submissionAvlTreeABI,
+          'addVotes'
+        >['request']['abi'],
+        'addVotes',
+        TMode
+      > & { functionName?: 'addVotes' }
     : UseContractWriteConfig<typeof submissionAvlTreeABI, 'addVotes', TMode> & {
-      abi?: never;
-      functionName?: 'addVotes';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'addVotes';
+      } = {} as any,
 ) {
   return useContractWrite<typeof submissionAvlTreeABI, 'addVotes', TMode>({
     abi: submissionAvlTreeABI,
@@ -1179,17 +1778,17 @@ export function useSubmissionAvlTreeAddSubmission<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof submissionAvlTreeABI,
-        'add_submission'
-      >['request']['abi'],
-      'add_submission',
-      TMode
-    > & { functionName?: 'add_submission' }
+        PrepareWriteContractResult<
+          typeof submissionAvlTreeABI,
+          'add_submission'
+        >['request']['abi'],
+        'add_submission',
+        TMode
+      > & { functionName?: 'add_submission' }
     : UseContractWriteConfig<typeof submissionAvlTreeABI, 'add_submission', TMode> & {
-      abi?: never;
-      functionName?: 'add_submission';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'add_submission';
+      } = {} as any,
 ) {
   return useContractWrite<typeof submissionAvlTreeABI, 'add_submission', TMode>({
     abi: submissionAvlTreeABI,
@@ -1206,17 +1805,17 @@ export function useSubmissionAvlTreeSetFundedTrue<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof submissionAvlTreeABI,
-        'setFundedTrue'
-      >['request']['abi'],
-      'setFundedTrue',
-      TMode
-    > & { functionName?: 'setFundedTrue' }
+        PrepareWriteContractResult<
+          typeof submissionAvlTreeABI,
+          'setFundedTrue'
+        >['request']['abi'],
+        'setFundedTrue',
+        TMode
+      > & { functionName?: 'setFundedTrue' }
     : UseContractWriteConfig<typeof submissionAvlTreeABI, 'setFundedTrue', TMode> & {
-      abi?: never;
-      functionName?: 'setFundedTrue';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'setFundedTrue';
+      } = {} as any,
 ) {
   return useContractWrite<typeof submissionAvlTreeABI, 'setFundedTrue', TMode>({
     abi: submissionAvlTreeABI,
@@ -1231,17 +1830,17 @@ export function useSubmissionAvlTreeSetFundedTrue<
 export function useSubmissionAvlTreeSubVotes<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof submissionAvlTreeABI,
-        'subVotes'
-      >['request']['abi'],
-      'subVotes',
-      TMode
-    > & { functionName?: 'subVotes' }
+        PrepareWriteContractResult<
+          typeof submissionAvlTreeABI,
+          'subVotes'
+        >['request']['abi'],
+        'subVotes',
+        TMode
+      > & { functionName?: 'subVotes' }
     : UseContractWriteConfig<typeof submissionAvlTreeABI, 'subVotes', TMode> & {
-      abi?: never;
-      functionName?: 'subVotes';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'subVotes';
+      } = {} as any,
 ) {
   return useContractWrite<typeof submissionAvlTreeABI, 'subVotes', TMode>({
     abi: submissionAvlTreeABI,
@@ -1258,21 +1857,21 @@ export function useSubmissionAvlTreeUpdateFunderBalance<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof submissionAvlTreeABI,
-        'updateFunderBalance'
-      >['request']['abi'],
-      'updateFunderBalance',
-      TMode
-    > & { functionName?: 'updateFunderBalance' }
+        PrepareWriteContractResult<
+          typeof submissionAvlTreeABI,
+          'updateFunderBalance'
+        >['request']['abi'],
+        'updateFunderBalance',
+        TMode
+      > & { functionName?: 'updateFunderBalance' }
     : UseContractWriteConfig<
-      typeof submissionAvlTreeABI,
-      'updateFunderBalance',
-      TMode
-    > & {
-      abi?: never;
-      functionName?: 'updateFunderBalance';
-    } = {} as any,
+        typeof submissionAvlTreeABI,
+        'updateFunderBalance',
+        TMode
+      > & {
+        abi?: never;
+        functionName?: 'updateFunderBalance';
+      } = {} as any,
 ) {
   return useContractWrite<typeof submissionAvlTreeABI, 'updateFunderBalance', TMode>({
     abi: submissionAvlTreeABI,
@@ -1415,25 +2014,6 @@ export function useViaPrizeAddressRefunded<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"admins"`.
- */
-export function useViaPrizeAdmins<
-  TFunctionName extends 'admins',
-  TSelectData = ReadContractResult<typeof viaPrizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: viaPrizeABI,
-    functionName: 'admins',
-    ...config,
-  } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
-}
-
-/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"check_refund_amount"`.
  */
 export function useViaPrizeCheckRefundAmount<
@@ -1467,44 +2047,6 @@ export function useViaPrizeDistributed<
   return useContractRead({
     abi: viaPrizeABI,
     functionName: 'distributed',
-    ...config,
-  } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"funderVotes"`.
- */
-export function useViaPrizeFunderVotes<
-  TFunctionName extends 'funderVotes',
-  TSelectData = ReadContractResult<typeof viaPrizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: viaPrizeABI,
-    functionName: 'funderVotes',
-    ...config,
-  } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"funders"`.
- */
-export function useViaPrizeFunders<
-  TFunctionName extends 'funders',
-  TSelectData = ReadContractResult<typeof viaPrizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: viaPrizeABI,
-    functionName: 'funders',
     ...config,
   } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
 }
@@ -1586,25 +2128,6 @@ export function useViaPrizeGetVotingTime<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"isAdmin"`.
- */
-export function useViaPrizeIsAdmin<
-  TFunctionName extends 'isAdmin',
-  TSelectData = ReadContractResult<typeof viaPrizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: viaPrizeABI,
-    functionName: 'isAdmin',
-    ...config,
-  } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
-}
-
-/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"isPlatformAdmin"`.
  */
 export function useViaPrizeIsPlatformAdmin<
@@ -1619,6 +2142,63 @@ export function useViaPrizeIsPlatformAdmin<
   return useContractRead({
     abi: viaPrizeABI,
     functionName: 'isPlatformAdmin',
+    ...config,
+  } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"isProposer"`.
+ */
+export function useViaPrizeIsProposer<
+  TFunctionName extends 'isProposer',
+  TSelectData = ReadContractResult<typeof viaPrizeABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: viaPrizeABI,
+    functionName: 'isProposer',
+    ...config,
+  } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"patronVotes"`.
+ */
+export function useViaPrizePatronVotes<
+  TFunctionName extends 'patronVotes',
+  TSelectData = ReadContractResult<typeof viaPrizeABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: viaPrizeABI,
+    functionName: 'patronVotes',
+    ...config,
+  } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"patrons"`.
+ */
+export function useViaPrizePatrons<
+  TFunctionName extends 'patrons',
+  TSelectData = ReadContractResult<typeof viaPrizeABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: viaPrizeABI,
+    functionName: 'patrons',
     ...config,
   } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
 }
@@ -1719,6 +2299,25 @@ export function useViaPrizeProposerReward<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"proposers"`.
+ */
+export function useViaPrizeProposers<
+  TFunctionName extends 'proposers',
+  TSelectData = ReadContractResult<typeof viaPrizeABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: viaPrizeABI,
+    functionName: 'proposers',
+    ...config,
+  } as UseContractReadConfig<typeof viaPrizeABI, TFunctionName, TSelectData>);
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"refunded"`.
  */
 export function useViaPrizeRefunded<
@@ -1784,13 +2383,13 @@ export function useViaPrizeWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<typeof viaPrizeABI, string>['request']['abi'],
-      TFunctionName,
-      TMode
-    >
+        PrepareWriteContractResult<typeof viaPrizeABI, string>['request']['abi'],
+        TFunctionName,
+        TMode
+      >
     : UseContractWriteConfig<typeof viaPrizeABI, TFunctionName, TMode> & {
-      abi?: never;
-    } = {} as any,
+        abi?: never;
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, TFunctionName, TMode>({
     abi: viaPrizeABI,
@@ -1804,14 +2403,14 @@ export function useViaPrizeWrite<
 export function useViaPrizeAddFunds<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<typeof viaPrizeABI, 'addFunds'>['request']['abi'],
-      'addFunds',
-      TMode
-    > & { functionName?: 'addFunds' }
+        PrepareWriteContractResult<typeof viaPrizeABI, 'addFunds'>['request']['abi'],
+        'addFunds',
+        TMode
+      > & { functionName?: 'addFunds' }
     : UseContractWriteConfig<typeof viaPrizeABI, 'addFunds', TMode> & {
-      abi?: never;
-      functionName?: 'addFunds';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'addFunds';
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, 'addFunds', TMode>({
     abi: viaPrizeABI,
@@ -1826,14 +2425,14 @@ export function useViaPrizeAddFunds<TMode extends WriteContractMode = undefined>
 export function useViaPrizeAddSubmission<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<typeof viaPrizeABI, 'addSubmission'>['request']['abi'],
-      'addSubmission',
-      TMode
-    > & { functionName?: 'addSubmission' }
+        PrepareWriteContractResult<typeof viaPrizeABI, 'addSubmission'>['request']['abi'],
+        'addSubmission',
+        TMode
+      > & { functionName?: 'addSubmission' }
     : UseContractWriteConfig<typeof viaPrizeABI, 'addSubmission', TMode> & {
-      abi?: never;
-      functionName?: 'addSubmission';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'addSubmission';
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, 'addSubmission', TMode>({
     abi: viaPrizeABI,
@@ -1848,14 +2447,14 @@ export function useViaPrizeAddSubmission<TMode extends WriteContractMode = undef
 export function useViaPrizeChangeVote<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<typeof viaPrizeABI, 'change_vote'>['request']['abi'],
-      'change_vote',
-      TMode
-    > & { functionName?: 'change_vote' }
+        PrepareWriteContractResult<typeof viaPrizeABI, 'change_vote'>['request']['abi'],
+        'change_vote',
+        TMode
+      > & { functionName?: 'change_vote' }
     : UseContractWriteConfig<typeof viaPrizeABI, 'change_vote', TMode> & {
-      abi?: never;
-      functionName?: 'change_vote';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'change_vote';
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, 'change_vote', TMode>({
     abi: viaPrizeABI,
@@ -1870,18 +2469,49 @@ export function useViaPrizeChangeVote<TMode extends WriteContractMode = undefine
 export function useViaPrizeClaimRefund<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<typeof viaPrizeABI, 'claimRefund'>['request']['abi'],
-      'claimRefund',
-      TMode
-    > & { functionName?: 'claimRefund' }
+        PrepareWriteContractResult<typeof viaPrizeABI, 'claimRefund'>['request']['abi'],
+        'claimRefund',
+        TMode
+      > & { functionName?: 'claimRefund' }
     : UseContractWriteConfig<typeof viaPrizeABI, 'claimRefund', TMode> & {
-      abi?: never;
-      functionName?: 'claimRefund';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'claimRefund';
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, 'claimRefund', TMode>({
     abi: viaPrizeABI,
     functionName: 'claimRefund',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"distribute_use_unused_votes_v2"`.
+ */
+export function useViaPrizeDistributeUseUnusedVotesV2<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof viaPrizeABI,
+          'distribute_use_unused_votes_v2'
+        >['request']['abi'],
+        'distribute_use_unused_votes_v2',
+        TMode
+      > & { functionName?: 'distribute_use_unused_votes_v2' }
+    : UseContractWriteConfig<
+        typeof viaPrizeABI,
+        'distribute_use_unused_votes_v2',
+        TMode
+      > & {
+        abi?: never;
+        functionName?: 'distribute_use_unused_votes_v2';
+      } = {} as any,
+) {
+  return useContractWrite<typeof viaPrizeABI, 'distribute_use_unused_votes_v2', TMode>({
+    abi: viaPrizeABI,
+    functionName: 'distribute_use_unused_votes_v2',
     ...config,
   } as any);
 }
@@ -1894,17 +2524,17 @@ export function useViaPrizeEndSubmissionPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof viaPrizeABI,
-        'end_submission_period'
-      >['request']['abi'],
-      'end_submission_period',
-      TMode
-    > & { functionName?: 'end_submission_period' }
+        PrepareWriteContractResult<
+          typeof viaPrizeABI,
+          'end_submission_period'
+        >['request']['abi'],
+        'end_submission_period',
+        TMode
+      > & { functionName?: 'end_submission_period' }
     : UseContractWriteConfig<typeof viaPrizeABI, 'end_submission_period', TMode> & {
-      abi?: never;
-      functionName?: 'end_submission_period';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'end_submission_period';
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, 'end_submission_period', TMode>({
     abi: viaPrizeABI,
@@ -1919,17 +2549,17 @@ export function useViaPrizeEndSubmissionPeriod<
 export function useViaPrizeEndVotingPeriod<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof viaPrizeABI,
-        'end_voting_period'
-      >['request']['abi'],
-      'end_voting_period',
-      TMode
-    > & { functionName?: 'end_voting_period' }
+        PrepareWriteContractResult<
+          typeof viaPrizeABI,
+          'end_voting_period'
+        >['request']['abi'],
+        'end_voting_period',
+        TMode
+      > & { functionName?: 'end_voting_period' }
     : UseContractWriteConfig<typeof viaPrizeABI, 'end_voting_period', TMode> & {
-      abi?: never;
-      functionName?: 'end_voting_period';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'end_voting_period';
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, 'end_voting_period', TMode>({
     abi: viaPrizeABI,
@@ -1946,17 +2576,17 @@ export function useViaPrizeStartSubmissionPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof viaPrizeABI,
-        'start_submission_period'
-      >['request']['abi'],
-      'start_submission_period',
-      TMode
-    > & { functionName?: 'start_submission_period' }
+        PrepareWriteContractResult<
+          typeof viaPrizeABI,
+          'start_submission_period'
+        >['request']['abi'],
+        'start_submission_period',
+        TMode
+      > & { functionName?: 'start_submission_period' }
     : UseContractWriteConfig<typeof viaPrizeABI, 'start_submission_period', TMode> & {
-      abi?: never;
-      functionName?: 'start_submission_period';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'start_submission_period';
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, 'start_submission_period', TMode>({
     abi: viaPrizeABI,
@@ -1971,46 +2601,21 @@ export function useViaPrizeStartSubmissionPeriod<
 export function useViaPrizeStartVotingPeriod<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof viaPrizeABI,
-        'start_voting_period'
-      >['request']['abi'],
-      'start_voting_period',
-      TMode
-    > & { functionName?: 'start_voting_period' }
+        PrepareWriteContractResult<
+          typeof viaPrizeABI,
+          'start_voting_period'
+        >['request']['abi'],
+        'start_voting_period',
+        TMode
+      > & { functionName?: 'start_voting_period' }
     : UseContractWriteConfig<typeof viaPrizeABI, 'start_voting_period', TMode> & {
-      abi?: never;
-      functionName?: 'start_voting_period';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'start_voting_period';
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, 'start_voting_period', TMode>({
     abi: viaPrizeABI,
     functionName: 'start_voting_period',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"use_unused_votes"`.
- */
-export function useViaPrizeUseUnusedVotes<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof viaPrizeABI,
-        'use_unused_votes'
-      >['request']['abi'],
-      'use_unused_votes',
-      TMode
-    > & { functionName?: 'use_unused_votes' }
-    : UseContractWriteConfig<typeof viaPrizeABI, 'use_unused_votes', TMode> & {
-      abi?: never;
-      functionName?: 'use_unused_votes';
-    } = {} as any,
-) {
-  return useContractWrite<typeof viaPrizeABI, 'use_unused_votes', TMode>({
-    abi: viaPrizeABI,
-    functionName: 'use_unused_votes',
     ...config,
   } as any);
 }
@@ -2021,14 +2626,14 @@ export function useViaPrizeUseUnusedVotes<TMode extends WriteContractMode = unde
 export function useViaPrizeVote<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<typeof viaPrizeABI, 'vote'>['request']['abi'],
-      'vote',
-      TMode
-    > & { functionName?: 'vote' }
+        PrepareWriteContractResult<typeof viaPrizeABI, 'vote'>['request']['abi'],
+        'vote',
+        TMode
+      > & { functionName?: 'vote' }
     : UseContractWriteConfig<typeof viaPrizeABI, 'vote', TMode> & {
-      abi?: never;
-      functionName?: 'vote';
-    } = {} as any,
+        abi?: never;
+        functionName?: 'vote';
+      } = {} as any,
 ) {
   return useContractWrite<typeof viaPrizeABI, 'vote', TMode>({
     abi: viaPrizeABI,
@@ -2117,6 +2722,25 @@ export function usePrepareViaPrizeClaimRefund(
 }
 
 /**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"distribute_use_unused_votes_v2"`.
+ */
+export function usePrepareViaPrizeDistributeUseUnusedVotesV2(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof viaPrizeABI, 'distribute_use_unused_votes_v2'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: viaPrizeABI,
+    functionName: 'distribute_use_unused_votes_v2',
+    ...config,
+  } as UsePrepareContractWriteConfig<
+    typeof viaPrizeABI,
+    'distribute_use_unused_votes_v2'
+  >);
+}
+
+/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"end_submission_period"`.
  */
 export function usePrepareViaPrizeEndSubmissionPeriod(
@@ -2181,22 +2805,6 @@ export function usePrepareViaPrizeStartVotingPeriod(
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"use_unused_votes"`.
- */
-export function usePrepareViaPrizeUseUnusedVotes(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof viaPrizeABI, 'use_unused_votes'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: viaPrizeABI,
-    functionName: 'use_unused_votes',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof viaPrizeABI, 'use_unused_votes'>);
-}
-
-/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link viaPrizeABI}__ and `functionName` set to `"vote"`.
  */
 export function usePrepareViaPrizeVote(
@@ -2253,15 +2861,15 @@ export function useViaPrizeFactoryWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<typeof viaPrizeFactoryABI, string>['request']['abi'],
-      TFunctionName,
-      TMode
-    > & { address?: Address; chainId?: TChainId }
+        PrepareWriteContractResult<typeof viaPrizeFactoryABI, string>['request']['abi'],
+        TFunctionName,
+        TMode
+      > & { address?: Address; chainId?: TChainId }
     : UseContractWriteConfig<typeof viaPrizeFactoryABI, TFunctionName, TMode> & {
-      abi?: never;
-      address?: never;
-      chainId?: TChainId;
-    } = {} as any,
+        abi?: never;
+        address?: never;
+        chainId?: TChainId;
+      } = {} as any,
 ) {
   const { chain } = useNetwork();
   const defaultChainId = useChainId();
@@ -2285,19 +2893,19 @@ export function useViaPrizeFactoryCreateViaPrize<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-      PrepareWriteContractResult<
-        typeof viaPrizeFactoryABI,
-        'createViaPrize'
-      >['request']['abi'],
-      'createViaPrize',
-      TMode
-    > & { address?: Address; chainId?: TChainId; functionName?: 'createViaPrize' }
+        PrepareWriteContractResult<
+          typeof viaPrizeFactoryABI,
+          'createViaPrize'
+        >['request']['abi'],
+        'createViaPrize',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'createViaPrize' }
     : UseContractWriteConfig<typeof viaPrizeFactoryABI, 'createViaPrize', TMode> & {
-      abi?: never;
-      address?: never;
-      chainId?: TChainId;
-      functionName?: 'createViaPrize';
-    } = {} as any,
+        abi?: never;
+        address?: never;
+        chainId?: TChainId;
+        functionName?: 'createViaPrize';
+      } = {} as any,
 ) {
   const { chain } = useNetwork();
   const defaultChainId = useChainId();
@@ -2398,4 +3006,140 @@ export function useViaPrizeFactoryNewViaPrizeCreatedEvent(
     eventName: 'NewViaPrizeCreated',
     ...config,
   } as UseContractEventConfig<typeof viaPrizeFactoryABI, 'NewViaPrizeCreated'>);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
+ *
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export function usePortalFactoryWrite<
+  TFunctionName extends string,
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof portalFactoryAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof portalFactoryABI, string>['request']['abi'],
+        TFunctionName,
+        TMode
+      > & { address?: Address; chainId?: TChainId }
+    : UseContractWriteConfig<typeof portalFactoryABI, TFunctionName, TMode> & {
+        abi?: never;
+        address?: never;
+        chainId?: TChainId;
+      } = {} as any,
+) {
+  return useContractWrite<typeof portalFactoryABI, TFunctionName, TMode>({
+    abi: portalFactoryABI,
+    address: portalFactoryAddress[80001],
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
+ *
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export function usePortalFactoryCreatePortal<
+  TMode extends WriteContractMode = undefined,
+  TChainId extends number = keyof typeof portalFactoryAddress,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof portalFactoryABI,
+          'createPortal'
+        >['request']['abi'],
+        'createPortal',
+        TMode
+      > & { address?: Address; chainId?: TChainId; functionName?: 'createPortal' }
+    : UseContractWriteConfig<typeof portalFactoryABI, 'createPortal', TMode> & {
+        abi?: never;
+        address?: never;
+        chainId?: TChainId;
+        functionName?: 'createPortal';
+      } = {} as any,
+) {
+  return useContractWrite<typeof portalFactoryABI, 'createPortal', TMode>({
+    abi: portalFactoryABI,
+    address: portalFactoryAddress[80001],
+    functionName: 'createPortal',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
+ *
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export function usePreparePortalFactoryWrite<TFunctionName extends string>(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof portalFactoryABI, TFunctionName>,
+    'abi' | 'address'
+  > & { chainId?: keyof typeof portalFactoryAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: portalFactoryABI,
+    address: portalFactoryAddress[80001],
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof portalFactoryABI, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
+ *
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export function usePreparePortalFactoryCreatePortal(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof portalFactoryABI, 'createPortal'>,
+    'abi' | 'address' | 'functionName'
+  > & { chainId?: keyof typeof portalFactoryAddress } = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: portalFactoryABI,
+    address: portalFactoryAddress[80001],
+    functionName: 'createPortal',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof portalFactoryABI, 'createPortal'>);
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link portalFactoryABI}__.
+ *
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export function usePortalFactoryEvent<TEventName extends string>(
+  config: Omit<
+    UseContractEventConfig<typeof portalFactoryABI, TEventName>,
+    'abi' | 'address'
+  > & { chainId?: keyof typeof portalFactoryAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: portalFactoryABI,
+    address: portalFactoryAddress[80001],
+    ...config,
+  } as UseContractEventConfig<typeof portalFactoryABI, TEventName>);
+}
+
+/**
+ * Wraps __{@link useContractEvent}__ with `abi` set to __{@link portalFactoryABI}__ and `eventName` set to `"NewPortalCreated"`.
+ *
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ */
+export function usePortalFactoryNewPortalCreatedEvent(
+  config: Omit<
+    UseContractEventConfig<typeof portalFactoryABI, 'NewPortalCreated'>,
+    'abi' | 'address' | 'eventName'
+  > & { chainId?: keyof typeof portalFactoryAddress } = {} as any,
+) {
+  return useContractEvent({
+    abi: portalFactoryABI,
+    address: portalFactoryAddress[80001],
+    eventName: 'NewPortalCreated',
+    ...config,
+  } as UseContractEventConfig<typeof portalFactoryABI, 'NewPortalCreated'>);
 }

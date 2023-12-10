@@ -47,12 +47,7 @@ const getProvider = (chainName: string) => {
 
 export const chain = getChain(env.NEXT_PUBLIC_CHAIN);
 const provider = getProvider(env.NEXT_PUBLIC_CHAIN);
-export const configureChainsConfig = configureChains(
-  [chain],
-  [
-    provider
-  ],
-);
+export const configureChainsConfig = configureChains([chain], [provider]);
 const config = createConfig({
   autoConnect: true,
   publicClient: configureChainsConfig.publicClient,
