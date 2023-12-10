@@ -5,6 +5,7 @@ import { Text } from "@mantine/core";
 import { waitForTransaction } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
+import { parseEther } from "viem";
 import ProposalExploreCard from "../ExplorePrize/proposalExploreCard";
 import { usePortal } from "../hooks/usePortal";
 const getProposalStatus = (item: PortalProposals): ProposalStatus => {
@@ -40,6 +41,7 @@ export default function PortalProposalsTabs({
                             key={item.id}
                             imageUrl={item.images[0]}
                             description={item.description}
+                            
                             onStatusClick={async (status) => {
                                 console.log({ status }, 'status');
                                 switch (status) {
@@ -72,12 +74,16 @@ export default function PortalProposalsTabs({
                                         //     ],
                                         //     'args',
                                         // );
+                                        console.log(item,"item")
+                                        const finalFundingGoal = parseEther(
+                                            (item.fundingGoal ?? '0').toString()
+                                        )
                                         const request = await prepareWritePortalFactory({
                                             functionName:'createPortal',
                                             args:[
                                                 item?.treasurers as `0x${string}`[],
-                                                BigInt(item.fundingGoal ?? 0) ,
-                                                BigInt( (new Date(item.deadline).getTime()/1000) ?? 0),
+                                                 finalFundingGoal,
+                                                BigInt( (Math.floor(new Date(item.deadline).getTime()/1000)) ?? 0),
                                                 item.allowDonationAboveThreshold,
                                                 BigInt(5),
                                                 item.sendImmediately  
@@ -98,9 +104,9 @@ export default function PortalProposalsTabs({
                                             hash: transaction.hash,
                                             confirmations: 1,
                                         });
-                                        console.log(waitForTransactionOut.logs[0].topics[2]);
+                                        console.log(waitForTransactionOut.logs[0].topics[1]);
                                         const portalAddress =
-                                            '0x' + waitForTransactionOut.logs[0].topics[2]?.slice(-40);
+                                            '0x' + waitForTransactionOut.logs[0].topics[1]?.slice(-40);
                                         console.log(portalAddress, 'portalAddress');
                                         const portal = await createPortal({
                                             address:portalAddress,

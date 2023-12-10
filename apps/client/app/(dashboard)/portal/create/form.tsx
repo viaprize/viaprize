@@ -100,13 +100,13 @@ export default function PortalForm() {
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
-      deadline: deadline?.toDateString() ?? undefined,
+      deadline: deadline?.toISOString()?? undefined,
       description: richtext,
       tags: generateTags(),
       images: [newImages],
       title: value,
       proposerAddress: wallet.address,
-      termsAndCondition: '',
+      termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
       fundingGoal: fundingGoal ? convertUSDTOETH(fundingGoal) : undefined,
@@ -132,7 +132,7 @@ export default function PortalForm() {
 
   return (
     <div className="flex flex-col gap-4">
-      <ImageComponent files={files} setFiles={setFiles} />
+      <ImageComponent files={files} setfiles={setFiles} />
       <TextInput
         label="Portal Name"
         placeholder="Waste Management System for the City of Lagos"
