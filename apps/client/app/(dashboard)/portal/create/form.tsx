@@ -103,7 +103,7 @@ export default function PortalForm() {
       deadline: deadline?.toISOString() ?? undefined,
       description: richtext,
       tags: generateTags(),
-      images: [newImages],
+      images: newImages,
       title: value,
       proposerAddress: wallet.address,
       termsAndCondition: 'test',
@@ -260,7 +260,7 @@ export default function PortalForm() {
         ) : null}
       </div>
       <div className="my-2">
-        {portalType == 'kickstarter' && (
+        {portalType === 'kickstarter' && (
           <Checkbox
             checked={haveDeadline || portalType === 'kickstarter'}
             onChange={(event) => {
