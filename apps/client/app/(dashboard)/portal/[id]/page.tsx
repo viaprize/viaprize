@@ -2,6 +2,7 @@ import { Api } from '@/lib/api';
 import AmountDonateCard from './amount-donate-card';
 import ImageTitleHeroCard from './image-title-hero-card';
 import PortalTabs from './portal-tabs';
+import { formatEther } from 'viem';
 
 export default async function CreatePortal({ params }: { params: { id: string } }) {
   const portal = (await new Api().portals.portalsDetail(params.id)).data;
@@ -14,7 +15,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           img={portal.images[0]}
         />
         <AmountDonateCard
-          amountRaised={portal.balance.toString()}
+          amountRaised={formatEther(BigInt(portal.balance))}
           recipientAddress={portal.contract_address}
           totalContributors="0"
           contractAddress={portal.contract_address}
