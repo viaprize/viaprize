@@ -50,10 +50,7 @@ export default function SearchFiltersPortals() {
           className="sm:w-[500px]"
         />
         <Group justify="space-between">
-          <Button
-            component='a'
-            href='/portal/about'
-          >
+          <Button component="a" href="/portal/about">
             About Portals
           </Button>
           <Button onClick={open}>Filter</Button>

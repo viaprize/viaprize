@@ -53,10 +53,9 @@ export default function AmountDonateCard({
         <Text fw="bold" c="blue" className="lg:text-5xl md:4xl ">
           {amountRaised} Matic
         </Text>
-        <Text size="sm" c="gray">
+        <Text size="sm">
           Raised from{'  '}
-          <span className="text-dark font-bold">{totalContributors}</span>
-          contributions
+          <span className="text-dark font-bold">{totalContributors}</span> contributions
         </Text>
         {/* <Text className="border-2 rounded-lg mt-2 ">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatibus,

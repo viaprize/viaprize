@@ -3,8 +3,9 @@ import { Tabs } from '@mantine/core';
 
 import React from 'react';
 import DonationInfo from './donation-info';
+import { TextEditor } from '@/components/richtexteditor/textEditor';
 
-export default function PortalTabs() {
+export default function PortalTabs({ description }: { description: string }) {
   return (
     <Tabs variant="pills" defaultValue="about" mt="md">
       <Tabs.List grow>
@@ -15,7 +16,11 @@ export default function PortalTabs() {
       </Tabs.List>
 
       <div className="">
-        <Tabs.Panel value="about">All the Rich Text info</Tabs.Panel>
+        <Tabs.Panel value="about">
+          <div className="my-5">
+            <TextEditor disabled richtext={description} />
+          </div>
+        </Tabs.Panel>
 
         <Tabs.Panel value="donations">
           <DonationInfo />

@@ -1,6 +1,14 @@
 import { Card, Image, Text, Title } from '@mantine/core';
 
-export default function ImageTitleHero({ title, name,img }: { title: string; name: string,img:string }) {
+export default function ImageTitleHero({
+  title,
+  name,
+  img,
+}: {
+  title: string;
+  name: string;
+  img: string;
+}) {
   return (
     <Card
       shadow="md"
@@ -8,13 +16,7 @@ export default function ImageTitleHero({ title, name,img }: { title: string; nam
       radius="md"
       className="relative max-h-fit rounded-lg h-full p-0"
     >
-      <Image
-        src={img}
-        alt="No Image"
-        className="h-full object-cover"
-        width="780"
-        height="768"
-      />
+      <Image src={img} alt="Portal Image" className="h-full w-full object-cover" />
       <div
         style={{
           position: 'absolute',
