@@ -12,7 +12,8 @@ contract Portal {
     address[] public patrons; 
     mapping(address => uint256) public patronAmount;
     uint256 totalFunds;
-    uint256 totalRewards;
+    uint256  totalRewards;
+
     bool allowDonationAboveGoalAmount;
     bool isActive;
     bool allowImmediately;

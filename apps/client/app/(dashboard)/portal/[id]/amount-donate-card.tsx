@@ -1,17 +1,43 @@
-import { Badge, Button, Card, Divider, Text } from '@mantine/core';
-import CopyDetails from './copy-details';
+'use client';
+import {
+  ActionIcon,
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Flex,
+  NumberInput,
+  Stack,
+  Text,
+} from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
+import { IconCurrencyEthereum, IconRefresh } from '@tabler/icons-react';
+import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { parseEther } from 'viem';
+import { useAccount, useBalance } from 'wagmi';
 
 interface AmountDonateCardProps {
   amountRaised: string;
   totalContributors: string;
   recipientAddress: string;
+  contractAddress: string;
 }
 
 export default function AmountDonateCard({
   recipientAddress,
   amountRaised,
   totalContributors,
+  contractAddress,
 }: AmountDonateCardProps) {
+  const { address } = useAccount();
+  const [value, setValue] = useState('');
+  const [debounced] = useDebouncedValue(value, 500);
+
+  const { data: balance, isLoading, refetch } = useBalance({ address });
+
+  const [sendLoading, setSendLoading] = useState(false);
   return (
     <Card
       p="md"
@@ -36,12 +62,83 @@ export default function AmountDonateCard({
           quas, quae, quos voluptatem amet voluptatum dolorum
         </Text> */}
       </div>
-      <div className="flex flex-col gap-2">
-        <Text>Project Recipient Address</Text>
-        <Divider />
-        <CopyDetails recipientAddress={recipientAddress} />
-      </div>
-      <Button color="primary">Donate</Button>
+      <Text>Project Recipient Address</Text>
+      <Divider />
+      <Badge color="gray" p="md">
+        <Flex gap="md">
+          <Text size="sm">
+            {recipientAddress.slice(0, 5)}....{recipientAddress.slice(-5)}
+          </Text>
+          <IconCurrencyEthereum size={20} />
+        </Flex>
+      </Badge>
+
+      {/* // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
+  //   ...config,
+  //   async onSuccess(data) {
+  //     toast.success(`Transaction Sent with Hash ${data?.hash}`, {
+  //       duration: 6000,
+  //     });
+  //     await refetch();
+  //   },
+  // }); */}
+
+      <Stack my="md">
+        <NumberInput
+          label={
+            isLoading
+              ? 'Loading.....'
+              : `Enter Value To Donate (Max: ${balance?.formatted} ${balance?.symbol} )`
+          }
+          placeholder="Custom right section"
+          mt="md"
+          rightSection={
+            <ActionIcon>
+              <IconRefresh onClick={() => refetch({})} />
+            </ActionIcon>
+          }
+          max={parseInt(balance?.formatted ?? '0')}
+          allowDecimal
+          defaultValue={0}
+          allowNegative={false}
+          value={value}
+          onChange={(v) => {
+            if (!v) {
+              console.log({ v }, 'inner v');
+              setValue('0');
+            }
+            setValue(v.toString());
+          }}
+        />
+
+        <Button
+          disabled={!value}
+          loading={sendLoading}
+          onClick={async () => {
+            await refetch();
+
+            if (parseInt(debounced.toString()) > parseInt(balance?.formatted ?? '0')) {
+              toast.error('Insufficient Balance');
+              return;
+            }
+            setSendLoading(true);
+
+            const config = await prepareSendTransaction({
+              to: contractAddress,
+              value: debounced ? parseEther(debounced) : undefined,
+            });
+
+            const { hash } = await sendTransaction(config);
+            toast.success(`Transaction ${hash}`, {
+              duration: 6000,
+            });
+            setSendLoading(false);
+            window.location.reload();
+          }}
+        >
+          Donate
+        </Button>
+      </Stack>
     </Card>
   );
 }

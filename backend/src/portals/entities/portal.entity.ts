@@ -25,8 +25,7 @@ export class Portals {
   slug: string;
 
   @Column()
-  sendImmediately: boolean
-
+  sendImmediately: boolean;
 
   @Column('decimal', { nullable: true })
   fundingGoal: number;
