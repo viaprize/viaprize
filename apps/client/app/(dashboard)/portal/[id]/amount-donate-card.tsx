@@ -29,15 +29,14 @@ export default function AmountDonateCard({
         </Text>
         <Text size="sm">
           Raised from{'  '}
-          <span className="text-dark font-bold">{totalContributors}</span>
-          {' '}contributions
+          <span className="text-dark font-bold">{totalContributors}</span> contributions
         </Text>
         {/* <Text className="border-2 rounded-lg mt-2 ">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatibus,
           quas, quae, quos voluptatem amet voluptatum dolorum
         </Text> */}
       </div>
-      <div className='flex flex-col gap-2'>
+      <div className="flex flex-col gap-2">
         <Text>Project Recipient Address</Text>
         <Divider />
         <CopyDetails recipientAddress={recipientAddress} />

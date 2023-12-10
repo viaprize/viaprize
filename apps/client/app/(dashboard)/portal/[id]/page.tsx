@@ -20,9 +20,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           totalContributors="0"
         />
       </div>
-      <PortalTabs 
-      description={portal.description}
-      />
+      <PortalTabs description={portal.description} />
     </div>
   );
 }

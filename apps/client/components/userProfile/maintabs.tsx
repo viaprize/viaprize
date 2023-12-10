@@ -13,15 +13,21 @@ import ProposalsTabs from './proposals-tabs';
 
 export default function MainTabsUserProfile() {
   const { getProposalsOfUser } = usePrizeProposal();
-  const { getProposalsOfUser: getPortalProposalsOfUser } = usePortalProposal()
+  const { getProposalsOfUser: getPortalProposalsOfUser } = usePortalProposal();
   const { query } = useRouter();
-  const getPrizeProposalOfUserMutation = useQuery(['getProposalsOfUser', undefined], () => {
-    return getProposalsOfUser({ limit: 10, page: 1 }, query.id as string);
-  });
-  const getPortalProposalsOfUserMutation = useQuery(['getPortalProposals', undefined], () => {
-    return getPortalProposalsOfUser({ limit: 10, page: 1 }, query.id as string)
-  });
-  console.log(getPortalProposalsOfUserMutation.data, "dataaaa")
+  const getPrizeProposalOfUserMutation = useQuery(
+    ['getProposalsOfUser', undefined],
+    () => {
+      return getProposalsOfUser({ limit: 10, page: 1 }, query.id as string);
+    },
+  );
+  const getPortalProposalsOfUserMutation = useQuery(
+    ['getPortalProposals', undefined],
+    () => {
+      return getPortalProposalsOfUser({ limit: 10, page: 1 }, query.id as string);
+    },
+  );
+  console.log(getPortalProposalsOfUserMutation.data, 'dataaaa');
   const client = usePublicClient();
   const getPrizesOfUserMutation = useQuery(['getPrizesOfUser', undefined], async () => {
     const prizes = await (
@@ -49,13 +55,12 @@ export default function MainTabsUserProfile() {
     },
   );
 
-
   return (
     <Tabs defaultValue="proposals" variant="pills" m="lg" className="md:w-2/3">
       <Tabs.List grow justify="center">
         <Tabs.Tab value="prizes">Prize</Tabs.Tab>
         <Tabs.Tab value="prize-proposals">Prize Proposals</Tabs.Tab>
-        <Tabs.Tab value='portal-proposals'>Portal Proposals</Tabs.Tab>
+        <Tabs.Tab value="portal-proposals">Portal Proposals</Tabs.Tab>
         <Tabs.Tab value="submissions">Submissions</Tabs.Tab>
       </Tabs.List>
       <Divider my="sm" />

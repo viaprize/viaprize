@@ -103,14 +103,14 @@ export default function PortalForm() {
       deadline: deadline?.toISOString() ?? undefined,
       description: richtext,
       tags: generateTags(),
-      images: [newImages],
+      images: [newImages] as string[],
       title: value,
       proposerAddress: wallet.address,
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
       fundingGoal: fundingGoal ? convertUSDTOETH(fundingGoal) : undefined,
-      sendImmediately: portalType == 'gofundme',
+      sendImmediately: portalType === 'gofundme',
     });
     setLoading(false);
     router.push(`/profile/${appUser?.username}`);
@@ -260,7 +260,7 @@ export default function PortalForm() {
         ) : null}
       </div>
       <div className="my-2">
-        {portalType == 'kickstarter' && (
+        {portalType === 'kickstarter' && (
           <Checkbox
             checked={haveDeadline || portalType === 'kickstarter'}
             onChange={(event) => {

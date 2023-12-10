@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
 import { Badge, Flex, CopyButton, Tooltip, ActionIcon, rem, Text } from '@mantine/core';
 import { IconCurrencyEthereum, IconCheck, IconCopy } from '@tabler/icons-react';
-import React from 'react'
+import React from 'react';
 
-export default function CopyDetails({recipientAddress}:{recipientAddress:string}) {
+export default function CopyDetails({ recipientAddress }: { recipientAddress: string }) {
   return (
     <Badge color="gray" p="md">
       <Flex gap="md" justify="center" align="center">

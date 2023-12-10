@@ -1,7 +1,7 @@
 import {
   prepareWriteViaPrize,
   useViaPrizePatrons,
-  writeViaPrize
+  writeViaPrize,
 } from '@/lib/smartContract';
 import { chain } from '@/lib/wagmi';
 import {

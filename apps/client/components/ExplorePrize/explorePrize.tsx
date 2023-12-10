@@ -14,7 +14,6 @@ interface ExploreCardProps {
   id: string;
 }
 
-
 function ExploreCard({
   imageUrl,
   profileName,

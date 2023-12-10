@@ -5,7 +5,7 @@ import React from 'react';
 import DonationInfo from './donation-info';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 
-export default function PortalTabs({description}:{description:string}) {
+export default function PortalTabs({ description }: { description: string }) {
   return (
     <Tabs variant="pills" defaultValue="about" mt="md">
       <Tabs.List grow>
@@ -17,7 +17,7 @@ export default function PortalTabs({description}:{description:string}) {
 
       <div className="">
         <Tabs.Panel value="about">
-          <div className='my-5'>
+          <div className="my-5">
             <TextEditor disabled richtext={description} />
           </div>
         </Tabs.Panel>
