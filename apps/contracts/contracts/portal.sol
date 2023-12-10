@@ -11,8 +11,8 @@ contract portal {
     address public platformAddress = 0xdD870fA1b7C4700F2BD7f44238821C26f7392148;
     address[] public patrons; 
     mapping(address => uint256) public patronAmount;
-    uint256 totalFunds;
-    uint256 totalRewards;
+    uint256 public totalFunds;
+    uint256 public totalRewards;
     bool allowDonationAboveGoalAmount;
     bool isActive;
     bool allowImmediately;
