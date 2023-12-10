@@ -72,6 +72,9 @@ export default function HeaderLayout() {
       </Flex>
       <Flex align="center" gap="md">
         <Button className="hidden sm:block " color="primary">
+          <Link href="/prize/create">Create Portals</Link>
+        </Button>
+        <Button className="hidden sm:block " color="primary">
           <Link href="/prize/create">Create Prize</Link>
         </Button>
         {appUser ? (
