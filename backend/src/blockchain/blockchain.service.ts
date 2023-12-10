@@ -36,6 +36,9 @@ export class BlockchainService {
     );
     return await contract.get_voting_time();
   }
+  
+
+  
 
   async getSubmissionVotes(
     viaprizeContractAddress: string,

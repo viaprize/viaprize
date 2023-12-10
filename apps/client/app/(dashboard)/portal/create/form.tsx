@@ -97,6 +97,7 @@ export default function PortalForm() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
+    
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
@@ -126,6 +127,7 @@ export default function PortalForm() {
         error: 'Error Submitting Proposal',
       });
     } catch {
+      setLoading(false);
       toast.error('Error Submitting Proposal');
     }
   };
