@@ -5,6 +5,7 @@ import FetchPortals from './fetchportals';
 import SkeletonLoad from './loading';
 
 import SearchFiltersPortals from './search-filters-portals';
+import PortalCard from './portal-card';
 export default function ExplorePortal() {
   return (
     <div className="max-w-screen-xl">
