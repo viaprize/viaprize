@@ -13,7 +13,7 @@ export class BlockchainService {
   }
 
   getBalanceOfAddress(address: string) {
-    console.log({ address })
+    console.log({ address });
     return this.provider.getBalance(address);
   }
 
@@ -36,9 +36,6 @@ export class BlockchainService {
     );
     return await contract.get_voting_time();
   }
-  
-
-  
 
   async getSubmissionVotes(
     viaprizeContractAddress: string,
