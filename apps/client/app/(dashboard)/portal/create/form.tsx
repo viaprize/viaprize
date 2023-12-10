@@ -103,7 +103,7 @@ export default function PortalForm() {
       deadline: deadline?.toISOString() ?? undefined,
       description: richtext,
       tags: generateTags(),
-      images: newImages,
+      images: [newImages] as string[],
       title: value,
       proposerAddress: wallet.address,
       termsAndCondition: 'test',
