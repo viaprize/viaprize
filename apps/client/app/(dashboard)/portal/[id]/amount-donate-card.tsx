@@ -1,5 +1,5 @@
-import { Badge, Button, Card, Divider, Flex, Text } from '@mantine/core';
-import { IconCurrencyEthereum } from '@tabler/icons-react';
+import { Badge, Button, Card, Divider, Text } from '@mantine/core';
+import CopyDetails from './copy-details';
 
 interface AmountDonateCardProps {
   amountRaised: string;
@@ -7,13 +7,11 @@ interface AmountDonateCardProps {
   recipientAddress: string;
 }
 
-
-
 export default function AmountDonateCard({
   recipientAddress,
   amountRaised,
   totalContributors,
-}:AmountDonateCardProps) {
+}: AmountDonateCardProps) {
   return (
     <Card
       p="md"
@@ -29,24 +27,21 @@ export default function AmountDonateCard({
         <Text fw="bold" c="blue" className="lg:text-5xl md:4xl ">
           {amountRaised} Matic
         </Text>
-        <Text size="sm" c="gray">
+        <Text size="sm">
           Raised from{'  '}
           <span className="text-dark font-bold">{totalContributors}</span>
-          contributions
+          {' '}contributions
         </Text>
         {/* <Text className="border-2 rounded-lg mt-2 ">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatibus,
           quas, quae, quos voluptatem amet voluptatum dolorum
         </Text> */}
       </div>
-      <Text>Project Recipient Address</Text>
-      <Divider />
-      <Badge  color="gray" p="md">
-        <Flex gap="md">
-          <Text size="sm">{recipientAddress.slice(0,5)}....{recipientAddress.slice(-5)}</Text>
-          <IconCurrencyEthereum size={20} />
-        </Flex>
-      </Badge>
+      <div className='flex flex-col gap-2'>
+        <Text>Project Recipient Address</Text>
+        <Divider />
+        <CopyDetails recipientAddress={recipientAddress} />
+      </div>
       <Button color="primary">Donate</Button>
     </Card>
   );

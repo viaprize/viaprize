@@ -10,10 +10,8 @@ export default function ImageTitleHero({ title, name,img }: { title: string; nam
     >
       <Image
         src={img}
-        alt="No Image"
-        className="h-full object-cover"
-        width="780"
-        height="768"
+        alt="Portal Image"
+        className="h-full w-full object-cover"
       />
       <div
         style={{
