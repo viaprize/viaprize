@@ -3,7 +3,6 @@ import { CreatePrizeProposalDto, PrizeProposals } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
 import { useState } from 'react';
 
-
 interface PrzieQuery {
   limit: number;
   page: number;

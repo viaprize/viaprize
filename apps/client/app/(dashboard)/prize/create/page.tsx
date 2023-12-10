@@ -107,7 +107,7 @@ function Prize() {
   //   });
   // };
   if (!appUser) {
-    return <ShouldLogin text="Please, login to create a prize" />;
+    return <ShouldLogin text="Please login to create a prize" />;
   }
 
   return (

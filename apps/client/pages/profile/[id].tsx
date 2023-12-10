@@ -9,7 +9,7 @@ export default function UserProfile() {
   const { appUser } = useAppUser();
 
   if (!appUser) {
-    return <ShouldLogin text="You need to login to view your profile" />
+    return <ShouldLogin text="You need to login to view your profile" />;
   }
 
   return (
