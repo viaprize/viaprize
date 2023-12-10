@@ -67,7 +67,7 @@ export default function DonationInfo() {
           ))}
         </Table.Tbody>
       </Table>
-      <ReceiverAddressCard address={'0x1234567890'} />
+      
     </div>
   );
 }
