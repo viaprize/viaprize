@@ -29,7 +29,7 @@ export default function AmountDonateCard() {
       </div>
       <Text>Project Recipient Address</Text>
       <Divider />
-      <Badge  color="gray" p="md">
+      <Badge color="gray" p="md">
         <Flex gap="md">
           <Text size="sm">0x62e9a8374AE3c</Text>
           <IconCurrencyEthereum size={20} />

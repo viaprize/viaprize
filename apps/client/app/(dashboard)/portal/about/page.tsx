@@ -3,7 +3,7 @@ import PortalAboutHero from './hero';
 
 export default function PortalAbout() {
   return (
-    <div className='my-10'>
+    <div className="my-10">
       <PortalAboutHero />
       <div className="grid grid-cols-2 gap-2">
         <Card withBorder shadow="md" radius="md">

@@ -67,7 +67,6 @@ export default function DonationInfo() {
           ))}
         </Table.Tbody>
       </Table>
-      
     </div>
   );
 }
