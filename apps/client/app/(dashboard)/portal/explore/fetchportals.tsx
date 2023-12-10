@@ -1,5 +1,5 @@
+import PortalCard from './portal-card';
 import { Api } from '@/lib/api';
-import PortalCards from './portal-card';
 
 export default async function FetchPortals() {
   const portal = (
@@ -12,18 +12,17 @@ export default async function FetchPortals() {
     <>
       {portal.map((portal) => {
         return (
-          <PortalCards
+          <PortalCard
             description={portal.description}
             imageUrl={portal.images[0]}
             amountRaised={portal.balance.toString()}
             authorName={portal.user.name}
-            shareUrl=''
-            totalContributors='0'
+            shareUrl=""
+            totalContributors="0"
             title={portal.title}
             key={portal.id}
             id={portal.id}
           />
-          
         );
       })}
     </>

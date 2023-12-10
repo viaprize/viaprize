@@ -18,18 +18,16 @@ interface PortalCardProps {
   description: string;
   amountRaised: string;
   totalContributors: string;
-  shareUrl: string;
   id: string;
 }
 
-export default function PortalCards({
+export default function PortalCard({
   imageUrl,
   title,
   authorName,
   description,
   amountRaised,
   totalContributors,
-  shareUrl,
   id,
 }: PortalCardProps) {
   return (
@@ -37,7 +35,7 @@ export default function PortalCards({
       padding="lg"
       radius="md"
       withBorder
-      className="w-[700px] shadow-xs hover:shadow-lg transition duration-300 ease-in-out"
+      className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out"
       pos="relative"
     >
       <Card.Section>
@@ -73,7 +71,7 @@ export default function PortalCards({
         Total Amount Raised
       </Badge>
 
-      <Text size="sm" c="gray">
+      <Text size="sm">
         Raised from <span className="text-gray font-bold">{totalContributors} </span>
         contributions
       </Text>
@@ -89,7 +87,7 @@ export default function PortalCards({
         Donate
       </Button>
       <div className="absolute top-2 right-2">
-        <CopyButton value={shareUrl || 'https://mantine.dev'}>
+        <CopyButton value={`https://pactsmith.com/portal/${id}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>
