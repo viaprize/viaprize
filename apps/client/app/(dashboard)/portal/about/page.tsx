@@ -17,7 +17,7 @@ export default function PortalAbout() {
           </p>
         </Card>
         <Card withBorder shadow="md" radius="md">
-          <h1>GoFundMe style (pass-through campaigns)</h1>
+          <h1>Kickstarter style (all-or-nothing campaigns)</h1>
           <p>
             If the author chooses to send all the contributions at once, they must choose
             a deadline and a goal. This is similar to campaigns on Kickstarter. The author
