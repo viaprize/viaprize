@@ -28,6 +28,7 @@ import { IoExit } from 'react-icons/io5';
 import { TbTopologyStarRing2 } from 'react-icons/tb';
 import { toast } from 'sonner';
 import SwitchAccount from './switchWallet';
+import { useDisclosure } from '@mantine/hooks';
 
 // function getEmailInitials(email: string) {
 //   const [username, domain] = email.split('@');
@@ -54,12 +55,10 @@ export default function HeaderLayout() {
       justify="space-between"
       align="center"
       pos="fixed"
+      visibleFrom="sm"
       className="sm:px-12 px-3 sm:w-full w-[90%]"
     >
       <Flex justify="space-between" align="center" gap={10}>
-        <Link href="/">
-          <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
-        </Link>
         <Link href="/" className="pl-5 font-bold">
           HOME
         </Link>
