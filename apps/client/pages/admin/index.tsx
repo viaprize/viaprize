@@ -99,6 +99,7 @@ const AccpetedProposals = ({
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
               id={portalProposal.id}
+              disableButton={true}
             />
           ))
           }

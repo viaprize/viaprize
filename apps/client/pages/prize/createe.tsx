@@ -98,7 +98,7 @@ function Prize() {
   // };
   return (
     <div className="shadow-md max-w-screen-lg p-8 m-6">
-      <ImageComponent files={files} setFiles={setFiles} />
+      <ImageComponent files={files} setfiles={setFiles} />
       <TextInput
         className="my-2"
         placeholder="Title"
