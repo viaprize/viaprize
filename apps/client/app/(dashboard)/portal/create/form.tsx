@@ -110,7 +110,7 @@ export default function PortalForm() {
       isMultiSignatureReciever: false,
       treasurers: [address],
       fundingGoal: fundingGoal ? convertUSDTOETH(fundingGoal) : undefined,
-      sendImmediately: portalType == 'gofundme',
+      sendImmediately: portalType === 'gofundme',
     });
     setLoading(false);
     router.push(`/profile/${appUser?.username}`);
