@@ -1,6 +1,6 @@
 import { Card, Image, Text, Title } from '@mantine/core';
 
-export default function ImageTitleHero() {
+export default function ImageTitleHero({ title, name,img }: { title: string; name: string,img:string }) {
   return (
     <Card
       shadow="md"
@@ -9,7 +9,7 @@ export default function ImageTitleHero() {
       className="relative max-h-fit rounded-lg h-full p-0"
     >
       <Image
-        src="https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image"
+        src={img}
         alt="No Image"
         className="h-full object-cover"
         width="780"
@@ -23,8 +23,8 @@ export default function ImageTitleHero() {
         }}
         className="text-white flex flex-col gap-2 z-10"
       >
-        <Title className="sm:text-1xl md:4xl lg:text-6xl">Title</Title>
-        <Text className="sm:text-80px  md:text-2xl lg:text-3xl">Foundation Name</Text>
+        <Title className="sm:text-1xl md:4xl lg:text-6xl">{title}</Title>
+        <Text className="sm:text-80px  md:text-2xl lg:text-3xl">{name}</Text>
       </div>
       <div
         className="rounded-lg"
