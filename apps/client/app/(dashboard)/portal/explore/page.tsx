@@ -21,16 +21,6 @@ export default function ExplorePortal() {
           {/* @ts-expect-error Server Component */}
           <FetchPortals />
         </Suspense>
-        <PortalCard
-          description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum! Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum!"
-          imageUrl="https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image"
-          amountRaised="0"
-          authorName="John Doe"
-          totalContributors="0"
-          title="Portal Title"
-          id="1"
-        />
-       
       </div>
     </div>
   );
