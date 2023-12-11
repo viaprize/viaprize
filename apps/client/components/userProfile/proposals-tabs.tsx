@@ -54,7 +54,7 @@ export default function ProposalsTabs({
                   }
                   case 'approved': {
                     const firstLoadingToast = toast.loading(
-                      'Trasnaction Waiting To Be approved',
+                      'Transaction Waiting To Be approved',
                       {
                         delete: false,
                         dismissible: false,
