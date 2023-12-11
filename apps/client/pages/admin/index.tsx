@@ -178,7 +178,7 @@ export default function AdminPage() {
             isSuccess={
               getAcceptedPrizeProposalMutation.isSuccess
                 ? getAcceptedPortalProposalMutation.isSuccess
-                : null
+                : false
             }
             data={{
               portalsProposals: getAcceptedPortalProposalMutation.data,
