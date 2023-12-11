@@ -71,21 +71,17 @@ export default function MainTabsUserProfile() {
 
         <Skeleton visible={getPrizesOfUserMutation.isLoading}>
           {getPrizesOfUserMutation.data?.map((prize) => {
-            const deadlineString = calculateDeadline(
-              prize.created_at,
-              prize.submissionTime,
-            );
             return (
               <ExploreCard
                 description={prize.description}
+                submissionDays={prize.submissionTime}
+                createdAt={prize.created_at}
                 imageUrl={prize.images[0]}
-                deadline=""
                 money={formatEther(BigInt(prize.balance))}
                 profileName={''}
                 title={prize.title}
                 key={prize.id}
                 id={prize.id}
-                deadlinetimereamining={deadlineString}
                 skills={prize.priorities || prize.proficiencies}
               />
             );
