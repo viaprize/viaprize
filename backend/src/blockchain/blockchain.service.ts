@@ -24,7 +24,8 @@ export class BlockchainService {
       abi,
       this.provider,
     );
-    return await contract.get_submission_time();
+    const totalFunds = await contract.totalRewards();
+    return totalFunds;
   }
 
   async getVotingTime(viaprizeContractAddress: string): Promise<bigint> {
@@ -35,6 +36,19 @@ export class BlockchainService {
       this.provider,
     );
     return await contract.get_voting_time();
+  }
+
+  async getTotalFundsInPortal(
+    viaprizeContractAddress: string,
+  ): Promise<bigint> {
+    const abi = [];
+    const contract = new ethers.Contract(
+      viaprizeContractAddress,
+      abi,
+      this.provider,
+    );
+    console.log(contract);
+    return await contract.totalRewards();
   }
 
   async getSubmissionVotes(

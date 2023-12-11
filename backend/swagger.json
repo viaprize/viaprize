@@ -3234,6 +3234,11 @@
             "x-typia-optional": false,
             "type": "number"
           },
+          "totalFunds": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
           "id": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3344,6 +3349,7 @@
         "nullable": false,
         "required": [
           "balance",
+          "totalFunds",
           "id",
           "description",
           "slug",
