@@ -103,9 +103,18 @@ export class PortalsController {
         const balance = await this.blockchainService.getBalanceOfAddress(
           Portal.contract_address,
         );
+        const totalRewards =
+          await this.blockchainService.getTotalRewardsOfPortal(
+            Portal.contract_address,
+          );
+        const totalFunds = await this.blockchainService.getTotalFundsOfPortal(
+          Portal.contract_address,
+        );
         return {
           ...Portal,
           balance: parseInt(balance.toString()),
+          totalFunds: parseInt(totalFunds.toString()),
+          totalRewards: parseInt(totalRewards.toString()),
         } as PortalWithBalance;
       }),
     );
@@ -121,16 +130,18 @@ export class PortalsController {
     const balance = await this.blockchainService.getBalanceOfAddress(
       Portal.contract_address,
     );
-    const totalFunds = '0';
-    // for now the total funds is not public, will have to redeplay it to make it public
-    // await this.blockchainService.getTotalFundsInPortal(
-    //   Portal.contract_address,
-    // );
+    const totalFunds = await this.blockchainService.getTotalFundsOfPortal(
+      Portal.contract_address,
+    );
+    const totalRewards = await this.blockchainService.getTotalRewardsOfPortal(
+      Portal.contract_address,
+    );
 
     return {
       ...Portal,
       balance: parseInt(balance.toString()),
       totalFunds: parseInt(totalFunds.toString()),
+      totalRewards: parseInt(totalRewards.toString()),
       // submission_time_blockchain: parseInt(submission_time.toString()),
       // voting_time_blockchain: parseInt(voting_time.toString()),
     };

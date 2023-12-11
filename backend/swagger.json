@@ -3235,8 +3235,13 @@
             "type": "number"
           },
           "totalFunds": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "number"
+          },
+          "totalRewards": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "id": {
@@ -3349,7 +3354,6 @@
         "nullable": false,
         "required": [
           "balance",
-          "totalFunds",
           "id",
           "description",
           "slug",

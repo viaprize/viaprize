@@ -38,17 +38,27 @@ export class BlockchainService {
     return await contract.get_voting_time();
   }
 
-  async getTotalFundsInPortal(
-    viaprizeContractAddress: string,
+  async getTotalRewardsOfPortal(
+    portalContractAddress: string,
   ): Promise<bigint> {
     const abi = [];
     const contract = new ethers.Contract(
-      viaprizeContractAddress,
+      portalContractAddress,
       abi,
       this.provider,
     );
     console.log(contract);
     return await contract.totalRewards();
+  }
+  async getTotalFundsOfPortal(portalContractAddress: string): Promise<bigint> {
+    const abi = [];
+    const contract = new ethers.Contract(
+      portalContractAddress,
+      abi,
+      this.provider,
+    );
+    console.log(contract);
+    return await contract.totalFunds();
   }
 
   async getSubmissionVotes(
