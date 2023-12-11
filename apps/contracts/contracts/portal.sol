@@ -8,7 +8,7 @@ contract Portal {
     uint256 public goalAmount = 0;
     uint256 public deadline = 0;
     uint256 public platformFee;
-    address public platformAddress = 0xdD870fA1b7C4700F2BD7f44238821C26f7392148;
+    address public platformAddress = 0x18E1f76217D05F1FfBC3129a035ca29304706774;
     address[] public patrons; 
     mapping(address => uint256) public patronAmount;
     uint256 public totalFunds;
