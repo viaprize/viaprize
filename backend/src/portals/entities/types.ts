@@ -6,4 +6,6 @@ export type PortalPaginateQuery = PaginateQuery & {
 };
 export interface PortalWithBalance extends Portals {
   balance: number;
+  totalFunds?: number;
+  totalRewards?: number;
 }

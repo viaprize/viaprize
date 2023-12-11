@@ -1,5 +1,5 @@
 import { Button } from '@mantine/core';
-import Image from 'next/image';
+import React from 'react';
 
 export default function PortalAboutHero() {
   return (
@@ -7,7 +7,6 @@ export default function PortalAboutHero() {
       //  className="flex flex-col justify-start gap-20 py-10 pb-32 md:gap-28 lg:py-20 xl:flex-row"
       className="py-10 pb-32 md:gap-28 lg:py-20"
     >
-      <div className="hero-map" />
       <div className="relative z-20 ">
         {/* <Image
           src="/portals/Portal.png"

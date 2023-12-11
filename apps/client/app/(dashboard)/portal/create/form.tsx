@@ -81,7 +81,7 @@ export default function PortalForm() {
   // };
   const generateTags = () => {
     const tags = [];
-    const sendNow = portalType == 'gofundme';
+    const sendNow = portalType === 'gofundme';
     if (!sendNow) {
       tags.push('Refundable');
     }
@@ -97,7 +97,7 @@ export default function PortalForm() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-    
+
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,

@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 
 function Prize() {
+  
   const [address, setAddress] = useState(['']);
   const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');

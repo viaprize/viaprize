@@ -15,9 +15,11 @@ import { useDisclosure } from '@mantine/hooks';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { prepareSendTransaction, sendTransaction, waitForTransaction } from '@wagmi/core';
 import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { toast } from 'sonner';
 import { isAddress, parseEther } from 'viem';
 import { useBalance } from 'wagmi';
+import { useUser } from '../hooks/useUser';
 import EditProfileModal from './edit-profile-modal';
 
 export default function Profile() {
@@ -36,15 +38,23 @@ export default function Profile() {
     }
   }, [balance]);
   const [loading, setLoading] = useState(false);
+
+  const { getUserByUserName } = useUser();
+
+  const { data: userData, refetch:fetchUser } = useQuery('result', () =>
+    getUserByUserName(appUser?.username || ''),
+  );
+
+  console.log(userData,appUser?.username, "ksdjf")
   // console.log(isAddress(recieverAddress), "ksdjf")
   // const { data, isLoading, refetch } = useBalance({ address });
   return (
     <div className="p-8 md:w-1/3">
       <div>
-        <Avatar radius="full" size="xl" />
+        <Avatar radius="full" size="xl" src={userData?.avatar} />
 
         <Text fw={700} size="xl" className="mb-0 uppercase mt-4">
-          {appUser?.name}
+          {userData?.name}
         </Text>
 
         <Group justify="space-between">
@@ -53,7 +63,15 @@ export default function Profile() {
             Edit Profile
           </Button>
           <Modal opened={opened} onClose={close} title="Edit Profile">
-            <EditProfileModal />
+            <EditProfileModal 
+            IBio={userData?.bio || ''}
+            IName={userData?.name || ''}
+            IProficiencies={userData?.proficiencies || []}
+            IPriorities={userData?.priorities || []}
+            IAvatar={userData?.avatar || ''}
+            fetchUser={fetchUser}
+            close={close}
+            />
           </Modal>
         </Group>
 
@@ -140,9 +158,7 @@ export default function Profile() {
 
       <div>
         <h1 className="mb-0 text-xl font-bold">Bio</h1>
-        <p className="my-0">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.
-        </p>
+        <p className="my-0">{userData?.bio}</p>
         {/* <div className="flex gap-3 justify-between">
           <div>
               <div className='flex gap-3 items-center'>
@@ -169,30 +185,22 @@ export default function Profile() {
           Proficiencies
         </Text>
         <div className="flex flex-wrap gap-1">
-          <Badge variant="light" color="green">
-            FULL STACK DEVELOPER
-          </Badge>
-          <Badge variant="light" color="green">
-            SMART CONTRACT DEVELOPER
-          </Badge>
-          <Badge variant="light" color="green">
-            Indigo cyan
-          </Badge>
+          {userData?.proficiencies.map((proficiency: string) => (
+            <Badge variant="light" color="green">
+              {proficiency}
+            </Badge>
+          ))}
         </div>
 
         <Text fw={700} mb="sm" mt="md" className="pl-1">
           Priorities
         </Text>
         <div className="flex flex-wrap gap-1">
-          <Badge variant="light" color="green">
-            FULL STACK DEVELOPER
-          </Badge>
-          <Badge variant="light" color="green">
-            SMART CONTRACT DEVELOPER
-          </Badge>
-          <Badge variant="light" color="green">
-            Indigo cyan
-          </Badge>
+          {userData?.priorities.map((priority: string) => (
+            <Badge variant="light" color="blue">
+              {priority}
+            </Badge>
+          ))}
         </div>
       </Box>
     </div>

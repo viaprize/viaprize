@@ -33,4 +33,8 @@ export interface CreateUser {
    * @example Hi I am Johnny Sins
    */
   bio: string;
+
+  avatar?: string;
+  proficiencies?: string[];
+  priorities?: string[];
 }
