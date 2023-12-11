@@ -1,6 +1,7 @@
 import { Divider, Loader, Skeleton, Tabs } from '@mantine/core';
 
 import { backendApi } from '@/lib/backend';
+import { calculateDeadline } from '@/lib/utils';
 import { useRouter } from 'next/router';
 import { formatEther } from 'viem';
 import { usePublicClient, useQuery } from 'wagmi';
@@ -69,18 +70,26 @@ export default function MainTabsUserProfile() {
         {getPrizesOfUserMutation.isLoading && <Loader color="orange" />}
 
         <Skeleton visible={getPrizesOfUserMutation.isLoading}>
-          {getPrizesOfUserMutation.data?.map((prize) => (
-            <ExploreCard
-              description={prize.description}
-              imageUrl={prize.images[0]}
-              deadline=""
-              money={formatEther(BigInt(prize.balance))}
-              profileName={''}
-              title={prize.title}
-              key={prize.id}
-              id={prize.id}
-            />
-          ))}
+          {getPrizesOfUserMutation.data?.map((prize) => {
+            const deadlineString = calculateDeadline(
+              prize.created_at,
+              prize.submissionTime,
+            );
+            return (
+              <ExploreCard
+                description={prize.description}
+                imageUrl={prize.images[0]}
+                deadline=""
+                money={formatEther(BigInt(prize.balance))}
+                profileName={''}
+                title={prize.title}
+                key={prize.id}
+                id={prize.id}
+                deadlinetimereamining={deadlineString}
+                skills={prize.priorities || prize.proficiencies}
+              />
+            );
+          })}
         </Skeleton>
       </Tabs.Panel>
       <Tabs.Panel value="prize-proposals">

@@ -1,4 +1,5 @@
 'use client';
+import { htmlToPlainText } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -9,12 +10,10 @@ import {
   Flex,
   Group,
   Image,
-  Stack,
   Text,
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { htmlToPlainText } from 'utils/utils';
 
 interface ExploreCardProps {
   imageUrl: string;

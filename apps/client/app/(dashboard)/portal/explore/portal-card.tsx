@@ -1,18 +1,16 @@
+import { htmlToPlainText } from '@/lib/utils';
 import {
   ActionIcon,
   Badge,
   Button,
   Card,
   CopyButton,
-  Divider,
   Group,
   Image,
   Text,
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import Link from 'next/link';
-import { htmlToPlainText } from 'utils/utils';
 
 interface PortalCardProps {
   imageUrl: string;
