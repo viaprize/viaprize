@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CopyButton,
+  Divider,
   Group,
   Image,
   Text,
@@ -65,17 +66,18 @@ export default function PortalCard({
         {htmlToPlainText(description)}
       </p>
 
-      <Text fw="bold" c="blue" size="xl">
+      <Text fw="bold" c="black" size="xl">
         {amountRaised} Matic
       </Text>
       <Badge color="gray" variant="light" radius="sm">
         Total Amount Raised
       </Badge>
 
-      <Text size="sm">
+      <Text size="xs" c="dimmed" mt="xs">
         Raised from <span className="text-gray font-bold">{totalContributors} </span>
         contributions
       </Text>
+
       <Button
         color="blue"
         component="a"
