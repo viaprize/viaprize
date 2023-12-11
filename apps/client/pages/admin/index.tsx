@@ -4,12 +4,12 @@ import PortalAdminCard from '@/components/Admin/portalAdminCard';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import AppShellLayout from '@/components/layout/appshell';
-import { PortalProposals, PrizeProposals } from '@/lib/api';
+import type { PortalProposals, PrizeProposals } from '@/lib/api';
 import { Loader, Tabs, Text } from '@mantine/core';
 import type { ReactElement } from 'react';
 import { useQuery } from 'react-query';
 
-const Proposals = ({
+function Proposals({
   isSuccess,
   data,
 }: {
@@ -18,7 +18,7 @@ const Proposals = ({
     prizesProposals: PrizeProposals[] | undefined;
     portalsProposals: PortalProposals[] | undefined;
   };
-}) => {
+}) {
   return (
     <>
       {isSuccess ? (
@@ -48,6 +48,7 @@ const Proposals = ({
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
               id={portalProposal.id}
+              key={portalProposal.id}
             />
           ))}
         </>
@@ -56,9 +57,9 @@ const Proposals = ({
       )}
     </>
   );
-};
+}
 
-const AccpetedProposals = ({
+function AccpetedProposals({
   isSuccess,
   data,
 }: {
@@ -67,7 +68,7 @@ const AccpetedProposals = ({
     prizesProposals: PrizeProposals[] | undefined;
     portalsProposals: PortalProposals[] | undefined;
   };
-}) => {
+}) {
   console.log({ data }, 'hiii');
   return (
     <>
@@ -97,7 +98,7 @@ const AccpetedProposals = ({
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
               id={portalProposal.id}
-              disableButton={true}
+              disableButton
             />
           ))}
         </>
@@ -106,7 +107,7 @@ const AccpetedProposals = ({
       )}
     </>
   );
-};
+}
 
 export default function AdminPage() {
   const { getAllProposals: getAllPrizeProposals, getAcceptedProposals } =
@@ -157,8 +158,9 @@ export default function AdminPage() {
         ) : (
           <Proposals
             isSuccess={
-              getAllPrizeProposalsMutation.isSuccess &&
               getAllPrizeProposalsMutation.isSuccess
+                ? getAllPrizeProposalsMutation.isSuccess
+                : false
             }
             data={{
               portalsProposals: getAllPortalProposalsMutation.data,
@@ -174,8 +176,9 @@ export default function AdminPage() {
         ) : (
           <AccpetedProposals
             isSuccess={
-              getAcceptedPrizeProposalMutation.isSuccess &&
-              getAcceptedPortalProposalMutation.isSuccess
+              getAcceptedPrizeProposalMutation.isSuccess
+                ? getAcceptedPortalProposalMutation.isSuccess
+                : false
             }
             data={{
               portalsProposals: getAcceptedPortalProposalMutation.data,

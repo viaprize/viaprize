@@ -20,6 +20,7 @@ fi
 
 # Check if any files in the 'client' directory are staged for commit
 if echo "$staged_files" | grep -q "^apps/client/"; then
+    cd apps/client && pnpm run format && cd ../../
     echo "Running checks for client..."
     (cd apps/client && pnpm run check-format) || {
         echo '🤢🤮🤢🤮 Its FOKING RAW - Your styling looks disgusting. 🤢🤮🤢🤮

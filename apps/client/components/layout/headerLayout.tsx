@@ -1,34 +1,20 @@
 import useAppUser from '@/context/hooks/useAppUser';
 import {
   ActionIcon,
-  Avatar,
   Button,
   Card,
   CopyButton,
+  Divider,
   Flex,
-  Group,
-  Menu,
-  Modal,
+  Popover,
+  Text,
   Tooltip,
   useMantineColorScheme,
 } from '@mantine/core';
-import { useWallets } from '@privy-io/react-auth';
-import {
-  IconArrowsLeftRight,
-  IconCheck,
-  IconCopy,
-  IconMoonStars,
-  IconSun,
-  IconUser,
-} from '@tabler/icons-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
-import { IoExit } from 'react-icons/io5';
-import { TbTopologyStarRing2 } from 'react-icons/tb';
-import { toast } from 'sonner';
-import SwitchAccount from './switchWallet';
 import { useDisclosure } from '@mantine/hooks';
+import { useWallets } from '@privy-io/react-auth';
+import { IconCheck, IconCopy, IconMoonStars, IconSun } from '@tabler/icons-react';
+import Link from 'next/link';
 
 // function getEmailInitials(email: string) {
 //   const [username, domain] = email.split('@');
@@ -49,58 +35,86 @@ export default function HeaderLayout() {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
   const { appUser } = useAppUser();
+  const [portalOpened, { close: portalMenuClose, open: portalMenuOpen }] =
+    useDisclosure(false);
+  const [prizeOpened, { close: prizeMenuClose, open: prizeMenuOpen }] =
+    useDisclosure(false);
 
   return (
-    <Group
+    <Flex
+      ml="md"
       justify="space-between"
       align="center"
-      pos="fixed"
       visibleFrom="sm"
-      className="sm:px-12 px-3 sm:w-full w-[90%]"
+      className="w-[90%] "
     >
-      <Flex justify="space-between" align="center" gap={10}>
-        <Link href="/" className="pl-5 font-bold">
+      <Flex gap="md">
+        <Link href="/" className="font-bold">
           HOME
         </Link>
-        <Link href="/prize/explore" className="pl-3 font-bold">
-          PRIZES
-        </Link>
-        <Link href="/portal/explore" className="pl-3 font-bold">
-          PORTALS
-        </Link>
+        <Popover withArrow shadow="md" opened={prizeOpened} position="bottom">
+          <Popover.Target>
+            <Link
+              onMouseEnter={prizeMenuOpen}
+              onMouseLeave={prizeMenuClose}
+              href="/portal/explore"
+              className="pl-3 font-bold"
+            >
+              PRIZE
+            </Link>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Text>About</Text>
+            <Divider />
+            <p>y efwjeg wlegr2 ri34br 43iyr034hrn i3oihi3</p>
+            <Button>
+              <Link href="/prize/create">Create Prize</Link>
+            </Button>
+          </Popover.Dropdown>
+        </Popover>
+
+        <Popover withArrow shadow="md" opened={portalOpened} position="bottom">
+          <Popover.Target>
+            <Link
+              onMouseEnter={portalMenuOpen}
+              onMouseLeave={portalMenuClose}
+              href="/portal/explore"
+              className="pl-3 font-bold"
+            >
+              PORTAL
+            </Link>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Text>About</Text>
+            <Divider />
+            <p>y efwjeg wlegr2 ri34br 43iyr034hrn i3oihi3</p>
+            <Button>
+              <Link href="/prize/create">Create Prize</Link>
+            </Button>
+          </Popover.Dropdown>
+        </Popover>
       </Flex>
-      <Flex align="center" gap="md">
-        <Button className="hidden sm:block " color="primary">
-          <Link href="/portal/create">Create Portals</Link>
-        </Button>
-        <Button className="hidden sm:block " color="primary">
-          <Link href="/prize/create">Create Prize</Link>
-        </Button>
+
+      <Flex gap="md">
         {appUser ? (
-          <Card py="5px" className="hidden sm:block">
-            <Group>
-              {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
-              {wallets[0] ? (
-                <CopyButton value={wallets[0].address}>
-                  {({ copied, copy }) => (
-                    <Tooltip
-                      label={copied ? 'Copied' : 'Copy'}
-                      withArrow
-                      position="right"
+          <Card className="hidden sm:block">
+            {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
+            {wallets[0] ? (
+              <CopyButton value={wallets[0].address}>
+                {({ copied, copy }) => (
+                  <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
+                    <ActionIcon
+                      onClick={copy}
+                      style={{
+                        backgroundColor: copied ? '#3d4070' : '#3d4070',
+                      }}
                     >
-                      <ActionIcon
-                        onClick={copy}
-                        style={{
-                          backgroundColor: copied ? '#3d4070' : '#3d4070',
-                        }}
-                      >
-                        {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
-                      </ActionIcon>
-                    </Tooltip>
-                  )}
-                </CopyButton>
-              ) : null}
-            </Group>
+                      {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </CopyButton>
+            ) : null}
           </Card>
         ) : null}
 
@@ -111,102 +125,15 @@ export default function HeaderLayout() {
             toggleColorScheme();
           }}
           title="Toggle color scheme"
+          mt="md"
         >
           {colorScheme === 'dark' ? (
-            <IconSun size="1.1rem" />
+            <IconSun size="1rem" />
           ) : (
-            <IconMoonStars size="1.1rem" />
+            <IconMoonStars size="1rem" />
           )}
         </ActionIcon>
-        <ProfileMenu />
       </Flex>
-    </Group>
-  );
-}
-
-function ProfileMenu() {
-  const { logoutUser, appUser, loginUser } = useAppUser();
-
-  const [switchWallet, setSwitchWallet] = useState(false);
-  const handleLogout = () => {
-    try {
-      toast.promise(logoutUser(), {
-        loading: 'Logging out',
-        success: 'Logged out',
-        error: 'Error logging out',
-      });
-    } catch {
-      toast.error('Error logging out');
-    }
-  };
-
-  return (
-    <>
-      {appUser ? (
-        <>
-          <Menu withArrow trigger="hover" openDelay={100} closeDelay={400}>
-            <Menu.Target>
-              <Avatar color="blue" radius="xl" className="cursor-pointer">
-                {appUser.username.charAt(0).toUpperCase()}
-              </Avatar>
-            </Menu.Target>
-            <Menu.Dropdown p="md" mr="sm">
-              <Menu.Label>Profile</Menu.Label>
-              <Menu.Item
-                leftSection={<IconUser size={14} />}
-                // onClick={() => {
-                //   router
-                //     .push(`/profile/${appUser?.username}`)
-                //     .then(console.log)
-                //     .catch(console.error);
-                // }}
-              >
-                <Link href={`/profile/${appUser.username}`}>View Profile</Link>
-              </Menu.Item>
-              <Menu.Item leftSection={<TbTopologyStarRing2 />} className="sm:hidden">
-                <Link href="/prize/create" className="block">
-                  Create Prize
-                </Link>
-              </Menu.Item>
-              <Menu.Divider />
-              <Menu.Item
-                onClick={() => {
-                  setSwitchWallet(true);
-                }}
-                rightSection={<IconArrowsLeftRight size={14} />}
-              >
-                Switch Wallet
-              </Menu.Item>
-              <Menu.Item
-                color="red"
-                leftSection={<IoExit size={14} />}
-                onClick={handleLogout}
-              >
-                Logout
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-          <Modal
-            size="lg"
-            opened={switchWallet}
-            onClose={() => {
-              setSwitchWallet(false);
-            }}
-            title="Switch Wallets"
-          >
-            <SwitchAccount />
-          </Modal>
-        </>
-      ) : (
-        <Button
-          color="primary"
-          onClick={() => {
-            void loginUser();
-          }}
-        >
-          Login
-        </Button>
-      )}
-    </>
+    </Flex>
   );
 }
