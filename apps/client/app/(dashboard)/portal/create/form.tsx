@@ -81,7 +81,7 @@ export default function PortalForm() {
   // };
   const generateTags = () => {
     const tags = [];
-    const sendNow = portalType == 'gofundme';
+    const sendNow = portalType === 'gofundme';
     if (!sendNow) {
       tags.push('Refundable');
     }
