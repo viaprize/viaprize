@@ -6,6 +6,7 @@ import { Submission } from 'src/prizes/entities/submission.entity';
 import { CreateUser } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
+import { UpdateUser } from './dto/update-user.dto';
 
 /**
  * The Users controller is responsible for handling requests from the client related to user data.
@@ -33,6 +34,20 @@ export class UsersController {
     await this.mailService.welcome(user.email, user.name);
     return user;
   }
+
+  @Post('update/:username')
+  async update(
+    @TypedBody() updateDtoUser: UpdateUser,
+    @TypedParam('username') username: string,
+  ): Promise<User> {
+    const user = await this.usersService.update(username, updateDtoUser);
+    return user;
+  }
+
+  // async update(@TypedBody() updateUserDto: UpdateUser): Promise<User> {
+  //   const user = await this.usersService.update(updateUserDto);
+  //   return user;
+  // }
 
   /**
    * Get a user by ID.

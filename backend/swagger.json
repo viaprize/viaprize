@@ -1918,6 +1918,49 @@
         "x-nestia-method": "POST"
       }
     },
+    "/users/update/{username}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "users.update.update",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
     "/users/{authId}": {
       "get": {
         "tags": [],
@@ -2613,6 +2656,11 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "avatar": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "username": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -2622,6 +2670,26 @@
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "boolean"
+          },
+          "proficiencies": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
           },
           "submissions": {
             "x-typia-required": true,
@@ -2671,8 +2739,11 @@
           "bio",
           "authId",
           "name",
+          "avatar",
           "username",
           "isAdmin",
+          "proficiencies",
+          "priorities",
           "submissions",
           "prizeProposals",
           "prizes",
@@ -4265,6 +4336,31 @@
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
+          },
+          "avatar": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "proficiencies": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
           }
         },
         "nullable": false,
@@ -4287,6 +4383,148 @@
             ]
           }
         ]
+      },
+      "UpdateUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "description": "User's emails which will be used to send emails and futher communication",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "johnsmith@gmail.com",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string",
+            "format": "email",
+            "x-typia-typeTags": [
+              {
+                "target": "string",
+                "name": "Format<\"email\">",
+                "kind": "format",
+                "value": "email",
+                "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
+                "exclusive": [
+                  "format",
+                  "pattern"
+                ]
+              }
+            ]
+          },
+          "authId": {
+            "description": "User Id which is gotten from the auth provider like privy , torus etc...",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "did:lsjfdlk:ljsdlkjsdfkm",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string",
+            "minLength": 5,
+            "x-typia-typeTags": [
+              {
+                "target": "string",
+                "name": "MinLength<5>",
+                "kind": "minLength",
+                "value": 5,
+                "validate": "5 <= $input.length",
+                "exclusive": true
+              }
+            ]
+          },
+          "name": {
+            "description": "The user name which is gotten from the onboarding process or page",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "Johnny Sins",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "username": {
+            "description": "The username which is gotten from the onboarding process or page and it is unique",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "sins",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "bio": {
+            "description": "The user bio which is gotten from the onboarding process or page",
+            "x-typia-jsDocTags": [
+              {
+                "name": "example",
+                "text": [
+                  {
+                    "text": "Hi I am Johnny Sins",
+                    "kind": "text"
+                  }
+                ]
+              }
+            ],
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "avatar": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "proficiencies": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          }
+        },
+        "nullable": false,
+        "x-typia-jsDocTags": []
       }
     },
     "securitySchemes": {

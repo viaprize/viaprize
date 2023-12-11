@@ -29,11 +29,20 @@ export class User {
   @Column()
   name: string;
 
+  @Column({ default: '' })
+  avatar: string;
+
   @Column({ unique: true })
   username: string;
 
   @Column({ default: false })
   isAdmin: boolean;
+
+  @Column('simple-array', { default: [] })
+  proficiencies: string[];
+
+  @Column('simple-array', { default: [] })
+  priorities: string[];
 
   @OneToMany(() => Submission, (submission) => submission.user)
   submissions: Submission[];

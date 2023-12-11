@@ -1,4 +1,5 @@
 import { Card } from '@mantine/core';
+import React from 'react';
 import PortalAboutHero from './hero';
 
 export default function PortalAbout() {
