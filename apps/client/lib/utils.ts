@@ -5,6 +5,7 @@
  */
 
 import { getAccessToken } from '@privy-io/react-auth';
+import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
 
 /* eslint-disable  -- needed */
@@ -68,6 +69,56 @@ export const getAccessTokenWithFallback = async (): Promise<string | null> => {
     console.error('Error fetching access token:', error);
     return null;
   }
+};
+
+export function htmlToPlainText(html: string): string {
+  let textContent = '';
+
+  const parser = new Parser(
+    {
+      ontext: (text) => {
+        textContent += text;
+      },
+    },
+    { decodeEntities: true },
+  );
+
+  parser.write(html);
+  parser.end();
+
+  return textContent;
+}
+
+
+
+
+export const calculateRemainingTime = (submissionDate: string) => {
+  const remainingTime = new Date(submissionDate).getTime() - Date.now();
+
+  if (remainingTime <= 0) {
+    return "Time is up!"
+  } else if (remainingTime < 60 * 60 * 1000) {
+    // Less than 1 hour in milliseconds
+    const minutes = Math.floor(remainingTime / (60 * 1000));
+    return `${minutes} minute${minutes !== 1 ? 's' : ''} remaining`;
+  } else if (remainingTime < 24 * 60 * 60 * 1000) {
+    // Less than 1 day in milliseconds
+    const hours = Math.floor(remainingTime / (60 * 60 * 1000));
+    return `${hours} hour${hours !== 1 ? 's' : ''} remaining`;
+  }
+  const days = Math.floor(remainingTime / (24 * 60 * 60 * 1000));
+  return `${days} day${days !== 1 ? 's' : ''} remaining`;
+};
+
+export const calculateDeadline = (startSubmissionTime: string, submissionDays: number) => {
+  const start = new Date(startSubmissionTime);
+  console.log(start, 'start');
+  const submissionDate = new Date(startSubmissionTime);
+  submissionDate.setDate(start.getDate() + submissionDays);
+  console.log(submissionDate, 'submissionDate');
+  const remainingTime = calculateRemainingTime(submissionDate.toISOString());
+  const dateString = submissionDate.toISOString().split('T')[0];
+  return { remainingTime, dateString };
 };
 
 export const ADMINS = [];

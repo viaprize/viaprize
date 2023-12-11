@@ -1,5 +1,5 @@
 'use client';
-import { chain } from '@/lib/wagmi';
+
 import {
   ActionIcon,
   Badge,
@@ -9,12 +9,12 @@ import {
   Flex,
   Group,
   Image,
-  Stack,
   Text,
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { htmlToPlainText } from 'utils/utils';
+import { calculateDeadline, htmlToPlainText } from '@/lib/utils';
+import { chain } from '@/lib/wagmi';
 
 interface ExploreCardProps {
   imageUrl: string;
@@ -22,11 +22,10 @@ interface ExploreCardProps {
   profileName: string;
   description: string;
   money: string;
-  deadline: string;
+  createdAt: string;
   id: string;
   skills: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  deadlinetimereamining: any;
+  submissionDays: number;
 }
 
 function ExploreCard({
@@ -35,11 +34,13 @@ function ExploreCard({
   title,
   description,
   money,
-  deadline,
+  createdAt,
   id,
   skills,
-  deadlinetimereamining,
+  submissionDays,
 }: ExploreCardProps) {
+  const deadlineString = calculateDeadline(createdAt, submissionDays);
+
   return (
     <Card
       padding="lg"
@@ -76,9 +77,9 @@ function ExploreCard({
         {money} {chain.nativeCurrency.symbol}
       </Text>
       <Flex justify="space-between" align="center">
-        <Text c="blue">Submission Deadline : {deadline}</Text>
+        <Text c="blue">Submission Deadline : {deadlineString.dateString}</Text>
 
-        {deadlinetimereamining}
+        {deadlineString.remainingTime}
       </Flex>
 
       <Button
