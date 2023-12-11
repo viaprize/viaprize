@@ -1,4 +1,4 @@
-import { CreatePrizeDto } from '@/lib/api';
+import type { CreatePrizeDto } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
 
 export const usePrize = () => {

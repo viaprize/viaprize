@@ -4,6 +4,7 @@ import { Prize } from 'src/prizes/entities/prize.entity';
 import { Submission } from 'src/prizes/entities/submission.entity';
 import { Repository } from 'typeorm';
 import { CreateUser } from './dto/create-user.dto';
+import { UpdateUser } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 /* The UsersService class is responsible for creating and retrieving user data from a repository. */
@@ -29,6 +30,22 @@ export class UsersService {
       return user;
     } catch (error) {
       throw new HttpException('User Already Exists', HttpStatus.FORBIDDEN);
+    }
+  }
+
+  async update(userName: string, updateUserDto: UpdateUser): Promise<User> {
+    try {
+      const user = await this.userRepository.findOneBy({
+        username: userName,
+      });
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      await this.userRepository.update(user.id, updateUserDto);
+      return user;
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(`There is some Problem`, HttpStatus.NOT_FOUND);
     }
   }
 

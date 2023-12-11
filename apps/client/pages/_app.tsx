@@ -19,6 +19,7 @@ import { Toaster } from 'sonner';
 import '../styles/globals.css';
 import '../styles/index.css';
 import { theme } from 'utils/theme';
+import NavigationProvider from '@/components/layout/navigation-progress';
 
 const queryClient = new QueryClient();
 
@@ -92,7 +93,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           <QueryClientProvider client={queryClient}>
             <MantineProvider theme={theme} defaultColorScheme="auto">
               <Toaster />
-              {getLayout(loading ? <OwnLoader /> : <Component {...pageProps} />)}
+              <NavigationProvider>
+                {getLayout(loading ? <OwnLoader /> : <Component {...pageProps} />)}
+              </NavigationProvider>
             </MantineProvider>
           </QueryClientProvider>
         </PrivyWagmiConnector>
