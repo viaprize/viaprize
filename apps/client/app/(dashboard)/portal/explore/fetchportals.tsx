@@ -1,8 +1,9 @@
 import { Api } from '@/lib/api';
-import PortalCards from './portal-card';
+import { formatEther } from 'viem';
+import PortalCard from './portal-card';
 
 export default async function FetchPortals() {
-  const portal = (
+  const portals = (
     await new Api().portals.portalsList({
       limit: 10,
       page: 1,
@@ -10,20 +11,18 @@ export default async function FetchPortals() {
   ).data.data;
   return (
     <>
-      {portal.map((portal) => {
+      {portals.map((portal) => {
         return (
-          <PortalCards
+          <PortalCard
             description={portal.description}
             imageUrl={portal.images[0]}
-            amountRaised={portal.balance.toString()}
+            amountRaised={formatEther(BigInt(portal.balance))}
             authorName={portal.user.name}
-            shareUrl=''
-            totalContributors='0'
+            totalContributors="0"
             title={portal.title}
             key={portal.id}
             id={portal.id}
           />
-          
         );
       })}
     </>

@@ -2,9 +2,9 @@
 import { Text } from '@mantine/core';
 import { Suspense } from 'react';
 import FetchPortals from './fetchportals';
-import SkeletonLoad from './loading';
-
 import SearchFiltersPortals from './search-filters-portals';
+import SkeletonLoad from '@/components/custom/skeleton-load-explore';
+
 export default function ExplorePortal() {
   return (
     <div className="max-w-screen-xl">

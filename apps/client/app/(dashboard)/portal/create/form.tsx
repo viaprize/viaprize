@@ -81,7 +81,7 @@ export default function PortalForm() {
   // };
   const generateTags = () => {
     const tags = [];
-    const sendNow = portalType == 'gofundme' ? true : false;
+    const sendNow = portalType == 'gofundme';
     if (!sendNow) {
       tags.push('Refundable');
     }
@@ -97,20 +97,21 @@ export default function PortalForm() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
+
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
-      deadline: deadline?.toISOString()?? undefined,
+      deadline: deadline?.toISOString() ?? undefined,
       description: richtext,
       tags: generateTags(),
-      images: [newImages],
+      images: [newImages] as string[],
       title: value,
       proposerAddress: wallet.address,
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
       fundingGoal: fundingGoal ? convertUSDTOETH(fundingGoal) : undefined,
-      sendImmediately: portalType == 'gofundme' ? true : false,
+      sendImmediately: portalType === 'gofundme',
     });
     setLoading(false);
     router.push(`/profile/${appUser?.username}`);
@@ -126,6 +127,7 @@ export default function PortalForm() {
         error: 'Error Submitting Proposal',
       });
     } catch {
+      setLoading(false);
       toast.error('Error Submitting Proposal');
     }
   };
@@ -215,28 +217,36 @@ export default function PortalForm() {
         value={portalType}
       >
         <Group mt="xs">
-          <Tooltip label="A little description about kickstarter" refProp="rootRef">
+          <Tooltip
+            label="Send all the contributions at once automatically if a funding goal is met and refund 
+            contributors if the funding goal is not met by the deadline "
+            refProp="rootRef"
+          >
             <Radio value="kickstarter" label="Kick Starter" />
           </Tooltip>
-          <Tooltip label="A little description about go fund me" refProp="rootRef">
+          <Tooltip
+            label="Immediately forward contributions to the recipient and end campaigns manually (GoFundMe styles)"
+            refProp="rootRef"
+          >
             <Radio value="gofundme" label="Go Fund Me" />
           </Tooltip>
         </Group>
       </Radio.Group>
       <div className="my-2">
-        <Checkbox
-          checked={haveFundingGoal || portalType === 'kickstarter'}
-          onChange={(event) => {
-            setHaveFundingGoal(event.currentTarget.checked);
-          }}
-          label="I have a funding goal"
-        />
-        {haveFundingGoal || portalType === 'kickstarter' ? (
+        {portalType === 'kickstarter' && (
+          <Checkbox
+            checked={haveFundingGoal || portalType === 'kickstarter'}
+            onChange={(event) => {
+              setHaveFundingGoal(event.currentTarget.checked);
+            }}
+            label="I have a funding goal"
+          />
+        )}
+        {portalType === 'kickstarter' ? (
           <div>
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
               <Text>Funding Goal in USD {`( ${convertUSDTOETH(fundingGoal ?? 0)}`}</Text>
-              <FaEthereum />
-              {')'}
+              <FaEthereum />)
             </div>
             <NumberInput
               min={0}
@@ -252,14 +262,16 @@ export default function PortalForm() {
         ) : null}
       </div>
       <div className="my-2">
-        <Checkbox
-          checked={haveDeadline || portalType === 'kickstarter'}
-          onChange={(event) => {
-            setHaveDeadline(event.currentTarget.checked);
-          }}
-          label="I have a Deadline"
-        />
-        {haveDeadline || portalType === 'kickstarter' ? (
+        {portalType === 'kickstarter' && (
+          <Checkbox
+            checked={haveDeadline || portalType === 'kickstarter'}
+            onChange={(event) => {
+              setHaveDeadline(event.currentTarget.checked);
+            }}
+            label="I have a Deadline"
+          />
+        )}
+        {portalType === 'kickstarter' ? (
           <DateTimePicker
             label="Deadline"
             value={deadline}
@@ -268,7 +280,7 @@ export default function PortalForm() {
           />
         ) : null}
       </div>
-      {(haveFundingGoal && haveDeadline) || portalType === 'kickstarter' ? (
+      {portalType === 'kickstarter' ? (
         <Checkbox
           my="md"
           checked={allowFundsAboveGoal}

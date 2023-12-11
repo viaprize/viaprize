@@ -58,7 +58,6 @@ function Prize() {
       submission_time: proposalTime,
       images: newImages ? [newImages] : [],
       title,
-      
     });
     setLoading(false);
     await router.push(`/profile/${appUser?.username}`);

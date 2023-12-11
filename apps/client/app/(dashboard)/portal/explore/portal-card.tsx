@@ -10,6 +10,8 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
+import Link from 'next/link';
+import { htmlToPlainText } from 'utils/utils';
 
 interface PortalCardProps {
   imageUrl: string;
@@ -18,18 +20,16 @@ interface PortalCardProps {
   description: string;
   amountRaised: string;
   totalContributors: string;
-  shareUrl: string;
   id: string;
 }
 
-export default function PortalCards({
+export default function PortalCard({
   imageUrl,
   title,
   authorName,
   description,
   amountRaised,
   totalContributors,
-  shareUrl,
   id,
 }: PortalCardProps) {
   return (
@@ -37,7 +37,7 @@ export default function PortalCards({
       padding="lg"
       radius="md"
       withBorder
-      className="w-[700px] shadow-xs hover:shadow-lg transition duration-300 ease-in-out"
+      className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out"
       pos="relative"
     >
       <Card.Section>
@@ -62,18 +62,17 @@ export default function PortalCards({
         className="text-md text-gray-500 h-20 overflow-y-auto"
         // dangerouslySetInnerHTML={{ __html: description }}
       >
-        {description}
-        {/* {htmlToPlainText(description)} */}
+        {htmlToPlainText(description)}
       </p>
 
       <Text fw="bold" c="blue" size="xl">
-        {amountRaised}
+        {amountRaised} Matic
       </Text>
       <Badge color="gray" variant="light" radius="sm">
         Total Amount Raised
       </Badge>
 
-      <Text size="sm" c="gray">
+      <Text size="sm">
         Raised from <span className="text-gray font-bold">{totalContributors} </span>
         contributions
       </Text>
@@ -84,12 +83,12 @@ export default function PortalCards({
         mt="md"
         radius="md"
         variant="light"
-        // href={`/prize/${id}`}
+        href={`/portal/${id}`}
       >
-        Donate
+        Details
       </Button>
       <div className="absolute top-2 right-2">
-        <CopyButton value={shareUrl || 'https://mantine.dev'}>
+        <CopyButton value={`https://pactsmith.com/portal/${id}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>

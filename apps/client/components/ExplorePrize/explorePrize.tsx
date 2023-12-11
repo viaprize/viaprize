@@ -2,6 +2,7 @@
 import { chain } from '@/lib/wagmi';
 import { Badge, Button, Card, Group, Text, Image } from '@mantine/core';
 import { Parser } from 'htmlparser2';
+import { htmlToPlainText } from 'utils/utils';
 
 interface ExploreCardProps {
   imageUrl: string;
@@ -11,24 +12,6 @@ interface ExploreCardProps {
   money: string;
   deadline: string;
   id: string;
-}
-
-function htmlToPlainText(html: string): string {
-  let textContent = '';
-
-  const parser = new Parser(
-    {
-      ontext: (text) => {
-        textContent += text;
-      },
-    },
-    { decodeEntities: true },
-  );
-
-  parser.write(html);
-  parser.end();
-
-  return textContent;
 }
 
 function ExploreCard({

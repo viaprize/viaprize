@@ -1,7 +1,7 @@
 import { Text } from '@mantine/core';
 import { Suspense } from 'react';
 import FetchPrizes from './fetchprizes';
-import SkeletonLoad from './skeleton-load';
+import SkeletonLoad from '../../../../components/custom/skeleton-load-explore';
 import SearchFilters from '@/components/ExplorePrize/searchFilters';
 
 function ExplorePage() {
