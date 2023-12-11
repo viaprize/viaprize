@@ -38,6 +38,7 @@ export default function Details() {
   });
 
   const router = useRouter();
+  const { logoutUser } = useAppUser();
   const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
     setEmail(val);
@@ -82,7 +83,18 @@ export default function Details() {
 
   const [exists, setExists] = useState(false);
   const [usernameLoading, setUsernameLoading] = useState(false);
-
+  const [logoutLoading, setLogoutLoading] = useState(false);
+  const logout = async () => {
+    setLogoutLoading(true);
+    await logoutUser()
+      .catch((error) => {
+        console.log('error logging out');
+        console.error(error);
+      })
+      .finally(() => {
+        setLogoutLoading(false);
+      });
+  };
   const checkUsername = useCallback(
     async (newusername: string) => {
       try {
@@ -159,12 +171,22 @@ export default function Details() {
         <Button
           onClick={handleLogin}
           loading={loading || uploadUserMutation.isLoading}
-          disabled={loading || uploadUserMutation.isLoading || exists}
+          disabled={loading || uploadUserMutation.isLoading || exists || usernameLoading}
           color="blue"
           fullWidth
           my="sm"
         >
           Get Started
+        </Button>
+        <Button
+          onClick={logout}
+          loading={logoutLoading}
+          disabled={loading || uploadUserMutation.isLoading || exists || usernameLoading}
+          color="blue"
+          fullWidth
+          my="sm"
+        >
+          Exit (Logout)
         </Button>
       </Card>
     </Center>

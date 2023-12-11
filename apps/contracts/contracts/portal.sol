@@ -11,22 +11,20 @@ contract Portal {
     address public platformAddress = 0xdD870fA1b7C4700F2BD7f44238821C26f7392148;
     address[] public patrons; 
     mapping(address => uint256) public patronAmount;
-    uint256 totalFunds;
-    uint256  totalRewards;
-
+    uint256 public totalFunds;
+    uint256 public totalRewards;
     bool allowDonationAboveGoalAmount;
     bool isActive;
     bool allowImmediately;
 
     uint256 deadline1;
     
+    
 
     error NotEnoughFunds();
     error FundingToContractEnded();
-    // error oneError();
-    // error twoError();
-    // error threeError(); 
     error RequireGoalAndDeadline();
+    error CantEndKickstarterTypeCampaign();
 
     event Values(
         address receiverAddress,
@@ -174,10 +172,12 @@ contract Portal {
         addFunds();
     }
 
-    function closeCampaign() public {
+    function endCampaign() public {
         require(isProposers[msg.sender] == true, "you are not an owner to close the campaign");
+        if(allowImmediately) revert CantEndKickstarterTypeCampaign();
         isActive = false;
     }
+
 
     // function withdrawAmount() public {
     //     require(isproposer[msg.sender] == true, "you are not an owner to close the campaign");
