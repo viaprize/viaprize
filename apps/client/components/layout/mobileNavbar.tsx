@@ -16,6 +16,7 @@ import Link from 'next/link';
 const navbnarItems = [
   {
     label: 'Prizes',
+    hrefabout: '/prize/about',
     hrefexplore: '/prize/explore',
     about: 'About Prizes',
     explore: 'Explore Prizes',
@@ -26,6 +27,7 @@ const navbnarItems = [
   },
   {
     label: 'Portals',
+    hrefabout: '/portal/about',
     hrefexplore: '/portal/explore',
     explore: 'Explore Portals',
     about: 'About Portals',
@@ -45,17 +47,18 @@ export default function MobileNavbar() {
         <Text className="font-bold">{item.label}</Text>
       </Accordion.Control>
       <Accordion.Panel>
-        <Flex justify="space-between">
-          <Text>About</Text>
-          <Link href={item.hrefexplore} className="underline">
+        <Stack gap="md">
+          <Link href={item.hrefabout} className="hover:text-blue-400">
+            <Text>About</Text>
+          </Link>
+          <Link href={item.hrefexplore} className="hover:text-blue-400">
             {item.explore}
           </Link>
-        </Flex>
 
-        <p>{item.description}</p>
-        <Button>
-          <Link href={item.hrefcreate}>{item.createbutton}</Link>
-        </Button>
+          <Button>
+            <Link href={item.hrefcreate}>{item.createbutton}</Link>
+          </Button>
+        </Stack>
       </Accordion.Panel>
     </Accordion.Item>
   ));
@@ -66,6 +69,7 @@ export default function MobileNavbar() {
         <Link href="/" className=" font-bold hover:underline flex justify-between pl-4">
           Home
         </Link>
+        <Divider />
         <Accordion>{items}</Accordion>
       </Stack>
     </div>
