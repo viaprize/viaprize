@@ -1,51 +1,72 @@
 import useAppUser from '@/context/hooks/useAppUser';
 import {
-  ActionIcon,
+  Accordion,
   Button,
-  Card,
-  CopyButton,
+  Divider,
   Flex,
   Group,
+  Menu,
+  MenuTarget,
   Stack,
-  Tooltip,
-  useMantineColorScheme,
+  Text,
 } from '@mantine/core';
-import { useWallets } from '@privy-io/react-auth';
-import { IconCheck, IconCopy, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { IconChevronDown } from '@tabler/icons-react';
 import Link from 'next/link';
 
-export default function MobileNavbar() {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+const navbnarItems = [
+  {
+    label: 'Prizes',
+    hrefexplore: '/prize/explore',
+    about: 'About Prizes',
+    explore: 'Explore Prizes',
+    hrefcreate: '/prize/create',
+    createbutton: 'Create Prize',
+    description:
+      'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+  },
+  {
+    label: 'Portals',
+    hrefexplore: '/portal/explore',
+    explore: 'Explore Portals',
+    about: 'About Portals',
+    hrefcreate: '/portal/create',
+    createbutton: 'Create Portal',
+    description:
+      'em ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
+  },
+];
 
-  const { wallets } = useWallets();
-  const displayAddress = (address: string) => {
-    return `${address.slice(0, 4)}....${address.slice(-4)}`;
-  };
+export default function MobileNavbar() {
   const { appUser } = useAppUser();
 
-  return (
-    <div>
-      <Stack gap="md">
-        <Link href="/" className="pl-5 font-bold">
-          HOME
-        </Link>
-        <Link href="/prize/explore" className="pl-3 font-bold">
-          PRIZES
-        </Link>
-        <Link href="/portal/explore" className="pl-3 font-bold">
-          PORTALS
-        </Link>
-        {appUser ? (
-          <Link className="pl-3 font-bold" href={`/profile/${appUser.username}`}>
-            PROFILE
+  const items = navbnarItems.map((item) => (
+    <Accordion.Item key={item.label} value={item.label}>
+      <Accordion.Control>
+        <Text className="font-bold">{item.label}</Text>
+      </Accordion.Control>
+      <Accordion.Panel>
+        <Flex justify="space-between">
+          <Text>About</Text>
+          <Link href={item.hrefexplore} className="underline">
+            {item.explore}
           </Link>
-        ) : null}
-        <Button className="w-[40%]" color="primary">
-          <Link href="/portal/create">Create Portals</Link>
+        </Flex>
+
+        <p>{item.description}</p>
+        <Button>
+          <Link href={item.hrefcreate}>{item.createbutton}</Link>
         </Button>
-        <Button className="w-[40%]" color="primary">
-          <Link href="/prize/create">Create Prize</Link>
-        </Button>
+      </Accordion.Panel>
+    </Accordion.Item>
+  ));
+
+  return (
+    <div className="flex ">
+      <Stack gap="lg" className="my-7 ml-4 w-full">
+        <Link href="/" className=" font-bold hover:underline flex justify-between pl-4">
+          Home
+        </Link>
+        <Accordion>{items}</Accordion>
       </Stack>
     </div>
   );

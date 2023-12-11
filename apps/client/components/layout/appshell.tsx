@@ -3,17 +3,18 @@ import {
   AppShell,
   Burger,
   Center,
-  Group,
+  Flex,
   useComputedColorScheme,
   useMantineTheme,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import Image from 'next/image';
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 import Footer from './footer';
 import HeaderLayout from './headerLayout';
 import MobileNavbar from './mobileNavbar';
-import { useDisclosure } from '@mantine/hooks';
-import Link from 'next/link';
-import Image from 'next/image';
+import ProfileMenu from './profilemenu';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
@@ -40,13 +41,16 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         p="md"
         bg={computedColorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]}
       >
-        <Group h="100%" px="md">
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" mx="md" />
-          <Link href="/">
-            <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
-          </Link>
+        <Flex justify="space-between" h="100%" px="md" className="w-full" align="center">
+          <div className="flex justify-between items-center">
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="md" mr="md" />
+            <Link href="/">
+              <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
+            </Link>
+          </div>
           <HeaderLayout />
-        </Group>
+          <ProfileMenu />
+        </Flex>
       </AppShell.Header>
       <AppShell.Navbar>
         <MobileNavbar />

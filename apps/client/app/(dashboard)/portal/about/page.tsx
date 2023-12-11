@@ -7,7 +7,7 @@ export default function PortalAbout() {
       <PortalAboutHero />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <Card withBorder shadow="md" radius="md">
-          <h1>GoFundMe style (pass-through campaigns)</h1>
+          <h1>GoFundMe style (pass-through )</h1>
           <p>
             If the author chooses to immediately forward contributions to the recipient,
             then it functions just like GoFundMe. It is not required, but the author may
@@ -17,7 +17,7 @@ export default function PortalAbout() {
           </p>
         </Card>
         <Card withBorder shadow="md" radius="md">
-          <h1>Kickstarter style (all-or-nothing campaigns)</h1>
+          <h1>Kickstarter style (all-or-nothing)</h1>
           <p>
             If the author chooses to send all the contributions at once, they must choose
             a deadline and a goal. This is similar to campaigns on Kickstarter. The author
