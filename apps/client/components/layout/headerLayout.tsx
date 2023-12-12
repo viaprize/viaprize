@@ -82,7 +82,7 @@ export default function HeaderLayout() {
 
         <Menu withArrow shadow="md" position="bottom" trigger="hover">
           <Menu.Target>
-            <Link href="/prize/explore" className="pl-3 font-bold">
+            <Link href="/portals/explore" className="pl-3 font-bold">
               PORTALS
             </Link>
           </Menu.Target>
@@ -100,7 +100,7 @@ export default function HeaderLayout() {
               </Menu.Item>
               <Divider />
               <Button>
-                <Link href="/portal/create">Create Prize</Link>
+                <Link href="/portal/create">Create Portal</Link>
               </Button>
             </Stack>
           </Menu.Dropdown>
