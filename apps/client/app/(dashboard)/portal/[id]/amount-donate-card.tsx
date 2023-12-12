@@ -104,7 +104,7 @@ export default function AmountDonateCard({
           value={value}
           onChange={(v) => {
             if (!v) {
-              console.log({ v }, 'inner v');
+              // console.log({ v }, 'inner v');
               setValue('0');
             }
             setValue(v.toString());
