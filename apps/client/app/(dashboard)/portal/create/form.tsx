@@ -225,7 +225,7 @@ export default function PortalForm() {
             <Radio value="kickstarter" label="Kick Starter" />
           </Tooltip>
           <Tooltip
-            label="Immediately forward contributions to the recipient and end campaigns manually (GoFundMe styles)"
+            label="Immediately forward contributions to the recipient and end campaigns manually"
             refProp="rootRef"
           >
             <Radio value="gofundme" label="Go Fund Me" />

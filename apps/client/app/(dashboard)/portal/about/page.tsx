@@ -8,7 +8,7 @@ export default function PortalAbout() {
       <PortalAboutHero />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
         <Card withBorder shadow="md" radius="md">
-          <h1>GoFundMe style (pass-through )</h1>
+          <h1>GoFundMe style (pass-through)</h1>
           <p>
             If the author chooses to immediately forward contributions to the recipient,
             then it functions just like GoFundMe. It is not required, but the author may

@@ -39,6 +39,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
     >
       <AppShell.Header
         p="md"
+        py="lg"
         bg={computedColorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]}
       >
         <Flex justify="space-between" h="100%" px="md" className="w-full" align="center">

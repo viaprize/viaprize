@@ -7,7 +7,6 @@ import {
   Divider,
   Flex,
   Menu,
-  Popover,
   Stack,
   Text,
   Tooltip,
@@ -83,7 +82,7 @@ export default function HeaderLayout() {
 
         <Menu withArrow shadow="md" position="bottom" trigger="hover">
           <Menu.Target>
-            <Link href="/prize/explore" className="pl-3 font-bold">
+            <Link href="/portals/explore" className="pl-3 font-bold">
               PORTALS
             </Link>
           </Menu.Target>
@@ -101,35 +100,34 @@ export default function HeaderLayout() {
               </Menu.Item>
               <Divider />
               <Button>
-                <Link href="/portal/create">Create Prize</Link>
+                <Link href="/portal/create">Create Portal</Link>
               </Button>
             </Stack>
           </Menu.Dropdown>
         </Menu>
       </Flex>
 
-      <Flex gap="md">
-        {appUser ? (
-          <Card className="hidden sm:block">
-            {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
-            {wallets[0] ? (
-              <CopyButton value={wallets[0].address}>
-                {({ copied, copy }) => (
-                  <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
-                    <ActionIcon
-                      onClick={copy}
-                      style={{
-                        backgroundColor: copied ? '#3d4070' : '#3d4070',
-                      }}
-                    >
-                      {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-              </CopyButton>
-            ) : null}
-          </Card>
-        ) : null}
+      <Flex gap="md" align="center">
+        <Card className="hidden sm:block py-1 my-2">
+          {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
+          {wallets[0] ? (
+            <CopyButton value={wallets[0].address}>
+              {({ copied, copy }) => (
+                <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
+                  <ActionIcon
+                    ml="md"
+                    onClick={copy}
+                    style={{
+                      backgroundColor: copied ? '#3d4070' : '#3d4070',
+                    }}
+                  >
+                    {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+                  </ActionIcon>
+                </Tooltip>
+              )}
+            </CopyButton>
+          ) : null}
+        </Card>
 
         <ActionIcon
           variant="outline"

@@ -132,7 +132,7 @@ function Prize() {
         <div className="">
           <NumberInput
             placeholder="Proposal Time (in days)"
-            label="This is number of days the submission would be valid for "
+            label="How many days you want submissions to be allowed for?"
             value={proposalTime}
             onChange={(e) => {
               setProposalTime(parseInt(e.toString()));

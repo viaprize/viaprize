@@ -1,5 +1,7 @@
 'use client';
 
+import { calculateDeadline, htmlToPlainText } from '@/lib/utils';
+import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
   Badge,
@@ -13,8 +15,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { calculateDeadline, htmlToPlainText } from '@/lib/utils';
-import { chain } from '@/lib/wagmi';
+import { PiTimerFill } from 'react-icons/pi';
 
 interface ExploreCardProps {
   imageUrl: string;
@@ -59,36 +60,42 @@ function ExploreCard({
           }
         />
       </Card.Section>
+      <div className="flex items-center my-3 gap-2 text-red-600">
+        <PiTimerFill
+        // color='red'
+        />
+        <Text
+          // c="red"
+          fw="bold"
+        >
+          {deadlineString.remainingTime}
+        </Text>
+      </div>
       <Group mb="xs" mt="md" justify="space-between">
         <Text fw={500}>{title}</Text>
-        <Badge color="blue" variant="light" p="sm">
+        <Badge color="primary" variant="gradient" p="sm">
           {profileName}
         </Badge>
       </Group>
       <p
-        className="text-md text-gray-500 h-20 overflow-y-auto"
+        className="text-md h-20 overflow-y-auto"
         // dangerouslySetInnerHTML={{ __html: description }}
       >
         {htmlToPlainText(description)}
       </p>
       {/*  >{htmlToPlainText(description)}</p> */}
       <Flex gap="sm">{skills}</Flex>
-      <Text fw="bold" c="black" size="xl">
+      <Text fw="bold" size="xl">
         {money} {chain.nativeCurrency.symbol}
       </Text>
-      <Flex justify="space-between" align="center">
-        <Text c="blue">Submission Deadline : {deadlineString.dateString}</Text>
-
-        {deadlineString.remainingTime}
-      </Flex>
+      <Text fw="bold">Submission Deadline : {deadlineString.dateString}</Text>
 
       <Button
-        color="blue"
+        color="primary"
         component="a"
         fullWidth
         mt="md"
         radius="md"
-        variant="light"
         href={`/prize/${id}`}
       >
         Details
