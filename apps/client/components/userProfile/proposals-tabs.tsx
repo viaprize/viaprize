@@ -72,7 +72,7 @@ export default function ProposalsTabs({
                         ] as `0x${string}`[],
                         BigInt(10),
                         BigInt(10),
-                        '0x62e9a8374AE3cdDD0DA7019721CcB091Fed927aE' as `0x${string}`,
+                        '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
                       ],
                       'args',
                     );
@@ -86,7 +86,7 @@ export default function ProposalsTabs({
                         ] as `0x${string}`[],
                         BigInt(5),
                         BigInt(5),
-                        '0x62e9a8374AE3cdDD0DA7019721CcB091Fed927aE' as `0x${string}`,
+                        '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
                         BigInt(currentTimestamp.current),
                       ],
                     });

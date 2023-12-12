@@ -1,4 +1,5 @@
 'use client';
+import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
   Badge,
@@ -51,7 +52,7 @@ export default function AmountDonateCard({
           Total Amount Raised
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-5xl md:4xl ">
-          {amountRaised} Matic
+          {amountRaised} {chain.nativeCurrency.symbol}
         </Text>
         <Text size="sm">
           Raised from{'  '}

@@ -16,9 +16,9 @@ export const useUser = () => {
   };
 
   const getUserByUserName = async (userName: string) => {
-    const user = await(await backendApi()).users.usernameDetail(userName);
+    const user = await (await backendApi()).users.usernameDetail(userName);
     return user.data;
-  }
+  };
 
   return { updateUser, getUserByUserName };
 };

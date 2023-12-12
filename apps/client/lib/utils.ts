@@ -89,14 +89,11 @@ export function htmlToPlainText(html: string): string {
   return textContent;
 }
 
-
-
-
 export const calculateRemainingTime = (submissionDate: string) => {
   const remainingTime = new Date(submissionDate).getTime() - Date.now();
 
   if (remainingTime <= 0) {
-    return "Time is up!"
+    return 'Time is up!';
   } else if (remainingTime < 60 * 60 * 1000) {
     // Less than 1 hour in milliseconds
     const minutes = Math.floor(remainingTime / (60 * 1000));
@@ -110,7 +107,10 @@ export const calculateRemainingTime = (submissionDate: string) => {
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
 };
 
-export const calculateDeadline = (startSubmissionTime: string, submissionDays: number) => {
+export const calculateDeadline = (
+  startSubmissionTime: string,
+  submissionDays: number,
+) => {
   const start = new Date(startSubmissionTime);
   console.log(start, 'start');
   const submissionDate = new Date(startSubmissionTime);

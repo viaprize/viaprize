@@ -166,11 +166,20 @@ export default function EditProfileModal({
         defaultValue={IPriorities}
       />
       <Flex gap={5}>
-        <Button my="md" className="w-full" variant="outline"
-        disabled={updatingProfile || uploadingImage}>
+        <Button
+          my="md"
+          className="w-full"
+          variant="outline"
+          disabled={updatingProfile || uploadingImage}
+        >
           Cancel
         </Button>
-        <Button disabled={updatingProfile || uploadingImage} my="md" className="w-full" onClick={submit}>
+        <Button
+          disabled={updatingProfile || uploadingImage}
+          my="md"
+          className="w-full"
+          onClick={submit}
+        >
           Save
         </Button>
       </Flex>
