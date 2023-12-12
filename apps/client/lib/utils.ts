@@ -112,10 +112,8 @@ export const calculateDeadline = (
   submissionDays: number,
 ) => {
   const start = new Date(startSubmissionTime);
-  console.log(start, 'start');
   const submissionDate = new Date(startSubmissionTime);
   submissionDate.setDate(start.getDate() + submissionDays);
-  console.log(submissionDate, 'submissionDate');
   const remainingTime = calculateRemainingTime(submissionDate.toISOString());
   const dateString = submissionDate.toISOString().split('T')[0];
   return { remainingTime, dateString };

@@ -143,7 +143,7 @@ export default function PortalForm() {
   const handleSubmit = () => {
     setLoading(true);
     try {
-      console.log(images, 'images');
+      // console.log(images, 'images');
       toast.promise(submit(), {
         loading: 'Submitting Proposal...',
         success: 'Proposal Submitted',

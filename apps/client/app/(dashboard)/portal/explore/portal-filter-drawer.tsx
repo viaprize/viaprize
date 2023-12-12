@@ -36,7 +36,7 @@ function PortalFilterDrawer() {
   const subCategory = searchParams?.get('Organization')
     ? (searchParams.get('Organization') as string).split(',')
     : [];
-  console.log(subCategory);
+  // console.log(subCategory);
 
   const RangeValue = () => {
     const ranges = (

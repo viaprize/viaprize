@@ -82,7 +82,7 @@ export default function HeaderLayout() {
 
         <Menu withArrow shadow="md" position="bottom" trigger="hover">
           <Menu.Target>
-            <Link href="/portals/explore" className="pl-3 font-bold">
+            <Link href="/portal/explore" className="pl-3 font-bold">
               PORTALS
             </Link>
           </Menu.Target>
