@@ -7,7 +7,7 @@ import SkeletonLoad from '@/components/custom/skeleton-load-explore';
 
 export default function ExplorePortal() {
   return (
-    <div className="max-w-screen-xl">
+    <div className="max-w-screen-xl w-screen">
       <Text size="25px" fw="bolder" mt="md" ml="md">
         Explore Portal
       </Text>
