@@ -4,6 +4,8 @@ import ImageComponent from '@/components/Prize/dropzone';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import useAppUser from '@/context/hooks/useAppUser';
+import { ConvertUSD } from '@/lib/types';
+import { chain } from '@/lib/wagmi';
 import {
   Button,
   Checkbox,
@@ -21,7 +23,8 @@ import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { FaCalendar, FaEthereum } from 'react-icons/fa';
+import { FaCalendar } from 'react-icons/fa';
+import { useQuery } from 'react-query';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 
@@ -44,10 +47,29 @@ export default function PortalForm() {
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
-
-  function convertUSDTOETH(usd: number) {
-    const eth = usd * 0.00042;
-    return parseFloat(eth.toFixed(4));
+  const { data: crytoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
+    const final = await (
+      await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=${chain.name.toLowerCase()}&vs_currencies=usd`,
+      )
+    ).json();
+    return Object.keys(final).length === 0
+      ? {
+          [chain.name.toLowerCase()]: {
+            usd: 2183.63,
+          },
+        }
+      : final;
+  });
+  console.log(crytoToUsd, 'crytoToUsd');
+  function convertUSDToCrypto(usd: number) {
+    if (!crytoToUsd) {
+      toast.error('Error converting USD to Crypto');
+      return 0;
+    }
+    const cryto_to_usd_value = crytoToUsd[chain.name.toLowerCase()].usd;
+    const eth_to_cryto = usd / cryto_to_usd_value;
+    return parseFloat(eth_to_cryto.toFixed(4));
   }
 
   const { appUser } = useAppUser();
@@ -97,6 +119,7 @@ export default function PortalForm() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
+    const finalFundingGoal = fundingGoal ? convertUSDToCrypto(fundingGoal) : undefined;
 
     const newImages = await handleUploadImages();
     await addProposalsMutation({
@@ -110,7 +133,7 @@ export default function PortalForm() {
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
-      fundingGoal: fundingGoal ? convertUSDTOETH(fundingGoal) : undefined,
+      fundingGoal: finalFundingGoal,
       sendImmediately: portalType === 'gofundme',
     });
     setLoading(false);
@@ -245,8 +268,10 @@ export default function PortalForm() {
         {portalType === 'kickstarter' ? (
           <div>
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
-              <Text>Funding Goal in USD {`( ${convertUSDTOETH(fundingGoal ?? 0)}`}</Text>
-              <FaEthereum />)
+              <Text>
+                Funding Goal in {`( ${convertUSDToCrypto(fundingGoal ?? 0)}`}{' '}
+                {chain.nativeCurrency.symbol}
+              </Text>
             </div>
             <NumberInput
               min={0}

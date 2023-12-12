@@ -13,6 +13,12 @@ export interface PactDetail {
   terms: string;
   transactionHash: string;
 }
+
+export type ConvertUSD = {
+  [key: string]: {
+    usd: number;
+  };
+};
 export interface Query {
   limit: number;
   page: number;

@@ -1,6 +1,5 @@
 'use client';
 
-
 import { env } from '@env';
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';

@@ -1,4 +1,5 @@
 import { htmlToPlainText } from '@/lib/utils';
+import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
   Badge,
@@ -65,7 +66,7 @@ export default function PortalCard({
       </p>
 
       <Text fw="bold" size="xl">
-        {amountRaised} Matic
+        {amountRaised} {chain.nativeCurrency.symbol}
       </Text>
       {/* <Badge color="gray" variant="light" radius="sm">
         Total Amount Raised
