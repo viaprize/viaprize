@@ -153,21 +153,23 @@ export default function AdminPage() {
       </Tabs.List>
 
       <Tabs.Panel value="pending" pt="xs">
-        {getAllPrizeProposalsMutation.isLoading ? (
-          <Loader size="xl" variant="bars" />
-        ) : (
-          <Proposals
-            isSuccess={
-              getAllPrizeProposalsMutation.isSuccess
-                ? getAllPrizeProposalsMutation.isSuccess
-                : false
-            }
-            data={{
-              portalsProposals: getAllPortalProposalsMutation.data,
-              prizesProposals: getAllPrizeProposalsMutation.data,
-            }}
-          />
-        )}
+        <div className="grid grid-cols-3 gap-4">
+          {getAllPrizeProposalsMutation.isLoading ? (
+            <Loader size="xl" variant="bars" />
+          ) : (
+            <Proposals
+              isSuccess={
+                getAllPrizeProposalsMutation.isSuccess
+                  ? getAllPrizeProposalsMutation.isSuccess
+                  : false
+              }
+              data={{
+                portalsProposals: getAllPortalProposalsMutation.data,
+                prizesProposals: getAllPrizeProposalsMutation.data,
+              }}
+            />
+          )}
+        </div>
       </Tabs.Panel>
 
       <Tabs.Panel value="accepted" pt="xs">

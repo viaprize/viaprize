@@ -1,29 +1,29 @@
 import {
-  PrepareWriteContractConfig,
+  writeContract,
   WriteContractArgs,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
   prepareWriteContract,
-  writeContract,
+  PrepareWriteContractConfig,
 } from 'wagmi/actions';
 
 import {
-  Address,
-  UseContractEventConfig,
-  UseContractReadConfig,
-  UseContractWriteConfig,
-  UsePrepareContractWriteConfig,
-  useChainId,
-  useContractEvent,
   useContractRead,
+  UseContractReadConfig,
   useContractWrite,
-  useNetwork,
+  UseContractWriteConfig,
   usePrepareContractWrite,
+  UsePrepareContractWriteConfig,
+  useContractEvent,
+  UseContractEventConfig,
+  useNetwork,
+  useChainId,
+  Address,
 } from 'wagmi';
 import {
-  PrepareWriteContractResult,
   ReadContractResult,
   WriteContractMode,
+  PrepareWriteContractResult,
 } from 'wagmi/actions';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ export const portalABI = [
     stateMutability: 'nonpayable',
     type: 'constructor',
     inputs: [
-      { name: '_owners', internalType: 'address[]', type: 'address[]' },
+      { name: '_proposer', internalType: 'address[]', type: 'address[]' },
       { name: '_goal', internalType: 'uint256', type: 'uint256' },
       { name: '_deadline', internalType: 'uint256', type: 'uint256' },
       { name: '_allowDonationAboveGoalAmount', internalType: 'bool', type: 'bool' },
@@ -90,12 +90,10 @@ export const portalABI = [
       { name: '_allowImmediately', internalType: 'bool', type: 'bool' },
     ],
   },
-  { type: 'error', inputs: [], name: 'AllowImmediatelyCantBeTrue' },
+  { type: 'error', inputs: [], name: 'CantEndKickstarterTypeCampaign' },
   { type: 'error', inputs: [], name: 'FundingToContractEnded' },
   { type: 'error', inputs: [], name: 'NotEnoughFunds' },
-  { type: 'error', inputs: [], name: 'oneError' },
-  { type: 'error', inputs: [], name: 'threeError' },
-  { type: 'error', inputs: [], name: 'twoError' },
+  { type: 'error', inputs: [], name: 'RequireGoalAndDeadline' },
   {
     type: 'event',
     anonymous: false,
@@ -137,25 +135,18 @@ export const portalABI = [
     ],
   },
   {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'closeCampaign',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'currentTimestamp',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
     name: 'deadline',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'endCampaign',
+    outputs: [],
   },
   {
     stateMutability: 'view',
@@ -168,22 +159,22 @@ export const portalABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'isOwner',
+    name: 'isProposers',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'owners',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'patronAmount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     name: 'patrons',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
   },
   {
     stateMutability: 'view',
@@ -202,9 +193,30 @@ export const portalABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'proposer',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [],
     name: 'receiverAddress',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'totalFunds',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'totalRewards',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   { stateMutability: 'payable', type: 'receive' },
 ] as const;
@@ -740,7 +752,7 @@ export const viaPrizeFactoryConfig = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export const portalFactoryABI = [
   {
@@ -768,14 +780,14 @@ export const portalFactoryABI = [
 ] as const;
 
 /**
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export const portalFactoryAddress = {
-  80001: '0x243016538AD59103A67dD79ccE7196628fC425A4',
+  80001: '0xAe37824e718488787D1bbD87E35985ED107a0C7E',
 } as const;
 
 /**
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export const portalFactoryConfig = {
   address: portalFactoryAddress,
@@ -961,7 +973,7 @@ export function prepareWriteViaPrizeFactory<
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export function writePortalFactory<
   TFunctionName extends string,
@@ -994,7 +1006,7 @@ export function writePortalFactory<
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export function prepareWritePortalFactory<
   TAbi extends readonly unknown[] = typeof portalFactoryABI,
@@ -1221,25 +1233,6 @@ export function usePortalRead<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"currentTimestamp"`.
- */
-export function usePortalCurrentTimestamp<
-  TFunctionName extends 'currentTimestamp',
-  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: portalABI,
-    functionName: 'currentTimestamp',
-    ...config,
-  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
-}
-
-/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"deadline"`.
  */
 export function usePortalDeadline<
@@ -1278,10 +1271,10 @@ export function usePortalGoalAmount<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"isOwner"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"isProposers"`.
  */
-export function usePortalIsOwner<
-  TFunctionName extends 'isOwner',
+export function usePortalIsProposers<
+  TFunctionName extends 'isProposers',
   TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
 >(
   config: Omit<
@@ -1291,16 +1284,16 @@ export function usePortalIsOwner<
 ) {
   return useContractRead({
     abi: portalABI,
-    functionName: 'isOwner',
+    functionName: 'isProposers',
     ...config,
   } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"owners"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"patronAmount"`.
  */
-export function usePortalOwners<
-  TFunctionName extends 'owners',
+export function usePortalPatronAmount<
+  TFunctionName extends 'patronAmount',
   TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
 >(
   config: Omit<
@@ -1310,7 +1303,7 @@ export function usePortalOwners<
 ) {
   return useContractRead({
     abi: portalABI,
-    functionName: 'owners',
+    functionName: 'patronAmount',
     ...config,
   } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
 }
@@ -1373,6 +1366,25 @@ export function usePortalPlatformFee<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"proposer"`.
+ */
+export function usePortalProposer<
+  TFunctionName extends 'proposer',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'proposer',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"receiverAddress"`.
  */
 export function usePortalReceiverAddress<
@@ -1387,6 +1399,44 @@ export function usePortalReceiverAddress<
   return useContractRead({
     abi: portalABI,
     functionName: 'receiverAddress',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"totalFunds"`.
+ */
+export function usePortalTotalFunds<
+  TFunctionName extends 'totalFunds',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'totalFunds',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"totalRewards"`.
+ */
+export function usePortalTotalRewards<
+  TFunctionName extends 'totalRewards',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'totalRewards',
     ...config,
   } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
 }
@@ -1437,23 +1487,23 @@ export function usePortalAddFunds<TMode extends WriteContractMode = undefined>(
 }
 
 /**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"closeCampaign"`.
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"endCampaign"`.
  */
-export function usePortalCloseCampaign<TMode extends WriteContractMode = undefined>(
+export function usePortalEndCampaign<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof portalABI, 'closeCampaign'>['request']['abi'],
-        'closeCampaign',
+        PrepareWriteContractResult<typeof portalABI, 'endCampaign'>['request']['abi'],
+        'endCampaign',
         TMode
-      > & { functionName?: 'closeCampaign' }
-    : UseContractWriteConfig<typeof portalABI, 'closeCampaign', TMode> & {
+      > & { functionName?: 'endCampaign' }
+    : UseContractWriteConfig<typeof portalABI, 'endCampaign', TMode> & {
         abi?: never;
-        functionName?: 'closeCampaign';
+        functionName?: 'endCampaign';
       } = {} as any,
 ) {
-  return useContractWrite<typeof portalABI, 'closeCampaign', TMode>({
+  return useContractWrite<typeof portalABI, 'endCampaign', TMode>({
     abi: portalABI,
-    functionName: 'closeCampaign',
+    functionName: 'endCampaign',
     ...config,
   } as any);
 }
@@ -1490,19 +1540,19 @@ export function usePreparePortalAddFunds(
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"closeCampaign"`.
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"endCampaign"`.
  */
-export function usePreparePortalCloseCampaign(
+export function usePreparePortalEndCampaign(
   config: Omit<
-    UsePrepareContractWriteConfig<typeof portalABI, 'closeCampaign'>,
+    UsePrepareContractWriteConfig<typeof portalABI, 'endCampaign'>,
     'abi' | 'functionName'
   > = {} as any,
 ) {
   return usePrepareContractWrite({
     abi: portalABI,
-    functionName: 'closeCampaign',
+    functionName: 'endCampaign',
     ...config,
-  } as UsePrepareContractWriteConfig<typeof portalABI, 'closeCampaign'>);
+  } as UsePrepareContractWriteConfig<typeof portalABI, 'endCampaign'>);
 }
 
 /**
@@ -3011,7 +3061,7 @@ export function useViaPrizeFactoryNewViaPrizeCreatedEvent(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export function usePortalFactoryWrite<
   TFunctionName extends string,
@@ -3040,7 +3090,7 @@ export function usePortalFactoryWrite<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
  *
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export function usePortalFactoryCreatePortal<
   TMode extends WriteContractMode = undefined,
@@ -3073,7 +3123,7 @@ export function usePortalFactoryCreatePortal<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export function usePreparePortalFactoryWrite<TFunctionName extends string>(
   config: Omit<
@@ -3091,7 +3141,7 @@ export function usePreparePortalFactoryWrite<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
  *
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export function usePreparePortalFactoryCreatePortal(
   config: Omit<
@@ -3110,7 +3160,7 @@ export function usePreparePortalFactoryCreatePortal(
 /**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export function usePortalFactoryEvent<TEventName extends string>(
   config: Omit<
@@ -3128,7 +3178,7 @@ export function usePortalFactoryEvent<TEventName extends string>(
 /**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link portalFactoryABI}__ and `eventName` set to `"NewPortalCreated"`.
  *
- * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0x243016538AD59103A67dD79ccE7196628fC425A4)
+ * [__View Contract on Polygon Mumbai Polygon Scan__](https://mumbai.polygonscan.com/address/0xAe37824e718488787D1bbD87E35985ED107a0C7E)
  */
 export function usePortalFactoryNewPortalCreatedEvent(
   config: Omit<

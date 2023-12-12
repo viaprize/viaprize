@@ -121,14 +121,14 @@ export default function PrizePageComponent({
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
         <Title order={2}>{prize.title}</Title>
-        <Group justify="right" gap="0" wrap="nowrap">
+        {/* <Group justify="right" gap="0" wrap="nowrap">
           <Button color="black" mx="5px">
             Upvote
           </Button>
           <ActionIcon variant="filled" size="lg" color="blue">
             <Text>0</Text>
           </ActionIcon>
-        </Group>
+        </Group> */}
       </Group>
       <Image
         className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md"

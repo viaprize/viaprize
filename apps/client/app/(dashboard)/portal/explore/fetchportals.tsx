@@ -16,7 +16,7 @@ export default async function FetchPortals() {
           <PortalCard
             description={portal.description}
             imageUrl={portal.images[0]}
-            amountRaised={formatEther(BigInt(portal.balance))}
+            amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
             authorName={portal.user.name}
             totalContributors="0"
             title={portal.title}

@@ -41,7 +41,36 @@ export class BlockchainService {
   async getTotalRewardsOfPortal(
     portalContractAddress: string,
   ): Promise<bigint> {
-    const abi = [];
+    const abi = [
+      {
+        constant: true,
+        inputs: [],
+        name: 'totalFunds',
+        outputs: [
+          {
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'totalRewards',
+        outputs: [
+          {
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ];
     const contract = new ethers.Contract(
       portalContractAddress,
       abi,
@@ -51,7 +80,36 @@ export class BlockchainService {
     return await contract.totalRewards();
   }
   async getTotalFundsOfPortal(portalContractAddress: string): Promise<bigint> {
-    const abi = [];
+    const abi = [
+      {
+        constant: true,
+        inputs: [],
+        name: 'totalFunds',
+        outputs: [
+          {
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'totalRewards',
+        outputs: [
+          {
+            name: '',
+            type: 'uint256',
+          },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+    ];
     const contract = new ethers.Contract(
       portalContractAddress,
       abi,

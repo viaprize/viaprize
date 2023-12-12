@@ -1,8 +1,21 @@
 'use client';
+
+import { calculateDeadline, htmlToPlainText } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
-import { Badge, Button, Card, Group, Text, Image } from '@mantine/core';
-import { Parser } from 'htmlparser2';
-import { htmlToPlainText } from 'utils/utils';
+import {
+  ActionIcon,
+  Badge,
+  Button,
+  Card,
+  CopyButton,
+  Flex,
+  Group,
+  Image,
+  Text,
+  Tooltip,
+} from '@mantine/core';
+import { IconCheck, IconCopy } from '@tabler/icons-react';
+import { PiTimerFill } from 'react-icons/pi';
 
 interface ExploreCardProps {
   imageUrl: string;
@@ -10,8 +23,10 @@ interface ExploreCardProps {
   profileName: string;
   description: string;
   money: string;
-  deadline: string;
+  createdAt: string;
   id: string;
+  skills: string[];
+  submissionDays: number;
 }
 
 function ExploreCard({
@@ -20,11 +35,21 @@ function ExploreCard({
   title,
   description,
   money,
-  deadline,
+  createdAt,
   id,
+  skills,
+  submissionDays,
 }: ExploreCardProps) {
+  const deadlineString = calculateDeadline(createdAt, submissionDays);
+
   return (
-    <Card padding="lg" radius="md" shadow="sm" withBorder className="w-full my-4">
+    <Card
+      padding="lg"
+      radius="md"
+      withBorder
+      className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out"
+      pos="relative"
+    >
       <Card.Section>
         <Image
           alt="Image"
@@ -35,38 +60,57 @@ function ExploreCard({
           }
         />
       </Card.Section>
+      <div className="flex items-center my-3 gap-2 text-red-600">
+        <PiTimerFill
+        // color='red'
+        />
+        <Text
+          // c="red"
+          fw="bold"
+        >
+          {deadlineString.remainingTime}
+        </Text>
+      </div>
       <Group mb="xs" mt="md" justify="space-between">
         <Text fw={500}>{title}</Text>
-        <Badge color="gray" variant="light">
+        <Badge color="primary" variant="gradient" p="sm">
           {profileName}
         </Badge>
       </Group>
       <p
-        className="text-md text-gray-500 h-20 overflow-y-auto"
+        className="text-md h-20 overflow-y-auto"
         // dangerouslySetInnerHTML={{ __html: description }}
       >
         {htmlToPlainText(description)}
       </p>
       {/*  >{htmlToPlainText(description)}</p> */}
-      <Group mb="xs" mt="sm" justify="space-between">
-        <Text c="green" fw={500}>
-          {money} {chain.nativeCurrency.symbol}
-        </Text>
-        <Text c="red" fw={500}>
-          {deadline}
-        </Text>
-      </Group>
+      <Flex gap="sm">{skills}</Flex>
+      <Text fw="bold" size="xl">
+        {money} {chain.nativeCurrency.symbol}
+      </Text>
+      <Text fw="bold">Submission Deadline : {deadlineString.dateString}</Text>
+
       <Button
-        color="blue"
+        color="primary"
         component="a"
         fullWidth
         mt="md"
         radius="md"
-        variant="light"
         href={`/prize/${id}`}
       >
         Details
       </Button>
+      <div className="absolute top-2 right-2">
+        <CopyButton value={`https://pactsmith.com/prize/${id}`}>
+          {({ copied, copy }) => (
+            <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
+              <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>
+                {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+              </ActionIcon>
+            </Tooltip>
+          )}
+        </CopyButton>
+      </div>
     </Card>
   );
 }

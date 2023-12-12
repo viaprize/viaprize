@@ -6,6 +6,7 @@ import { formatEther } from 'viem';
 
 export default async function CreatePortal({ params }: { params: { id: string } }) {
   const portal = (await new Api().portals.portalsDetail(params.id)).data;
+  console.log(portal)
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
       <div className="w-full lg:flex gap-4 justify-between">
@@ -17,7 +18,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
         <AmountDonateCard
           amountRaised={formatEther(BigInt(portal.balance))}
           recipientAddress={portal.contract_address}
-          totalContributors="0"
+          totalContributors={formatEther(BigInt(portal.totalFunds ?? 0))}
           contractAddress={portal.contract_address}
         />
       </div>

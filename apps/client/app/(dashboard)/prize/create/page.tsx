@@ -24,7 +24,6 @@ import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 
 function Prize() {
-  
   const [address, setAddress] = useState(['']);
   const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');
@@ -132,7 +131,7 @@ function Prize() {
         <div className="">
           <NumberInput
             placeholder="Proposal Time (in days)"
-            label="This is number of days the submission would be valid for "
+            label="How many days you want submissions to be allowed for?"
             value={proposalTime}
             onChange={(e) => {
               setProposalTime(parseInt(e.toString()));

@@ -6,7 +6,8 @@ import {
   CopyButton,
   Divider,
   Flex,
-  Popover,
+  Menu,
+  Stack,
   Text,
   Tooltip,
   useMantineColorScheme,
@@ -46,77 +47,87 @@ export default function HeaderLayout() {
       justify="space-between"
       align="center"
       visibleFrom="sm"
-      className="w-[90%] "
+      className="w-[90%]"
+      pr="md"
     >
-      <Flex gap="md">
+      <Flex gap="xl">
         <Link href="/" className="font-bold">
           HOME
         </Link>
-        <Popover withArrow shadow="md" opened={prizeOpened} position="bottom">
-          <Popover.Target>
-            <Link
-              onMouseEnter={prizeMenuOpen}
-              onMouseLeave={prizeMenuClose}
-              href="/portal/explore"
-              className="pl-3 font-bold"
-            >
+        <Menu withArrow shadow="md" position="bottom" trigger="hover">
+          <Menu.Target>
+            <Link href="/prize/explore" className="pl-3 font-bold">
               PRIZE
             </Link>
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Text>About</Text>
-            <Divider />
-            <p>y efwjeg wlegr2 ri34br 43iyr034hrn i3oihi3</p>
-            <Button>
-              <Link href="/prize/create">Create Prize</Link>
-            </Button>
-          </Popover.Dropdown>
-        </Popover>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Stack gap="md" p="md">
+              <Menu.Item>
+                <Link href="/prize/about">
+                  <Text>About</Text>
+                </Link>
+              </Menu.Item>
+              <Menu.Item>
+                <Link href="/prize/explore">
+                  <Text>Explore Prizes</Text>
+                </Link>
+              </Menu.Item>
+              <Divider />
+              <Button>
+                <Link href="/prize/create">Create Prize</Link>
+              </Button>
+            </Stack>
+          </Menu.Dropdown>
+        </Menu>
 
-        <Popover withArrow shadow="md" opened={portalOpened} position="bottom">
-          <Popover.Target>
-            <Link
-              onMouseEnter={portalMenuOpen}
-              onMouseLeave={portalMenuClose}
-              href="/portal/explore"
-              className="pl-3 font-bold"
-            >
-              PORTAL
+        <Menu withArrow shadow="md" position="bottom" trigger="hover">
+          <Menu.Target>
+            <Link href="/portal/explore" className="pl-3 font-bold">
+              PORTALS
             </Link>
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Text>About</Text>
-            <Divider />
-            <p>y efwjeg wlegr2 ri34br 43iyr034hrn i3oihi3</p>
-            <Button>
-              <Link href="/prize/create">Create Prize</Link>
-            </Button>
-          </Popover.Dropdown>
-        </Popover>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Stack gap="md" p="md">
+              <Menu.Item>
+                <Link href="/portal/about">
+                  <Text>About</Text>
+                </Link>
+              </Menu.Item>
+              <Menu.Item>
+                <Link href="/portal/explore">
+                  <Text>Explore Portals</Text>
+                </Link>
+              </Menu.Item>
+              <Divider />
+              <Button>
+                <Link href="/portal/create">Create Portal</Link>
+              </Button>
+            </Stack>
+          </Menu.Dropdown>
+        </Menu>
       </Flex>
 
-      <Flex gap="md">
-        {appUser ? (
-          <Card className="hidden sm:block">
-            {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
-            {wallets[0] ? (
-              <CopyButton value={wallets[0].address}>
-                {({ copied, copy }) => (
-                  <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
-                    <ActionIcon
-                      onClick={copy}
-                      style={{
-                        backgroundColor: copied ? '#3d4070' : '#3d4070',
-                      }}
-                    >
-                      {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
-                    </ActionIcon>
-                  </Tooltip>
-                )}
-              </CopyButton>
-            ) : null}
-          </Card>
-        ) : null}
+      <Flex gap="md" align="center">
+        <Card className="hidden sm:block py-1 my-2">
+          {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
+          {wallets[0] ? (
+            <CopyButton value={wallets[0].address}>
+              {({ copied, copy }) => (
+                <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
+                  <ActionIcon
+                    ml="md"
+                    onClick={copy}
+                    style={{
+                      backgroundColor: copied ? '#3d4070' : '#3d4070',
+                    }}
+                  >
+                    {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+                  </ActionIcon>
+                </Tooltip>
+              )}
+            </CopyButton>
+          ) : null}
+        </Card>
 
         <ActionIcon
           variant="outline"
@@ -125,12 +136,11 @@ export default function HeaderLayout() {
             toggleColorScheme();
           }}
           title="Toggle color scheme"
-          mt="md"
         >
           {colorScheme === 'dark' ? (
-            <IconSun size="1rem" />
+            <IconSun size="1.1rem" />
           ) : (
-            <IconMoonStars size="1rem" />
+            <IconMoonStars size="1.1rem" />
           )}
         </ActionIcon>
       </Flex>
