@@ -14,8 +14,8 @@ export interface PactDetail {
   transactionHash: string;
 }
 export interface Query {
-  limit: 10;
-  page: 1;
+  limit: number;
+  page: number;
 }
 
 export type ProposalStatus = 'pending' | 'approved' | 'rejected';
