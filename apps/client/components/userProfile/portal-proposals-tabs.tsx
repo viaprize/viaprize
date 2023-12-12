@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { parseEther } from 'viem';
 import ProposalExploreCard from '../ExplorePrize/proposalExploreCard';
 import { usePortal } from '../hooks/usePortal';
+
 const getProposalStatus = (item: PortalProposals): ProposalStatus => {
   if (item.isApproved) {
     return 'approved';

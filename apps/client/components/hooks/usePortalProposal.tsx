@@ -33,7 +33,7 @@ export default function usePortalProposal() {
 
   const getAllProposals = async (
     queryParam: Query = {
-      limit: 10,
+      limit: 20,
       page: 1,
     },
   ) => {
