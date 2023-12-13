@@ -401,14 +401,18 @@ function FunctionCard({
         <Button
           className="bg-[#E5F1F5] text-black font-bold gap-5 items-center"
           rightSection={<BiSolidRightArrowCircle size={14} />}
+          component="a"
+          href={know}
         >
-          <Link href={know}>Know More</Link>
+          Know More
         </Button>
         <Button
           className="bg-[#E5F1F5] text-black font-bold gap-5 items-center"
           rightSection={<BiSolidRightArrowCircle size={14} />}
+          component="a"
+          href={explore}
         >
-          <Link href={explore}>Explore</Link>
+          Explore
         </Button>
       </div>
     </Card>
