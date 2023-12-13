@@ -18,7 +18,7 @@ import {
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
@@ -37,6 +37,7 @@ function Prize() {
   const { addProposals, uploadImages } = usePrizeProposal();
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
@@ -71,21 +72,25 @@ function Prize() {
       title,
     });
     setLoading(false);
-    await router.push(`/profile/${appUser?.username}`);
+    router.push(`/profile/${appUser?.username}`);
   };
 
   const handleSubmit = () => {
     console.log(user);
     setLoading(true);
     try {
-      console.log(images, 'images');
+      // console.log(images, 'images');
       toast.promise(submit(), {
         loading: 'Submitting Proposal...',
         success: 'Proposal Submitted',
         error: 'Error Submitting Proposal',
       });
-    } catch {
-      toast.error('Error Submitting Proposal');
+    } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      /* eslint-disable */
+      toast.error(e.message);
+    } finally {
+      setLoading(false);
     }
   };
 
