@@ -23,6 +23,8 @@ export class PrizeProposalsService {
     const prizeProposal = await this.prizeProposalsRepository.save({
       ...createPrizeDto,
       user: user,
+      isApproved: false,
+      isRejected: false,
     });
     return prizeProposal;
   }
