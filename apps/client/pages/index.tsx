@@ -402,7 +402,7 @@ function FunctionCard({
       <p className="text-white md:max-w-[80%] text-lg lg:font-semibold leading-7">
         {Description}
       </p>
-      <Flex gap="sm">
+      <div className='flex gap-4 max-sm:flex-col'>
         <Button
           className="bg-[#E5F1F5] text-black font-bold gap-5 items-center"
           rightSection={<BiSolidRightArrowCircle size={14} />}
@@ -410,12 +410,12 @@ function FunctionCard({
           <Link href={know}>Know More</Link>
         </Button>
         <Button
-          className="bg-[#E5F1F5] text-black font-bold flex gap-5 items-center"
+          className="bg-[#E5F1F5] text-black font-bold gap-5 items-center"
           rightSection={<BiSolidRightArrowCircle size={14} />}
         >
-          <Link href={explore}>explore prizes</Link>
+          <Link href={explore}>Explore</Link>
         </Button>
-      </Flex>
+      </div>
     </Card>
   );
 }
