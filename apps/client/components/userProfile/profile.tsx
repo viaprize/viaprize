@@ -1,4 +1,5 @@
 import useAppUser from '@/context/hooks/useAppUser';
+import { chain } from '@/lib/wagmi';
 import {
   Avatar,
   Badge,
@@ -41,11 +42,11 @@ export default function Profile() {
 
   const { getUserByUserName } = useUser();
 
-  const { data: userData, refetch:fetchUser } = useQuery('result', () =>
+  const { data: userData, refetch: fetchUser } = useQuery('result', () =>
     getUserByUserName(appUser?.username || ''),
   );
 
-  console.log(userData,appUser?.username, "ksdjf")
+  console.log(userData, appUser?.username, 'ksdjf');
   // console.log(isAddress(recieverAddress), "ksdjf")
   // const { data, isLoading, refetch } = useBalance({ address });
   return (
@@ -63,14 +64,14 @@ export default function Profile() {
             Edit Profile
           </Button>
           <Modal opened={opened} onClose={close} title="Edit Profile">
-            <EditProfileModal 
-            IBio={userData?.bio || ''}
-            IName={userData?.name || ''}
-            IProficiencies={userData?.proficiencies || []}
-            IPriorities={userData?.priorities || []}
-            IAvatar={userData?.avatar || ''}
-            fetchUser={fetchUser}
-            close={close}
+            <EditProfileModal
+              IBio={userData?.bio || ''}
+              IName={userData?.name || ''}
+              IProficiencies={userData?.proficiencies || []}
+              IPriorities={userData?.priorities || []}
+              IAvatar={userData?.avatar || ''}
+              fetchUser={fetchUser}
+              close={close}
             />
           </Modal>
         </Group>
@@ -94,6 +95,7 @@ export default function Profile() {
               <Text>
                 Balance : {balance.formatted} {balance.symbol}
               </Text>
+              <Text>Network : {chain.name.toUpperCase()}</Text>
 
               <Input
                 placeholder="Reciever Address"

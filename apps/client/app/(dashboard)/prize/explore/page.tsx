@@ -1,4 +1,3 @@
-
 import { Text } from '@mantine/core';
 import { Suspense } from 'react';
 import FetchPrizes from './fetchprizes';

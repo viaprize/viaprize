@@ -153,7 +153,7 @@ export default function AdminPage() {
       </Tabs.List>
 
       <Tabs.Panel value="pending" pt="xs">
-        <div className='grid grid-cols-3 gap-4'>
+        <div className="grid grid-cols-3 gap-4">
           {getAllPrizeProposalsMutation.isLoading ? (
             <Loader size="xl" variant="bars" />
           ) : (

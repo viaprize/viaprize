@@ -10,10 +10,10 @@ const config: HardhatUserConfig = {
       url: process.env.MUMBAI_RPC,
       accounts: [process.env.MUMBAI_PRIVATEKEY as string],
     },
-    // op: {
-    //   url: process.env.OP_RPC,
-    //   accounts: [process.env.OP_PRIVATEKEY as string],
-    // },
+    op: {
+      url: process.env.OP_RPC,
+      accounts: [process.env.OP_PRIVATEKEY as string],
+    },
   }
 };
 

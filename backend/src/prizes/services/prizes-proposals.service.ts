@@ -13,7 +13,7 @@ export class PrizeProposalsService {
     @InjectRepository(PrizeProposals)
     private prizeProposalsRepository: Repository<PrizeProposals>,
     private userService: UsersService,
-  ) {}
+  ) { }
   async create(createPrizeDto: CreatePrizeProposalDto, userId: string) {
     const user = await this.userService.findOneByAuthId(userId);
     if (!user) {
@@ -122,8 +122,10 @@ export class PrizeProposalsService {
     }
     await this.prizeProposalsRepository.update(id, {
       isApproved: false,
+      isRejected: true,
     });
     prizeProposal.isApproved = false;
+    prizeProposal.isRejected = true;
     console.log(comment);
     return prizeProposal;
     // await this.mailService.rejected(prizeProposal.user.email, comment);
@@ -132,6 +134,11 @@ export class PrizeProposalsService {
   async update(id: string, updatePrizeDto: UpdatePrizeDto) {
     await this.prizeProposalsRepository.update(id, updatePrizeDto);
     return this.findOne(id);
+  }
+
+  async isEmpty() {
+    const count = await this.prizeProposalsRepository.count();
+    return count === 0;
   }
 
   async remove(id: string) {
