@@ -1,9 +1,7 @@
 import AppShellLayout from '@/components/layout/appshell';
 import useAppUser from '@/context/hooks/useAppUser';
-import { Badge, Burger, Button, Card, Flex } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Button, Card, Flex } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
-import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -212,75 +210,69 @@ export default function Home() {
             </div>
           </Flex> */}
         </div>
-        {/* Viaprize’s Core Functions  */}
-        {/* <section className="my-24 flex items-center flex-col gap-3">
-          <h1 className="text-3xl font-bold text-black">
-            viaPrize&apos;s Core Functions
-          </h1>
+        <section className="my-24 flex items-center flex-col gap-3 w-full">
+          <h1 className="text-3xl font-bold">viaPrize&apos;s Core Functions</h1>
           <FunctionCard
-            Title="Prize"
-            Description="Hey testing is the one of the hello sadlkfjlajsl Hey testing 
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello 
-          sadlkfjlajsl Hey testing is the one of the hello sadlkfjlajsl Hey testing 
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello
-          sadlkfjlajsl Hey testing is the one of the hello sadlkfjlajsl Hey testing 
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello 
-          sadlkfjlajsl Hey testing is the one of the hello sadlkfjlajsl Hey testing
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello
-          sadlkfjlajsl"
-            know="linking"
-            explore="sadlfsafasd"
+            Title="Prizes"
+            Description="Create, Fund, and Win prizes"
+            know="prize/about"
+            explore="prize/explore"
           />
           <FunctionCard
-            Title="Pact"
-            Description="Hey testing is the one of the hello sadlkfjlajsl Hey testing 
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello 
-          sadlkfjlajsl Hey testing is the one of the hello sadlkfjlajsl Hey testing 
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello
-          sadlkfjlajsl Hey testing is the one of the hello sadlkfjlajsl Hey testing 
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello 
-          sadlkfjlajsl Hey testing is the one of the hello sadlkfjlajsl Hey testing
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello
-          sadlkfjlajsl"
-            know="linking"
-            explore="sadlfsafasd"
-          />
-          <FunctionCard
-            Title="Go Fund Me"
-            Description="Hey testing is the one of the hello sadlkfjlajsl Hey testing 
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello 
-          sadlkfjlajsl Hey testing is the one of the hello sadlkfjlajsl Hey testing 
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello
-          sadlkfjlajsl Hey testing is the one of the hello sadlkfjlajsl Hey testing 
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello 
-          sadlkfjlajsl Hey testing is the one of the hello sadlkfjlajsl Hey testing
-          is the one of the hello sadlkfjlajsl Hey testing is the one of the hello
-          sadlkfjlajsl"
-            know="linking"
-            explore="sadlfsafasd"
-          />
-        </section> */}
-
-        {/* How it works */}
-        <section className="flex flex-col items-center my-14">
-          {/* <h1 className="text-3xl font-bold text-black">How it works</h1> */}
-          <Image
-            src="/home/howItWorks.png"
-            width={1000}
-            height={1000}
-            alt="How it works"
-            className="rounded-md max-w-full h-auto"
+            Title="Portals"
+            Description="Create GoFundMe style pass-through campaigns or Kickstarter style all-or-nothing campaigns"
+            know="portal/about"
+            explore="portal/explore"
           />
         </section>
-        {/* 3 roles in a prize */}
-        <section className="flex flex-col items-center my-14">
-          <h1 className="text-3xl font-bold">3 Roles in a Prize</h1>
-          <Image
-            src="/home/rolesInPrize.png"
-            width={1000}
-            height={500}
-            alt="How it works"
-            className="rounded-md max-w-full h-auto"
+        {/* Our story */}
+        <section className="flex flex-col items-center my-14 gap-5">
+          <h1 className="text-3xl font-bold">Our Story</h1>
+          <StoryCard
+            Title="Beginning of something new"
+            Description="During a pop-up village called Zuzalu, we witnessed 
+            firsthand how the right economic mechanisms may gather a community to build public goods. 
+            Inspired by conversations with Vitalik Buterin and others, Noah Chon Lee launched a 
+            crowdfunded prize to build an AI voice for a river and various people at Zuzalu 
+            tossed in $20 each. "
+            image="/home/story/zuzalu.jpeg"
+            side="left"
+          />
+          <StoryCard
+            Title="The first prize"
+            Description="With only this incentive, an impromptu hackathon emerged with 
+            12 contributors and in five days the first AI voice for a nature entity in 
+            history was built and presented to the Prime Minister of Montenegro."
+            image="/home/story/prize.png"
+            side="right"
+          />
+          <StoryCard
+            Title="The Doubt"
+            Description="Crowdfunded prizes clearly incentivized collective action,
+             but Noah needed to know if this could make a radical difference in peoples’ lives. "
+            image="/home/story/noah_think.jpeg"
+            side="left"
+          />
+          <StoryCard
+            Title="The Impact"
+            Description="Next, he watched a kamikaze drone diving towards 
+            him get shot down while driving into the frontline of Ukraine to complete 
+            a crowdfunded prize for delivering medical supplies. The volunteer medics 
+            received the supplies they were missing and because of this they were able 
+            to treat 45 injured and said this undoubtedly saved at least one life. "
+            image="/home/story/medics.png"
+            side="right"
+          />
+          <StoryCard
+            Title="The Impact Continues"
+            Description="Half a year later thanks to contributions of 
+            over 500 people on Gitcoin donating to viaPrize, 
+            over 30 developers adding to our open source code, 
+            and our core team of developers Dipanshu, Nithin, Swaraj, 
+            and Aryan we now have this fully open source platform 
+            for anyone to use. "
+            image="/home/story/us.png"
+            side="left"
           />
         </section>
         {/* Community */}
@@ -315,127 +307,37 @@ export default function Home() {
   );
 }
 
-function NavBarLinks({ text, link }: { text: string; link: string }) {
+function StoryCard({
+  Title,
+  Description,
+  image,
+  side,
+}: {
+  Title: string;
+  Description: string;
+  image: string;
+  side: 'left' | 'right';
+}) {
   return (
-    <Link
-      href={link}
-      className="font-semibold text-lg text-gray-700 capitalize hover:text-black"
+    <div
+      className={`bg-[#486B78] md:flex ${
+        side === 'right' ? 'flex-row-reverse' : ''
+      } p-6 rounded-lg shadow-lg`}
     >
-      {text}
-    </Link>
-  );
-}
-
-function NavBar() {
-  const [opened, { toggle }] = useDisclosure();
-  const { user } = usePrivy();
-  const { wallet } = usePrivyWagmi();
-
-  const { loginUser } = useAppUser();
-
-  return (
-    <>
-      <nav className="relative z-10 hidden md:flex justify-between w-full md:px-14 pt-2 ">
-        <div className="flex gap-3 items-center">
-          <Image
-            src="/viaprizeBg.png"
-            alt="viaPrize Logo"
-            width={40}
-            height={40}
-            priority
-            className="rounded-full"
-          />
-          <h3 className="font-bold text-2xl text-black">viaPrize</h3>
-        </div>
-        <div className="flex gap-10 justify-between items-center">
-          {navBarLinks.map((data) => (
-            <NavBarLinks key={data.text} text={data.text} link={data.link} />
-          ))}
-          <Button
-            className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
-            component="a"
-            href="/prize/create"
-          >
-            Create Prize
-          </Button>
-          {user ? (
-            <Badge variant="gradient" className="py-4">
-              {wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
-            </Badge>
-          ) : (
-            <Button
-              className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
-              onClick={() => {
-                loginUser()
-                  .then(() => {
-                    console.log('logging in ');
-                  })
-                  .catch((error) => {
-                    console.error(error);
-                  });
-              }}
-            >
-              Login
-            </Button>
-          )}
-        </div>
-      </nav>
-      <nav className="md:hidden flex w-full justify-between px-5 py-5">
+      <div className="p-4 rounded-lg">
         <Image
-          src="/viaprizeBg.png"
-          alt="viaPrize Logo"
-          width={40}
-          height={40}
-          priority
+          src={image}
+          height={300}
+          alt="Reason 1"
+          width={460}
+          className="max-h-fit max-md:w-full h-full md:max-w-[300px] object-cover rounded-lg"
         />
-        <Burger
-          opened={opened}
-          onClick={toggle}
-          aria-label="Toggle navigation"
-          className="z-[1000] "
-          color="dark"
-        />
-        {opened ? (
-          <div
-            className=" flex flex-col bg-gray-100 items-center gap-3 absolute top-3 right-3 rounded-lg  py-24 px-24 z-[999]"
-            // style={{
-            //   background: `rgba(125, 185, 206, 0.15)`,
-            // }}
-          >
-            {navBarLinks.map((data) => (
-              <NavBarLinks key={data.text} text={data.text} link={data.link} />
-            ))}
-            <Button
-              className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
-              component="a"
-              href="/prize/create"
-            >
-              Create Prize
-            </Button>
-            {user ? (
-              <Badge variant="gradient" className="py-4">
-                {user.wallet?.address.slice(0, 6)}...{user.wallet?.address.slice(-6, -1)}
-              </Badge>
-            ) : (
-              <Button
-                className="rounded-lg px-6 bg-gradient-to-r from-[#32a9c0] to-[#2794bc]"
-                onClick={() => {
-                  loginUser()
-                    .then(() => {
-                      console.log('logging in ');
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                    });
-                }}
-              >
-                Login
-              </Button>
-            )}
-          </div>
-        ) : null}
-      </nav>
-    </>
+      </div>
+      <div className="p-4">
+        <h3 className="text-xl text-white font-bold my-0">{Title}</h3>
+        <p className="text-base text-white">{Description}</p>
+      </div>
+    </div>
   );
 }
 
@@ -472,7 +374,6 @@ function ReasonCard({
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- will use it later
 function FunctionCard({
   Title,
   Description,
@@ -485,7 +386,7 @@ function FunctionCard({
   know: string;
 }) {
   return (
-    <Card className="bg-[#486B78] rounded-2xl p-10">
+    <Card className="bg-[#486B78] rounded-2xl p-10 w-full">
       <h1 className="my-0 text-white ">{Title}</h1>
       <p className="text-white md:max-w-[80%] text-lg lg:font-semibold leading-7">
         {Description}
