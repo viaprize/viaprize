@@ -136,8 +136,8 @@ export default function PortalForm() {
       fundingGoal: finalFundingGoal,
       sendImmediately: portalType === 'gofundme',
     });
-    setLoading(false);
     router.push(`/profile/${appUser?.username}`);
+    setLoading(false);
   };
 
   const handleSubmit = () => {
