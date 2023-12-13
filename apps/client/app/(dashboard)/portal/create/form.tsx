@@ -149,9 +149,12 @@ export default function PortalForm() {
         success: 'Proposal Submitted',
         error: 'Error Submitting Proposal',
       });
-    } catch {
+    } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      /* eslint-disable */
+      toast.error(e.message);
+    } finally {
       setLoading(false);
-      toast.error('Error Submitting Proposal');
     }
   };
 

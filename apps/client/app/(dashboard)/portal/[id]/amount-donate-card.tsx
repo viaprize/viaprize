@@ -89,7 +89,11 @@ export default function AmountDonateCard({
           label={
             isLoading
               ? 'Loading.....'
-              : `Enter Value To Donate (Max: ${balance?.formatted} ${balance?.symbol} )`
+              : `Enter Value To Donate (Max: ${
+                  balance
+                    ? `${balance?.formatted} ${balance?.symbol}`
+                    : `Login To See Max`
+                }  )`
           }
           placeholder="Custom right section"
           mt="md"
