@@ -1,3 +1,5 @@
+import AppShellLayout from '@/components/layout/appshell';
+import useAppUser from '@/context/hooks/useAppUser';
 import { Badge, Burger, Button, Card, Flex } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { usePrivy } from '@privy-io/react-auth';
@@ -11,8 +13,6 @@ import { BiSolidRightArrowCircle } from 'react-icons/bi';
 import { FaTelegramPlane } from 'react-icons/fa';
 import type { RenderPhotoProps } from 'react-photo-album';
 import { PhotoAlbum } from 'react-photo-album';
-import AppShellLayout from '@/components/layout/appshell';
-import useAppUser from '@/context/hooks/useAppUser';
 
 const photoSizes: number[][] = [
   [2160, 2160],
@@ -108,7 +108,9 @@ export default function Home() {
             {/* <h2 className="font-normal text-lg text-black uppercase my-0">
               Crowdfund the future
             </h2> */}
-            <h1 className="font-bold text-5xl  my-6">Trustworthy Crowdfunding</h1>
+            <h1 className="font-bold text-5xl  my-6">
+              The home for all your crowdfunding needs
+            </h1>
             {/* <p className="text-lg text-gray-600 my-4">
               Simple and sleek design with users in mind. viaPrize is a platform that
               allows
@@ -135,7 +137,7 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="my-0">63</h3>
-                <p className="my-0">Prize winners</p>
+                <p className="my-0">Total number of campaigns</p>
               </div>
               <div>
                 <h3 className="my-0">17</h3>
@@ -168,18 +170,18 @@ export default function Home() {
           <h1>Why viaPrize?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             <ReasonCard
-              Title="Reason 1"
-              Description="30B is wasted annually on crowdfunding campaigns that never deliver"
+              Title="Simplicity"
+              Description="Easy global transactions without needing a bank account or credit card"
               image="/home/piggy-bank-was-thrown-broke-gold-coins-flowed-out.jpg"
             />
             <ReasonCard
-              Title="Reason 2"
+              Title="Sovereignty"
               Description="With viaPrize either the campaign delivers or you receive a refund"
               image="/home/3d-cryptocurrency-rendering-design.jpg"
             />
             <ReasonCard
-              Title="Reason 3"
-              Description="Win prizes!"
+              Title="Stability"
+              Description="Consistent process for anyone around the world with smart contract security"
               image="/home/team-working-animation-project.jpg"
             />
           </div>
