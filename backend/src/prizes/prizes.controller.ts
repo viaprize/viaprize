@@ -332,6 +332,13 @@ export class PrizesController {
       hasNextPage: boolean;
     }>
   > {
+    const isEmpty = await this.prizeProposalsService.isEmpty();
+    if (isEmpty) {
+      return {
+        data: [],
+        hasNextPage: false,
+      };
+    }
     return infinityPagination(
       await this.prizeProposalsService.findAllPendingWithPagination({
         page,
