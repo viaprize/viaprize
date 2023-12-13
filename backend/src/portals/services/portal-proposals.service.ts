@@ -132,8 +132,10 @@ export class PortalProposalsService {
     }
     await this.portalProposalsRepository.update(id, {
       isApproved: false,
+      isRejected: true,
     });
     portalProposal.isApproved = false;
+    portalProposal.isRejected = true;
     console.log(comment);
     return portalProposal;
     // await this.mailService.rejected(portalProposal.user.email, comment);
