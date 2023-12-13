@@ -26,7 +26,7 @@ export const NESTIA_CONFIG: INestiaConfig = {
         description: 'Dev Server',
       },
       {
-        url: "https://api-prod.pactsmith.com",
+        url: "https://api-prod.pactsmith.com/api",
         description: 'Prod Server',
       }
     ],
