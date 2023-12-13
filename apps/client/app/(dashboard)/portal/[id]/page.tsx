@@ -1,12 +1,19 @@
 import { Api } from '@/lib/api';
+import { formatEther } from 'viem';
 import AmountDonateCard from './amount-donate-card';
 import ImageTitleHeroCard from './image-title-hero-card';
 import PortalTabs from './portal-tabs';
-import { formatEther } from 'viem';
 
 export default async function CreatePortal({ params }: { params: { id: string } }) {
-  const portal = (await new Api().portals.portalsDetail(params.id)).data;
-  console.log(portal)
+  const portal = (
+    await new Api().portals.portalsDetail(params.id, {
+      next: {
+        revalidate: 10,
+      },
+    })
+  ).data;
+
+  console.log(portal);
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
       <div className="w-full lg:flex gap-4 justify-between">
