@@ -95,8 +95,8 @@ export default function Profile() {
               <Text>
                 Balance : {balance.formatted} {balance.symbol}
               </Text>
+              Total Amount Raised
               <Text>Network : {chain.name.toUpperCase()}</Text>
-
               <Input
                 placeholder="Reciever Address"
                 value={recieverAddress}
@@ -104,7 +104,6 @@ export default function Profile() {
                   setRecieverAddress(e.currentTarget.value);
                 }}
               />
-
               <NumberInput
                 label=""
                 placeholder="Enter amount"
