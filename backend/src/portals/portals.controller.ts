@@ -32,7 +32,7 @@ export class PortalsController {
     private readonly mailService: MailService,
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
-  ) {}
+  ) { }
 
   @Post('')
   @UseGuards(AuthGuard)
@@ -174,6 +174,13 @@ export class PortalsController {
       hasNextPage: boolean;
     }>
   > {
+    const isEmpty = await this.portalProposalsService.isEmpty();
+    if (isEmpty) {
+      return {
+        data: [],
+        hasNextPage: false,
+      };
+    }
     return infinityPagination(
       await this.portalProposalsService.findAllPendingWithPagination({
         page,
@@ -218,6 +225,13 @@ export class PortalsController {
       hasNextPage: boolean;
     }>
   > {
+    const isEmpty = await this.portalProposalsService.isEmpty();
+    if (isEmpty) {
+      return {
+        data: [],
+        hasNextPage: false,
+      };
+    }
     return infinityPagination(
       await this.portalProposalsService.findAllPendingWithPagination({
         page,
