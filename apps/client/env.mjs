@@ -22,7 +22,7 @@ export const env = createEnv({
     NEXT_PUBLIC_PRIVY_APP_ID: z.string(),
     NEXT_PUBLIC_BACKEND_URL: z
       .enum(['https://api-prod.pactsmith.com/api', 'https://api.pactsmith.com/api'])
-      .default('https://api.pactsmith.com/api'),
+      .default('https://api-prod.pactsmith.com/api'),
   },
   /*
    * Due to how Next.js bundles enironment variables on Edge and Client,
