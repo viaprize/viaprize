@@ -101,12 +101,12 @@ export default function Home() {
       {/* <NavBar /> */}
       <div className="max-w-screen-2xl px-8 pt-4 pb-8 w-full bg-transparent">
         {/* Hero Section */}
-        <section className="md:flex justify-betweem items-center h-screen">
+        <section className="md:flex justify-betweem items-center min-h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
             {/* <h2 className="font-normal text-lg text-black uppercase my-0">
               Crowdfund the future
             </h2> */}
-            <h1 className="font-bold text-5xl  my-6">
+            <h1 className="font-bold text-4xl sm:text-5xl my-6">
               The home for all your crowdfunding needs
             </h1>
             {/* <p className="text-lg text-gray-600 my-4">
@@ -132,18 +132,18 @@ export default function Home() {
               </Link>
             </Flex>
             <Flex
-              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[80%]"
+              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[60%]"
               style={{
                 background: `rgba(125, 185, 206, 0.15)`,
               }}
               justify="space-between"
               align="center"
             >
-              <div>
+              <div className='text-center'>
                 <h3 className="my-0">$32,460</h3>
                 <p className="my-0">Total contributions</p>
               </div>
-              <div>
+              <div className='text-center'>
                 <h3 className="my-0">63</h3>
                 <p className="my-0">Total campaigns</p>
               </div>
@@ -169,13 +169,13 @@ export default function Home() {
               alt="hero image"
               height={500}
               width={500}
-              className="relative z-10 object-cover w-full"
+              className="relative z-10 object-cover w-full max-sm:h-full"
               src="/home/hero.png"
             />
           </div>
         </section>
         {/* How it works */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center my-4">
           <h1>Why viaPrize?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             <ReasonCard
@@ -258,21 +258,16 @@ export default function Home() {
             side="right"
           />
           <StoryCard
-            Title="The Doubt"
-            Description="Crowdfunded prizes clearly incentivized collective action,
-             but Noah needed to know if this could make a radical difference in peoples’ lives. "
-            image="/home/story/noah_think.jpeg"
-            side="left"
-          />
-          <StoryCard
             Title="The Impact"
-            Description="Next, he watched a kamikaze drone diving towards 
+            Description="Crowdfunded prizes clearly incentivized collective action,
+             but Noah needed to know if this could make a radical difference in peoples’ lives. 
+              Next, he watched a kamikaze drone diving towards 
             him get shot down while driving into the frontline of Ukraine to complete 
             a crowdfunded prize for delivering medical supplies. The volunteer medics 
             received the supplies they were missing and because of this they were able 
             to treat 45 injured and said this undoubtedly saved at least one life. "
             image="/home/story/medics.png"
-            side="right"
+            side="left"
           />
           <StoryCard
             Title="The Impact Continues"
@@ -283,7 +278,7 @@ export default function Home() {
             and Aryan we now have this fully open source platform 
             for anyone to use. "
             image="/home/story/us.png"
-            side="left"
+            side="right"
           />
         </section>
         {/* Community */}
@@ -402,18 +397,22 @@ function FunctionCard({
       <p className="text-white md:max-w-[80%] text-lg lg:font-semibold leading-7">
         {Description}
       </p>
-      <div className='flex gap-4 max-sm:flex-col'>
+      <div className="flex gap-4 max-sm:flex-col">
         <Button
           className="bg-[#E5F1F5] text-black font-bold gap-5 items-center"
           rightSection={<BiSolidRightArrowCircle size={14} />}
+          component="a"
+          href={know}
         >
-          <Link href={know}>Know More</Link>
+          Know More
         </Button>
         <Button
           className="bg-[#E5F1F5] text-black font-bold gap-5 items-center"
           rightSection={<BiSolidRightArrowCircle size={14} />}
+          component="a"
+          href={explore}
         >
-          <Link href={explore}>Explore</Link>
+          Explore
         </Button>
       </div>
     </Card>
