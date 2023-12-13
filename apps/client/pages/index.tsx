@@ -113,14 +113,24 @@ export default function Home() {
               Simple and sleek design with users in mind. viaPrize is a platform that
               allows
             </p> */}
-            <Link href="/prize/explore">
-              <Button
-                className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]"
-                color="primary"
-              >
-                Explore Prizes
-              </Button>
-            </Link>
+            <Flex gap="md">
+              <Link href="/prize/explore">
+                <Button
+                  className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]"
+                  color="primary"
+                >
+                  Explore Prizes
+                </Button>
+              </Link>
+              <Link href="/portal/explore">
+                <Button
+                  className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]"
+                  color="primary"
+                >
+                  Explore Portals
+                </Button>
+              </Link>
+            </Flex>
             <Flex
               className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[80%]"
               style={{
@@ -135,12 +145,13 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="my-0">63</h3>
-                <p className="my-0">Total number of campaigns</p>
+                <p className="my-0">Total campaigns</p>
               </div>
-              <div>
+              {/* <div>
                 <h3 className="my-0">17</h3>
                 <p className="my-0">Prizes won</p>
               </div>
+            */}
             </Flex>
           </div>
           <div className="md:w-1/2">
