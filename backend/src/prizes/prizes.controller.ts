@@ -73,7 +73,7 @@ export class PrizesController {
     private readonly blockchainService: BlockchainService,
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
-  ) { }
+  ) {}
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -168,6 +168,7 @@ export class PrizesController {
     const balance = await this.blockchainService.getBalanceOfAddress(
       prize.contract_address,
     );
+    console.log('asdaf');
     const submission_time = await this.blockchainService.getSubmissionTime(
       prize.contract_address,
     );
@@ -290,7 +291,6 @@ export class PrizesController {
         where: {
           isApproved: false,
           isRejected: false,
-
         },
       }),
       {
@@ -299,7 +299,7 @@ export class PrizesController {
         where: {
           isApproved: false,
           isRejected: false,
-        }
+        },
       },
     );
   }

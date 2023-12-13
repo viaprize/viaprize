@@ -17,49 +17,24 @@ import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/router';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
+import { useWallets } from '@privy-io/react-auth';
 
 function EditorsPage() {
   const [content, setContent] = useState<JSONContent | undefined>(
     PrizeSubmissionTemplate,
   );
   const { appUser } = useAppUser();
-  const { address } = useAccount();
+  const { wallets } = useWallets();
   const router = useRouter();
-  const { config } = usePrepareViaPrizeAddSubmission({
-    account: address,
-    address: router.query.contract as `0x${string}`,
-    args: [address ? address : '0x', `${appUser?.id}${router.query.id as string}`],
-  });
-  console.log({ address });
-  const { data: submissionData, writeAsync } = useViaPrizeAddSubmission({
-    ...config,
-    async onSuccess(data) {
-      const waitForTransactionOut = await waitForTransaction({
-        hash: data.hash,
-        confirmations: 1,
-      });
-      console.log(waitForTransactionOut.logs[0].topics[2]);
-      const hash = waitForTransactionOut.logs[0].topics[2];
-      if (!hash) {
-        throw Error('Hash is undefined');
-      }
-      const res = await (
-        await backendApi()
-      ).prizes.submissionCreate(router.query.id as string, {
-        submissionDescription: JSON.stringify(content),
-        submissionHash: hash as string,
-        submitterAddress: address ?? '0x',
-      });
-      console.log({ res }, 'ressss');
 
-      toast.promise(router.push(`/prize/${router.query.id as string}`), {
-        loading: 'Redirecting please wait ',
-        success: 'Submission Submitted',
-        error: 'Error Submitting Proposal',
-      });
-    },
-  });
+
   const submitToSmartContract = async () => {
+
+    if(!wallets[0]){
+      throw Error('Wallet is undefined');
+    }
+
+    const address = wallets[0].address as `0x${string}`;
     // await writeAsync?.();
     const request = await prepareWriteViaPrize({
       account: address,
@@ -77,13 +52,14 @@ function EditorsPage() {
     if (!submissionHash) {
       throw Error('Hash is undefined');
     }
-    const res = await (
-      await backendApi()
-    ).prizes.submissionCreate(router.query.id as string, {
-      submissionDescription: JSON.stringify(content),
-      submissionHash: submissionHash as string,
-      submitterAddress: address ?? '0x',
-    });
+    const res = await(await backendApi()).prizes.submissionCreate(
+      router.query.id as string,
+      {
+        submissionDescription: JSON.stringify(content),
+        submissionHash: submissionHash as string,
+        submitterAddress: address,
+      },
+    );
     console.log({ res }, 'ressss');
 
     toast.promise(router.push(`/prize/${router.query.id as string}`), {
@@ -92,7 +68,6 @@ function EditorsPage() {
       error: 'Error Submitting Proposal',
     });
   };
-  console.log({ submissionData }, 'submission hash');
   const onSumbit = () => {
     console.log('on sumbitttt');
     try {
