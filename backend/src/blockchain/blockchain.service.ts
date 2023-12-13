@@ -24,8 +24,8 @@ export class BlockchainService {
       abi,
       this.provider,
     );
-    const totalFunds = await contract.totalRewards();
-    return totalFunds;
+    const getSubmissionTime = await contract.get_submission_time();
+    return getSubmissionTime;
   }
 
   async getVotingTime(viaprizeContractAddress: string): Promise<bigint> {
