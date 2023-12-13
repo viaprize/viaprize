@@ -143,14 +143,14 @@ function Prize() {
             }}
             allowNegative={false}
           />
-          <Checkbox
+          {/* <Checkbox
             checked={isAutomatic}
             onChange={(e) => {
               setIsAutomatic(e.currentTarget.checked);
             }}
             className="my-2 cursor-pointer"
             label="Automatically start campaign when it is accepted by the admin"
-          />
+          /> */}
         </div>
         <NumberInput
           placeholder="voting Time (in days)"

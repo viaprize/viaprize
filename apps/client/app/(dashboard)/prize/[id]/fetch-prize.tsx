@@ -10,7 +10,11 @@ export const maxDuration = 5;
 
 export default async function FetchPrize({ params }: { params: { id: string } }) {
 
-  const prize = (await new Api().prizes.prizesDetail(params.id)).data;
+  const prize = (await new Api().prizes.prizesDetail(params.id,{
+    next:{
+      revalidate: 0,
+    }
+  })).data;
   const submissions = (
     await new Api().prizes.submissionDetail2(
       params.id,

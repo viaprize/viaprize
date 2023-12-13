@@ -23,8 +23,8 @@ export default function Submissions({
           component="a"
           w="40%"
           className="self-end"
-          target="_blank"
-          href={`/prize/${id as string}/editor?contract=${contractAddress}`}
+          // target="_blank"
+          href={`${id as string}/editor?contract=${contractAddress}`}
         >
           Submit your work
         </Button>
