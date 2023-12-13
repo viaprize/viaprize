@@ -4,7 +4,14 @@ import dotenv from "dotenv";
 import { HardhatUserConfig } from "hardhat/config";
 dotenv.config();
 const config: HardhatUserConfig = {
-  solidity: "0.8.19",
+  solidity: {
+
+    version: "0.8.19",
+    settings: {
+      evmVersion: "paris",
+    }
+
+  },
   networks: {
     mumbai: {
       url: process.env.MUMBAI_RPC,
@@ -13,6 +20,7 @@ const config: HardhatUserConfig = {
     op: {
       url: process.env.OP_RPC,
       accounts: [process.env.OP_PRIVATEKEY as string],
+
     },
   }
 };
