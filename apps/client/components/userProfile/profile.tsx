@@ -1,4 +1,5 @@
 import useAppUser from '@/context/hooks/useAppUser';
+import { chain } from '@/lib/wagmi';
 import {
   Avatar,
   Badge,
@@ -94,6 +95,7 @@ export default function Profile() {
               <Text>
                 Balance : {balance.formatted} {balance.symbol}
               </Text>
+              <Text>Network : {chain.name.toUpperCase()}</Text>
 
               <Input
                 placeholder="Reciever Address"
