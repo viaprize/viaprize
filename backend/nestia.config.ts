@@ -23,8 +23,12 @@ export const NESTIA_CONFIG: INestiaConfig = {
       },
       {
         url: 'https://api.pactsmith.com/api',
-        description: 'Prod Server',
+        description: 'Dev Server',
       },
+      {
+        url: "https://api-prod.pactsmith.com",
+        description: 'Prod Server',
+      }
     ],
     security: {
       bearer: {

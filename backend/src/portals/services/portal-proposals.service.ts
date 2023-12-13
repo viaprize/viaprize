@@ -14,7 +14,7 @@ export class PortalProposalsService {
     @InjectRepository(PortalProposals)
     private portalProposalsRepository: Repository<PortalProposals>,
     private userService: UsersService,
-  ) {}
+  ) { }
   async create(
     createPortalProposalDto: CreatePortalProposalDto,
     userId: string,
@@ -56,6 +56,10 @@ export class PortalProposalsService {
       relations: ['user'],
       where: paginationOptions.where,
     });
+  }
+  async isEmpty() {
+    const count = await this.portalProposalsRepository.count();
+    return count === 0;
   }
   async findByUserNameWithPagination(
     paginationOptions: IPaginationOptions<PortalProposals>,

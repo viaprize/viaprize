@@ -73,7 +73,7 @@ export class PrizesController {
     private readonly blockchainService: BlockchainService,
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
-  ) {}
+  ) { }
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -276,6 +276,13 @@ export class PrizesController {
       hasNextPage: boolean;
     }>
   > {
+    const isEmpty = await this.prizeProposalsService.isEmpty();
+    if (isEmpty) {
+      return {
+        data: [],
+        hasNextPage: false,
+      };
+    }
     return infinityPagination(
       await this.prizeProposalsService.findAllPendingWithPagination({
         page,
@@ -283,11 +290,16 @@ export class PrizesController {
         where: {
           isApproved: false,
           isRejected: false,
+
         },
       }),
       {
         page,
         limit,
+        where: {
+          isApproved: false,
+          isRejected: false,
+        }
       },
     );
   }
@@ -320,6 +332,13 @@ export class PrizesController {
       hasNextPage: boolean;
     }>
   > {
+    const isEmpty = await this.prizeProposalsService.isEmpty();
+    if (isEmpty) {
+      return {
+        data: [],
+        hasNextPage: false,
+      };
+    }
     return infinityPagination(
       await this.prizeProposalsService.findAllPendingWithPagination({
         page,
