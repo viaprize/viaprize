@@ -132,18 +132,18 @@ export default function Home() {
               </Link>
             </Flex>
             <Flex
-              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[80%]"
+              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[60%]"
               style={{
                 background: `rgba(125, 185, 206, 0.15)`,
               }}
               justify="space-between"
               align="center"
             >
-              <div>
+              <div className='text-center'>
                 <h3 className="my-0">$32,460</h3>
                 <p className="my-0">Total contributions</p>
               </div>
-              <div>
+              <div className='text-center'>
                 <h3 className="my-0">63</h3>
                 <p className="my-0">Total campaigns</p>
               </div>
