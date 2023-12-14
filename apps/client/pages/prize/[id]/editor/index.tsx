@@ -27,10 +27,8 @@ function EditorsPage() {
   const { wallets } = useWallets();
   const router = useRouter();
 
-
   const submitToSmartContract = async () => {
-
-    if(!wallets[0]){
+    if (!wallets[0]) {
       throw Error('Wallet is undefined');
     }
 
@@ -52,14 +50,13 @@ function EditorsPage() {
     if (!submissionHash) {
       throw Error('Hash is undefined');
     }
-    const res = await(await backendApi()).prizes.submissionCreate(
-      router.query.id as string,
-      {
-        submissionDescription: JSON.stringify(content),
-        submissionHash: submissionHash as string,
-        submitterAddress: address,
-      },
-    );
+    const res = await (
+      await backendApi()
+    ).prizes.submissionCreate(router.query.id as string, {
+      submissionDescription: JSON.stringify(content),
+      submissionHash: submissionHash as string,
+      submitterAddress: address,
+    });
     console.log({ res }, 'ressss');
 
     toast.promise(router.push(`/prize/${router.query.id as string}`), {

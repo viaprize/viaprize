@@ -8,7 +8,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import PortalFilterDrawer from './portal-filter-drawer';
-
+import Link from 'next/link';
 // import Filter from "./filterComponent";
 
 type Sorts = Record<string, string>;
@@ -50,9 +50,12 @@ export default function SearchFiltersPortals() {
           className="sm:w-[500px]"
         />
         <Group justify="space-between">
-          <Button component="a" href="/portal/about">
-            About Portals
-          </Button>
+          <Link href="/portal/about">
+            <Button component="a">About Portals</Button>
+          </Link>
+          <Link href="/portal/create">
+            <Button component="a">Create Portal</Button>
+          </Link>
           <Button onClick={open}>Filter</Button>
           {/* <Button>Sort</Button> */}
           <Menu shadow="md" width={200}>
