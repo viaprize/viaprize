@@ -75,6 +75,14 @@ export default function PortalProposalsTabs({
                     const finalFundingGoal = parseEther(
                       (item.fundingGoal ?? '0').toString(),
                     );
+                    console.log([
+                      item?.treasurers as `0x${string}`[],
+                      finalFundingGoal,
+                      BigInt(Math.floor(new Date(item.deadline).getTime() / 1000) ?? 0),
+                      item.allowDonationAboveThreshold,
+                      BigInt(5),
+                      item.sendImmediately,
+                    ]);
                     const request = await prepareWritePortalFactory({
                       functionName: 'createPortal',
                       args: [

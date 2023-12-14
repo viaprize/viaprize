@@ -16,8 +16,7 @@ contract Portal {
     bool allowDonationAboveGoalAmount;
     bool isActive;
     bool allowImmediately;
-
-    uint256 deadline1;
+    // uint256 deadline1 = 0;
     
     
 
@@ -46,6 +45,10 @@ contract Portal {
         uint256 _platformFee,
         bool _allowImmediately
     ) {
+
+        if((!_allowImmediately) && (_goal == 0 && _deadline == 0)) revert RequireGoalAndDeadline();
+        // require((_allowImmediately) && (_goal == 0 || _deadline == 0), "required goal and deadline");
+
         for (uint256 i = 0; i < _proposer.length; i++) {
             proposer.push(_proposer[i]);
             isProposers[_proposer[i]] = true;
@@ -55,12 +58,11 @@ contract Portal {
         allowImmediately = _allowImmediately;
 
         goalAmount = _goal;
-        deadline = block.timestamp + _deadline * 86400;
-        deadline1 = _deadline;
+        deadline = _deadline;
+        // deadline1 = _deadline;
         allowDonationAboveGoalAmount = _allowDonationAboveGoalAmount;
         isActive = true;
 
-        if((!allowImmediately) && goalAmount == 0 || deadline1 == 0 ) revert RequireGoalAndDeadline();
     }
 
     function addFunds() public payable returns (uint256, uint256, uint256, bool, bool, bool)
@@ -73,7 +75,7 @@ contract Portal {
         totalRewards += (msg.value * (100 - platformFee)) / 100;
 
         bool goalAmountAvailable = goalAmount > 0;
-        bool deadlineAvailable = deadline1 > 0;
+        bool deadlineAvailable = deadline > 0;
         bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
         bool metGoal = totalRewards >= goalAmount;
 

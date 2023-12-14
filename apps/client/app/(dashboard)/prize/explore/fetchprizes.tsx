@@ -4,10 +4,17 @@ import { formatEther } from 'viem';
 
 export default async function FetchPrizes() {
   const prizes = (
-    await new Api().prizes.prizesList({
-      limit: 10,
-      page: 1,
-    })
+    await new Api().prizes.prizesList(
+      {
+        limit: 10,
+        page: 1,
+      },
+      {
+        next: {
+          revalidate: 5,
+        },
+      },
+    )
   ).data.data;
 
   return (
