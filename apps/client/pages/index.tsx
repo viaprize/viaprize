@@ -139,11 +139,11 @@ export default function Home() {
               justify="space-between"
               align="center"
             >
-              <div className='text-center'>
+              <div className="text-center">
                 <h3 className="my-0">$32,460</h3>
                 <p className="my-0">Total contributions</p>
               </div>
-              <div className='text-center'>
+              <div className="text-center">
                 <h3 className="my-0">63</h3>
                 <p className="my-0">Total campaigns</p>
               </div>

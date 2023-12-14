@@ -3,7 +3,6 @@ import { formatEther } from 'viem';
 import PortalCard from './portal-card';
 
 export default async function FetchPortals() {
-  
   const portals = (
     await new Api().portals.portalsList({
       limit: 10,
