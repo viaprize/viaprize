@@ -50,16 +50,11 @@ export default function SearchFiltersPortals() {
           className="sm:w-[500px]"
         />
         <Group justify="space-between">
-          <Link href="/portal/about">
-            <Button component="a">About Portals</Button>
-          </Link>
-          <Link href="/portal/create">
-            <Button component="a">Create Portal</Button>
-          </Link>
-          {/* <Button onClick={open}>Filter</Button> */}
+
+          <Button onClick={open}>Filter</Button>
           <Menu shadow="md" width={200}>
             <Menu.Target>
-              {/* <Button>Sort</Button> */}
+              <Button>Sort</Button>
             </Menu.Target>
 
             <Menu.Dropdown>
