@@ -54,7 +54,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar>
-        <MobileNavbar />
+        <MobileNavbar close={toggle}  open={opened} />
       </AppShell.Navbar>
 
       <AppShell.Main>

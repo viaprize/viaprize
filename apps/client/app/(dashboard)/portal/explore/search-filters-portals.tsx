@@ -56,11 +56,10 @@ export default function SearchFiltersPortals() {
           <Link href="/portal/create">
             <Button component="a">Create Portal</Button>
           </Link>
-          <Button onClick={open}>Filter</Button>
-          {/* <Button>Sort</Button> */}
+          {/* <Button onClick={open}>Filter</Button> */}
           <Menu shadow="md" width={200}>
             <Menu.Target>
-              <Button>Sort</Button>
+              {/* <Button>Sort</Button> */}
             </Menu.Target>
 
             <Menu.Dropdown>
