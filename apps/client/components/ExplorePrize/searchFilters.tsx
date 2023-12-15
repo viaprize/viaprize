@@ -57,9 +57,9 @@ export default function SearchFilters() {
           </Link>
 
           {/* <Button onClick={open}>Filter</Button> */}
-          <Menu shadow="md" width={200}>
+          {/* <Menu shadow="md" width={200}>
             <Menu.Target>
-              {/* <Button>Sort</Button> */}
+              <Button>Sort</Button>
             </Menu.Target>
 
             <Menu.Dropdown>
@@ -83,7 +83,7 @@ export default function SearchFilters() {
                 );
               })}
             </Menu.Dropdown>
-          </Menu>
+          </Menu> */}
         </Group>
       </Group>
       <Drawer opened={opened} onClose={close} title="Filters" position="right">

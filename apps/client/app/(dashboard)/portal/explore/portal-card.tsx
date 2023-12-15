@@ -95,7 +95,7 @@ export default function PortalCard({
         Details
       </Button>
       <div className="absolute top-2 right-2">
-        <CopyButton value={`https://pactsmith.com/portal/${id}`}>
+        <CopyButton value={`https://viaprize.org/portal/${id}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>
