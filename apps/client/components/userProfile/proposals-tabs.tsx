@@ -22,7 +22,7 @@ export default function ProposalsTabs({
   const { address } = useAccount();
   const currentTimestamp = useRef(Date.now());
   const { createPrize } = usePrize();
-  const [visible, { toggle }] = useDisclosure(true);
+  const [visible, { toggle }] = useDisclosure(false);
   const getProposalStatus = (item: PrizeProposals): ProposalStatus => {
     if (data) {
       if (item.isApproved) {
