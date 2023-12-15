@@ -32,7 +32,7 @@ export class PortalsController {
     private readonly mailService: MailService,
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
-  ) { }
+  ) {}
 
   @Post('')
   @UseGuards(AuthGuard)
