@@ -273,7 +273,7 @@ export default function PortalForm() {
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
               <Text>
                 Funding Goal in {`( ${convertUSDToCrypto(fundingGoal ?? 0)}`}{' '}
-                {chain.nativeCurrency.symbol}
+                {chain.nativeCurrency.symbol} {')'}
               </Text>
             </div>
             <NumberInput
