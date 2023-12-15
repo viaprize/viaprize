@@ -27,6 +27,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           recipientAddress={portal.contract_address}
           totalContributors={formatEther(BigInt(portal.totalFunds ?? 0))}
           contractAddress={portal.contract_address}
+          fundingGoal={portal.fundingGoal ?? 0}
         />
       </div>
       <PortalTabs description={portal.description} />
