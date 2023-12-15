@@ -13,7 +13,7 @@ export class PrizeProposalsService {
     @InjectRepository(PrizeProposals)
     private prizeProposalsRepository: Repository<PrizeProposals>,
     private userService: UsersService,
-  ) { }
+  ) {}
   async create(createPrizeDto: CreatePrizeProposalDto, userId: string) {
     const user = await this.userService.findOneByAuthId(userId);
     if (!user) {

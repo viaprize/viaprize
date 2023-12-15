@@ -37,7 +37,7 @@ export class MailService {
       templateName: 'portalDeployed.hbs',
       context: {
         name,
-        title,
+        proposalTitle: title,
         telegramLink: this.telegramLink,
       },
     });

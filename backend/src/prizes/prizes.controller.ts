@@ -378,7 +378,6 @@ export class PrizesController {
     const proposals = await this.prizeProposalsService.create(
       createPrizeProposalDto,
       req.user.userId,
-
     );
     await this.mailService.proposalSent(
       proposals.user.email,
