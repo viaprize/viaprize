@@ -23,6 +23,7 @@ export default async function FetchPortals() {
             title={portal.title}
             key={portal.id}
             id={portal.id}
+            fundingGoal={portal.fundingGoal ?? 0}
           />
         );
       })}

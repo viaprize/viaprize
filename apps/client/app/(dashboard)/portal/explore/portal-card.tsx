@@ -21,6 +21,7 @@ interface PortalCardProps {
   amountRaised: string;
   totalContributors: string;
   id: string;
+  fundingGoal: number;
 }
 
 export default function PortalCard({
@@ -31,6 +32,7 @@ export default function PortalCard({
   amountRaised,
   totalContributors,
   id,
+  fundingGoal,
 }: PortalCardProps) {
   return (
     <Card
@@ -72,10 +74,16 @@ export default function PortalCard({
         Total Amount Raised
       </Badge> */}
 
-      <Text size="xs" mt="xs">
+      {/* <Text size="xs" mt="xs">
         Raised from <span className="text-gray font-bold">{totalContributors} </span>
         contributions
+      </Text> */}
+      {fundingGoal !== 0 && (
+      <Text size="xs" mt="xs">
+        {fundingGoal} {chain.nativeCurrency.symbol} Funding Goal
       </Text>
+      )}
+
 
       <Button
         color="primary"
