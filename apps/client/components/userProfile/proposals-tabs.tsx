@@ -62,7 +62,6 @@ export default function ProposalsTabs({
                       break;
                     }
                     case 'approved': {
-                      toggle();
                       const firstLoadingToast = toast.loading(
                         'Transaction Waiting To Be approved',
                         {
@@ -125,7 +124,7 @@ export default function ProposalsTabs({
                       toast.dismiss(secondToast);
                       console.log(prize, 'prize');
                       toast.success(`Prize Address ${prizeAddress} `);
-                      toggle();
+
                       toast.promise(router.push('/prize/explore'), {
                         loading: 'Redirecting Please Wait',
                         error: 'Error while redirecting ',
