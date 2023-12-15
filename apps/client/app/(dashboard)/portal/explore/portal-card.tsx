@@ -79,11 +79,10 @@ export default function PortalCard({
         contributions
       </Text> */}
       {fundingGoal !== 0 && (
-      <Text size="xs" mt="xs">
-        {fundingGoal} {chain.nativeCurrency.symbol} Funding Goal
-      </Text>
+        <Text size="xs" mt="xs">
+          {fundingGoal} {chain.nativeCurrency.symbol} Funding Goal
+        </Text>
       )}
-
 
       <Button
         color="primary"

@@ -39,7 +39,7 @@ export default function AmountDonateCard({
   const [debounced] = useDebouncedValue(value, 500);
 
   const { data: balance, isLoading, refetch } = useBalance({ address });
-  console.log({ balance }, 'balance')
+  console.log({ balance }, 'balance');
 
   const [sendLoading, setSendLoading] = useState(false);
   return (
