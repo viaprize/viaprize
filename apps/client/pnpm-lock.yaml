@@ -101,9 +101,6 @@ dependencies:
   cookies-next:
     specifier: ^3.0.0
     version: 3.0.0
-  dayjs:
-    specifier: ^1.11.9
-    version: 1.11.10
   eslint-config-prettier:
     specifier: 9.0.0
     version: 9.0.0(eslint@8.52.0)

@@ -28,6 +28,10 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           totalContributors={formatEther(BigInt(portal.totalFunds ?? 0))}
           contractAddress={portal.contract_address}
           fundingGoal={portal.fundingGoal ?? 0}
+          typeOfPortal={portal.sendImmediately ? 'GoFundMe' : 'KickStarter'}
+          deadline={portal.deadline}
+          isActive={portal.isActive ?? false}
+          treasurers={portal.treasurers}
         />
       </div>
       <PortalTabs description={portal.description} />

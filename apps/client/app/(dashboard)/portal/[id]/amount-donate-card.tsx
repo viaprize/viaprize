@@ -1,4 +1,6 @@
 'use client';
+import { prepareWritePortal, writePortal } from '@/lib/smartContract';
+import { formatDate } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -14,7 +16,7 @@ import {
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconCurrencyEthereum, IconRefresh } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
@@ -25,6 +27,10 @@ interface AmountDonateCardProps {
   recipientAddress: string;
   contractAddress: string;
   fundingGoal: number;
+  treasurers: string[];
+  typeOfPortal: string;
+  deadline?: string;
+  isActive: boolean;
 }
 
 export default function AmountDonateCard({
@@ -33,6 +39,10 @@ export default function AmountDonateCard({
   totalContributors,
   contractAddress,
   fundingGoal,
+  typeOfPortal,
+  deadline,
+  treasurers,
+  isActive,
 }: AmountDonateCardProps) {
   const { address } = useAccount();
   const [value, setValue] = useState('');
@@ -40,6 +50,10 @@ export default function AmountDonateCard({
 
   const { data: balance, isLoading, refetch } = useBalance({ address });
   console.log({ balance }, 'balance');
+
+  useEffect(() => {
+    void refetch();
+  }, []);
 
   const [sendLoading, setSendLoading] = useState(false);
   return (
@@ -57,10 +71,24 @@ export default function AmountDonateCard({
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
           {amountRaised} {chain.nativeCurrency.symbol}
         </Text>
+
+        <Text fw="bold" size="xl">
+          {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
+        </Text>
         {/* <Text size="sm">
           Raised from{'  '}
           <span className="text-dark font-bold">{totalContributors}</span> contributions
         </Text> */}
+        <Badge color="gray" variant="light" radius="sm">
+          {typeOfPortal}
+        </Badge>
+
+        {deadline && (
+          <Text size="xs" mt="xs">
+            Deadline: {formatDate(deadline)}
+          </Text>
+        )}
+
         {fundingGoal !== 0 ? (
           <Badge size="md" my="md" radius="md">
             Funding Goal: {fundingGoal} {chain.nativeCurrency.symbol}
@@ -151,6 +179,31 @@ export default function AmountDonateCard({
         >
           Donate
         </Button>
+        {address && treasurers.includes(address) ? (
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                const config = await prepareWritePortal({
+                  functionName: 'endCampaign',
+                  address: contractAddress as `0x${string}`,
+                });
+
+                const { hash } = await writePortal(config);
+                toast.success(`Transaction ${hash}`, {
+                  duration: 6000,
+                });
+              } catch (e: unknown) {
+                toast.error((e as any)?.message);
+              } finally {
+                setSendLoading(false);
+                window.location.reload();
+              }
+            }}
+          >
+            End Campaign
+          </Button>
+        ) : null}
       </Stack>
     </Card>
   );

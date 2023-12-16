@@ -14,9 +14,9 @@ contract Portal {
     mapping(address => uint256) public patronAmount;
     uint256 public totalFunds;
     uint256 public totalRewards;
-    bool allowDonationAboveGoalAmount;
-    bool isActive;
-    bool allowImmediately;
+    bool public allowDonationAboveGoalAmount;
+    bool public isActive;
+    bool public  allowImmediately;
     // uint256 deadline1 = 0;
     
     
@@ -180,13 +180,13 @@ contract Portal {
 
     function endCampaign() public {
         require(isProposers[msg.sender] == true, "you are not an owner to close the campaign");
-        if(allowImmediately) revert CantEndKickstarterTypeCampaign();
+        if(!allowImmediately) revert CantEndKickstarterTypeCampaign();
         isActive = false;
     }
 
     function patronRefund() public {
         require(isPatron[msg.sender] == true, "only patrons can claim refund");
-        if(!allowImmediately) revert CantGetRefundForGoFundMeTypeCampaign();
+        if(allowImmediately) revert CantGetRefundForGoFundMeTypeCampaign();
         bool deadlineAvailable = deadline > 0;
         bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
         bool metGoal = totalRewards >= goalAmount;
@@ -197,6 +197,7 @@ contract Portal {
             payable(patrons[i]).transfer(transferableAmount);
             patronAmount[patrons[i]] = 0;
         }
+        isActive = false;
     }
 
 }

@@ -42,7 +42,7 @@ function ExploreCard({
 }: ExploreCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const deadlineString = calculateDeadline(createdAt, submissionDays);
-
+  
   return (
     <Card
       padding="lg"

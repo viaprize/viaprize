@@ -1,4 +1,4 @@
-import { htmlToPlainText } from '@/lib/utils';
+import { formatDate, htmlToPlainText } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -21,7 +21,10 @@ interface PortalCardProps {
   amountRaised: string;
   totalContributors: string;
   id: string;
+  typeOfPortal: string;
   fundingGoal: number;
+  deadline?: string;
+  isActive: boolean;
 }
 
 export default function PortalCard({
@@ -31,8 +34,11 @@ export default function PortalCard({
   description,
   amountRaised,
   totalContributors,
+  typeOfPortal,
   id,
   fundingGoal,
+  deadline,
+  isActive,
 }: PortalCardProps) {
   return (
     <Card
@@ -70,6 +76,14 @@ export default function PortalCard({
       <Text fw="bold" size="xl">
         {amountRaised} {chain.nativeCurrency.symbol}
       </Text>
+
+      <Text fw="bold" size="xl">
+        {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
+      </Text>
+
+      <Badge color="gray" variant="light" radius="sm">
+        {typeOfPortal}
+      </Badge>
       {/* <Badge color="gray" variant="light" radius="sm">
         Total Amount Raised
       </Badge> */}
@@ -81,6 +95,12 @@ export default function PortalCard({
       {fundingGoal !== 0 && (
         <Text size="xs" mt="xs">
           {fundingGoal} {chain.nativeCurrency.symbol} Funding Goal
+        </Text>
+      )}
+
+      {deadline && (
+        <Text size="xs" mt="xs">
+          Deadline: {formatDate(deadline)}
         </Text>
       )}
 

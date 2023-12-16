@@ -32,7 +32,7 @@ export class PortalsController {
     private readonly mailService: MailService,
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
-  ) {}
+  ) { }
 
   @Post('')
   @UseGuards(AuthGuard)
@@ -110,11 +110,15 @@ export class PortalsController {
         const totalFunds = await this.blockchainService.getTotalFundsOfPortal(
           Portal.contract_address,
         );
+        const isActive = await this.blockchainService.isPortalActive(
+          Portal.contract_address
+        )
         return {
           ...Portal,
           balance: parseInt(balance.toString()),
           totalFunds: parseInt(totalFunds.toString()),
           totalRewards: parseInt(totalRewards.toString()),
+          isActive: isActive
         } as PortalWithBalance;
       }),
     );
@@ -136,14 +140,14 @@ export class PortalsController {
     const totalRewards = await this.blockchainService.getTotalRewardsOfPortal(
       Portal.contract_address,
     );
+    const isActive = await this.blockchainService.isPortalActive(Portal.contract_address)
 
     return {
       ...Portal,
       balance: parseInt(balance.toString()),
       totalFunds: parseInt(totalFunds.toString()),
       totalRewards: parseInt(totalRewards.toString()),
-      // submission_time_blockchain: parseInt(submission_time.toString()),
-      // voting_time_blockchain: parseInt(voting_time.toString()),
+      isActive: isActive
     };
   }
 
