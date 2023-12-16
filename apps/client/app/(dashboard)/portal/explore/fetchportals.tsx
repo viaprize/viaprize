@@ -20,11 +20,13 @@ export default async function FetchPortals() {
             amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
             authorName={portal.user.name}
             totalContributors="0"
+            isActive={portal.isActive ?? false}
             title={portal.title}
             key={portal.id}
             typeOfPortal={portal.sendImmediately ? 'GoFundMe' : 'KickStarter'}
             id={portal.id}
             fundingGoal={portal.fundingGoal ?? 0}
+            deadline={portal.deadline}
           />
         );
       })}

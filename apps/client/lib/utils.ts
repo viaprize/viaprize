@@ -119,4 +119,16 @@ export const calculateDeadline = (
   return { remainingTime, dateString };
 };
 
+
+export const formatDate = (date: string): string => {
+  const format = new Intl.DateTimeFormat('en-ZA', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  return format.format(new Date(date));
+};
 export const ADMINS = [];

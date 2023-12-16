@@ -47,7 +47,10 @@ export class BlockchainService {
       abi,
       this.provider,
     );
-    return await contract.isActive();
+    return await contract.isActive().catch((e) => {
+      console.log(e)
+      return false
+    });
   }
 
   async getTotalRewardsOfPortal(
