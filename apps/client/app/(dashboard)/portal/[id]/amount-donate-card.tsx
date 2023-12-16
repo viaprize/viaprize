@@ -183,17 +183,22 @@ export default function AmountDonateCard({
           <Button
             variant="outline"
             onClick={async () => {
-              const config = await prepareWritePortal({
-                functionName: 'endCampaign',
-                address: contractAddress as `0x${string}`,
-              });
+              try {
+                const config = await prepareWritePortal({
+                  functionName: 'endCampaign',
+                  address: contractAddress as `0x${string}`,
+                });
 
-              const { hash } = await writePortal(config);
-              toast.success(`Transaction ${hash}`, {
-                duration: 6000,
-              });
-              setSendLoading(false);
-              window.location.reload();
+                const { hash } = await writePortal(config);
+                toast.success(`Transaction ${hash}`, {
+                  duration: 6000,
+                });
+              } catch (e: unknown) {
+                toast.error((e as any)?.message);
+              } finally {
+                setSendLoading(false);
+                window.location.reload();
+              }
             }}
           >
             End Campaign

@@ -19,7 +19,7 @@ export default defineConfig({
         },
         portalFactory: {
           // 80001: '0xAe37824e718488787D1bbD87E35985ED107a0C7E',
-          10: '0x8dc530D45061d23A4C05787216E45A23244482f4',
+          10: '0xdDf95262777c6423385e7d53461fDD545202369a',
         },
       },
     }),
