@@ -1,8 +1,6 @@
 'use client';
 import { Tabs } from '@mantine/core';
 
-import React from 'react';
-import DonationInfo from './donation-info';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 
 export default function PortalTabs({ description }: { description: string }) {
@@ -12,7 +10,7 @@ export default function PortalTabs({ description }: { description: string }) {
         <Tabs.Tab value="about" className="">
           About
         </Tabs.Tab>
-        <Tabs.Tab value="donations">Donations</Tabs.Tab>
+        {/* <Tabs.Tab value="donations">Donations</Tabs.Tab> */}
       </Tabs.List>
 
       <div className="">
@@ -22,9 +20,9 @@ export default function PortalTabs({ description }: { description: string }) {
           </div>
         </Tabs.Panel>
 
-        <Tabs.Panel value="donations">
+        {/* <Tabs.Panel value="donations">
           <DonationInfo />
-        </Tabs.Panel>
+        </Tabs.Panel> */}
       </div>
     </Tabs>
   );
