@@ -10,6 +10,7 @@ contract Portal {
     uint256 public platformFee;
     address public platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
     address[] public patrons; 
+    mapping(address => bool) public isPatron;
     mapping(address => uint256) public patronAmount;
     uint256 public totalFunds;
     uint256 public totalRewards;
@@ -24,6 +25,8 @@ contract Portal {
     error FundingToContractEnded();
     error RequireGoalAndDeadline();
     error CantEndKickstarterTypeCampaign();
+    error GoalAndDeadlineAlreadyMet();
+    error CantGetRefundForGoFundMeTypeCampaign();
 
     event Values(
         address receiverAddress,
@@ -71,6 +74,7 @@ contract Portal {
         if (!isActive) revert FundingToContractEnded();
 
         patronAmount[msg.sender] += msg.value;
+        isPatron[msg.sender] = true;
         totalFunds += msg.value;
         totalRewards += (msg.value * (100 - platformFee)) / 100;
 
@@ -180,15 +184,19 @@ contract Portal {
         isActive = false;
     }
 
+    function patronRefund() public {
+        require(isPatron[msg.sender] == true, "only patrons can claim refund");
+        if(!allowImmediately) revert CantGetRefundForGoFundMeTypeCampaign();
+        bool deadlineAvailable = deadline > 0;
+        bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
+        bool metGoal = totalRewards >= goalAmount;
+        if(metDeadline && metGoal) revert GoalAndDeadlineAlreadyMet();
 
-    // function withdrawAmount() public {
-    //     require(isproposer[msg.sender] == true, "you are not an owner to close the campaign");
-    //     payable(receiverAddress).transfer(totalRewards);
-    //     payable(platformAddress).transfer(totalFunds - totalRewards);
-    //     totalRewards = 0;
-    //     totalFunds = 0;
+        for(uint i=0; i<patrons.length; i++) {
+            uint transferableAmount = patronAmount[patrons[i]];
+            payable(patrons[i]).transfer(transferableAmount);
+            patronAmount[patrons[i]] = 0;
+        }
+    }
 
-    // }
-
-    // // function refundAmount
 }
