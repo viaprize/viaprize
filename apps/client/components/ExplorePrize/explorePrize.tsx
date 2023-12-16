@@ -40,6 +40,7 @@ function ExploreCard({
   skills,
   submissionDays,
 }: ExploreCardProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const deadlineString = calculateDeadline(createdAt, submissionDays);
   
   return (
@@ -101,7 +102,7 @@ function ExploreCard({
         Details
       </Button>
       <div className="absolute top-2 right-2">
-        <CopyButton value={`https://pactsmith.com/prize/${id}`}>
+        <CopyButton value={`https://viaprize.org/prize/${id}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>

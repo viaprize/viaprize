@@ -24,6 +24,7 @@ interface AmountDonateCardProps {
   totalContributors: string;
   recipientAddress: string;
   contractAddress: string;
+  fundingGoal: number;
 }
 
 export default function AmountDonateCard({
@@ -31,12 +32,14 @@ export default function AmountDonateCard({
   amountRaised,
   totalContributors,
   contractAddress,
+  fundingGoal,
 }: AmountDonateCardProps) {
   const { address } = useAccount();
   const [value, setValue] = useState('');
   const [debounced] = useDebouncedValue(value, 500);
 
   const { data: balance, isLoading, refetch } = useBalance({ address });
+  console.log({ balance }, 'balance');
 
   const [sendLoading, setSendLoading] = useState(false);
   return (
@@ -51,28 +54,35 @@ export default function AmountDonateCard({
         <Badge color="gray" variant="light" radius="sm" mb="sm">
           Total Amount Raised
         </Badge>
-        <Text fw="bold" c="blue" className="lg:text-5xl md:4xl ">
+        <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
           {amountRaised} {chain.nativeCurrency.symbol}
         </Text>
-        <Text size="sm">
+        {/* <Text size="sm">
           Raised from{'  '}
           <span className="text-dark font-bold">{totalContributors}</span> contributions
-        </Text>
+        </Text> */}
+        {fundingGoal !== 0 ? (
+          <Badge size="md" my="md" radius="md">
+            Funding Goal: {fundingGoal} {chain.nativeCurrency.symbol}
+          </Badge>
+        ) : null}
         {/* <Text className="border-2 rounded-lg mt-2 ">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam voluptatibus,
           quas, quae, quos voluptatem amet voluptatum dolorum
         </Text> */}
       </div>
-      <Text>Project Recipient Address</Text>
-      <Divider />
-      <Badge color="gray" p="md">
-        <Flex gap="md">
-          <Text size="sm">
-            {recipientAddress.slice(0, 5)}....{recipientAddress.slice(-5)}
-          </Text>
-          <IconCurrencyEthereum size={20} />
-        </Flex>
-      </Badge>
+      <div>
+        <Text>Project Recipient Address</Text>
+        <Divider my="sm" />
+        <Badge color="gray" p="md">
+          <Flex gap="md">
+            <Text size="sm">
+              {recipientAddress.slice(0, 5)}....{recipientAddress.slice(-5)}
+            </Text>
+            <IconCurrencyEthereum size={20} />
+          </Flex>
+        </Badge>
+      </div>
 
       {/* // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
   //   ...config,
@@ -90,9 +100,7 @@ export default function AmountDonateCard({
             isLoading
               ? 'Loading.....'
               : `Enter Value To Donate (Max: ${
-                  balance
-                    ? `${balance?.formatted} ${balance?.symbol}`
-                    : `Login To See Max`
+                  balance ? `${balance.formatted} ${balance.symbol}` : `Login To See Max`
                 }  )`
           }
           placeholder="Custom right section"

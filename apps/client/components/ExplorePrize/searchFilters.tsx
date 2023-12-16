@@ -8,7 +8,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Filter from './filterComponent';
-
+import Link from 'next/link';
 // import Filter from "./filterComponent";
 
 type Sorts = Record<string, string>;
@@ -49,9 +49,15 @@ export default function SearchFilters() {
           className="sm:w-[500px]"
         />
         <Group justify="space-between">
-          <Button onClick={open}>Filter</Button>
-          {/* <Button>Sort</Button> */}
-          <Menu shadow="md" width={200}>
+          <Link href="/prize/about">
+            <Button>About Prize</Button>
+          </Link>
+          <Link href="/prize/create">
+            <Button>Create Prize </Button>
+          </Link>
+
+          {/* <Button onClick={open}>Filter</Button> */}
+          {/* <Menu shadow="md" width={200}>
             <Menu.Target>
               <Button>Sort</Button>
             </Menu.Target>
@@ -77,7 +83,7 @@ export default function SearchFilters() {
                 );
               })}
             </Menu.Dropdown>
-          </Menu>
+          </Menu> */}
         </Group>
       </Group>
       <Drawer opened={opened} onClose={close} title="Filters" position="right">

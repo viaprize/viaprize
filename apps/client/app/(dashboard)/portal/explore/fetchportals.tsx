@@ -24,6 +24,7 @@ export default async function FetchPortals() {
             key={portal.id}
             typeOfPortal={portal.sendImmediately ? 'GoFundMe' : 'KickStarter'}
             id={portal.id}
+            fundingGoal={portal.fundingGoal ?? 0}
           />
         );
       })}

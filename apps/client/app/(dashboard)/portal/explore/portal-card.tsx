@@ -22,6 +22,7 @@ interface PortalCardProps {
   totalContributors: string;
   id: string;
   typeOfPortal: string;
+  fundingGoal: number;
 }
 
 export default function PortalCard({
@@ -33,6 +34,7 @@ export default function PortalCard({
   totalContributors,
   typeOfPortal,
   id,
+  fundingGoal,
 }: PortalCardProps) {
   return (
     <Card
@@ -78,10 +80,15 @@ export default function PortalCard({
         Total Amount Raised
       </Badge> */}
 
-      <Text size="xs" mt="xs">
+      {/* <Text size="xs" mt="xs">
         Raised from <span className="text-gray font-bold">{totalContributors} </span>
         contributions
-      </Text>
+      </Text> */}
+      {fundingGoal !== 0 && (
+        <Text size="xs" mt="xs">
+          {fundingGoal} {chain.nativeCurrency.symbol} Funding Goal
+        </Text>
+      )}
 
       <Button
         color="primary"
@@ -94,7 +101,7 @@ export default function PortalCard({
         Details
       </Button>
       <div className="absolute top-2 right-2">
-        <CopyButton value={`https://pactsmith.com/portal/${id}`}>
+        <CopyButton value={`https://viaprize.org/portal/${id}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>

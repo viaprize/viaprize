@@ -9,20 +9,18 @@ export const preferredRegion = 'auto';
 export const maxDuration = 5;
 
 export default async function FetchPrize({ params }: { params: { id: string } }) {
-
-  const prize = (await new Api().prizes.prizesDetail(params.id,{
-    next:{
-      revalidate: 0,
-    }
-  })).data;
-  const submissions = (
-    await new Api().prizes.submissionDetail2(
-      params.id,
-      {
-        limit: 5,
-        page: 1,
+  const prize = (
+    await new Api().prizes.prizesDetail(params.id, {
+      next: {
+        revalidate: 0,
       },
-    )
+    })
+  ).data;
+  const submissions = (
+    await new Api().prizes.submissionDetail2(params.id, {
+      limit: 5,
+      page: 1,
+    })
   ).data.data;
   return <PrizePageComponent prize={prize} submissions={submissions} />;
 }

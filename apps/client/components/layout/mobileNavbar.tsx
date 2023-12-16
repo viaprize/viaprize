@@ -1,17 +1,7 @@
-import useAppUser from '@/context/hooks/useAppUser';
-import {
-  Accordion,
-  Button,
-  Divider,
-  Flex,
-  Group,
-  Menu,
-  MenuTarget,
-  Stack,
-  Text,
-} from '@mantine/core';
-import { IconChevronDown } from '@tabler/icons-react';
+import { Accordion, Button, Divider, Stack, Text } from '@mantine/core';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 const navbnarItems = [
   {
@@ -38,8 +28,18 @@ const navbnarItems = [
   },
 ];
 
-export default function MobileNavbar() {
-  const { appUser } = useAppUser();
+export default function MobileNavbar({ close, open }: { close: () => void , open:boolean}) {
+
+
+  const pathName = usePathname();
+
+
+
+  useEffect(() => {
+    if (open){
+    close();
+    }
+  }, [pathName]);
 
   const items = navbnarItems.map((item) => (
     <Accordion.Item key={item.label} value={item.label}>
