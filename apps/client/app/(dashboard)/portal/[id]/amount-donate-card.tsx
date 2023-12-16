@@ -52,8 +52,10 @@ export default function AmountDonateCard({
   console.log({ balance }, 'balance');
 
   useEffect(() => {
-    void refetch();
-  }, []);
+    if (!balance) {
+      void refetch();
+    }
+  }, [balance]);
 
   const [sendLoading, setSendLoading] = useState(false);
   return (

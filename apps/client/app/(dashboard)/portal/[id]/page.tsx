@@ -8,7 +8,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
   const portal = (
     await new Api().portals.portalsDetail(params.id, {
       next: {
-        revalidate: 10,
+        revalidate: 0,
       },
     })
   ).data;
