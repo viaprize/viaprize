@@ -11,7 +11,7 @@ export default async function FetchPrizes() {
       },
       {
         next: {
-          revalidate: 5,
+          revalidate: 0,
         },
       },
     )
