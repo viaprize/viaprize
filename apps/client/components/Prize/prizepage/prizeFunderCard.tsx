@@ -26,9 +26,6 @@ export default function PrizeFunderCard({ name, email }: PrizeFunderCardProps) {
           {/* <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
             Proposer Email: {email}
           </Text> */}
-          <Text c="dimmed" fz="sm">
-            {email}
-          </Text>
         </div>
       </Group>
       {/* <Badge>

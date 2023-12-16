@@ -77,9 +77,15 @@ export default function PortalCard({
         {amountRaised} {chain.nativeCurrency.symbol}
       </Text>
 
-      <Text fw="bold" size="xl">
-        {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
-      </Text>
+      {isActive ? (
+        <Text fw="bold" size="xl">
+          Accepting Donation
+        </Text>
+      ) : (
+        <Text fw="bold" size="xl" c={'red'}>
+          Campaign Ended
+        </Text>
+      )}
 
       <Badge color="gray" variant="light" radius="sm">
         {typeOfPortal}
