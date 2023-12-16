@@ -105,7 +105,11 @@ export default function PortalForm() {
     const tags = [];
     const sendNow = portalType === 'gofundme';
     if (!sendNow) {
+      tags.push('KickStarter');
       tags.push('Refundable');
+    }
+    if (sendNow) {
+      tags.push('Go FundMe');
     }
     if (deadline) {
       tags.push('Deadline');

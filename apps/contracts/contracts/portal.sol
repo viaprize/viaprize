@@ -13,9 +13,9 @@ contract Portal {
     mapping(address => uint256) public patronAmount;
     uint256 public totalFunds;
     uint256 public totalRewards;
-    bool allowDonationAboveGoalAmount;
-    bool isActive;
-    bool allowImmediately;
+    bool public allowDonationAboveGoalAmount;
+    bool public isActive;
+    bool public  allowImmediately;
     // uint256 deadline1 = 0;
     
     
@@ -190,5 +190,14 @@ contract Portal {
 
     // }
 
-    // // function refundAmount
+    function refundPatrons() public {
+        require(isProposers[msg.sender] == true, "you are not an owner to close the campaign");
+       
+        for (uint256 i = 0; i < patrons.length; i++) {
+            payable(patrons[i]).transfer(patronAmount[patrons[i]]);
+        }
+        isActive = false;
+        totalRewards = 0;
+        totalFunds = 0;
+    }
 }

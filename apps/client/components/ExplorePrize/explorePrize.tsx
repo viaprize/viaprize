@@ -41,7 +41,7 @@ function ExploreCard({
   submissionDays,
 }: ExploreCardProps) {
   const deadlineString = calculateDeadline(createdAt, submissionDays);
-
+  
   return (
     <Card
       padding="lg"

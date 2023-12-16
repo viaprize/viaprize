@@ -3,10 +3,9 @@ import { formatEther } from 'viem';
 import PortalCard from './portal-card';
 
 export default async function FetchPortals() {
-  
   const portals = (
     await new Api().portals.portalsList({
-      limit: 10,
+      limit: 20,
       page: 1,
     })
   ).data.data;
@@ -23,6 +22,7 @@ export default async function FetchPortals() {
             totalContributors="0"
             title={portal.title}
             key={portal.id}
+            typeOfPortal={portal.sendImmediately ? 'GoFundMe' : 'KickStarter'}
             id={portal.id}
           />
         );

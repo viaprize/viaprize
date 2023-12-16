@@ -17,6 +17,8 @@ export class BlockchainService {
     return this.provider.getBalance(address);
   }
 
+
+
   async getSubmissionTime(viaprizeContractAddress: string): Promise<bigint> {
     const abi = ['function get_submission_time() view returns (uint256)'];
     const contract = new ethers.Contract(
@@ -36,6 +38,16 @@ export class BlockchainService {
       this.provider,
     );
     return await contract.get_voting_time();
+  }
+
+  async isPortalActive(portalContractAddress: string): Promise<boolean> {
+    const abi = ['function isActive() view returns (bool)'];
+    const contract = new ethers.Contract(
+      portalContractAddress,
+      abi,
+      this.provider,
+    );
+    return await contract.isActive();
   }
 
   async getTotalRewardsOfPortal(

@@ -124,7 +124,6 @@ export default function ProposalsTabs({
                       toast.dismiss(secondToast);
                       console.log(prize, 'prize');
                       toast.success(`Prize Address ${prizeAddress} `);
-
                       toast.promise(router.push('/prize/explore'), {
                         loading: 'Redirecting Please Wait',
                         error: 'Error while redirecting ',
