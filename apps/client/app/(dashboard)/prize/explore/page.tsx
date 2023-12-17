@@ -18,11 +18,11 @@ function ExplorePage() {
           </Text>
         </div>
         <Group mt="md" mb="md" className="max-sm:ml-7">
-          <Link href="/portal/about">
-            <Button component="a">About Portals</Button>
+          <Link href="/prize/about">
+            <Button component="a">About Prizes</Button>
           </Link>
-          <Link href="/portal/create">
-            <Button component="a">Create Portal</Button>
+          <Link href="/prize/create">
+            <Button component="a">Create Prizes</Button>
           </Link>
         </Group>
       </div>
