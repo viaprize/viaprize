@@ -72,7 +72,7 @@ export default function MainTabsUserProfile() {
           {getPrizesOfUserMutation.data?.map((prize) => {
             return (
               <ExploreCard
-                distributed={''}
+                distributed={false}
                 description={prize.description}
                 submissionDays={prize.submissionTime}
                 createdAt={prize.created_at}
