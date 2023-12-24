@@ -47,7 +47,7 @@ export default function HeaderLayout() {
     console.log(ready, 'ready');
     console.log(wallet, 'wallet');
     console.log(loaded && ready && (!wallet || wallet.address != ''), 'final boolean');
-    if (loaded && ready && (!wallet || wallet.address != '')) {
+    if (loaded && ready && !wallets[0] && appUser) {
       logoutUser();
     }
   }, []);
