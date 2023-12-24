@@ -1,7 +1,6 @@
 import { Divider, Loader, Skeleton, Tabs } from '@mantine/core';
 
 import { backendApi } from '@/lib/backend';
-import { calculateDeadline } from '@/lib/utils';
 import { useRouter } from 'next/router';
 import { formatEther } from 'viem';
 import { usePublicClient, useQuery } from 'wagmi';
@@ -73,6 +72,7 @@ export default function MainTabsUserProfile() {
           {getPrizesOfUserMutation.data?.map((prize) => {
             return (
               <ExploreCard
+                distributed={''}
                 description={prize.description}
                 submissionDays={prize.submissionTime}
                 createdAt={prize.created_at}
