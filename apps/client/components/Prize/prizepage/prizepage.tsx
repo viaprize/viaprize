@@ -8,7 +8,6 @@ import {
   Group,
   NumberInput,
   Stack,
-  Text,
   Title,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -121,6 +120,8 @@ export default function PrizePageComponent({
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
         <Title order={2}>{prize.title}</Title>
+        {prize.distributed ? <Title order={3}>Prize Has Ended</Title> : null}
+
         {/* <Group justify="right" gap="0" wrap="nowrap">
           <Button color="black" mx="5px">
             Upvote

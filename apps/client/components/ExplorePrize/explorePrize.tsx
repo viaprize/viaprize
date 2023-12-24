@@ -18,6 +18,7 @@ import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { PiTimerFill } from 'react-icons/pi';
 
 interface ExploreCardProps {
+  distributed: boolean;
   imageUrl: string;
   title: string;
   profileName: string;
@@ -38,11 +39,12 @@ function ExploreCard({
   createdAt,
   id,
   skills,
+  distributed,
   submissionDays,
 }: ExploreCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const deadlineString = calculateDeadline(createdAt, submissionDays);
-  
+
   return (
     <Card
       padding="lg"
@@ -71,6 +73,8 @@ function ExploreCard({
         >
           {deadlineString.remainingTime}
         </Text>
+
+        {distributed ? <Text>Prize Has Ended</Text> : null}
       </div>
       <Group mb="xs" mt="md" justify="space-between">
         <Text fw={500}>{title}</Text>
