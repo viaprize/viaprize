@@ -70,8 +70,10 @@ export default function useAppUser() {
   };
 
   const logoutUser = async (): Promise<void> => {
-    await logout();
-    clearUser();
+    await logout().finally(() => {
+      clearUser();
+    });
+
     await router.push('/');
   };
 

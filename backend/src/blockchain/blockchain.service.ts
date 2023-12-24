@@ -53,6 +53,20 @@ export class BlockchainService {
     });
   }
 
+  async getIsPrizeDistributed(viaprizeContractAddress: string): Promise<boolean> {
+
+    const abi = ['function distributed() view returns (bool)'];
+    const contract = new ethers.Contract(
+      viaprizeContractAddress,
+      abi,
+      this.provider,
+    );
+    return await contract.distributed().catch((e) => {
+      console.log(e)
+      return false
+    });
+  }
+
   async getTotalRewardsOfPortal(
     portalContractAddress: string,
   ): Promise<bigint> {

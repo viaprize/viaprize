@@ -28,9 +28,11 @@ import { Submission } from './entities/submission.entity';
 import { SubmissionService } from './services/submissions.service';
 
 interface PrizeWithBalance extends Prize {
+  distributed: boolean;
   balance: number;
 }
 interface PrizeWithBlockchainData extends PrizeWithBalance {
+  distributed: boolean;
   submission_time_blockchain: number;
   voting_time_blockchain: number;
 }
@@ -73,7 +75,7 @@ export class PrizesController {
     private readonly blockchainService: BlockchainService,
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
-  ) {}
+  ) { }
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -148,8 +150,10 @@ export class PrizesController {
         const balance = await this.blockchainService.getBalanceOfAddress(
           prize.contract_address,
         );
+        const distributed = await this.blockchainService.getIsPrizeDistributed(prize.contract_address)
         return {
           ...prize,
+          distributed: distributed,
           balance: parseInt(balance.toString()),
         } as PrizeWithBalance;
       }),
@@ -175,9 +179,11 @@ export class PrizesController {
     const voting_time = await this.blockchainService.getVotingTime(
       prize.contract_address,
     );
+    const distributed = await this.blockchainService.getIsPrizeDistributed(prize.contract_address)
 
     return {
       ...prize,
+      distributed: distributed,
       balance: parseInt(balance.toString()),
       submission_time_blockchain: parseInt(submission_time.toString()),
       voting_time_blockchain: parseInt(voting_time.toString()),
