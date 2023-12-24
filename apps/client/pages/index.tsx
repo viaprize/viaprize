@@ -326,7 +326,7 @@ function StoryCard({
 }) {
   return (
     <div
-      className={`bg-[#486B78] md:flex ${
+      className={`bg-[#4c717f] md:flex ${
         side === 'right' ? 'flex-row-reverse' : ''
       } p-6 rounded-lg shadow-lg`}
     >

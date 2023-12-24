@@ -20,6 +20,7 @@ export default function PrizePageTabs({
   const { data: balance } = useBalance({
     address: contractAddress as `0x${string}`,
   });
+  console.log(contractAddress, 'contractAddress');
   // const interval = useInterval(async () => {
   //   console.log("hiii")
   //   await refetch()
@@ -43,6 +44,7 @@ export default function PrizePageTabs({
         <AboutPrize
           description={description}
           balanceWithDenomation={`${balance?.formatted} ${balance?.symbol}`}
+          contractAddress={contractAddress}
         />
       </Tabs.Panel>
       <Tabs.Panel value="creators">

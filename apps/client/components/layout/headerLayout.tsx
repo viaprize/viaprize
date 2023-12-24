@@ -7,15 +7,18 @@ import {
   Divider,
   Flex,
   Menu,
+  Pill,
   Stack,
   Text,
   Tooltip,
   useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useWallets } from '@privy-io/react-auth';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconCopy, IconMoonStars, IconSun } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 // function getEmailInitials(email: string) {
 //   const [username, domain] = email.split('@');
@@ -30,12 +33,28 @@ import Link from 'next/link';
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-
+  const [loaded, setLoaded] = useState(false);
   const { wallets } = useWallets();
+  const { ready } = usePrivy();
+  const { wallet } = usePrivyWagmi();
+  const { appUser, logoutUser } = useAppUser();
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
+  useEffect(() => {
+    console.log(loaded, 'loaded');
+    console.log(wallets, 'wallets');
+    console.log(ready, 'ready');
+    console.log(wallet, 'wallet');
+    console.log(loaded && ready && (!wallet || wallet.address != ''), 'final boolean');
+    if (loaded && ready && (!wallet || wallet.address != '')) {
+      logoutUser();
+    }
+  }, []);
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
-  const { appUser } = useAppUser();
+
   const [portalOpened, { close: portalMenuClose, open: portalMenuOpen }] =
     useDisclosure(false);
   const [prizeOpened, { close: prizeMenuClose, open: prizeMenuOpen }] =
@@ -106,6 +125,9 @@ export default function HeaderLayout() {
           </Menu.Dropdown>
         </Menu>
       </Flex>
+      <Pill color="red" size="lg" radius="xs">
+        Live On OP Mainnet Only (Multichain Coming Soon)
+      </Pill>
 
       <Flex gap="md" align="center">
         <Card className="hidden sm:block py-1 my-2">

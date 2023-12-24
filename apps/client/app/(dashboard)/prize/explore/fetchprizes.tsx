@@ -22,6 +22,7 @@ export default async function FetchPrizes() {
       {prizes.map((prize) => {
         return (
           <ExploreCard
+            distributed={prize.distributed}
             description={prize.description}
             imageUrl={prize.images[0]}
             createdAt={prize.created_at}

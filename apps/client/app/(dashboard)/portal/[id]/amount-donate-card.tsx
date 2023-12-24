@@ -7,6 +7,7 @@ import {
   Badge,
   Button,
   Card,
+  CopyButton,
   Divider,
   Flex,
   NumberInput,
@@ -14,7 +15,7 @@ import {
   Text,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconCurrencyEthereum, IconRefresh } from '@tabler/icons-react';
+import { IconCheck, IconCopy, IconRefresh } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -64,7 +65,7 @@ export default function AmountDonateCard({
       radius="md"
       shadow="md"
       withBorder
-      className="flex flex-col justify-between w-full lg:max-w-[300px] my-3 lg:my-0"
+      className="flex flex-col justify-between w-full lg:max-w-[350px] my-3 lg:my-0"
     >
       <div>
         <Badge color="gray" variant="light" radius="sm" mb="sm">
@@ -102,16 +103,28 @@ export default function AmountDonateCard({
         </Text> */}
       </div>
       <div>
-        <Text>Project Recipient Address</Text>
+        <Text>
+          Project Donation Address{' '}
+          <CopyButton value={recipientAddress}>
+            {({ copied, copy }) => (
+              <ActionIcon
+                ml="md"
+                onClick={copy}
+                style={{
+                  backgroundColor: copied ? '#3d4070' : '#3d4070',
+                }}
+              >
+                {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+              </ActionIcon>
+            )}
+          </CopyButton>
+        </Text>
+        <Flex></Flex>
+        <Text size="sm" my={'sm'}>
+          {recipientAddress}
+        </Text>
+
         <Divider my="sm" />
-        <Badge color="gray" p="md">
-          <Flex gap="md">
-            <Text size="sm">
-              {recipientAddress.slice(0, 5)}....{recipientAddress.slice(-5)}
-            </Text>
-            <IconCurrencyEthereum size={20} />
-          </Flex>
-        </Badge>
       </div>
 
       {/* // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({

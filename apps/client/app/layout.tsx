@@ -1,5 +1,7 @@
 'use client';
 
+import NavigationProvider from '@/components/layout/navigation-progress';
+import { configureChainsConfig } from '@/lib/wagmi';
 import { env } from '@env';
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
@@ -12,8 +14,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { theme } from 'utils/theme';
-import NavigationProvider from '@/components/layout/navigation-progress';
-import { configureChainsConfig } from '@/lib/wagmi';
 import '../styles/globals.css';
 import '../styles/index.css';
 

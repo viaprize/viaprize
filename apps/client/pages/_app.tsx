@@ -1,7 +1,8 @@
 import { OwnLoader } from '@/components/custom/loader';
+import NavigationProvider from '@/components/layout/navigation-progress';
 import { configureChainsConfig } from '@/lib/wagmi';
 import { env } from '@env';
-import { MantineProvider, createTheme } from '@mantine/core';
+import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dropzone/styles.css';
 import '@mantine/tiptap/styles.css';
@@ -16,10 +17,9 @@ import { Router } from 'next/router';
 import { useEffect, useState, type ReactElement, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
+import { theme } from 'utils/theme';
 import '../styles/globals.css';
 import '../styles/index.css';
-import { theme } from 'utils/theme';
-import NavigationProvider from '@/components/layout/navigation-progress';
 
 const queryClient = new QueryClient();
 

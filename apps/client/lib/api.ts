@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { env } from "@env";
+import { env } from '@env';
 
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
@@ -266,6 +266,7 @@ export interface ReadonlyTypeO4 {
 }
 
 export interface PrizeWithBalance {
+  distributed: boolean;
   balance: number;
   id: string;
   description: string;
@@ -292,6 +293,7 @@ export interface PrizeWithBalance {
 }
 
 export interface PrizeWithBlockchainData {
+  distributed: boolean;
   submission_time_blockchain: number;
   voting_time_blockchain: number;
   balance: number;
