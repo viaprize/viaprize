@@ -1,26 +1,43 @@
 'use client';
+import { chain } from '@/lib/wagmi';
 import {
   AppShell,
   Burger,
+  Button,
   Center,
   Flex,
+  Modal,
   useComputedColorScheme,
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { optimism } from '@wagmi/chains';
+import { switchNetwork } from '@wagmi/core';
 import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import Footer from './footer';
 import HeaderLayout from './headerLayout';
 import MobileNavbar from './mobileNavbar';
 import ProfileMenu from './profilemenu';
-
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
   const [opened, { toggle }] = useDisclosure();
+  const [openedChainModal, { open: openChainModal, close: closeChainModal }] =
+    useDisclosure(false);
   const computedColorScheme = useComputedColorScheme('light');
-
+  useEffect(() => {
+    if (chain.id != optimism.id) {
+      openChainModal();
+    }
+  }, [chain.id]);
+  const switchToOptimism = async () => {
+    await switchNetwork({
+      chainId: 1,
+    }).then(() => {
+      closeChainModal();
+    });
+  };
   return (
     <AppShell
       header={{ height: 60 }}
@@ -37,6 +54,16 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         },
       }}
     >
+      <Modal
+        opened={openedChainModal}
+        onClose={closeChainModal}
+        withCloseButton={false}
+        size="sm"
+        centered
+        title="Wrong Network"
+      >
+        <Button onClick={() => switchToOptimism()}> Switch To Optimism</Button>
+      </Modal>
       <AppShell.Header
         p="md"
         py="lg"
@@ -54,7 +81,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar>
-        <MobileNavbar close={toggle}  open={opened} />
+        <MobileNavbar close={toggle} open={opened} />
       </AppShell.Navbar>
 
       <AppShell.Main>
