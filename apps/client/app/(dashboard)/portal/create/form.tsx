@@ -30,7 +30,7 @@ import { useMutation } from 'wagmi';
 
 export default function PortalForm() {
   const [files, setFiles] = useState<FileWithPath[]>([]);
-  const [value, setValue] = useState('');
+  const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');
   const [address, setAddress] = useState('');
   const [fundingGoal, setFundingGoal] = useState<number>();
@@ -50,13 +50,13 @@ export default function PortalForm() {
   const { data: crytoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
     const final = await (
       await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=${chain.name.toLowerCase()}&vs_currencies=usd`,
+        `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
       )
     ).json();
     return Object.keys(final).length === 0
       ? {
           [chain.name.toLowerCase()]: {
-            usd: 2183.63,
+            usd: 2357.89,
           },
         }
       : final;
@@ -67,7 +67,7 @@ export default function PortalForm() {
       toast.error('Error converting USD to Crypto');
       return 0;
     }
-    const cryto_to_usd_value = crytoToUsd[chain.name.toLowerCase()].usd;
+    const cryto_to_usd_value = crytoToUsd['ethereum'].usd;
     const eth_to_cryto = usd / cryto_to_usd_value;
     return parseFloat(eth_to_cryto.toFixed(4));
   }
@@ -132,7 +132,7 @@ export default function PortalForm() {
       description: richtext,
       tags: generateTags(),
       images: [newImages] as string[],
-      title: value,
+      title: title,
       proposerAddress: wallet.address,
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
@@ -168,26 +168,27 @@ export default function PortalForm() {
       <TextInput
         label="Portal Name"
         placeholder="Waste Management System for the City of Lagos"
-        value={value}
+        value={title}
         onChange={(event) => {
-          setValue(event.currentTarget.value);
+          setTitle(event.currentTarget.value);
         }}
         radius="md"
         rightSectionPointerEvents="all"
         mt="md"
+        required
         className="focus:border-blue-600"
         rightSection={
           <CloseButton
             aria-label="Clear input"
             onClick={() => {
-              setValue('');
+              setTitle('');
             }}
-            style={{ display: value ? undefined : 'none' }}
+            style={{ display: title ? undefined : 'none' }}
           />
         }
       />
       <div className="mt-3">
-        <Title order={4}>Tell us about your project... </Title>
+        <Title order={4}>Required: Tell us about your project... </Title>
         <Text>Aim for 200-500 words</Text>
       </div>
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
@@ -203,11 +204,13 @@ export default function PortalForm() {
           <div className="flex gap-1 justify-start items-center w-full" key={item}> */}
       <TextInput
         type="text"
+        label="Portal Admin"
         placeholder="Enter Admin Address"
         className="w-full"
         onChange={(e) => {
           setAddress(e.target.value);
         }}
+        required
       />
       {/* {address.length > 1 && (
               <Button
@@ -281,7 +284,9 @@ export default function PortalForm() {
               </Text>
             </div>
             <NumberInput
+              required
               min={0}
+              label="Funding Goal"
               leftSection="$"
               placeholder="Enter Funding Goal in USD"
               className="w-full"
@@ -305,6 +310,9 @@ export default function PortalForm() {
         )}
         {portalType === 'kickstarter' ? (
           <DateTimePicker
+            withAsterisk
+            minDate={new Date()}
+            required
             label="Deadline"
             value={deadline}
             onChange={setDeadline}
@@ -327,6 +335,13 @@ export default function PortalForm() {
         radius="md"
         loading={submittingProposal || loading}
         onClick={handleSubmit}
+        disabled={
+          !title ||
+          !richtext ||
+          !address ||
+          !files.length ||
+          (portalType === 'kickstarter' && (!fundingGoal || !deadline))
+        }
       >
         Create Portal
       </Button>

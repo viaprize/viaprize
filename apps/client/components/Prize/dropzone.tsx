@@ -37,6 +37,7 @@ export default function ImageComponent(props: ImageComponentProps) {
 
   return (
     <div className="overflow-hidden">
+      Required to upload an image
       {props.files.length === 0 ? (
         <Dropzone
           onDrop={props.setfiles}
