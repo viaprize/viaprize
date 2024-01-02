@@ -57,11 +57,19 @@ const AdminCard: React.FC<AdminCardProps> = ({
     <>
       <Modal opened={opened} onClose={close} title="Update Fee Percentage" centered>
         <TextInput
+          value={platfromFeePercentage}
+          onChange={(event) => {
+            setnewPlatfromFeePercentage(Number(event.currentTarget.value));
+          }}
           label={`${platfromFeePercentage} % is the Current Platform Fee for this proposal`}
           placeholder="Enter in %"
           description="Click Submit to confirm"
         />
         <TextInput
+          value={proposerFeePercentage}
+          onChange={(event) => {
+            setnewProposerFeePercentage(Number(event.currentTarget.value));
+          }}
           label={`${proposerFeePercentage} % is the Current Proposer Fee for this proposal`}
           placeholder="Enter in %"
           description="Click Submit to confirm"
