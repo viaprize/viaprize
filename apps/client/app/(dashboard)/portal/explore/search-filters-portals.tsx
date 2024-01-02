@@ -50,7 +50,6 @@ export default function SearchFiltersPortals() {
           className="sm:w-[500px]"
         />
         <Group justify="space-between">
-
           <Button onClick={open}>Filter</Button>
           <Menu shadow="md" width={200}>
             <Menu.Target>

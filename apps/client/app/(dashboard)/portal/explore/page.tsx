@@ -8,7 +8,7 @@ import FetchPortals from './fetchportals';
 export default function ExplorePortal() {
   return (
     <div className="max-w-screen-xl w-screen">
-      <div className='sm:flex justify-between'>
+      <div className="sm:flex justify-between">
         <div>
           <Text size="25px" fw="bolder" mt="md" ml="md">
             Explore Portal
@@ -17,7 +17,7 @@ export default function ExplorePortal() {
             you can explore portal and work on them
           </Text>
         </div>
-        <Group mt="md" mb="md" className='max-sm:ml-7'>
+        <Group mt="md" mb="md" className="max-sm:ml-7">
           <Link href="/portal/about">
             <Button component="a">About Portals</Button>
           </Link>

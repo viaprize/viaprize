@@ -119,7 +119,6 @@ export const calculateDeadline = (
   return { remainingTime, dateString };
 };
 
-
 export const formatDate = (date: string): string => {
   const format = new Intl.DateTimeFormat('en-ZA', {
     weekday: 'short',
