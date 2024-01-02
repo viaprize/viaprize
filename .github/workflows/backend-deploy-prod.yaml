@@ -24,7 +24,7 @@ jobs:
             git add -A 
             git stash 
             git pull origin
-            git checkout dev
+            git checkout main
             exit
       - name: Copy Env
         uses: appleboy/ssh-action@master
