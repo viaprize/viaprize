@@ -35,6 +35,8 @@ function Proposals({
               title={proposal.title}
               user={proposal.user}
               voting={proposal.voting_time}
+              proposerFeePercentage={proposal.proposerFeePercentage}
+              platfromFeePercentage={proposal.platformFeePercentage}
             />
           ))}
           {data.portalsProposals?.map((portalProposal: PortalProposals) => (

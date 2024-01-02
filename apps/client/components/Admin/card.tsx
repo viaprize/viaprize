@@ -1,10 +1,20 @@
 import { User } from '@/lib/api';
-import { Badge, Button, Card, Group, Image, Modal, Text, Textarea } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Card,
+  Group,
+  Image,
+  Modal,
+  Text,
+  TextInput,
+  Textarea,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import usePrizeProposal from '../hooks/usePrizeProposal';
 import ViewDetails from './details';
-
 interface AdminCardProps {
   images: string[];
   user: User;
@@ -14,6 +24,8 @@ interface AdminCardProps {
   voting: number;
   submission: number;
   id: string;
+  proposerFeePercentage: number;
+  platfromFeePercentage: number;
 }
 
 const AdminCard: React.FC<AdminCardProps> = ({
@@ -25,17 +37,52 @@ const AdminCard: React.FC<AdminCardProps> = ({
   title,
   user,
   voting,
+  proposerFeePercentage,
+  platfromFeePercentage,
 }) => {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [comment, setComment] = useState('');
-  const { acceptProposal, rejectProposal } = usePrizeProposal();
+  const { acceptProposal, rejectProposal, updateProposal } = usePrizeProposal();
   const acceptProposalMutation = useMutation(acceptProposal);
   const rejectProposalMutation = useMutation(rejectProposal);
-
+  const [opened, { open, close }] = useDisclosure(false);
+  const [newPlatfromFeePercentage, setnewPlatfromFeePercentage] =
+    useState(platfromFeePercentage);
+  const [newProposerFeePercentage, setnewProposerFeePercentage] =
+    useState(proposerFeePercentage);
+  const updateProposalMutation = useMutation(updateProposal);
   console.log({ images }, 'in admin card');
   return (
     <>
+      <Modal opened={opened} onClose={close} title="Update Fee Percentage" centered>
+        <TextInput
+          label={`${platfromFeePercentage} % is the Current Platform Fee for this proposal`}
+          placeholder="Enter in %"
+          description="Click Submit to confirm"
+        />
+        <TextInput
+          label={`${proposerFeePercentage} % is the Current Proposer Fee for this proposal`}
+          placeholder="Enter in %"
+          description="Click Submit to confirm"
+        />
+        <Button
+          onClick={async () => {
+            await updateProposalMutation.mutateAsync({
+              id,
+              dto: {
+                proposerFeePercentage: newProposerFeePercentage,
+                platformFeePercentage: newPlatfromFeePercentage,
+              },
+            });
+            window.location.reload();
+          }}
+          loading={updateProposalMutation.isLoading}
+        >
+          {' '}
+          Confirm
+        </Button>
+      </Modal>
       <Card shadow="sm" padding="lg" radius="md" withBorder my="md">
         <Card.Section>
           {images.length > 0
@@ -101,6 +148,9 @@ const AdminCard: React.FC<AdminCardProps> = ({
             }}
           >
             Accept
+          </Button>
+          <Button color="blue" onClick={open}>
+            Edit
           </Button>
         </Group>
       </Card>

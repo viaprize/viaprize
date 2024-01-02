@@ -1,5 +1,5 @@
 import { storeFiles } from '@/context/tools';
-import { CreatePrizeProposalDto, PrizeProposals } from '@/lib/api';
+import { CreatePrizeProposalDto, PrizeProposals, UpdatePrizeDto } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
 import { useState } from 'react';
 
@@ -19,6 +19,11 @@ export default function usePrizeProposal() {
   const uploadImages = async (files: File[]) => {
     const images = await storeFiles(files);
     return images;
+  };
+
+  const updateProposal = async ({ id, dto }: { id: string; dto: UpdatePrizeDto }) => {
+    const res = await (await backendApi()).prizes.proposalsUpdate(id, dto);
+    return res.data;
   };
 
   const getProposalsOfUser = async (
@@ -98,5 +103,6 @@ export default function usePrizeProposal() {
     acceptProposal,
     rejectProposal,
     getAcceptedProposals,
+    updateProposal,
   };
 }
