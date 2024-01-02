@@ -58,7 +58,11 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
     <>
       <Modal opened={opened} onClose={close} title="Update Fee Percentage" centered>
         <TextInput
+          value={newPlatfromFeePercentage}
           label={`${platfromFeePercentage} % is the Current Platform Fee for this proposal`}
+          onChange={(event) => {
+            setnewPlatfromFeePercentage(parseInt(event.currentTarget.value));
+          }}
           placeholder="Enter in %"
           description="Click Submit to confirm"
         />

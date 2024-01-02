@@ -28,16 +28,18 @@ const navbnarItems = [
   },
 ];
 
-export default function MobileNavbar({ close, open }: { close: () => void , open:boolean}) {
-
-
+export default function MobileNavbar({
+  close,
+  open,
+}: {
+  close: () => void;
+  open: boolean;
+}) {
   const pathName = usePathname();
 
-
-
   useEffect(() => {
-    if (open){
-    close();
+    if (open) {
+      close();
     }
   }, [pathName]);
 
