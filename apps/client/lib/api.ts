@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { env } from '@env';
+import { env } from "@env";
 
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
@@ -147,6 +147,8 @@ export interface PrizeProposals {
   startVotingDate: string;
   /** @format date-time */
   startSubmissionDate: string;
+  platformFeePercentage: number;
+  proposerFeePercentage: number;
   proficiencies: string[];
   priorities: string[];
   images: string[];
@@ -167,6 +169,7 @@ export interface PortalProposals {
   proposerAddress: string;
   treasurers: string[];
   tags: string[];
+  platformFeePercentage: number;
   isApproved: boolean;
   isRejected: boolean;
   /** @format date-time */
@@ -238,6 +241,7 @@ export interface CreatePortalProposalDto {
   tags: string[];
   images: string[];
   title: string;
+  platformFeePercentage?: number;
 }
 
 /** Make all properties in T readonly */
@@ -252,6 +256,16 @@ export interface RejectProposalDto {
 
 export interface Http200Response {
   message: string;
+}
+
+export interface UpdatePortalDto {
+  platformFeePercentage: number;
+  address?: string;
+  proposal_id?: string;
+}
+
+export interface UpdatePlatformFeeDto {
+  platformFeePercentage: number;
 }
 
 export interface CreatePrizeDto {
@@ -319,6 +333,46 @@ export interface PrizeWithBlockchainData {
   title: string;
   submissions: Submission[];
   user: User;
+}
+
+export interface UpdatePrizeDto {
+  platformFeePercentage: number;
+  proposerFeePercentage: number;
+  voting_time?: number;
+  submission_time?: number;
+  admins?: string[];
+  title?: string;
+  description?: string;
+  proposer_address?: string;
+  isAutomatic?: boolean;
+  /** @format date-time */
+  startVotingDate?: string;
+  /** @format date-time */
+  startSubmissionDate?: string;
+  proficiencies?: (
+    | 'Programming'
+    | 'Python'
+    | 'JavaScript'
+    | 'Writing'
+    | 'Design'
+    | 'Translation'
+    | 'Research'
+    | 'Real estate'
+    | 'Apps'
+    | 'Hardware'
+    | 'Art'
+    | 'Meta'
+    | 'AI'
+  )[];
+  priorities?: (
+    | 'Climate change'
+    | 'Network civilizations'
+    | 'Open-source'
+    | 'Community coordination'
+    | 'Health'
+    | 'Education'
+  )[];
+  images?: string[];
 }
 
 export interface CreateSubmissionDto {
@@ -875,6 +929,44 @@ the `approve` method of the `portalProposalsService` with the given `id`
         format: 'json',
         ...params,
       }),
+
+    /**
+     * @description it updates the proposal
+     *
+     * @name ProposalsUpdate
+     * @request PUT:/portals/proposals/{id}
+     * @secure
+     */
+    proposalsUpdate: (id: string, data: UpdatePortalDto, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/proposals/${id}`,
+        method: 'PUT',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
+ *
+ * @name ProposalsPlatformFeeCreate
+ * @summary The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
+the ``setPlatformFee method of the `portalProposalsService` with the given `id`
+ * @request POST:/portals/proposals/platformFee/{id}
+ * @secure
+ */
+    proposalsPlatformFeeCreate: (id: string, data: UpdatePlatformFeeDto, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/proposals/platformFee/${id}`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
   };
   prizes = {
     /**
@@ -939,6 +1031,24 @@ the `approve` method of the `portalProposalsService` with the given `id`
       this.request<PrizeWithBlockchainData, any>({
         path: `/prizes/${id}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description it updates the proposal
+     *
+     * @name ProposalsUpdate
+     * @request PUT:/prizes/proposals/{id}
+     * @secure
+     */
+    proposalsUpdate: (id: string, data: UpdatePrizeDto, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/proposals/${id}`,
+        method: 'PUT',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -1108,6 +1218,26 @@ the `approve` method of the `prizeProposalsService` with the given `id`
         path: `/prizes/proposals/accept/${id}`,
         method: 'POST',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
+ *
+ * @name ProposalsPlatformFeeCreate
+ * @summary The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
+the ``setPlatformFee method of the `portalProposalsService` with the given `id`
+ * @request POST:/prizes/proposals/platformFee/{id}
+ * @secure
+ */
+    proposalsPlatformFeeCreate: (id: string, data: UpdatePlatformFeeDto, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/proposals/platformFee/${id}`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

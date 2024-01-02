@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -13,6 +14,7 @@ import { PrizesService } from './services/prizes.service';
 import { TypedBody, TypedParam } from '@nestia/core';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
+import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
 import { UsersService } from 'src/users/users.service';
 import { Http200Response } from 'src/utils/types/http.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
@@ -22,6 +24,7 @@ import { InfinityPaginationResultType } from '../utils/types/infinity-pagination
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
+import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
 import { Submission } from './entities/submission.entity';
@@ -75,7 +78,7 @@ export class PrizesController {
     private readonly blockchainService: BlockchainService,
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
-  ) { }
+  ) {}
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -150,7 +153,9 @@ export class PrizesController {
         const balance = await this.blockchainService.getBalanceOfAddress(
           prize.contract_address,
         );
-        const distributed = await this.blockchainService.getIsPrizeDistributed(prize.contract_address)
+        const distributed = await this.blockchainService.getIsPrizeDistributed(
+          prize.contract_address,
+        );
         return {
           ...prize,
           distributed: distributed,
@@ -179,7 +184,9 @@ export class PrizesController {
     const voting_time = await this.blockchainService.getVotingTime(
       prize.contract_address,
     );
-    const distributed = await this.blockchainService.getIsPrizeDistributed(prize.contract_address)
+    const distributed = await this.blockchainService.getIsPrizeDistributed(
+      prize.contract_address,
+    );
 
     return {
       ...prize,
@@ -187,6 +194,27 @@ export class PrizesController {
       balance: parseInt(balance.toString()),
       submission_time_blockchain: parseInt(submission_time.toString()),
       voting_time_blockchain: parseInt(voting_time.toString()),
+    };
+  }
+
+  /**
+   * it updates the proposal
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {Promise<Http200Response>}
+   */
+  @Put('/proposals/:id')
+  @UseGuards(AdminAuthGuard)
+  async updateProposal(
+    @TypedParam('id') id: string,
+    @TypedBody() updateBody: UpdatePrizeDto,
+  ): Promise<Http200Response> {
+    const proposal = await this.prizeProposalsService.update(id, updateBody);
+
+    return {
+      message: `Proposal with id ${id} has been updated`,
     };
   }
 
@@ -483,6 +511,31 @@ export class PrizesController {
     );
     return {
       message: `Proposal with id ${id} has been accepted`,
+    };
+  }
+
+  /**
+   * The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
+   * the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {Promise<Http200Response>}
+   */
+  @Post('/proposals/platformFee/:id')
+  @UseGuards(AdminAuthGuard)
+  async setPlatformFee(
+    @TypedParam('id') id: string,
+    @TypedBody() updateFeePlatformPrize: UpdatePlatformFeeDto,
+  ): Promise<Http200Response> {
+    await this.prizeProposalsService.setPlatformFee(
+      id,
+      updateFeePlatformPrize.platformFeePercentage,
+    );
+    return {
+      message: `Prize proposal with id ${id} has been updated`,
     };
   }
 }

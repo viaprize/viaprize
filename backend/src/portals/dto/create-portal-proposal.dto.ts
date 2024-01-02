@@ -66,4 +66,9 @@ export class CreatePortalProposalDto {
   @IsString()
   @IsNotEmpty()
   title: string;
+
+  @Expose()
+  @IsOptional()
+  @IsNumber()
+  platformFeePercentage?: number;
 }

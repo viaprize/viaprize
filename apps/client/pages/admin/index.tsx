@@ -35,6 +35,8 @@ function Proposals({
               title={proposal.title}
               user={proposal.user}
               voting={proposal.voting_time}
+              proposerFeePercentage={proposal.proposerFeePercentage}
+              platfromFeePercentage={proposal.platformFeePercentage}
             />
           ))}
           {data.portalsProposals?.map((portalProposal: PortalProposals) => (
@@ -48,6 +50,7 @@ function Proposals({
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
               id={portalProposal.id}
+              platfromFeePercentage={portalProposal.platformFeePercentage}
               key={portalProposal.id}
             />
           ))}
@@ -97,6 +100,7 @@ function AccpetedProposals({
               title={portalProposal.title}
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
+              platfromFeePercentage={portalProposal.platformFeePercentage}
               id={portalProposal.id}
               disableButton
             />

@@ -51,6 +51,9 @@ export class PortalProposals {
   @Column('simple-array')
   tags: string[];
 
+  @Column({ default: 5 })
+  platformFeePercentage: number;
+
   @Column({ default: false })
   isApproved: boolean;
 
