@@ -182,6 +182,9 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
               >
                 Accept
               </Button>
+              <Button color="blue" onClick={open}>
+                Edit
+              </Button>
             </Group>
           )}
         </Group>
