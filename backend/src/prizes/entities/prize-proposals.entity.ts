@@ -46,6 +46,9 @@ export class PrizeProposals {
   @Column({ default: 5 })
   platformFeePercentage: number;
 
+  @Column({ default: 5 })
+  proposerFeePercentage: number;
+
   @Column('simple-array')
   proficiencies: string[];
 

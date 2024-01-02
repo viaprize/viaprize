@@ -565,7 +565,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Retrieve a list of accepted Portal proposals\r\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\r\nparameters",
+        "summary": "Retrieve a list of accepted Portal proposals\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\nparameters",
         "description": "The code snippet you provided is a method in the `PortalsController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
         "security": [
           {
@@ -578,7 +578,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Retrieve a list of accepted Portal proposals\r\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\r\nparameters",
+                "text": "Retrieve a list of accepted Portal proposals\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\nparameters",
                 "kind": "text"
               }
             ]
@@ -940,6 +940,173 @@
         "x-nestia-method": "POST"
       }
     },
+    "/portals/proposals/{id}": {
+      "put": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePortalDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "it updates the proposal",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.proposals.updateProposal",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "PUT"
+      }
+    },
+    "/portals/proposals/platformFee/{id}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlatformFeeDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls\nthe ``setPlatformFee method of the `portalProposalsService` with the given `id`",
+        "description": "The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls\nthe ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.proposals.platformFee.setPlatformFee",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
     "/prizes/submission/{id}": {
       "get": {
         "tags": [],
@@ -1141,6 +1308,89 @@
         "x-nestia-namespace": "prizes.getPrize",
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/proposals/{id}": {
+      "put": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePrizeDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "it updates the proposal",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "prizes.proposals.updateProposal",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "PUT"
       }
     },
     "/prizes/{id}/submission": {
@@ -1467,7 +1717,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
+        "summary": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
         "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
         "security": [
           {
@@ -1480,7 +1730,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
+                "text": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
                 "kind": "text"
               }
             ]
@@ -1804,6 +2054,90 @@
           }
         ],
         "x-nestia-namespace": "prizes.proposals.accept.approveProposal",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/prizes/proposals/platformFee/{id}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePlatformFeeDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls\nthe ``setPlatformFee method of the `portalProposalsService` with the given `id`",
+        "description": "The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls\nthe ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "prizes.proposals.platformFee.setPlatformFee",
         "x-nestia-jsDocTags": [
           {
             "name": "date",
@@ -3012,6 +3346,16 @@
             "type": "string",
             "format": "date-time"
           },
+          "platformFeePercentage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "proposerFeePercentage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
           "proficiencies": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3059,6 +3403,8 @@
           "isAutomatic",
           "startVotingDate",
           "startSubmissionDate",
+          "platformFeePercentage",
+          "proposerFeePercentage",
           "proficiencies",
           "priorities",
           "images",
@@ -3140,6 +3486,11 @@
               "type": "string"
             }
           },
+          "platformFeePercentage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
           "isApproved": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3195,6 +3546,7 @@
           "proposerAddress",
           "treasurers",
           "tags",
+          "platformFeePercentage",
           "isApproved",
           "isRejected",
           "createdAt",
@@ -3513,6 +3865,11 @@
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string"
+          },
+          "platformFeePercentage": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "number"
           }
         },
         "nullable": false,
@@ -3582,6 +3939,46 @@
         "nullable": false,
         "required": [
           "message"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "UpdatePortalDto": {
+        "type": "object",
+        "properties": {
+          "platformFeePercentage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "address": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "proposal_id": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "platformFeePercentage"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "UpdatePlatformFeeDto": {
+        "type": "object",
+        "properties": {
+          "platformFeePercentage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "platformFeePercentage"
         ],
         "x-typia-jsDocTags": []
       },
@@ -3948,6 +4345,132 @@
           "title",
           "submissions",
           "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "UpdatePrizeDto": {
+        "type": "object",
+        "properties": {
+          "platformFeePercentage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "proposerFeePercentage": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "voting_time": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "number"
+          },
+          "submission_time": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "number"
+          },
+          "admins": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "proposer_address": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "isAutomatic": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "boolean"
+          },
+          "startVotingDate": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string",
+            "format": "date-time"
+          },
+          "startSubmissionDate": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string",
+            "format": "date-time"
+          },
+          "proficiencies": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string",
+              "enum": [
+                "Programming",
+                "Python",
+                "JavaScript",
+                "Writing",
+                "Design",
+                "Translation",
+                "Research",
+                "Real estate",
+                "Apps",
+                "Hardware",
+                "Art",
+                "Meta",
+                "AI"
+              ]
+            }
+          },
+          "priorities": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string",
+              "enum": [
+                "Climate change",
+                "Network civilizations",
+                "Open-source",
+                "Community coordination",
+                "Health",
+                "Education"
+              ]
+            }
+          },
+          "images": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          }
+        },
+        "nullable": false,
+        "required": [
+          "platformFeePercentage",
+          "proposerFeePercentage"
         ],
         "x-typia-jsDocTags": []
       },

@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -23,6 +24,7 @@ import { InfinityPaginationResultType } from '../utils/types/infinity-pagination
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
+import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
 import { Submission } from './entities/submission.entity';
@@ -192,6 +194,27 @@ export class PrizesController {
       balance: parseInt(balance.toString()),
       submission_time_blockchain: parseInt(submission_time.toString()),
       voting_time_blockchain: parseInt(voting_time.toString()),
+    };
+  }
+
+  /**
+   * it updates the proposal
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {Promise<Http200Response>}
+   */
+  @Put('/proposals/:id')
+  @UseGuards(AdminAuthGuard)
+  async updateProposal(
+    @TypedParam('id') id: string,
+    @TypedBody() updateBody: UpdatePrizeDto,
+  ): Promise<Http200Response> {
+    const proposal = await this.prizeProposalsService.update(id, updateBody);
+
+    return {
+      message: `Proposal with id ${id} has been updated`,
     };
   }
 

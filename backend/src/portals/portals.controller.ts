@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -20,6 +21,7 @@ import { Http200Response } from 'src/utils/types/http.type';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
 import { UpdatePlatformFeeDto } from './dto/update-platform-fee.dto';
+import { UpdatePortalDto } from './dto/update-portal.dto';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
 import { PortalWithBalance } from './entities/types';
@@ -378,6 +380,27 @@ export class PortalsController {
     );
     return {
       message: `Proposal with id ${id} has been accepted`,
+    };
+  }
+
+  /**
+   * it updates the proposal
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {Promise<Http200Response>}
+   */
+  @Put('/proposals/:id')
+  @UseGuards(AdminAuthGuard)
+  async updateProposal(
+    @TypedParam('id') id: string,
+    @TypedBody() updateBody: UpdatePortalDto,
+  ): Promise<Http200Response> {
+    await this.portalProposalsService.update(id, updateBody);
+
+    return {
+      message: `Proposal with id ${id} has been updated`,
     };
   }
 

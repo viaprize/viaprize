@@ -80,7 +80,7 @@ export default function PortalProposalsTabs({
                       finalFundingGoal,
                       BigInt(Math.floor(new Date(item.deadline).getTime() / 1000) ?? 0),
                       item.allowDonationAboveThreshold,
-                      BigInt(0),
+                      BigInt(item.platformFeePercentage),
                       item.sendImmediately,
                     ]);
                     const request = await prepareWritePortalFactory({
@@ -90,7 +90,7 @@ export default function PortalProposalsTabs({
                         finalFundingGoal,
                         BigInt(Math.floor(new Date(item.deadline).getTime() / 1000) ?? 0),
                         item.allowDonationAboveThreshold,
-                        BigInt(0),
+                        BigInt(item.platformFeePercentage),
                         item.sendImmediately,
                       ],
                     });
