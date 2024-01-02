@@ -1,5 +1,16 @@
 import { User } from '@/lib/api';
-import { Badge, Button, Card, Group, Image, Modal, Text, Textarea } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Card,
+  Group,
+  Image,
+  Modal,
+  Text,
+  TextInput,
+  Textarea,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { SetStateAction, useState } from 'react';
 import { useMutation } from 'wagmi';
 import usePortalProposal from '../hooks/usePortalProposal';
@@ -15,6 +26,7 @@ interface AdminCardProps {
   deadline: string;
   allowAboveFundingGoal: boolean;
   disableButton?: boolean;
+  platfromFeePercentage: number;
 }
 
 const PortalAdminCard: React.FC<AdminCardProps> = ({
@@ -27,15 +39,46 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
   id,
   deadline,
   allowAboveFundingGoal,
+  platfromFeePercentage,
   disableButton = false,
 }) => {
-  const { acceptProposal, rejectProposal } = usePortalProposal();
+  const { acceptProposal, rejectProposal, updateProposal } = usePortalProposal();
   const acceptProposalMutation = useMutation(acceptProposal);
   const rejectProposalMutation = useMutation(rejectProposal);
   const [comment, setComment] = useState('');
   const [rejectOpen, setRejectOpen] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [newPlatfromFeePercentage, setnewPlatfromFeePercentage] =
+    useState(platfromFeePercentage);
+
+  const updateProposalMutation = useMutation(updateProposal);
+  console.log({ images }, 'in admin card');
+
   return (
     <>
+      <Modal opened={opened} onClose={close} title="Update Fee Percentage" centered>
+        <TextInput
+          label={`${platfromFeePercentage} % is the Current Platform Fee for this proposal`}
+          placeholder="Enter in %"
+          description="Click Submit to confirm"
+        />
+
+        <Button
+          onClick={async () => {
+            await updateProposalMutation.mutateAsync({
+              id,
+              dto: {
+                platformFeePercentage: newPlatfromFeePercentage,
+              },
+            });
+            window.location.reload();
+          }}
+          loading={updateProposalMutation.isLoading}
+        >
+          {' '}
+          Confirm
+        </Button>
+      </Modal>
       <Card shadow="sm" padding="lg" radius="md" withBorder my="md">
         <Card.Section>
           {images.length > 0
