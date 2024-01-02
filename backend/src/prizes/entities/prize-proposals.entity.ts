@@ -43,6 +43,9 @@ export class PrizeProposals {
   @Column({ nullable: true })
   startSubmissionDate: Date;
 
+  @Column({ default: 5 })
+  platformFeePercentage: number;
+
   @Column('simple-array')
   proficiencies: string[];
 

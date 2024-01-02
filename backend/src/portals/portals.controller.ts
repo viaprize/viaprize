@@ -19,7 +19,7 @@ import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
-import { UpdateFeePortalDto } from './dto/update-portal-proosal-platform-fee';
+import { UpdatePlatformFeeDto } from './dto/update-platform-fee.dto';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
 import { PortalWithBalance } from './entities/types';
@@ -33,7 +33,7 @@ export class PortalsController {
     private readonly mailService: MailService,
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
-  ) { }
+  ) {}
 
   @Post('')
   @UseGuards(AuthGuard)
@@ -59,7 +59,6 @@ export class PortalsController {
       treasurers: portalProposal.treasurers,
       user: portalProposal.user,
       sendImmediately: portalProposal.sendImmediately,
-
     });
     await this.portalProposalsService.remove(portalProposal.id);
     await this.mailService.portalDeployed(
@@ -113,14 +112,14 @@ export class PortalsController {
           Portal.contract_address,
         );
         const isActive = await this.blockchainService.isPortalActive(
-          Portal.contract_address
-        )
+          Portal.contract_address,
+        );
         return {
           ...Portal,
           balance: parseInt(balance.toString()),
           totalFunds: parseInt(totalFunds.toString()),
           totalRewards: parseInt(totalRewards.toString()),
-          isActive: isActive
+          isActive: isActive,
         } as PortalWithBalance;
       }),
     );
@@ -142,14 +141,16 @@ export class PortalsController {
     const totalRewards = await this.blockchainService.getTotalRewardsOfPortal(
       Portal.contract_address,
     );
-    const isActive = await this.blockchainService.isPortalActive(Portal.contract_address)
+    const isActive = await this.blockchainService.isPortalActive(
+      Portal.contract_address,
+    );
 
     return {
       ...Portal,
       balance: parseInt(balance.toString()),
       totalFunds: parseInt(totalFunds.toString()),
       totalRewards: parseInt(totalRewards.toString()),
-      isActive: isActive
+      isActive: isActive,
     };
   }
 
@@ -380,25 +381,26 @@ export class PortalsController {
     };
   }
 
-
   /**
- * The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
- * the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
- * 
- * @date 9/25/2023 - 5:35:35 AM
- * @security bearer
- * @async
- * @param {string} id
- * @returns {Promise<Http200Response>}
- */
+   * The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
+   * the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {Promise<Http200Response>}
+   */
   @Post('/proposals/platformFee/:id')
   @UseGuards(AdminAuthGuard)
   async setPlatformFee(
     @TypedParam('id') id: string,
-    @TypedBody() updateFeePortalDto: UpdateFeePortalDto
-
+    @TypedBody() updateFeePortalDto: UpdatePlatformFeeDto,
   ): Promise<Http200Response> {
-    await this.portalProposalsService.setPlatformFee(id, updateFeePortalDto.platformFeePercentage);
+    await this.portalProposalsService.setPlatformFee(
+      id,
+      updateFeePortalDto.platformFeePercentage,
+    );
     return {
       message: `Proposal with id ${id} has been updated`,
     };

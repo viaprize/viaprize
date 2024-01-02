@@ -17,8 +17,6 @@ export class BlockchainService {
     return this.provider.getBalance(address);
   }
 
-
-
   async getSubmissionTime(viaprizeContractAddress: string): Promise<bigint> {
     const abi = ['function get_submission_time() view returns (uint256)'];
     const contract = new ethers.Contract(
@@ -48,13 +46,14 @@ export class BlockchainService {
       this.provider,
     );
     return await contract.isActive().catch((e) => {
-      console.log(e)
-      return false
+      console.log(e);
+      return false;
     });
   }
 
-  async getIsPrizeDistributed(viaprizeContractAddress: string): Promise<boolean> {
-
+  async getIsPrizeDistributed(
+    viaprizeContractAddress: string,
+  ): Promise<boolean> {
     const abi = ['function distributed() view returns (bool)'];
     const contract = new ethers.Contract(
       viaprizeContractAddress,
@@ -62,8 +61,8 @@ export class BlockchainService {
       this.provider,
     );
     return await contract.distributed().catch((e) => {
-      console.log(e)
-      return false
+      console.log(e);
+      return false;
     });
   }
 

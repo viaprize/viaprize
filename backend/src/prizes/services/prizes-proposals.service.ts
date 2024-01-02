@@ -29,6 +29,24 @@ export class PrizeProposalsService {
     return prizeProposal;
   }
 
+  async setPlatformFee(id: string, platformFeePercentage: number) {
+    const prizeProposal = await this.prizeProposalsRepository.findOneByOrFail({
+      id: id,
+    });
+
+    if (!prizeProposal) {
+      throw new HttpException(
+        'Portal Proposal not found',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    await this.prizeProposalsRepository.update(id, {
+      platformFeePercentage: platformFeePercentage,
+    });
+    prizeProposal.platformFeePercentage = platformFeePercentage;
+    return prizeProposal;
+  }
+
   async findAll() {
     return await this.prizeProposalsRepository.find();
   }
