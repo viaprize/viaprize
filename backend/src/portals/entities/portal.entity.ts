@@ -36,6 +36,8 @@ export class Portals {
   @Column({ nullable: true })
   deadline: Date;
 
+
+
   @Column('boolean')
   allowDonationAboveThreshold: boolean;
 

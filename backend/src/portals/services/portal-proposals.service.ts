@@ -10,11 +10,12 @@ import { PortalProposals } from '../entities/portal-proposals.entity';
 
 @Injectable()
 export class PortalProposalsService {
+
   constructor(
     @InjectRepository(PortalProposals)
     private portalProposalsRepository: Repository<PortalProposals>,
     private userService: UsersService,
-  ) {}
+  ) { }
   async create(
     createPortalProposalDto: CreatePortalProposalDto,
     userId: string,
@@ -30,6 +31,23 @@ export class PortalProposalsService {
       user: user,
       slug: slug,
     });
+    return portalProposal;
+  }
+
+  async setPlatformFee(id: string, platformFeePercentage: number) {
+    const portalProposal = await this.portalProposalsRepository.findOneByOrFail(
+      {
+        id: id,
+      }
+    );
+
+    if (!portalProposal) {
+      throw new HttpException('Portal Proposal not found', HttpStatus.NOT_FOUND);
+    }
+    await this.portalProposalsRepository.update(id, {
+      platformFeePercentage: platformFeePercentage,
+    });
+    portalProposal.platformFeePercentage = platformFeePercentage;
     return portalProposal;
   }
 

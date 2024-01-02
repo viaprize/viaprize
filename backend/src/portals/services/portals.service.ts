@@ -11,7 +11,7 @@ export class PortalsService {
   constructor(
     @InjectRepository(Portals)
     private portalRepository: Repository<Portals>,
-  ) {}
+  ) { }
 
   async findAll(query: PortalPaginateQuery): Promise<Paginated<Portals>> {
     const { tags, ...paginateQuery } = query;
