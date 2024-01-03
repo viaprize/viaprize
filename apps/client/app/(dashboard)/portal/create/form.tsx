@@ -40,8 +40,6 @@ export default function PortalForm() {
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
   const [portalType, setPortalType] = useState('gofundme');
-  const [haveFundingGoal, setHaveFundingGoal] = useState(false);
-  const [haveDeadline, setHaveDeadline] = useState(false);
 
   const { addProposals, uploadImages } = usePortalProposal();
 
@@ -266,15 +264,6 @@ export default function PortalForm() {
         </Group>
       </Radio.Group>
       <div className="my-2">
-        {portalType === 'kickstarter' && (
-          <Checkbox
-            checked={haveFundingGoal || portalType === 'kickstarter'}
-            onChange={(event) => {
-              setHaveFundingGoal(event.currentTarget.checked);
-            }}
-            label="I have a funding goal"
-          />
-        )}
         {portalType === 'kickstarter' ? (
           <div>
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
@@ -299,15 +288,6 @@ export default function PortalForm() {
         ) : null}
       </div>
       <div className="my-2">
-        {portalType === 'kickstarter' && (
-          <Checkbox
-            checked={haveDeadline || portalType === 'kickstarter'}
-            onChange={(event) => {
-              setHaveDeadline(event.currentTarget.checked);
-            }}
-            label="I have a Deadline"
-          />
-        )}
         {portalType === 'kickstarter' ? (
           <DateTimePicker
             withAsterisk
