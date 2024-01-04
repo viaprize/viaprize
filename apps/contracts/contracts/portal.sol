@@ -100,28 +100,12 @@ contract Portal {
     {
         if (msg.value == 0) revert NotEnoughFunds();
         if (!isActive) revert FundingToContractEnded();
-        if(!allowDonationAboveGoalAmount && !allowImmediately) {
-            uint256 donationAmount = (msg.value * (100 - platformFee)) / 100;
-            if(donationAmount + totalRewards > goalAmount) {
-                uint256 remainingGoalAmount = goalAmount - totalRewards;
-                uint256 remainingPlatformFee = ((remainingGoalAmount / (100-platformFee)) * platformFee);
-                uint256 refundAmount = msg.value - (remainingGoalAmount + remainingPlatformFee);
-                payable(msg.sender).transfer(refundAmount);
-                refundAmount = 0;
-                patronAmount[msg.sender] += msg.value;
-                totalFunds += msg.value;
-                totalRewards += donationAmount;
-            } else {
-                totalFunds += msg.value;
-                totalRewards += donationAmount;
-                patronAmount[msg.sender] += msg.value;
-            }
-        }
-        if(allowDonationAboveGoalAmount && allowImmediately) {
-            patronAmount[msg.sender] += msg.value;
-            totalFunds += msg.value;
-            totalRewards += (msg.value * (100 - platformFee)) / 100;
-        }
+        patrons.push(msg.sender);
+        isPatron[msg.sender] = true;
+        patronAmount[msg.sender] += msg.value;
+        totalRewards += (msg.value * (100-platformFee)) / 100;
+        totalFunds += msg.value;
+       
 
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
@@ -135,13 +119,7 @@ contract Portal {
             payable(platformAddress).transfer(
                 (msg.value * (platformFee)) / 100
             );
-
-            patronAmount[msg.sender] += msg.value;
-            totalFunds += msg.value;
-            totalRewards += (msg.value * (100 - platformFee)) / 100;
         }
-        patrons.push(msg.sender);
-        isPatron[msg.sender] = true;
 
         if (goalAmountAvailable && deadlineAvailable) {
             if(!allowImmediately) {
@@ -167,14 +145,24 @@ contract Portal {
 
                 if(!allowDonationAboveGoalAmount) {
                     if(metGoal) {
-                        uint256 totalrewards = totalRewards;
-                        uint256 adminrewards = totalFunds - totalRewards;
-                        totalRewards = 0;
-                        totalFunds = 0;
-                        payable(receiverAddress).transfer(totalrewards);
-                        payable(platformAddress).transfer(adminrewards);
+                        uint256 moneyToPlatform = (goalAmount * platformFee)/(100-platformFee);
+                        uint256 excessRewards = totalFunds - (goalAmount + moneyToPlatform);
+                        payable(receiverAddress).transfer(goalAmount);
+                        payable(platformAddress).transfer(moneyToPlatform);
+                        if(excessRewards > 0) {
+                            payable(msg.sender).transfer(excessRewards);
+                        }
                         isActive = false;
                     }
+                    // if(metGoal) {
+                    //     uint256 totalrewards = totalRewards;
+                    //     uint256 adminrewards = totalFunds - totalRewards;
+                    //     totalRewards = 0;
+                    //     totalFunds = 0;
+                    //     payable(receiverAddress).transfer(totalrewards);
+                    //     payable(platformAddress).transfer(adminrewards);
+                    //     isActive = false;
+                    // }
                     if(metDeadline && !metGoal) {
                         for(uint i=0; i<patrons.length; i++) {
                             uint transferableAmount = patronAmount[patrons[i]];
