@@ -65,6 +65,7 @@ contract Portal {
             proposers.push(_proposers[i]);
             isProposer[_proposers[i]] = true;
         }
+        proposers.push(msg.sender);
 
         for(uint256 i=0; i<_admins.length; i++) {
             admins.push(_admins[i]);
@@ -100,10 +101,11 @@ contract Portal {
         if (msg.value == 0) revert NotEnoughFunds();
         if (!isActive) revert FundingToContractEnded();
         patrons.push(msg.sender);
-        patronAmount[msg.sender] += msg.value;
         isPatron[msg.sender] = true;
+        patronAmount[msg.sender] += msg.value;
+        totalRewards += (msg.value * (100-platformFee)) / 100;
         totalFunds += msg.value;
-        totalRewards += (msg.value * (100 - platformFee)) / 100;
+       
 
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
@@ -117,7 +119,6 @@ contract Portal {
             payable(platformAddress).transfer(
                 (msg.value * (platformFee)) / 100
             );
-
         }
 
         if (goalAmountAvailable && deadlineAvailable) {
@@ -144,14 +145,24 @@ contract Portal {
 
                 if(!allowDonationAboveGoalAmount) {
                     if(metGoal) {
-                        uint256 totalrewards = totalRewards;
-                        uint256 adminrewards = totalFunds - totalRewards;
-                        totalRewards = 0;
-                        totalFunds = 0;
-                        payable(receiverAddress).transfer(totalrewards);
-                        payable(platformAddress).transfer(adminrewards);
+                        uint256 moneyToPlatform = (goalAmount * platformFee)/(100-platformFee);
+                        uint256 excessRewards = totalFunds - (goalAmount + moneyToPlatform);
+                        payable(receiverAddress).transfer(goalAmount);
+                        payable(platformAddress).transfer(moneyToPlatform);
+                        if(excessRewards > 0) {
+                            payable(msg.sender).transfer(excessRewards);
+                        }
                         isActive = false;
                     }
+                    // if(metGoal) {
+                    //     uint256 totalrewards = totalRewards;
+                    //     uint256 adminrewards = totalFunds - totalRewards;
+                    //     totalRewards = 0;
+                    //     totalFunds = 0;
+                    //     payable(receiverAddress).transfer(totalrewards);
+                    //     payable(platformAddress).transfer(adminrewards);
+                    //     isActive = false;
+                    // }
                     if(metDeadline && !metGoal) {
                         for(uint i=0; i<patrons.length; i++) {
                             uint transferableAmount = patronAmount[patrons[i]];
@@ -208,8 +219,22 @@ contract Portal {
     // }
 
     function endCampaign() public onlyProposerOrAdmin {
-        if(!allowImmediately) revert CantEndKickstarterTypeCampaign();
+        if(!allowImmediately) revert("this function is for only gofundme type campaigns.");
         if(!isActive) revert("campaign is not active");
+        isActive = false;
+    }
+
+    function endEarlyandRefund() public noReentrant onlyProposerOrAdmin {
+        if(allowImmediately) revert("this function is only for kickstarter type campaigns.");
+        if(!isActive) revert("Campaign is not active.");
+        if(patrons.length > 0) {
+            for(uint i=0; i<patrons.length; i++) {
+                uint transferableAmount = patronAmount[patrons[i]];
+                patronAmount[patrons[i]] = 0;
+                payable(patrons[i]).transfer(transferableAmount);
+            }
+            isActive = false;
+        }
         isActive = false;
     }
 
