@@ -20,6 +20,7 @@ contract Portal {
     bool public allowDonationAboveGoalAmount;
     bool public isActive;
     bool public  allowImmediately;
+    bool internal locked;
 
     
 
@@ -80,12 +81,21 @@ contract Portal {
 
     }
 
+     
+
+    modifier noReentrant() {
+        require(!locked, "No re-entrancy");
+        locked = true;
+        _;
+        locked = false;
+    }
+
     modifier onlyProposerOrAdmin {
         require(isProposer[msg.sender] == true || isAdmin[msg.sender] == true, "You are not a proposer or admin.");
         _;
     }
 
-    function addFunds() public payable returns (uint256, uint256, uint256, bool, bool, bool)
+    function addFunds() public noReentrant payable returns (uint256, uint256, uint256, bool, bool, bool) 
     {
         if (msg.value == 0) revert NotEnoughFunds();
         if (!isActive) revert FundingToContractEnded();
@@ -212,7 +222,7 @@ contract Portal {
     //     refundByDeadline();
     // }
 
-    function endKickStarterCampaign() public onlyProposerOrAdmin {
+    function endKickStarterCampaign() public noReentrant onlyProposerOrAdmin {
         if(!isActive) revert("campaign is not active");
         bool deadlineAvailable = deadline > 0;
         bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
