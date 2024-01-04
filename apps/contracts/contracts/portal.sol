@@ -65,6 +65,7 @@ contract Portal {
             proposers.push(_proposers[i]);
             isProposer[_proposers[i]] = true;
         }
+        proposers.push(msg.sender);
 
         for(uint256 i=0; i<_admins.length; i++) {
             admins.push(_admins[i]);
@@ -208,8 +209,22 @@ contract Portal {
     // }
 
     function endCampaign() public onlyProposerOrAdmin {
-        if(!allowImmediately) revert CantEndKickstarterTypeCampaign();
+        if(!allowImmediately) revert("this function is for only gofundme type campaigns.");
         if(!isActive) revert("campaign is not active");
+        isActive = false;
+    }
+
+    function endEarlyandRefund() public noReentrant onlyProposerOrAdmin {
+        if(allowImmediately) revert("this function is only for kickstarter type campaigns.");
+        if(!isActive) revert("Campaign is not active.");
+        if(patrons.length > 0) {
+            for(uint i=0; i<patrons.length; i++) {
+                uint transferableAmount = patronAmount[patrons[i]];
+                patronAmount[patrons[i]] = 0;
+                payable(patrons[i]).transfer(transferableAmount);
+            }
+            isActive = false;
+        }
         isActive = false;
     }
 
