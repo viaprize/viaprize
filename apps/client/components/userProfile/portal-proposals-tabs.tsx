@@ -87,6 +87,11 @@ export default function PortalProposalsTabs({
                       functionName: 'createPortal',
                       args: [
                         item?.treasurers as `0x${string}`[],
+                        [
+                          '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
+                          '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
+                          '0x598B7Cd048e97E1796784d92D06910F359dA5913',
+                        ] as `0x${string}`[],
                         finalFundingGoal,
                         BigInt(Math.floor(new Date(item.deadline).getTime() / 1000) ?? 0),
                         item.allowDonationAboveThreshold,
