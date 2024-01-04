@@ -2,8 +2,10 @@
 pragma solidity 0.8.19;
 
 contract Portal {
-    address[] public proposer;
-    mapping(address => bool) public isProposers; 
+    address[] public proposers;
+    mapping(address => bool) public isProposer;
+    address[] public admins;
+    mapping(address => bool) public isAdmin;
     address public receiverAddress;
     uint256 public goalAmount = 0;
     uint256 public deadline = 0;
@@ -12,21 +14,23 @@ contract Portal {
     address[] public patrons; 
     mapping(address => bool) public isPatron;
     mapping(address => uint256) public patronAmount;
+    mapping(address => uint256) public refundPatronsAmount;
     uint256 public totalFunds;
     uint256 public totalRewards;
     bool public allowDonationAboveGoalAmount;
     bool public isActive;
     bool public  allowImmediately;
-    // uint256 deadline1 = 0;
-    
+
     
 
     error NotEnoughFunds();
     error FundingToContractEnded();
     error RequireGoalAndDeadline();
+    error GoalAndDeadlineNotRequired();
     error CantEndKickstarterTypeCampaign();
     error GoalAndDeadlineAlreadyMet();
     error CantGetRefundForGoFundMeTypeCampaign();
+    error DeadlineNotMet();
 
     event Values(
         address receiverAddress,
@@ -41,7 +45,8 @@ contract Portal {
     );
 
     constructor(
-        address[] memory _proposer,
+        address[] memory _proposers,
+        address[] memory _admins,
         uint256 _goal,
         uint256 _deadline,
         bool _allowDonationAboveGoalAmount,
@@ -49,30 +54,42 @@ contract Portal {
         bool _allowImmediately
     ) {
 
-        if((!_allowImmediately) && (_goal == 0 && _deadline == 0)) revert RequireGoalAndDeadline();
-        // require((_allowImmediately) && (_goal == 0 || _deadline == 0), "required goal and deadline");
-
-        for (uint256 i = 0; i < _proposer.length; i++) {
-            proposer.push(_proposer[i]);
-            isProposers[_proposer[i]] = true;
+        if(_allowImmediately) {
+            if(_goal != 0 || _deadline !=0) revert GoalAndDeadlineNotRequired();
+        } else {
+            if(_goal == 0 || _deadline == 0) revert RequireGoalAndDeadline();
         }
-        receiverAddress = proposer[0];
+
+        for (uint256 i = 0; i < _proposers.length; i++) {
+            proposers.push(_proposers[i]);
+            isProposer[_proposers[i]] = true;
+        }
+
+        for(uint256 i=0; i<_admins.length; i++) {
+            admins.push(_admins[i]);
+            isAdmin[_admins[i]] = true;
+        }
+        receiverAddress = proposers[0];
         platformFee = _platformFee;
         allowImmediately = _allowImmediately;
 
         goalAmount = _goal;
         deadline = _deadline;
-        // deadline1 = _deadline;
         allowDonationAboveGoalAmount = _allowDonationAboveGoalAmount;
         isActive = true;
 
+    }
+
+    modifier onlyProposerOrAdmin {
+        require(isProposer[msg.sender] == true || isAdmin[msg.sender] == true, "You are not a proposer or admin.");
+        _;
     }
 
     function addFunds() public payable returns (uint256, uint256, uint256, bool, bool, bool)
     {
         if (msg.value == 0) revert NotEnoughFunds();
         if (!isActive) revert FundingToContractEnded();
-
+        patrons.push(msg.sender);
         patronAmount[msg.sender] += msg.value;
         isPatron[msg.sender] = true;
         totalFunds += msg.value;
@@ -94,64 +111,49 @@ contract Portal {
         }
 
         if (goalAmountAvailable && deadlineAvailable) {
-            // if(allowImmediately) {
-            //     payable(receiverAddress).transfer(
-            //     (msg.value * (100 - platformFee)) / 100
-            //     );
-            //     payable(platformAddress).transfer(
-            //         (msg.value * (platformFee)) / 100
-            //     );
-            // }
             if(!allowImmediately) {
-                if (metDeadline ||(!allowDonationAboveGoalAmount && totalRewards >= goalAmount)) {
-                    payable(receiverAddress).transfer(totalRewards);
-                    payable(platformAddress).transfer(totalFunds - totalRewards);
-                    isActive = false;
+                if(allowDonationAboveGoalAmount) {
+                    if (metDeadline && metGoal) {
+                        uint256 totalrewards = totalRewards;
+                        uint256 adminrewards = totalFunds - totalRewards;
+                        totalRewards = 0;
+                        totalFunds = 0;
+                        payable(receiverAddress).transfer(totalrewards);
+                        payable(platformAddress).transfer(adminrewards);
+                        isActive = false;
+                    }
+                    if(metDeadline && !metGoal) {
+                        for(uint i=0; i<patrons.length; i++) {
+                            uint transferableAmount = patronAmount[patrons[i]];
+                            patronAmount[patrons[i]] = 0;
+                            payable(patrons[i]).transfer(transferableAmount);
+                        }
+                        isActive = false;
+                    }
                 }
+
+                if(!allowDonationAboveGoalAmount) {
+                    if(metGoal) {
+                        uint256 totalrewards = totalRewards;
+                        uint256 adminrewards = totalFunds - totalRewards;
+                        totalRewards = 0;
+                        totalFunds = 0;
+                        payable(receiverAddress).transfer(totalrewards);
+                        payable(platformAddress).transfer(adminrewards);
+                        isActive = false;
+                    }
+                    if(metDeadline && !metGoal) {
+                        for(uint i=0; i<patrons.length; i++) {
+                            uint transferableAmount = patronAmount[patrons[i]];
+                            patronAmount[patrons[i]] = 0;
+                            payable(patrons[i]).transfer(transferableAmount);
+                        }
+                        isActive = false;
+                    }
+                }
+                
             }
         }
-
-        // if (goalAmountAvailable && !deadlineAvailable) {
-        //     if (allowImmediately && metGoal) {
-        //         payable(receiverAddress).transfer(
-        //         (msg.value * (100 - platformFee)) / 100
-        //         );
-        //         payable(platformAddress).transfer(
-        //             (msg.value * (platformFee)) / 100
-        //         );
-        //         isActive = false;
-        //         allowImmediately = false;
-        //     }
-        //     if(allowImmediately) {
-        //         payable(receiverAddress).transfer(
-        //         (msg.value * (100 - platformFee)) / 100
-        //         );
-        //         payable(platformAddress).transfer(
-        //             (msg.value * (platformFee)) / 100
-        //         );
-        //     }
-        // }
-        // if (!goalAmountAvailable && deadlineAvailable) {
-        //     if (allowImmediately && metDeadline) {
-        //         payable(receiverAddress).transfer(
-        //         (msg.value * (100 - platformFee)) / 100
-        //         );
-        //         payable(platformAddress).transfer(
-        //             (msg.value * (platformFee)) / 100
-        //         );
-        //         isActive = false;
-        //         allowImmediately = false;
-        //     }
-        //     if(allowImmediately) {
-        //         payable(receiverAddress).transfer(
-        //         (msg.value * (100 - platformFee)) / 100
-        //         );
-        //         payable(platformAddress).transfer(
-        //             (msg.value * (platformFee)) / 100
-        //         );
-        //     }
-           
-        // }
 
         emit Values(
             receiverAddress, 
@@ -178,26 +180,83 @@ contract Portal {
         addFunds();
     }
 
-    function endCampaign() public {
-        require(isProposers[msg.sender] == true, "you are not an owner to close the campaign");
+    // function refundByDeadline() private {
+    //     bool deadlineAvailable = deadline > 0;
+    //     bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
+    //     bool metGoal = totalRewards >= goalAmount;
+
+    //     if(metDeadline && !metGoal) {
+    //         for(uint256 i=0; i<patrons.length; i++) {
+    //             uint256 transferableAmount = patronAmount[patrons[i]];
+    //             patronAmount[patrons[i]] = 0;
+    //             payable(patrons[i]).transfer(transferableAmount);
+    //         }
+    //         isActive = false;
+    //     } else {
+    //         revert DeadlineNotMet();
+    //     }
+    // }
+
+    function endCampaign() public onlyProposerOrAdmin {
         if(!allowImmediately) revert CantEndKickstarterTypeCampaign();
+        if(!isActive) revert("campaign is not active");
         isActive = false;
     }
 
-    function patronRefund() public {
-        require(isPatron[msg.sender] == true, "only patrons can claim refund");
-        if(allowImmediately) revert CantGetRefundForGoFundMeTypeCampaign();
+    // function refundAllPatrons() public onlyProposerOrAdmin {
+    //     if(allowImmediately) revert CantGetRefundForGoFundMeTypeCampaign();
+    //     bool deadlineAvailable = deadline > 0;
+    //     bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
+    //     bool metGoal = totalRewards >= goalAmount;
+    //     if(metDeadline && metGoal) revert GoalAndDeadlineAlreadyMet();
+    //     refundByDeadline();
+    // }
+
+    function endKickStarterCampaign() public onlyProposerOrAdmin {
+        if(!isActive) revert("campaign is not active");
         bool deadlineAvailable = deadline > 0;
         bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
         bool metGoal = totalRewards >= goalAmount;
-        if(metDeadline && metGoal) revert GoalAndDeadlineAlreadyMet();
-
-        for(uint i=0; i<patrons.length; i++) {
-            uint transferableAmount = patronAmount[patrons[i]];
-            payable(patrons[i]).transfer(transferableAmount);
-            patronAmount[patrons[i]] = 0;
+        if(!allowImmediately) {
+            if(allowDonationAboveGoalAmount) {
+                if (metDeadline && metGoal) {
+                    uint256 totalrewards = totalRewards;
+                    uint256 adminrewards = totalFunds - totalRewards;
+                    totalRewards = 0;
+                    totalFunds = 0;
+                    payable(receiverAddress).transfer(totalrewards);
+                    payable(platformAddress).transfer(adminrewards);
+                    isActive = false;
+                }
+                if(metDeadline && !metGoal) {
+                    for(uint i=0; i<patrons.length; i++) {
+                        uint transferableAmount = patronAmount[patrons[i]];
+                        patronAmount[patrons[i]] = 0;
+                        payable(patrons[i]).transfer(transferableAmount);
+                    }
+                    isActive = false;
+                }
+            }
+            if(!allowDonationAboveGoalAmount) {
+                if(metGoal) {
+                    uint256 totalrewards = totalRewards;
+                    uint256 adminrewards = totalFunds - totalRewards;
+                    totalRewards = 0;
+                    totalFunds = 0;
+                    payable(receiverAddress).transfer(totalrewards);
+                    payable(platformAddress).transfer(adminrewards);
+                    isActive = false;
+                }
+                if(metDeadline && !metGoal) {
+                    for(uint i=0; i<patrons.length; i++) {
+                        uint transferableAmount = patronAmount[patrons[i]];
+                        patronAmount[patrons[i]] = 0;
+                        payable(patrons[i]).transfer(transferableAmount);
+                    }
+                    isActive = false;
+                }
+            }
+            
         }
-        isActive = false;
     }
-
 }
