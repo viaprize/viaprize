@@ -26,6 +26,7 @@ import { useState } from 'react';
 import { FaCalendar } from 'react-icons/fa';
 import { useQuery } from 'react-query';
 import { toast } from 'sonner';
+import { isAddress } from 'viem';
 import { useMutation } from 'wagmi';
 
 export default function PortalForm() {
@@ -39,7 +40,7 @@ export default function PortalForm() {
   const [images, setImages] = useState<string>();
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
-  const [portalType, setPortalType] = useState('gofundme');
+  const [portalType, setPortalType] = useState('pass-through');
 
   const { addProposals, uploadImages } = usePortalProposal();
 
@@ -101,13 +102,13 @@ export default function PortalForm() {
   // };
   const generateTags = () => {
     const tags = [];
-    const sendNow = portalType === 'gofundme';
+    const sendNow = portalType === 'pass-through';
     if (!sendNow) {
-      tags.push('KickStarter');
+      tags.push('All-or-Nothing');
       tags.push('Refundable');
     }
     if (sendNow) {
-      tags.push('Go FundMe');
+      tags.push('Pass-through');
     }
     if (deadline) {
       tags.push('Deadline');
@@ -136,7 +137,7 @@ export default function PortalForm() {
       isMultiSignatureReciever: false,
       treasurers: [address],
       fundingGoal: finalFundingGoal,
-      sendImmediately: portalType === 'gofundme',
+      sendImmediately: portalType === 'pass-through',
     });
     router.push(`/profile/${appUser?.username}`);
     setLoading(false);
@@ -193,8 +194,7 @@ export default function PortalForm() {
       <div>
         <Title order={4}>Receiving funds</Title>
         <p className="my-0">
-          Enter the address where you would like to receive the funds. You can add
-          multiple addresses.
+          Enter the wallet address where you would like to receive the funds
         </p>
       </div>
       {/* <SimpleGrid cols={2}>
@@ -202,8 +202,8 @@ export default function PortalForm() {
           <div className="flex gap-1 justify-start items-center w-full" key={item}> */}
       <TextInput
         type="text"
-        label="Portal Admin"
-        placeholder="Enter Admin Address"
+        label="Treasurer wallet address"
+        placeholder="Must start with 0x..."
         className="w-full"
         onChange={(e) => {
           setAddress(e.target.value);
@@ -253,18 +253,18 @@ export default function PortalForm() {
             contributors if the funding goal is not met by the deadline "
             refProp="rootRef"
           >
-            <Radio value="kickstarter" label="Kick Starter" />
+            <Radio value="all-or-nothing" label="All-or-nothing" />
           </Tooltip>
           <Tooltip
             label="Immediately forward contributions to the recipient and end campaigns manually"
             refProp="rootRef"
           >
-            <Radio value="gofundme" label="Go Fund Me" />
+            <Radio value="pass-through" label="Pass-through" />
           </Tooltip>
         </Group>
       </Radio.Group>
       <div className="my-2">
-        {portalType === 'kickstarter' ? (
+        {portalType === 'all-or-nothing' ? (
           <div>
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
               <Text>
@@ -288,7 +288,7 @@ export default function PortalForm() {
         ) : null}
       </div>
       <div className="my-2">
-        {portalType === 'kickstarter' ? (
+        {portalType === 'all-or-nothing' ? (
           <DateTimePicker
             withAsterisk
             minDate={new Date()}
@@ -300,7 +300,7 @@ export default function PortalForm() {
           />
         ) : null}
       </div>
-      {portalType === 'kickstarter' ? (
+      {portalType === 'all-or-nothing' ? (
         <Checkbox
           my="md"
           checked={allowFundsAboveGoal}
@@ -316,11 +316,12 @@ export default function PortalForm() {
         loading={submittingProposal || loading}
         onClick={handleSubmit}
         disabled={
+          !isAddress(address) ||
           !title ||
           !richtext ||
           !address ||
           !files.length ||
-          (portalType === 'kickstarter' && (!fundingGoal || !deadline))
+          (portalType === 'all-or-nothing' && (!fundingGoal || !deadline))
         }
       >
         Create Portal

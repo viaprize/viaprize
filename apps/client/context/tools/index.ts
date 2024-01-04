@@ -1,4 +1,11 @@
-import { makeStorageClient } from '@/components/_providers/WebClient';
+import { env } from '@env';
+import { createClient } from '@supabase/supabase-js';
+
+// Create Supabase client
+
+
+// Upload file using standard upload
+
 
 /**
  * Sleep for a given number of milliseconds.
@@ -53,14 +60,24 @@ export const formatIPFS = (url: string): string => {
   return url.replace('ipfs://', 'https://ipfs.io/ipfs/');
 };
 
+function generateRandomThreeDigitNumber() {
+  // Option 1: Using Math.floor and modulo
+  let randomNum = Math.floor(Math.random() * 900) + 100; // Generates a number between 100 and 999
+
+  // Option 2: Using string manipulation
+  // let randomNum = (Math.random() * 1000).toString().padStart(3, "0");
+  // randomNum = parseInt(randomNum);
+
+  return randomNum;
+}
 export const storeFiles = async (files: File[]) => {
-  const client = makeStorageClient();
-  const cid = await client.put(files);
-  console.log('stored files with cid:', cid);
-  if (!files[0]) {
+  const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_API_KEY)
+  const { data, error } = await supabase.storage.from('campaigns').upload(`${generateRandomThreeDigitNumber()}${files[0].name}`, files[0])
+
+
+  if (!files[0] || error) {
     return '';
   }
-  const url = `https://dweb.link/ipfs/${cid}/${files[0].name}`;
-  console.log('URL of the uploaded image:', url);
-  return url;
+  console.log(data.path, "path")
+  return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaings/${data.path}`;
 };
