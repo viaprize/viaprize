@@ -101,15 +101,19 @@ contract Portal {
         if (msg.value == 0) revert NotEnoughFunds();
         if (!isActive) revert FundingToContractEnded();
         if(!allowDonationAboveGoalAmount && !allowImmediately) {
-            uint256 reward = (msg.value * (100 - platformFee)) / 100;
-            if(msg.value > reward) {
-                uint256 refundAmount = msg.value - reward;
-                patronAmount[msg.sender] += reward;
+            uint256 donationAmount = (msg.value * (100 - platformFee)) / 100;
+            if(donationAmount + totalRewards > goalAmount) {
+                uint256 remainingGoalAmount = goalAmount - totalRewards;
+                uint256 remainingPlatformFee = ((remainingGoalAmount / (100-platformFee)) * platformFee);
+                uint256 refundAmount = msg.value - (remainingGoalAmount + remainingPlatformFee);
                 payable(msg.sender).transfer(refundAmount);
                 refundAmount = 0;
+                patronAmount[msg.sender] += msg.value;
+                totalFunds += msg.value;
+                totalRewards += donationAmount;
             } else {
                 totalFunds += msg.value;
-                totalRewards += (msg.value * (100 - platformFee)) / 100;
+                totalRewards += donationAmount;
                 patronAmount[msg.sender] += msg.value;
             }
         }
