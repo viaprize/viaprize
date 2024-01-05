@@ -12,9 +12,9 @@ import { JobService } from './jobs.service';
         useFactory: (configService: ConfigService) => {
             console.log(configService.get<string>("TRIGGER_API_KEY"), "hiiiiiiiiiiiiiiiiiiiiiii")
             return ({
-                id: 'viaprize-prod',
+                id: 'nestjs-backend',
                 apiKey: configService.get<string>("TRIGGER_API_KEY"),
-                apiUrl: "https://api-prod.pactsmith.com/api/api/trigger",
+                apiUrl: "https://cloud.trigger.dev",
 
 
             })
