@@ -26,13 +26,12 @@ import {
   TestTrigger,
   UpdatePlatformFeeDto,
 } from './dto/update-platform-fee.dto';
-import { UpdatePortalPropsalDto } from './dto/update-portal-proposal.dto';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
 import { PortalWithBalance } from './entities/types';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
-
+import { UpdatePortalPropsalDto } from './dto/update-portal-proposal.dto';
 
 function addMinutes(date: Date, minutes: number): Date {
   date.setMinutes(date.getMinutes() + minutes);
@@ -94,22 +93,25 @@ export class PortalsController {
       user: portalProposal.user,
       sendImmediately: portalProposal.sendImmediately,
     });
-    const properMinutes = extractMinutes(portalProposal.deadline.toISOString())
+    const properMinutes = extractMinutes(portalProposal.deadline.toISOString());
     if (!properMinutes) {
-      throw new HttpException("Error in minutes", 500);
+      throw new HttpException('Error in minutes', 500);
     }
     await this.jobService.registerJobForEndKickStarterCampaign(
       createPortalDto.address,
       {
-        expiresAt: parseInt(formatDateToUTC(new Date(addMinutes(portalProposal.deadline, 5).toISOString()))),
+        expiresAt: parseInt(
+          formatDateToUTC(
+            new Date(addMinutes(portalProposal.deadline, 5).toISOString()),
+          ),
+        ),
         hours: [portalProposal.deadline.getUTCHours()],
         minutes: [properMinutes],
         mdays: [portalProposal.deadline.getUTCDate()],
         months: [portalProposal.deadline.getUTCMonth() + 1],
         wdays: [portalProposal.deadline.getUTCDay()],
-      }
-
-    )
+      },
+    );
     await this.portalProposalsService.remove(portalProposal.id);
     await this.mailService.portalDeployed(
       portalProposal.user.email,
@@ -494,65 +496,62 @@ export class PortalsController {
    * @returns {Promise<Http200Response>}
    */
   @Post('/trigger/:contractAddress')
-
-  async trigger(@TypedParam('contractAddress') contractAddress: string, @TypedBody() body: TestTrigger): Promise<Http200Response> {
-    const date = new Date(body.date)
-    console.log(date, " dataeee")
-    console.log(date.toUTCString(), " d ate utc")
-
-    const properMinutes = extractMinutes(date.toISOString())
-    if (!properMinutes) {
-      throw new HttpException("Error in minutes", 500);
-    }
-    console.log(
-      {
-        expiresAt: parseInt(formatDateToUTC(new Date(addMinutes(date, 5).toISOString()))),
-        hours: [date.getUTCHours()],
-        minutes: [new Date(date.toISOString()).getUTCMinutes()],
-        mdays: [date.getUTCDate()],
-        months: [date.getUTCMonth() + 1],
-        wdays: [date.getUTCDay()],
-      }
-    );
-    console.log(
-      {
-        expiresAt: parseInt(formatDateToUTC(new Date(addMinutes(date, 5).toISOString()))),
-        hours: [date.getUTCHours()],
-        minutes: [properMinutes],
-        mdays: [date.getUTCDate()],
-        months: [date.getUTCMonth() + 1],
-        wdays: [date.getUTCDay()],
-      }
-    );
-
-    console.log(
-      {
-        expiresAt: parseInt(formatDateToUTC(new Date(addMinutes(date, 5).toISOString()))),
-        hours: [date.getHours()],
-        minutes: [date.getMinutes()],
-        mdays: [date.getDate()],
-        months: [date.getMonth() + 1],
-        wdays: [date.getDay()],
-      }
-    );
-
-    await this.jobService.registerJobForEndKickStarterCampaign(contractAddress,
-      {
-        expiresAt: parseInt(formatDateToUTC(new Date(addMinutes(date, 5).toISOString()))),
-        hours: [date.getUTCHours()],
-        minutes: [properMinutes],
-        mdays: [date.getUTCDate()],
-        months: [date.getUTCMonth() + 1],
-        wdays: [date.getUTCDay()],
-      }
-    );
   async trigger(
     @TypedParam('contractAddress') contractAddress: string,
     @TypedBody() body: TestTrigger,
   ): Promise<Http200Response> {
-    await this.jobService.registerPortalDeadlineCronJob(
+    const date = new Date(body.date);
+    console.log(date, ' dataeee');
+    console.log(date.toUTCString(), ' d ate utc');
+
+    const properMinutes = extractMinutes(date.toISOString());
+    if (!properMinutes) {
+      throw new HttpException('Error in minutes', 500);
+    }
+    console.log({
+      expiresAt: parseInt(
+        formatDateToUTC(new Date(addMinutes(date, 5).toISOString())),
+      ),
+      hours: [date.getUTCHours()],
+      minutes: [new Date(date.toISOString()).getUTCMinutes()],
+      mdays: [date.getUTCDate()],
+      months: [date.getUTCMonth() + 1],
+      wdays: [date.getUTCDay()],
+    });
+    console.log({
+      expiresAt: parseInt(
+        formatDateToUTC(new Date(addMinutes(date, 5).toISOString())),
+      ),
+      hours: [date.getUTCHours()],
+      minutes: [properMinutes],
+      mdays: [date.getUTCDate()],
+      months: [date.getUTCMonth() + 1],
+      wdays: [date.getUTCDay()],
+    });
+
+    console.log({
+      expiresAt: parseInt(
+        formatDateToUTC(new Date(addMinutes(date, 5).toISOString())),
+      ),
+      hours: [date.getHours()],
+      minutes: [date.getMinutes()],
+      mdays: [date.getDate()],
+      months: [date.getMonth() + 1],
+      wdays: [date.getDay()],
+    });
+
+    await this.jobService.registerJobForEndKickStarterCampaign(
       contractAddress,
-      dateToCron(new Date(body.date)),
+      {
+        expiresAt: parseInt(
+          formatDateToUTC(new Date(addMinutes(date, 5).toISOString())),
+        ),
+        hours: [date.getUTCHours()],
+        minutes: [properMinutes],
+        mdays: [date.getUTCDate()],
+        months: [date.getUTCMonth() + 1],
+        wdays: [date.getUTCDay()],
+      },
     );
     return {
       message: `Job has been registered`,
