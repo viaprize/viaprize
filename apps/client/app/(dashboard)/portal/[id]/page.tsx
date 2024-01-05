@@ -32,6 +32,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           deadline={portal.deadline}
           isActive={portal.isActive ?? false}
           treasurers={portal.treasurers}
+          sendImmediately={portal.sendImmediately}
         />
       </div>
       <PortalTabs description={portal.description} />

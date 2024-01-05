@@ -81,5 +81,5 @@ export const storeFiles = async (files: File[]) => {
     return '';
   }
   console.log(data.path, 'path');
-  return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaings/${data.path}`;
+  return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaigns/${data.path}`;
 };

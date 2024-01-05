@@ -565,7 +565,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Retrieve a list of accepted Portal proposals\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\nparameters",
+        "summary": "Retrieve a list of accepted Portal proposals\r\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\r\nparameters",
         "description": "The code snippet you provided is a method in the `PortalsController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
         "security": [
           {
@@ -578,7 +578,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Retrieve a list of accepted Portal proposals\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\nparameters",
+                "text": "Retrieve a list of accepted Portal proposals\r\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\r\nparameters",
                 "kind": "text"
               }
             ]
@@ -1096,6 +1096,76 @@
             "text": [
               {
                 "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/portals/trigger/{contractAddress}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contractAddress",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestTrigger"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls\nthe ``setPlatformFee method of the `portalProposalsService` with the given `id`",
+        "description": "The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls\nthe ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal",
+        "x-nestia-namespace": "portals.trigger.trigger",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "contractAddress",
                 "kind": "text"
               }
             ]
@@ -3979,6 +4049,21 @@
         "nullable": false,
         "required": [
           "platformFeePercentage"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "TestTrigger": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "date"
         ],
         "x-typia-jsDocTags": []
       },
