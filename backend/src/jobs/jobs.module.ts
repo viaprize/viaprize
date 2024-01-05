@@ -16,9 +16,11 @@ import { JobService } from './jobs.service';
                 apiKey: configService.get<string>("TRIGGER_API_KEY"),
                 apiUrl: "https://cloud.trigger.dev",
 
+
             })
         },
         inject: [ConfigService],
+
     }), BlockchainModule],
     exports: [JobService],
 })
