@@ -55,4 +55,4 @@ import { PortalsModule } from './portals/portals.module';
   providers: [],
   controllers: [],
 })
-export class AppModule {}
+export class AppModule { }

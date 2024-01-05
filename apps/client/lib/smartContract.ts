@@ -80,7 +80,8 @@ export const portalABI = [
     stateMutability: 'nonpayable',
     type: 'constructor',
     inputs: [
-      { name: '_proposer', internalType: 'address[]', type: 'address[]' },
+      { name: '_proposers', internalType: 'address[]', type: 'address[]' },
+      { name: '_admins', internalType: 'address[]', type: 'address[]' },
       { name: '_goal', internalType: 'uint256', type: 'uint256' },
       { name: '_deadline', internalType: 'uint256', type: 'uint256' },
       { name: '_allowDonationAboveGoalAmount', internalType: 'bool', type: 'bool' },
@@ -90,8 +91,10 @@ export const portalABI = [
   },
   { type: 'error', inputs: [], name: 'CantEndKickstarterTypeCampaign' },
   { type: 'error', inputs: [], name: 'CantGetRefundForGoFundMeTypeCampaign' },
+  { type: 'error', inputs: [], name: 'DeadlineNotMet' },
   { type: 'error', inputs: [], name: 'FundingToContractEnded' },
   { type: 'error', inputs: [], name: 'GoalAndDeadlineAlreadyMet' },
+  { type: 'error', inputs: [], name: 'GoalAndDeadlineNotRequired' },
   { type: 'error', inputs: [], name: 'NotEnoughFunds' },
   { type: 'error', inputs: [], name: 'RequireGoalAndDeadline' },
   {
@@ -137,6 +140,13 @@ export const portalABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'admins',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [],
     name: 'allowDonationAboveGoalAmount',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
@@ -163,6 +173,20 @@ export const portalABI = [
     outputs: [],
   },
   {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'endEarlyandRefund',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'endKickStarterCampaign',
+    outputs: [],
+  },
+  {
     stateMutability: 'view',
     type: 'function',
     inputs: [],
@@ -180,6 +204,13 @@ export const portalABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isAdmin',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
     name: 'isPatron',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
@@ -187,7 +218,7 @@ export const portalABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'isProposers',
+    name: 'isProposer',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
@@ -196,13 +227,6 @@ export const portalABI = [
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
     name: 'patronAmount',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'patronRefund',
-    outputs: [],
   },
   {
     stateMutability: 'view',
@@ -229,7 +253,7 @@ export const portalABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'proposer',
+    name: 'proposers',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
   },
   {
@@ -238,6 +262,13 @@ export const portalABI = [
     inputs: [],
     name: 'receiverAddress',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'refundPatronsAmount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
@@ -783,7 +814,7 @@ export const viaPrizeFactoryConfig = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export const portalFactoryABI = [
   {
@@ -799,6 +830,7 @@ export const portalFactoryABI = [
     type: 'function',
     inputs: [
       { name: '_owners', internalType: 'address[]', type: 'address[]' },
+      { name: '_admins', internalType: 'address[]', type: 'address[]' },
       { name: '_goal', internalType: 'uint256', type: 'uint256' },
       { name: '_deadline', internalType: 'uint256', type: 'uint256' },
       { name: '_allowDonationAboveGoalAmount', internalType: 'bool', type: 'bool' },
@@ -811,14 +843,14 @@ export const portalFactoryABI = [
 ] as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export const portalFactoryAddress = {
-  10: '0xdDf95262777c6423385e7d53461fDD545202369a',
+  10: '0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0',
 } as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export const portalFactoryConfig = {
   address: portalFactoryAddress,
@@ -1000,7 +1032,7 @@ export function prepareWriteViaPrizeFactory<
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function writePortalFactory<
   TFunctionName extends string,
@@ -1033,7 +1065,7 @@ export function writePortalFactory<
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function prepareWritePortalFactory<
   TAbi extends readonly unknown[] = typeof portalFactoryABI,
@@ -1260,6 +1292,25 @@ export function usePortalRead<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"admins"`.
+ */
+export function usePortalAdmins<
+  TFunctionName extends 'admins',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'admins',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"allowDonationAboveGoalAmount"`.
  */
 export function usePortalAllowDonationAboveGoalAmount<
@@ -1355,6 +1406,25 @@ export function usePortalIsActive<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"isAdmin"`.
+ */
+export function usePortalIsAdmin<
+  TFunctionName extends 'isAdmin',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'isAdmin',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"isPatron"`.
  */
 export function usePortalIsPatron<
@@ -1374,10 +1444,10 @@ export function usePortalIsPatron<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"isProposers"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"isProposer"`.
  */
-export function usePortalIsProposers<
-  TFunctionName extends 'isProposers',
+export function usePortalIsProposer<
+  TFunctionName extends 'isProposer',
   TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
 >(
   config: Omit<
@@ -1387,7 +1457,7 @@ export function usePortalIsProposers<
 ) {
   return useContractRead({
     abi: portalABI,
-    functionName: 'isProposers',
+    functionName: 'isProposer',
     ...config,
   } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
 }
@@ -1469,10 +1539,10 @@ export function usePortalPlatformFee<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"proposer"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"proposers"`.
  */
-export function usePortalProposer<
-  TFunctionName extends 'proposer',
+export function usePortalProposers<
+  TFunctionName extends 'proposers',
   TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
 >(
   config: Omit<
@@ -1482,7 +1552,7 @@ export function usePortalProposer<
 ) {
   return useContractRead({
     abi: portalABI,
-    functionName: 'proposer',
+    functionName: 'proposers',
     ...config,
   } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
 }
@@ -1502,6 +1572,25 @@ export function usePortalReceiverAddress<
   return useContractRead({
     abi: portalABI,
     functionName: 'receiverAddress',
+    ...config,
+  } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"refundPatronsAmount"`.
+ */
+export function usePortalRefundPatronsAmount<
+  TFunctionName extends 'refundPatronsAmount',
+  TSelectData = ReadContractResult<typeof portalABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: portalABI,
+    functionName: 'refundPatronsAmount',
     ...config,
   } as UseContractReadConfig<typeof portalABI, TFunctionName, TSelectData>);
 }
@@ -1612,23 +1701,53 @@ export function usePortalEndCampaign<TMode extends WriteContractMode = undefined
 }
 
 /**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"patronRefund"`.
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"endEarlyandRefund"`.
  */
-export function usePortalPatronRefund<TMode extends WriteContractMode = undefined>(
+export function usePortalEndEarlyandRefund<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof portalABI, 'patronRefund'>['request']['abi'],
-        'patronRefund',
+        PrepareWriteContractResult<
+          typeof portalABI,
+          'endEarlyandRefund'
+        >['request']['abi'],
+        'endEarlyandRefund',
         TMode
-      > & { functionName?: 'patronRefund' }
-    : UseContractWriteConfig<typeof portalABI, 'patronRefund', TMode> & {
+      > & { functionName?: 'endEarlyandRefund' }
+    : UseContractWriteConfig<typeof portalABI, 'endEarlyandRefund', TMode> & {
         abi?: never;
-        functionName?: 'patronRefund';
+        functionName?: 'endEarlyandRefund';
       } = {} as any,
 ) {
-  return useContractWrite<typeof portalABI, 'patronRefund', TMode>({
+  return useContractWrite<typeof portalABI, 'endEarlyandRefund', TMode>({
     abi: portalABI,
-    functionName: 'patronRefund',
+    functionName: 'endEarlyandRefund',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"endKickStarterCampaign"`.
+ */
+export function usePortalEndKickStarterCampaign<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof portalABI,
+          'endKickStarterCampaign'
+        >['request']['abi'],
+        'endKickStarterCampaign',
+        TMode
+      > & { functionName?: 'endKickStarterCampaign' }
+    : UseContractWriteConfig<typeof portalABI, 'endKickStarterCampaign', TMode> & {
+        abi?: never;
+        functionName?: 'endKickStarterCampaign';
+      } = {} as any,
+) {
+  return useContractWrite<typeof portalABI, 'endKickStarterCampaign', TMode>({
+    abi: portalABI,
+    functionName: 'endKickStarterCampaign',
     ...config,
   } as any);
 }
@@ -1681,19 +1800,35 @@ export function usePreparePortalEndCampaign(
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"patronRefund"`.
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"endEarlyandRefund"`.
  */
-export function usePreparePortalPatronRefund(
+export function usePreparePortalEndEarlyandRefund(
   config: Omit<
-    UsePrepareContractWriteConfig<typeof portalABI, 'patronRefund'>,
+    UsePrepareContractWriteConfig<typeof portalABI, 'endEarlyandRefund'>,
     'abi' | 'functionName'
   > = {} as any,
 ) {
   return usePrepareContractWrite({
     abi: portalABI,
-    functionName: 'patronRefund',
+    functionName: 'endEarlyandRefund',
     ...config,
-  } as UsePrepareContractWriteConfig<typeof portalABI, 'patronRefund'>);
+  } as UsePrepareContractWriteConfig<typeof portalABI, 'endEarlyandRefund'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalABI}__ and `functionName` set to `"endKickStarterCampaign"`.
+ */
+export function usePreparePortalEndKickStarterCampaign(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof portalABI, 'endKickStarterCampaign'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: portalABI,
+    functionName: 'endKickStarterCampaign',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof portalABI, 'endKickStarterCampaign'>);
 }
 
 /**
@@ -3178,7 +3313,7 @@ export function useViaPrizeFactoryNewViaPrizeCreatedEvent(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function usePortalFactoryWrite<
   TFunctionName extends string,
@@ -3207,7 +3342,7 @@ export function usePortalFactoryWrite<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function usePortalFactoryCreatePortal<
   TMode extends WriteContractMode = undefined,
@@ -3240,7 +3375,7 @@ export function usePortalFactoryCreatePortal<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function usePreparePortalFactoryWrite<TFunctionName extends string>(
   config: Omit<
@@ -3258,7 +3393,7 @@ export function usePreparePortalFactoryWrite<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function usePreparePortalFactoryCreatePortal(
   config: Omit<
@@ -3277,7 +3412,7 @@ export function usePreparePortalFactoryCreatePortal(
 /**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link portalFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function usePortalFactoryEvent<TEventName extends string>(
   config: Omit<
@@ -3295,7 +3430,7 @@ export function usePortalFactoryEvent<TEventName extends string>(
 /**
  * Wraps __{@link useContractEvent}__ with `abi` set to __{@link portalFactoryABI}__ and `eventName` set to `"NewPortalCreated"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xdDf95262777c6423385e7d53461fDD545202369a)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function usePortalFactoryNewPortalCreatedEvent(
   config: Omit<

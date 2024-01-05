@@ -12,15 +12,17 @@ import {
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
+import { JobService } from 'src/jobs/jobs.service';
 import { MailService } from 'src/mail/mail.service';
 import { CreatePortalDto } from 'src/portals/dto/create-portal.dto';
 import { RejectProposalDto } from 'src/prizes/dto/reject-proposal.dto';
+import { dateToCron } from 'src/utils/date-to-cron';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
-import { UpdatePlatformFeeDto } from './dto/update-platform-fee.dto';
+import { TestTrigger, UpdatePlatformFeeDto } from './dto/update-platform-fee.dto';
 import { UpdatePortalDto } from './dto/update-portal.dto';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
@@ -35,7 +37,8 @@ export class PortalsController {
     private readonly mailService: MailService,
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
-  ) {}
+    private readonly jobService: JobService,
+  ) { }
 
   @Post('')
   @UseGuards(AuthGuard)
@@ -428,4 +431,22 @@ export class PortalsController {
       message: `Proposal with id ${id} has been updated`,
     };
   }
+
+  /**
+   * The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
+   * the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} contractAddress
+   * @returns {Promise<Http200Response>}
+   */
+  @Post('/trigger/:contractAddress')
+  async trigger(@TypedParam('contractAddress') contractAddress: string, @TypedBody() body: TestTrigger): Promise<Http200Response> {
+    await this.jobService.registerPortalDeadlineCronJob(contractAddress, dateToCron(new Date(body.date)));
+    return {
+      message: `Job has been registered`,
+    };
+  }
+
 }
