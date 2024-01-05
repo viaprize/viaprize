@@ -37,6 +37,8 @@ export default function ProposalsTabs({
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const finalizeTransaction = (item: PrizeProposals) => {};
+
+
   return (
     <div className="p-6 w-full">
       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
@@ -58,7 +60,7 @@ export default function ProposalsTabs({
                   console.log({ status }, 'status');
                   switch (status) {
                     case 'pending': {
-                      console.log('pending');
+                      // router.push(`/prize/edit/${item.id}`);
                       break;
                     }
                     case 'approved': {
@@ -73,7 +75,7 @@ export default function ProposalsTabs({
                       console.log('approved');
                       console.log(
                         [
-                          item?.admins as `0x${string}`[],
+                          item.admins as `0x${string}`[],
                           [
                             '0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2',
                             '0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB',

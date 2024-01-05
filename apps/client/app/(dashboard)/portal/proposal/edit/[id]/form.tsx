@@ -8,6 +8,7 @@ import ImageComponent from '@/components/Prize/dropzone';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import useAppUser from '@/context/hooks/useAppUser';
+import { PortalProposals } from '@/lib/api';
 import type { ConvertUSD } from '@/lib/types';
 import { chain } from '@/lib/wagmi';
 import {
@@ -33,20 +34,49 @@ import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useMutation } from 'wagmi';
 
-export default function PortalForm({ id }: { id: string }) {
+interface PortalProposalForm extends Partial<PortalProposals> {
+  id: string;
+}
+
+export default function PortalProposalForm({
+  id,
+  title: proposalTitle,
+  description,
+  deadline: proposalDeadline,
+  fundingGoal: proposalFundingGoal,
+  allowDonationAboveThreshold: proposalAllowDonationAboveThreshold,
+  images: proposalImages,
+  treasurers: proposalTreasurers,
+  user: proposalUser,
+}: PortalProposalForm) {
+  // const portalProposal = (
+  //   await new Api().portals.proposalsDetail(params.id, {
+  //     next: {
+  //       revalidate: 0,
+  //     },
+  //   })
+  // ).data;
+
+  // if (!appUser || appUser.id !== portalProposal.user.id) {
+  //   return (
+  //     <div className="h-full w-full grid place-content-center">Not authorized</div>
+  //   );
+  // }
+  const { updateProposal, uploadImages } = usePortalProposal();
+
   const [files, setFiles] = useState<FileWithPath[]>([]);
-  const [title, setTitle] = useState('');
-  const [richtext, setRichtext] = useState('');
-  const [address, setAddress] = useState('');
+  const [title, setTitle] = useState(proposalTitle);
+  const [richtext, setRichtext] = useState(description);
+  const [address, setAddress] = useState(proposalTreasurers?.[0] ?? '');
   const [fundingGoal, setFundingGoal] = useState<number>();
-  const [deadline, setDeadline] = useState<Date | null>(null);
-  const [allowFundsAboveGoal, setAllowFundsAboveGoal] = useState(false);
+  const [deadline, setDeadline] = useState<Date | null>(proposalDeadline ? new Date(proposalDeadline) : null);
+  const [allowFundsAboveGoal, setAllowFundsAboveGoal] = useState(
+    proposalAllowDonationAboveThreshold,
+  );
   const [images, setImages] = useState<string>();
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
   const [portalType, setPortalType] = useState('pass-through');
-
-  const { updateProposal, uploadImages } = usePortalProposal();
 
   const { mutateAsync: updateProposalsMutation, isLoading: updatatingProposal } =
     useMutation(updateProposal);

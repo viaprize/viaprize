@@ -44,7 +44,7 @@ export default function PortalProposalsTabs({
                 console.log({ status }, 'status');
                 switch (status) {
                   case 'pending': {
-                    console.log('pending');
+                    await router.push(`/portal/proposal/edit/${item.id}`);
                     break;
                   }
                   case 'approved': {

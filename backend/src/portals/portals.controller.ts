@@ -211,6 +211,13 @@ export class PortalsController {
       },
     );
   }
+  @Get('/proposals/:id')
+  async getProposalById(
+    @TypedParam('id')
+    id: string,
+  ): Promise<PortalProposals> {
+    return await this.portalProposalsService.findOne(id);
+  }
   /**
    * The code snippet you provided is a method in the `PortalsController` class. It is a route handler
    * for the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:

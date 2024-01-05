@@ -16,6 +16,12 @@ export default function usePortalProposal() {
     return res;
   };
 
+
+  const getProposalById = async (id: string) => {
+    const res = await (await backendApi()).portals.proposalsDetail(id);
+    return res.data;
+  }
+
   const updateProposal = async ({
     id,
     dto,
@@ -26,6 +32,7 @@ export default function usePortalProposal() {
     const res = await (await backendApi()).portals.proposalsUpdate(id, dto);
     return res.data;
   };
+
 
   const uploadImages = async (files: File[]) => {
     const images = await storeFiles(files);
@@ -110,5 +117,6 @@ export default function usePortalProposal() {
     rejectProposal,
     getAcceptedProposals,
     updateProposal,
+    getProposalById,
   };
 }

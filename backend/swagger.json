@@ -551,6 +551,119 @@
         "x-nestia-method": "POST"
       }
     },
+    "/portals/proposals/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortalProposals"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.proposals.getProposalById",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      },
+      "put": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePortalPropsalDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "it updates the proposal",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.proposals.updateProposal",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "PUT"
+      }
+    },
     "/portals/proposals/accept": {
       "get": {
         "tags": [],
@@ -960,89 +1073,6 @@
           }
         ],
         "x-nestia-method": "POST"
-      }
-    },
-    "/portals/proposals/{id}": {
-      "put": {
-        "tags": [],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "description": "",
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePortalPropsalDto"
-              }
-            }
-          },
-          "required": true,
-          "x-nestia-encrypted": false
-        },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Http200Response"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "description": "it updates the proposal",
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "x-nestia-namespace": "portals.proposals.updateProposal",
-        "x-nestia-jsDocTags": [
-          {
-            "name": "date",
-            "text": [
-              {
-                "text": "9/25/2023 - 5:35:35 AM",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "security",
-            "text": [
-              {
-                "text": "bearer",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "async"
-          },
-          {
-            "name": "param",
-            "text": [
-              {
-                "text": "id",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "returns"
-          }
-        ],
-        "x-nestia-method": "PUT"
       }
     },
     "/portals/proposals/platformFee/{id}": {
