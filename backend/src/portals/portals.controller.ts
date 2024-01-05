@@ -91,6 +91,22 @@ export class PortalsController {
       user: portalProposal.user,
       sendImmediately: portalProposal.sendImmediately,
     });
+    const properMinutes = extractMinutes(portalProposal.deadline.toISOString())
+    if (!properMinutes) {
+      throw new HttpException("Error in minutes", 500);
+    }
+    await this.jobService.registerJobForEndKickStarterCampaign(
+      createPortalDto.address,
+      {
+        expiresAt: parseInt(formatDateToUTC(new Date(addMinutes(portalProposal.deadline, 5).toISOString()))),
+        hours: [portalProposal.deadline.getUTCHours()],
+        minutes: [properMinutes],
+        mdays: [portalProposal.deadline.getUTCDate()],
+        months: [portalProposal.deadline.getUTCMonth() + 1],
+        wdays: [portalProposal.deadline.getUTCDay()],
+      }
+
+    )
     await this.portalProposalsService.remove(portalProposal.id);
     await this.mailService.portalDeployed(
       portalProposal.user.email,
