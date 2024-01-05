@@ -958,7 +958,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdatePortalDto"
+                "$ref": "#/components/schemas/UpdatePortalPropsalDto"
               }
             }
           },
@@ -3942,7 +3942,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "UpdatePortalDto": {
+      "UpdatePortalPropsalDto": {
         "type": "object",
         "properties": {
           "platformFeePercentage": {
@@ -3950,12 +3950,78 @@
             "x-typia-optional": false,
             "type": "number"
           },
-          "address": {
+          "description": {
             "x-typia-required": false,
             "x-typia-optional": true,
             "type": "string"
           },
-          "proposal_id": {
+          "fundingGoal": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "number"
+          },
+          "isMultiSignatureReciever": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "boolean"
+          },
+          "sendImmediately": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "boolean"
+          },
+          "deadline": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string",
+            "format": "date-time"
+          },
+          "allowDonationAboveThreshold": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "boolean"
+          },
+          "termsAndCondition": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "proposerAddress": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "treasurers": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "tags": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "images": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "title": {
             "x-typia-required": false,
             "x-typia-optional": true,
             "type": "string"

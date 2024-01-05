@@ -21,12 +21,12 @@ import { Http200Response } from 'src/utils/types/http.type';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
 import { UpdatePlatformFeeDto } from './dto/update-platform-fee.dto';
-import { UpdatePortalDto } from './dto/update-portal.dto';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
 import { PortalWithBalance } from './entities/types';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
+import { UpdatePortalPropsalDto } from './dto/update-portal-proposal.dto';
 
 @Controller('portals')
 export class PortalsController {
@@ -395,7 +395,7 @@ export class PortalsController {
   @UseGuards(AdminAuthGuard)
   async updateProposal(
     @TypedParam('id') id: string,
-    @TypedBody() updateBody: UpdatePortalDto,
+    @TypedBody() updateBody: UpdatePortalPropsalDto,
   ): Promise<Http200Response> {
     await this.portalProposalsService.update(id, updateBody);
 
