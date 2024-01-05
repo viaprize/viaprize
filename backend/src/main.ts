@@ -40,6 +40,8 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+
+
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
