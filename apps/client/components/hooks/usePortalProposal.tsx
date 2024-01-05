@@ -1,5 +1,9 @@
 import { storeFiles } from '@/context/tools';
-import { CreatePortalProposalDto, PortalProposals, UpdatePortalDto } from '@/lib/api';
+import {
+  CreatePortalProposalDto,
+  PortalProposals,
+  UpdatePortalPropsalDto,
+} from '@/lib/api';
 import { backendApi } from '@/lib/backend';
 import { Query } from '@/lib/types';
 import { useState } from 'react';
@@ -11,7 +15,14 @@ export default function usePortalProposal() {
     const res = await (await backendApi()).portals.proposalsCreate(proposalDto);
     return res;
   };
-  const updateProposal = async ({ id, dto }: { id: string; dto: UpdatePortalDto }) => {
+
+  const updateProposal = async ({
+    id,
+    dto,
+  }: {
+    id: string;
+    dto: UpdatePortalPropsalDto;
+  }) => {
     const res = await (await backendApi()).portals.proposalsUpdate(id, dto);
     return res.data;
   };

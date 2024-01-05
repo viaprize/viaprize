@@ -258,14 +258,29 @@ export interface Http200Response {
   message: string;
 }
 
-export interface UpdatePortalDto {
+export interface UpdatePortalPropsalDto {
   platformFeePercentage: number;
-  address?: string;
-  proposal_id?: string;
+  description?: string;
+  fundingGoal?: number;
+  isMultiSignatureReciever?: boolean;
+  sendImmediately?: boolean;
+  /** @format date-time */
+  deadline?: string;
+  allowDonationAboveThreshold?: boolean;
+  termsAndCondition?: string;
+  proposerAddress?: string;
+  treasurers?: string[];
+  tags?: string[];
+  images?: string[];
+  title?: string;
 }
 
 export interface UpdatePlatformFeeDto {
   platformFeePercentage: number;
+}
+
+export interface TestTrigger {
+  date: string;
 }
 
 export interface CreatePrizeDto {
@@ -739,6 +754,20 @@ export class HttpClient<SecurityDataType = unknown> {
  * @baseUrl http://localhost:3001/api
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @name GetRoot
+   * @request GET:/
+   */
+  getRoot = (params: RequestParams = {}) =>
+    this.request<string, any>({
+      path: `/`,
+      method: 'GET',
+      format: 'json',
+      ...params,
+    });
+
   pacts = {
     /**
      * No description
@@ -963,7 +992,11 @@ the `approve` method of the `portalProposalsService` with the given `id`
      * @request PUT:/portals/proposals/{id}
      * @secure
      */
-    proposalsUpdate: (id: string, data: UpdatePortalDto, params: RequestParams = {}) =>
+    proposalsUpdate: (
+      id: string,
+      data: UpdatePortalPropsalDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/${id}`,
         method: 'PUT',
@@ -993,6 +1026,28 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         method: 'POST',
         body: data,
         secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
+ *
+ * @name TriggerCreate
+ * @summary The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
+the ``setPlatformFee method of the `portalProposalsService` with the given `id`
+ * @request POST:/portals/trigger/{contractAddress}
+ */
+    triggerCreate: (
+      contractAddress: string,
+      data: TestTrigger,
+      params: RequestParams = {},
+    ) =>
+      this.request<Http200Response, any>({
+        path: `/portals/trigger/${contractAddress}`,
+        method: 'POST',
+        body: data,
         type: ContentType.Json,
         format: 'json',
         ...params,
