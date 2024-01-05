@@ -26,12 +26,12 @@ import {
   TestTrigger,
   UpdatePlatformFeeDto,
 } from './dto/update-platform-fee.dto';
+import { UpdatePortalPropsalDto } from './dto/update-portal-proposal.dto';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
 import { PortalWithBalance } from './entities/types';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
-import { UpdatePortalPropsalDto } from './dto/update-portal-proposal.dto';
 
 function addMinutes(date: Date, minutes: number): Date {
   date.setMinutes(date.getMinutes() + minutes);
@@ -93,25 +93,29 @@ export class PortalsController {
       user: portalProposal.user,
       sendImmediately: portalProposal.sendImmediately,
     });
-    const properMinutes = extractMinutes(portalProposal.deadline.toISOString());
-    if (!properMinutes) {
-      throw new HttpException('Error in minutes', 500);
-    }
-    await this.jobService.registerJobForEndKickStarterCampaign(
-      createPortalDto.address,
-      {
-        expiresAt: parseInt(
-          formatDateToUTC(
-            new Date(addMinutes(portalProposal.deadline, 5).toISOString()),
+    if (!portalProposal.sendImmediately) {
+      const properMinutes = extractMinutes(
+        portalProposal.deadline.toISOString(),
+      );
+      if (!properMinutes) {
+        throw new HttpException('Error in minutes', 500);
+      }
+      await this.jobService.registerJobForEndKickStarterCampaign(
+        createPortalDto.address,
+        {
+          expiresAt: parseInt(
+            formatDateToUTC(
+              new Date(addMinutes(portalProposal.deadline, 5).toISOString()),
+            ),
           ),
-        ),
-        hours: [portalProposal.deadline.getUTCHours()],
-        minutes: [properMinutes],
-        mdays: [portalProposal.deadline.getUTCDate()],
-        months: [portalProposal.deadline.getUTCMonth() + 1],
-        wdays: [portalProposal.deadline.getUTCDay()],
-      },
-    );
+          hours: [portalProposal.deadline.getUTCHours()],
+          minutes: [properMinutes],
+          mdays: [portalProposal.deadline.getUTCDate()],
+          months: [portalProposal.deadline.getUTCMonth() + 1],
+          wdays: [portalProposal.deadline.getUTCDay()],
+        },
+      );
+    }
     await this.portalProposalsService.remove(portalProposal.id);
     await this.mailService.portalDeployed(
       portalProposal.user.email,
