@@ -14,7 +14,7 @@ import { JobService } from './jobs.service';
             return ({
                 id: 'viaprize-prod',
                 apiKey: configService.get<string>("TRIGGER_API_KEY"),
-                apiUrl: "https://cloud.trigger.dev",
+                apiUrl: "https://api-prod.pactsmith.com/api/api/trigger",
 
 
             })
