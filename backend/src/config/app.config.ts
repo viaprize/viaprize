@@ -74,6 +74,6 @@ export default registerAs<AppConfig>('app', () => {
     rpcUrl: process.env.RPC_URL || 'no-url',
     privateKey: process.env.PRIVATE_KEY || 'no-key',
     triggerApiKey: process.env.TRIGGER_API_KEY || 'no-api',
-    triggerApiUrl: process.env.TRIGGER_API_KEY || 'no-trigger'
+    triggerApiUrl: process.env.TRIGGER_API_URL || 'no-trigger'
   };
 });
