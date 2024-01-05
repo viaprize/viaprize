@@ -529,6 +529,119 @@
         "x-nestia-method": "POST"
       }
     },
+    "/portals/proposals/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortalProposals"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.proposals.getProposalById",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      },
+      "put": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePortalPropsalDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "it updates the proposal",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.proposals.updateProposal",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "PUT"
+      }
+    },
     "/portals/proposals/accept": {
       "get": {
         "tags": [],
@@ -565,7 +678,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Retrieve a list of accepted Portal proposals\r\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\r\nparameters",
+        "summary": "Retrieve a list of accepted Portal proposals\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\nparameters",
         "description": "The code snippet you provided is a method in the `PortalsController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
         "security": [
           {
@@ -578,7 +691,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Retrieve a list of accepted Portal proposals\r\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\r\nparameters",
+                "text": "Retrieve a list of accepted Portal proposals\ndescription: Retrieve a list of accepted Portal proposals. The list supports pagination.\nparameters",
                 "kind": "text"
               }
             ]
@@ -938,89 +1051,6 @@
           }
         ],
         "x-nestia-method": "POST"
-      }
-    },
-    "/portals/proposals/{id}": {
-      "put": {
-        "tags": [],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "description": "",
-            "required": true
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePortalDto"
-              }
-            }
-          },
-          "required": true,
-          "x-nestia-encrypted": false
-        },
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Http200Response"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "description": "it updates the proposal",
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "x-nestia-namespace": "portals.proposals.updateProposal",
-        "x-nestia-jsDocTags": [
-          {
-            "name": "date",
-            "text": [
-              {
-                "text": "9/25/2023 - 5:35:35 AM",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "security",
-            "text": [
-              {
-                "text": "bearer",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "async"
-          },
-          {
-            "name": "param",
-            "text": [
-              {
-                "text": "id",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "returns"
-          }
-        ],
-        "x-nestia-method": "PUT"
       }
     },
     "/portals/proposals/platformFee/{id}": {
@@ -4012,7 +4042,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "UpdatePortalDto": {
+      "UpdatePortalPropsalDto": {
         "type": "object",
         "properties": {
           "platformFeePercentage": {
@@ -4020,12 +4050,78 @@
             "x-typia-optional": false,
             "type": "number"
           },
-          "address": {
+          "description": {
             "x-typia-required": false,
             "x-typia-optional": true,
             "type": "string"
           },
-          "proposal_id": {
+          "fundingGoal": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "number"
+          },
+          "isMultiSignatureReciever": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "boolean"
+          },
+          "sendImmediately": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "boolean"
+          },
+          "deadline": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string",
+            "format": "date-time"
+          },
+          "allowDonationAboveThreshold": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "boolean"
+          },
+          "termsAndCondition": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "proposerAddress": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "treasurers": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "tags": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "images": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "title": {
             "x-typia-required": false,
             "x-typia-optional": true,
             "type": "string"

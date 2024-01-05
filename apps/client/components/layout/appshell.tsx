@@ -20,6 +20,7 @@ import Footer from './footer';
 import HeaderLayout from './headerLayout';
 import MobileNavbar from './mobileNavbar';
 import ProfileMenu from './profilemenu';
+
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
   const [opened, { toggle }] = useDisclosure();
@@ -27,7 +28,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
     useDisclosure(false);
   const computedColorScheme = useComputedColorScheme('light');
   useEffect(() => {
-    if (chain.id != optimism.id) {
+    if (chain.id !== optimism.id) {
       openChainModal();
     }
   }, [chain.id]);
@@ -83,7 +84,6 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
       <AppShell.Navbar>
         <MobileNavbar close={toggle} open={opened} />
       </AppShell.Navbar>
-
       <AppShell.Main>
         <div className="w-full flex justify-center">
           <Center className="max-w-screen-xl w-full">{children}</Center>

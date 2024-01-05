@@ -59,6 +59,7 @@ const config = {
     'eslint-comments/require-description': 'warn',
     'import/no-extraneous-dependencies': 'off',
     '@typescript-eslint/no-unused-vars': 'warn',
+    'import/order': 'off',
     // "unicorn/filename-case": [
     //   "error",
     //   {

@@ -1,9 +1,14 @@
-import type { CreateUser } from '@/lib/api';
+import type { CreateUser, UpdateUser } from '@/lib/api';
+import { backendApi } from '@/lib/backend';
 import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import useAppUserStore from 'store/app-user';
+
+interface UpdateUserDtoWithUserName extends UpdateUser {
+  userName: string;
+}
 
 export default function useAppUser() {
   const router = useRouter();
@@ -74,7 +79,22 @@ export default function useAppUser() {
       clearUser();
     });
 
-    await router.push('/');
+    router.push('/');
+  };
+
+  const updateUser = async (updateUserDTO: UpdateUserDtoWithUserName) => {
+    console.log(updateUser, 'updateUser');
+    const { userName, ...propertiesToUpdate } = updateUserDTO;
+    const thisUser = await (
+      await backendApi()
+    ).users.updateCreate(updateUserDTO.userName, propertiesToUpdate);
+    await refreshUser();
+    return thisUser.data;
+  };
+
+  const getUserByUserName = async (userName: string) => {
+    const thisUser = await (await backendApi()).users.usernameDetail(userName);
+    return thisUser.data;
   };
 
   const refreshUser = async (): Promise<void> => {
@@ -83,11 +103,15 @@ export default function useAppUser() {
     }
   };
 
+  const isOwner = user?.id === appUser?.authId;
+
   return {
     refreshUser,
     createNewUser,
     logoutUser,
     appUser,
     loginUser,
+    updateUser,
+    getUserByUserName,
   };
 }

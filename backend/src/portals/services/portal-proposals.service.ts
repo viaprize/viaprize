@@ -33,6 +33,11 @@ export class PortalProposalsService {
     return portalProposal;
   }
 
+  async edit(portalId: string, updatePortalProposal: UpdatePortalPropsalDto) {
+    await this.portalProposalsRepository.update(portalId, updatePortalProposal);
+    return this.findOne(portalId);
+  }
+
   async setPlatformFee(id: string, platformFeePercentage: number) {
     const portalProposal = await this.portalProposalsRepository.findOneByOrFail(
       {

@@ -58,23 +58,27 @@ export default function EditProfileModal({
   };
 
   const handleUpdateProfile = async () => {
-    const userName = appUser?.username;
-    if (!userName) {
-      toast.error('User name is not defined');
-      return;
+    try {
+      const userName = appUser?.username;
+      if (!userName) {
+        toast.error('User name is not defined');
+        return;
+      }
+      setUploadingImage(true);
+      const profileImageAvatar = await handleUploadImages();
+      setUploadingImage(false);
+      await updateUserProfile({
+        userName,
+        name,
+        priorities,
+        proficiencies,
+        bio,
+        avatar: profileImageAvatar,
+      });
+      fetchUser();
+    } catch (e) {
+      console.log(e);
     }
-    setUploadingImage(true);
-    const profileImageAvatar = await handleUploadImages();
-    setUploadingImage(false);
-    await updateUserProfile({
-      userName,
-      name,
-      priorities,
-      proficiencies,
-      bio,
-      avatar: profileImageAvatar,
-    });
-    fetchUser();
   };
 
   const submit = () => {
