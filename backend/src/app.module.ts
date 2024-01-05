@@ -33,6 +33,18 @@ import { PortalsModule } from './portals/portals.module';
         return new DataSource(options).initialize();
       },
     }),
+    // TriggerDevModule.registerAsync({
+    //   useFactory: (configService: ConfigService) => {
+    //     console.log(configService.get<string>("TRIGGER_API_KEY"), "hiiiiiiiiiiiiiiiiiiiiiii")
+    //     return ({
+    //       id: 'viaprize-prod',
+    //       apiKey: configService.get<string>("TRIGGER_API_KEY"),
+    //       apiUrl: "https://cloud.trigger.dev",
+
+    //     })
+    //   },
+    //   inject: [ConfigService],
+    // }),
     AgendaModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) =>
