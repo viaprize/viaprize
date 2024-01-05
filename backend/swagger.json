@@ -23,28 +23,6 @@
     }
   },
   "paths": {
-    "/": {
-      "get": {
-        "tags": [],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "x-nestia-namespace": "getHello",
-        "x-nestia-jsDocTags": [],
-        "x-nestia-method": "GET"
-      }
-    },
     "/pacts": {
       "post": {
         "tags": [],
