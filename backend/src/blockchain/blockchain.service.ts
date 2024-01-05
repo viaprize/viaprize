@@ -10,40 +10,40 @@ export class BlockchainService {
     const key = this.configService.getOrThrow<AllConfigType>('RPC_URL', {
       infer: true,
     });
-    const privateKey = this.configService.getOrThrow<AllConfigType>('PRIVATE_KEY', { infer: true });
+    // const privateKey = this.configService.getOrThrow<AllConfigType>('PRIVATE_KEY', { infer: true });
     this.provider = new JsonRpcProvider(key);
-    this.wallet = new ethers.Wallet(privateKey, this.provider);
+    // this.wallet = new ethers.Wallet(privateKey, this.provider);
   }
 
   getBalanceOfAddress(address: string) {
     console.log({ address });
     return this.provider.getBalance(address);
   }
-  async setEndKickStarterCampaign(contractAddress: string) {
-    const contract = new ethers.Contract(
-      contractAddress,
-      [
-        "function endKickStarterCampaign()",
-      ],
-      this.wallet,
-    );
-    try {
-      const gasEstimate = await contract.endKickStarterCampaign.estimateGas(
-        this.wallet.address,
-      );
-      const gasLimit = parseInt(gasEstimate.toString()) * 2;
-      const tx = await contract.endKickStarterCampaign(this.wallet.address, {
-        gasLimit: BigInt(gasLimit),
-      });
+  // async setEndKickStarterCampaign(contractAddress: string) {
+  //   const contract = new ethers.Contract(
+  //     contractAddress,
+  //     [
+  //       "function endKickStarterCampaign()",
+  //     ],
+  //     this.wallet,
+  //   );
+  //   try {
+  //     const gasEstimate = await contract.endKickStarterCampaign.estimateGas(
+  //       this.wallet.address,
+  //     );
+  //     const gasLimit = parseInt(gasEstimate.toString()) * 2;
+  //     const tx = await contract.endKickStarterCampaign(this.wallet.address, {
+  //       gasLimit: BigInt(gasLimit),
+  //     });
 
-      const receipt = await tx.wait();
+  //     const receipt = await tx.wait();
 
-      return receipt;
-    } catch (error) {
+  //     return receipt;
+  //   } catch (error) {
 
-      return new Error(error);
-    }
-  }
+  //     return new Error(error);
+  //   }
+  // }
   async getSubmissionTime(viaprizeContractAddress: string): Promise<bigint> {
     const abi = ['function get_submission_time() view returns (uint256)'];
     const contract = new ethers.Contract(

@@ -72,8 +72,7 @@ export default registerAs<AppConfig>('app', () => {
     scheduleDatabaseUrL: process.env.SCHEDULE_DATABASE_URL || 'default',
     alchemy: process.env.ALCHEMY || 'no-api',
     rpcUrl: process.env.RPC_URL || 'no-url',
-    privateKey: process.env.PRIVATE_KEY || 'no-key',
-    triggerApiKey: process.env.TRIGGER_API_KEY || 'no-api',
-    triggerApiUrl: process.env.TRIGGER_API_URL || 'no-trigger'
+    cronjobApiKey: process.env.CRON_JOB_API_KEY || 'no-key',
+    supabaseAnonApiKey: process.env.SUPABASE_ANON_API_KEY || '',
   };
 });

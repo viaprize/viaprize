@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 
-import { AgendaModule } from 'agenda-nest';
-import { AgendaModuleConfig } from 'agenda-nest/dist/interfaces';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { TypeOrmConfigService } from './database/typeorm-config.service';
 
@@ -45,16 +43,16 @@ import { PortalsModule } from './portals/portals.module';
     //   },
     //   inject: [ConfigService],
     // }),
-    AgendaModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (config: ConfigService) =>
-        ({
-          db: {
-            address: config.get<string>('SCHEDULE_DATABASE_URL'),
-          },
-        }) as AgendaModuleConfig,
-      inject: [ConfigService],
-    }),
+    // AgendaModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: (config: ConfigService) =>
+    //     ({
+    //       db: {
+    //         address: config.get<string>('SCHEDULE_DATABASE_URL'),
+    //       },
+    //     }) as AgendaModuleConfig,
+    //   inject: [ConfigService],
+    // }),
     PactsModule,
     PrizesModule,
     UsersModule,
