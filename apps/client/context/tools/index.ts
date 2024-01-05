@@ -3,9 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 
 // Create Supabase client
 
-
 // Upload file using standard upload
-
 
 /**
  * Sleep for a given number of milliseconds.
@@ -71,13 +69,17 @@ function generateRandomThreeDigitNumber() {
   return randomNum;
 }
 export const storeFiles = async (files: File[]) => {
-  const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_API_KEY)
-  const { data, error } = await supabase.storage.from('campaigns').upload(`${generateRandomThreeDigitNumber()}${files[0].name}`, files[0])
-
+  const supabase = createClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_API_KEY,
+  );
+  const { data, error } = await supabase.storage
+    .from('campaigns')
+    .upload(`${generateRandomThreeDigitNumber()}${files[0].name}`, files[0]);
 
   if (!files[0] || error) {
     return '';
   }
-  console.log(data.path, "path")
-  return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaings/${data.path}`;
+  console.log(data.path, 'path');
+  return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaigns/${data.path}`;
 };

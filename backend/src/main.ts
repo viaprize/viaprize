@@ -5,28 +5,28 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
-import { FastifyAdapter } from '@nestjs/platform-fastify';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import { SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
-import { join } from 'path';
 import docs from '../swagger.json';
 import { AppModule } from './app.module';
 import { AllConfigType } from './config/config.type';
 import validationOptions from './utils/validation-options';
 
 async function bootstrap() {
-  const adapter = new FastifyAdapter({
-    logger: true,
-  });
-  await adapter.useStaticAssets({
-    root: join(__dirname, '..', 'public'), // Specify the directory where your static assets are located
-    prefix: '/public/', // Spe
-  });
+  const adapter = new ExpressAdapter();
+  // await adapter.useStaticAssets({
+  //   root: join(__dirname, '..', 'public'), // Specify the directory where your static assets are located
+  //   prefix: '/public/', // Spe
+  // });
 
   adapter.enableCors({
     origin: '*',
   });
-  const app = await NestFactory.create(AppModule, adapter);
+
+  const app = await NestFactory.create(AppModule, adapter, {
+    logger: ['error', 'warn', 'debug', 'log', 'verbose'],
+  });
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
 
@@ -40,6 +40,8 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+
+
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 

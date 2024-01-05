@@ -1,4 +1,5 @@
 'use client';
+import useAppUser from '@/context/hooks/useAppUser';
 import { prepareWritePortal, writePortal } from '@/lib/smartContract';
 import { formatDate } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
@@ -32,6 +33,7 @@ interface AmountDonateCardProps {
   typeOfPortal: string;
   deadline?: string;
   isActive: boolean;
+  sendImmediately: boolean;
 }
 
 export default function AmountDonateCard({
@@ -43,11 +45,13 @@ export default function AmountDonateCard({
   typeOfPortal,
   deadline,
   treasurers,
+  sendImmediately,
   isActive,
 }: AmountDonateCardProps) {
   const { address } = useAccount();
   const [value, setValue] = useState('');
   const [debounced] = useDebouncedValue(value, 500);
+  const { appUser } = useAppUser();
 
   const { data: balance, isLoading, refetch } = useBalance({ address });
   console.log({ balance }, 'balance');
@@ -194,13 +198,71 @@ export default function AmountDonateCard({
         >
           Donate
         </Button>
-        {address && treasurers.includes(address) ? (
+        {address && treasurers.includes(address) && sendImmediately ? (
           <Button
             variant="outline"
             onClick={async () => {
               try {
                 const config = await prepareWritePortal({
                   functionName: 'endCampaign',
+                  address: contractAddress as `0x${string}`,
+                });
+
+                const { hash } = await writePortal(config);
+                toast.success(`Transaction ${hash}`, {
+                  duration: 6000,
+                });
+              } catch (e: unknown) {
+                toast.error((e as any)?.message);
+              } finally {
+                setSendLoading(false);
+                window.location.reload();
+              }
+            }}
+          >
+            End Campaign
+          </Button>
+        ) : null}
+        {address &&
+        isActive &&
+        (treasurers.includes(address) || appUser?.isAdmin) &&
+        !sendImmediately ? (
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                const config = await prepareWritePortal({
+                  functionName: 'endEarlyandRefund',
+                  address: contractAddress as `0x${string}`,
+                });
+
+                const { hash } = await writePortal(config);
+                toast.success(`Transaction ${hash}`, {
+                  duration: 6000,
+                });
+              } catch (e: unknown) {
+                toast.error((e as any)?.message);
+              } finally {
+                setSendLoading(false);
+                window.location.reload();
+              }
+            }}
+          >
+            Refund and End Campaign
+          </Button>
+        ) : null}
+        {address &&
+        deadline &&
+        isActive &&
+        new Date(deadline) < new Date() &&
+        (treasurers.includes(address) || appUser?.isAdmin) &&
+        !sendImmediately ? (
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                const config = await prepareWritePortal({
+                  functionName: 'endKickStarterCampaign',
                   address: contractAddress as `0x${string}`,
                 });
 
