@@ -69,6 +69,8 @@ export default function PortalProposalForm({
     proposalSendImmediately ? 'pass-through' : 'all-or-nothing',
   );
   const [fundingGoal, setFundingGoal] = useState<number | undefined>(proposalFundingGoal);
+  const [image,setImage] = useState(proposalImages?.[0]);
+  console.log(image, 'image')
 
   const { mutateAsync: updateProposalsMutation, isLoading: updatatingProposal } =
     useMutation(updateProposal);
@@ -181,7 +183,7 @@ export default function PortalProposalForm({
 
   return (
     <div className="flex flex-col gap-4">
-      <ImageComponent files={files} setfiles={setFiles} image={proposalImages?.[0]} />
+      <ImageComponent files={files} setfiles={setFiles} image={image} />
       <TextInput
         label="Portal Name"
         placeholder="Waste Management System for the City of Lagos"

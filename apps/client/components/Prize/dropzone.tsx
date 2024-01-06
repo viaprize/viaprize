@@ -40,7 +40,7 @@ export default function ImageComponent(props: ImageComponentProps) {
 
   return (
     <>
-      {props.image ? (
+      {props.image && props.files.length === 0 ? (
         <div>
           <Image
             className="aspect-video object-cover max-h-[400px]"
@@ -51,17 +51,18 @@ export default function ImageComponent(props: ImageComponentProps) {
           />
           <Dropzone
             openRef={openRef}
-            onDrop={() => {
-              props.setfiles;
-            }}
+            onDrop={props.setfiles}
             activateOnClick={false}
+            maxSize={3 * 1024 ** 2}
+            accept={IMAGE_MIME_TYPE}
+            {...props}
           >
             <Group justify="center">
               <Button
                 onClick={() => openRef.current?.()}
                 style={{ pointerEvents: 'all' }}
               >
-                Select files
+                Select Image
               </Button>
             </Group>
           </Dropzone>

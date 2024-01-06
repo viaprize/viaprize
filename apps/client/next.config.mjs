@@ -38,6 +38,9 @@ export default withBundleAnalyzer({
       {
         hostname: 'placehold.jp',
       },
+      {
+        hostname: 'uofqdqrrquswprylyzby.supabase.co',
+      },
     ],
   },
   output: 'standalone',

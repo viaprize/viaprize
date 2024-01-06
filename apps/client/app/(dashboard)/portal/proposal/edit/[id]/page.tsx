@@ -46,6 +46,7 @@ export default async function EditPortalProposal({ params }: { params: { id: str
         treasurers={proposal.data.treasurers}
         user={proposal.data.user}
         sendImmediately={proposal.data.sendImmediately}
+        images={proposal.data.images}
       />
     </Card>
   );
