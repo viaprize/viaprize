@@ -5,7 +5,6 @@ import {
   Get,
   HttpException,
   Post,
-  Put,
   Query,
   Request,
   UseGuards,
@@ -452,8 +451,7 @@ export class PortalsController {
    * @param {string} id
    * @returns {Promise<Http200Response>}
    */
-  @Put('/proposals/:id')
-  @UseGuards(AdminAuthGuard)
+  @Post('/proposals/:id')
   async updateProposal(
     @TypedParam('id') id: string,
     @TypedBody() updateBody: UpdatePortalPropsalDto,
