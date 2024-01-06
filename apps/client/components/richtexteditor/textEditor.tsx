@@ -38,7 +38,6 @@ export function TextEditor({
     onUpdate: (e) => {
       if (setRichtext) {
         setRichtext(e.editor.getHTML().toString());
-        console.log(richtext, 'richtext');
       }
     },
   });

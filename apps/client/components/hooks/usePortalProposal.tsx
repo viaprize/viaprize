@@ -36,6 +36,7 @@ export default function usePortalProposal() {
 
   const uploadImages = async (files: File[]) => {
     const images = await storeFiles(files);
+    console.log({ images });
     return images;
   };
 

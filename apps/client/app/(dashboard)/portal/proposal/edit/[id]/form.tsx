@@ -8,7 +8,7 @@ import ImageComponent from '@/components/Prize/dropzone';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import useAppUser from '@/context/hooks/useAppUser';
-import { PortalProposals } from '@/lib/api';
+import type { PortalProposals } from '@/lib/api';
 import type { ConvertUSD } from '@/lib/types';
 import { chain } from '@/lib/wagmi';
 import {
@@ -48,35 +48,29 @@ export default function PortalProposalForm({
   images: proposalImages,
   treasurers: proposalTreasurers,
   user: proposalUser,
+  sendImmediately: proposalSendImmediately,
 }: PortalProposalForm) {
-  // const portalProposal = (
-  //   await new Api().portals.proposalsDetail(params.id, {
-  //     next: {
-  //       revalidate: 0,
-  //     },
-  //   })
-  // ).data;
-
-  // if (!appUser || appUser.id !== portalProposal.user.id) {
-  //   return (
-  //     <div className="h-full w-full grid place-content-center">Not authorized</div>
-  //   );
-  // }
   const { updateProposal, uploadImages } = usePortalProposal();
 
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [title, setTitle] = useState(proposalTitle);
   const [richtext, setRichtext] = useState(description);
   const [address, setAddress] = useState(proposalTreasurers?.[0] ?? '');
-  const [fundingGoal, setFundingGoal] = useState<number>();
-  const [deadline, setDeadline] = useState<Date | null>(proposalDeadline ? new Date(proposalDeadline) : null);
+  const [deadline, setDeadline] = useState<Date | null>(
+    proposalDeadline ? new Date(proposalDeadline) : null,
+  );
   const [allowFundsAboveGoal, setAllowFundsAboveGoal] = useState(
     proposalAllowDonationAboveThreshold,
   );
   const [images, setImages] = useState<string>();
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
-  const [portalType, setPortalType] = useState('pass-through');
+  const [portalType, setPortalType] = useState(
+    proposalSendImmediately ? 'pass-through' : 'all-or-nothing',
+  );
+  const [fundingGoal, setFundingGoal] = useState<number | undefined>(proposalFundingGoal);
+  const [image,setImage] = useState(proposalImages?.[0]);
+  console.log(image, 'image')
 
   const { mutateAsync: updateProposalsMutation, isLoading: updatatingProposal } =
     useMutation(updateProposal);
@@ -101,6 +95,7 @@ export default function PortalProposalForm({
       toast.error('Error converting USD to Crypto');
       return 0;
     }
+
     const cryptoToUsd = crytoToUsd.ethereum.usd;
     const ethToCrypto = usd / cryptoToUsd;
     return parseFloat(ethToCrypto.toFixed(4));
@@ -142,6 +137,7 @@ export default function PortalProposalForm({
     const finalFundingGoal = fundingGoal ? convertUSDToCrypto(fundingGoal) : undefined;
 
     const newImages = await handleUploadImages();
+    console.log(deadline?.toISOString(), 'deadline');
     await updateProposalsMutation({
       id,
       dto: {
@@ -149,7 +145,7 @@ export default function PortalProposalForm({
         deadline: deadline?.toISOString() ?? undefined,
         description: richtext,
         tags: generateTags(),
-        images: [newImages] as string[],
+        images: [newImages],
         title,
         proposerAddress: wallet.address,
         termsAndCondition: 'test',
@@ -181,9 +177,13 @@ export default function PortalProposalForm({
     }
   };
 
+  if (!appUser || appUser.id !== proposalUser?.id) {
+    return <div className="h-full w-full grid place-content-center">Not authorized</div>;
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <ImageComponent files={files} setfiles={setFiles} />
+      <ImageComponent files={files} setfiles={setFiles} image={image} />
       <TextInput
         label="Portal Name"
         placeholder="Waste Management System for the City of Lagos"
@@ -228,6 +228,7 @@ export default function PortalProposalForm({
         onChange={(e) => {
           setAddress(e.target.value);
         }}
+        value={address}
         required
       />
       <Radio.Group
