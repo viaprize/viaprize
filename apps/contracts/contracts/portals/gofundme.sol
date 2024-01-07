@@ -2,6 +2,8 @@
 
 pragma solidity 0.8.19;
 
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
 contract Gofundme {
     address[] public proposers;
     mapping(address => bool) public isProposer;
@@ -22,6 +24,8 @@ contract Gofundme {
 
     error NotEnoughFunds();
     error FundingToContractEnded();
+
+    using SafeMath for uint256;
 
     event Values(
         address receiverAddress,
@@ -69,15 +73,15 @@ contract Gofundme {
         if(!isActive) revert FundingToContractEnded();
         patrons.push(msg.sender);
         isPatron[msg.sender] = true;
-        patronAmount[msg.sender] += msg.value;
-        totalRewards += (msg.value * (100-platformFee)) / 100;
-        totalFunds += msg.value;
+        patronAmount[msg.sender] = patronAmount[msg.sender].add(msg.value);
+        totalRewards = totalRewards.add((msg.value.mul(100 - platformFee)).div(100));
+        totalFunds = totalFunds.add(msg.value);
 
         payable(receiverAddress).transfer(
-            (msg.value * (100-platformFee)) / 100
+           (msg.value.mul(100 - platformFee)).div(100)
         );
         payable(platformAddress).transfer(
-            (msg.value * (platformFee)) / 100
+            (msg.value.mul(platformFee)).div(100)
         );
 
         emit Values(
