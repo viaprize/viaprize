@@ -2,6 +2,8 @@
 
 pragma solidity 0.8.19;
 
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
 contract Kickstarter {
 
     address[] public proposers;
@@ -33,6 +35,8 @@ contract Kickstarter {
     error GoalAndDeadlineAlreadyMet();
     error CantGetRefundForGoFundMeTypeCampaign();
     error DeadlineNotMet();
+
+    using SafeMath for uint256;
 
     event Values(
         address receiverAddress,
@@ -92,9 +96,9 @@ contract Kickstarter {
         if(!isActive) revert FundingToContractEnded();
         patrons.push(msg.sender);
         isPatron[msg.sender] = true;
-        patronAmount[msg.sender] += msg.value;
-        totalRewards += (msg.value * (100-platformFee)) / 100;
-        totalFunds += msg.value;
+        patronAmount[msg.sender] = patronAmount[msg.sender].add(msg.value);
+       totalRewards = totalRewards.add((msg.value.mul(100 - platformFee)).div(100));
+       totalFunds = totalFunds.add(msg.value);
 
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
@@ -104,7 +108,7 @@ contract Kickstarter {
         if(allowDonationAboveGoalAmount) {
             if (metDeadline && metGoal) {
                 uint256 totalrewards = totalRewards;
-                uint256 adminrewards = totalFunds - totalRewards;
+                uint256 adminrewards = totalFunds.sub(totalRewards);
                 totalRewards = 0;
                 totalFunds = 0;
                 payable(receiverAddress).transfer(totalrewards);
@@ -123,8 +127,8 @@ contract Kickstarter {
 
         if(!allowDonationAboveGoalAmount) {
             if(metGoal) {
-                uint256 moneyToPlatform = (goalAmount * platformFee)/(100-platformFee);
-                uint256 excessRewards = totalFunds - (goalAmount + moneyToPlatform);
+                uint256 moneyToPlatform = (goalAmount.mul(platformFee)).div(uint256(100).sub(platformFee));
+                uint256 excessRewards = totalFunds.sub(goalAmount.add(moneyToPlatform));
                 payable(receiverAddress).transfer(goalAmount);
                 payable(platformAddress).transfer(moneyToPlatform);
                 if(excessRewards > 0) {
@@ -188,7 +192,7 @@ contract Kickstarter {
         if(allowDonationAboveGoalAmount) {
             if (metDeadline && metGoal) {
                 uint256 totalrewards = totalRewards;
-                uint256 adminrewards = totalFunds - totalRewards;
+                uint256 adminrewards = totalFunds.sub(totalRewards);
                 totalRewards = 0;
                 totalFunds = 0;
                 payable(receiverAddress).transfer(totalrewards);
@@ -207,7 +211,7 @@ contract Kickstarter {
         if(!allowDonationAboveGoalAmount) {
             if(metGoal) {
                 uint256 totalrewards = totalRewards;
-                uint256 adminrewards = totalFunds - totalRewards;
+                uint256 adminrewards = totalFunds.sub(totalRewards);
                 totalRewards = 0;
                 totalFunds = 0;
                 payable(receiverAddress).transfer(totalrewards);
