@@ -170,6 +170,7 @@ export interface PortalProposals {
   platformFeePercentage: number;
   isApproved: boolean;
   isRejected: boolean;
+  rejectionComment: string;
   /** @format date-time */
   createdAt: string;
   /** @format date-time */
@@ -258,6 +259,7 @@ export interface Http200Response {
 
 export interface UpdatePortalPropsalDto {
   platformFeePercentage: number;
+  isRejected?: boolean;
   description?: string;
   fundingGoal?: number;
   isMultiSignatureReciever?: boolean;
@@ -732,20 +734,6 @@ export class HttpClient<SecurityDataType = unknown> {
  * @baseUrl http://localhost:3001/api
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
-  /**
-   * No description
-   *
-   * @name GetRoot
-   * @request GET:/
-   */
-  getRoot = (params: RequestParams = {}) =>
-    this.request<string, any>({
-      path: `/`,
-      method: 'GET',
-      format: 'json',
-      ...params,
-    });
-
   pacts = {
     /**
      * No description
@@ -890,14 +878,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * @description it updates the proposal
      *
-     * @name ProposalsUpdate
-     * @request PUT:/portals/proposals/{id}
+     * @name ProposalsPartialUpdate
+     * @request PATCH:/portals/proposals/{id}
      * @secure
      */
-    proposalsUpdate: (id: string, data: UpdatePortalPropsalDto, params: RequestParams = {}) =>
+    proposalsPartialUpdate: (id: string, data: UpdatePortalPropsalDto, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/${id}`,
-        method: 'PUT',
+        method: 'PATCH',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -905,7 +893,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
 
-/**
+    /**
  * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does: Gets page
  *
  * @name ProposalsAcceptList

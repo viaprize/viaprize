@@ -560,7 +560,7 @@
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
       },
-      "put": {
+      "patch": {
         "tags": [],
         "parameters": [
           {
@@ -639,7 +639,7 @@
             "name": "returns"
           }
         ],
-        "x-nestia-method": "PUT"
+        "x-nestia-method": "PATCH"
       }
     },
     "/portals/proposals/accept": {
@@ -1817,7 +1817,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
+        "summary": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
         "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
         "security": [
           {
@@ -1830,7 +1830,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
+                "text": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
                 "kind": "text"
               }
             ]
@@ -3601,6 +3601,11 @@
             "x-typia-optional": false,
             "type": "boolean"
           },
+          "rejectionComment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "createdAt": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3649,6 +3654,7 @@
           "platformFeePercentage",
           "isApproved",
           "isRejected",
+          "rejectionComment",
           "createdAt",
           "updatedAt",
           "images",
@@ -4049,6 +4055,11 @@
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "number"
+          },
+          "isRejected": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "boolean"
           },
           "description": {
             "x-typia-required": false,

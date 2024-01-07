@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   HttpException,
+  Patch,
   Post,
   Query,
   Request,
@@ -451,13 +452,18 @@ export class PortalsController {
    * @param {string} id
    * @returns {Promise<Http200Response>}
    */
-  @Post('/proposals/:id')
+  @Patch('/proposals/:id')
+  @UseGuards(AuthGuard)
   async updateProposal(
     @TypedParam('id') id: string,
-    @TypedBody() updateBody: UpdatePortalPropsalDto,
+    @Body() updateBody: UpdatePortalPropsalDto,
   ): Promise<Http200Response> {
-    await this.portalProposalsService.update(id, updateBody);
-
+    console.log(updateBody, 'updateBody');
+    const removeRejection = {
+      ...updateBody,
+      isRejected: false,
+    };
+    await this.portalProposalsService.update(id, removeRejection);
     return {
       message: `Proposal with id ${id} has been updated`,
     };
