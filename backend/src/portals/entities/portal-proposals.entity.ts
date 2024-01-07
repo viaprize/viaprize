@@ -60,6 +60,9 @@ export class PortalProposals {
   @Column({ default: false })
   isRejected: boolean;
 
+  @Column({ default: '' })
+  rejectionComment: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
