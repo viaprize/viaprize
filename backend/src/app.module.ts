@@ -17,6 +17,7 @@ import { UsersModule } from './users/users.module';
 // import { EthersModule } from 'nestjs-ethers';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { PortalsModule } from './portals/portals.module';
+import { IndexerModule } from './indexer/indexer.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { PortalsModule } from './portals/portals.module';
     JobsModule,
     BlockchainModule,
     PortalsModule,
+    IndexerModule,
   ],
   providers: [],
   controllers: [],
