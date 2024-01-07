@@ -66,7 +66,7 @@ export class PortalsController {
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
-  ) {}
+  ) { }
 
   @Post('')
   @UseGuards(AuthGuard)
@@ -136,7 +136,7 @@ export class PortalsController {
    * @async
    * @param {page=1} this is the page number of the return pending proposals
    * @param {limit=10} this is the limit of the return type of the pending proposals
-   * @returns {Promise<Readonly<{data: PortalWithBalance[];hasNextPage: boolean;}>>>}
+   * @returns {Promise<Readonly<{data: Portals[];hasNextPage: boolean;}>>>}
    */
   @Get('')
   async getPortals(
@@ -144,8 +144,10 @@ export class PortalsController {
     page: number = 1,
     @Query('limit')
     limit: number = 10,
-  ): Promise<Readonly<{ data: PortalWithBalance[]; hasNextPage: boolean }>> {
-    const PortalWithoutBalance = infinityPagination(
+  ): Promise<Readonly<{
+    data: Portals[]; hasNextPage: boolean
+  }>> {
+    const portalWithoutBalance = infinityPagination(
       await this.portalsService.findAllPendingWithPagination({
         page,
         limit,
@@ -155,58 +157,43 @@ export class PortalsController {
         page,
       },
     );
-    const PortalWithBalanceData: PortalWithBalance[] = await Promise.all(
-      PortalWithoutBalance.data.map(async (Portal) => {
-        const balance = await this.blockchainService.getBalanceOfAddress(
-          Portal.contract_address,
-        );
-        const totalRewards =
-          await this.blockchainService.getTotalRewardsOfPortal(
-            Portal.contract_address,
-          );
-        const totalFunds = await this.blockchainService.getTotalFundsOfPortal(
-          Portal.contract_address,
-        );
-        const isActive = await this.blockchainService.isPortalActive(
-          Portal.contract_address,
-        );
+    const results = await this.blockchainService.getPortalsPublicVariables(
+      portalWithoutBalance.data.map((portal) => portal.contract_address),
+    );
+    console.log({ results })
+    let start = 0;
+    let end = 4;
+    const portalWithBalanceData: PortalWithBalance[] = portalWithoutBalance.data.map(
+      (portal, index) => {
+        const portalResults = results.slice(start, end);
+        start += 4;
+        end += 4;
         return {
-          ...Portal,
-          balance: parseInt(balance.toString()),
-          totalFunds: parseInt(totalFunds.toString()),
-          totalRewards: parseInt(totalRewards.toString()),
-          isActive: isActive,
+          ...portal,
+          balance: parseInt((portalResults[0].result as bigint).toString()),
+          totalFunds: parseInt((portalResults[1].result as bigint).toString()),
+          totalRewards: parseInt(((portalResults[2].result as bigint)).toString()),
+          isActive: (portalResults[3].result as boolean),
         } as PortalWithBalance;
-      }),
+      },
     );
     return {
-      data: PortalWithBalanceData as PortalWithBalance[],
-      hasNextPage: PortalWithoutBalance.hasNextPage,
+      data: portalWithoutBalance.data,
+      hasNextPage: portalWithoutBalance.hasNextPage
     };
   }
 
   @Get('/:id')
   async getPortal(@TypedParam('id') id: string): Promise<PortalWithBalance> {
-    const Portal = await this.portalsService.findOne(id);
-    const balance = await this.blockchainService.getBalanceOfAddress(
-      Portal.contract_address,
-    );
-    const totalFunds = await this.blockchainService.getTotalFundsOfPortal(
-      Portal.contract_address,
-    );
-    const totalRewards = await this.blockchainService.getTotalRewardsOfPortal(
-      Portal.contract_address,
-    );
-    const isActive = await this.blockchainService.isPortalActive(
-      Portal.contract_address,
-    );
+    const portal = await this.portalsService.findOne(id);
+    const results = await this.blockchainService.getPortalPublicVariables(portal.contract_address)
 
     return {
-      ...Portal,
-      balance: parseInt(balance.toString()),
-      totalFunds: parseInt(totalFunds.toString()),
-      totalRewards: parseInt(totalRewards.toString()),
-      isActive: isActive,
+      ...portal,
+      balance: parseInt((results[0].result as bigint).toString()),
+      totalFunds: parseInt((results[1].result as bigint).toString()),
+      totalRewards: parseInt(((results[2].result as bigint)).toString()),
+      isActive: (results[3].result as boolean),
     };
   }
 
