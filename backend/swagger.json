@@ -582,7 +582,7 @@
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
       },
-      "post": {
+      "patch": {
         "tags": [],
         "parameters": [
           {
@@ -661,7 +661,7 @@
             "name": "returns"
           }
         ],
-        "x-nestia-method": "POST"
+        "x-nestia-method": "PATCH"
       }
     },
     "/portals/proposals/accept": {
@@ -3623,6 +3623,11 @@
             "x-typia-optional": false,
             "type": "boolean"
           },
+          "rejectionComment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "createdAt": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3671,6 +3676,7 @@
           "platformFeePercentage",
           "isApproved",
           "isRejected",
+          "rejectionComment",
           "createdAt",
           "updatedAt",
           "images",

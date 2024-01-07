@@ -26,7 +26,7 @@ export function TextEditor({
   const editor = useEditor({
     editable: !disabled,
     extensions: [
-      StarterKit as AnyExtension,
+      StarterKit as AnyExtension, 
       Underline,
       Link,
       Superscript,
@@ -41,7 +41,6 @@ export function TextEditor({
       }
     },
   });
-  console.log(richtext, 'richtext');
 
   return (
     <>

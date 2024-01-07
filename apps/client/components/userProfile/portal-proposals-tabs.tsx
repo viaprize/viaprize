@@ -1,6 +1,6 @@
-import { PortalProposals } from '@/lib/api';
+import type { PortalProposals } from '@/lib/api';
 import { prepareWritePortalFactory, writePortalFactory } from '@/lib/smartContract';
-import { ProposalStatus } from '@/lib/types';
+import type { ProposalStatus } from '@/lib/types';
 import { Text } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/router';
@@ -16,8 +16,6 @@ const getProposalStatus = (item: PortalProposals): ProposalStatus => {
     return `rejected`;
   }
   return 'pending';
-
-  return 'pending';
 };
 export default function PortalProposalsTabs({
   data,
@@ -32,7 +30,7 @@ export default function PortalProposalsTabs({
   const { createPortal } = usePortal();
   return (
     <div className="p-6 w-full">
-      <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+      <div className="grid  md:grid-cols-2 grid-cols-1 gap-4">
         {isSuccess ? (
           data?.map((item) => (
             <ProposalExploreCard
@@ -76,7 +74,7 @@ export default function PortalProposalsTabs({
                       (item.fundingGoal ?? '0').toString(),
                     );
                     console.log([
-                      item?.treasurers as `0x${string}`[],
+                      item.treasurers as `0x${string}`[],
                       finalFundingGoal,
                       BigInt(Math.floor(new Date(item.deadline).getTime() / 1000) ?? 0),
                       item.allowDonationAboveThreshold,
@@ -86,7 +84,7 @@ export default function PortalProposalsTabs({
                     const request = await prepareWritePortalFactory({
                       functionName: 'createPortal',
                       args: [
-                        item?.treasurers as `0x${string}`[],
+                        item.treasurers as `0x${string}`[],
                         [
                           '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
                           '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
@@ -115,8 +113,9 @@ export default function PortalProposalsTabs({
                       confirmations: 1,
                     });
                     console.log(waitForTransactionOut.logs[0].topics[1]);
-                    const portalAddress =
-                      '0x' + waitForTransactionOut.logs[0].topics[1]?.slice(-40);
+                    const portalAddress = `0x${waitForTransactionOut.logs[0].topics[1]?.slice(
+                      -40,
+                    )}`;
                     console.log(portalAddress, 'portalAddress');
                     const portal = await createPortal({
                       address: portalAddress,
@@ -133,8 +132,7 @@ export default function PortalProposalsTabs({
                     break;
                   }
                   case 'rejected': {
-                    console.log('rejected');
-
+                    await router.push(`/portal/proposal/edit/${item.id}`);
                     break;
                   }
                   default:
@@ -142,6 +140,7 @@ export default function PortalProposalsTabs({
                 }
               }}
               title={item.title}
+              rejectedReason={item.rejectionComment}
             />
           ))
         ) : (

@@ -158,6 +158,7 @@ export class PortalProposalsService {
     await this.portalProposalsRepository.update(id, {
       isApproved: false,
       isRejected: true,
+      rejectionComment: comment,
     });
     portalProposal.isApproved = false;
     portalProposal.isRejected = true;
