@@ -113,12 +113,14 @@ export class PrizesController {
       startVotingDate: prizeProposal.startVotingDate,
       user: prizeProposal.user,
     });
+
     await this.prizeProposalsService.remove(prizeProposal.id);
     await this.mailService.prizeDeployed(
       prizeProposal.user.email,
       prizeProposal.user.name,
       prizeProposal.title,
     );
+    await this.cacheManager.reset();
     return prize;
   }
 
