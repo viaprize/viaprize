@@ -175,7 +175,7 @@ export class PortalsController {
           page,
         },
       );
-      await this.cacheManager.set(key, JSON.stringify(portalWithoutBalance), 300000)
+      await this.cacheManager.set(key, JSON.stringify(portalWithoutBalance), 21600000)
     }
     const results = await this.blockchainService.getPortalsPublicVariables(
       portalWithoutBalance.data.map((portal) => portal.contract_address),
