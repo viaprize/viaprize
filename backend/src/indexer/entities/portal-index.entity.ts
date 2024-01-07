@@ -1,5 +1,4 @@
-import { Portals } from "src/portals/entities/portal.entity";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -13,20 +12,16 @@ export class PortalIndex {
     @Column()
     contract_address: string;
 
-    @Column()
+    @Column('bigint')
     totalFunds: number;
 
-    @Column()
+    @Column('bigint')
     balance: number;
 
-    @Column()
+    @Column('bigint')
     totalRewards: number;
 
     @Column()
     isActive: boolean;
-
-    @OneToOne(() => Portals)
-    @JoinColumn()
-    portal: number;
 }
 

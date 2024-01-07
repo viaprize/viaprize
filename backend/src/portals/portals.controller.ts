@@ -135,7 +135,7 @@ export class PortalsController {
    * @async
    * @param {page=1} this is the page number of the return pending proposals
    * @param {limit=10} this is the limit of the return type of the pending proposals
-   * @returns {Promise<Readonly<{data: Portals[];hasNextPage: boolean;}>>>}
+   * @returns {Promise<Readonly<{data: PortalWithBalance[];hasNextPage: boolean;}>>>}
    */
   @Get('')
   async getPortals(
@@ -144,7 +144,7 @@ export class PortalsController {
     @Query('limit')
     limit: number = 10,
   ): Promise<Readonly<{
-    data: Portals[]; hasNextPage: boolean
+    data: PortalWithBalance[]; hasNextPage: boolean
   }>> {
     const portalWithoutBalance = infinityPagination(
       await this.portalsService.findAllPendingWithPagination({
@@ -177,7 +177,7 @@ export class PortalsController {
       },
     );
     return {
-      data: portalWithoutBalance.data,
+      data: portalWithBalanceData,
       hasNextPage: portalWithoutBalance.hasNextPage
     };
   }
