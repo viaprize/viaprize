@@ -1,14 +1,17 @@
 import { TypedBody, TypedParam } from '@nestia/core';
+import { CACHE_MANAGER, } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
   Get,
   HttpException,
+  Inject,
   Post,
   Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
@@ -65,6 +68,7 @@ export class PortalsController {
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
   ) { }
 
   @Post('')
@@ -72,6 +76,7 @@ export class PortalsController {
   async createPortal(
     @TypedBody() createPortalDto: CreatePortalDto,
   ): Promise<Portals> {
+
     const portalProposal = await this.portalProposalsService.findOne(
       createPortalDto.proposal_id,
     );
@@ -121,6 +126,9 @@ export class PortalsController {
       portalProposal.user.name,
       portalProposal.title,
     );
+
+    await this.cacheManager.reset();
+
     return portal;
   }
 
@@ -146,16 +154,28 @@ export class PortalsController {
   ): Promise<Readonly<{
     data: PortalWithBalance[]; hasNextPage: boolean
   }>> {
-    const portalWithoutBalance = infinityPagination(
-      await this.portalsService.findAllPendingWithPagination({
-        page,
-        limit,
-      }),
-      {
-        limit,
-        page,
-      },
-    );
+    let portalWithoutBalance: {
+      data: Portals[];
+      hasNextPage: boolean;
+    };
+    const key = `portals-${page}-${limit}`;
+    const cachePortalWithoutBalance = await this.cacheManager.get(key);
+    if (cachePortalWithoutBalance) {
+      portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string)
+    }
+    else {
+      portalWithoutBalance = infinityPagination(
+        await this.portalsService.findAllPendingWithPagination({
+          page,
+          limit,
+        }),
+        {
+          limit,
+          page,
+        },
+      );
+      await this.cacheManager.set(key, JSON.stringify(portalWithoutBalance), 300000)
+    }
     const results = await this.blockchainService.getPortalsPublicVariables(
       portalWithoutBalance.data.map((portal) => portal.contract_address),
     );

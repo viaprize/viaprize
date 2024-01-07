@@ -23,6 +23,28 @@
     }
   },
   "paths": {
+    "/indexer/portal": {
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "indexer.portal.portalIndex",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
     "/pacts": {
       "post": {
         "tags": [],
@@ -560,7 +582,7 @@
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
       },
-      "put": {
+      "post": {
         "tags": [],
         "parameters": [
           {
@@ -639,7 +661,7 @@
             "name": "returns"
           }
         ],
-        "x-nestia-method": "PUT"
+        "x-nestia-method": "POST"
       }
     },
     "/portals/proposals/accept": {
@@ -3665,7 +3687,7 @@
             "x-typia-optional": false,
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Portals"
+              "$ref": "#/components/schemas/PortalWithBalance"
             }
           },
           "hasNextPage": {

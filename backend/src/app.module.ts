@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -16,8 +17,8 @@ import { PrizesModule } from './prizes/prizes.module';
 import { UsersModule } from './users/users.module';
 // import { EthersModule } from 'nestjs-ethers';
 import { BlockchainModule } from './blockchain/blockchain.module';
-import { PortalsModule } from './portals/portals.module';
 import { IndexerModule } from './indexer/indexer.module';
+import { PortalsModule } from './portals/portals.module';
 
 @Module({
   imports: [
@@ -32,6 +33,11 @@ import { IndexerModule } from './indexer/indexer.module';
         return new DataSource(options).initialize();
       },
     }),
+    CacheModule.register(
+      {
+        isGlobal: true
+      }
+    ),
     // TriggerDevModule.registerAsync({
     //   useFactory: (configService: ConfigService) => {
     //     console.log(configService.get<string>("TRIGGER_API_KEY"), "hiiiiiiiiiiiiiiiiiiiiiii")
