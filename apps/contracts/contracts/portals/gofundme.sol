@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "../helperContracts/safemath.sol";
 
 contract Gofundme {
     address[] public proposers;
