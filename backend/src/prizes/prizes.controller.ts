@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Inject,
   Post,
   Put,
   Query,
@@ -12,6 +13,8 @@ import { PrizeProposalsService } from './services/prizes-proposals.service';
 import { PrizesService } from './services/prizes.service';
 
 import { TypedBody, TypedParam } from '@nestia/core';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
@@ -78,7 +81,8 @@ export class PrizesController {
     private readonly blockchainService: BlockchainService,
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
-  ) {}
+    @Inject(CACHE_MANAGER) private cacheManager: Cache
+  ) { }
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -138,31 +142,40 @@ export class PrizesController {
     @Query('limit')
     limit: number = 10,
   ): Promise<Readonly<{ data: PrizeWithBalance[]; hasNextPage: boolean }>> {
-    const prizeWithoutBalance = infinityPagination(
-      await this.prizeService.findAllPendingWithPagination({
-        page,
-        limit,
-      }),
-      {
-        limit,
-        page,
-      },
+    const key = `prizes-${page}-${limit}`;
+    let prizeWithoutBalance: { data: Prize[]; hasNextPage: boolean };
+    const cachedprizeWithoutBalance = await this.cacheManager.get(key);
+    if (cachedprizeWithoutBalance) {
+      prizeWithoutBalance = JSON.parse(cachedprizeWithoutBalance as string);
+    }
+    else {
+      prizeWithoutBalance = infinityPagination(
+        await this.prizeService.findAllPendingWithPagination({
+          page,
+          limit,
+        }),
+        {
+          limit,
+          page,
+        },
+      );
+      await this.cacheManager.set(key, JSON.stringify(prizeWithoutBalance), 300000);
+    }
+    const results = await this.blockchainService.getPrizesPublicVariables(
+      prizeWithoutBalance.data.map((prize) => prize.contract_address),
     );
-    const prizeWithBalanceData: PrizeWithBalance[] = await Promise.all(
-      prizeWithoutBalance.data.map(async (prize) => {
-        const balance = await this.blockchainService.getBalanceOfAddress(
-          prize.contract_address,
-        );
-        const distributed = await this.blockchainService.getIsPrizeDistributed(
-          prize.contract_address,
-        );
-        return {
-          ...prize,
-          distributed: distributed,
-          balance: parseInt(balance.toString()),
-        } as PrizeWithBalance;
-      }),
-    );
+    let start = 0;
+    let end = 2;
+    const prizeWithBalanceData = prizeWithoutBalance.data.map((prize, index) => {
+      const portalResults = results.slice(start, end);
+      start += 2;
+      end += 2;
+      return {
+        ...prize,
+        balance: parseInt((portalResults[0].result as bigint).toString()),
+        distributed: (portalResults[1].result as boolean)
+      } as PrizeWithBalance;
+    },)
     return {
       data: prizeWithBalanceData as PrizeWithBalance[],
       hasNextPage: prizeWithoutBalance.hasNextPage,
@@ -174,26 +187,13 @@ export class PrizesController {
     @TypedParam('id') id: string,
   ): Promise<PrizeWithBlockchainData> {
     const prize = await this.prizeService.findOne(id);
-    const balance = await this.blockchainService.getBalanceOfAddress(
-      prize.contract_address,
-    );
-    console.log('asdaf');
-    const submission_time = await this.blockchainService.getSubmissionTime(
-      prize.contract_address,
-    );
-    const voting_time = await this.blockchainService.getVotingTime(
-      prize.contract_address,
-    );
-    const distributed = await this.blockchainService.getIsPrizeDistributed(
-      prize.contract_address,
-    );
-
+    const results = await this.blockchainService.getPrizePublicVariables(prize.contract_address)
     return {
       ...prize,
-      distributed: distributed,
-      balance: parseInt(balance.toString()),
-      submission_time_blockchain: parseInt(submission_time.toString()),
-      voting_time_blockchain: parseInt(voting_time.toString()),
+      distributed: (results[3].result as boolean),
+      balance: parseInt((results[0].result as bigint).toString()),
+      submission_time_blockchain: parseInt((results[1].result as bigint).toString()),
+      voting_time_blockchain: parseInt((results[2].result as bigint).toString()),
     };
   }
 

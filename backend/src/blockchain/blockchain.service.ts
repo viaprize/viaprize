@@ -8,6 +8,10 @@ import { optimism } from 'viem/chains';
 export class BlockchainService {
   provider: PublicClient;
   wallet: ethers.Wallet;
+  multiCallContract = {
+    address: '0xcA11bde05977b3631167028862bE2a173976CA11' as `0x${string}`,
+    abi: parseAbi(['function getEthBalance(address addr) view returns (uint256 balance)'] as const),
+  } as const;
   constructor(private readonly configService: ConfigService<AllConfigType>) {
     const key = this.configService.getOrThrow<AllConfigType>('RPC_URL', {
       infer: true,
@@ -243,10 +247,7 @@ export class BlockchainService {
         type: 'function',
       },
     ] as const;
-    const multiCallContract = {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as `0x${string}`,
-      abi: parseAbi(['function getEthBalance(address addr) view returns (uint256 balance)'] as const),
-    }
+
     let calls: any = [];
     portalContractAddress.forEach((address) => {
       const wagmiContract = {
@@ -255,7 +256,7 @@ export class BlockchainService {
       } as const;
       calls.push(
         {
-          ...multiCallContract,
+          ...this.multiCallContract,
           functionName: 'getEthBalance',
           args: [address as `0x${string}`]
         },
@@ -280,6 +281,96 @@ export class BlockchainService {
 
     return results;
   }
+
+  async getPrizesPublicVariables(prizeAddresses: string[]) {
+
+    const abi = [
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'distributed',
+        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+      }
+    ]
+    let calls: any = [];
+    prizeAddresses.forEach((address) => {
+      const wagmiContract = {
+        address: address as `0x${string}`,
+        abi: abi,
+      } as const;
+      calls.push(
+        {
+          ...this.multiCallContract,
+          functionName: 'getEthBalance',
+          args: [address as `0x${string}`]
+        },
+        {
+          ...wagmiContract,
+          functionName: 'distributed'
+        }
+      )
+    })
+    const results = await this.provider.multicall({
+      contracts: calls,
+    });
+    return results;
+  }
+
+  async getPrizePublicVariables(prizeContractAddress: string) {
+    const abi = [
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'get_voting_time',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'get_submission_time',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'distributed',
+        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+      }
+    ]
+    const wagmiContract = {
+      address: prizeContractAddress as `0x${string}`,
+      abi: abi,
+    } as const;
+    const results = await this.provider.multicall({
+      contracts: [
+        {
+          ...this.multiCallContract,
+          functionName: 'getEthBalance',
+          args: [prizeContractAddress as `0x${string}`]
+
+        },
+        {
+          ...wagmiContract,
+          functionName: 'get_submission_time'
+        },
+        {
+          ...wagmiContract,
+          functionName: 'get_voting_time'
+        },
+        {
+          ...wagmiContract,
+          functionName: 'distributed'
+        },
+
+
+      ],
+    });
+  }
+
 
   async getPortalPublicVariables(portalContractAddress: string) {
     const abi = [
@@ -319,10 +410,7 @@ export class BlockchainService {
         type: 'function',
       },
     ] as const;
-    const multiCallContract = {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11' as `0x${string}`,
-      abi: parseAbi(['function getEthBalance(address addr) view returns (uint256 balance)'] as const),
-    }
+
     const wagmiContract = {
       address: portalContractAddress as `0x${string}`,
       abi: abi,
@@ -330,7 +418,7 @@ export class BlockchainService {
     const results = await this.provider.multicall({
       contracts: [
         {
-          ...multiCallContract,
+          ...this.multiCallContract,
           functionName: 'getEthBalance',
           args: [portalContractAddress as `0x${string}`]
         },
