@@ -369,6 +369,7 @@ export class BlockchainService {
 
       ],
     });
+    return results;
   }
 
 

@@ -190,6 +190,7 @@ export class PrizesController {
   ): Promise<PrizeWithBlockchainData> {
     const prize = await this.prizeService.findOne(id);
     const results = await this.blockchainService.getPrizePublicVariables(prize.contract_address)
+    console.log(results, "results")
     return {
       ...prize,
       distributed: (results[3].result as boolean),
