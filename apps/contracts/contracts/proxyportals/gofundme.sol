@@ -56,7 +56,9 @@ contract Gofundme is Initializable {
         isActive = true;
     }
 
-    constructor() initializer {}
+    constructor() initializer {
+    //    initialize();
+   }
 
     modifier noReentrant() {
         require(!locked, "No Re-entrancy");
