@@ -1,6 +1,7 @@
 'use client';
 import useAppUser from '@/context/hooks/useAppUser';
 import { prepareWritePortal, writePortal } from '@/lib/smartContract';
+import { ConvertUSD } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
@@ -19,6 +20,7 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { IconCheck, IconCopy, IconRefresh } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
@@ -56,6 +58,21 @@ export default function AmountDonateCard({
   const { data: balance, isLoading, refetch } = useBalance({ address });
   console.log({ balance }, 'balance');
 
+  const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
+    const final = await (
+      await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
+      )
+    ).json();
+    return Object.keys(final).length === 0
+      ? {
+          [chain.name.toLowerCase()]: {
+            usd: 0,
+          },
+        }
+      : final;
+  });
+
   useEffect(() => {
     if (!balance) {
       void refetch();
@@ -76,9 +93,13 @@ export default function AmountDonateCard({
           Total Amount Raised
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
-          {amountRaised} {chain.nativeCurrency.symbol}
+          {cryptoToUsd && (
+            <>${(parseFloat(amountRaised) * cryptoToUsd!.ethereum!.usd).toFixed(2)} USD</>
+          )}
         </Text>
-
+        <Text c="blue" className="lg:text-3xl md:text-2xl text-sm">
+          ({amountRaised} {chain.nativeCurrency.symbol} )
+        </Text>
         <Text fw="bold" size="xl">
           {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
         </Text>
@@ -89,16 +110,15 @@ export default function AmountDonateCard({
         <Badge color="gray" variant="light" radius="sm">
           {typeOfPortal}
         </Badge>
-
         {deadline && (
           <Text size="xs" mt="xs">
             Deadline: {formatDate(deadline)}
           </Text>
         )}
-
-        {fundingGoal !== 0 ? (
+        {fundingGoal !== 0 && cryptoToUsd ? (
           <Badge size="md" my="md" radius="md">
-            Funding Goal: {fundingGoal} {chain.nativeCurrency.symbol}
+            Funding Goal: {(fundingGoal * cryptoToUsd?.ethereum.usd).toFixed(2)} USD (
+            {fundingGoal} {chain.nativeCurrency.symbol})
           </Badge>
         ) : null}
         {/* <Text className="border-2 rounded-lg mt-2 ">

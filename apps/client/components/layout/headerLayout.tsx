@@ -13,13 +13,11 @@ import {
   Tooltip,
   useMantineColorScheme,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconCopy, IconMoonStars, IconSun } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -31,25 +29,20 @@ export default function HeaderLayout() {
   useEffect(() => {
     setLoaded(true);
   }, []);
-  
+
   useEffect(() => {
     console.log(loaded, 'loaded');
     console.log(wallets, 'wallets');
     console.log(ready, 'ready');
     console.log(wallet, 'wallet');
     console.log(loaded && ready && (!wallet || wallet.address !== ''), 'final boolean');
-    if (loaded && ready && !wallets[0] && appUser) {
+    if (loaded && !wallets[0] && appUser) {
       logoutUser();
     }
   }, []);
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
-
-  const [portalOpened, { close: portalMenuClose, open: portalMenuOpen }] =
-    useDisclosure(false);
-  const [prizeOpened, { close: prizeMenuClose, open: prizeMenuOpen }] =
-    useDisclosure(false);
 
   return (
     <Flex

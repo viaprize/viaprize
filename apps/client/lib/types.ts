@@ -15,7 +15,7 @@ export interface PactDetail {
 }
 
 export type ConvertUSD = {
-  [key: string]: {
+  ethereum: {
     usd: number;
   };
 };

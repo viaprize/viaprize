@@ -14,6 +14,7 @@ import {
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 
 interface PortalCardProps {
+  ethToUsd: number;
   imageUrl: string;
   title: string;
   authorName: string;
@@ -38,8 +39,10 @@ export default function PortalCard({
   id,
   fundingGoal,
   deadline,
+  ethToUsd,
   isActive,
 }: PortalCardProps) {
+  console.log((parseFloat(amountRaised) * ethToUsd).toFixed(2));
   return (
     <Card
       padding="lg"
@@ -74,7 +77,8 @@ export default function PortalCard({
       </p>
 
       <Text fw="bold" size="xl">
-        {amountRaised} {chain.nativeCurrency.symbol}
+        {(parseFloat(amountRaised) * ethToUsd).toFixed(2)} USD ( {amountRaised}
+        {chain.nativeCurrency.symbol} )
       </Text>
 
       {isActive ? (
@@ -100,7 +104,8 @@ export default function PortalCard({
       </Text> */}
       {fundingGoal !== 0 && (
         <Text size="xs" mt="xs">
-          {fundingGoal} {chain.nativeCurrency.symbol} Funding Goal
+          {(fundingGoal * ethToUsd).toFixed(2)} USD ({fundingGoal}{' '}
+          {chain.nativeCurrency.symbol}) Funding Goal
         </Text>
       )}
 

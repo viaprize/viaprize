@@ -52,5 +52,6 @@ const config = createConfig({
   autoConnect: true,
   publicClient: configureChainsConfig.publicClient,
   webSocketPublicClient: configureChainsConfig.webSocketPublicClient,
+
 });
 export default config;

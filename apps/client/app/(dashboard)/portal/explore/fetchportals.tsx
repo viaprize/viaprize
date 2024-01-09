@@ -10,14 +10,21 @@ export default async function FetchPortals() {
     })
   ).data.data;
 
+  const final: { ethereum: { usd: number } } = await (
+    await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
+    )
+  ).json();
+
   return (
     <>
       {portals.map((portal) => {
         return (
           <PortalCard
+            ethToUsd={final.ethereum.usd}
             description={portal.description}
             imageUrl={portal.images[0]}
-            amountRaised={formatEther(BigInt(portal.totalRewards ?? 0))}
+            amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
             authorName={portal.user.name}
             totalContributors="0"
             isActive={portal.isActive ?? false}
