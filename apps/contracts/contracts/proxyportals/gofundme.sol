@@ -2,9 +2,12 @@
 
 pragma solidity ^0.8.19;
 
+// import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../helperContracts/safemath.sol";
+// import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "../helperContracts/initializable.sol";
 
-contract Gofundme {
+contract Gofundme is Initializable {
     address[] public proposers;
     mapping(address => bool) public isProposer;
     address[] public admins;
@@ -33,12 +36,11 @@ contract Gofundme {
         uint256 totalRewards
     );
 
-    constructor(
+    function initialize(
         address[] memory _proposers,
         address[] memory _admins,
         uint256 _platformFee
-    ) {
-
+    ) public initializer {
         for (uint256 i = 0; i < _proposers.length; i++) {
             proposers.push(_proposers[i]);
             isProposer[_proposers[i]] = true;
@@ -53,6 +55,8 @@ contract Gofundme {
         platformFee = _platformFee;
         isActive = true;
     }
+
+    constructor() initializer {}
 
     modifier noReentrant() {
         require(!locked, "No Re-entrancy");
