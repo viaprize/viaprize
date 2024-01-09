@@ -7,7 +7,7 @@ import "../helperContracts/safemath.sol";
 // import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../helperContracts/initializable.sol";
 
-contract Kickstarter is Initializable{
+contract KickstarterV2 is Initializable{
 
     address[] public proposers;
     mapping(address => bool) public isProposer;
@@ -96,6 +96,9 @@ contract Kickstarter is Initializable{
     modifier onlyProposerOrAdmin {
         require(isProposer[msg.sender] == true || isAdmin[msg.sender] == true, "You are not a proposer or admin.");
         _;
+    }
+    function updatePlatformFee(uint256 _newFee) public {
+        platformFee = _newFee;
     }
 
     function addFunds() public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
