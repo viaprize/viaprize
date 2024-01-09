@@ -23,7 +23,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           img={portal.images[0]}
         />
         <AmountDonateCard
-          amountRaised={formatEther(BigInt(portal.totalRewards ?? 0))}
+          amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
           recipientAddress={portal.contract_address}
           totalContributors={formatEther(BigInt(portal.totalFunds ?? 0))}
           contractAddress={portal.contract_address}
