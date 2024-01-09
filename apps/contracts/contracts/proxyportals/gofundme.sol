@@ -1,5 +1,4 @@
 //SPDX-License-Identifier:MIT
-
 pragma solidity ^0.8.19;
 
 // import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -14,7 +13,7 @@ contract Gofundme is Initializable {
     mapping(address => bool) public isAdmin;
     address public receiverAddress;
     uint256 public platformFee;
-    address public platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
+    address public platformAddress;
     address[] public patrons; 
     mapping(address => bool) public isPatron;
     mapping(address => uint256) public patronAmount;
@@ -32,8 +31,8 @@ contract Gofundme is Initializable {
 
     event Values(
         address receiverAddress,
-        uint256 totalFunds,
-        uint256 totalRewards
+        uint256 _totalFunds,
+        uint256 _totalRewards
     );
 
     function initialize(
@@ -52,13 +51,10 @@ contract Gofundme is Initializable {
             isAdmin[_admins[i]] = true;
         }
         receiverAddress = proposers[0];
+        platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
         platformFee = _platformFee;
         isActive = true;
     }
-
-    constructor() initializer {
-    //    initialize();
-   }
 
     modifier noReentrant() {
         require(!locked, "No Re-entrancy");
@@ -91,7 +87,7 @@ contract Gofundme is Initializable {
         );
 
         emit Values(
-            receiverAddress, 
+            receiverAddress,
             totalFunds, 
             totalRewards
         );

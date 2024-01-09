@@ -1,8 +1,7 @@
 import { ethers, upgrades } from "hardhat";
-
 async function main() {
     console.log("wait starting");
-    const GoFundMe = await ethers.getContractFactory('gofundmeFactory');
+    const GoFundMe = await ethers.getContractFactory('Gofundme');
     console.log("wait deploying");
     // await GoFundMe.deployed();
     console.log('GoFundMe is deployed...')
@@ -12,7 +11,7 @@ async function main() {
         // );
         const gofundme = await upgrades.deployProxy(
             GoFundMe,
-            ['0x18E1f76217D05F1FfBC3129a035ca29304706774', '0x18E1f76217D05F1FfBC3129a035ca29304706774', 10],
+            [['0x18E1f76217D05F1FfBC3129a035ca29304706774'], ['0x18E1f76217D05F1FfBC3129a035ca29304706774'], 10],
             { initializer: 'initialize' }
         );
         await gofundme.deployed();

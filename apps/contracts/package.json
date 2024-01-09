@@ -10,12 +10,12 @@
     "@openzeppelin/contracts": "^4.9.3",
     "dotenv": "^16.3.1",
     "ethers": "5.5.0",
-    "hardhat": "^2.4.1"
+    "hardhat": "^2.19.2"
   },
   "scripts": {
     "hardhat": "npx hardhat"
   },
   "devDependencies": {
-    "@openzeppelin/hardhat-upgrades": "^3.0.1"
+    "@openzeppelin/hardhat-upgrades": "^1.21.0"
   }
 }

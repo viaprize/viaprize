@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 
 import "../helperContracts/safemath.sol";
 
-contract Kickstarter {
+contract Kickstarter1 {
 
     address[] public proposers;
     mapping(address => bool) public isProposer;

@@ -4,7 +4,7 @@ pragma solidity ^0.8.19;
 
 import "../helperContracts/safemath.sol";
 
-contract Gofundme {
+contract Gofundme1 {
     address[] public proposers;
     mapping(address => bool) public isProposer;
     address[] public admins;
