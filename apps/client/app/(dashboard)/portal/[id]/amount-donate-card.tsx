@@ -81,7 +81,7 @@ export default function AmountDonateCard({
 
   const ethOfDonateValue = useMemo(() => {
     if (!cryptoToUsd) {
-      toast.error('Error converting USD to Crypto');
+      console.error('cryptoToUsd is undefined');
       return 0;
     }
     const cryto_to_usd_value = cryptoToUsd['ethereum'].usd;
