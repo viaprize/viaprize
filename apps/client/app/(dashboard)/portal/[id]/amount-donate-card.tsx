@@ -19,7 +19,7 @@ import {
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconCheck, IconCopy, IconRefresh } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
@@ -79,6 +79,16 @@ export default function AmountDonateCard({
     }
   }, [balance]);
 
+  const ethOfDonateValue = useMemo(() => {
+    if (!cryptoToUsd) {
+      toast.error('Error converting USD to Crypto');
+      return 0;
+    }
+    const cryto_to_usd_value = cryptoToUsd['ethereum'].usd;
+    const usd_to_eth = parseFloat(value) / cryto_to_usd_value;
+    return isNaN(usd_to_eth) ? 0 : usd_to_eth;
+  }, [value]);
+
   const [sendLoading, setSendLoading] = useState(false);
   return (
     <Card
@@ -94,7 +104,7 @@ export default function AmountDonateCard({
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
           {cryptoToUsd && (
-            <>${(parseFloat(amountRaised) * cryptoToUsd!.ethereum!.usd).toFixed(2)} USD</>
+            <>${(parseFloat(amountRaised) * cryptoToUsd!.ethereum!.usd).toFixed(4)} USD</>
           )}
         </Text>
         <Text c="blue" className="lg:text-3xl md:text-2xl text-sm">
@@ -117,7 +127,7 @@ export default function AmountDonateCard({
         )}
         {fundingGoal !== 0 && cryptoToUsd ? (
           <Badge size="md" my="md" radius="md">
-            Funding Goal: {(fundingGoal * cryptoToUsd?.ethereum.usd).toFixed(2)} USD (
+            Funding Goal: {(fundingGoal * cryptoToUsd?.ethereum.usd).toFixed(4)} USD (
             {fundingGoal} {chain.nativeCurrency.symbol})
           </Badge>
         ) : null}
@@ -163,15 +173,25 @@ export default function AmountDonateCard({
 
       <Stack my="md">
         <NumberInput
-          label={
+          description={
             isLoading
               ? 'Loading.....'
-              : `Enter Value To Donate (Max: ${
-                  balance ? `${balance.formatted} ${balance.symbol}` : `Login To See Max`
-                }  )`
+              : `Wallet Balance: ${
+                  balance
+                    ? `$${(
+                        parseFloat(balance.formatted.toString()) *
+                        (cryptoToUsd?.ethereum?.usd ?? 0)
+                      ).toFixed(4)} (${parseFloat(balance.formatted).toFixed(4)} ${
+                        balance.symbol
+                      })`
+                    : `Login To See Max`
+                })`
           }
-          placeholder="Custom right section"
+          placeholder="Enter Value  in $ To Donate"
           mt="md"
+          label={`You will donate ${ethOfDonateValue.toFixed(4) ?? 0} ${
+            chain.nativeCurrency.symbol
+          } (${value} USD)`}
           rightSection={
             <ActionIcon>
               <IconRefresh onClick={() => refetch({})} />
@@ -197,23 +217,35 @@ export default function AmountDonateCard({
           onClick={async () => {
             await refetch();
 
-            if (parseInt(debounced.toString()) > parseInt(balance?.formatted ?? '0')) {
+            if (!balance) {
+              toast.error('Please Login');
+              return;
+            }
+
+            if (
+              parseInt(ethOfDonateValue.toString()) > parseInt(balance?.formatted ?? '0')
+            ) {
               toast.error('Insufficient Balance');
               return;
             }
             setSendLoading(true);
 
-            const config = await prepareSendTransaction({
-              to: contractAddress,
-              value: debounced ? parseEther(debounced) : undefined,
-            });
+            try {
+              const config = await prepareSendTransaction({
+                to: contractAddress,
+                value: debounced ? parseEther(ethOfDonateValue.toString()) : undefined,
+              });
+              const { hash } = await sendTransaction(config);
+              toast.success(`Transaction ${hash}`, {
+                duration: 6000,
+              });
 
-            const { hash } = await sendTransaction(config);
-            toast.success(`Transaction ${hash}`, {
-              duration: 6000,
-            });
-            setSendLoading(false);
-            window.location.reload();
+              window.location.reload();
+            } catch (e: unknown) {
+              toast.error((e as any)?.message);
+            } finally {
+              setSendLoading(false);
+            }
           }}
         >
           Donate
