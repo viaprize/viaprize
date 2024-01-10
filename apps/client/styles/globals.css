@@ -28,7 +28,10 @@
   src        : url("/fonts/Inter/Inter-ExtraBold.ttf");
 }
 
-html,
+
+.ProseMirror{
+  max-width: 90vw;
+}
 
 
 .ant-btn,

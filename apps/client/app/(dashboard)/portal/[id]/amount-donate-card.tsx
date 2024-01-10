@@ -1,7 +1,7 @@
 'use client';
 import useAppUser from '@/context/hooks/useAppUser';
 import { prepareWritePortal, writePortal } from '@/lib/smartContract';
-import { ConvertUSD } from '@/lib/types';
+import type { ConvertUSD } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
@@ -93,9 +93,9 @@ export default function AmountDonateCard({
           Total Amount Raised
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
-          {cryptoToUsd && (
-            <>${(parseFloat(amountRaised) * cryptoToUsd!.ethereum!.usd).toFixed(2)} USD</>
-          )}
+          {cryptoToUsd ? (
+            <>${(parseFloat(amountRaised) * cryptoToUsd.ethereum.usd).toFixed(2)} USD</>
+          ) : null}
         </Text>
         <Text c="blue" className="lg:text-3xl md:text-2xl text-sm">
           ({amountRaised} {chain.nativeCurrency.symbol} )
@@ -110,14 +110,14 @@ export default function AmountDonateCard({
         <Badge color="gray" variant="light" radius="sm">
           {typeOfPortal}
         </Badge>
-        {deadline && (
+        {deadline ? (
           <Text size="xs" mt="xs">
             Deadline: {formatDate(deadline)}
           </Text>
-        )}
+        ) : null}
         {fundingGoal !== 0 && cryptoToUsd ? (
           <Badge size="md" my="md" radius="md">
-            Funding Goal: {(fundingGoal * cryptoToUsd?.ethereum.usd).toFixed(2)} USD (
+            Funding Goal: {(fundingGoal * cryptoToUsd.ethereum.usd).toFixed(2)} USD (
             {fundingGoal} {chain.nativeCurrency.symbol})
           </Badge>
         ) : null}
@@ -127,8 +127,11 @@ export default function AmountDonateCard({
         </Text> */}
       </div>
       <div>
-        <Text>
-          Project Donation Address{' '}
+        <Text>Project Donation Address </Text>
+        <Flex align="center">
+          <Text size="sm" my="sm">
+            {recipientAddress.slice(0, 6)}......{recipientAddress.slice(-5)}
+          </Text>
           <CopyButton value={recipientAddress}>
             {({ copied, copy }) => (
               <ActionIcon
@@ -142,11 +145,7 @@ export default function AmountDonateCard({
               </ActionIcon>
             )}
           </CopyButton>
-        </Text>
-        <Flex></Flex>
-        <Text size="sm" my={'sm'}>
-          {recipientAddress}
-        </Text>
+        </Flex>
 
         <Divider my="sm" />
       </div>
