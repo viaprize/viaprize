@@ -1229,6 +1229,26 @@
         "x-nestia-method": "POST"
       }
     },
+    "/price/usd_to_eth": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "price.usd_to_eth.usd_to_eth",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/prizes/submission/{id}": {
       "get": {
         "tags": [],
