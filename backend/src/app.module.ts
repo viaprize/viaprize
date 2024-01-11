@@ -19,6 +19,7 @@ import { UsersModule } from './users/users.module';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { IndexerModule } from './indexer/indexer.module';
 import { PortalsModule } from './portals/portals.module';
+import { PriceController } from './price/price.controller';
 
 @Module({
   imports: [
@@ -71,6 +72,6 @@ import { PortalsModule } from './portals/portals.module';
     IndexerModule,
   ],
   providers: [],
-  controllers: [],
+  controllers: [PriceController],
 })
 export class AppModule { }

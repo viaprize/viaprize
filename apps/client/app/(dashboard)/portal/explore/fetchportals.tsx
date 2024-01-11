@@ -19,11 +19,14 @@ export default async function FetchPortals() {
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- will check later
   const final: { ethereum: { usd: number } } = await (
-    await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
-    )
+    await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    })
   ).json();
-
+  console.log({ portals });
   return (
     <>
       {portals.map((portal) => {

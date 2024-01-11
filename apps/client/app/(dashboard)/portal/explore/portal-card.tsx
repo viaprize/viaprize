@@ -77,7 +77,8 @@ export default function PortalCard({
       </p>
 
       <Text fw="bold" size="xl">
-        {(parseFloat(amountRaised) * ethToUsd).toFixed(2)} USD ({parseFloat(amountRaised).toFixed(3)}
+        {(parseFloat(amountRaised) * ethToUsd).toFixed(2)} USD (
+        {parseFloat(amountRaised).toFixed(3)}
         {chain.nativeCurrency.symbol} )
       </Text>
 
@@ -104,7 +105,7 @@ export default function PortalCard({
       </Text> */}
       {fundingGoal !== 0 && (
         <Text size="xs" mt="xs">
-          {(fundingGoal * ethToUsd).toFixed(2)} USD ({fundingGoal.toFixed(3)}{' '}
+          {(fundingGoal * ethToUsd).toFixed(2)} USD ({fundingGoal}{' '}
           {chain.nativeCurrency.symbol}) Funding Goal
         </Text>
       )}

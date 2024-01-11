@@ -30,6 +30,7 @@ export default function Profile() {
   const [recieverAddress, setRecieverAddress] = useState<string>('');
   const [amount, setAmount] = useState<string>('0');
   const { wallet } = usePrivyWagmi();
+
   const { data: balance, refetch } = useBalance({
     address: wallet?.address as `0x${string}`,
   });
@@ -98,7 +99,7 @@ export default function Profile() {
               Total Amount Raised
               <Text>Network : {chain.name.toUpperCase()}</Text>
               <Input
-                placeholder="Reciever Address"
+                placeholder="Receiver Address"
                 value={recieverAddress}
                 onChange={(e) => {
                   setRecieverAddress(e.currentTarget.value);
