@@ -221,12 +221,6 @@ export default function AmountDonateCard({
               return;
             }
 
-            if (
-              parseInt(ethOfDonateValue.toString()) > parseInt(balance?.formatted ?? '0')
-            ) {
-              toast.error('Insufficient Balance');
-              return;
-            }
             setSendLoading(true);
 
             try {
