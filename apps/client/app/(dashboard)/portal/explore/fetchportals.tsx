@@ -11,9 +11,14 @@ export default async function FetchPortals() {
   ).data.data;
 
   const final: { ethereum: { usd: number } } = await (
-    await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
+    await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    })
   ).json();
-
+  console.log({ portals });
   return (
     <>
       {portals.map((portal) => {
@@ -30,7 +35,7 @@ export default async function FetchPortals() {
             key={portal.id}
             typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
             id={portal.id}
-            fundingGoal={portal.fundingGoal ?? 0}
+            fundingGoal={parseFloat(portal.fundingGoal ?? 0)}
             deadline={portal.deadline}
           />
         );
