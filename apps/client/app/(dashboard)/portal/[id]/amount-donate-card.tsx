@@ -104,11 +104,11 @@ export default function AmountDonateCard({
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
           {cryptoToUsd ? (
-            <>${(parseFloat(amountRaised) * cryptoToUsd.ethereum.usd).toFixed(4)} USD</>
+            <>${(parseFloat(amountRaised) * cryptoToUsd.ethereum.usd).toFixed(2)} USD</>
           ) : null}
         </Text>
         <Text c="blue" className="lg:text-3xl md:text-2xl text-sm">
-          ({parseFloat(amountRaised).toFixed(4)} {chain.nativeCurrency.symbol} )
+          ({parseFloat(amountRaised).toFixed(3)} {chain.nativeCurrency.symbol} )
         </Text>
         <Text fw="bold" size="xl">
           {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
@@ -127,7 +127,7 @@ export default function AmountDonateCard({
         ) : null}
         {fundingGoal !== 0 && cryptoToUsd ? (
           <Badge size="md" my="md" radius="md">
-            Funding Goal: {(fundingGoal * cryptoToUsd.ethereum.usd).toFixed(4)} USD (
+            Funding Goal: {(fundingGoal * cryptoToUsd.ethereum.usd).toFixed(2)} USD (
             {fundingGoal} {chain.nativeCurrency.symbol})
           </Badge>
         ) : null}
@@ -180,7 +180,7 @@ export default function AmountDonateCard({
                     ? `$${(
                         parseFloat(balance.formatted.toString()) *
                         (cryptoToUsd?.ethereum?.usd ?? 0)
-                      ).toFixed(4)} (${parseFloat(balance.formatted).toFixed(4)} ${
+                      ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${
                         balance.symbol
                       })`
                     : `Login To See Balance`
