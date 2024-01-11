@@ -85,7 +85,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         <MobileNavbar close={toggle} open={opened} />
       </AppShell.Navbar>
       <AppShell.Main>
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center min-w-0">
           <Center className="max-w-screen-xl w-full">{children}</Center>
         </div>
         <Footer />

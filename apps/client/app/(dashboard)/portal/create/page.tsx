@@ -9,7 +9,7 @@ export default function CreatePortal() {
   // }
 
   return (
-    <Card className="w-full p-8 m-6" mt="md" withBorder shadow="sm">
+    <Card className="w-full m-0 sm:m-6 p-3 sm:p-8" mt="md" withBorder shadow="sm">
       <Title my="md" order={1}>
         Create a Portal
       </Title>
