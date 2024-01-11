@@ -1,5 +1,5 @@
 import { TypedBody, TypedParam } from '@nestia/core';
-import { CACHE_MANAGER, } from '@nestjs/cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -69,15 +69,14 @@ export class PortalsController {
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
-  ) { }
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   @Post('')
   @UseGuards(AuthGuard)
   async createPortal(
     @TypedBody() createPortalDto: CreatePortalDto,
   ): Promise<Portals> {
-
     const portalProposal = await this.portalProposalsService.findOne(
       createPortalDto.proposal_id,
     );
@@ -152,39 +151,45 @@ export class PortalsController {
     page: number = 1,
     @Query('limit')
     limit: number = 10,
-  ): Promise<Readonly<{
-    data: PortalWithBalance[]; hasNextPage: boolean
-  }>> {
-    let portalWithoutBalance: {
-      data: Portals[];
+  ): Promise<
+    Readonly<{
+      data: PortalWithBalance[];
       hasNextPage: boolean;
-    };
-    const key = `portals-${page}-${limit}`;
-    const cachePortalWithoutBalance = await this.cacheManager.get(key);
-    if (cachePortalWithoutBalance) {
-      portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string)
-    }
-    else {
-      portalWithoutBalance = infinityPagination(
-        await this.portalsService.findAllPendingWithPagination({
-          page,
-          limit,
-        }),
-        {
-          limit,
-          page,
-        },
-      );
-      await this.cacheManager.set(key, JSON.stringify(portalWithoutBalance), 21600000)
-    }
+    }>
+  > {
+    // let portalWithoutBalance: {
+    //   data: Portals[];
+    //   hasNextPage: boolean;
+    // };
+    // const key = `portals-${page}-${limit}`;
+    // const cachePortalWithoutBalance = await this.cacheManager.get(key);
+    // if (cachePortalWithoutBalance) {
+    //   portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
+    // } else {
+    const portalWithoutBalance = infinityPagination(
+      await this.portalsService.findAllPendingWithPagination({
+        page,
+        limit,
+      }),
+      {
+        limit,
+        page,
+      },
+    );
+    // await this.cacheManager.set(
+    //   key,
+    //   JSON.stringify(portalWithoutBalance),
+    //   21600000,
+    // );
+    // }
     const results = await this.blockchainService.getPortalsPublicVariables(
       portalWithoutBalance.data.map((portal) => portal.contract_address),
     );
-    console.log({ results })
+    console.log({ results });
     let start = 0;
     let end = 4;
-    const portalWithBalanceData: PortalWithBalance[] = portalWithoutBalance.data.map(
-      (portal, index) => {
+    const portalWithBalanceData: PortalWithBalance[] =
+      portalWithoutBalance.data.map((portal) => {
         const portalResults = results.slice(start, end);
         start += 4;
         end += 4;
@@ -192,28 +197,31 @@ export class PortalsController {
           ...portal,
           balance: parseInt((portalResults[0].result as bigint).toString()),
           totalFunds: parseInt((portalResults[1].result as bigint).toString()),
-          totalRewards: parseInt(((portalResults[2].result as bigint)).toString()),
-          isActive: (portalResults[3].result as boolean),
+          totalRewards: parseInt(
+            (portalResults[2].result as bigint).toString(),
+          ),
+          isActive: portalResults[3].result as boolean,
         } as PortalWithBalance;
-      },
-    );
+      });
     return {
       data: portalWithBalanceData,
-      hasNextPage: portalWithoutBalance.hasNextPage
+      hasNextPage: portalWithoutBalance.hasNextPage,
     };
   }
 
   @Get('/:id')
   async getPortal(@TypedParam('id') id: string): Promise<PortalWithBalance> {
     const portal = await this.portalsService.findOne(id);
-    const results = await this.blockchainService.getPortalPublicVariables(portal.contract_address)
+    const results = await this.blockchainService.getPortalPublicVariables(
+      portal.contract_address,
+    );
 
     return {
       ...portal,
       balance: parseInt((results[0].result as bigint).toString()),
       totalFunds: parseInt((results[1].result as bigint).toString()),
-      totalRewards: parseInt(((results[2].result as bigint)).toString()),
-      isActive: (results[3].result as boolean),
+      totalRewards: parseInt((results[2].result as bigint).toString()),
+      isActive: results[3].result as boolean,
     };
   }
 

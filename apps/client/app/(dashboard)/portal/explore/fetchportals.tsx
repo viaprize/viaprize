@@ -4,12 +4,20 @@ import PortalCard from './portal-card';
 
 export default async function FetchPortals() {
   const portals = (
-    await new Api().portals.portalsList({
-      limit: 20,
-      page: 1,
-    })
+    await new Api().portals.portalsList(
+      {
+        limit: 20,
+        page: 1,
+      },
+      {
+        next: {
+          revalidate: 0,
+        },
+      },
+    )
   ).data.data;
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- will check later
   const final: { ethereum: { usd: number } } = await (
     await fetch(
       `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
