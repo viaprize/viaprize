@@ -10,8 +10,8 @@ export default async function FetchPortals() {
     })
   ).data.data;
 
-  const final: { ethereum: { usd: number } } = await(
-    await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`),
+  const final: { ethereum: { usd: number } } = await (
+    await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
   ).json();
 
   return (
