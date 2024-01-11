@@ -108,7 +108,7 @@ export default function AmountDonateCard({
           ) : null}
         </Text>
         <Text c="blue" className="lg:text-3xl md:text-2xl text-sm">
-          ({parseFloat(amountRaised).toFixed(3)} {chain.nativeCurrency.symbol} )
+          ({parseFloat(amountRaised).toPrecision(4)} {chain.nativeCurrency.symbol} )
         </Text>
         <Text fw="bold" size="xl">
           {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
