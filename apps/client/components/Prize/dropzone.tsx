@@ -25,7 +25,7 @@ export default function ImageComponent(props: ImageComponentProps) {
     const imageUrl = URL.createObjectURL(file);
     return (
       <Image
-        className="aspect-video object-cover max-h-[400px]"
+        className="aspect-video object-cover sm:max-h-[400px] max-sm:w-full max-sm:h-full"
         key={file.name}
         src={imageUrl}
         width="1280"
@@ -43,7 +43,7 @@ export default function ImageComponent(props: ImageComponentProps) {
       {props.image && props.files.length === 0 ? (
         <div>
           <Image
-            className="aspect-video object-cover max-h-[400px]"
+            className="aspect-video object-cover  sm:max-h-[400px] max-sm:w-full max-sm:h-full"
             src={props.image}
             width="1280"
             height="768"
