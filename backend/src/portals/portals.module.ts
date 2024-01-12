@@ -13,8 +13,6 @@ import { PortalsService } from './services/portals.service';
 @Module({
   controllers: [PortalsController],
   imports: [
-
-
     TypeOrmModule.forFeature([Portals, PortalProposals]),
     UsersModule,
     MailModule,
@@ -23,4 +21,4 @@ import { PortalsService } from './services/portals.service';
   ],
   providers: [PortalsService, PortalProposalsService],
 })
-export class PortalsModule { }
+export class PortalsModule {}

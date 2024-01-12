@@ -16,7 +16,7 @@ import validationOptions from './utils/validation-options';
 
 async function bootstrap() {
   const adapter = new FastifyAdapter({
-    logger: true
+    logger: true,
   });
   await adapter.useStaticAssets({
     root: join(__dirname, '..', 'public'), // Specify the directory where your static assets are located
@@ -41,7 +41,6 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
-
 
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));

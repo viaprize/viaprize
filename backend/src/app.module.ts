@@ -34,11 +34,9 @@ import { PriceController } from './price/price.controller';
         return new DataSource(options).initialize();
       },
     }),
-    CacheModule.register(
-      {
-        isGlobal: true
-      }
-    ),
+    CacheModule.register({
+      isGlobal: true,
+    }),
     // TriggerDevModule.registerAsync({
     //   useFactory: (configService: ConfigService) => {
     //     console.log(configService.get<string>("TRIGGER_API_KEY"), "hiiiiiiiiiiiiiiiiiiiiiii")
@@ -74,4 +72,4 @@ import { PriceController } from './price/price.controller';
   providers: [],
   controllers: [PriceController],
 })
-export class AppModule { }
+export class AppModule {}
