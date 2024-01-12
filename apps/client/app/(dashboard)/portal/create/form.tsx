@@ -3,6 +3,7 @@
 import ImageComponent from '@/components/Prize/dropzone';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
+import { platformFeePercentage } from '@/config';
 import useAppUser from '@/context/hooks/useAppUser';
 import { ConvertUSD } from '@/lib/types';
 import { chain } from '@/lib/wagmi';
@@ -22,7 +23,7 @@ import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FaCalendar } from 'react-icons/fa';
 import { useQuery } from 'react-query';
 import { toast } from 'sonner';
@@ -53,7 +54,7 @@ export default function PortalForm() {
     return Object.keys(final).length === 0
       ? {
           [chain.name.toLowerCase()]: {
-            usd: 2357.89,
+            usd: 0,
           },
         }
       : final;
@@ -120,7 +121,6 @@ export default function PortalForm() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-    const finalFundingGoal = fundingGoal ? convertUSDToCrypto(fundingGoal) : undefined;
 
     const newImages = await handleUploadImages();
     await addProposalsMutation({
@@ -134,21 +134,46 @@ export default function PortalForm() {
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
-      fundingGoal: finalFundingGoal,
+      fundingGoal: finalFundingGoal === 0 ? undefined : finalFundingGoal,
       sendImmediately: portalType === 'pass-through',
     });
     router.push(`/profile/${appUser?.username}`);
     setLoading(false);
   };
 
+  const finalFundingGoal = useMemo(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+    const ethValue = convertUSDToCrypto(fundingGoal);
+    return parseFloat(
+      (
+        ethValue +
+        ethValue * (platformFeePercentage / 100) +
+        convertUSDToCrypto(2)
+      ).toPrecision(4),
+    );
+  }, [fundingGoal]);
+
+  const finalFundingGoalUsd = useMemo<number>(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+    console.log({ fundingGoal });
+    const fundingGoalPercentage =
+      parseFloat(fundingGoal.toString()) * (platformFeePercentage / 100);
+    console.log({ fundingGoalPercentage });
+    return parseFloat(fundingGoal.toString()) + fundingGoalPercentage + 2;
+  }, [fundingGoal]);
+  console.log({ finalFundingGoalUsd });
   const handleSubmit = () => {
     setLoading(true);
     try {
       // console.log(images, 'images');
       toast.promise(submit(), {
-        loading: 'Submitting Proposal...',
-        success: 'Proposal Submitted',
-        error: 'Error Submitting Proposal',
+        loading: 'Submitting proposal...',
+        success: 'Proposal submitted',
+        error: 'Error submitting proposal',
       });
     } catch (e: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -262,11 +287,12 @@ export default function PortalForm() {
         </Group>
       </Radio.Group>
       <div className="my-2">
-        {portalType === 'all-or-nothing' ? (
+        {portalType === 'all-or-nothing' && crytoToUsd ? (
           <div>
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
               <Text>
-                Funding Goal in {`( ${convertUSDToCrypto(fundingGoal ?? 0)}`}{' '}
+                Funding goal in total (+ platform fee of {platformFeePercentage}% ){' '}
+                {`$${finalFundingGoalUsd}`} ({`${finalFundingGoal}`}{' '}
                 {chain.nativeCurrency.symbol} {')'}
               </Text>
             </div>
@@ -277,8 +303,15 @@ export default function PortalForm() {
               leftSection="$"
               placeholder="Enter Funding Goal in USD"
               className="w-full"
+              allowLeadingZeros={false}
+              allowNegative={false}
               value={fundingGoal}
               onChange={(e) => {
+                if (parseInt(e.toString()) === 0) {
+                  console.log('hiii');
+                  setFundingGoal(0);
+                  return;
+                }
                 setFundingGoal(e as number);
               }}
             />

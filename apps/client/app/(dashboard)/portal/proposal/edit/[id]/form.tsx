@@ -4,6 +4,7 @@
 import ImageComponent from '@/components/Prize/dropzone';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
+import { platformFeePercentage } from '@/config';
 import useAppUser from '@/context/hooks/useAppUser';
 import type { PortalProposals } from '@/lib/api';
 import { chain } from '@/lib/wagmi';
@@ -23,7 +24,7 @@ import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FaCalendar } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
@@ -106,14 +107,26 @@ export default function PortalProposalForm({
     return tags;
   };
 
+  const finalFundingGoal = useMemo<number>(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+    const ethValue = convertUSDToCrypto(fundingGoal);
+    return parseFloat(
+      (
+        ethValue +
+        ethValue * (platformFeePercentage / 100) +
+        convertUSDToCrypto(2)
+      ).toPrecision(4),
+    );
+  }, [fundingGoal]);
   const submit = async () => {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-    const finalFundingGoal = fundingGoal ? convertUSDToCrypto(fundingGoal) : undefined;
 
     const newImages = await handleUploadImages();
-    console.log(newImages, "image");
+    console.log(newImages, 'image');
     await updateProposalsMutation({
       id,
       dto: {
@@ -132,7 +145,7 @@ export default function PortalProposalForm({
         treasurers: [address],
         fundingGoal: portalType === 'all-or-nothing' ? finalFundingGoal : undefined,
         sendImmediately: portalType === 'pass-through',
-        platformFeePercentage: 5,
+        platformFeePercentage: platformFeePercentage,
         isRejected: false,
       },
     });
