@@ -82,7 +82,7 @@ export class PrizesController {
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -224,6 +224,7 @@ export class PrizesController {
     @TypedBody() updateBody: UpdatePrizeDto,
   ): Promise<Http200Response> {
     await this.prizeProposalsService.update(id, updateBody);
+    await this.cacheManager.reset()
 
     return {
       message: `Proposal with id ${id} has been updated`,
