@@ -39,14 +39,13 @@ describe("addFunds", () => {
     it("should correctly add funds", async () => {
         await gofundme.addFunds({ value: 100 });
 
-        expect(await gofundme.patronAmount(await (await ethers.provider.getSigner()).getAddress())).to.equal(100);
+        expect(await gofundme.patronAmount((await ethers.provider.getSigner()).getAddress())).to.equal(100);
         expect(await gofundme.totalFunds()).to.equal(100);
     });
 });
 
 describe("endCampaign", () => {
     it("should revert if not called by a proposer or admin", async () => {
-        // Assuming not a proposer or admin
         await expect(gofundme.connect(await ethers.getSigner("0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c")).endCampaign()).to.be.revertedWith("You are not a proposer or admin.");
     });
 
