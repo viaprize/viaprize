@@ -111,8 +111,8 @@ export default function AmountDonateCard({
         <Text fw="bold" size="xl">
           {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
         </Text>
-        <Badge color="gray" variant="light" radius="sm" size="lg">
-          Donation Only On OP Mainnet !
+        <Badge color="red" variant="light" radius="sm" size="lg">
+          Donation only on OP Mainnet !
         </Badge>
         {/* <Text size="sm">
           Raised from{'  '}
