@@ -16,7 +16,7 @@ export default async function getCryptoToUsd(): Promise<ConvertUSD> {
   return Object.keys(final).length === 0
     ? {
         ethereum: {
-          usd: 2357.89,
+          usd: 0,
         },
       }
     : final;
