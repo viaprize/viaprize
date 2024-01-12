@@ -73,7 +73,7 @@ export class PortalsController {
   ) { }
 
   @Get('/clear_cache')
-  async clearCache() {
+  async clearCache(): Promise<Http200Response> {
     await this.cacheManager.reset();
     return {
       message: 'Cache cleared',
