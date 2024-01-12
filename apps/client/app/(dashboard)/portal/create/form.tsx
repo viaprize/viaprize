@@ -147,11 +147,7 @@ export default function PortalForm() {
     }
     const ethValue = convertUSDToCrypto(fundingGoal);
     return parseFloat(
-      (
-        ethValue +
-        ethValue * (platformFeePercentage / 100) +
-        convertUSDToCrypto(2)
-      ).toPrecision(4),
+      (ethValue + ethValue * (platformFeePercentage / 100)).toPrecision(4),
     );
   }, [fundingGoal]);
 
@@ -163,7 +159,7 @@ export default function PortalForm() {
     const fundingGoalPercentage =
       parseFloat(fundingGoal.toString()) * (platformFeePercentage / 100);
     console.log({ fundingGoalPercentage });
-    return parseFloat(fundingGoal.toString()) + fundingGoalPercentage + 2;
+    return parseFloat(fundingGoal.toString()) + fundingGoalPercentage;
   }, [fundingGoal]);
   console.log({ finalFundingGoalUsd });
   const handleSubmit = () => {

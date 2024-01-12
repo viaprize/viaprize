@@ -113,11 +113,7 @@ export default function PortalProposalForm({
     }
     const ethValue = convertUSDToCrypto(fundingGoal);
     return parseFloat(
-      (
-        ethValue +
-        ethValue * (platformFeePercentage / 100) +
-        convertUSDToCrypto(2)
-      ).toPrecision(4),
+      (ethValue + ethValue * (platformFeePercentage / 100)).toPrecision(4),
     );
   }, [fundingGoal]);
   const submit = async () => {
