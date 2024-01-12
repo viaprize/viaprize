@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlockchainModule } from 'src/blockchain/blockchain.module';
@@ -13,8 +14,7 @@ import { PortalsService } from './services/portals.service';
 @Module({
   controllers: [PortalsController],
   imports: [
-
-
+    CacheModule.register(),
     TypeOrmModule.forFeature([Portals, PortalProposals]),
     UsersModule,
     MailModule,

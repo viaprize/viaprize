@@ -183,6 +183,28 @@
         "x-nestia-method": "GET"
       }
     },
+    "/portals/clear_cache": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.clear_cache.clearCache",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/portals": {
       "post": {
         "tags": [],
@@ -2954,6 +2976,21 @@
         ],
         "x-typia-jsDocTags": []
       },
+      "Http200Response": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "message"
+        ],
+        "x-typia-jsDocTags": []
+      },
       "CreatePortalDto": {
         "type": "object",
         "properties": {
@@ -4072,21 +4109,6 @@
         "nullable": false,
         "required": [
           "comment"
-        ],
-        "x-typia-jsDocTags": []
-      },
-      "Http200Response": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "message"
         ],
         "x-typia-jsDocTags": []
       },

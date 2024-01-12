@@ -1,13 +1,9 @@
-import { Controller, Post } from "@nestjs/common";
+import { Controller, Post } from '@nestjs/common';
 
 @Controller('indexer')
 export class PortalsController {
-
-    @Post('/portal')
-    async portalIndex() {
-        return 'This action adds a new portal';
-
-    }
-
-
+  @Post('/portal')
+  portalIndex() {
+    return 'This action adds a new portal';
+  }
 }

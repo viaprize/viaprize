@@ -10,7 +10,9 @@ export class BlockchainService {
   wallet: ethers.Wallet;
   multiCallContract = {
     address: '0xcA11bde05977b3631167028862bE2a173976CA11' as `0x${string}`,
-    abi: parseAbi(['function getEthBalance(address addr) view returns (uint256 balance)'] as const),
+    abi: parseAbi([
+      'function getEthBalance(address addr) view returns (uint256 balance)',
+    ] as const),
   } as const;
   constructor(private readonly configService: ConfigService<AllConfigType>) {
     const key = this.configService.getOrThrow<AllConfigType>('RPC_URL', {
@@ -20,7 +22,7 @@ export class BlockchainService {
     this.provider = createPublicClient({
       chain: optimism,
       transport: http(key),
-    })
+    });
     // this.wallet = new ethers.Wallet(privateKey, this.provider);
   }
 
@@ -56,79 +58,87 @@ export class BlockchainService {
   //   }
   // }
   async getSubmissionTime(viaprizeContractAddress: string): Promise<bigint> {
-    const abi = [{
-      stateMutability: 'view',
-      type: 'function',
-      inputs: [],
-      name: 'get_submission_time',
-      outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    }] as const;
-    const data = await this.provider.readContract(
+    const abi = [
       {
-        abi,
-        address: viaprizeContractAddress as `0x${string}`,
-        functionName: 'get_submission_time'
-      }
-    );
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'get_submission_time',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+    ] as const;
+    const data = await this.provider.readContract({
+      abi,
+      address: viaprizeContractAddress as `0x${string}`,
+      functionName: 'get_submission_time',
+    });
 
     return data;
   }
 
   async getVotingTime(viaprizeContractAddress: string): Promise<bigint> {
-    const abi = [{
-      stateMutability: 'view',
-      type: 'function',
-      inputs: [],
-      name: 'get_voting_time',
-      outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    }] as const;
+    const abi = [
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'get_voting_time',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+    ] as const;
     const data = await this.provider.readContract({
       abi,
       address: viaprizeContractAddress as `0x${string}`,
-      functionName: 'get_voting_time'
+      functionName: 'get_voting_time',
     });
     return data;
   }
 
   async isPortalActive(portalContractAddress: string): Promise<boolean> {
-    const abi = [{
-      stateMutability: 'view',
-      type: 'function',
-      inputs: [],
-      name: 'isActive',
-      outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    }] as const;
-    const data = await this.provider.readContract({
-      abi,
-      address: portalContractAddress as `0x${string}`,
-      functionName: 'isActive'
-    }).catch((e) => {
-      console.log(e);
-      return false;
-    });
+    const abi = [
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'isActive',
+        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+      },
+    ] as const;
+    const data = await this.provider
+      .readContract({
+        abi,
+        address: portalContractAddress as `0x${string}`,
+        functionName: 'isActive',
+      })
+      .catch((e) => {
+        console.log(e);
+        return false;
+      });
     return data;
   }
-
-
 
   async getIsPrizeDistributed(
     viaprizeContractAddress: string,
   ): Promise<boolean> {
-    const abi = [{
-      stateMutability: 'view',
-      type: 'function',
-      inputs: [],
-      name: 'distributed',
-      outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-    }] as const;
-    const data = await this.provider.readContract({
-      address: viaprizeContractAddress as `0x${string}`,
-      abi: abi,
-      functionName: 'distributed'
-    }).catch((e) => {
-      console.log(e);
-      return false;
-    });
+    const abi = [
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'distributed',
+        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+      },
+    ] as const;
+    const data = await this.provider
+      .readContract({
+        address: viaprizeContractAddress as `0x${string}`,
+        abi: abi,
+        functionName: 'distributed',
+      })
+      .catch((e) => {
+        console.log(e);
+        return false;
+      });
     return data;
   }
 
@@ -136,7 +146,6 @@ export class BlockchainService {
     portalContractAddress: string,
   ): Promise<bigint> {
     const abi = [
-
       {
         constant: true,
         inputs: [],
@@ -156,7 +165,7 @@ export class BlockchainService {
       address: portalContractAddress as `0x${string}`,
       abi,
       functionName: 'totalRewards',
-    })
+    });
 
     return data;
   }
@@ -175,14 +184,13 @@ export class BlockchainService {
         payable: false,
         stateMutability: 'view',
         type: 'function',
-      }
+      },
     ] as const;
     const data = this.provider.readContract({
       address: portalContractAddress as `0x${string}`,
       abi: abi,
-      functionName: 'totalFunds'
+      functionName: 'totalFunds',
     });
-
 
     return data;
   }
@@ -195,16 +203,18 @@ export class BlockchainService {
       {
         stateMutability: 'view',
         type: 'function',
-        inputs: [{ name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' }],
+        inputs: [
+          { name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' },
+        ],
         name: 'get_submission_by_hash',
         outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      }
+      },
     ] as const;
     const data = await this.provider.readContract({
       address: viaprizeContractAddress as `0x${string}`,
       abi,
       args: [hash as `0x${string}`],
-      functionName: 'get_submission_by_hash'
+      functionName: 'get_submission_by_hash',
     });
     return data;
   }
@@ -248,7 +258,7 @@ export class BlockchainService {
       },
     ] as const;
 
-    let calls: any = [];
+    const calls: any = [];
     portalContractAddress.forEach((address) => {
       const wagmiContract = {
         address: address as `0x${string}`,
@@ -258,22 +268,22 @@ export class BlockchainService {
         {
           ...this.multiCallContract,
           functionName: 'getEthBalance',
-          args: [address as `0x${string}`]
+          args: [address as `0x${string}`],
         },
         {
           ...wagmiContract,
-          functionName: 'totalFunds'
+          functionName: 'totalFunds',
         },
         {
           ...wagmiContract,
-          functionName: 'totalRewards'
+          functionName: 'totalRewards',
         },
         {
           ...wagmiContract,
-          functionName: 'isActive'
-        }
-      )
-    })
+          functionName: 'isActive',
+        },
+      );
+    });
 
     const results = await this.provider.multicall({
       contracts: calls,
@@ -283,7 +293,6 @@ export class BlockchainService {
   }
 
   async getPrizesPublicVariables(prizeAddresses: string[]) {
-
     const abi = [
       {
         stateMutability: 'view',
@@ -291,9 +300,9 @@ export class BlockchainService {
         inputs: [],
         name: 'distributed',
         outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-      }
-    ]
-    let calls: any = [];
+      },
+    ];
+    const calls: any = [];
     prizeAddresses.forEach((address) => {
       const wagmiContract = {
         address: address as `0x${string}`,
@@ -303,14 +312,14 @@ export class BlockchainService {
         {
           ...this.multiCallContract,
           functionName: 'getEthBalance',
-          args: [address as `0x${string}`]
+          args: [address as `0x${string}`],
         },
         {
           ...wagmiContract,
-          functionName: 'distributed'
-        }
-      )
-    })
+          functionName: 'distributed',
+        },
+      );
+    });
     const results = await this.provider.multicall({
       contracts: calls,
     });
@@ -339,8 +348,8 @@ export class BlockchainService {
         inputs: [],
         name: 'distributed',
         outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-      }
-    ]
+      },
+    ];
     const wagmiContract = {
       address: prizeContractAddress as `0x${string}`,
       abi: abi,
@@ -350,28 +359,24 @@ export class BlockchainService {
         {
           ...this.multiCallContract,
           functionName: 'getEthBalance',
-          args: [prizeContractAddress as `0x${string}`]
-
+          args: [prizeContractAddress as `0x${string}`],
         },
         {
           ...wagmiContract,
-          functionName: 'get_submission_time'
+          functionName: 'get_submission_time',
         },
         {
           ...wagmiContract,
-          functionName: 'get_voting_time'
+          functionName: 'get_voting_time',
         },
         {
           ...wagmiContract,
-          functionName: 'distributed'
+          functionName: 'distributed',
         },
-
-
       ],
     });
     return results;
   }
-
 
   async getPortalPublicVariables(portalContractAddress: string) {
     const abi = [
@@ -421,26 +426,23 @@ export class BlockchainService {
         {
           ...this.multiCallContract,
           functionName: 'getEthBalance',
-          args: [portalContractAddress as `0x${string}`]
+          args: [portalContractAddress as `0x${string}`],
         },
         {
           ...wagmiContract,
-          functionName: 'totalFunds'
+          functionName: 'totalFunds',
         },
         {
           ...wagmiContract,
-          functionName: 'totalRewards'
+          functionName: 'totalRewards',
         },
         {
           ...wagmiContract,
-          functionName: 'isActive'
-        }
+          functionName: 'isActive',
+        },
       ],
     });
 
     return results;
   }
-
-
-
 }

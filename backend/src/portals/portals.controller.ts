@@ -70,7 +70,15 @@ export class PortalsController {
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
+
+  @Get('/clear_cache')
+  async clearCache(): Promise<Http200Response> {
+    await this.cacheManager.reset();
+    return {
+      message: 'Cache cleared',
+    };
+  }
 
   @Post('')
   @UseGuards(AuthGuard)
@@ -157,31 +165,31 @@ export class PortalsController {
       hasNextPage: boolean;
     }>
   > {
-    // let portalWithoutBalance: {
-    //   data: Portals[];
-    //   hasNextPage: boolean;
-    // };
-    // const key = `portals-${page}-${limit}`;
-    // const cachePortalWithoutBalance = await this.cacheManager.get(key);
-    // if (cachePortalWithoutBalance) {
-    //   portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
-    // } else {
-    const portalWithoutBalance = infinityPagination(
-      await this.portalsService.findAllPendingWithPagination({
-        page,
-        limit,
-      }),
-      {
-        limit,
-        page,
-      },
-    );
-    // await this.cacheManager.set(
-    //   key,
-    //   JSON.stringify(portalWithoutBalance),
-    //   21600000,
-    // );
-    // }
+    let portalWithoutBalance: {
+      data: Portals[];
+      hasNextPage: boolean;
+    };
+    const key = `portals-${page}-${limit}`;
+    const cachePortalWithoutBalance = await this.cacheManager.get(key);
+    if (cachePortalWithoutBalance) {
+      portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
+    } else {
+      portalWithoutBalance = infinityPagination(
+        await this.portalsService.findAllPendingWithPagination({
+          page,
+          limit,
+        }),
+        {
+          limit,
+          page,
+        },
+      );
+      await this.cacheManager.set(
+        key,
+        JSON.stringify(portalWithoutBalance),
+        21600000,
+      );
+    }
     const results = await this.blockchainService.getPortalsPublicVariables(
       portalWithoutBalance.data.map((portal) => portal.contract_address),
     );
@@ -479,6 +487,7 @@ export class PortalsController {
       isRejected: false,
     };
     await this.portalProposalsService.update(id, removeRejection);
+    await this.cacheManager.reset();
     return {
       message: `Proposal with id ${id} has been updated`,
     };

@@ -81,8 +81,8 @@ export class PrizesController {
     private readonly blockchainService: BlockchainService,
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
-  ) { }
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -149,8 +149,7 @@ export class PrizesController {
     const cachedprizeWithoutBalance = await this.cacheManager.get(key);
     if (cachedprizeWithoutBalance) {
       prizeWithoutBalance = JSON.parse(cachedprizeWithoutBalance as string);
-    }
-    else {
+    } else {
       prizeWithoutBalance = infinityPagination(
         await this.prizeService.findAllPendingWithPagination({
           page,
@@ -161,23 +160,27 @@ export class PrizesController {
           page,
         },
       );
-      await this.cacheManager.set(key, JSON.stringify(prizeWithoutBalance), 300000);
+      await this.cacheManager.set(
+        key,
+        JSON.stringify(prizeWithoutBalance),
+        300000,
+      );
     }
     const results = await this.blockchainService.getPrizesPublicVariables(
       prizeWithoutBalance.data.map((prize) => prize.contract_address),
     );
     let start = 0;
     let end = 2;
-    const prizeWithBalanceData = prizeWithoutBalance.data.map((prize, index) => {
+    const prizeWithBalanceData = prizeWithoutBalance.data.map((prize) => {
       const portalResults = results.slice(start, end);
       start += 2;
       end += 2;
       return {
         ...prize,
         balance: parseInt((portalResults[0].result as bigint).toString()),
-        distributed: (portalResults[1].result as boolean)
+        distributed: portalResults[1].result as boolean,
       } as PrizeWithBalance;
-    },)
+    });
     return {
       data: prizeWithBalanceData as PrizeWithBalance[],
       hasNextPage: prizeWithoutBalance.hasNextPage,
@@ -189,14 +192,20 @@ export class PrizesController {
     @TypedParam('id') id: string,
   ): Promise<PrizeWithBlockchainData> {
     const prize = await this.prizeService.findOne(id);
-    const results = await this.blockchainService.getPrizePublicVariables(prize.contract_address)
-    console.log(results, "results")
+    const results = await this.blockchainService.getPrizePublicVariables(
+      prize.contract_address,
+    );
+    console.log(results, 'results');
     return {
       ...prize,
-      distributed: (results[3].result as boolean),
+      distributed: results[3].result as boolean,
       balance: parseInt((results[0].result as bigint).toString()),
-      submission_time_blockchain: parseInt((results[1].result as bigint).toString()),
-      voting_time_blockchain: parseInt((results[2].result as bigint).toString()),
+      submission_time_blockchain: parseInt(
+        (results[1].result as bigint).toString(),
+      ),
+      voting_time_blockchain: parseInt(
+        (results[2].result as bigint).toString(),
+      ),
     };
   }
 
@@ -214,7 +223,7 @@ export class PrizesController {
     @TypedParam('id') id: string,
     @TypedBody() updateBody: UpdatePrizeDto,
   ): Promise<Http200Response> {
-    const proposal = await this.prizeProposalsService.update(id, updateBody);
+    await this.prizeProposalsService.update(id, updateBody);
 
     return {
       message: `Proposal with id ${id} has been updated`,

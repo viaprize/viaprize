@@ -48,9 +48,7 @@ export default function PortalForm() {
     useMutation(addProposals);
   const { data: crytoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
     const final = await (
-      await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
-      )
+      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
     ).json();
     return Object.keys(final).length === 0
       ? {

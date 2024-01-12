@@ -11,14 +11,12 @@ type ConvertUSD = Record<
 >;
 
 export default async function getCryptoToUsd(): Promise<ConvertUSD> {
-  const response = await fetch(
-    `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
-  );
+  const response = await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`);
   const final = await response.json();
   return Object.keys(final).length === 0
     ? {
         ethereum: {
-          usd: 2357.89,
+          usd: 0,
         },
       }
     : final;
