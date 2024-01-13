@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useRef } from 'react';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
-import ProposalExploreCard from '../ExplorePrize/proposalExploreCard';
+import ProposalExploreCard from '../Prize/ExplorePrize/proposalExploreCard';
 import { usePrize } from '../hooks/usePrize';
 export default function ProposalsTabs({
   data,
@@ -37,7 +37,6 @@ export default function ProposalsTabs({
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const finalizeTransaction = (item: PrizeProposals) => {};
-
 
   return (
     <div className="p-6 w-full">

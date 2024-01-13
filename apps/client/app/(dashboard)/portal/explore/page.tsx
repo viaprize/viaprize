@@ -4,8 +4,11 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchPortals from './fetchportals';
 import SearchFiltersPortals from './search-filters-portals';
+import { type SearchParams } from '@/lib/types';
 
-export default function ExplorePortal() {
+export default function ExplorePortal({searchParams}:SearchParams) {
+
+
   return (
     <div className="max-w-screen-xl w-screen">
       <div className="sm:flex justify-between">
@@ -26,7 +29,7 @@ export default function ExplorePortal() {
           </Link>
         </Group>
       </div>
-      <SearchFiltersPortals />
+      {/* <SearchFiltersPortals /> */}
       <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
         <Suspense fallback={<SkeletonLoad />}>
           {/* @ts-expect-error Server Component */}

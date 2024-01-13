@@ -1,12 +1,20 @@
 import { Api } from '@/lib/api';
 import PortalCard from './portal-card';
+import { campaignSearchParamsSchema } from '@/lib/params';
+import { type SearchParams } from '@/lib/types';
+import { formatEther } from 'viem';
 
-export default async function FetchPortals() {
+
+export default async function FetchPortals(searchParams: SearchParams) {
+
+    const { page, perPage, sort } =
+      campaignSearchParamsSchema.parse(searchParams);
+
   const portals = (
     await new Api().portals.portalsList(
       {
-        limit: 20,
-        page: 1,
+        limit: perPage,
+        page,
       },
       {
         next: {
@@ -25,7 +33,7 @@ export default async function FetchPortals() {
       },
     })
   ).json();
-  console.log({ portals });
+
   return (
     <>
       {portals.map((portal) => {
@@ -34,7 +42,7 @@ export default async function FetchPortals() {
             ethToUsd={final.ethereum.usd}
             description={portal.description}
             imageUrl={portal.images[0]}
-            amountRaised={''}
+            amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
             authorName={portal.user.name}
             totalContributors="0"
             isActive={portal.isActive ?? false}
