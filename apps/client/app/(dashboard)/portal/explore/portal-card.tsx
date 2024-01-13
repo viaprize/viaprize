@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { formatDate, htmlToPlainText } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
@@ -29,6 +29,7 @@ interface PortalCardProps {
   fundingGoal: number;
   deadline?: string;
   isActive: boolean;
+  tags: string[];
 }
 
 export default function PortalCard({
@@ -44,6 +45,7 @@ export default function PortalCard({
   deadline,
   ethToUsd,
   isActive,
+  tags,
 }: PortalCardProps) {
   return (
     <Card
@@ -68,11 +70,12 @@ export default function PortalCard({
           <PiTimerFill />
           <Text fw="bold">Accepting Donation</Text>
         </div>
-      ) :
-      <div className="flex items-center mt-3 gap-2 text-red-600">
-        <PiTimerFill />
-        <Text fw="bold">Campaign Ended</Text>
-      </div>}
+      ) : (
+        <div className="flex items-center mt-3 gap-2 text-red-600">
+          <PiTimerFill />
+          <Text fw="bold">Campaign Ended</Text>
+        </div>
+      )}
       <Group mt="sm" justify="space-between">
         <Text fw="bold" size="lg">
           {title}
@@ -94,22 +97,16 @@ export default function PortalCard({
         {chain.nativeCurrency.symbol} )
       </Text>
 
-      {/* {isActive ? (
-        <Text fw="bold" size="xl">
-          Accepting Donation
-        </Text>
-      ) : (
-        <Text fw="bold" size="xl" c="red">
-          Campaign Ended
-        </Text>
-      )} */}
-
       <Badge color="gray" variant="light" radius="sm">
         {typeOfPortal}
       </Badge>
-      {/* <Badge color="gray" variant="light" radius="sm">
-        Total Amount Raised
-      </Badge> */}
+      {tags.map((tag) => {
+        return (
+          <Badge key={tag} color="gray" variant="light" radius="sm">
+            {tag}
+          </Badge>
+        );
+      })}
 
       {/* <Text size="xs" mt="xs">
         Raised from <span className="text-gray font-bold">{totalContributors} </span>
@@ -123,7 +120,7 @@ export default function PortalCard({
       )}
 
       {deadline ? (
-        <Text size="xs"  fw="bold">
+        <Text size="xs" fw="bold">
           Deadline: {formatDate(deadline)}
         </Text>
       ) : null}

@@ -7,8 +7,10 @@ import { formatEther } from 'viem';
 
 export default async function FetchPortals(searchParams: SearchParams) {
 
-    const { page, perPage, sort } =
+    const { page, perPage } =
       campaignSearchParamsSchema.parse(searchParams);
+    
+    console.log(page, perPage);
 
   const portals = (
     await new Api().portals.portalsList(
@@ -52,6 +54,7 @@ export default async function FetchPortals(searchParams: SearchParams) {
             id={portal.id}
             fundingGoal={portal.fundingGoal ?? 0}
             deadline={portal.deadline}
+            tags={portal.tags}
           />
         );
       })}
