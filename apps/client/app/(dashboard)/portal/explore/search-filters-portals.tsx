@@ -76,7 +76,8 @@ export default function SearchFiltersPortals() {
           </Menu>
         </Group>
       </Group>
-      <Drawer opened={opened} onClose={close} title="Filters" position="right">
+      <Drawer opened={opened} onClose={close} title="Filters" position="right"
+      >
         <PortalFilterDrawer />
       </Drawer>
     </div>
