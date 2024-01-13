@@ -12,6 +12,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
+import { PiTimerFill } from 'react-icons/pi';
 
 interface PortalCardProps {
   ethToUsd: number;
@@ -42,7 +43,6 @@ export default function PortalCard({
   ethToUsd,
   isActive,
 }: PortalCardProps) {
-  console.log((parseFloat(amountRaised) * ethToUsd).toFixed(2));
   return (
     <Card
       padding="lg"
@@ -61,6 +61,16 @@ export default function PortalCard({
           }
         />
       </Card.Section>
+      {isActive ? (
+        <div className="flex items-center mt-3 gap-2 text-green-600">
+          <PiTimerFill />
+          <Text fw="bold">Accepting Donation</Text>
+        </div>
+      ) :
+      <div className="flex items-center mt-3 gap-2 text-red-600">
+        <PiTimerFill />
+        <Text fw="bold">Campaign Ended</Text>
+      </div>}
       <Group mt="sm" justify="space-between">
         <Text fw="bold" size="lg">
           {title}
@@ -82,15 +92,15 @@ export default function PortalCard({
         {chain.nativeCurrency.symbol} )
       </Text>
 
-      {isActive ? (
+      {/* {isActive ? (
         <Text fw="bold" size="xl">
           Accepting Donation
         </Text>
       ) : (
-        <Text fw="bold" size="xl" c={'red'}>
+        <Text fw="bold" size="xl" c="red">
           Campaign Ended
         </Text>
-      )}
+      )} */}
 
       <Badge color="gray" variant="light" radius="sm">
         {typeOfPortal}
@@ -104,17 +114,17 @@ export default function PortalCard({
         contributions
       </Text> */}
       {fundingGoal !== 0 && (
-        <Text size="xs" mt="xs">
+        <Text size="xs" mt="sm" fw="bold">
           {(fundingGoal * ethToUsd).toFixed(2)} USD ({fundingGoal}{' '}
           {chain.nativeCurrency.symbol}) Funding Goal
         </Text>
       )}
 
-      {deadline && (
-        <Text size="xs" mt="xs">
+      {deadline ? (
+        <Text size="xs"  fw="bold">
           Deadline: {formatDate(deadline)}
         </Text>
-      )}
+      ) : null}
 
       <Button
         color="primary"
@@ -130,7 +140,7 @@ export default function PortalCard({
         <CopyButton value={`https://viaprize.org/portal/${id}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
-              <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>
+              <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'primary'}>
                 {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
               </ActionIcon>
             </Tooltip>
