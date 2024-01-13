@@ -3,12 +3,8 @@ import { Button, Group, Text } from '@mantine/core';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchPortals from './fetchportals';
-import SearchFiltersPortals from './search-filters-portals';
-import { type SearchParams } from '@/lib/types';
 
-export default function ExplorePortal({searchParams}:SearchParams) {
-
-
+export default function ExplorePortal() {
   return (
     <div className="max-w-screen-xl w-screen">
       <div className="sm:flex justify-between">
