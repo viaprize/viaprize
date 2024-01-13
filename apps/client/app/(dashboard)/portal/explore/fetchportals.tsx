@@ -1,5 +1,4 @@
 import { Api } from '@/lib/api';
-import { formatEther } from 'viem';
 import PortalCard from './portal-card';
 
 export default async function FetchPortals() {
@@ -35,7 +34,7 @@ export default async function FetchPortals() {
             ethToUsd={final.ethereum.usd}
             description={portal.description}
             imageUrl={portal.images[0]}
-            amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
+            amountRaised={''}
             authorName={portal.user.name}
             totalContributors="0"
             isActive={portal.isActive ?? false}

@@ -1,3 +1,5 @@
+'use client'
+
 import { formatDate, htmlToPlainText } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
