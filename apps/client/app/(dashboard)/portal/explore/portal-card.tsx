@@ -50,7 +50,7 @@ export default function PortalCard({
   return (
     <Card
       padding="lg"
-      radius="md"
+      radius="lg"
       withBorder
       className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out"
       pos="relative"
@@ -96,17 +96,15 @@ export default function PortalCard({
         {parseFloat(amountRaised).toFixed(3)}
         {chain.nativeCurrency.symbol} )
       </Text>
-
-      <Badge color="gray" variant="light" radius="sm">
-        {typeOfPortal}
-      </Badge>
-      {tags.map((tag) => {
-        return (
-          <Badge key={tag} color="gray" variant="light" radius="sm">
-            {tag}
-          </Badge>
-        );
-      })}
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag) => {
+          return (
+            <Badge key={tag} color="gray" variant="light" radius="sm">
+              {tag}
+            </Badge>
+          );
+        })}
+      </div>
 
       {/* <Text size="xs" mt="xs">
         Raised from <span className="text-gray font-bold">{totalContributors} </span>
