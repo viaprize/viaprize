@@ -1,4 +1,4 @@
-import ExploreCard from '@/components/ExplorePrize/explorePrize';
+import ExploreCard from '@/components/Prize/ExplorePrize/explorePrize';
 import { Api } from '@/lib/api';
 import { formatEther } from 'viem';
 

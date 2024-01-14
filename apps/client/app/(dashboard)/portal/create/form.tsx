@@ -5,13 +5,15 @@ import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { platformFeePercentage } from '@/config';
 import useAppUser from '@/context/hooks/useAppUser';
-import { ConvertUSD } from '@/lib/types';
+import { campaignsTags } from '@/lib/constants';
+import type { ConvertUSD } from '@/lib/types';
 import { chain } from '@/lib/wagmi';
 import {
   Button,
   Checkbox,
   CloseButton,
   Group,
+  MultiSelect,
   NumberInput,
   Radio,
   Text,
@@ -42,11 +44,13 @@ export default function PortalForm() {
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
   const [portalType, setPortalType] = useState('pass-through');
+  const [categories, setCategories] = useState<string[]>([]);
 
   const { addProposals, uploadImages } = usePortalProposal();
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
+
   const { data: crytoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
     const final = await (
       await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
@@ -65,7 +69,7 @@ export default function PortalForm() {
       toast.error('Error converting USD to Crypto');
       return 0;
     }
-    const cryto_to_usd_value = crytoToUsd['ethereum'].usd;
+    const cryto_to_usd_value = crytoToUsd.ethereum.usd;
     const eth_to_cryto = usd / cryto_to_usd_value;
     return parseFloat(eth_to_cryto.toFixed(4));
   }
@@ -100,7 +104,7 @@ export default function PortalForm() {
   //   });
   // };
   const generateTags = () => {
-    const tags = [];
+    const tags: string[] = [];
     const sendNow = portalType === 'pass-through';
     if (!sendNow) {
       tags.push('All-or-Nothing');
@@ -115,21 +119,24 @@ export default function PortalForm() {
     if (fundingGoal) {
       tags.push('Funding Goal');
     }
-    return tags;
+    setCategories((prev) => {
+      return [...prev, ...tags];
+    });
   };
   const submit = async () => {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-
+    
+    generateTags();
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
       deadline: deadline?.toISOString() ?? undefined,
       description: richtext,
-      tags: generateTags(),
+      tags: categories,
       images: [newImages] as string[],
-      title: title,
+      title,
       proposerAddress: wallet.address,
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
@@ -165,7 +172,9 @@ export default function PortalForm() {
     console.log({ fundingGoalPercentage });
     return parseFloat(fundingGoal.toString()) + fundingGoalPercentage + 2;
   }, [fundingGoal]);
+
   console.log({ finalFundingGoalUsd });
+
   const handleSubmit = () => {
     setLoading(true);
     try {
@@ -176,7 +185,6 @@ export default function PortalForm() {
         error: 'Error submitting proposal',
       });
     } catch (e: any) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       /* eslint-disable */
       toast.error(e.message);
     } finally {
@@ -232,6 +240,13 @@ export default function PortalForm() {
           setAddress(e.target.value);
         }}
         required
+      />
+      <MultiSelect
+        label="Pick Categories"
+        placeholder="Pick value"
+        data={campaignsTags}
+        value={categories}
+        onChange={setCategories}
       />
       {/* {address.length > 1 && (
               <Button
@@ -341,6 +356,7 @@ export default function PortalForm() {
           label="Allow funds above goal"
         />
       ) : null}
+
       <Button
         color="primary"
         radius="md"
