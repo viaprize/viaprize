@@ -39,7 +39,7 @@ export default function HeaderLayout() {
     if (loaded && !wallets[0] && appUser) {
       logoutUser();
     }
-  }, []);
+  }, [wallets]);
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
