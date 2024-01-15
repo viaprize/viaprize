@@ -23,6 +23,7 @@ contract Gofundme {
     bool public isActive;
     bool internal locked;
     IERC20 private _usdc;
+    IERC20 private _usdcBridged;
 
     error NotEnoughFunds();
     error FundingToContractEnded();
@@ -55,7 +56,8 @@ contract Gofundme {
         platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
         platformFee = _platformFee;
         isActive = true;
-        _usdc = IERC20(0xFd4fF6863A9069cFdc006524432ce661866C5D97);
+        _usdc = IERC20(0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85);
+        _usdcBridged = IERC20(0x7F5c764cBc14f9669B88837ca1490cCa17c31607);
     }
 
     modifier noReentrant() {
@@ -89,10 +91,26 @@ contract Gofundme {
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
         
         uint256 _donation = _amountUsdc;
+        patrons.push(msg.sender);
+        isPatron[msg.sender] = true;
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(receiverAddress, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
+
+        emit Values(receiverAddress, totalFunds, totalRewards);
+    }
+    function addBridgedUSDCFunds(uint256 _amountUsdc) public noReentrant payable {
+        require(_usdcBridged.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
+        _usdcBridged.transferFrom(msg.sender, address(this), _amountUsdc);
+        
+        uint256 _donation = _amountUsdc;
+        patrons.push(msg.sender);
+        isPatron[msg.sender] = true;
+        totalFunds = totalFunds.add(_donation);
+        totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
+        _usdcBridged.transfer(receiverAddress, (_donation.mul(100 - platformFee)).div(100));
+        _usdcBridged.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
 
         emit Values(receiverAddress, totalFunds, totalRewards);
     }
