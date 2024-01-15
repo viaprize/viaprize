@@ -39,10 +39,9 @@ export default function Details() {
 
   const router = useRouter();
   const { logoutUser } = useAppUser();
-  const handleEmailChange = (val: string) => {
-    const smallCaseEmail = val.toLowerCase().replace(/\s/g, '');
+  const handleChange = (val: string) => {
     window.clearTimeout(timeoutRef.current);
-    setEmail(smallCaseEmail);
+    setEmail(val);
     setData([]);
 
     if (val.trim().length === 0 || val.includes('@')) {
@@ -61,9 +60,6 @@ export default function Details() {
   };
 
   const handleLogin = () => {
-    if (!name || !username || !email) {
-      return toast.error('Please fill in all the fields with asterisk');
-    }
     try {
       toast.promise(
         uploadUserMutation.mutateAsync({
@@ -115,11 +111,7 @@ export default function Details() {
   );
 
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value
-      .toLowerCase()
-      .replace(/\s/g, '')
-      .replace(/[^\w\s]/gi, '');
-
+    const value = event.currentTarget.value.toLowerCase().replace(/\s/g, '');
     setUsernameLoading(true);
     setUsername(value);
     sleep(1000)
@@ -134,7 +126,6 @@ export default function Details() {
       <Card shadow="md" radius="md" withBorder className="w-[50vw]">
         <Text>Enter your details to get started</Text>
         <TextInput
-          required
           value={username}
           onChange={handleUsernameChange}
           label="Username"
@@ -153,7 +144,6 @@ export default function Details() {
         </Flex>
         <TextInput
           value={name}
-          required
           onChange={(e) => {
             setName(e.currentTarget.value);
           }}
@@ -162,10 +152,8 @@ export default function Details() {
           my="sm"
         />
         <Autocomplete
-          required
           value={email}
-          disabled={!!user && !!user.email && user?.email?.address !== undefined}
-          onChange={handleEmailChange}
+          onChange={handleChange}
           label="Email"
           placeholder="Enter your email"
           data={data}
@@ -175,6 +163,7 @@ export default function Details() {
           size="lg"
           radius="xs"
           label="User Bio"
+          withAsterisk
           description="Type in something about yourself"
           value={bio}
           onChange={(e) => setBio(e.currentTarget.value)}
@@ -189,7 +178,14 @@ export default function Details() {
         >
           Get Started
         </Button>
-        <Button onClick={logout} loading={logoutLoading} color="blue" fullWidth my="sm">
+        <Button
+          onClick={logout}
+          loading={logoutLoading}
+          disabled={loading || uploadUserMutation.isLoading || exists || usernameLoading}
+          color="blue"
+          fullWidth
+          my="sm"
+        >
           Exit (Logout)
         </Button>
       </Card>
