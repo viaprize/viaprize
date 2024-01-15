@@ -22,6 +22,8 @@ export default function useAppUser() {
 
   const { user, logout } = usePrivy();
 
+
+
   const { login } = useLogin({
     async onComplete(loginUser, isNewUser, wasAlreadyAuthenticated) {
       const token = await getAccessToken();
@@ -75,11 +77,13 @@ export default function useAppUser() {
   };
 
   const logoutUser = async (): Promise<void> => {
-    await logout().finally(() => {
+    await logout().finally(async () => {
+
       clearUser();
+      router.push('/');
     });
 
-    router.push('/');
+
   };
 
   const updateUser = async (updateUserDTO: UpdateUserDtoWithUserName) => {

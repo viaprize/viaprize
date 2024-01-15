@@ -29,6 +29,7 @@ export default function HeaderLayout() {
   useEffect(() => {
     setLoaded(true);
   }, []);
+  const { user } = usePrivy();
 
   useEffect(() => {
     console.log(loaded, 'loaded');
@@ -39,7 +40,7 @@ export default function HeaderLayout() {
     if (loaded && !wallets[0] && appUser) {
       logoutUser();
     }
-  }, [wallets]);
+  }, [wallets, user]);
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
@@ -115,9 +116,9 @@ export default function HeaderLayout() {
 
       <Flex gap="md" align="center">
         <Card className="hidden sm:block py-1 my-2">
-          {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
-          {wallets[0] ? (
-            <CopyButton value={wallets[0].address}>
+          {user && user?.wallet ? displayAddress(user.wallet.address) : 'No Wallet'}
+          {user && user?.wallet ? (
+            <CopyButton value={user.wallet.address}>
               {({ copied, copy }) => (
                 <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
                   <ActionIcon
