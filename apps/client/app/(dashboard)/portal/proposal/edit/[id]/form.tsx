@@ -142,7 +142,6 @@ export default function PortalProposalForm({
         fundingGoal: portalType === 'all-or-nothing' ? finalFundingGoal : undefined,
         sendImmediately: portalType === 'pass-through',
         platformFeePercentage: platformFeePercentage,
-        isRejected: false,
       },
     });
     router.push(`/profile/${appUser?.username}`);
