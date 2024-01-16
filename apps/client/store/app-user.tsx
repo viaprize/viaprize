@@ -9,6 +9,7 @@ interface AppUserStore {
   fetchUser: (_userId: string) => Promise<User>;
   refreshUser: (_userId: string) => Promise<void>;
   uploadUser: (newUser: CreateUser) => Promise<void>;
+  loading: boolean;
   clearUser: () => void;
 }
 const useAppUserStore = create(
@@ -18,7 +19,9 @@ const useAppUserStore = create(
       setUser: (user: User) => set({ user }),
       fetchUser: async (_userId: string) => {
         // const res = await myAxios.get(`/users/${_userId}`);
+        set({ loading: true });
         const res = await new Api().users.usersDetail(_userId);
+        set({ loading: false });
         return res.data;
       },
       refreshUser: async (_userId: string) => {
@@ -26,13 +29,15 @@ const useAppUserStore = create(
         set({ user: newUserData });
       },
       uploadUser: async (newUser: CreateUser) => {
+        set({ loading: true });
         const res = await (
           await backendApi()
         ).users.usersCreate({
           ...newUser,
         });
-        set({ user: res.data });
+        set({ user: res.data, loading: false });
       },
+      loading: false,
       clearUser: () => set({ user: undefined }),
     }),
     {
