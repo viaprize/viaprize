@@ -37,7 +37,7 @@ export default function PortalForm() {
   const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');
   const [address, setAddress] = useState('');
-  const [fundingGoal, setFundingGoal] = useState<number>();
+  const [fundingGoal, setFundingGoal] = useState<number>(0);
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [allowFundsAboveGoal, setAllowFundsAboveGoal] = useState(false);
   const [images, setImages] = useState<string>();
@@ -127,7 +127,7 @@ export default function PortalForm() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-    
+
     generateTags();
     const newImages = await handleUploadImages();
     await addProposalsMutation({
@@ -244,36 +244,6 @@ export default function PortalForm() {
         value={categories}
         onChange={setCategories}
       />
-      {/* {address.length > 1 && (
-              <Button
-                color="red"
-                className="my-2"
-                onClick={() => {
-                  removeAddress(index);
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </Button>
-            )}
-          </div>
-        ))}
-      </SimpleGrid> */}
-      {/* <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
-        <IconPlus />
-      </ActionIcon> */}
       <Radio.Group
         name="favoriteFramework"
         label="Select your portal type"
@@ -310,6 +280,9 @@ export default function PortalForm() {
             <NumberInput
               required
               min={0}
+              description={`You will get in total $${fundingGoal} and Platform would get $${
+                fundingGoal * (platformFeePercentage / 100)
+              }`}
               label="Funding Goal"
               leftSection="$"
               placeholder="Enter Funding Goal in USD"

@@ -14,7 +14,7 @@ export class PortalProposalsService {
     @InjectRepository(PortalProposals)
     private portalProposalsRepository: Repository<PortalProposals>,
     private userService: UsersService,
-  ) {}
+  ) { }
   async create(
     createPortalProposalDto: CreatePortalProposalDto,
     userId: string,

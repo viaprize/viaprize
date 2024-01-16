@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import type { SetStateAction } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation } from 'wagmi';
 import usePortalProposal from '../hooks/usePortalProposal';
 
@@ -55,6 +55,16 @@ function PortalAdminCard({
   const updateProposalMutation = useMutation(updateProposal);
   console.log({ images }, 'in admin card');
 
+  const finalFundingGoal = useMemo(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+
+    return parseFloat(
+      (fundingGoal + fundingGoal * (newPlatfromFeePercentage / 100)).toPrecision(4),
+    );
+  }, [fundingGoal]);
+
   return (
     <>
       <Modal opened={opened} onClose={close} title="Update Fee Percentage" centered>
@@ -65,7 +75,7 @@ function PortalAdminCard({
             setnewPlatfromFeePercentage(parseInt(event.currentTarget.value));
           }}
           placeholder="Enter in %"
-          description="Click Submit to confirm"
+          description={`This will change funding goal to ${finalFundingGoal} eth`}
         />
 
         <Button
