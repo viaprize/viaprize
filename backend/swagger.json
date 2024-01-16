@@ -1881,7 +1881,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
+        "summary": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
         "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
         "security": [
           {
@@ -1894,7 +1894,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
+                "text": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
                 "kind": "text"
               }
             ]

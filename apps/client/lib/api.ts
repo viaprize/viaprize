@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+import { env } from "@env";
+
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
   /** Name of the pact i.e the title, which is gotten in the pact form */
@@ -46,6 +48,10 @@ export type PactNullable = {
   transactionHash: string;
   blockHash: string;
 } | null;
+
+export interface Http200Response {
+  message: string;
+}
 
 export interface CreatePortalDto {
   address: string;
@@ -253,13 +259,8 @@ export interface RejectProposalDto {
   comment: string;
 }
 
-export interface Http200Response {
-  message: string;
-}
-
 export interface UpdatePortalPropsalDto {
   platformFeePercentage: number;
-  isRejected?: boolean;
   description?: string;
   fundingGoal?: number;
   isMultiSignatureReciever?: boolean;
@@ -560,8 +561,6 @@ export enum ContentType {
   Text = 'text/plain',
 }
 
-import { env } from "@env";
-
 export class HttpClient<SecurityDataType = unknown> {
   public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
   private securityData: SecurityDataType | null = null;
@@ -623,8 +622,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-            ? JSON.stringify(property)
-            : `${property}`,
+              ? JSON.stringify(property)
+              : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -704,18 +703,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-            .then((data) => {
-              if (r.ok) {
-                r.data = data;
-              } else {
-                r.error = data;
-              }
-              return r;
-            })
-            .catch((e) => {
-              r.error = e;
-              return r;
-            });
+          .then((data) => {
+            if (r.ok) {
+              r.data = data;
+            } else {
+              r.error = data;
+            }
+            return r;
+          })
+          .catch((e) => {
+            r.error = e;
+            return r;
+          });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
@@ -734,6 +733,21 @@ export class HttpClient<SecurityDataType = unknown> {
  * @baseUrl http://localhost:3001/api
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  indexer = {
+    /**
+     * No description
+     *
+     * @name PortalCreate
+     * @request POST:/indexer/portal
+     */
+    portalCreate: (params: RequestParams = {}) =>
+      this.request<string, any>({
+        path: `/indexer/portal`,
+        method: 'POST',
+        format: 'json',
+        ...params,
+      }),
+  };
   pacts = {
     /**
      * No description
@@ -766,6 +780,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
   };
   portals = {
+    /**
+     * No description
+     *
+     * @name ClearCacheList
+     * @request GET:/portals/clear_cache
+     */
+    clearCacheList: (params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/clear_cache`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
     /**
      * No description
      *
@@ -1013,6 +1041,21 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+  };
+  price = {
+    /**
+     * No description
+     *
+     * @name UsdToEthList
+     * @request GET:/price/usd_to_eth
+     */
+    usdToEthList: (params: RequestParams = {}) =>
+      this.request<any, any>({
+        path: `/price/usd_to_eth`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),
