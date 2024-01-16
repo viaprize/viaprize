@@ -1,4 +1,3 @@
-import useAppUser from '@/context/hooks/useAppUser';
 import {
   ActionIcon,
   Button,
@@ -13,52 +12,14 @@ import {
   Tooltip,
   useMantineColorScheme,
 } from '@mantine/core';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { usePrivy } from '@privy-io/react-auth';
 import { IconCheck, IconCopy, IconMoonStars, IconSun } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useState } from 'react';
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const [loaded, setLoaded] = useState(false);
-  const { wallets } = useWallets();
-  const { ready, user } = usePrivy();
 
-  const { wallet } = usePrivyWagmi();
-  const { appUser, logoutUser, loading: userLoading } = useAppUser();
-  // useEffect(() => {
-  //   if (loaded && ready) {
-  //     if (!wallets[0] && user && appUser) {
-  //       console.log('hiiiiiiiiiiiiiijljlkkljljli');
-  //       logoutUser();
-  //     }
-  //     // if (wallet) {
-  //     //   wallet.isConnected().then((isConnected) => {
-  //     //     if (!isConnected && appUser) {
-  //     //       console.log('hiiiiiiiiiiiiiijljlkkljljli');
-  //     //       logoutUser();
-  //     //     }
-  //     //   });
-  //     // }
-  //     // if (!appUser && user?.wallet?.address && !userLoading) {
-  //     //   console.log('logging in user');
-  //     //   logoutUser();
-  //     // }
-  //     // if (!user?.wallet?.address && !appUser) {
-  //     //   console.log('refreshing user');
-  //     //   refreshUser();
-  //     // }
-  //   }
-  // }, [wallets, ready, loaded, wallet, user, appUser, logoutUser]);
-
-  // useEffect(() => {
-  //   if (ready) {
-  //     console.log('ready', ready);
-  //     refreshUser();
-  //   }
-  // }, [user]);
-
+  const { user } = usePrivy();
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
