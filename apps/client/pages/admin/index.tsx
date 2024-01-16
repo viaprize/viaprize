@@ -177,21 +177,23 @@ export default function AdminPage() {
       </Tabs.Panel>
 
       <Tabs.Panel value="accepted" pt="xs">
-        {getAcceptedPrizeProposalMutation.isLoading ? (
-          <Loader size="xl" variant="bars" />
-        ) : (
-          <AccpetedProposals
-            isSuccess={
-              getAcceptedPrizeProposalMutation.isSuccess
-                ? getAcceptedPortalProposalMutation.isSuccess
-                : false
-            }
-            data={{
-              portalsProposals: getAcceptedPortalProposalMutation.data,
-              prizesProposals: getAcceptedPrizeProposalMutation.data,
-            }}
-          />
-        )}
+        <div className="grid grid-cols-3 gap-4">
+          {getAcceptedPrizeProposalMutation.isLoading ? (
+            <Loader size="xl" variant="bars" />
+          ) : (
+            <AccpetedProposals
+              isSuccess={
+                getAcceptedPrizeProposalMutation.isSuccess
+                  ? getAcceptedPortalProposalMutation.isSuccess
+                  : false
+              }
+              data={{
+                portalsProposals: getAcceptedPortalProposalMutation.data,
+                prizesProposals: getAcceptedPrizeProposalMutation.data,
+              }}
+            />
+          )}
+        </div>
       </Tabs.Panel>
     </Tabs>
   );

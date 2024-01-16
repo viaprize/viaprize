@@ -17,29 +17,48 @@ import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconCopy, IconMoonStars, IconSun } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [loaded, setLoaded] = useState(false);
   const { wallets } = useWallets();
-  const { ready } = usePrivy();
-  const { wallet } = usePrivyWagmi();
-  const { appUser, logoutUser } = useAppUser();
-  useEffect(() => {
-    setLoaded(true);
-  }, []);
+  const { ready, user } = usePrivy();
 
-  useEffect(() => {
-    console.log(loaded, 'loaded');
-    console.log(wallets, 'wallets');
-    console.log(ready, 'ready');
-    console.log(wallet, 'wallet');
-    console.log(loaded && ready && (!wallet || wallet.address !== ''), 'final boolean');
-    if (loaded && !wallets[0] && appUser) {
-      logoutUser();
-    }
-  }, []);
+  const { wallet } = usePrivyWagmi();
+  const { appUser, logoutUser, loading: userLoading } = useAppUser();
+  // useEffect(() => {
+  //   if (loaded && ready) {
+  //     if (!wallets[0] && user && appUser) {
+  //       console.log('hiiiiiiiiiiiiiijljlkkljljli');
+  //       logoutUser();
+  //     }
+  //     // if (wallet) {
+  //     //   wallet.isConnected().then((isConnected) => {
+  //     //     if (!isConnected && appUser) {
+  //     //       console.log('hiiiiiiiiiiiiiijljlkkljljli');
+  //     //       logoutUser();
+  //     //     }
+  //     //   });
+  //     // }
+  //     // if (!appUser && user?.wallet?.address && !userLoading) {
+  //     //   console.log('logging in user');
+  //     //   logoutUser();
+  //     // }
+  //     // if (!user?.wallet?.address && !appUser) {
+  //     //   console.log('refreshing user');
+  //     //   refreshUser();
+  //     // }
+  //   }
+  // }, [wallets, ready, loaded, wallet, user, appUser, logoutUser]);
+
+  // useEffect(() => {
+  //   if (ready) {
+  //     console.log('ready', ready);
+  //     refreshUser();
+  //   }
+  // }, [user]);
+
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
@@ -115,9 +134,9 @@ export default function HeaderLayout() {
 
       <Flex gap="md" align="center">
         <Card className="hidden sm:block py-1 my-2">
-          {wallets[0] ? displayAddress(wallets[0].address) : 'No Wallet'}
-          {wallets[0] ? (
-            <CopyButton value={wallets[0].address}>
+          {user && user.wallet ? displayAddress(user?.wallet?.address) : 'No Wallet'}
+          {user && user.wallet ? (
+            <CopyButton value={user?.wallet?.address}>
               {({ copied, copy }) => (
                 <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
                   <ActionIcon

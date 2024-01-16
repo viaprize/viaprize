@@ -1,4 +1,4 @@
-import { User } from '@/lib/api';
+import type { User } from '@/lib/api';
 import {
   Badge,
   Button,
@@ -11,7 +11,8 @@ import {
   Textarea,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { SetStateAction, useState } from 'react';
+import type { SetStateAction } from 'react';
+import { useState } from 'react';
 import { useMutation } from 'wagmi';
 import usePortalProposal from '../hooks/usePortalProposal';
 
@@ -29,7 +30,7 @@ interface AdminCardProps {
   platfromFeePercentage: number;
 }
 
-const PortalAdminCard: React.FC<AdminCardProps> = ({
+function PortalAdminCard({
   images,
   tresurers,
   description,
@@ -41,7 +42,7 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
   allowAboveFundingGoal,
   platfromFeePercentage,
   disableButton = false,
-}) => {
+}: AdminCardProps) {
   const { acceptProposal, rejectProposal, updateProposal } = usePortalProposal();
   const acceptProposalMutation = useMutation(acceptProposal);
   const rejectProposalMutation = useMutation(rejectProposal);
@@ -98,7 +99,7 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
           </Badge>
         </Group>
         <p className="text-md text-gray-500 max-h-14 overflow-y-auto">
-          <Text> {tresurers && `${tresurers.join(', ')} \n`}</Text>
+          <Text> {tresurers ? `${tresurers.join(', ')} \n` : null}</Text>
           <Text>
             {' '}
             {fundingGoal
@@ -195,6 +196,6 @@ const PortalAdminCard: React.FC<AdminCardProps> = ({
       </Card>
     </>
   );
-};
+}
 
 export default PortalAdminCard;

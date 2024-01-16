@@ -4,7 +4,7 @@ import { backendApi } from '@/lib/backend';
 import { useRouter } from 'next/router';
 import { formatEther } from 'viem';
 import { usePublicClient, useQuery } from 'wagmi';
-import ExploreCard from '../ExplorePrize/explorePrize';
+import ExploreCard from '../Prize/ExplorePrize/explorePrize';
 import SubmissionsCard from '../Prize/prizepage/submissionsCard';
 import usePortalProposal from '../hooks/usePortalProposal';
 import usePrizeProposal from '../hooks/usePrizeProposal';

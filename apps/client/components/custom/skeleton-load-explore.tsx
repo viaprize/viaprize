@@ -15,7 +15,7 @@ export default function SkeletonLoad() {
 
 function SkeletonCard() {
   return (
-    <Card withBorder radius="md" shadow="md" className="w-full my-4">
+    <Card withBorder radius="lg" shadow="md" className="w-full my-4">
       <Skeleton height={150} width="100%" mb="xl" />
       <Skeleton height={10} width={380} radius="xl" />
       <Skeleton height={10} mt={6} radius="xl" />

@@ -1,9 +1,8 @@
+import SkeletonLoad from '@/components/custom/skeleton-load-explore';
 import { Button, Group, Text } from '@mantine/core';
+import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchPrizes from './fetchprizes';
-import SearchFilters from '@/components/ExplorePrize/searchFilters';
-import SkeletonLoad from '@/components/custom/skeleton-load-explore';
-import Link from 'next/link';
 
 function ExplorePage() {
   return (

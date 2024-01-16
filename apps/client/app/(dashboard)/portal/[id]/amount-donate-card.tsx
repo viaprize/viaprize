@@ -82,7 +82,7 @@ export default function AmountDonateCard({
       console.error('cryptoToUsd is undefined');
       return 0;
     }
-    const cryto_to_usd_value = cryptoToUsd['ethereum'].usd;
+    const cryto_to_usd_value = cryptoToUsd.ethereum.usd;
     const usd_to_eth = parseFloat(value) / cryto_to_usd_value;
     return isNaN(usd_to_eth) ? 0 : usd_to_eth;
   }, [value]);
@@ -111,6 +111,7 @@ export default function AmountDonateCard({
         <Text fw="bold" size="xl">
           {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
         </Text>
+
         {/* <Text size="sm">
           Raised from{'  '}
           <span className="text-dark font-bold">{totalContributors}</span> contributions
@@ -137,9 +138,9 @@ export default function AmountDonateCard({
       <div>
         <Text>Project Donation Address </Text>
         <Flex align="center">
-          <Text size="sm" my="sm">
-            {recipientAddress.slice(0, 6)}......{recipientAddress.slice(-5)}
-          </Text>
+          <Badge size="lg" variant='light' color='primary.2' my="sm">
+            {recipientAddress.slice(0, 8)}........{recipientAddress.slice(-5)}
+          </Badge>
           <CopyButton value={recipientAddress}>
             {({ copied, copy }) => (
               <ActionIcon
@@ -154,7 +155,9 @@ export default function AmountDonateCard({
             )}
           </CopyButton>
         </Flex>
-
+        <Badge color="red" variant="light" radius="md" my="sm" size="lg">
+          Donation only on OP Mainnet !
+        </Badge>
         <Divider my="sm" />
       </div>
 
@@ -177,7 +180,7 @@ export default function AmountDonateCard({
                   balance
                     ? `$${(
                         parseFloat(balance.formatted.toString()) *
-                        (cryptoToUsd?.ethereum?.usd ?? 0)
+                        (cryptoToUsd?.ethereum.usd ?? 0)
                       ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${
                         balance.symbol
                       })`

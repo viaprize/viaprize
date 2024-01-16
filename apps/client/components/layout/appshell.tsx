@@ -1,5 +1,4 @@
 'use client';
-import { chain } from '@/lib/wagmi';
 import {
   AppShell,
   Burger,
@@ -11,11 +10,14 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useWallets } from '@privy-io/react-auth';
 import { optimism } from '@wagmi/chains';
 import { switchNetwork } from '@wagmi/core';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, type ReactNode } from 'react';
+import { useNetwork } from 'wagmi';
+import useIsMounted from '../hooks/useIsMounted';
 import Footer from './footer';
 import HeaderLayout from './headerLayout';
 import MobileNavbar from './mobileNavbar';
@@ -23,18 +25,21 @@ import ProfileMenu from './profilemenu';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
+  const { chain: currentChain } = useNetwork();
   const [opened, { toggle }] = useDisclosure();
+  const { wallets } = useWallets();
   const [openedChainModal, { open: openChainModal, close: closeChainModal }] =
     useDisclosure(false);
   const computedColorScheme = useComputedColorScheme('light');
+  const isMounted = useIsMounted();
   useEffect(() => {
-    if (chain.id !== optimism.id) {
+    if (currentChain?.id !== optimism.id && wallets[0] && wallets[0].address) {
       openChainModal();
     }
-  }, [chain.id]);
+  }, [currentChain, isMounted]);
   const switchToOptimism = async () => {
     await switchNetwork({
-      chainId: 1,
+      chainId: optimism.id,
     }).then(() => {
       closeChainModal();
     });
@@ -61,6 +66,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         withCloseButton={false}
         size="sm"
         centered
+        closeOnClickOutside={false}
         title="Wrong Network"
       >
         <Button onClick={() => switchToOptimism()}> Switch To Optimism</Button>

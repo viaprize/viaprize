@@ -15,7 +15,9 @@ const primary: MantineColorsTuple = [
 ];
 
 export const theme = createTheme({
+  primaryColor: 'primary',
   colors: {
     primary,
   },
+  defaultRadius: 'md',
 });
