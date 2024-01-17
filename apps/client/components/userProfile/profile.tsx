@@ -28,20 +28,6 @@ export default function Profile() {
   // const { address } = useAccount();
   const [opened, { open, close }] = useDisclosure(false);
   const { appUser } = useAppUser();
-  const [recieverAddress, setRecieverAddress] = useState<string>('');
-  const [amount, setAmount] = useState<string>('0');
-  const { wallet } = usePrivyWagmi();
-
-  const { data: balance, refetch } = useBalance({
-    address: wallet?.address as `0x${string}`,
-  });
-  useEffect(() => {
-    if (!balance) {
-      void refetch();
-    }
-  }, [balance]);
-  const [loading, setLoading] = useState(false);
-
   const { getUserByUserName } = useUser();
 
   const { data: userData, refetch: fetchUser } = useQuery('result', () =>
@@ -52,15 +38,13 @@ export default function Profile() {
   // console.log(isAddress(recieverAddress), "ksdjf")
   // const { data, isLoading, refetch } = useBalance({ address });
   return (
-    <Card shadow="md" className="w-full">
-      <div className="p-8 md:w-1/3">
+    <Card shadow="md" className="w-full min-w-0 flex flex-col md:flex-row justify-center gap-3">
+      <div className="md:p-8 p-3">
         <div>
           <Avatar radius="full" size="xl" src={userData?.avatar} />
-
           <Text fw={700} size="xl" className="mb-0 uppercase mt-4">
             {userData?.name}
           </Text>
-
           <Group justify="space-between">
             <Text className="lg my-0">@{appUser?.username}</Text>
             <Button size="xs" onClick={open}>
@@ -78,110 +62,11 @@ export default function Profile() {
               />
             </Modal>
           </Group>
-
-          <Group mt="sm">
-            {/* <Avatar radius="xl" size="sm">
-            <IconBrandX />
-          </Avatar>
-          <Avatar radius="xl" size="sm">
-            <IconBrandLinkedin />
-          </Avatar>
-          <Avatar radius="xl" size="sm">
-            <IconBrandGithubFilled />
-          </Avatar>
-          <Avatar radius="xl" size="sm">
-            <IconBrandTelegram />
-          </Avatar> */}
-            {appUser && balance ? (
-              <Stack>
-                <Text>Address : {wallet?.address}</Text>
-                <Text>
-                  Balance : {balance.formatted} {balance.symbol}
-                </Text>
-                Total Amount Raised
-                <Text>Network : {chain.name.toUpperCase()}</Text>
-                <Input
-                  placeholder="Receiver Address"
-                  value={recieverAddress}
-                  onChange={(e) => {
-                    setRecieverAddress(e.currentTarget.value);
-                  }}
-                />
-                <NumberInput
-                  label=""
-                  placeholder="Enter amount"
-                  allowDecimal
-                  allowNegative={false}
-                  defaultValue={0}
-                  value={amount}
-                  max={parseInt(balance.value.toString() ?? '1000')}
-                  onChange={(value) => {
-                    setAmount(value.toString());
-                  }}
-                />
-                <Button
-                  disabled={!isAddress(recieverAddress)}
-                  onClick={async () => {
-                    setLoading(true);
-                    if (parseEther(amount) > balance.value) {
-                      toast.error('Insufficient Balance');
-                      setLoading(false);
-                      return;
-                    }
-                    try {
-                      const config = await prepareSendTransaction({
-                        to: recieverAddress,
-                        value: parseEther(amount),
-                      });
-                      const { hash } = await sendTransaction(config);
-                      toast.promise(
-                        waitForTransaction({
-                          hash,
-                        }),
-                        {
-                          loading: 'Sending Transaction',
-                          success: 'Transaction Sent',
-                          error: 'Error Sending Transaction',
-                        },
-                      );
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    } catch (e: any) {
-                      /* eslint-disable */
-                      toast.error(e.message);
-                    }
-                    setLoading(false);
-                  }}
-                >
-                  Send{' '}
-                </Button>
-              </Stack>
-            ) : null}
-          </Group>
-          {/* <Button my="sm">Edit Profile</Button> */}
         </div>
 
         <div>
           <h1 className="mb-0 text-xl font-bold">Bio</h1>
           <p className="my-0">{userData?.bio}</p>
-          {/* <div className="flex gap-3 justify-between">
-          <div>
-              <div className='flex gap-3 items-center'>
-              {isLoading ? (
-                <Loader color="blue" />
-              ) : (
-                <Text w={500} c="green" size="xl">
-                  {data?.formatted} Eth
-                </Text>
-              )}
-              <ActionIcon>
-              <IconRefresh onClick={() => refetch()} />
-            </ActionIcon>
-            </div>
-            <Text w={600} c="" size="lg">
-              Balance In Eth 
-            </Text>   
-          </div>
-        </div> */}
         </div>
 
         <Box mt="md">
@@ -190,7 +75,7 @@ export default function Profile() {
           </Text>
           <div className="flex flex-wrap gap-1">
             {userData?.proficiencies.map((proficiency: string) => (
-              <Badge variant="light" color="green">
+              <Badge key={proficiency} variant="light" color="green">
                 {proficiency}
               </Badge>
             ))}
@@ -201,13 +86,115 @@ export default function Profile() {
           </Text>
           <div className="flex flex-wrap gap-1">
             {userData?.priorities.map((priority: string) => (
-              <Badge variant="light" color="blue">
+              <Badge key={priority} variant="light" color="blue">
                 {priority}
               </Badge>
             ))}
           </div>
         </Box>
       </div>
+      <DonateCard />
     </Card>
+  );
+}
+
+function DonateCard() {
+  const { appUser } = useAppUser();
+  const [recieverAddress, setRecieverAddress] = useState<string>('');
+  const [amount, setAmount] = useState<string>('0');
+  const { wallet } = usePrivyWagmi();
+  const [loading, setLoading] = useState(false);
+
+  const { data: balance, refetch } = useBalance({
+    address: wallet?.address as `0x${string}`,
+  });
+  useEffect(() => {
+    if (!balance) {
+      void refetch();
+    }
+  }, [balance]);
+
+  const handleDonation = async () => {
+    setLoading(true);
+    if (!isAddress(recieverAddress)) {
+      toast.error('Invalid Address');
+      setLoading(false);
+      return;
+    }
+    if(!balance) {
+      toast.error('Invalid Balance');
+      setLoading(false);
+      return;
+    }
+
+    if (parseEther(amount) > balance.value) {
+      toast.error('Insufficient Balance');
+      setLoading(false);
+      return;
+    }
+    try {
+      const config = await prepareSendTransaction({
+        to: recieverAddress,
+        value: parseEther(amount),
+      });
+      const { hash } = await sendTransaction(config);
+      toast.promise(
+        waitForTransaction({
+          hash,
+        }),
+        {
+          loading: 'Sending Transaction',
+          success: 'Transaction Sent',
+          error: 'Error Sending Transaction',
+        },
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      /* eslint-disable */
+      toast.error(e.message);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <Group mt="sm" p="sm">
+      {appUser && balance ? (
+        <Stack>
+          <Text>Address : {wallet?.address.slice(0,6)}.....{wallet?.address.slice(-6)}</Text>
+          <Text>
+            Balance : {balance.formatted} {balance.symbol}
+          </Text>
+          Total Amount Raised
+          <Text>Network : {chain.name.toUpperCase()}</Text>
+          <Input
+            placeholder="Receiver Address"
+            value={recieverAddress}
+            onChange={(e) => {
+              setRecieverAddress(e.currentTarget.value);
+            }}
+          />
+          <NumberInput
+            label=""
+            placeholder="Enter amount"
+            allowDecimal
+            allowNegative={false}
+            defaultValue={0}
+            value={amount}
+            max={parseInt(balance.value.toString() ?? '1000')}
+            onChange={(value) => {
+              setAmount(value.toString());
+            }}
+          />
+          <Button
+            disabled={!isAddress(recieverAddress) || loading}
+            onClick={async () => {
+              handleDonation;
+            }}
+          >
+            Send
+          </Button>
+        </Stack>
+      ) : null}
+    </Group>
   );
 }
