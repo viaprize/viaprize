@@ -1,5 +1,5 @@
+import useAppUser from '@/components/hooks/useAppUser';
 import AppShellLayout from '@/components/layout/appshell';
-import useAppUser from '@/context/hooks/useAppUser';
 import { Button, Card, Flex } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
 import Image from 'next/image';
@@ -72,12 +72,7 @@ export default function Home() {
   }, [ready]);
 
   return (
-    <div
-      className="w-full min-h-screen flex flex-col items-center relative overflow-clip"
-      // style={{
-      //   background: `radial-gradient(243.55% 153.69% at 23.48% -1.07%, #EBF3F5 6.99%, #C5E2F0 100%)`,
-      // }}
-    >
+    <div className="w-full min-h-screen flex flex-col items-center relative overflow-clip">
       {/*Nav bar*/}
       {/* <NavBar /> */}
       <div className="max-w-screen-2xl px-8 pt-4 pb-8 w-full bg-transparent">
@@ -128,11 +123,6 @@ export default function Home() {
                 <h3 className="my-0">63</h3>
                 <p className="my-0">Total campaigns</p>
               </div>
-              {/* <div>
-                <h3 className="my-0">17</h3>
-                <p className="my-0">Prizes won</p>
-              </div>
-            */}
             </Flex>
           </div>
           <div className="md:w-1/2">
@@ -352,11 +342,6 @@ function ReasonCard({
       <h3 className="text-xl text-white font-bold my-0">{Title}</h3>
 
       <p className="text-base text-white">{Description}</p>
-      {/* //TODO: Add read more button  */}
-
-      {/* <Button className="bg-[#DFEDF2] text-black rounded-lg" fullWidth mt="md">
-        Read More
-      </Button> */}
     </Card>
   );
 }

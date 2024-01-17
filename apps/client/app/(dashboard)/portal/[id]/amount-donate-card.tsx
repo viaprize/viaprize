@@ -1,5 +1,5 @@
 'use client';
-import useAppUser from '@/context/hooks/useAppUser';
+import useAppUser from '@/components/hooks/useAppUser';
 import { prepareWritePortal, writePortal } from '@/lib/smartContract';
 import type { ConvertUSD } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
@@ -138,7 +138,7 @@ export default function AmountDonateCard({
       <div>
         <Text>Project Donation Address </Text>
         <Flex align="center">
-          <Badge size="lg" variant='light' color='primary.2' my="sm">
+          <Badge size="lg" variant="light" color="primary.2" my="sm">
             {recipientAddress.slice(0, 8)}........{recipientAddress.slice(-5)}
           </Badge>
           <CopyButton value={recipientAddress}>

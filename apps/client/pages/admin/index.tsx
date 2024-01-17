@@ -23,7 +23,6 @@ function Proposals({
     <>
       {isSuccess ? (
         <>
-          {' '}
           {data.prizesProposals?.map((proposal: PrizeProposals) => (
             <AdminCard
               key={proposal.id}
@@ -56,7 +55,7 @@ function Proposals({
           ))}
         </>
       ) : (
-        <Text>Error</Text>
+        <Text>Error </Text>
       )}
     </>
   );
@@ -72,7 +71,6 @@ function AccpetedProposals({
     portalsProposals: PortalProposals[] | undefined;
   };
 }) {
-  console.log({ data }, 'hiii');
   return (
     <>
       {isSuccess ? (

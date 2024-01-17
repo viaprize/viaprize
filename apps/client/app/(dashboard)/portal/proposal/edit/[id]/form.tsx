@@ -2,10 +2,10 @@
 'use client';
 
 import ImageComponent from '@/components/Prize/dropzone';
+import useAppUser from '@/components/hooks/useAppUser';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { platformFeePercentage } from '@/config';
-import useAppUser from '@/context/hooks/useAppUser';
 import type { PortalProposals } from '@/lib/api';
 import { chain } from '@/lib/wagmi';
 import {

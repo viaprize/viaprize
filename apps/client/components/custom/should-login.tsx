@@ -1,6 +1,6 @@
+import useAppUser from '@/components/hooks/useAppUser';
 import { Button } from '@mantine/core';
 import { cn } from 'utils/tailwindmerge';
-import useAppUser from '@/context/hooks/useAppUser';
 
 export default function ShouldLogin({
   text,
