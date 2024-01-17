@@ -63,7 +63,7 @@ export interface Portals {
   description: string;
   slug: string;
   sendImmediately: boolean;
-  fundingGoal: number;
+  fundingGoal?: string;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
@@ -163,7 +163,7 @@ export interface PortalProposals {
   id: string;
   description: string;
   slug: string;
-  fundingGoal: number;
+  fundingGoal?: string;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
@@ -201,7 +201,7 @@ export interface PortalWithBalance {
   description: string;
   slug: string;
   sendImmediately: boolean;
-  fundingGoal: number;
+  fundingGoal?: string;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
@@ -234,7 +234,7 @@ export interface ReadonlyTypeO2 {
 
 export interface CreatePortalProposalDto {
   description: string;
-  fundingGoal?: number;
+  fundingGoal?: string;
   isMultiSignatureReciever: boolean;
   sendImmediately: boolean;
   /** @format date-time */
@@ -262,7 +262,7 @@ export interface RejectProposalDto {
 export interface UpdatePortalPropsalDto {
   platformFeePercentage: number;
   description?: string;
-  fundingGoal?: number;
+  fundingGoal?: string;
   isMultiSignatureReciever?: boolean;
   sendImmediately?: boolean;
   /** @format date-time */

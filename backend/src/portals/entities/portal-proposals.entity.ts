@@ -25,7 +25,7 @@ export class PortalProposals {
   slug: string;
 
   @Column('decimal', { nullable: true })
-  fundingGoal: number;
+  fundingGoal?: string;
 
   @Column('boolean')
   isMultiSignatureReciever: boolean;

@@ -6,8 +6,8 @@ import {
   Group,
   Image,
   Modal,
+  NumberInput,
   Text,
-  TextInput,
   Textarea,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -23,7 +23,7 @@ interface AdminCardProps {
   title: string;
   description: string;
   tresurers: string[];
-  fundingGoal?: number;
+  fundingGoal?: string;
   deadline: string;
   allowAboveFundingGoal: boolean;
   disableButton?: boolean;
@@ -56,23 +56,52 @@ function PortalAdminCard({
   console.log({ images }, 'in admin card');
 
   const finalFundingGoal = useMemo(() => {
-    if (!fundingGoal) {
+    console.log(fundingGoal, 'this is the funding goal');
+    console.log(typeof fundingGoal, 'this is the type of funding goal');
+    let fundingGoalNumber = parseFloat(fundingGoal ?? '0');
+    if (!fundingGoal || fundingGoalNumber == 0) {
       return 0;
     }
+    if (newPlatfromFeePercentage == 0) {
+      return fundingGoalNumber - fundingGoalNumber * (platfromFeePercentage / 100);
+    }
+    if (newPlatfromFeePercentage == platfromFeePercentage) {
+      return fundingGoalNumber;
+    }
+    if (newPlatfromFeePercentage < platfromFeePercentage) {
+      return fundingGoalNumber - fundingGoalNumber * (newPlatfromFeePercentage / 100);
+    }
+    console.log(
+      fundingGoalNumber + fundingGoalNumber * (newPlatfromFeePercentage / 100),
+      'blaballl',
+    );
 
     return parseFloat(
-      (fundingGoal + fundingGoal * (newPlatfromFeePercentage / 100)).toPrecision(4),
+      (
+        fundingGoalNumber +
+        fundingGoalNumber * (newPlatfromFeePercentage / 100)
+      ).toPrecision(4),
     );
-  }, [fundingGoal]);
+  }, [newPlatfromFeePercentage]);
 
   return (
     <>
       <Modal opened={opened} onClose={close} title="Update Fee Percentage" centered>
-        <TextInput
+        <NumberInput
           value={newPlatfromFeePercentage}
           label={`${platfromFeePercentage} % is the Current Platform Fee for this proposal`}
+          allowDecimal={false}
+          allowNegative={false}
           onChange={(event) => {
-            setnewPlatfromFeePercentage(parseInt(event.currentTarget.value));
+            if (parseInt(event.toString()) > 100) {
+              setnewPlatfromFeePercentage(100);
+              return;
+            }
+            if (event.toString() === '') {
+              setnewPlatfromFeePercentage(platfromFeePercentage);
+              return;
+            }
+            setnewPlatfromFeePercentage(parseInt(event.toString()));
           }}
           placeholder="Enter in %"
           description={`This will change funding goal to ${finalFundingGoal} eth`}
@@ -83,6 +112,8 @@ function PortalAdminCard({
             await updateProposalMutation.mutateAsync({
               id,
               dto: {
+                fundingGoal:
+                  finalFundingGoal == 0 ? undefined : finalFundingGoal.toString(),
                 platformFeePercentage: newPlatfromFeePercentage,
               },
             });

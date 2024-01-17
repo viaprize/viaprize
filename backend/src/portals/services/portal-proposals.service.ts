@@ -29,6 +29,7 @@ export class PortalProposalsService {
       ...createPortalProposalDto,
       user: user,
       slug: slug,
+
     });
     return portalProposal;
   }

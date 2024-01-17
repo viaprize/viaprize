@@ -3036,9 +3036,9 @@
             "type": "boolean"
           },
           "fundingGoal": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
@@ -3128,7 +3128,6 @@
           "description",
           "slug",
           "sendImmediately",
-          "fundingGoal",
           "isMultiSignatureReciever",
           "deadline",
           "allowDonationAboveThreshold",
@@ -3610,9 +3609,9 @@
             "type": "string"
           },
           "fundingGoal": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
@@ -3721,7 +3720,6 @@
           "id",
           "description",
           "slug",
-          "fundingGoal",
           "isMultiSignatureReciever",
           "deadline",
           "sendImmediately",
@@ -3811,9 +3809,9 @@
             "type": "boolean"
           },
           "fundingGoal": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
@@ -3905,7 +3903,6 @@
           "description",
           "slug",
           "sendImmediately",
-          "fundingGoal",
           "isMultiSignatureReciever",
           "deadline",
           "allowDonationAboveThreshold",
@@ -3983,7 +3980,7 @@
           "fundingGoal": {
             "x-typia-required": false,
             "x-typia-optional": true,
-            "type": "number"
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
@@ -4128,7 +4125,7 @@
           "fundingGoal": {
             "x-typia-required": false,
             "x-typia-optional": true,
-            "type": "number"
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": false,
