@@ -5,6 +5,7 @@ import {
   Badge,
   Box,
   Button,
+  Card,
   Group,
   Input,
   Modal,
@@ -51,34 +52,35 @@ export default function Profile() {
   // console.log(isAddress(recieverAddress), "ksdjf")
   // const { data, isLoading, refetch } = useBalance({ address });
   return (
-    <div className="p-8 md:w-1/3">
-      <div>
-        <Avatar radius="full" size="xl" src={userData?.avatar} />
+    <Card shadow="md" className="w-full">
+      <div className="p-8 md:w-1/3">
+        <div>
+          <Avatar radius="full" size="xl" src={userData?.avatar} />
 
-        <Text fw={700} size="xl" className="mb-0 uppercase mt-4">
-          {userData?.name}
-        </Text>
+          <Text fw={700} size="xl" className="mb-0 uppercase mt-4">
+            {userData?.name}
+          </Text>
 
-        <Group justify="space-between">
-          <Text className="lg my-0">@{appUser?.username}</Text>
-          <Button size="xs" onClick={open}>
-            Edit Profile
-          </Button>
-          <Modal opened={opened} onClose={close} title="Edit Profile">
-            <EditProfileModal
-              IBio={userData?.bio || ''}
-              IName={userData?.name || ''}
-              IProficiencies={userData?.proficiencies || []}
-              IPriorities={userData?.priorities || []}
-              IAvatar={userData?.avatar || ''}
-              fetchUser={fetchUser}
-              close={close}
-            />
-          </Modal>
-        </Group>
+          <Group justify="space-between">
+            <Text className="lg my-0">@{appUser?.username}</Text>
+            <Button size="xs" onClick={open}>
+              Edit Profile
+            </Button>
+            <Modal opened={opened} onClose={close} title="Edit Profile">
+              <EditProfileModal
+                IBio={userData?.bio || ''}
+                IName={userData?.name || ''}
+                IProficiencies={userData?.proficiencies || []}
+                IPriorities={userData?.priorities || []}
+                IAvatar={userData?.avatar || ''}
+                fetchUser={fetchUser}
+                closeModal={close}
+              />
+            </Modal>
+          </Group>
 
-        <Group mt="sm">
-          {/* <Avatar radius="xl" size="sm">
+          <Group mt="sm">
+            {/* <Avatar radius="xl" size="sm">
             <IconBrandX />
           </Avatar>
           <Avatar radius="xl" size="sm">
@@ -90,78 +92,78 @@ export default function Profile() {
           <Avatar radius="xl" size="sm">
             <IconBrandTelegram />
           </Avatar> */}
-          {appUser && balance ? (
-            <Stack>
-              <Text>Address : {wallet?.address}</Text>
-              <Text>
-                Balance : {balance.formatted} {balance.symbol}
-              </Text>
-              Total Amount Raised
-              <Text>Network : {chain.name.toUpperCase()}</Text>
-              <Input
-                placeholder="Receiver Address"
-                value={recieverAddress}
-                onChange={(e) => {
-                  setRecieverAddress(e.currentTarget.value);
-                }}
-              />
-              <NumberInput
-                label=""
-                placeholder="Enter amount"
-                allowDecimal
-                allowNegative={false}
-                defaultValue={0}
-                value={amount}
-                max={parseInt(balance.value.toString() ?? '1000')}
-                onChange={(value) => {
-                  setAmount(value.toString());
-                }}
-              />
-              <Button
-                disabled={!isAddress(recieverAddress)}
-                onClick={async () => {
-                  setLoading(true);
-                  if (parseEther(amount) > balance.value) {
-                    toast.error('Insufficient Balance');
+            {appUser && balance ? (
+              <Stack>
+                <Text>Address : {wallet?.address}</Text>
+                <Text>
+                  Balance : {balance.formatted} {balance.symbol}
+                </Text>
+                Total Amount Raised
+                <Text>Network : {chain.name.toUpperCase()}</Text>
+                <Input
+                  placeholder="Receiver Address"
+                  value={recieverAddress}
+                  onChange={(e) => {
+                    setRecieverAddress(e.currentTarget.value);
+                  }}
+                />
+                <NumberInput
+                  label=""
+                  placeholder="Enter amount"
+                  allowDecimal
+                  allowNegative={false}
+                  defaultValue={0}
+                  value={amount}
+                  max={parseInt(balance.value.toString() ?? '1000')}
+                  onChange={(value) => {
+                    setAmount(value.toString());
+                  }}
+                />
+                <Button
+                  disabled={!isAddress(recieverAddress)}
+                  onClick={async () => {
+                    setLoading(true);
+                    if (parseEther(amount) > balance.value) {
+                      toast.error('Insufficient Balance');
+                      setLoading(false);
+                      return;
+                    }
+                    try {
+                      const config = await prepareSendTransaction({
+                        to: recieverAddress,
+                        value: parseEther(amount),
+                      });
+                      const { hash } = await sendTransaction(config);
+                      toast.promise(
+                        waitForTransaction({
+                          hash,
+                        }),
+                        {
+                          loading: 'Sending Transaction',
+                          success: 'Transaction Sent',
+                          error: 'Error Sending Transaction',
+                        },
+                      );
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    } catch (e: any) {
+                      /* eslint-disable */
+                      toast.error(e.message);
+                    }
                     setLoading(false);
-                    return;
-                  }
-                  try {
-                    const config = await prepareSendTransaction({
-                      to: recieverAddress,
-                      value: parseEther(amount),
-                    });
-                    const { hash } = await sendTransaction(config);
-                    toast.promise(
-                      waitForTransaction({
-                        hash,
-                      }),
-                      {
-                        loading: 'Sending Transaction',
-                        success: 'Transaction Sent',
-                        error: 'Error Sending Transaction',
-                      },
-                    );
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  } catch (e: any) {
-                    /* eslint-disable */
-                    toast.error(e.message);
-                  }
-                  setLoading(false);
-                }}
-              >
-                Send{' '}
-              </Button>
-            </Stack>
-          ) : null}
-        </Group>
-        {/* <Button my="sm">Edit Profile</Button> */}
-      </div>
+                  }}
+                >
+                  Send{' '}
+                </Button>
+              </Stack>
+            ) : null}
+          </Group>
+          {/* <Button my="sm">Edit Profile</Button> */}
+        </div>
 
-      <div>
-        <h1 className="mb-0 text-xl font-bold">Bio</h1>
-        <p className="my-0">{userData?.bio}</p>
-        {/* <div className="flex gap-3 justify-between">
+        <div>
+          <h1 className="mb-0 text-xl font-bold">Bio</h1>
+          <p className="my-0">{userData?.bio}</p>
+          {/* <div className="flex gap-3 justify-between">
           <div>
               <div className='flex gap-3 items-center'>
               {isLoading ? (
@@ -180,31 +182,32 @@ export default function Profile() {
             </Text>   
           </div>
         </div> */}
+        </div>
+
+        <Box mt="md">
+          <Text fw={700} mb="sm" mt="md" className="pl-1">
+            Proficiencies
+          </Text>
+          <div className="flex flex-wrap gap-1">
+            {userData?.proficiencies.map((proficiency: string) => (
+              <Badge variant="light" color="green">
+                {proficiency}
+              </Badge>
+            ))}
+          </div>
+
+          <Text fw={700} mb="sm" mt="md" className="pl-1">
+            Priorities
+          </Text>
+          <div className="flex flex-wrap gap-1">
+            {userData?.priorities.map((priority: string) => (
+              <Badge variant="light" color="blue">
+                {priority}
+              </Badge>
+            ))}
+          </div>
+        </Box>
       </div>
-
-      <Box mt="md">
-        <Text fw={700} mb="sm" mt="md" className="pl-1">
-          Proficiencies
-        </Text>
-        <div className="flex flex-wrap gap-1">
-          {userData?.proficiencies.map((proficiency: string) => (
-            <Badge variant="light" color="green">
-              {proficiency}
-            </Badge>
-          ))}
-        </div>
-
-        <Text fw={700} mb="sm" mt="md" className="pl-1">
-          Priorities
-        </Text>
-        <div className="flex flex-wrap gap-1">
-          {userData?.priorities.map((priority: string) => (
-            <Badge variant="light" color="blue">
-              {priority}
-            </Badge>
-          ))}
-        </div>
-      </Box>
-    </div>
+    </Card>
   );
 }

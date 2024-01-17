@@ -13,7 +13,7 @@ export default function UserProfile() {
   }
 
   return (
-    <div className="md:flex md:w-[95vw] justify-between p-7">
+    <div className="lg:flex md:w-[95vw] flex-col items-center lg:justify-between p-7">
       <Profile />
       <MainTabsUserProfile />
     </div>

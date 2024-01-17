@@ -66,6 +66,7 @@
     "image-size": "^1.0.2",
     "keccak256": "^1.0.6",
     "ldrs": "^1.0.1",
+    "million": "^2.6.4",
     "next": "14.0.3",
     "next-nprogress-bar": "^2.1.2",
     "novel": "^0.1.22",
