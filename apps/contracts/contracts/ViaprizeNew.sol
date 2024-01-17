@@ -226,6 +226,7 @@ contract ViaPrize {
                 payable(allPatrons[i]).transfer(reward);
                 unchecked {++i;}
             }
+            distributed = true;
         }
     }
 

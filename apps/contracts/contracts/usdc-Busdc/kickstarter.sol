@@ -111,6 +111,8 @@ contract Kickstarter {
         patronAmount[msg.sender] = patronAmount[msg.sender].add(_donation);
         totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
         totalUsdcFunds = totalUsdcFunds.add(_donation);
+        totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
+        totalFunds = totalFunds.add(_donation);
 
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
@@ -227,6 +229,8 @@ contract Kickstarter {
         patronAmount[msg.sender] = patronAmount[msg.sender].add(_donation);
         totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
         totalBridgedUsdcFunds = totalBridgedUsdcFunds.add(_donation);
+        totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
+        totalFunds = totalFunds.add(_donation);
 
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
