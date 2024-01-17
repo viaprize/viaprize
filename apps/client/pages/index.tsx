@@ -51,25 +51,6 @@ const photos: {
   }),
 }));
 
-const navBarLinks = [
-  {
-    text: 'Home',
-    link: '/',
-  },
-  {
-    text: 'Explore Prizes',
-    link: '/prize/explore',
-  },
-  // {
-  //   text: 'Pacts',
-  //   link: '/pact/home',
-  // },
-  // {
-  //   text: 'about',
-  //   link: '/about',
-  // },
-];
-
 export default function Home() {
   const router = useRouter();
 

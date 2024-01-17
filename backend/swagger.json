@@ -2458,9 +2458,31 @@
             "x-nestia-encrypted": false
           }
         },
-        "x-nestia-namespace": "users.update.update",
+        "x-nestia-namespace": "users.update.updateByUsername",
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "POST"
+      }
+    },
+    "/users/clear_cache": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "users.clear_cache.clearCache",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
       }
     },
     "/users/{authId}": {
