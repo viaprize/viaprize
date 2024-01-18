@@ -9,7 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-import { env } from "env.mjs";
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
   /** Name of the pact i.e the title, which is gotten in the pact form */
@@ -198,6 +197,7 @@ export interface PortalWithBalance {
   isActive: boolean;
   totalFunds?: number;
   totalRewards?: number;
+  contributors?: string[];
   id: string;
   description: string;
   slug: string;
@@ -563,8 +563,10 @@ export enum ContentType {
   Text = 'text/plain',
 }
 
+import { env } from "env.mjs";
+
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
+  public baseUrl: string = `${env.NEXT_PUBLIC_BACKEND_URL}`;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -823,6 +825,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: {
         page: number;
         limit: number;
+        tags?: string[];
+        search?: string;
+        sort?: 'DESC' | 'ASC';
       },
       params: RequestParams = {},
     ) =>

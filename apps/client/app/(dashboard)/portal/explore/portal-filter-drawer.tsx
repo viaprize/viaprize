@@ -1,20 +1,7 @@
-import { useDebounce } from '@/components/hooks/useDebounce';
 import { campaignsTags } from '@/lib/constants';
 import { type Option } from '@/lib/types';
 import { toTitleCase } from '@/lib/utils';
-import {
-  Box,
-  Button,
-  Card,
-  Checkbox,
-  Group,
-  Input,
-  RangeSlider,
-  Stack,
-  Text,
-  rem,
-} from '@mantine/core';
-import { IconCoin, IconCurrencyDollar } from '@tabler/icons-react';
+import { Box, Button, Card, Checkbox, Stack, Text } from '@mantine/core';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 
@@ -24,12 +11,12 @@ function PortalFilterDrawer() {
   const pathname = usePathname();
 
   const categoriesParam = searchParams?.get('categories');
-  const rangeParam = searchParams?.get('price_range');
+  // const rangeParam = searchParams?.get('price_range');
 
   const [isPending, startTransition] = useTransition();
 
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
-  const debouncedPrice = useDebounce(priceRange, 500);
+  // const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
+  // const debouncedPrice = useDebounce(priceRange, 500);
 
   const [selectedCategories, setSelectedCategories] = useState<Option[] | null>(
     categoriesParam
@@ -41,15 +28,14 @@ function PortalFilterDrawer() {
   );
 
   const clearFilters = useCallback(() => {
-    setPriceRange([0, 500]);
+    // setPriceRange([0, 500]);
     setSelectedCategories(null);
-    console.log(pathname);
+    const pathNameWithoutParams = pathname?.split('?')[0];
     startTransition(() => {
-      router.push(pathname ?? '', {
+      router.push(pathNameWithoutParams ?? '', {
         scroll: false,
       });
-    }
-    );
+    });
   }, []);
 
   const createQueryString = useCallback(
@@ -69,21 +55,22 @@ function PortalFilterDrawer() {
     [searchParams],
   );
 
-  useEffect(() => {
-    const [min, max] = debouncedPrice;
-    startTransition(() => {
-      const newQueryString = createQueryString({
-        price_range: `${min}-${max}`,
-      });
+  // useEffect(() => {
+  //   const [min, max] = debouncedPrice;
+  //   startTransition(() => {
+  //     const newQueryString = createQueryString({
+  //       price_range: `${min}-${max}`,
+  //     });
 
-      router.push(`${pathname}?${newQueryString}`, {
-        scroll: false,
-      });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- only one is needed
-  }, [debouncedPrice]);
+  //     router.push(`${pathname}?${newQueryString}`, {
+  //       scroll: false,
+  //     });
+  //   });
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps -- only one is needed
+  // }, [debouncedPrice]);
 
   useEffect(() => {
+    console.log('this should run');
     startTransition(() => {
       const newQueryString = createQueryString({
         categories: selectedCategories?.length
@@ -101,7 +88,7 @@ function PortalFilterDrawer() {
 
   return (
     <Box maw={400} mx="auto" className="relative">
-      <Card my="md" p="md" radius="md" shadow="sm">
+      {/* <Card my="md" p="md" radius="md" shadow="sm">
         <Text>Price range ($)</Text>
         <RangeSlider
           mt="xl"
@@ -159,12 +146,57 @@ function PortalFilterDrawer() {
             }}
           />
         </div>
-      </Card>
+      </Card> */}
       <Card my="md" p="md" radius="md" shadow="sm">
-      <Text>Status</Text>
-      <Checkbox my="sm" label="Active" />
-      <Checkbox mb="sm" label="has Funding Goal" />
-      <Checkbox  label="has Deadline" />
+        <Text>Status</Text>
+        {/* <Checkbox my="sm" label="Active" /> */}
+        <Checkbox
+          mb="sm"
+          label="has Funding Goal"
+          checked={selectedCategories?.some((c) => c.value === 'Funding Goal') ?? false}
+          onChange={(e) => {
+            setSelectedCategories((prevCategories) => {
+              if (e.target.checked) {
+                // Add the category if it doesn't exist
+                if (!prevCategories?.some((c) => c.value === 'Funding Goal')) {
+                  return [
+                    ...(prevCategories || []), // Ensure prevCategories is not null or undefined
+                    { label: 'Funding Goal', value: 'Funding Goal' },
+                  ];
+                }
+              } else {
+                // Remove the category if it exists
+                return prevCategories?.filter((c) => c.value !== 'Funding Goal') || null; // Ensure null is returned if prevCategories is null
+              }
+
+              // If no changes, return the current state
+              return prevCategories || null; // Ensure null is returned if prevCategories is null
+            });
+          }}
+        />
+        <Checkbox
+          label="has Deadline"
+          checked={selectedCategories?.some((c) => c.value === 'Deadline') ?? false}
+          onChange={(e) => {
+            setSelectedCategories((prevCategories) => {
+              if (e.target.checked) {
+                // Add the category if it doesn't exist
+                if (!prevCategories?.some((c) => c.value === 'Deadline')) {
+                  return [
+                    ...(prevCategories || []),
+                    { label: 'Deadline', value: 'Deadline' },
+                  ];
+                }
+              } else {
+                // Remove the category if it exists
+                return prevCategories?.filter((c) => c.value !== 'Deadline') || null;
+              }
+
+              // If no changes, return the current state
+              return prevCategories || null;
+            });
+          }}
+        />
       </Card>
 
       <Card my="md" p="md" radius="md" shadow="sm">
@@ -189,9 +221,7 @@ function PortalFilterDrawer() {
         </Checkbox.Group>
       </Card>
 
-      <Button color="primary" fullWidth
-      onClick={clearFilters}
-      >
+      <Button color="primary" fullWidth onClick={clearFilters} disabled={isPending}>
         Clear filters
       </Button>
     </Box>

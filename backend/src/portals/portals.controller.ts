@@ -159,6 +159,12 @@ export class PortalsController {
     page: number = 1,
     @Query('limit')
     limit: number = 10,
+    @Query('tags')
+    tags?: string[],
+    @Query('search')
+    search?: string,
+    @Query('sort')
+    sort?: 'DESC' | 'ASC',
   ): Promise<
     Readonly<{
       data: PortalWithBalance[];
@@ -169,7 +175,7 @@ export class PortalsController {
       data: Portals[];
       hasNextPage: boolean;
     };
-    const key = `portals-${page}-${limit}`;
+    const key = `portals-${page}-${limit}-${tags}-${search}-${sort}`;
     const cachePortalWithoutBalance = await this.cacheManager.get(key);
     if (cachePortalWithoutBalance) {
       portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
@@ -178,6 +184,9 @@ export class PortalsController {
         await this.portalsService.findAllPendingWithPagination({
           page,
           limit,
+          tags: tags,
+          search: search,
+          sort: sort,
         }),
         {
           limit,
@@ -223,9 +232,9 @@ export class PortalsController {
     const results = await this.blockchainService.getPortalPublicVariables(
       portal.contract_address,
     );
-    // const contributors = await this.blockchainService.getPortalContributors(
-    //   portal.contract_address,
-    // );
+    const contributors = await this.blockchainService.getPortalContributors(
+      portal.contract_address,
+    );
 
     return {
       ...portal,
@@ -233,6 +242,7 @@ export class PortalsController {
       totalFunds: parseInt((results[1].result as bigint).toString()),
       totalRewards: parseInt((results[2].result as bigint).toString()),
       isActive: results[3].result as boolean,
+      contributors: contributors,
     };
   }
 
