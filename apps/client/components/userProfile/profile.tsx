@@ -38,7 +38,10 @@ export default function Profile() {
   // console.log(isAddress(recieverAddress), "ksdjf")
   // const { data, isLoading, refetch } = useBalance({ address });
   return (
-    <Card shadow="md" className="w-full min-w-0 flex flex-col md:flex-row justify-center gap-3">
+    <Card
+      shadow="md"
+      className="w-full min-w-0 flex flex-col md:flex-row justify-center gap-3"
+    >
       <div className="md:p-8 p-3">
         <div>
           <Avatar radius="full" size="xl" src={userData?.avatar} />
@@ -93,12 +96,12 @@ export default function Profile() {
           </div>
         </Box>
       </div>
-      <DonateCard />
+      <SendCard />
     </Card>
   );
 }
 
-function DonateCard() {
+function SendCard() {
   const { appUser } = useAppUser();
   const [recieverAddress, setRecieverAddress] = useState<string>('');
   const [amount, setAmount] = useState<string>('0');
@@ -114,14 +117,14 @@ function DonateCard() {
     }
   }, [balance]);
 
-  const handleDonation = async () => {
+  const handleSend = async () => {
     setLoading(true);
     if (!isAddress(recieverAddress)) {
       toast.error('Invalid Address');
       setLoading(false);
       return;
     }
-    if(!balance) {
+    if (!balance) {
       toast.error('Invalid Balance');
       setLoading(false);
       return;
@@ -160,7 +163,9 @@ function DonateCard() {
     <Group mt="sm" p="sm">
       {appUser && balance ? (
         <Stack>
-          <Text>Address : {wallet?.address.slice(0,6)}.....{wallet?.address.slice(-6)}</Text>
+          <Text>
+            Address : {wallet?.address.slice(0, 6)}.....{wallet?.address.slice(-6)}
+          </Text>
           <Text>
             Balance : {balance.formatted} {balance.symbol}
           </Text>
@@ -188,7 +193,7 @@ function DonateCard() {
           <Button
             disabled={!isAddress(recieverAddress) || loading}
             onClick={async () => {
-              handleDonation;
+              await handleSend();
             }}
           >
             Send
