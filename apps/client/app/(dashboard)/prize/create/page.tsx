@@ -4,6 +4,7 @@
 import ImageComponent from '@/components/Prize/dropzone';
 import ShouldLogin from '@/components/custom/should-login';
 import usePrizeProposal from '@/components/hooks/usePrizeProposal';
+import NovelEditor from '@/components/richtexteditor/novelEditor';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import useAppUser from '@/context/hooks/useAppUser';
 import {

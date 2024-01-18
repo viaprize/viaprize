@@ -378,6 +378,40 @@ export class BlockchainService {
     return results;
   }
 
+  async getPortalContributors(portalContractAddress: string) {
+    const abi = [
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+        name: 'patrons',
+        outputs: [{ name: '', internalType: 'address', type: 'address' }],
+      },
+    ] as const;
+
+    let i = 0n;
+    const contributors: string[] = [];
+    let loop = true;
+    while (loop) {
+      const data = await this.provider
+        .readContract({
+          address: portalContractAddress as `0x${string}`,
+          abi: abi,
+          functionName: 'patrons',
+          args: [i],
+        })
+        .catch((e) => {
+          console.log(e);
+          loop = false;
+        });
+      if (data) {
+        contributors.push(data);
+        i = i + 1n;
+      }
+    }
+    return contributors;
+  }
+
   async getPortalPublicVariables(portalContractAddress: string) {
     const abi = [
       {
