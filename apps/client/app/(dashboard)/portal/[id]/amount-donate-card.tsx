@@ -17,13 +17,14 @@ import {
   Text,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconCopy, IconRefresh } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
-import { useAccount, useBalance } from 'wagmi';
+import { useBalance } from 'wagmi';
 
 interface AmountDonateCardProps {
   amountRaised: string;
@@ -50,12 +51,19 @@ export default function AmountDonateCard({
   sendImmediately,
   isActive,
 }: AmountDonateCardProps) {
-  const { address } = useAccount();
   const [value, setValue] = useState('');
   const [debounced] = useDebouncedValue(value, 500);
   const { appUser } = useAppUser();
+  const { wallet } = usePrivyWagmi();
 
-  const { data: balance, isLoading, refetch } = useBalance({ address });
+  const {
+    data: balance,
+    refetch,
+    isLoading,
+  } = useBalance({
+    address: wallet?.address as `0x${string}`,
+  });
+
   console.log({ balance }, 'balance');
 
   const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
@@ -218,11 +226,6 @@ export default function AmountDonateCard({
           onClick={async () => {
             await refetch();
 
-            if (!balance) {
-              toast.error('Please Login');
-              return;
-            }
-
             setSendLoading(true);
 
             try {
@@ -245,7 +248,7 @@ export default function AmountDonateCard({
         >
           Donate
         </Button>
-        {address && treasurers.includes(address) && sendImmediately ? (
+        {wallet?.address && treasurers.includes(wallet?.address) && sendImmediately ? (
           <Button
             variant="outline"
             onClick={async () => {
@@ -270,9 +273,9 @@ export default function AmountDonateCard({
             End Campaign
           </Button>
         ) : null}
-        {address &&
+        {wallet?.address &&
         isActive &&
-        (treasurers.includes(address) || appUser?.isAdmin) &&
+        (treasurers.includes(wallet?.address) || appUser?.isAdmin) &&
         !sendImmediately ? (
           <Button
             variant="outline"
@@ -298,11 +301,11 @@ export default function AmountDonateCard({
             Refund and End Campaign Early
           </Button>
         ) : null}
-        {address &&
+        {wallet?.address &&
         deadline &&
         isActive &&
         new Date(deadline) < new Date() &&
-        (treasurers.includes(address) || appUser?.isAdmin) &&
+        (treasurers.includes(wallet?.address) || appUser?.isAdmin) &&
         !sendImmediately ? (
           <Button
             variant="outline"
