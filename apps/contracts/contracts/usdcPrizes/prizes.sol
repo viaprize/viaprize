@@ -5,13 +5,15 @@ import "./SubmissionAVLTree.sol";
 import "../helperContracts/safemath.sol";
 import "../helperContracts/ierc20.sol";
 
+// import "./helperContracts/safemath.sol";
+
 library SubmissionLibrary {
     function deploySubmission() external returns(address) {
         SubmissionAVLTree new_SubmissionAVLTree = new SubmissionAVLTree();
         return address(new_SubmissionAVLTree);
     }
 }
-
+ 
 contract ViaPrize {
     /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
@@ -133,8 +135,8 @@ contract ViaPrize {
         submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission());
         proposerFee = _proposerFee;
         platformFee = _platFormFee;
-        _usdc = IERC20(0xFd4fF6863A9069cFdc006524432ce661866C5D97);
-        _usdcBridged = IERC20(0xFd4fF6863A9069cFdc006524432ce661866C5D97);
+        _usdc = IERC20(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
+        _usdcBridged = IERC20(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
         isActive = true;
     }
 
@@ -208,9 +210,14 @@ contract ViaPrize {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(distributed == true) revert RewardsAlreadyDistributed();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+        uint256 usdcPlatformReward;
+        uint256 usdcProposerReward;
+        uint256 usdcBridgedPlatformReward;
+        uint256 usdcBridgedProposerReward;
+
         if(allSubmissions.length > 0) {
-            platform_reward = (total_funds * platformFee ) / 100;
-            proposer_reward = (total_funds * proposerFee ) / 100;
+            // platform_reward = (total_funds * platformFee ) / 100;
+            // proposer_reward = (total_funds * proposerFee ) / 100;
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if (allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
@@ -228,15 +235,29 @@ contract ViaPrize {
                 unchecked { ++i; }
             }
             total_rewards = 0;
+            if(totalUsdcFunds > 0) {
+                usdcPlatformReward = (totalUsdcFunds * platformFee) / 100;
+                usdcProposerReward = (totalUsdcFunds * proposerFee) / 100;
+                uint256 send_usdc_platform_reward = usdcPlatformReward;
+                uint256 send_usdc_proposer_reward = usdcProposerReward;
+                _usdc.transfer(platformAddress, send_usdc_platform_reward);
+                _usdc.transfer(proposerAddress, send_usdc_proposer_reward);
+            }
+            if(totalBridgedUsdcFunds > 0) {
+                usdcBridgedPlatformReward = (totalUsdcFunds * platformFee) / 100;
+                usdcBridgedProposerReward = (totalUsdcFunds * proposerFee) / 100;
+                uint256 send_usdcBridged_platform_reward = usdcBridgedPlatformReward;
+                uint256 send_usdcBridged_proposer_reward = usdcBridgedProposerReward;
+                _usdcBridged.transfer(platformAddress, send_usdcBridged_platform_reward);
+                _usdcBridged.transfer(proposerAddress, send_usdcBridged_proposer_reward);
+            }
             /// @notice  Send the platform reward
-            uint256 send_platform_reward = platform_reward;
-            platform_reward = 0;
+            // platform_reward = 0;
             /// @notice  Send the proposer reward
-            uint256 send_proposer_reward = proposer_reward;
-            proposer_reward = 0;
+            // proposer_reward = 0;
             distributed = true;
-            payable(platformAddress).transfer(send_platform_reward);
-            payable(proposerAddress).transfer(send_proposer_reward);
+            // payable(platformAddress).transfer(send_platform_reward);
+            // payable(proposerAddress).transfer(send_proposer_reward);
         }
         if(allSubmissions.length == 0 && allPatrons.length > 0) {
             for(uint256 i=0; i<allPatrons.length;) {
