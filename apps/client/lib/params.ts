@@ -11,10 +11,12 @@ export const searchParamsSchema = z.object({
 export const campaignSearchParamsSchema = searchParamsSchema
     .omit({ from: true, to: true })
     .extend({
-        categories: z.string().optional(),
+        categories: z.string().array().optional(),
         subcategory: z.string().optional(),
         subcategories: z.string().optional(),
         price_range: z.string().optional(),
         userids: z.string().optional(),
-        active: z.string().optional().default("true"),
+        active: z.string().optional(),
+        search: z.string().optional(),
+        sort: z.enum(['DESC', 'ASC']).optional().default('DESC'),
     })

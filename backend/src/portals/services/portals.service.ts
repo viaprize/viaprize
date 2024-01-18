@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated, paginate } from 'nestjs-paginate';
-import { ILike, In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Portals } from '../entities/portal.entity';
 import { PortalPaginateQuery, PortalPaginateResponse } from '../entities/types';
 
@@ -56,25 +56,34 @@ export class PortalsService {
   async findAllPendingWithPagination(
     paginationOptions: PortalPaginateResponse,
   ) {
-    const whereCondition: any = {};
+    const queryBuilder = this.portalRepository.createQueryBuilder('portal');
+
+    queryBuilder.skip((paginationOptions.page - 1) * paginationOptions.limit);
+    queryBuilder.take(paginationOptions.limit);
+    queryBuilder.leftJoinAndSelect('portal.user', 'user');
 
     if (paginationOptions.search) {
-      whereCondition.title = ILike(`%${paginationOptions.search}%`);
-      whereCondition.description = ILike(`%${paginationOptions.search}%`);
+      queryBuilder.andWhere(
+        '(portal.title ILIKE :search OR portal.description ILIKE :search)',
+        { search: `%${paginationOptions.search}%` },
+      );
     }
 
-    if (paginationOptions.tags && paginationOptions.tags.length > 0) {
-      whereCondition.tags = ILike(In(paginationOptions.tags));
+    const tags =
+      typeof paginationOptions.tags === 'string'
+        ? [paginationOptions.tags]
+        : paginationOptions.tags;
+
+    if (tags && tags.length > 0) {
+      queryBuilder.andWhere('portal.tags ILIKE ANY(:tags)', {
+        tags: tags.map((tag) => `%${tag}%`),
+      });
     }
-    return this.portalRepository.find({
-      skip: (paginationOptions.page - 1) * paginationOptions.limit,
-      take: paginationOptions.limit,
-      relations: ['user'],
-      where: whereCondition,
-      order: {
-        createdAt: paginationOptions.sort === 'ASC' ? 'ASC' : 'DESC',
-      },
-    });
+
+    const orderDirection = paginationOptions.sort === 'ASC' ? 'ASC' : 'DESC';
+    queryBuilder.orderBy({ 'portal.createdAt': orderDirection });
+
+    return queryBuilder.getMany();
   }
 
   async create(portalData: Omit<Portals, 'id' | 'createdAt' | 'updatedAt'>) {

@@ -1,22 +1,39 @@
 import { Api } from '@/lib/api';
-import PortalCard from './portal-card';
 import { campaignSearchParamsSchema } from '@/lib/params';
-import { type SearchParams } from '@/lib/types';
+import type { SearchParams } from '@/lib/types';
 import { formatEther } from 'viem';
+import PortalCard from './portal-card';
 
+const parseCategories = (value: string | undefined): string[] | undefined => {
+  if (value) {
+    return value.split('.').map((item) => item.replace(/\+/g, ' '));
+  }
+  return undefined;
+};
 
-export default async function FetchPortals(searchParams: SearchParams) {
+export default async function FetchPortals({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  if (searchParams.categories) {
+    searchParams.categories = parseCategories(searchParams.categories as string);
+  }
 
-    const { page, perPage } =
-      campaignSearchParamsSchema.parse(searchParams);
-    
-    console.log(page, perPage);
+  const { page, perPage, search, sort,categories } = campaignSearchParamsSchema.parse(searchParams);
+
+  console.log(searchParams, 'searchParams.categories');
+
+  // console.log(search, sort);
 
   const portals = (
     await new Api().portals.portalsList(
       {
-        limit: perPage,
-        page,
+        limit: 10,
+        page: 1,
+        tags: categories,
+        search,
+        sort,
       },
       {
         next: {
@@ -25,6 +42,8 @@ export default async function FetchPortals(searchParams: SearchParams) {
       },
     )
   ).data.data;
+
+  // console.log(portals);
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- will check later
   const final: { ethereum: { usd: number } } = await (

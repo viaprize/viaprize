@@ -14,12 +14,12 @@ import Link from 'next/link';
 type Sorts = Record<string, string>;
 
 const sorts: Sorts = {
-  'Date: Old to New': 'date.asc',
-  'Date: New to Old': 'date.desc',
-  'Prize: Low to High': 'prize.asc',
-  'Prize: High to Low': 'prize.desc',
-  'Deadline: Sooner to Later': 'deadline.asc',
-  'Deadline: Later to Sooner': 'deadline.desc',
+  'Date: Old to New': 'ASC',
+  'Date: New to Old': 'DESC',
+  // 'Prize: Low to High': 'prize.asc',
+  // 'Prize: High to Low': 'prize.desc',
+  // 'Deadline: Sooner to Later': 'deadline.asc',
+  // 'Deadline: Later to Sooner': 'deadline.desc',
 };
 
 const sortKeys = Object.keys(sorts).map((key) => ({
