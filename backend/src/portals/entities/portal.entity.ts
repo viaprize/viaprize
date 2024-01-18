@@ -28,7 +28,11 @@ export class Portals {
   sendImmediately: boolean;
 
   @Column('decimal', { nullable: true })
-  fundingGoal: number;
+  fundingGoal?: string;
+
+
+  @Column('decimal', { nullable: true })
+  fundingGoalWithPlatformFee?: string;
 
   @Column('boolean')
   isMultiSignatureReciever: boolean;

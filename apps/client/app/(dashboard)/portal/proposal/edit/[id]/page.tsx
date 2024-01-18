@@ -42,7 +42,9 @@ export default async function EditPortalProposal({ params }: { params: { id: str
           allowDonationAboveThreshold={proposal.data.allowDonationAboveThreshold}
           deadline={proposal.data.deadline}
           description={proposal.data.description}
-          fundingGoal={convertCryptoToUSD(proposal.data.fundingGoal)}
+          fundingGoal={convertCryptoToUSD(
+            parseFloat(proposal.data.fundingGoal ?? '0'),
+          )?.toString()}
           title={proposal.data.title}
           treasurers={proposal.data.treasurers}
           user={proposal.data.user}

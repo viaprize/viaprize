@@ -1881,7 +1881,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "summary": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
+        "summary": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
         "description": "The code snippet you provided is a method in the `PrizesController` class. It is a route handler\nfor the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does:\nGets page",
         "security": [
           {
@@ -1894,7 +1894,7 @@
             "name": "summary",
             "text": [
               {
-                "text": "Retrieve a list of accepted prize proposals\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\nparameters",
+                "text": "Retrieve a list of accepted prize proposals\r\ndescription: Retrieve a list of accepted prize proposals. The list supports pagination.\r\nparameters",
                 "kind": "text"
               }
             ]
@@ -2458,9 +2458,31 @@
             "x-nestia-encrypted": false
           }
         },
-        "x-nestia-namespace": "users.update.update",
+        "x-nestia-namespace": "users.update.updateByUsername",
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "POST"
+      }
+    },
+    "/users/clear_cache": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "users.clear_cache.clearCache",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
       }
     },
     "/users/{authId}": {
@@ -3036,9 +3058,14 @@
             "type": "boolean"
           },
           "fundingGoal": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "fundingGoalWithPlatformFee": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
@@ -3128,7 +3155,6 @@
           "description",
           "slug",
           "sendImmediately",
-          "fundingGoal",
           "isMultiSignatureReciever",
           "deadline",
           "allowDonationAboveThreshold",
@@ -3610,9 +3636,14 @@
             "type": "string"
           },
           "fundingGoal": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "fundingGoalWithPlatformFee": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
@@ -3721,7 +3752,6 @@
           "id",
           "description",
           "slug",
-          "fundingGoal",
           "isMultiSignatureReciever",
           "deadline",
           "sendImmediately",
@@ -3811,9 +3841,14 @@
             "type": "boolean"
           },
           "fundingGoal": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "fundingGoalWithPlatformFee": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
@@ -3905,7 +3940,6 @@
           "description",
           "slug",
           "sendImmediately",
-          "fundingGoal",
           "isMultiSignatureReciever",
           "deadline",
           "allowDonationAboveThreshold",
@@ -3983,7 +4017,7 @@
           "fundingGoal": {
             "x-typia-required": false,
             "x-typia-optional": true,
-            "type": "number"
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
@@ -4128,7 +4162,7 @@
           "fundingGoal": {
             "x-typia-required": false,
             "x-typia-optional": true,
-            "type": "number"
+            "type": "string"
           },
           "isMultiSignatureReciever": {
             "x-typia-required": false,

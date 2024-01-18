@@ -1,4 +1,3 @@
-import { storeFiles } from '@/context/tools';
 import type {
   CreatePortalProposalDto,
   PortalProposals,
@@ -6,6 +5,7 @@ import type {
 } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
 import type { Query } from '@/lib/types';
+import { storeFiles } from '@/lib/utils';
 import { useState } from 'react';
 
 export default function usePortalProposal() {

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import useAppUser from '@/context/hooks/useAppUser';
+import useAppUser from '@/components/hooks/useAppUser';
 import { ActionIcon, Avatar, Button, Flex, TagsInput, TextInput } from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';

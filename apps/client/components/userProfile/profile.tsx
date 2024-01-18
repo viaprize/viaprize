@@ -1,4 +1,4 @@
-import useAppUser from '@/context/hooks/useAppUser';
+import useAppUser from '@/components/hooks/useAppUser';
 import { chain } from '@/lib/wagmi';
 import {
   Avatar,

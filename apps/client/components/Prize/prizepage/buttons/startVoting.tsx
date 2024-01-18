@@ -10,11 +10,6 @@ export default function StartVoting({
   votingTime: number;
 }) {
   const { address } = useAccount();
-  // const { config } = usePrepareViaPrizeStartVotingPeriod({
-  //     account: address,
-  //     address: contractAddress as `0x${string}`,
-  //     args: [BigInt(votingTime)]
-  // });
   const { writeAsync, isLoading } = useViaPrizeStartVotingPeriod({
     account: address,
     address: contractAddress as `0x${string}`,

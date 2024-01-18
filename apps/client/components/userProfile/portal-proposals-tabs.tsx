@@ -70,6 +70,7 @@ export default function PortalProposalsTabs({
                     //     'args',
                     // );
                     console.log(item, 'item');
+
                     const finalFundingGoal = parseEther(
                       (item.fundingGoal ?? '0').toString(),
                     );

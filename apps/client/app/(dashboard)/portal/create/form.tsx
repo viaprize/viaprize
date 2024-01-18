@@ -1,10 +1,10 @@
 'use client';
 
 import ImageComponent from '@/components/Prize/dropzone';
+import useAppUser from '@/components/hooks/useAppUser';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import NovelEditor from '@/components/richtexteditor/novelEditor';
 import { platformFeePercentage } from '@/config';
-import useAppUser from '@/context/hooks/useAppUser';
 import { campaignsTags } from '@/lib/constants';
 import type { ConvertUSD } from '@/lib/types';
 import { chain } from '@/lib/wagmi';
@@ -37,7 +37,7 @@ export default function PortalForm() {
   const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');
   const [address, setAddress] = useState('');
-  const [fundingGoal, setFundingGoal] = useState<number>();
+  const [fundingGoal, setFundingGoal] = useState<number>(0);
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [allowFundsAboveGoal, setAllowFundsAboveGoal] = useState(false);
   const [images, setImages] = useState<string>();
@@ -127,8 +127,6 @@ export default function PortalForm() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-    
-    generateTags();
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
@@ -141,7 +139,7 @@ export default function PortalForm() {
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
-      fundingGoal: finalFundingGoal === 0 ? undefined : finalFundingGoal,
+      fundingGoal: finalFundingGoal === 0 ? undefined : finalFundingGoal.toString(),
       sendImmediately: portalType === 'pass-through',
     });
     router.push(`/profile/${appUser?.username}`);
@@ -154,11 +152,7 @@ export default function PortalForm() {
     }
     const ethValue = convertUSDToCrypto(fundingGoal);
     return parseFloat(
-      (
-        ethValue +
-        ethValue * (platformFeePercentage / 100) +
-        convertUSDToCrypto(2)
-      ).toPrecision(4),
+      (ethValue + ethValue * (platformFeePercentage / 100)).toPrecision(4),
     );
   }, [fundingGoal]);
 
@@ -170,7 +164,7 @@ export default function PortalForm() {
     const fundingGoalPercentage =
       parseFloat(fundingGoal.toString()) * (platformFeePercentage / 100);
     console.log({ fundingGoalPercentage });
-    return parseFloat(fundingGoal.toString()) + fundingGoalPercentage + 2;
+    return parseFloat(fundingGoal.toString()) + fundingGoalPercentage;
   }, [fundingGoal]);
 
   console.log({ finalFundingGoalUsd });
@@ -249,36 +243,6 @@ export default function PortalForm() {
         value={categories}
         onChange={setCategories}
       />
-      {/* {address.length > 1 && (
-              <Button
-                color="red"
-                className="my-2"
-                onClick={() => {
-                  removeAddress(index);
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </Button>
-            )}
-          </div>
-        ))}
-      </SimpleGrid> */}
-      {/* <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
-        <IconPlus />
-      </ActionIcon> */}
       <Radio.Group
         name="favoriteFramework"
         label="Select your portal type"
@@ -315,6 +279,9 @@ export default function PortalForm() {
             <NumberInput
               required
               min={0}
+              description={`You will get in total $${fundingGoal} and Platform would get $${
+                fundingGoal * (platformFeePercentage / 100)
+              }`}
               label="Funding Goal"
               leftSection="$"
               placeholder="Enter Funding Goal in USD"
