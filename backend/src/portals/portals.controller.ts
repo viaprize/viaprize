@@ -70,7 +70,7 @@ export class PortalsController {
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -171,34 +171,34 @@ export class PortalsController {
       hasNextPage: boolean;
     }>
   > {
-    // let portalWithoutBalance: {
-    //   data: Portals[];
-    //   hasNextPage: boolean;
-    // };
-    // const key = `portals-${page}-${limit}-${tags}-${search}-${sort}`;
-    // const cachePortalWithoutBalance = await this.cacheManager.get(key);
-    // if (cachePortalWithoutBalance) {
-    //   portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
-    // } else {
-    const portalWithoutBalance = infinityPagination(
-      await this.portalsService.findAllPendingWithPagination({
-        page,
-        limit,
-        tags: tags,
-        search: search,
-        sort: sort,
-      }),
-      {
-        limit,
-        page,
-      },
-    );
-    // await this.cacheManager.set(
-    //   key,
-    //   JSON.stringify(portalWithoutBalance),
-    //   21600000,
-    // );
-    // }
+    let portalWithoutBalance: {
+      data: Portals[];
+      hasNextPage: boolean;
+    };
+    const key = `portals-${page}-${limit}-${tags}-${search}-${sort}`;
+    const cachePortalWithoutBalance = await this.cacheManager.get(key);
+    if (cachePortalWithoutBalance) {
+      portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
+    } else {
+      portalWithoutBalance = infinityPagination(
+        await this.portalsService.findAllPendingWithPagination({
+          page,
+          limit,
+          tags: tags,
+          search: search,
+          sort: sort,
+        }),
+        {
+          limit,
+          page,
+        },
+      );
+      await this.cacheManager.set(
+        key,
+        JSON.stringify(portalWithoutBalance),
+        21600000,
+      );
+    }
     const results = await this.blockchainService.getPortalsPublicVariables(
       portalWithoutBalance.data.map((portal) => portal.contract_address),
     );

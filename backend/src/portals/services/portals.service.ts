@@ -52,7 +52,6 @@ export class PortalsService {
 
     return portal;
   }
-
   async findAllPendingWithPagination(
     paginationOptions: PortalPaginateResponse,
   ) {
@@ -81,7 +80,12 @@ export class PortalsService {
     }
 
     const orderDirection = paginationOptions.sort === 'ASC' ? 'ASC' : 'DESC';
-    queryBuilder.orderBy({ 'portal.createdAt': orderDirection });
+
+    // queryBuilder.addOrderBy(
+    //   '(SELECT CASE WHEN portal.deadline > CURRENT_TIMESTAMP THEN 1 ELSE 2 END)',
+    //   'ASC',
+    // );
+    queryBuilder.addOrderBy('portal.createdAt', orderDirection);
 
     return queryBuilder.getMany();
   }

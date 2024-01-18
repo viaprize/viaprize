@@ -3,13 +3,13 @@
 
 'use client';
 
-import { Button, Drawer, Group, Menu, Text, TextInput } from '@mantine/core';
+import { Button, Drawer, Group, Menu, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import PortalFilterDrawer from './portal-filter-drawer';
-import Link from 'next/link';
 // import Filter from "./filterComponent";
+import { useCallback, useTransition } from 'react';
 
 type Sorts = Record<string, string>;
 
@@ -29,17 +29,31 @@ const sortKeys = Object.keys(sorts).map((key) => ({
 
 export default function SearchFiltersPortals() {
   const [opened, { open, close }] = useDisclosure(false);
+  const [isPending, startTransition] = useTransition();
 
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: fix
-  const params = new URLSearchParams(searchParams as any as string);
 
-  // eslint-disable-next-line @typescript-eslint/require-await
-  const handleSort = async (value: string) => {
-    params.set('sort', value);
-    router.replace({ query: params.toString() });
-  };
+  // const params = new URLSearchParams(searchParams as any as string);
+  const sort = searchParams?.get('sort') ?? 'DESC';
+
+  const createQueryString = useCallback(
+    (params: Record<string, string | number | null>) => {
+      const newSearchParams = new URLSearchParams(searchParams?.toString());
+
+      for (const [key, value] of Object.entries(params)) {
+        if (value === null) {
+          newSearchParams.delete(key);
+        } else {
+          newSearchParams.set(key, String(value));
+        }
+      }
+
+      return newSearchParams.toString();
+    },
+    [searchParams],
+  );
 
   return (
     <div className="p-5">
@@ -63,10 +77,20 @@ export default function SearchFiltersPortals() {
                 return (
                   <Menu.Item
                     key={key.value}
-                    onClick={() => void handleSort(key.value)}
-                    className={`${
-                      key.value === searchParams.sort ? 'font-bold' : 'font-normal'
-                    }`}
+                    disabled={isPending}
+                    onClick={() => {
+                      startTransition(() => {
+                        router.push(
+                          `${pathname}?${createQueryString({
+                            sort: key.value,
+                          })}`,
+                          {
+                            scroll: false,
+                          },
+                        );
+                      });
+                    }}
+                    className={`${key.value === sort ? 'font-bold' : 'font-normal'}`}
                   >
                     {key.label}
                   </Menu.Item>
@@ -76,8 +100,7 @@ export default function SearchFiltersPortals() {
           </Menu>
         </Group>
       </Group>
-      <Drawer opened={opened} onClose={close} title="Filters" position="right"
-      >
+      <Drawer opened={opened} onClose={close} title="Filters" position="right">
         <PortalFilterDrawer />
       </Drawer>
     </div>
