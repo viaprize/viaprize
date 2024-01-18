@@ -29,6 +29,7 @@ export const env = createEnv({
       .default('https://api.pactsmith.com/api'),
     NEXT_PUBLIC_SUPABASE_URL: z.string(),
     NEXT_PUBLIC_SUPABASE_API_KEY: z.string(),
+    NEXT_PUBLIC_RPC_URL: z.string(),
   },
   /*
    * Due to how Next.js bundles enironment variables on Edge and Client,
@@ -44,5 +45,6 @@ export const env = createEnv({
     NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_API_KEY: process.env.NEXT_PUBLIC_SUPABASE_API_KEY,
+    NEXT_PUBLIC_RPC_URL: process.env.NEXT_PUBLIC_RPC_URL,
   },
 });
