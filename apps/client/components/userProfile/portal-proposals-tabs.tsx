@@ -70,12 +70,9 @@ export default function PortalProposalsTabs({
                     //     'args',
                     // );
                     console.log(item, 'item');
-                    const fundingGoalWithoutPlatfromfees = item.fundingGoal
-                      ? item.fundingGoal +
-                        item.fundingGoal * (item.platformFeePercentage / 100)
-                      : 0;
+
                     const finalFundingGoal = parseEther(
-                      (fundingGoalWithoutPlatfromfees ?? '0').toString(),
+                      (item.fundingGoal ?? '0').toString(),
                     );
                     console.log([
                       item.treasurers as `0x${string}`[],
