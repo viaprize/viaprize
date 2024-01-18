@@ -3,13 +3,14 @@
 
 'use client';
 
-import { Button, Drawer, Group, Menu, TextInput } from '@mantine/core';
+import { Button, CloseButton, Drawer, Group, Menu, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import PortalFilterDrawer from './portal-filter-drawer';
 // import Filter from "./filterComponent";
-import { useCallback, useTransition } from 'react';
+import { useDebounce } from '@/context/hooks/useDebounce';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 
 type Sorts = Record<string, string>;
 
@@ -30,10 +31,13 @@ const sortKeys = Object.keys(sorts).map((key) => ({
 export default function SearchFiltersPortals() {
   const [opened, { open, close }] = useDisclosure(false);
   const [isPending, startTransition] = useTransition();
+  const [search, setSearch] = useState<string>('');
+  const debounceSearch = useDebounce(search, 1000);
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const searchFromParam = searchParams?.get('search') ?? '';
 
   // const params = new URLSearchParams(searchParams as any as string);
   const sort = searchParams?.get('sort') ?? 'DESC';
@@ -54,7 +58,28 @@ export default function SearchFiltersPortals() {
     },
     [searchParams],
   );
+  useEffect(() => {
+    startTransition(() => {
+      const newQueryString = createQueryString({
+        search: `${search}`,
+      });
+      router.push(`${pathname}?${newQueryString}`, {
+        scroll: false,
+      });
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debounceSearch]);
 
+  const clearSearch = useCallback(() => {
+    setSearch('');
+    const pathNameWithoutSearchParam = pathname.replace(/search=[^&]+&?/, '');
+
+    startTransition(() => {
+      router.push(pathNameWithoutSearchParam, {
+        scroll: false,
+      });
+    });
+  }, []);
   return (
     <div className="p-5">
       <Group mb="xs" mt="md" justify="space-between">
@@ -62,6 +87,20 @@ export default function SearchFiltersPortals() {
           icon={<IconSearch size="1rem" />}
           placeholder="Search"
           className="sm:w-[500px]"
+          value={search}
+          defaultValue={searchFromParam}
+          onChange={(event) => {
+            setSearch(event.currentTarget.value);
+          }}
+          rightSection={
+            <CloseButton
+              aria-label="Clear input"
+              onClick={() => {
+                clearSearch();
+              }}
+              style={{ display: search ? undefined : 'none' }}
+            />
+          }
         />
         <Group justify="space-between">
           <Button onClick={open}>Filter</Button>
