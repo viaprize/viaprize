@@ -40,7 +40,7 @@ export default function HeaderLayout() {
         <Menu withArrow shadow="md" position="bottom" trigger="hover">
           <Menu.Target>
             <Link href="/prize/explore" className="pl-3 font-bold">
-              PRIZE
+              PRIZES
             </Link>
           </Menu.Target>
           <Menu.Dropdown>
