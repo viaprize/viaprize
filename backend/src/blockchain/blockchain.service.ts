@@ -389,7 +389,7 @@ export class BlockchainService {
       },
     ] as const;
 
-    let i = 0n;
+    let i = 1n;
     const contributors: string[] = [];
     let loop = true;
     while (loop) {

@@ -47,6 +47,10 @@ export type PactNullable = {
   blockHash: string;
 } | null;
 
+export interface Http200Response {
+  message: string;
+}
+
 export interface CreatePortalDto {
   address: string;
   proposal_id: string;
@@ -191,6 +195,7 @@ export interface PortalWithBalance {
   isActive: boolean;
   totalFunds?: number;
   totalRewards?: number;
+  contributors?: string[];
   id: string;
   description: string;
   slug: string;
@@ -253,13 +258,8 @@ export interface RejectProposalDto {
   comment: string;
 }
 
-export interface Http200Response {
-  message: string;
-}
-
 export interface UpdatePortalPropsalDto {
   platformFeePercentage: number;
-  isRejected?: boolean;
   description?: string;
   fundingGoal?: number;
   isMultiSignatureReciever?: boolean;
@@ -734,6 +734,21 @@ export class HttpClient<SecurityDataType = unknown> {
  * @baseUrl http://localhost:3001/api
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  indexer = {
+    /**
+     * No description
+     *
+     * @name PortalCreate
+     * @request POST:/indexer/portal
+     */
+    portalCreate: (params: RequestParams = {}) =>
+      this.request<string, any>({
+        path: `/indexer/portal`,
+        method: 'POST',
+        format: 'json',
+        ...params,
+      }),
+  };
   pacts = {
     /**
      * No description
@@ -769,6 +784,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name ClearCacheList
+     * @request GET:/portals/clear_cache
+     */
+    clearCacheList: (params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/clear_cache`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @name PortalsCreate
      * @request POST:/portals
      */
@@ -793,6 +822,9 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: {
         page: number;
         limit: number;
+        tags?: string[];
+        search?: string;
+        sort?: 'DESC' | 'ASC';
       },
       params: RequestParams = {},
     ) =>
@@ -1013,6 +1045,21 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+  };
+  price = {
+    /**
+     * No description
+     *
+     * @name UsdToEthList
+     * @request GET:/price/usd_to_eth
+     */
+    usdToEthList: (params: RequestParams = {}) =>
+      this.request<any, any>({
+        path: `/price/usd_to_eth`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

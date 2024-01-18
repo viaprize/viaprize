@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated, paginate } from 'nestjs-paginate';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import { Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 import { Portals } from '../entities/portal.entity';
-import { PortalPaginateQuery } from '../entities/types';
+import { PortalPaginateQuery, PortalPaginateResponse } from '../entities/types';
 
 @Injectable()
 export class PortalsService {
   constructor(
     @InjectRepository(Portals)
     private portalRepository: Repository<Portals>,
-  ) {}
+  ) { }
 
   async findAll(query: PortalPaginateQuery): Promise<Paginated<Portals>> {
     const { tags, ...paginateQuery } = query;
@@ -55,13 +54,26 @@ export class PortalsService {
   }
 
   async findAllPendingWithPagination(
-    paginationOptions: IPaginationOptions<Portals>,
+    paginationOptions: PortalPaginateResponse,
   ) {
+    const whereCondition: any = {};
+
+    if (paginationOptions.search) {
+      whereCondition.title = ILike(`%${paginationOptions.search}%`);
+      whereCondition.description = ILike(`%${paginationOptions.search}%`);
+    }
+
+    if (paginationOptions.tags && paginationOptions.tags.length > 0) {
+      whereCondition.tags = ILike(In(paginationOptions.tags));
+    }
     return this.portalRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       relations: ['user'],
-      where: paginationOptions.where,
+      where: whereCondition,
+      order: {
+        createdAt: paginationOptions.sort === 'ASC' ? 'ASC' : 'DESC',
+      },
     });
   }
 

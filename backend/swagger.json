@@ -257,6 +257,40 @@
             },
             "description": "",
             "required": true
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "",
+            "required": false
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": false
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "DESC",
+                "ASC"
+              ]
+            },
+            "description": "",
+            "required": false
           }
         ],
         "responses": {
@@ -3789,6 +3823,16 @@
             "x-typia-required": false,
             "x-typia-optional": true,
             "type": "number"
+          },
+          "contributors": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
           },
           "id": {
             "x-typia-required": true,
