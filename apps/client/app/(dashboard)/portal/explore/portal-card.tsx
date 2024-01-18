@@ -26,7 +26,7 @@ interface PortalCardProps {
   totalContributors: string;
   id: string;
   typeOfPortal: string;
-  fundingGoal: number;
+  fundingGoalWithPlatformFee: number;
   deadline?: string;
   isActive: boolean;
   tags: string[];
@@ -38,10 +38,8 @@ export default function PortalCard({
   authorName,
   description,
   amountRaised,
-  totalContributors,
-  typeOfPortal,
   id,
-  fundingGoal,
+  fundingGoalWithPlatformFee,
   deadline,
   ethToUsd,
   isActive,
@@ -110,10 +108,10 @@ export default function PortalCard({
         Raised from <span className="text-gray font-bold">{totalContributors} </span>
         contributions
       </Text> */}
-      {fundingGoal !== 0 && (
+      {fundingGoalWithPlatformFee !== 0 && (
         <Text size="xs" mt="sm" fw="bold">
-          {(fundingGoal * ethToUsd).toFixed(2)} USD ({fundingGoal}{' '}
-          {chain.nativeCurrency.symbol}) Funding Goal
+          {(fundingGoalWithPlatformFee * ethToUsd).toFixed(2)} USD (
+          {fundingGoalWithPlatformFee} {chain.nativeCurrency.symbol}) Funding Goal
         </Text>
       )}
 

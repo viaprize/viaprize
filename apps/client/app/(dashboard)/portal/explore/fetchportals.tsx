@@ -1,16 +1,13 @@
 import { Api } from '@/lib/api';
-import PortalCard from './portal-card';
 import { campaignSearchParamsSchema } from '@/lib/params';
 import { type SearchParams } from '@/lib/types';
 import { formatEther } from 'viem';
-
+import PortalCard from './portal-card';
 
 export default async function FetchPortals(searchParams: SearchParams) {
+  const { page, perPage } = campaignSearchParamsSchema.parse(searchParams);
 
-    const { page, perPage } =
-      campaignSearchParamsSchema.parse(searchParams);
-    
-    console.log(page, perPage);
+  console.log(page, perPage);
 
   const portals = (
     await new Api().portals.portalsList(
@@ -52,7 +49,7 @@ export default async function FetchPortals(searchParams: SearchParams) {
             key={portal.id}
             typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
             id={portal.id}
-            fundingGoal={portal.fundingGoal ?? 0}
+            fundingGoalWithPlatformFee={parseFloat(portal.fundingGoal ?? '0')}
             deadline={portal.deadline}
             tags={portal.tags}
           />
