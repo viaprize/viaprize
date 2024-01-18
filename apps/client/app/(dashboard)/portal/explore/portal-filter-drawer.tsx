@@ -149,7 +149,7 @@ function PortalFilterDrawer() {
       </Card> */}
       <Card my="md" p="md" radius="md" shadow="sm">
         <Text>Status</Text>
-        <Checkbox my="sm" label="Active" />
+        {/* <Checkbox my="sm" label="Active" /> */}
         <Checkbox
           mb="sm"
           label="has Funding Goal"
