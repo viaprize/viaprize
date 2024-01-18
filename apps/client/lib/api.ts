@@ -9,6 +9,7 @@
  * ---------------------------------------------------------------
  */
 
+import { env } from "env.mjs";
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
   /** Name of the pact i.e the title, which is gotten in the pact form */
@@ -61,7 +62,8 @@ export interface Portals {
   description: string;
   slug: string;
   sendImmediately: boolean;
-  fundingGoal: number;
+  fundingGoal?: string;
+  fundingGoalWithPlatformFee?: string;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
@@ -161,7 +163,8 @@ export interface PortalProposals {
   id: string;
   description: string;
   slug: string;
-  fundingGoal: number;
+  fundingGoal?: string;
+  fundingGoalWithPlatformFee?: string;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
@@ -200,7 +203,8 @@ export interface PortalWithBalance {
   description: string;
   slug: string;
   sendImmediately: boolean;
-  fundingGoal: number;
+  fundingGoal?: string;
+  fundingGoalWithPlatformFee?: string;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
@@ -233,7 +237,7 @@ export interface ReadonlyTypeO2 {
 
 export interface CreatePortalProposalDto {
   description: string;
-  fundingGoal?: number;
+  fundingGoal?: string;
   isMultiSignatureReciever: boolean;
   sendImmediately: boolean;
   /** @format date-time */
@@ -261,7 +265,7 @@ export interface RejectProposalDto {
 export interface UpdatePortalPropsalDto {
   platformFeePercentage: number;
   description?: string;
-  fundingGoal?: number;
+  fundingGoal?: string;
   isMultiSignatureReciever?: boolean;
   sendImmediately?: boolean;
   /** @format date-time */
@@ -621,8 +625,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-            ? JSON.stringify(property)
-            : `${property}`,
+              ? JSON.stringify(property)
+              : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -702,18 +706,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-            .then((data) => {
-              if (r.ok) {
-                r.data = data;
-              } else {
-                r.error = data;
-              }
-              return r;
-            })
-            .catch((e) => {
-              r.error = e;
-              return r;
-            });
+          .then((data) => {
+            if (r.ok) {
+              r.data = data;
+            } else {
+              r.error = data;
+            }
+            return r;
+          })
+          .catch((e) => {
+            r.error = e;
+            return r;
+          });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
@@ -1366,6 +1370,20 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ClearCacheList
+     * @request GET:/users/clear_cache
+     */
+    clearCacheList: (params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/users/clear_cache`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

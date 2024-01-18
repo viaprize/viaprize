@@ -6,13 +6,13 @@ import {
   Group,
   Image,
   Modal,
+  NumberInput,
   Text,
-  TextInput,
   Textarea,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import type { SetStateAction } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation } from 'wagmi';
 import usePortalProposal from '../hooks/usePortalProposal';
 
@@ -23,11 +23,12 @@ interface AdminCardProps {
   title: string;
   description: string;
   tresurers: string[];
-  fundingGoal?: number;
+  fundingGoal?: string;
   deadline: string;
   allowAboveFundingGoal: boolean;
   disableButton?: boolean;
   platfromFeePercentage: number;
+  fundingGoalWithPlatfromFeePercentage?: string;
 }
 
 function PortalAdminCard({
@@ -41,6 +42,7 @@ function PortalAdminCard({
   deadline,
   allowAboveFundingGoal,
   platfromFeePercentage,
+  fundingGoalWithPlatfromFeePercentage,
   disableButton = false,
 }: AdminCardProps) {
   const { acceptProposal, rejectProposal, updateProposal } = usePortalProposal();
@@ -55,17 +57,40 @@ function PortalAdminCard({
   const updateProposalMutation = useMutation(updateProposal);
   console.log({ images }, 'in admin card');
 
+  const fundingGoalWithNewPlatformFees = useMemo(() => {
+    console.log(fundingGoal, 'this is the funding goal');
+    console.log(typeof fundingGoal, 'this is the type of funding goal');
+    let fundingGoalNumber = parseFloat(fundingGoal ?? '0');
+
+    return parseFloat(
+      (
+        fundingGoalNumber +
+        fundingGoalNumber * (newPlatfromFeePercentage / 100)
+      ).toPrecision(4),
+    );
+  }, [newPlatfromFeePercentage]);
+
   return (
     <>
       <Modal opened={opened} onClose={close} title="Update Fee Percentage" centered>
-        <TextInput
+        <NumberInput
           value={newPlatfromFeePercentage}
           label={`${platfromFeePercentage} % is the Current Platform Fee for this proposal`}
+          allowDecimal={false}
+          allowNegative={false}
           onChange={(event) => {
-            setnewPlatfromFeePercentage(parseInt(event.currentTarget.value));
+            if (parseInt(event.toString()) > 100) {
+              setnewPlatfromFeePercentage(100);
+              return;
+            }
+            if (event.toString() === '') {
+              setnewPlatfromFeePercentage(platfromFeePercentage);
+              return;
+            }
+            setnewPlatfromFeePercentage(parseInt(event.toString()));
           }}
           placeholder="Enter in %"
-          description="Click Submit to confirm"
+          description={`This will change funding goal with platform fees to to ${fundingGoalWithNewPlatformFees} eth`}
         />
 
         <Button
@@ -105,6 +130,11 @@ function PortalAdminCard({
             {fundingGoal
               ? `Funding Goal is set too ${fundingGoal} \n`
               : 'No funding  Goal Set \n'}
+          </Text>
+          <Text>
+            {fundingGoalWithPlatfromFeePercentage
+              ? `Funding Goal with platform fees is ${fundingGoalWithPlatfromFeePercentage} \n`
+              : `No funding  Goal Set \n`}
           </Text>
           <Text>
             {' '}

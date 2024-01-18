@@ -71,7 +71,7 @@ export default async function FetchPortals({
             key={portal.id}
             typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
             id={portal.id}
-            fundingGoal={portal.fundingGoal ?? 0}
+            fundingGoalWithPlatformFee={parseFloat(portal.fundingGoal ?? '0')}
             deadline={portal.deadline}
             tags={portal.tags}
           />

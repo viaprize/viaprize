@@ -2,10 +2,10 @@
 'use client';
 
 import ImageComponent from '@/components/Prize/dropzone';
+import useAppUser from '@/components/hooks/useAppUser';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { platformFeePercentage } from '@/config';
-import useAppUser from '@/context/hooks/useAppUser';
 import type { PortalProposals } from '@/lib/api';
 import { chain } from '@/lib/wagmi';
 import {
@@ -66,7 +66,9 @@ export default function PortalProposalForm({
   const [portalType, setPortalType] = useState(
     proposalSendImmediately ? 'pass-through' : 'all-or-nothing',
   );
-  const [fundingGoal, setFundingGoal] = useState<number | undefined>(proposalFundingGoal);
+  const [fundingGoal, setFundingGoal] = useState<number | undefined>(
+    parseFloat(proposalFundingGoal ?? '0'),
+  );
 
   const { mutateAsync: updateProposalsMutation, isLoading: updatatingProposal } =
     useMutation(updateProposal);
@@ -113,11 +115,7 @@ export default function PortalProposalForm({
     }
     const ethValue = convertUSDToCrypto(fundingGoal);
     return parseFloat(
-      (
-        ethValue +
-        ethValue * (platformFeePercentage / 100) +
-        convertUSDToCrypto(2)
-      ).toPrecision(4),
+      (ethValue + ethValue * (platformFeePercentage / 100)).toPrecision(4),
     );
   }, [fundingGoal]);
   const submit = async () => {
@@ -143,10 +141,10 @@ export default function PortalProposalForm({
         termsAndCondition: 'test',
         isMultiSignatureReciever: false,
         treasurers: [address],
-        fundingGoal: portalType === 'all-or-nothing' ? finalFundingGoal : undefined,
+        fundingGoal:
+          portalType === 'all-or-nothing' ? finalFundingGoal.toString() : undefined,
         sendImmediately: portalType === 'pass-through',
         platformFeePercentage: platformFeePercentage,
-        isRejected: false,
       },
     });
     router.push(`/profile/${appUser?.username}`);

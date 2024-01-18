@@ -21,13 +21,15 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           name={portal.user.name}
           title={portal.title}
           img={portal.images[0]}
-        /> 
-         <AmountDonateCard
+        />
+        <AmountDonateCard
           amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
           recipientAddress={portal.contract_address}
           totalContributors={formatEther(BigInt(portal.totalFunds ?? 0))}
           contractAddress={portal.contract_address}
-          fundingGoal={portal.fundingGoal ?? 0}
+          fundingGoalWithPlatformFee={parseFloat(
+            portal.fundingGoalWithPlatformFee ?? '0',
+          )}
           typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
           deadline={portal.deadline}
           isActive={portal.isActive ?? false}

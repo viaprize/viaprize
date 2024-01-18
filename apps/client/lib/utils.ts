@@ -4,7 +4,9 @@
  * @returns A Promise that resolves after the specified duration.
  */
 
+import { env } from '@env';
 import { getAccessToken } from '@privy-io/react-auth';
+import { createClient } from '@supabase/supabase-js';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
 
@@ -169,3 +171,31 @@ export function isArrayOfFile(files: unknown): files is File[] {
   if (!isArray) return false
   return files.every((file) => file instanceof File)
 }
+
+
+function generateRandomThreeDigitNumber() {
+  // Option 1: Using Math.floor and modulo
+  const randomNum = Math.floor(Math.random() * 900) + 100; // Generates a number between 100 and 999
+
+  // Option 2: Using string manipulation
+  // let randomNum = (Math.random() * 1000).toString().padStart(3, "0");
+  // randomNum = parseInt(randomNum);
+
+  return randomNum;
+}
+export const storeFiles = async (files: File[]) => {
+  const supabase = createClient(
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_API_KEY,
+  );
+  const { data, error } = await supabase.storage
+    .from('campaigns')
+    .upload(`${generateRandomThreeDigitNumber()}${files[0].name}`, files[0]);
+  console.log(data, 'data');
+
+  if (!files[0] || error) {
+    return '';
+  }
+  console.log(data.path, 'image path');
+  return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaigns/${data.path}`;
+};

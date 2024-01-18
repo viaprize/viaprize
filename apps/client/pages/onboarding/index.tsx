@@ -10,7 +10,7 @@ import {
   Textarea,
 } from '@mantine/core';
 
-import useAppUser from '@/context/hooks/useAppUser';
+import useAppUser from '@/components/hooks/useAppUser';
 import { Api } from '@/lib/api';
 import { sleep } from '@/lib/utils';
 import { useDebouncedValue } from '@mantine/hooks';

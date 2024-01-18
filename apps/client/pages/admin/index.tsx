@@ -23,7 +23,6 @@ function Proposals({
     <>
       {isSuccess ? (
         <>
-          {' '}
           {data.prizesProposals?.map((proposal: PrizeProposals) => (
             <AdminCard
               key={proposal.id}
@@ -50,13 +49,16 @@ function Proposals({
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
               id={portalProposal.id}
+              fundingGoalWithPlatfromFeePercentage={
+                portalProposal.fundingGoalWithPlatformFee
+              }
               platfromFeePercentage={portalProposal.platformFeePercentage}
               key={portalProposal.id}
             />
           ))}
         </>
       ) : (
-        <Text>Error</Text>
+        <Text>Error </Text>
       )}
     </>
   );
@@ -72,7 +74,6 @@ function AccpetedProposals({
     portalsProposals: PortalProposals[] | undefined;
   };
 }) {
-  console.log({ data }, 'hiii');
   return (
     <>
       {isSuccess ? (
@@ -100,6 +101,9 @@ function AccpetedProposals({
               title={portalProposal.title}
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
+              fundingGoalWithPlatfromFeePercentage={
+                portalProposal.fundingGoalWithPlatformFee
+              }
               platfromFeePercentage={portalProposal.platformFeePercentage}
               id={portalProposal.id}
               disableButton

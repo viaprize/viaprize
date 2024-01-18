@@ -1,6 +1,6 @@
-import { storeFiles } from '@/context/tools';
 import { CreatePrizeProposalDto, PrizeProposals, UpdatePrizeDto } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
+import { storeFiles } from '@/lib/utils';
 import { useState } from 'react';
 
 interface PrzieQuery {

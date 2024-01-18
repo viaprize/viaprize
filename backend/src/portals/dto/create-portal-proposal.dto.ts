@@ -16,9 +16,8 @@ export class CreatePortalProposalDto {
   description: string;
 
   @Expose()
-  @IsNumber()
   @IsOptional()
-  fundingGoal?: number;
+  fundingGoal?: string;
 
   @Expose()
   @IsBoolean()

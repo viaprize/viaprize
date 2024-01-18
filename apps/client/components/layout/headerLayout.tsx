@@ -20,7 +20,6 @@ export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   const { user } = usePrivy();
-
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
