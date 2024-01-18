@@ -127,8 +127,6 @@ export default function PortalForm() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-
-    generateTags();
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
@@ -141,7 +139,7 @@ export default function PortalForm() {
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
-      fundingGoal: finalFundingGoal === 0 ? undefined : finalFundingGoal,
+      fundingGoal: finalFundingGoal === 0 ? undefined : finalFundingGoal.toString(),
       sendImmediately: portalType === 'pass-through',
     });
     router.push(`/profile/${appUser?.username}`);

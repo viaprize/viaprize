@@ -3062,6 +3062,11 @@
             "x-typia-optional": true,
             "type": "string"
           },
+          "fundingGoalWithPlatformFee": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3635,6 +3640,11 @@
             "x-typia-optional": true,
             "type": "string"
           },
+          "fundingGoalWithPlatformFee": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
           "isMultiSignatureReciever": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3831,6 +3841,11 @@
             "type": "boolean"
           },
           "fundingGoal": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "fundingGoalWithPlatformFee": {
             "x-typia-required": false,
             "x-typia-optional": true,
             "type": "string"

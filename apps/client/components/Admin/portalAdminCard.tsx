@@ -28,6 +28,7 @@ interface AdminCardProps {
   allowAboveFundingGoal: boolean;
   disableButton?: boolean;
   platfromFeePercentage: number;
+  fundingGoalWithPlatfromFeePercentage?: string;
 }
 
 function PortalAdminCard({
@@ -41,6 +42,7 @@ function PortalAdminCard({
   deadline,
   allowAboveFundingGoal,
   platfromFeePercentage,
+  fundingGoalWithPlatfromFeePercentage,
   disableButton = false,
 }: AdminCardProps) {
   const { acceptProposal, rejectProposal, updateProposal } = usePortalProposal();
@@ -55,26 +57,10 @@ function PortalAdminCard({
   const updateProposalMutation = useMutation(updateProposal);
   console.log({ images }, 'in admin card');
 
-  const finalFundingGoal = useMemo(() => {
+  const fundingGoalWithNewPlatformFees = useMemo(() => {
     console.log(fundingGoal, 'this is the funding goal');
     console.log(typeof fundingGoal, 'this is the type of funding goal');
     let fundingGoalNumber = parseFloat(fundingGoal ?? '0');
-    if (!fundingGoal || fundingGoalNumber == 0) {
-      return 0;
-    }
-    if (newPlatfromFeePercentage == 0) {
-      return fundingGoalNumber - fundingGoalNumber * (platfromFeePercentage / 100);
-    }
-    if (newPlatfromFeePercentage == platfromFeePercentage) {
-      return fundingGoalNumber;
-    }
-    if (newPlatfromFeePercentage < platfromFeePercentage) {
-      return fundingGoalNumber - fundingGoalNumber * (newPlatfromFeePercentage / 100);
-    }
-    console.log(
-      fundingGoalNumber + fundingGoalNumber * (newPlatfromFeePercentage / 100),
-      'blaballl',
-    );
 
     return parseFloat(
       (
@@ -104,7 +90,7 @@ function PortalAdminCard({
             setnewPlatfromFeePercentage(parseInt(event.toString()));
           }}
           placeholder="Enter in %"
-          description={`This will change funding goal to ${finalFundingGoal} eth`}
+          description={`This will change funding goal with platform fees to to ${fundingGoalWithNewPlatformFees} eth`}
         />
 
         <Button
@@ -112,8 +98,6 @@ function PortalAdminCard({
             await updateProposalMutation.mutateAsync({
               id,
               dto: {
-                fundingGoal:
-                  finalFundingGoal == 0 ? undefined : finalFundingGoal.toString(),
                 platformFeePercentage: newPlatfromFeePercentage,
               },
             });
@@ -146,6 +130,11 @@ function PortalAdminCard({
             {fundingGoal
               ? `Funding Goal is set too ${fundingGoal} \n`
               : 'No funding  Goal Set \n'}
+          </Text>
+          <Text>
+            {fundingGoalWithPlatfromFeePercentage
+              ? `Funding Goal with platform fees is ${fundingGoalWithPlatfromFeePercentage} \n`
+              : `No funding  Goal Set \n`}
           </Text>
           <Text>
             {' '}

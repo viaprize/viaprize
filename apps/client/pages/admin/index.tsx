@@ -49,6 +49,9 @@ function Proposals({
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
               id={portalProposal.id}
+              fundingGoalWithPlatfromFeePercentage={
+                portalProposal.fundingGoalWithPlatformFee
+              }
               platfromFeePercentage={portalProposal.platformFeePercentage}
               key={portalProposal.id}
             />
@@ -98,6 +101,9 @@ function AccpetedProposals({
               title={portalProposal.title}
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
+              fundingGoalWithPlatfromFeePercentage={
+                portalProposal.fundingGoalWithPlatformFee
+              }
               platfromFeePercentage={portalProposal.platformFeePercentage}
               id={portalProposal.id}
               disableButton

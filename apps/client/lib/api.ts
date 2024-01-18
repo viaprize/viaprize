@@ -9,8 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { env } from "@env";
-
+import { env } from "env.mjs";
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
   /** Name of the pact i.e the title, which is gotten in the pact form */
@@ -64,6 +63,7 @@ export interface Portals {
   slug: string;
   sendImmediately: boolean;
   fundingGoal?: string;
+  fundingGoalWithPlatformFee?: string;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
@@ -164,6 +164,7 @@ export interface PortalProposals {
   description: string;
   slug: string;
   fundingGoal?: string;
+  fundingGoalWithPlatformFee?: string;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
@@ -202,6 +203,7 @@ export interface PortalWithBalance {
   slug: string;
   sendImmediately: boolean;
   fundingGoal?: string;
+  fundingGoalWithPlatformFee?: string;
   isMultiSignatureReciever: boolean;
   /** @format date-time */
   deadline: string;
@@ -1364,6 +1366,20 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ClearCacheList
+     * @request GET:/users/clear_cache
+     */
+    clearCacheList: (params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/users/clear_cache`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

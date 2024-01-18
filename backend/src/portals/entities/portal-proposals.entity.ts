@@ -1,5 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import {
+  AfterInsert,
+  AfterUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -26,6 +28,9 @@ export class PortalProposals {
 
   @Column('decimal', { nullable: true })
   fundingGoal?: string;
+
+  @Column('decimal', { nullable: true })
+  fundingGoalWithPlatformFee?: string;
 
   @Column('boolean')
   isMultiSignatureReciever: boolean;
@@ -78,4 +83,14 @@ export class PortalProposals {
   @ManyToOne(() => User, (user) => user.portals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
   user: User;
+
+  @AfterUpdate()
+  @AfterInsert()
+  updateFundingGoalWithPlatformFee() {
+    if (!this.sendImmediately && this.fundingGoal) {
+      console.log("funding platfee insert and update")
+      const fundingGoalNumber = parseFloat(this.fundingGoal)
+      this.fundingGoalWithPlatformFee = (fundingGoalNumber + (fundingGoalNumber * (this.platformFeePercentage / 100))).toString()
+    }
+  }
 }

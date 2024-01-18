@@ -30,7 +30,7 @@ interface AmountDonateCardProps {
   totalContributors: string;
   recipientAddress: string;
   contractAddress: string;
-  fundingGoal: number;
+  fundingGoalWithPlatformFee: number;
   treasurers: string[];
   typeOfPortal: string;
   deadline?: string;
@@ -43,7 +43,7 @@ export default function AmountDonateCard({
   amountRaised,
   totalContributors,
   contractAddress,
-  fundingGoal,
+  fundingGoalWithPlatformFee,
   typeOfPortal,
   deadline,
   treasurers,
@@ -124,10 +124,11 @@ export default function AmountDonateCard({
             Deadline: {formatDate(deadline)}
           </Text>
         ) : null}
-        {fundingGoal !== 0 && cryptoToUsd ? (
+        {fundingGoalWithPlatformFee !== 0 && cryptoToUsd ? (
           <Badge size="md" my="md" radius="md">
-            Funding Goal: {(fundingGoal * cryptoToUsd.ethereum.usd).toFixed(2)} USD (
-            {fundingGoal} {chain.nativeCurrency.symbol})
+            Funding Goal:{' '}
+            {(fundingGoalWithPlatformFee * cryptoToUsd.ethereum.usd).toFixed(2)} USD (
+            {fundingGoalWithPlatformFee} {chain.nativeCurrency.symbol})
           </Badge>
         ) : null}
         {/* <Text className="border-2 rounded-lg mt-2 ">

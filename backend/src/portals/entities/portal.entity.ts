@@ -30,6 +30,10 @@ export class Portals {
   @Column('decimal', { nullable: true })
   fundingGoal?: string;
 
+
+  @Column('decimal', { nullable: true })
+  fundingGoalWithPlatformFee?: string;
+
   @Column('boolean')
   isMultiSignatureReciever: boolean;
 
