@@ -3,7 +3,7 @@ import { env } from '@env';
 import type { Chain } from 'wagmi';
 import { configureChains, createConfig } from 'wagmi';
 import { optimism, optimismGoerli, polygonMumbai } from 'wagmi/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 
 const getChain = (chainName: string): Chain => {
   switch (chainName) {
@@ -23,26 +23,11 @@ const getChain = (chainName: string): Chain => {
 };
 
 const getProvider = (chainName: string) => {
-  switch (chainName) {
-    case 'op': {
-      return alchemyProvider({
-        apiKey: '224qz7e8XHRyAkY6AXLYHhGB9cPxeuYG',
-      });
-    }
-    case 'op-goerli': {
-      return alchemyProvider({
-        apiKey: 'WJky3_r1JKKeHmTC6CsDg9_iJdaAvIqK',
-      });
-    }
-    case 'mumbai': {
-      return alchemyProvider({
-        apiKey: 'XcG0U49rmR40kygsOE2Z2MrqtZxXYjGS',
-      });
-    }
-    default: {
-      throw new Error('Chain Id is not defined in the app');
-    }
-  }
+  return jsonRpcProvider({
+    rpc: (chain) => ({
+      http: env.NEXT_PUBLIC_RPC_URL,
+    }),
+  })
 };
 
 export const chain = getChain(env.NEXT_PUBLIC_CHAIN);
