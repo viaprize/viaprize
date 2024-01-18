@@ -66,7 +66,9 @@ export default function PortalProposalForm({
   const [portalType, setPortalType] = useState(
     proposalSendImmediately ? 'pass-through' : 'all-or-nothing',
   );
-  const [fundingGoal, setFundingGoal] = useState<number | undefined>(proposalFundingGoal);
+  const [fundingGoal, setFundingGoal] = useState<number | undefined>(
+    parseFloat(proposalFundingGoal ?? '0'),
+  );
 
   const { mutateAsync: updateProposalsMutation, isLoading: updatatingProposal } =
     useMutation(updateProposal);
@@ -139,7 +141,8 @@ export default function PortalProposalForm({
         termsAndCondition: 'test',
         isMultiSignatureReciever: false,
         treasurers: [address],
-        fundingGoal: portalType === 'all-or-nothing' ? finalFundingGoal : undefined,
+        fundingGoal:
+          portalType === 'all-or-nothing' ? finalFundingGoal.toString() : undefined,
         sendImmediately: portalType === 'pass-through',
         platformFeePercentage: platformFeePercentage,
       },
