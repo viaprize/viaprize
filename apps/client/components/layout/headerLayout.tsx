@@ -93,11 +93,11 @@ export default function HeaderLayout() {
         Live On OP Mainnet Only (Multichain Coming Soon)
       </Pill>
 
-      <Flex gap="md" align="center">
+      <Flex gap="sm" align="center">
         <Card className="hidden sm:block py-1 my-2">
-          {user && user.wallet ? displayAddress(user?.wallet?.address) : 'No Wallet'}
-          {user && user.wallet ? (
-            <CopyButton value={user?.wallet?.address}>
+          {user?.wallet ? displayAddress(user.wallet.address) : 'No Wallet'}
+          {user?.wallet ? (
+            <CopyButton value={user.wallet.address}>
               {({ copied, copy }) => (
                 <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
                   <ActionIcon
@@ -114,7 +114,6 @@ export default function HeaderLayout() {
             </CopyButton>
           ) : null}
         </Card>
-
         <ActionIcon
           variant="outline"
           color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}

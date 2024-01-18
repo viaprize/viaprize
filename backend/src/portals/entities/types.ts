@@ -9,4 +9,5 @@ export interface PortalWithBalance extends Portals {
   isActive: boolean;
   totalFunds?: number;
   totalRewards?: number;
+  contributors?: string[];
 }

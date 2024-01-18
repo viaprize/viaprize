@@ -1,3 +1,4 @@
+import million from 'million/compiler';
 /** @type {import("next").NextConfig} */
 import './env.mjs';
 import BundleAnalyzer from '@next/bundle-analyzer';
@@ -6,7 +7,8 @@ const withBundleAnalyzer = BundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-export default withBundleAnalyzer({
+export default million.next(
+  withBundleAnalyzer({
   reactStrictMode: true,
   transpilePackages: ['@viaprize/ui'],
   eslint: {
@@ -44,4 +46,5 @@ export default withBundleAnalyzer({
     ],
   },
   output: 'standalone',
-});
+}), { auto: { rsc: true } }
+);

@@ -70,7 +70,7 @@ export class PortalsController {
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -223,6 +223,9 @@ export class PortalsController {
     const results = await this.blockchainService.getPortalPublicVariables(
       portal.contract_address,
     );
+    // const contributors = await this.blockchainService.getPortalContributors(
+    //   portal.contract_address,
+    // );
 
     return {
       ...portal,

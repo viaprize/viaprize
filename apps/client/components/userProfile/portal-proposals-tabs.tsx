@@ -30,7 +30,7 @@ export default function PortalProposalsTabs({
   const { createPortal } = usePortal();
   return (
     <div className="p-6 w-full">
-      <div className="grid  md:grid-cols-2 grid-cols-1 gap-4">
+      <div className="grid  md:grid-cols-3 grid-cols-1 gap-4">
         {isSuccess ? (
           data?.map((item) => (
             <ProposalExploreCard

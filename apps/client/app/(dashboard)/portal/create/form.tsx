@@ -3,7 +3,7 @@
 import ImageComponent from '@/components/Prize/dropzone';
 import useAppUser from '@/components/hooks/useAppUser';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
-import { TextEditor } from '@/components/richtexteditor/textEditor';
+import NovelEditor from '@/components/richtexteditor/novelEditor';
 import { platformFeePercentage } from '@/config';
 import { campaignsTags } from '@/lib/constants';
 import type { ConvertUSD } from '@/lib/types';
@@ -215,7 +215,8 @@ export default function PortalForm() {
         <Title order={4}>Required: Tell us about your project... </Title>
         <Text>Aim for 200-500 words</Text>
       </div>
-      <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
+      {/* <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext /> */}
+      <NovelEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
       <div>
         <Title order={4}>Receiving funds</Title>
         <p className="my-0">

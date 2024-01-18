@@ -19,7 +19,7 @@ interface EditProfileModalProps {
   IPriorities: string[];
   IAvatar: string;
   fetchUser: () => void;
-  close: () => void;
+  closeModal: () => void;
 }
 
 export default function EditProfileModal({
@@ -29,6 +29,7 @@ export default function EditProfileModal({
   IPriorities,
   IAvatar,
   fetchUser,
+  closeModal
 }: EditProfileModalProps) {
   const openRef = useRef<() => void>(null);
   const { updateUser } = useUser();
@@ -67,6 +68,7 @@ export default function EditProfileModal({
       setUploadingImage(true);
       const profileImageAvatar = await handleUploadImages();
       setUploadingImage(false);
+      console.log(profileImageAvatar, 'profileImageAvatar');
       await updateUserProfile({
         userName,
         name,
@@ -76,6 +78,7 @@ export default function EditProfileModal({
         avatar: profileImageAvatar,
       });
       fetchUser();
+      closeModal();
     } catch (e) {
       console.log(e);
     }
