@@ -216,20 +216,20 @@ contract ViaPrize {
         uint256 usdcBridgedProposerReward;
 
         if(allSubmissions.length > 0) {
-            // platform_reward = (total_funds * platformFee ) / 100;
-            // proposer_reward = (total_funds * proposerFee ) / 100;
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
-                if (allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
+                if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
                     uint256 reward = (allSubmissions[i].usdcVotes);
                     allSubmissions[i].usdcVotes = 0;
-                    total_rewards -= reward;
+                    // total_rewards -= reward;
+                    totalUsdcRewards.sub(reward);
                     _usdc.transfer(allSubmissions[i].submitter, reward);
-                } 
-                if (allSubmissions[i].funded && allSubmissions[i].usdcBridgedVotes > 0) {
+                }
+                if(allSubmissions[i].funded && allSubmissions[i].usdcBridgedVotes > 0) {
                     uint256 reward = (allSubmissions[i].usdcBridgedVotes);
                     allSubmissions[i].usdcBridgedVotes = 0;
-                    total_rewards -= reward;
+                    // total_rewards -= reward;
+                    totalBridgedUsdcRewards.sub(reward);
                     _usdcBridged.transfer(allSubmissions[i].submitter, reward);
                 } 
                 unchecked { ++i; }
@@ -251,13 +251,7 @@ contract ViaPrize {
                 _usdcBridged.transfer(platformAddress, send_usdcBridged_platform_reward);
                 _usdcBridged.transfer(proposerAddress, send_usdcBridged_proposer_reward);
             }
-            /// @notice  Send the platform reward
-            // platform_reward = 0;
-            /// @notice  Send the proposer reward
-            // proposer_reward = 0;
             distributed = true;
-            // payable(platformAddress).transfer(send_platform_reward);
-            // payable(proposerAddress).transfer(send_proposer_reward);
         }
         if(allSubmissions.length == 0 && allPatrons.length > 0) {
             for(uint256 i=0; i<allPatrons.length;) {
@@ -416,15 +410,21 @@ contract ViaPrize {
            total_usdc_votes += allSubmissions[i].usdcVotes;
            total_usdcBridged_votes += allSubmissions[i].usdcBridgedVotes;
        }
-       uint256 total_unused_votes = total_rewards.sub(total_usdc_votes + total_usdcBridged_votes);
+       uint256 total_unused_usdc_votes = totalUsdcRewards.sub(total_usdc_votes);
+       uint256 total_unused_usdcBridged_votes = totalBridgedUsdcRewards.sub(total_usdcBridged_votes);
+
        for(uint256 i=0; i<allSubmissions.length; i++) {
-           uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
-           uint256 transferable_usdc_amount = (total_unused_votes.mul(individual_usdc_percentage)).div(100);
-           _usdc.transfer(allSubmissions[i].submitter, transferable_usdc_amount);
-           uint256 individual_usdcBridged_percentage = (allSubmissions[i].usdcBridgedVotes.mul(100)).div(total_usdcBridged_votes); 
-           uint256 transferable_usdcBridged_amount = (total_unused_votes.mul(individual_usdcBridged_percentage)).div(100);
-           _usdc.transfer(allSubmissions[i].submitter, transferable_usdcBridged_amount);
+            if(total_unused_usdc_votes > 0) {
+                uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
+                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
+                _usdc.transfer(allSubmissions[i].submitter, transferable_usdc_amount);
+            }
+            if(total_unused_usdcBridged_votes > 0) {
+                uint256 individual_usdcBridged_percentage = (allSubmissions[i].usdcBridgedVotes.mul(100)).div(total_usdcBridged_votes); 
+                uint256 transferable_usdcBridged_amount = (total_unused_usdcBridged_votes.mul(individual_usdcBridged_percentage)).div(100);
+                _usdcBridged.transfer(allSubmissions[i].submitter, transferable_usdcBridged_amount);
+            }
        }
-       return (total_usdc_votes, total_usdcBridged_votes, total_unused_votes, total_rewards);
+       return (total_usdc_votes, total_usdcBridged_votes, totalUsdcRewards, totalBridgedUsdcRewards);
    }
 }
