@@ -74,6 +74,8 @@ contract ViaPrize {
 
     /// @notice / @notice submissionTree contract
     SubmissionAVLTree private submissionTree;
+
+    uint256 public totalVotes;
  
     // Errors
     /// @notice not admin error
@@ -251,7 +253,8 @@ contract ViaPrize {
             }
             distributed = true;
         }
-        if(allSubmissions.length == 0 && allPatrons.length > 0) {
+
+        if(allSubmissions.length == 0 || allPatrons.length == 0 || totalVotes == 0) {
             for(uint256 i=0; i<allPatrons.length; i++) {
                 if(isUsdcContributor[allPatrons[i]]) {
                     _usdc.transfer(allPatrons[i], patronAmount[allPatrons[i]]);
@@ -289,7 +292,8 @@ contract ViaPrize {
         if(isUsdcContributor[msg.sender]) {
             patronAmount[msg.sender] -= amount;
             submissionTree.addUsdcVotes(_submissionHash, amount);
-            patronVotes[msg.sender][_submissionHash] += amount;
+            patronVotes[msg.sender][_submissionHash].add(amount);
+            totalVotes.add(amount);
             submissionTree.updateFunderBalance(_submissionHash, msg.sender, (patronVotes[msg.sender][_submissionHash] * (100-platformFee))/100);
             SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
@@ -300,13 +304,13 @@ contract ViaPrize {
             patronAmount[msg.sender] -= amount;
             submissionTree.addUsdcBridgedVotes(_submissionHash, amount);
             patronVotes[msg.sender][_submissionHash] += amount;
+            totalVotes.add(amount);
             submissionTree.updateFunderBalance(_submissionHash, msg.sender, (patronVotes[msg.sender][_submissionHash] * (100-platformFee))/100);
             SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
             if (submission.usdcBridgedVotes > 0) {
                 submissionTree.setFundedTrue(_submissionHash, true);
             }
         }
-
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
