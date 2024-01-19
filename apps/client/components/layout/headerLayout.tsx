@@ -15,14 +15,22 @@ import {
 import { usePrivy } from '@privy-io/react-auth';
 import { IconCheck, IconCopy, IconMoonStars, IconSun } from '@tabler/icons-react';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import useAppUser from '../hooks/useAppUser';
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-  const { user } = usePrivy();
+  const { user, ready } = usePrivy();
+  const { appUser, logoutUser } = useAppUser();
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
+  useEffect(() => {
+    if (!user && appUser && ready) {
+      logoutUser();
+    }
+  }, []);
 
   return (
     <Flex

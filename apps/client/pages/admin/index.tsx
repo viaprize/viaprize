@@ -54,6 +54,7 @@ function Proposals({
               }
               platfromFeePercentage={portalProposal.platformFeePercentage}
               key={portalProposal.id}
+              sendImmediately={portalProposal.sendImmediately}
             />
           ))}
         </>
@@ -101,12 +102,13 @@ function AccpetedProposals({
               title={portalProposal.title}
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
+              sendImmediately={portalProposal.sendImmediately}
               fundingGoalWithPlatfromFeePercentage={
                 portalProposal.fundingGoalWithPlatformFee
               }
               platfromFeePercentage={portalProposal.platformFeePercentage}
               id={portalProposal.id}
-              disableButton
+              portalAccepted
             />
           ))}
         </>

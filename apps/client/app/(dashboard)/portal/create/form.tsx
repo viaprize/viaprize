@@ -139,14 +139,14 @@ export default function PortalForm() {
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
-      fundingGoal: finalFundingGoal === 0 ? undefined : finalFundingGoal.toString(),
+      fundingGoal: fundingGoal === 0 ? undefined : finalFundingGoalEth.toString(),
       sendImmediately: portalType === 'pass-through',
     });
     router.push(`/profile/${appUser?.username}`);
     setLoading(false);
   };
 
-  const finalFundingGoal = useMemo(() => {
+  const finalFundingGoalWithPlatformFees = useMemo(() => {
     if (!fundingGoal) {
       return 0;
     }
@@ -154,6 +154,14 @@ export default function PortalForm() {
     return parseFloat(
       (ethValue + ethValue * (platformFeePercentage / 100)).toPrecision(4),
     );
+  }, [fundingGoal]);
+
+  const finalFundingGoalEth = useMemo(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+    const ethValue = convertUSDToCrypto(fundingGoal);
+    return ethValue;
   }, [fundingGoal]);
 
   const finalFundingGoalUsd = useMemo<number>(() => {
@@ -272,7 +280,7 @@ export default function PortalForm() {
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
               <Text>
                 Funding goal in total (+ platform fee of {platformFeePercentage}% ){' '}
-                {`$${finalFundingGoalUsd}`} ({`${finalFundingGoal}`}{' '}
+                {`$${finalFundingGoalUsd}`} ({`${finalFundingGoalWithPlatformFees}`}{' '}
                 {chain.nativeCurrency.symbol} {')'}
               </Text>
             </div>
