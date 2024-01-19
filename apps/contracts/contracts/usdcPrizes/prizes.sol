@@ -46,7 +46,7 @@ contract ViaPrize {
     mapping(address => bool) public addressRefunded;
     /// @notice to keep track the campaign is Alive or not
     bool public isActive = false;
-    mapping(address => bool) public isUsdcContributer;
+    mapping(address => bool) public isUsdcContributor;
     bool internal locked;
     uint256 public totalUsdcFunds;
     uint256 public totalUsdcRewards;
@@ -221,14 +221,12 @@ contract ViaPrize {
                 if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
                     uint256 reward = (allSubmissions[i].usdcVotes);
                     allSubmissions[i].usdcVotes = 0;
-                    // total_rewards -= reward;
                     totalUsdcRewards.sub(reward);
                     _usdc.transfer(allSubmissions[i].submitter, reward);
                 }
                 if(allSubmissions[i].funded && allSubmissions[i].usdcBridgedVotes > 0) {
                     uint256 reward = (allSubmissions[i].usdcBridgedVotes);
                     allSubmissions[i].usdcBridgedVotes = 0;
-                    // total_rewards -= reward;
                     totalBridgedUsdcRewards.sub(reward);
                     _usdcBridged.transfer(allSubmissions[i].submitter, reward);
                 } 
@@ -254,11 +252,15 @@ contract ViaPrize {
             distributed = true;
         }
         if(allSubmissions.length == 0 && allPatrons.length > 0) {
-            for(uint256 i=0; i<allPatrons.length;) {
-                uint256 reward = patronAmount[allPatrons[i]];
-                patronAmount[allPatrons[i]] = 0;
-                payable(allPatrons[i]).transfer(reward);
-                unchecked {++i;}
+            for(uint256 i=0; i<allPatrons.length; i++) {
+                if(isUsdcContributor[allPatrons[i]]) {
+                    _usdc.transfer(allPatrons[i], patronAmount[allPatrons[i]]);
+                    patronAmount[allPatrons[i]] = 0;
+                }
+                if(!isUsdcContributor[allPatrons[i]]) {
+                    _usdcBridged.transfer(allPatrons[i], patronAmount[allPatrons[i]]);
+                    patronAmount[allPatrons[i]] = 0;
+                }
             }
             distributed = true;
         }
@@ -284,7 +286,7 @@ contract ViaPrize {
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
-        if(isUsdcContributer[msg.sender]) {
+        if(isUsdcContributor[msg.sender]) {
             patronAmount[msg.sender] -= amount;
             submissionTree.addUsdcVotes(_submissionHash, amount);
             patronVotes[msg.sender][_submissionHash] += amount;
@@ -294,7 +296,7 @@ contract ViaPrize {
                 submissionTree.setFundedTrue(_submissionHash, true);
             }
         }
-        if(!isUsdcContributer[msg.sender]) {
+        if(!isUsdcContributor[msg.sender]) {
             patronAmount[msg.sender] -= amount;
             submissionTree.addUsdcBridgedVotes(_submissionHash, amount);
             patronVotes[msg.sender][_submissionHash] += amount;
@@ -312,7 +314,7 @@ contract ViaPrize {
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
         if (patronVotes[msg.sender][_previous_submissionHash] < amount) revert NotYourVote();
         if(!isPatron[msg.sender]) revert("you are not even a patron");
-        if(isUsdcContributer[msg.sender]) {
+        if(isUsdcContributor[msg.sender]) {
             submissionTree.subUsdcVotes(_previous_submissionHash, amount);
             submissionTree.addUsdcVotes(_new_submissionHash, amount);
             submissionTree.updateFunderBalance(_previous_submissionHash, msg.sender, (patronVotes[msg.sender][_previous_submissionHash]*(100-platformFee))/100);
@@ -332,7 +334,7 @@ contract ViaPrize {
                 submissionTree.setFundedTrue(_new_submissionHash, true);
             }
         }
-        if(!isUsdcContributer[msg.sender]) {
+        if(!isUsdcContributor[msg.sender]) {
             submissionTree.subBridgedUsdcVotes(_previous_submissionHash, amount);
             submissionTree.addUsdcBridgedVotes(_new_submissionHash, amount);
             submissionTree.updateFunderBalance(_previous_submissionHash, msg.sender, (patronVotes[msg.sender][_previous_submissionHash]*(100-platformFee))/100);
@@ -372,7 +374,7 @@ contract ViaPrize {
         if(!isActive) revert("Funding to contract ended");
         uint256 _donation = _amountUsdc;
         isPatron[msg.sender] = true;
-        isUsdcContributer[msg.sender] = true;
+        isUsdcContributor[msg.sender] = true;
         patronAmount[msg.sender] = patronAmount[msg.sender].add(_donation);
         totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
         totalUsdcFunds = totalUsdcFunds.add(_donation);
@@ -389,7 +391,7 @@ contract ViaPrize {
         if(!isActive) revert("Funding to contract ended");
         uint256 _donation = _amountUsdc;
         isPatron[msg.sender] = true;
-        isUsdcContributer[msg.sender] = false;
+        isUsdcContributor[msg.sender] = false;
         patronAmount[msg.sender] = patronAmount[msg.sender].add(_donation);
         totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
         totalBridgedUsdcFunds = totalUsdcFunds.add(_donation);
