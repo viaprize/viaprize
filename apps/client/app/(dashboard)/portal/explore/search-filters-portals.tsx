@@ -32,7 +32,7 @@ export default function SearchFiltersPortals() {
   const [opened, { open, close }] = useDisclosure(false);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState<string>('');
-  const debounceSearch = useDebounce(search, 1000);
+  const debounceSearch = useDebounce(search, 500);
 
   const router = useRouter();
   const pathname = usePathname();
