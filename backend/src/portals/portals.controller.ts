@@ -70,7 +70,7 @@ export class PortalsController {
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -104,6 +104,7 @@ export class PortalsController {
       treasurers: portalProposal.treasurers,
       user: portalProposal.user,
       sendImmediately: portalProposal.sendImmediately,
+      fundingGoalWithPlatformFee: portalProposal.fundingGoalWithPlatformFee
     });
     if (!portalProposal.sendImmediately) {
       const properMinutes = extractMinutes(
