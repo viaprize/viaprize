@@ -139,6 +139,7 @@ function SendCard() {
       const config = await prepareSendTransaction({
         to: recieverAddress,
         value: parseEther(amount),
+        data: '0x',
       });
       const { hash } = await sendTransaction(config);
       toast.promise(
