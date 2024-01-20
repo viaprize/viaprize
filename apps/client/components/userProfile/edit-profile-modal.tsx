@@ -29,7 +29,7 @@ export default function EditProfileModal({
   IPriorities,
   IAvatar,
   fetchUser,
-  closeModal
+  closeModal,
 }: EditProfileModalProps) {
   const openRef = useRef<() => void>(null);
   const { updateUser } = useUser();

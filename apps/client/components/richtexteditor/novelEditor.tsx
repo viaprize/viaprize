@@ -26,12 +26,12 @@ export default function NovelEditor({
   // console.log(output);
 
   return (
-      <NovalEditor
-        disableLocalStorage
-        editorProps={{
-          editable: () => !disabled,
-        }}
-        className={`relative min-h-[500px]
+    <NovalEditor
+      disableLocalStorage
+      editorProps={{
+        editable: () => !disabled,
+      }}
+      className={`relative min-h-[500px]
           w-full
           ${
             colorScheme === 'dark'
@@ -39,11 +39,10 @@ export default function NovelEditor({
               : '!bg-slate-100 border-gray-300'
           }
           sm:pb-[calc(10vh)] sm:rounded-lg sm:border sm:shadow-lg`}
-        onUpdate={(e) => {
-          setRichtext?.(e?.getHTML() || '');
-        }}
-
-        defaultValue={PrizeCreationTemplate}
-      />
+      onUpdate={(e) => {
+        setRichtext?.(e?.getHTML() || '');
+      }}
+      defaultValue={PrizeCreationTemplate}
+    />
   );
 }
