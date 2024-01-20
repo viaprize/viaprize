@@ -36,10 +36,8 @@ contract ViaPrize {
     mapping (address => uint256) public patronAmount;
     address[] public allPatrons;
     mapping(address => bool) public isPatron;
-    /// @notice Add a new mapping to check if a funder has received their refunds
-    mapping(bytes32 => mapping(address => bool)) public refunded;
-    /// @notice add a new refund mapping for address to bool
-    mapping(address => bool) public addressRefunded;
+    /// @notice to keep track the campaign is Alive or not
+    bool public isActive = false;
 
     address[] public judges;
 
@@ -51,8 +49,6 @@ contract ViaPrize {
     using SafeMath for uint256;
     uint proposerFee;
     uint platformFee;
-
-    bool votingPeriod = false;
         
     address[] public platformAdmins;
     mapping(address => bool) public isPlatformAdmin;
@@ -137,11 +133,12 @@ contract ViaPrize {
         submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission());
         proposerFee = _proposerFee;
         platformFee = _platFormFee;
+        isActive = true;
     }
 
 
     modifier onlyPlatformAdmin() {
-     require(isPlatformAdmin[msg.sender]);
+        require(isPlatformAdmin[msg.sender]);
     _;
     }
 
@@ -150,8 +147,7 @@ contract ViaPrize {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
 
         /// @notice submission time will be in days
-        submission_time = block.timestamp + _submission_time * 1 days;
-     
+        submission_time = block.timestamp + _submission_time * 1 days;     
     }
 
     /// @notice getter for submission time
@@ -173,11 +169,8 @@ contract ViaPrize {
     function start_voting_period(uint256 _voting_time) public {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(block.timestamp < submission_time) revert SubmissionPeriodActive();
-
         /// @notice voting time also in days
         voting_time = block.timestamp + _voting_time * 1 days;
-        votingPeriod = true;
-
     }
 
     function end_voting_period() public onlyPlatformAdmin {
@@ -185,10 +178,24 @@ contract ViaPrize {
         voting_time = 0;
         distribute_use_unused_votes_v2();
         distributeRewards();
+        isActive = false;
+    }
+
+    function increase_submission_period(uint256 _submissionTime) public onlyPlatformAdmin {
+        if(voting_time > 0) revert VotingPeriodActive();
+        if(submission_time == 0) revert SubmissionPeriodNotActive();
+        submission_time = block.timestamp + _submissionTime * 1 days;
+    }
+
+    function increase_voting_period(uint256 _votingTime) public onlyPlatformAdmin {
+        if(voting_time == 0) revert VotingPeriodNotActive();
+        if(distributed == true) revert RewardsAlreadyDistributed();
+        voting_time = block.timestamp + _votingTime * 1 days;
     }
 
         /// @notice function to allow patrons to add funds to the contract
     function addFunds() public payable {
+        if(isActive == false) revert("campaign already ended");
         if (msg.value == 0) revert NotEnoughFunds();
         if (total_judge_votes > 0) revert("total judge votes not zero");
         if(isPatron[msg.sender]) {
