@@ -56,7 +56,7 @@ export default function MainTabsUserProfile() {
   );
 
   return (
-    <Tabs defaultValue="prizes" variant="pills" m="lg" className='w-full'>
+    <Tabs defaultValue="prizes" variant="pills" m="lg" className="w-full">
       <Tabs.List grow justify="center">
         <Tabs.Tab value="prizes">Prize</Tabs.Tab>
         <Tabs.Tab value="prize-proposals">Prize Proposals</Tabs.Tab>

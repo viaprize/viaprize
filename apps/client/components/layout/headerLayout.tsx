@@ -28,6 +28,7 @@ export default function HeaderLayout() {
   };
   useEffect(() => {
     if (!user && appUser && ready) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       logoutUser();
     }
   }, []);

@@ -27,7 +27,7 @@ const getProvider = (chainName: string) => {
     rpc: (chain) => ({
       http: env.NEXT_PUBLIC_RPC_URL,
     }),
-  })
+  });
 };
 
 export const chain = getChain(env.NEXT_PUBLIC_CHAIN);
@@ -37,6 +37,5 @@ const config = createConfig({
   autoConnect: true,
   publicClient: configureChainsConfig.publicClient,
   webSocketPublicClient: configureChainsConfig.webSocketPublicClient,
-
 });
 export default config;

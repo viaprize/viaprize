@@ -16,15 +16,14 @@ export default function useAppUser() {
   const refresh = useAppUserStore((state) => state.refreshUser);
   const uploadUser = useAppUserStore((state) => state.uploadUser);
   const clearUser = useAppUserStore((state) => state.clearUser);
-  const loading = useAppUserStore((state) => state.loading)
+  const loading = useAppUserStore((state) => state.loading);
   const { wallets } = useWallets();
-
 
   const { setActiveWallet, wallet } = usePrivyWagmi();
 
   const { user, logout, ready } = usePrivy();
-  console.log({ wallet })
-  console.log({ user }, "userr")
+  console.log({ wallet });
+  console.log({ user }, 'userr');
 
   // const isMounted = useIsMounted()
   // useEffect(() => {
@@ -89,7 +88,7 @@ export default function useAppUser() {
 
   const logoutUser = async (): Promise<void> => {
     await logout().finally(() => {
-      wallet?.disconnect()
+      wallet?.disconnect();
       clearUser();
     });
 
@@ -127,6 +126,6 @@ export default function useAppUser() {
     loginUser,
     updateUser,
     getUserByUserName,
-    loading
+    loading,
   };
 }
