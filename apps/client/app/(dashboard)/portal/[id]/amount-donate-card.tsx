@@ -232,6 +232,7 @@ export default function AmountDonateCard({
               const config = await prepareSendTransaction({
                 to: contractAddress,
                 value: debounced ? parseEther(ethOfDonateValue.toString()) : undefined,
+                data: '0x',
               });
               const { hash } = await sendTransaction(config);
               toast.success(`Transaction ${hash}`, {

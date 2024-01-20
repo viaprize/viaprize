@@ -92,6 +92,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
           const config = await prepareSendTransaction({
             to: contractAddress,
             value: debounced ? parseEther(debounced) : undefined,
+            data: '0x',
           });
 
           const { hash } = await sendTransaction(config);
