@@ -5,7 +5,6 @@ import ImageComponent from '@/components/Prize/dropzone';
 import ShouldLogin from '@/components/custom/should-login';
 import useAppUser from '@/components/hooks/useAppUser';
 import usePrizeProposal from '@/components/hooks/usePrizeProposal';
-import NovelEditor from '@/components/richtexteditor/novelEditor';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { Button, Card, NumberInput, SimpleGrid, TextInput, Title } from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
@@ -79,7 +78,6 @@ function Prize() {
         error: 'Error Submitting Proposal',
       });
     } catch (e: any) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       /* eslint-disable */
       toast.error(e.message);
     } finally {

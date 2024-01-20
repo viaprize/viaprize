@@ -1,7 +1,7 @@
-import { Divider, Loader, Skeleton, Tabs } from '@mantine/core';
+'use client';
 
 import { backendApi } from '@/lib/backend';
-import { useRouter } from 'next/router';
+import { Divider, Loader, Skeleton, Tabs } from '@mantine/core';
 import { formatEther } from 'viem';
 import { usePublicClient, useQuery } from 'wagmi';
 import ExploreCard from '../Prize/ExplorePrize/explorePrize';
@@ -11,28 +11,25 @@ import usePrizeProposal from '../hooks/usePrizeProposal';
 import PortalProposalsTabs from './portal-proposals-tabs';
 import ProposalsTabs from './proposals-tabs';
 
-export default function MainTabsUserProfile() {
+export default function MainTabsUserProfile({ params }: { params: { id: string } }) {
   const { getProposalsOfUser } = usePrizeProposal();
   const { getProposalsOfUser: getPortalProposalsOfUser } = usePortalProposal();
-  const { query } = useRouter();
   const getPrizeProposalOfUserMutation = useQuery(
     ['getProposalsOfUser', undefined],
     () => {
-      return getProposalsOfUser({ limit: 10, page: 1 }, query.id as string);
+      return getProposalsOfUser({ limit: 10, page: 1 }, params.id);
     },
   );
   const getPortalProposalsOfUserMutation = useQuery(
     ['getPortalProposals', undefined],
     () => {
-      return getPortalProposalsOfUser({ limit: 10, page: 1 }, query.id as string);
+      return getPortalProposalsOfUser({ limit: 10, page: 1 }, params.id);
     },
   );
   console.log(getPortalProposalsOfUserMutation.data, 'dataaaa');
   const client = usePublicClient();
   const getPrizesOfUserMutation = useQuery(['getPrizesOfUser', undefined], async () => {
-    const prizes = await (
-      await backendApi()
-    ).users.usernamePrizesDetail(query.id as string);
+    const prizes = await (await backendApi()).users.usernamePrizesDetail(params.id);
 
     const prizesWithBalancePromise = prizes.data.map(async (prize) => {
       const balance = await client.getBalance({
@@ -51,12 +48,12 @@ export default function MainTabsUserProfile() {
   const getSubmissionsOfUserMutation = useQuery(
     ['getSubmissionsOfUser', undefined],
     async () => {
-      return (await backendApi()).users.usernameSubmissionsDetail(query.id as string);
+      return (await backendApi()).users.usernameSubmissionsDetail(params.id);
     },
   );
 
   return (
-    <Tabs defaultValue="prizes" variant="pills" m="lg" className='w-full'>
+    <Tabs defaultValue="prizes" variant="pills" m="lg" className="w-full">
       <Tabs.List grow justify="center">
         <Tabs.Tab value="prizes">Prize</Tabs.Tab>
         <Tabs.Tab value="prize-proposals">Prize Proposals</Tabs.Tab>
@@ -66,7 +63,7 @@ export default function MainTabsUserProfile() {
       <Divider my="sm" />
 
       <Tabs.Panel value="prizes">
-        {getPrizesOfUserMutation.isLoading && <Loader color="orange" />}
+        {getPrizesOfUserMutation.isLoading ? <Loader color="orange" /> : null}
         <Skeleton visible={getPrizesOfUserMutation.isLoading}>
           {getPrizesOfUserMutation.data?.map((prize) => {
             return (
@@ -77,7 +74,7 @@ export default function MainTabsUserProfile() {
                 createdAt={prize.created_at}
                 imageUrl={prize.images[0]}
                 money={formatEther(BigInt(prize.balance))}
-                profileName={''}
+                profileName=""
                 title={prize.title}
                 key={prize.id}
                 id={prize.id}
@@ -101,20 +98,20 @@ export default function MainTabsUserProfile() {
       </Tabs.Panel>
       <Tabs.Panel value="submissions">
         <div className="w-full flex justify-center items-center">
-          {getSubmissionsOfUserMutation.isLoading && <Loader color="green" />}
+          {getSubmissionsOfUserMutation.isLoading ? <Loader color="green" /> : null}
 
           <Skeleton visible={getSubmissionsOfUserMutation.isLoading}>
-            {getSubmissionsOfUserMutation.data?.data?.map((submission) => (
+            {getSubmissionsOfUserMutation.data?.data.map((submission) => (
               <SubmissionsCard
                 allowVoting={false}
-                contractAddress={''}
+                contractAddress=""
                 description={submission.submissionDescription}
-                fullname={''}
+                fullname=""
                 hash={submission.submissionHash}
                 showVote={false}
                 votes={0}
                 submissionId={submission.id}
-                time={''}
+                time=""
                 wallet={submission.submitterAddress}
                 key={submission.id}
               />

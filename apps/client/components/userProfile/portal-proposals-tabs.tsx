@@ -3,7 +3,7 @@ import { prepareWritePortalFactory, writePortalFactory } from '@/lib/smartContra
 import type { ProposalStatus } from '@/lib/types';
 import { Text } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
 import ProposalExploreCard from '../Prize/ExplorePrize/proposalExploreCard';

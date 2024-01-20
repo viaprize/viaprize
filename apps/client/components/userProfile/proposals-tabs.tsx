@@ -4,7 +4,7 @@ import { ProposalStatus } from '@/lib/types';
 import { LoadingOverlay, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { waitForTransaction } from '@wagmi/core';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
