@@ -33,9 +33,9 @@ contract ViaPrize {
     /// @notice array of proposers;
     address[] public proposers;
     /// @notice this will be a mapping of the addresses of the patrons to the amount of eth they have contributed
-    mapping (address => uint256) public patrons;
-    /// @notice Add a new mapping to store each patrons's votes on each submission
-    mapping(address => mapping(bytes32 => uint256)) public patronVotes;
+    mapping (address => uint256) public patronAmount;
+    address[] public allPatrons;
+    mapping(address => bool) public isPatron;
     /// @notice Add a new mapping to check if a funder has received their refunds
     mapping(bytes32 => mapping(address => bool)) public refunded;
     /// @notice add a new refund mapping for address to bool
@@ -56,6 +56,8 @@ contract ViaPrize {
         
     address[] public platformAdmins;
     mapping(address => bool) public isPlatformAdmin;
+
+    uint256 public totalVotes;
 
     ///@notice proposerAddress is the address of the proposer who created a prize
     address public proposerAddress;
@@ -185,6 +187,28 @@ contract ViaPrize {
         distributeRewards();
     }
 
+        /// @notice function to allow patrons to add funds to the contract
+    function addFunds() public payable {
+        if (msg.value == 0) revert NotEnoughFunds();
+        if (total_judge_votes > 0) revert("total judge votes not zero");
+        if(isPatron[msg.sender]) {
+            patronAmount[msg.sender] += msg.value;
+        }
+        if(!isPatron[msg.sender]) {
+            patronAmount[msg.sender] += msg.value;
+            allPatrons.push(msg.sender);
+            isPatron[msg.sender] = true;
+        }
+        total_funds += msg.value;
+        total_rewards += (msg.value * (100-platformFee-proposerFee)) / 100; /// @notice  platform fee will depend on the prize
+        total_judge_votes = (msg.value * (100-platformFee-proposerFee)) / 100;
+        assignJudgeVotes();
+    }
+
+    receive () external payable {
+        addFunds();
+    }
+
     /// @notice Distribute rewards
     function distributeRewards() private {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
@@ -193,25 +217,34 @@ contract ViaPrize {
         platform_reward = (total_funds * platformFee ) / 100;
         proposer_reward = (total_funds * proposerFee ) / 100;
         /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
-        for (uint256 i = 0; i < allSubmissions.length;) {
-            if (allSubmissions[i].funded) {
-                uint256 reward = (allSubmissions[i].votes);
-                total_rewards -= reward;
-                payable(allSubmissions[i].submitter).transfer(reward);
-            } 
-            unchecked { ++i; }
-    }
-        total_rewards = 0;
-        /// @notice  Send the platform reward
-        uint256 send_platform_reward = platform_reward;
-        platform_reward = 0;
-        /// @notice  Send the proposer reward
-        uint256 send_proposer_reward = proposer_reward;
-        proposer_reward = 0;
-        distributed = true;
-        payable(platformAddress).transfer(send_platform_reward);
-        payable(proposerAddress).transfer(send_proposer_reward);
-        
+        if(allSubmissions.length > 0) {
+            for (uint256 i = 0; i < allSubmissions.length;) {
+                if (allSubmissions[i].funded) {
+                    uint256 reward = (allSubmissions[i].votes);
+                    total_rewards -= reward;
+                    payable(allSubmissions[i].submitter).transfer(reward);
+                } 
+                unchecked { ++i; }
+            }
+            total_rewards = 0;
+            /// @notice  Send the platform reward
+            uint256 send_platform_reward = platform_reward;
+            platform_reward = 0;
+            /// @notice  Send the proposer reward
+            uint256 send_proposer_reward = proposer_reward;
+            proposer_reward = 0;
+            distributed = true;
+            payable(platformAddress).transfer(send_platform_reward);
+            payable(proposerAddress).transfer(send_proposer_reward);
+        }
+
+        if(allSubmissions.length == 0 || judges.length == 0 || allPatrons.length == 0 || totalVotes == 0) {
+            for(uint256 i=0; i<allPatrons.length; i++) {
+                payable(allPatrons[i]).transfer(patronAmount[allPatrons[i]]);
+                patronAmount[allPatrons[i]] = 0;
+            }
+            distributed = true;
+        }
     }
 
     /// @notice addSubmission should return the submissionHash
@@ -248,14 +281,14 @@ contract ViaPrize {
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
     function change_vote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount) public {
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
-        if (patronVotes[msg.sender][_previous_submissionHash] < amount) revert NotYourVote();
+        if (judgeVotes[msg.sender][_previous_submissionHash] < amount) revert NotYourVote();
 
         submissionTree.subVotes(_previous_submissionHash, amount);
         submissionTree.addVotes(_new_submissionHash, amount);
-        submissionTree.updateFunderBalance(_previous_submissionHash, msg.sender, (patronVotes[msg.sender][_previous_submissionHash]*(100-platformFee))/100);
-        submissionTree.updateFunderBalance(_new_submissionHash, msg.sender, (patronVotes[msg.sender][_new_submissionHash]*(100-platformFee))/100);
-        patronVotes[msg.sender][_previous_submissionHash] -= amount;
-        patronVotes[msg.sender][_new_submissionHash] += amount;
+        submissionTree.updateFunderBalance(_previous_submissionHash, msg.sender, (judgeVotes[msg.sender][_previous_submissionHash]*(100-platformFee))/100);
+        submissionTree.updateFunderBalance(_new_submissionHash, msg.sender, (judgeVotes[msg.sender][_new_submissionHash]*(100-platformFee))/100);
+        judgeVotes[msg.sender][_previous_submissionHash] -= amount;
+        judgeVotes[msg.sender][_new_submissionHash] += amount;
 
         SubmissionAVLTree.SubmissionInfo memory previousSubmission = submissionTree.getSubmission(_previous_submissionHash);
 
@@ -282,113 +315,35 @@ contract ViaPrize {
         return submissionTree.getSubmissionVote(submissionHash);
 
     }
-    
-    /// @notice function to allow patrons to add funds to the contract
-    function addFunds() public payable {
-        if (msg.value == 0) revert NotEnoughFunds();
-            patrons[msg.sender] += msg.value;
-            total_funds += msg.value;
-            total_rewards += (msg.value * (100-platformFee-proposerFee)) / 100; /// @notice  platform fee will depend on the prize
-            total_judge_votes = (msg.value * (100-platformFee-proposerFee)) / 100;
-            assignJudgeVotes();
-            total_judge_votes = 0;
-    }
-
-    receive () external payable {
-        addFunds();
-    }
-
-    // /// @notice create function to allow proposers to withdraw funds to the submission winners and the platform but do not iterate through an unknown length array
-    // function use_unused_votes(bytes32 _submissionHash) public {
-    //     if(isProposer[msg.sender] == false) revert NotAdmin();
-    //     if (block.timestamp > voting_time) revert VotingPeriodNotActive();
-
-    //     uint256 unused_admin_votes = total_funds - total_rewards;
-    //     submissionTree.addVotes(_submissionHash, unused_admin_votes);
-    //     unused_admin_votes = 0;
-    // }
 
    /// @notice this fn sends the unused votes to the submitter based on their previous votes.
     function distribute_use_unused_votes_v2() public returns(uint256, uint256, uint256){
        if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
 
-       uint256 total_votes = 0;
+       uint256 total_votes_voted = 0;
 
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
        for(uint256 i=0; i<allSubmissions.length; i++) {
-           total_votes += allSubmissions[i].votes;
+           total_votes_voted += allSubmissions[i].votes;
        }
-       uint256 total_unused_votes = total_rewards.sub(total_votes);
-       for(uint256 i=0; i<allSubmissions.length; i++) {
-           uint256 individual_percentage = (allSubmissions[i].votes.mul(100)).div(total_votes); 
-           uint256 transferable_amount = (total_unused_votes.mul(individual_percentage)).div(100);
-           payable(allSubmissions[i].submitter).transfer(transferable_amount);
+       uint256 total_unused_votes = total_rewards.sub(total_votes_voted);
+       if(total_unused_votes < 0) revert("total_unused_votes cant be negative");
+       if(total_unused_votes > 0) {
+            for(uint256 i=0; i<allSubmissions.length; i++) {
+                uint256 individual_percentage = (allSubmissions[i].votes.mul(100)).div(total_votes_voted); 
+                uint256 transferable_amount = (total_unused_votes.mul(individual_percentage)).div(100);
+                payable(allSubmissions[i].submitter).transfer(transferable_amount);
+            }
        }
 
-       return (total_votes, total_unused_votes, total_rewards);
+       return (total_votes_voted, total_unused_votes, total_rewards);
    }
 
-    /// @notice Allows users to withdraw funds that they have voted for but did not cross threshhold as well as unused funds 
-    function claimRefund(address recipient) public {
-        if (block.timestamp < voting_time) revert VotingPeriodActive();
-        if (addressRefunded[recipient] == true) revert RefundAlreadyClaimed();
-        if (recipient != msg.sender) revert NotYourVote();
-        if (patrons[recipient] <= 0) revert RefundDoesntExist();
-        if (distributed != true) revert RewardsNotDistributed();
-
-        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-
-        uint256 totalRefundAmount = 0;
-
-        /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
-        for (uint256 i = 0; i < allSubmissions.length;) {
-            if (!allSubmissions[i].funded) {
-                uint256 refundAmount = submissionTree.submissionFunderBalances(allSubmissions[i].submissionHash, recipient);
-                if (refundAmount == 0) revert RefundDoesntExist();
-                if (refunded[allSubmissions[i].submissionHash][recipient]) revert RefundAlreadyClaimed();
-
-                refunded[allSubmissions[i].submissionHash][recipient] = true;
-                totalRefundAmount += refundAmount;
-            }
-        unchecked { ++i; }
-        }
-
-        totalRefundAmount += (patrons[recipient]*(100-platformFee))/100;
-        totalRefundAmount -= tx.gasprice;
-
-        addressRefunded[recipient] = true;
-        if (address(this).balance <  totalRefundAmount) revert NotEnoughFunds();
-        total_funds -= totalRefundAmount;
-        payable(recipient).transfer(totalRefundAmount);
-
-
-    }      
-
-    /// @notice Simple view functions to check the refund amount
-    function check_refund_amount(address recipient) public view returns (uint256 _refundAmount) {
-        if(isProposer[msg.sender] == false) revert NotAdmin();
-        if(block.timestamp < voting_time) revert VotingPeriodActive();
-        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-
-        uint256 refundAmount = 0;
-
-        /// @notice  Count the number of unfunded submissions
-        for (uint256 i = 0; i < allSubmissions.length;) {
-            if (!allSubmissions[i].funded) {
-                uint256 subRefundAmount = submissionTree.submissionFunderBalances(allSubmissions[i].submissionHash, recipient);
-                refundAmount += subRefundAmount;
-                return refundAmount;
-            }
-        unchecked { ++i; }
-        }
-        
-    }
-
     function assignJudgeVotes() public {
+        uint256 judge_funds = total_judge_votes / judges.length;
+        total_judge_votes = 0;
         for(uint i=0; i<judges.length; i++) {
-            uint256 judge_funds = total_judge_votes / judges.length;
             judgeFunds[judges[i]] += judge_funds;
         }
     }
- 
 }
