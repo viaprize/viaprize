@@ -1,4 +1,5 @@
 import type { User } from '@/lib/api';
+import { prepareWritePortalFactory, writePortalFactory } from '@/lib/smartContract';
 import {
   Badge,
   Button,
@@ -11,9 +12,13 @@ import {
   Textarea,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { waitForTransaction } from '@wagmi/core';
 import type { SetStateAction } from 'react';
 import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { parseEther } from 'viem';
 import { useMutation } from 'wagmi';
+import { usePortal } from '../hooks/usePortal';
 import usePortalProposal from '../hooks/usePortalProposal';
 
 interface AdminCardProps {
@@ -26,9 +31,10 @@ interface AdminCardProps {
   fundingGoal?: string;
   deadline: string;
   allowAboveFundingGoal: boolean;
-  disableButton?: boolean;
+  portalAccepted?: boolean;
   platfromFeePercentage: number;
   fundingGoalWithPlatfromFeePercentage?: string;
+  sendImmediately: boolean;
 }
 
 function PortalAdminCard({
@@ -43,7 +49,8 @@ function PortalAdminCard({
   allowAboveFundingGoal,
   platfromFeePercentage,
   fundingGoalWithPlatfromFeePercentage,
-  disableButton = false,
+  sendImmediately,
+  portalAccepted = false,
 }: AdminCardProps) {
   const { acceptProposal, rejectProposal, updateProposal } = usePortalProposal();
   const acceptProposalMutation = useMutation(acceptProposal);
@@ -56,6 +63,58 @@ function PortalAdminCard({
 
   const updateProposalMutation = useMutation(updateProposal);
   console.log({ images }, 'in admin card');
+  const { createPortal } = usePortal();
+
+  const portalDeploy = async () => {
+    try {
+      const firstLoadingToast = toast.loading('Transaction Waiting To Be approved', {
+        delete: false,
+        dismissible: false,
+      });
+      const finalFundingGoal = parseEther((fundingGoal ?? '0').toString());
+      const request = await prepareWritePortalFactory({
+        functionName: 'createPortal',
+        args: [
+          tresurers as `0x${string}`[],
+          [
+            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
+            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
+            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
+          ] as `0x${string}`[],
+          finalFundingGoal,
+          BigInt(Math.floor(new Date(deadline).getTime() / 1000) ?? 0),
+          allowAboveFundingGoal,
+          BigInt(platfromFeePercentage),
+          sendImmediately,
+        ],
+      });
+      const transaction = await writePortalFactory(request);
+      toast.dismiss(firstLoadingToast);
+      const secondToast = toast.loading(
+        'Waiting for transaction Confirmation...DO NOT CLOSE WINDOW',
+        {
+          dismissible: false,
+          delete: false,
+        },
+      );
+      const waitForTransactionOut = await waitForTransaction({
+        hash: transaction.hash,
+        confirmations: 1,
+      });
+      const portalAddress = `0x${waitForTransactionOut.logs[0].topics[1]?.slice(-40)}`;
+      const portal = await createPortal({
+        address: portalAddress,
+        proposal_id: id,
+      });
+
+      toast.success(`portal Address ${portalAddress} `);
+      window.location.reload();
+    } catch (e: any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      /* eslint-disable */
+      toast.error(e.message);
+    }
+  };
 
   const fundingGoalWithNewPlatformFees = useMemo(() => {
     console.log(fundingGoal, 'this is the funding goal');
@@ -197,7 +256,7 @@ function PortalAdminCard({
               </Button>
             </Group>
           </Modal>
-          {!disableButton && (
+          {!portalAccepted ? (
             <Group>
               <Button
                 color="red"
@@ -221,6 +280,8 @@ function PortalAdminCard({
                 Edit
               </Button>
             </Group>
+          ) : (
+            <Button onClick={portalDeploy}>Deploy</Button>
           )}
         </Group>
       </Card>

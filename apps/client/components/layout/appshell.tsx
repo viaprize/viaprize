@@ -10,7 +10,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useWallets } from '@privy-io/react-auth';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { optimism } from '@wagmi/chains';
 import { switchNetwork } from '@wagmi/core';
 import Image from 'next/image';
@@ -32,11 +32,12 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
     useDisclosure(false);
   const computedColorScheme = useComputedColorScheme('light');
   const isMounted = useIsMounted();
+  const { ready } = usePrivy();
   useEffect(() => {
-    if (currentChain?.id !== optimism.id && wallets[0] && wallets[0].address) {
+    if (currentChain?.id !== optimism.id && wallets[0] && wallets[0].address && ready) {
       openChainModal();
     }
-  }, [currentChain, isMounted]);
+  }, [currentChain, isMounted, ready]);
   const switchToOptimism = async () => {
     await switchNetwork({
       chainId: optimism.id,

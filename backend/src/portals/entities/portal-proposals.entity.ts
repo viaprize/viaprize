@@ -1,7 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import {
-  AfterInsert,
-  AfterUpdate,
+  BeforeInsert,
+  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -84,8 +84,8 @@ export class PortalProposals {
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
   user: User;
 
-  @AfterUpdate()
-  @AfterInsert()
+  @BeforeUpdate()
+  @BeforeInsert()
   updateFundingGoalWithPlatformFee() {
     if (!this.sendImmediately && this.fundingGoal) {
       console.log("funding platfee insert and update")
