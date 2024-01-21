@@ -31,4 +31,4 @@ jobs:
       - name: Deploy
         working-directory: ./apps/client
         run: |
-          npx sst deploy --stage ${{env.pr_id}}
+          npx sst deploy --stage ${{github.ref_name}}
