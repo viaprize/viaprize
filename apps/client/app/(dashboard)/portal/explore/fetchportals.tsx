@@ -20,7 +20,7 @@ export default async function FetchPortals({
     searchParams.categories = parseCategories(searchParams.categories as string);
   }
 
-  const { page, perPage, search, sort, categories } =
+  const { search, sort, categories } =
     campaignSearchParamsSchema.parse(searchParams);
 
   console.log(searchParams, 'searchParams.categories');
