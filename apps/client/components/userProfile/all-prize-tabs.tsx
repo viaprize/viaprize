@@ -3,6 +3,8 @@ import { Skeleton } from '@mantine/core';
 import { formatEther } from 'viem';
 import { usePublicClient, useQuery } from 'wagmi';
 import ExploreCard from '../Prize/ExplorePrize/explorePrize';
+import SkeletonLoad from '../custom/skeleton-load-explore';
+import Shell from '../custom/shell';
 
 export default function PrizeTabs({ params }: { params: { id: string } }) {
   const client = usePublicClient();
@@ -22,6 +24,14 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
 
     return prizesWithBalance;
   });
+
+  if (getPrizesOfUserMutation.isLoading) return <SkeletonLoad numberOfCards={3} />
+
+  if (!getPrizesOfUserMutation.data || getPrizesOfUserMutation.data.length === 0) return (
+    <Shell>
+      No Prizes
+    </Shell>
+  );
 
   return (
     <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1'>

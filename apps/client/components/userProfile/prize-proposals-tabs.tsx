@@ -1,8 +1,7 @@
 import type { PrizeProposals } from '@/lib/api';
 import { prepareWriteViaPrizeFactory, writeViaPrizeFactory } from '@/lib/smartContract';
 import type { ProposalStatus } from '@/lib/types';
-import { Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Button, Text } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
@@ -10,9 +9,10 @@ import { useQuery } from 'react-query';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
 import ProposalExploreCard from '../Prize/ExplorePrize/proposalExploreCard';
+import Shell from '../custom/shell';
+import SkeletonLoad from '../custom/skeleton-load-explore';
 import { usePrize } from '../hooks/usePrize';
 import usePrizeProposal from '../hooks/usePrizeProposal';
-import SkeletonLoad from '../custom/skeleton-load-explore';
 
 export default function ProposalsTabs({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -42,10 +42,22 @@ export default function ProposalsTabs({ params }: { params: { id: string } }) {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const finalizeTransaction = (item: PrizeProposals) => {};
 
-
   if (isLoading) return <SkeletonLoad numberOfCards={3} />;
 
-  if (data?.length === 0) return <div>No Proposals</div>;
+  if (data?.length === 0)
+    return (
+      <Shell>
+        <Text>You dont have any Proposals</Text>
+        <Button
+          onClick={() => {
+            router.push('/prize/create');
+          }}
+          className="mt-4"
+        >
+          Create Prize Proposal
+        </Button>
+      </Shell>
+    );
 
   return (
     <div className="p-6 w-full">

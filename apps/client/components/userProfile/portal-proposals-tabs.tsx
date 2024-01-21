@@ -2,13 +2,14 @@ import SkeletonLoad from '@/components/custom/skeleton-load-explore';
 import type { PortalProposals } from '@/lib/api';
 import { prepareWritePortalFactory, writePortalFactory } from '@/lib/smartContract';
 import type { ProposalStatus } from '@/lib/types';
-import { Text } from '@mantine/core';
+import { Button, Text, Title } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
 import { useQuery } from 'wagmi';
 import ProposalExploreCard from '../Prize/ExplorePrize/proposalExploreCard';
+import Shell from '../custom/shell';
 import { usePortal } from '../hooks/usePortal';
 import usePortalProposal from '../hooks/usePortalProposal';
 
@@ -33,6 +34,21 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
   );
 
   if (isLoading) return <SkeletonLoad numberOfCards={3} />;
+
+  if (data?.length === 0)
+    return (
+      <Shell>
+        <Title className="text-2xl">You dont have any Portal Proposals</Title>
+        <Button
+          onClick={() => {
+            router.push('/portal/create');
+          }}
+          className="mt-4"
+        >
+          Create Portal Proposal
+        </Button>
+      </Shell>
+    );
 
   return (
     <div className="p-6 w-full">
