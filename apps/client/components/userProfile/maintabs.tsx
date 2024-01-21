@@ -13,20 +13,13 @@ import ProposalsTabs from './proposals-tabs';
 
 export default function MainTabsUserProfile({ params }: { params: { id: string } }) {
   const { getProposalsOfUser } = usePrizeProposal();
-  const { getProposalsOfUser: getPortalProposalsOfUser } = usePortalProposal();
   const getPrizeProposalOfUserMutation = useQuery(
     ['getProposalsOfUser', undefined],
     () => {
       return getProposalsOfUser({ limit: 10, page: 1 }, params.id);
     },
   );
-  const getPortalProposalsOfUserMutation = useQuery(
-    ['getPortalProposals', undefined],
-    () => {
-      return getPortalProposalsOfUser({ limit: 10, page: 1 }, params.id);
-    },
-  );
-  console.log(getPortalProposalsOfUserMutation.data, 'dataaaa');
+  
   const client = usePublicClient();
   const getPrizesOfUserMutation = useQuery(['getPrizesOfUser', undefined], async () => {
     const prizes = await (await backendApi()).users.usernamePrizesDetail(params.id);
@@ -92,8 +85,7 @@ export default function MainTabsUserProfile({ params }: { params: { id: string }
       </Tabs.Panel>
       <Tabs.Panel value="portal-proposals">
         <PortalProposalsTabs
-          data={getPortalProposalsOfUserMutation.data}
-          isSuccess={getPortalProposalsOfUserMutation.isSuccess}
+          params={params}
         />
       </Tabs.Panel>
       <Tabs.Panel value="submissions">

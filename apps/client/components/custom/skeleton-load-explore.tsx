@@ -1,14 +1,18 @@
 import { Card, Skeleton } from '@mantine/core';
 
-export default function SkeletonLoad() {
+export default function SkeletonLoad({ numberOfCards = 6 }: { numberOfCards?: number }) {
   return (
     <>
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
+      {Array.from({ length: numberOfCards }).map(() => (
+        <>
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </>
+      ))}
     </>
   );
 }
