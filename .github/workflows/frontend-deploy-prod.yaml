@@ -11,6 +11,7 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     environment: production
+
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -24,7 +25,10 @@ jobs:
           node-version: "18"
 
       - name: Install dependencies
-        run: npm ci
+        working-directory: ./apps/client
+        run: |
+          npm install -g pnpm
+          pnpm install
       - name: Deploy
         run: |
           npx sst deploy --stage prod
