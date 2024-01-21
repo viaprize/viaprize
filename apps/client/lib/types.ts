@@ -12,11 +12,11 @@ export interface Query {
 export type ProposalStatus = 'pending' | 'approved' | 'rejected';
 
 export interface SearchParams {
-  [key: string]: string | string[] | undefined
+  [key: string]: string | string[] | undefined;
 }
 
 export interface Option {
-  label: string
-  value: string
-  icon?: React.ComponentType<{ className?: string }>
+  label: string;
+  value: string;
+  icon?: React.ComponentType<{ className?: string }>;
 }
