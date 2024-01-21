@@ -11,7 +11,8 @@ export default function ProfilePrizeSubmission({ params }: { params: { id: strin
 
   if (isLoading) return <SkeletonLoad numberOfCards={2} />;
 
-  if (!data || data.data.length === 0) return <Shell>You dont have any Submissions</Shell>;
+  if (!data || data.data.length === 0)
+    return <Shell>You dont have any Submissions</Shell>;
 
   return (
     <div className="w-full flex justify-center items-center">

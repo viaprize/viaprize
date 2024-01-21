@@ -87,7 +87,7 @@ export default function Profile() {
       </div>
       {appUser?.authId === userData?.authId && (
         <>
-          <Divider orientation="vertical" className='hidden md:block' />
+          <Divider orientation="vertical" className="hidden md:block" />
           <SendCard />
         </>
       )}

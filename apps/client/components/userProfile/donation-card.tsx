@@ -72,10 +72,10 @@ export default function SendCard() {
     <Group mt="sm" p="sm">
       {appUser && balance ? (
         <Stack>
-          <Badge variant='light' radius="md">
+          <Badge variant="light" radius="md">
             Address : {wallet?.address.slice(0, 6)}.....{wallet?.address.slice(-6)}
           </Badge>
-          <Badge size='lg' color='green' radius="md">
+          <Badge size="lg" color="green" radius="md">
             Balance : {balance.formatted} {balance.symbol}
           </Badge>
           {/* Total Amount Raised */}
