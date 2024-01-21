@@ -10,16 +10,16 @@ export default function SkeletonLoad({
   if (gridedSkeleton) {
     return (
       <div className="grid gap-2 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
-        {Array.from({ length: numberOfCards }).map(() => (
-          <SkeletonCard key={length * 2} />
+        {[...Array(numberOfCards)].map((_, index) => (
+          <SkeletonCard key={index * 2} />
         ))}
       </div>
     );
   }
   return (
     <>
-      {Array.from({ length: numberOfCards }).map(() => (
-        <SkeletonCard key={length} />
+      {[...Array(numberOfCards)].map((_, index) => (
+        <SkeletonCard key={index * 2} />
       ))}
     </>
   );
