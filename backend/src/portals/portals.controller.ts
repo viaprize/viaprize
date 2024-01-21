@@ -6,6 +6,7 @@ import {
   Get,
   HttpException,
   Inject,
+  Param,
   Patch,
   Post,
   Query,
@@ -23,7 +24,6 @@ import { RejectProposalDto } from 'src/prizes/dto/reject-proposal.dto';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
-import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
 import {
   TestTrigger,
@@ -35,6 +35,7 @@ import { Portals } from './entities/portal.entity';
 import { PortalWithBalance } from './entities/types';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
+import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 
 function addMinutes(date: Date, minutes: number): Date {
   date.setMinutes(date.getMinutes() + minutes);
@@ -70,7 +71,7 @@ export class PortalsController {
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -104,7 +105,7 @@ export class PortalsController {
       treasurers: portalProposal.treasurers,
       user: portalProposal.user,
       sendImmediately: portalProposal.sendImmediately,
-      fundingGoalWithPlatformFee: portalProposal.fundingGoalWithPlatformFee
+      fundingGoalWithPlatformFee: portalProposal.fundingGoalWithPlatformFee,
     });
     if (!portalProposal.sendImmediately) {
       const properMinutes = extractMinutes(
@@ -245,6 +246,67 @@ export class PortalsController {
       isActive: results[3].result as boolean,
       contributors: contributors,
     };
+  }
+
+  /**
+   * The code snippet you provided is a method in the `PortalsController` class. It is a route handler
+   * for the GET request to `/user/{username}` endpoint. Here's a breakdown of what it does:
+   * Gets page
+   *
+   * @summary Get all Portal of a single user
+   *
+   * @date 9/25/2023 - 4:06:45 AM
+   * @security bearer
+   * @async
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
+   * @returns {Promise<Readonly<{data: PortalProposals[];hasNextPage: boolean;}>>}
+   */
+
+  @Get('/user/:username')
+  @UseGuards(AuthGuard)
+  async getPortalByUser(
+    @Param('username') username: string,
+  ): Promise<PortalWithBalance[]> {
+    let portalWithoutBalance: Portals[];
+
+    const key = `user-portals-${username}`;
+    const cachePortalWithoutBalance = await this.cacheManager.get(key);
+    if (cachePortalWithoutBalance) {
+      portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
+    } else {
+      (portalWithoutBalance = await this.portalsService.findAllUserPortals(
+        username,
+      )),
+        await this.cacheManager.set(
+          key,
+          JSON.stringify(portalWithoutBalance),
+          21600000,
+        );
+    }
+    const results = await this.blockchainService.getPortalsPublicVariables(
+      portalWithoutBalance.map((portal) => portal.contract_address),
+    );
+    console.log({ results });
+    let start = 0;
+    let end = 4;
+    const portalWithBalanceData: PortalWithBalance[] = portalWithoutBalance.map(
+      (portal) => {
+        const portalResults = results.slice(start, end);
+        start += 4;
+        end += 4;
+        return {
+          ...portal,
+          balance: parseInt((portalResults[0].result as bigint).toString()),
+          totalFunds: parseInt((portalResults[1].result as bigint).toString()),
+          totalRewards: parseInt(
+            (portalResults[2].result as bigint).toString(),
+          ),
+          isActive: portalResults[3].result as boolean,
+        } as PortalWithBalance;
+      },
+    );
+    return portalWithBalanceData;
   }
 
   /**

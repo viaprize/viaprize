@@ -10,7 +10,7 @@ export class PortalsService {
   constructor(
     @InjectRepository(Portals)
     private portalRepository: Repository<Portals>,
-  ) { }
+  ) {}
 
   async findAll(query: PortalPaginateQuery): Promise<Paginated<Portals>> {
     const { tags, ...paginateQuery } = query;
@@ -88,6 +88,16 @@ export class PortalsService {
     queryBuilder.addOrderBy('portal.createdAt', orderDirection);
 
     return queryBuilder.getMany();
+  }
+
+  async findAllUserPortals(username: string) {
+    return await this.portalRepository.find({
+      where: {
+        user: {
+          username,
+        },
+      },
+    });
   }
 
   async create(portalData: Omit<Portals, 'id' | 'createdAt' | 'updatedAt'>) {

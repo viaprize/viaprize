@@ -1,5 +1,6 @@
 'use client';
 import {
+  ActionIcon,
   AppShell,
   Burger,
   Button,
@@ -7,10 +8,12 @@ import {
   Flex,
   Modal,
   useComputedColorScheme,
+  useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import { optimism } from '@wagmi/chains';
 import { switchNetwork } from '@wagmi/core';
 import Image from 'next/image';
@@ -38,6 +41,8 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
       openChainModal();
     }
   }, [currentChain, isMounted, ready]);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
   const switchToOptimism = async () => {
     await switchNetwork({
       chainId: optimism.id,
@@ -85,7 +90,23 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
             </Link>
           </div>
           <HeaderLayout />
-          <ProfileMenu />
+          <div className="flex gap-2 items-center">
+            <ActionIcon
+              variant="outline"
+              color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}
+              onClick={() => {
+                toggleColorScheme();
+              }}
+              title="Toggle color scheme"
+            >
+              {colorScheme === 'dark' ? (
+                <IconSun size="1.1rem" />
+              ) : (
+                <IconMoonStars size="1.1rem" />
+              )}
+            </ActionIcon>
+            <ProfileMenu />
+          </div>
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar>

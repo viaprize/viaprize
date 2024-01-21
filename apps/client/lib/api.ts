@@ -593,9 +593,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key);
-    return `${encodedKey}=${encodeURIComponent(
-      typeof value === 'number' ? value : `${value}`,
-    )}`;
+    return `${encodedKey}=${encodeURIComponent(typeof value === 'number' ? value : `${value}`)}`;
   }
 
   protected addQueryParam(query: QueryParamsType, key: string) {
@@ -639,8 +637,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-            ? JSON.stringify(property)
-            : `${property}`,
+              ? JSON.stringify(property)
+              : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -871,6 +869,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<PortalWithBalance, any>({
         path: `/portals/${id}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the GET request to `/user/{username}` endpoint. Here's a breakdown of what it does: Gets page
+     *
+     * @name UserDetail
+     * @summary Get all Portal of a single user
+     * @request GET:/portals/user/{username}
+     * @secure
+     */
+    userDetail: (username: string, params: RequestParams = {}) =>
+      this.request<PortalWithBalance[], any>({
+        path: `/portals/user/${username}`,
+        method: 'GET',
+        secure: true,
         format: 'json',
         ...params,
       }),

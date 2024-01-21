@@ -1,11 +1,11 @@
+'use client';
+
 import ShouldLogin from '@/components/custom/should-login';
 import useAppUser from '@/components/hooks/useAppUser';
-import AppShellLayout from '@/components/layout/appshell';
 import MainTabsUserProfile from '@/components/userProfile/maintabs';
 import Profile from '@/components/userProfile/profile';
-import type { ReactElement } from 'react';
 
-export default function UserProfile() {
+export default function UserProfile({ params }: { params: { id: string } }) {
   const { appUser } = useAppUser();
 
   if (!appUser) {
@@ -15,11 +15,7 @@ export default function UserProfile() {
   return (
     <div className="flex md:w-[95vw] flex-col items-center justify-between p-7">
       <Profile />
-      <MainTabsUserProfile />
+      <MainTabsUserProfile params={params} />
     </div>
   );
 }
-
-UserProfile.getLayout = function getLayout(page: ReactElement) {
-  return <AppShellLayout>{page}</AppShellLayout>;
-};
