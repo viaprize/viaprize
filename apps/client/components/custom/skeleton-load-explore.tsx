@@ -1,14 +1,26 @@
 import { Card, Skeleton } from '@mantine/core';
 
-export default function SkeletonLoad() {
+export default function SkeletonLoad({
+  numberOfCards = 6,
+  gridedSkeleton = false,
+}: {
+  numberOfCards?: number;
+  gridedSkeleton?: boolean;
+}) {
+  if (gridedSkeleton) {
+    return (
+      <div className="grid gap-2 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+        {[...Array(numberOfCards)].map((_, index) => (
+          <SkeletonCard key={index * 2} />
+        ))}
+      </div>
+    );
+  }
   return (
     <>
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
-      <SkeletonCard />
+      {[...Array(numberOfCards)].map((_, index) => (
+        <SkeletonCard key={index * 2} />
+      ))}
     </>
   );
 }

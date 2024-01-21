@@ -20,8 +20,8 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache
-  ) { }
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   /**
    * Creates a new user and sends welcome email.
@@ -32,11 +32,9 @@ export class UsersController {
    */
   @Post()
   async create(@TypedBody() createUserDto: CreateUser): Promise<User> {
-
     const user = await this.usersService.create(createUserDto);
 
-
-    await this.cacheManager.reset()
+    await this.cacheManager.reset();
     await this.mailService.welcome(user.email, user.name);
     return user;
   }
@@ -45,10 +43,14 @@ export class UsersController {
   async updateByUsername(
     @TypedBody() updateDtoUser: UpdateUser,
     @TypedParam('username') username: string,
-  ): Promise<User> {
-    const user = await this.usersService.update(username, updateDtoUser);
-    await this.cacheManager.reset()
-    return user;
+  ) {
+    try {
+      const user = await this.usersService.update(username, updateDtoUser);
+      await this.cacheManager.reset();
+      return user;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   @Get('/clear_cache')
@@ -58,8 +60,6 @@ export class UsersController {
       message: 'Cache cleared',
     };
   }
-
-
 
   /**
    * Get a user by ID.
@@ -112,7 +112,6 @@ export class UsersController {
   async getSubmissions(
     @TypedParam('username') username: string,
   ): Promise<Submission[]> {
-
     const submissions = await this.usersService.findUserSubmissionsByUsername(
       username,
     );

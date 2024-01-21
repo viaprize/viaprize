@@ -2,7 +2,7 @@ import { Api } from '@/lib/api';
 import { campaignSearchParamsSchema } from '@/lib/params';
 import type { SearchParams } from '@/lib/types';
 import { formatEther } from 'viem';
-import PortalCard from './portal-card';
+import PortalCard from '../../../../components/portals/portal-card';
 
 const parseCategories = (value: string | undefined): string[] | undefined => {
   if (value) {
@@ -20,8 +20,7 @@ export default async function FetchPortals({
     searchParams.categories = parseCategories(searchParams.categories as string);
   }
 
-  const { page, perPage, search, sort, categories } =
-    campaignSearchParamsSchema.parse(searchParams);
+  const { search, sort, categories } = campaignSearchParamsSchema.parse(searchParams);
 
   console.log(searchParams, 'searchParams.categories');
 
