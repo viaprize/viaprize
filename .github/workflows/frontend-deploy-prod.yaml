@@ -30,5 +30,6 @@ jobs:
           npm install -g pnpm
           pnpm install
       - name: Deploy
+        working-directory: ./apps/client
         run: |
           npx sst deploy --stage prod
