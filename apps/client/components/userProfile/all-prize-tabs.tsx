@@ -44,7 +44,7 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
     );
 
   return (
-    <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+    <div className="grid gap-2 md:grid-cols-2 grid-cols-1">
       {getPrizesOfUserMutation.data.map((prize) => {
         return (
           <ExploreCard

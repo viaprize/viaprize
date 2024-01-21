@@ -9,9 +9,9 @@ export default function SkeletonLoad({
 }) {
   if (gridedSkeleton) {
     return (
-      <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+      <div className="grid gap-2 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
         {Array.from({ length: numberOfCards }).map(() => (
-          <SkeletonCard key={length*2} />
+          <SkeletonCard key={length * 2} />
         ))}
       </div>
     );

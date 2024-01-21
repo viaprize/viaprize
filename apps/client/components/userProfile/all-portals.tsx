@@ -35,7 +35,7 @@ export default function AllPortals({ params }: { params: { id: string } }) {
       </Shell>
     );
   return (
-    <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+    <div className="grid md:grid-cols-2 grid-cols-1 gap-3">
       {data.data.map((portal) => {
         return (
           <PortalCard

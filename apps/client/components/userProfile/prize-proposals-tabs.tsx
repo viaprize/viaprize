@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import { useQuery } from 'react-query';
 import { toast } from 'sonner';
-import { useAccount } from 'wagmi';
 import ProposalExploreCard from '../Prize/ExplorePrize/proposalExploreCard';
 import Shell from '../custom/shell';
 import SkeletonLoad from '../custom/skeleton-load-explore';
@@ -16,7 +15,6 @@ import usePrizeProposal from '../hooks/usePrizeProposal';
 
 export default function ProposalsTab({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const { address } = useAccount();
   const currentTimestamp = useRef(Date.now());
   const { createPrize } = usePrize();
 
@@ -54,7 +52,7 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
           }}
           className="mt-4"
         >
-          Create Prize 
+          Create Prize
         </Button>
       </Shell>
     );

@@ -4,7 +4,7 @@ import AllPortals from './all-portals';
 import PortalProposalsTabs from './portal-proposals-tabs';
 
 export default function PortalTabs({ params }: { params: { id: string } }) {
-  const [value, setValue] = useState('all-prizes');
+  const [value, setValue] = useState('all-portals');
 
   return (
     <div className="w-full">
