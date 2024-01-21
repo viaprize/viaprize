@@ -45,7 +45,6 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                 imageUrl={item.images[0]}
                 description={item.description}
                 onStatusClick={async (status) => {
-                  console.log({ status }, 'status');
                   switch (status) {
                     case 'pending': {
                       router.push(`/portal/proposal/edit/${item.id}`);
@@ -59,35 +58,9 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                           dismissible: false,
                         },
                       );
-
-                      console.log('approved');
-                      // console.log(
-                      //     [
-                      //         item?.admins as `0x${string}`[],
-                      //         [
-                      //             '0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2',
-                      //             '0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB',
-                      //             '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-                      //         ] as `0x${string}`[],
-                      //         BigInt(10),
-                      //         BigInt(10),
-                      //         '0x62e9a8374AE3cdDD0DA7019721CcB091Fed927aE' as `0x${string}`,
-                      //     ],
-                      //     'args',
-                      // );
-                      console.log(item, 'item');
-
                       const finalFundingGoal = parseEther(
                         (item.fundingGoal ?? '0').toString(),
                       );
-                      console.log([
-                        item.treasurers as `0x${string}`[],
-                        finalFundingGoal,
-                        BigInt(Math.floor(new Date(item.deadline).getTime() / 1000) ?? 0),
-                        item.allowDonationAboveThreshold,
-                        BigInt(item.platformFeePercentage),
-                        item.sendImmediately,
-                      ]);
                       const request = await prepareWritePortalFactory({
                         functionName: 'createPortal',
                         args: [
@@ -116,22 +89,18 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                           delete: false,
                         },
                       );
-                      console.log(transaction, 'out');
                       const waitForTransactionOut = await waitForTransaction({
                         hash: transaction.hash,
                         confirmations: 1,
                       });
-                      console.log(waitForTransactionOut.logs[0].topics[1]);
                       const portalAddress = `0x${waitForTransactionOut.logs[0].topics[1]?.slice(
                         -40,
                       )}`;
-                      console.log(portalAddress, 'portalAddress');
-                      const portal = await createPortal({
+                      await createPortal({
                         address: portalAddress,
                         proposal_id: item.id,
                       });
                       toast.dismiss(secondToast);
-                      console.log(portal, 'portal');
                       toast.success(`portal Address ${portalAddress} `);
                       toast.loading('Redirecting Please Wait');
                       router.push('/portal/explore');
