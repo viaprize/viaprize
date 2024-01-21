@@ -270,7 +270,7 @@ export class PortalsController {
   ): Promise<PortalWithBalance[]> {
     let portalWithoutBalance: Portals[];
 
-    const key = `user-portals`;
+    const key = `user-portals-${username}`;
     const cachePortalWithoutBalance = await this.cacheManager.get(key);
     if (cachePortalWithoutBalance) {
       portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
