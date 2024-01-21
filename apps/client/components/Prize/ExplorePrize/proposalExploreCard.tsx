@@ -35,24 +35,24 @@ function ProposalExploreCard({
           {status}
         </Badge>
       </Group>
-        <p className="text-md text-gray-500 max-h-14 overflow-y-auto">
-          {htmlToPlainText(description)}
-        </p>
-        {status === 'rejected' && (
-          <>
-            <Divider my="sm" />
-            <Text c="red" fw="bold">
-              Rejected Reason
-            </Text>
-            <Text>{rejectedReason}</Text>
-          </>
-        )}
-        {/* <Button color="blue" fullWidth mt="md" radius="md" variant="light">
+      <p className="text-md text-gray-500 max-h-14 overflow-y-auto">
+        {htmlToPlainText(description)}
+      </p>
+      {status === 'rejected' && (
+        <>
+          <Divider my="sm" />
+          <Text c="red" fw="bold">
+            Rejected Reason
+          </Text>
+          <Text>{rejectedReason}</Text>
+        </>
+      )}
+      {/* <Button color="blue" fullWidth mt="md" radius="md" variant="light">
           Details
         </Button> */}
-        <Button my="xs" onClick={() => void onStatusClick(status)}>
-          {status === 'approved' ? 'Deploy Proposal' : 'Edit Proposal'}
-        </Button>
+      <Button my="xs" onClick={() => void onStatusClick(status)}>
+        {status === 'approved' ? 'Deploy Proposal' : 'Edit Proposal'}
+      </Button>
     </Card>
   );
 }

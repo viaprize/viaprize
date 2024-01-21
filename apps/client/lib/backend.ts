@@ -20,9 +20,9 @@ export const backendApi = async (withoutAuth?: boolean) => {
   }
 
   if (!token) {
-    const user = useAppUserStore.getState().user
+    const user = useAppUserStore.getState().user;
     if (user) {
-      useAppUserStore.getState().clearUser()
+      useAppUserStore.getState().clearUser();
     }
     return api;
   }

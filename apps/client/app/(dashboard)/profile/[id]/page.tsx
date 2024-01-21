@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import ShouldLogin from '@/components/custom/should-login';
 import useAppUser from '@/components/hooks/useAppUser';

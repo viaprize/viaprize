@@ -42,7 +42,7 @@ export default function PortalProposalsTabs({
                 console.log({ status }, 'status');
                 switch (status) {
                   case 'pending': {
-                    await router.push(`/portal/proposal/edit/${item.id}`);
+                    router.push(`/portal/proposal/edit/${item.id}`);
                     break;
                   }
                   case 'approved': {
@@ -125,15 +125,13 @@ export default function PortalProposalsTabs({
                     toast.dismiss(secondToast);
                     console.log(portal, 'portal');
                     toast.success(`portal Address ${portalAddress} `);
-                    toast.promise(router.push('/portal/explore'), {
-                      loading: 'Redirecting Please Wait',
-                      error: 'Error while redirecting ',
-                      success: 'Redirected to portal Explore Page',
-                    });
+                    toast.loading('Redirecting Please Wait');
+                    router.push('/portal/explore');
+                    toast.success('Redirected to portal Explore Page');
                     break;
                   }
                   case 'rejected': {
-                    await router.push(`/portal/proposal/edit/${item.id}`);
+                    router.push(`/portal/proposal/edit/${item.id}`);
                     break;
                   }
                   default:

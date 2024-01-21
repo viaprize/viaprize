@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import useAppUser from '@/components/hooks/useAppUser';
 import { Avatar, Badge, Box, Button, Card, Group, Modal, Text } from '@mantine/core';

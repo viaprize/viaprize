@@ -47,9 +47,7 @@ export default function RootLayout({
         >
           <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
             <QueryClientProvider client={queryClient}>
-              <MantineProvider theme={theme} 
-              
-              defaultColorScheme="auto">
+              <MantineProvider theme={theme} defaultColorScheme="auto">
                 <Toaster />
                 <NavigationProvider>{children}</NavigationProvider>
               </MantineProvider>
