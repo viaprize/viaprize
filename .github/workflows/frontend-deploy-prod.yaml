@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - dev
-    paths:
-      - "apps/client/**"
 
 jobs:
   deployment:
