@@ -10,17 +10,14 @@ import {
   Stack,
   Text,
   Tooltip,
-  useMantineColorScheme,
 } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
-import { IconCheck, IconCopy, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { IconCheck, IconCopy } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import useAppUser from '../hooks/useAppUser';
 
 export default function HeaderLayout() {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-
   const { user, ready } = usePrivy();
   const { appUser, logoutUser } = useAppUser();
   const displayAddress = (address: string) => {
@@ -98,7 +95,7 @@ export default function HeaderLayout() {
           </Menu.Dropdown>
         </Menu>
       </Flex>
-      <Pill color="red" size="lg" radius="xs">
+      <Pill color="red" size="lg" radius="xs" className="lg:block hidden">
         Live On OP Mainnet Only (Multichain Coming Soon)
       </Pill>
 
@@ -123,20 +120,6 @@ export default function HeaderLayout() {
             </CopyButton>
           ) : null}
         </Card>
-        <ActionIcon
-          variant="outline"
-          color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}
-          onClick={() => {
-            toggleColorScheme();
-          }}
-          title="Toggle color scheme"
-        >
-          {colorScheme === 'dark' ? (
-            <IconSun size="1.1rem" />
-          ) : (
-            <IconMoonStars size="1.1rem" />
-          )}
-        </ActionIcon>
       </Flex>
     </Flex>
   );
