@@ -1,5 +1,6 @@
+import { env } from "@env";
 import { SSTConfig } from "sst";
-import { Bucket, NextjsSite, Service } from "sst/constructs";
+import { Bucket, NextjsSite } from "sst/constructs";
 
 export default {
   config(_input) {
@@ -10,18 +11,17 @@ export default {
   },
   stacks(app) {
     app.stack(function Site({ stack }) {
-      const service = new Service(stack, "service", {
-        port: 3000
-      })
       const bucket = new Bucket(stack, "public");
 
       const site = new NextjsSite(stack, "site", {
-        bind: [bucket]
+        bind: [bucket],
+        environment: {
+          ...env
+        }
       });
 
       stack.addOutputs({
-        ServiceUrl: service.url,
-
+        SiteUrl: site.url,
       });
     });
   },
