@@ -430,7 +430,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o1"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortalWithBalance"
+                  }
                 }
               }
             },
@@ -546,7 +549,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o2"
+                  "$ref": "#/components/schemas/Readonly__type.o1"
                 }
               }
             },
@@ -856,7 +859,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o3"
+                  "$ref": "#/components/schemas/Readonly__type.o2"
                 }
               }
             },
@@ -981,7 +984,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o4"
+                  "$ref": "#/components/schemas/Readonly__type.o3"
                 }
               }
             },
@@ -1504,7 +1507,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o5"
+                  "$ref": "#/components/schemas/Readonly__type.o4"
                 }
               }
             },
@@ -1777,7 +1780,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o6"
+                  "$ref": "#/components/schemas/Readonly__type.o5"
                 }
               }
             },
@@ -1818,7 +1821,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o7"
+                  "$ref": "#/components/schemas/Readonly__type.o6"
                 }
               }
             },
@@ -2015,7 +2018,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o8"
+                  "$ref": "#/components/schemas/Readonly__type.o7"
                 }
               }
             },
@@ -2140,7 +2143,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Readonly__type.o9"
+                  "$ref": "#/components/schemas/Readonly__type.o8"
                 }
               }
             },
@@ -4115,25 +4118,6 @@
             "x-typia-optional": false,
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PortalWithBalance"
-            }
-          }
-        },
-        "nullable": false,
-        "required": [
-          "data"
-        ],
-        "description": "Make all properties in T readonly",
-        "x-typia-jsDocTags": []
-      },
-      "Readonly__type.o2": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
               "$ref": "#/components/schemas/PortalProposals"
             }
           },
@@ -4151,7 +4135,7 @@
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o3": {
+      "Readonly__type.o2": {
         "type": "object",
         "properties": {
           "data": {
@@ -4276,7 +4260,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o4": {
+      "Readonly__type.o3": {
         "type": "object",
         "properties": {
           "data": {
@@ -4458,7 +4442,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o5": {
+      "Readonly__type.o4": {
         "type": "object",
         "properties": {
           "data": {
@@ -4956,7 +4940,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o6": {
+      "Readonly__type.o5": {
         "type": "object",
         "properties": {
           "data": {
@@ -5035,7 +5019,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o7": {
+      "Readonly__type.o6": {
         "type": "object",
         "properties": {
           "data": {
@@ -5060,7 +5044,7 @@
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o8": {
+      "Readonly__type.o7": {
         "type": "object",
         "properties": {
           "data": {
@@ -5209,7 +5193,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "Readonly__type.o9": {
+      "Readonly__type.o8": {
         "type": "object",
         "properties": {
           "data": {

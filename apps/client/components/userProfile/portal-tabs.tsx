@@ -1,6 +1,6 @@
 import { Select, Title } from '@mantine/core';
 import { useState } from 'react';
-import PrizeTabs from './all-prize-tabs';
+import AllPortals from './all-portals';
 import PortalProposalsTabs from './portal-proposals-tabs';
 
 export default function PortalTabs({ params }: { params: { id: string } }) {
@@ -16,7 +16,7 @@ export default function PortalTabs({ params }: { params: { id: string } }) {
             { label: 'Portals', value: 'all-portals' },
             { label: 'Proposals', value: 'all-proposals' },
           ]}
-          defaultValue="all-prizes"
+          defaultValue="all-portals"
           allowDeselect={false}
           onChange={(val) => {
             if (val) {
@@ -26,7 +26,7 @@ export default function PortalTabs({ params }: { params: { id: string } }) {
         />
       </div>
       <div className="mt-2">
-        {value === 'all-prizes' && <PrizeTabs params={params} />}
+        {value === 'all-portals' && <AllPortals params={params} />}
         {value === 'all-proposals' && <PortalProposalsTabs params={params} />}
       </div>
     </div>

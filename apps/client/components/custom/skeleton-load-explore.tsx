@@ -11,7 +11,7 @@ export default function SkeletonLoad({
     return (
       <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
         {Array.from({ length: numberOfCards }).map(() => (
-          <SkeletonCard key={length} />
+          <SkeletonCard key={length*2} />
         ))}
       </div>
     );

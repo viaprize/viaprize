@@ -1,7 +1,7 @@
 import { Api } from '@/lib/api';
 import { Card, Title } from '@mantine/core';
 import { Suspense } from 'react';
-import getCryptoToUsd from './CryptotoUsd';
+import getCryptoToUsd from '../../../../../../components/hooks/server-actions/CryptotoUsd';
 import PortalProposalForm from './form';
 
 export default async function EditPortalProposal({ params }: { params: { id: string } }) {

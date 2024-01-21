@@ -224,17 +224,12 @@ export interface PortalWithBalance {
 
 /** Make all properties in T readonly */
 export interface ReadonlyTypeO1 {
-  data: PortalWithBalance[];
-}
-
-/** Make all properties in T readonly */
-export interface ReadonlyTypeO2 {
   data: PortalProposals[];
   hasNextPage: boolean;
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO3 {
+export interface ReadonlyTypeO2 {
   data: PortalProposals[];
   hasNextPage: boolean;
 }
@@ -257,7 +252,7 @@ export interface CreatePortalProposalDto {
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO4 {
+export interface ReadonlyTypeO3 {
   data: PortalProposals[];
   hasNextPage: boolean;
 }
@@ -297,7 +292,7 @@ export interface CreatePrizeDto {
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO5 {
+export interface ReadonlyTypeO4 {
   data: PrizeWithBalance[];
   hasNextPage: boolean;
 }
@@ -405,7 +400,7 @@ export interface CreateSubmissionDto {
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO6 {
+export interface ReadonlyTypeO5 {
   data: SubmissionWithBlockchainData[];
   hasNextPage: boolean;
 }
@@ -423,13 +418,13 @@ export interface SubmissionWithBlockchainData {
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO7 {
+export interface ReadonlyTypeO6 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO8 {
+export interface ReadonlyTypeO7 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
@@ -473,7 +468,7 @@ export interface CreatePrizeProposalDto {
 }
 
 /** Make all properties in T readonly */
-export interface ReadonlyTypeO9 {
+export interface ReadonlyTypeO8 {
   data: PrizeProposals[];
   hasNextPage: boolean;
 }
@@ -867,7 +862,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @secure
      */
     userDetail: (username: string, params: RequestParams = {}) =>
-      this.request<ReadonlyTypeO1, any>({
+      this.request<PortalWithBalance[], any>({
         path: `/portals/user/${username}`,
         method: 'GET',
         secure: true,
@@ -890,7 +885,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO2, any>({
+      this.request<ReadonlyTypeO1, any>({
         path: `/portals/proposals`,
         method: 'GET',
         query: query,
@@ -967,7 +962,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO3, any>({
+      this.request<ReadonlyTypeO2, any>({
         path: `/portals/proposals/accept`,
         method: 'GET',
         query: query,
@@ -991,7 +986,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO4, any>({
+      this.request<ReadonlyTypeO3, any>({
         path: `/portals/proposals/user/${username}`,
         method: 'GET',
         query: query,
@@ -1134,7 +1129,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO5, any>({
+      this.request<ReadonlyTypeO4, any>({
         path: `/prizes`,
         method: 'GET',
         query: query,
@@ -1206,7 +1201,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO6, any>({
+      this.request<ReadonlyTypeO5, any>({
         path: `/prizes/${id}/submission`,
         method: 'GET',
         query: query,
@@ -1229,7 +1224,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO7, any>({
+      this.request<ReadonlyTypeO6, any>({
         path: `/prizes/proposals`,
         method: 'GET',
         query: query,
@@ -1274,7 +1269,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO8, any>({
+      this.request<ReadonlyTypeO7, any>({
         path: `/prizes/proposals/accept`,
         method: 'GET',
         query: query,
@@ -1298,7 +1293,7 @@ parameters
       },
       params: RequestParams = {},
     ) =>
-      this.request<ReadonlyTypeO9, any>({
+      this.request<ReadonlyTypeO8, any>({
         path: `/prizes/proposals/user/${username}`,
         method: 'GET',
         query: query,

@@ -24,7 +24,6 @@ import { RejectProposalDto } from 'src/prizes/dto/reject-proposal.dto';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
-import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
 import {
   TestTrigger,
@@ -36,6 +35,7 @@ import { Portals } from './entities/portal.entity';
 import { PortalWithBalance } from './entities/types';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
+import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 
 function addMinutes(date: Date, minutes: number): Date {
   date.setMinutes(date.getMinutes() + minutes);
@@ -265,11 +265,9 @@ export class PortalsController {
 
   @Get('/user/:username')
   @UseGuards(AuthGuard)
-  async getPortalByUser(@Param('username') username: string): Promise<
-    Readonly<{
-      data: PortalWithBalance[];
-    }>
-  > {
+  async getPortalByUser(
+    @Param('username') username: string,
+  ): Promise<PortalWithBalance[]> {
     let portalWithoutBalance: Portals[];
 
     const key = `user-portals`;
@@ -308,9 +306,7 @@ export class PortalsController {
         } as PortalWithBalance;
       },
     );
-    return {
-      data: portalWithBalanceData,
-    };
+    return portalWithBalanceData;
   }
 
   /**

@@ -2,7 +2,7 @@ import { Api } from '@/lib/api';
 import { campaignSearchParamsSchema } from '@/lib/params';
 import type { SearchParams } from '@/lib/types';
 import { formatEther } from 'viem';
-import PortalCard from './portal-card';
+import PortalCard from '../../../../components/portals/portal-card';
 
 const parseCategories = (value: string | undefined): string[] | undefined => {
   if (value) {
