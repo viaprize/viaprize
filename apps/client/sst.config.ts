@@ -13,8 +13,11 @@ export default {
       const service = new Service(stack, "service", {
         port: 3000
       })
-      const site = new NextjsSite(stack, "site");
       const bucket = new Bucket(stack, "public");
+
+      const site = new NextjsSite(stack, "site", {
+        bind: [bucket]
+      });
 
       stack.addOutputs({
         ServiceUrl: service.url,
