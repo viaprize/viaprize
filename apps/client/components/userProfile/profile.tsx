@@ -9,7 +9,6 @@ import SendCard from './donation-card';
 import EditProfileModal from './edit-profile-modal';
 
 export default function Profile() {
-  // const { address } = useAccount();
   const [opened, { open, close }] = useDisclosure(false);
   const { appUser } = useAppUser();
   const { getUserByUserName } = useUser();
@@ -17,14 +16,10 @@ export default function Profile() {
   const { data: userData, refetch: fetchUser } = useQuery('getUserByUserName', () =>
     getUserByUserName(appUser?.username || ''),
   );
-
-  // console.log(isAddress(recieverAddress), "ksdjf")
-  // const { data, isLoading, refetch } = useBalance({ address });
   return (
     <Card
       shadow="md"
-      className="w-full min-w-0 flex flex-col md:flex-row justify-center gap-3"
-    >
+      className="w-full min-w-0 flex flex-col md:flex-row justify-center gap-3">
       <div className="md:p-8 p-3">
         <div>
           <Avatar radius="full" size="xl" src={userData?.avatar} />
@@ -83,4 +78,3 @@ export default function Profile() {
     </Card>
   );
 }
-

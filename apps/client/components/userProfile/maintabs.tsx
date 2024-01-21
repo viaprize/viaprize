@@ -99,7 +99,6 @@ export default function MainTabsUserProfile({ params }: { params: { id: string }
       <Tabs.Panel value="submissions">
         <div className="w-full flex justify-center items-center">
           {getSubmissionsOfUserMutation.isLoading ? <Loader color="green" /> : null}
-
           <Skeleton visible={getSubmissionsOfUserMutation.isLoading}>
             {getSubmissionsOfUserMutation.data?.data.map((submission) => (
               <SubmissionsCard
