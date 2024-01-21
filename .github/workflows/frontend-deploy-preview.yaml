@@ -1,9 +1,8 @@
-name: Deploy frontend to prod
+name: Deploy to preview
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    branches: [main]
 
 jobs:
   deployment:
@@ -32,4 +31,4 @@ jobs:
       - name: Deploy
         working-directory: ./apps/client
         run: |
-          npx sst deploy --stage prod
+          npx sst deploy --stage pr-${{ github.event.pull_request.number }}
