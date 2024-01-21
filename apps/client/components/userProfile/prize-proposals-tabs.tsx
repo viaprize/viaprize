@@ -14,7 +14,7 @@ import SkeletonLoad from '../custom/skeleton-load-explore';
 import { usePrize } from '../hooks/usePrize';
 import usePrizeProposal from '../hooks/usePrizeProposal';
 
-export default function ProposalsTabs({ params }: { params: { id: string } }) {
+export default function ProposalsTab({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { address } = useAccount();
   const currentTimestamp = useRef(Date.now());
@@ -42,19 +42,19 @@ export default function ProposalsTabs({ params }: { params: { id: string } }) {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const finalizeTransaction = (item: PrizeProposals) => {};
 
-  if (isLoading) return <SkeletonLoad numberOfCards={3} />;
+  if (isLoading) return <SkeletonLoad numberOfCards={3} gridedSkeleton />;
 
   if (data?.length === 0)
     return (
       <Shell>
-        <Text>You dont have any Proposals</Text>
+        <Text>You dont have any Prize Proposals</Text>
         <Button
           onClick={() => {
             router.push('/prize/create');
           }}
           className="mt-4"
         >
-          Create Prize Proposal
+          Create Prize 
         </Button>
       </Shell>
     );

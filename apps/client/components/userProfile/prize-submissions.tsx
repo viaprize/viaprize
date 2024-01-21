@@ -2,6 +2,7 @@ import SkeletonLoad from '@/components/custom/skeleton-load-explore';
 import { backendApi } from '@/lib/backend';
 import { useQuery } from 'wagmi';
 import SubmissionsCard from '../Prize/prizepage/submissionsCard';
+import Shell from '../custom/shell';
 
 export default function ProfilePrizeSubmission({ params }: { params: { id: string } }) {
   const { isLoading, data } = useQuery(['getSubmissionsOfUser', undefined], async () => {
@@ -10,7 +11,7 @@ export default function ProfilePrizeSubmission({ params }: { params: { id: strin
 
   if (isLoading) return <SkeletonLoad numberOfCards={2} />;
 
-  if (!data || data.data.length === 0) return <div>No Submissions</div>;
+  if (!data || data.data.length === 0) return <Shell>You dont have any Submissions</Shell>;
 
   return (
     <div className="w-full flex justify-center items-center">

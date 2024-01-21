@@ -3,8 +3,9 @@ import { useState } from 'react';
 import PrizeTabs from './all-prize-tabs';
 import ProposalsTab from './prize-proposals-tabs';
 import ProfilePrizeSubmission from './prize-submissions';
+import PortalProposalsTabs from './portal-proposals-tabs';
 
-export default function PrizeTab({ params }: { params: { id: string } }) {
+export default function PortalTabs({ params }: { params: { id: string } }) {
   const [value, setValue] = useState('all-prizes');
 
   return (
@@ -14,9 +15,8 @@ export default function PrizeTab({ params }: { params: { id: string } }) {
         <Select
           value={value}
           data={[
-            { label: 'Prizes', value: 'all-prizes' },
+            { label: 'Portals', value: 'all-portals' },
             { label: 'Proposals', value: 'all-proposals' },
-            { label: 'Submissions', value: 'all-submissions' },
           ]}
           defaultValue="all-prizes"
           allowDeselect={false}
@@ -29,7 +29,7 @@ export default function PrizeTab({ params }: { params: { id: string } }) {
       </div>
       <div className="mt-2">
         {value === 'all-prizes' && <PrizeTabs params={params} />}
-        {value === 'all-proposals' && <ProposalsTab params={params} />}
+        {value === 'all-proposals' && <PortalProposalsTabs params={params} />}
         {value === 'all-submissions' && <ProfilePrizeSubmission params={params} />}
       </div>
     </div>
