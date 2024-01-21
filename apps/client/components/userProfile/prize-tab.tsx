@@ -10,7 +10,7 @@ export default function PrizeTab({ params }: { params: { id: string } }) {
   return (
     <div className="w-full">
       <div className="w-full flex justify-between">
-        <Title className="text-2xl">Prize</Title>
+        <Title className="text-lg md:text-2xl">Prize</Title>
         <Select
           value={value}
           data={[

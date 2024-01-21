@@ -9,7 +9,7 @@ export default function PortalTabs({ params }: { params: { id: string } }) {
   return (
     <div className="w-full">
       <div className="w-full flex justify-between">
-        <Title className="text-2xl">Portals</Title>
+        <Title className="text-lg md:text-2xl">Portals</Title>
         <Select
           value={value}
           data={[

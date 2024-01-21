@@ -1,7 +1,17 @@
 'use client';
 
 import useAppUser from '@/components/hooks/useAppUser';
-import { Avatar, Badge, Box, Button, Card, Group, Modal, Text } from '@mantine/core';
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Card,
+  Divider,
+  Group,
+  Modal,
+  Text,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useQuery } from 'react-query';
 import { useUser } from '../hooks/useUser';
@@ -19,7 +29,8 @@ export default function Profile() {
   return (
     <Card
       shadow="md"
-      className="w-full min-w-0 flex flex-col md:flex-row justify-center gap-3">
+      className="w-full min-w-0 flex flex-col md:flex-row justify-center gap-3"
+    >
       <div className="md:p-8 p-3">
         <div>
           <Avatar radius="full" size="xl" src={userData?.avatar} />
@@ -74,7 +85,12 @@ export default function Profile() {
           </div>
         </Box>
       </div>
-      {appUser?.authId === userData?.authId && <SendCard />}
+      {appUser?.authId === userData?.authId && (
+        <>
+          <Divider orientation="vertical" className='hidden md:block' />
+          <SendCard />
+        </>
+      )}
     </Card>
   );
 }

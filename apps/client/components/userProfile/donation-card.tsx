@@ -1,7 +1,7 @@
 'use client';
 
 import { chain } from '@/lib/wagmi';
-import { Button, Group, Input, NumberInput, Stack, Text } from '@mantine/core';
+import { Badge, Button, Group, Input, NumberInput, Stack, Text } from '@mantine/core';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { prepareSendTransaction, sendTransaction, waitForTransaction } from '@wagmi/core';
 import { useEffect, useState } from 'react';
@@ -72,13 +72,13 @@ export default function SendCard() {
     <Group mt="sm" p="sm">
       {appUser && balance ? (
         <Stack>
-          <Text>
+          <Badge variant='light' radius="md">
             Address : {wallet?.address.slice(0, 6)}.....{wallet?.address.slice(-6)}
-          </Text>
-          <Text>
+          </Badge>
+          <Badge size='lg' color='green' radius="md">
             Balance : {balance.formatted} {balance.symbol}
-          </Text>
-          Total Amount Raised
+          </Badge>
+          {/* Total Amount Raised */}
           <Text>Network : {chain.name.toUpperCase()}</Text>
           <Input
             placeholder="Receiver Address"
