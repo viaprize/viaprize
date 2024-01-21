@@ -45,3 +45,6 @@ storybook-static
 .env
 
 yarn.lock
+
+# sst
+.sst
