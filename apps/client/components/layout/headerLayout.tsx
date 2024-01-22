@@ -20,16 +20,6 @@ import { IconCheck, IconCopy, IconMoonStars, IconSun } from '@tabler/icons-react
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
-// function getEmailInitials(email: string) {
-//   const [username, domain] = email.split('@');
-//   if (!username || !domain) {
-//     return '??';
-//   }
-//   const usernameInitial = username.charAt(0);
-//   const domainInitial = domain.charAt(0);
-
-//   return usernameInitial + domainInitial;
-// }
 
 export default function HeaderLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -41,12 +31,13 @@ export default function HeaderLayout() {
   useEffect(() => {
     setLoaded(true);
   }, []);
+  
   useEffect(() => {
     console.log(loaded, 'loaded');
     console.log(wallets, 'wallets');
     console.log(ready, 'ready');
     console.log(wallet, 'wallet');
-    console.log(loaded && ready && (!wallet || wallet.address != ''), 'final boolean');
+    console.log(loaded && ready && (!wallet || wallet.address !== ''), 'final boolean');
     if (loaded && ready && !wallets[0] && appUser) {
       logoutUser();
     }

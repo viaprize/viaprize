@@ -42,7 +42,7 @@ export class UsersService {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
       await this.userRepository.update(user.id, updateUserDto);
-      return user;
+      return this.findOneByUsername(user.username);
     } catch (error) {
       console.log(error);
       throw new HttpException(`There is some Problem`, HttpStatus.NOT_FOUND);

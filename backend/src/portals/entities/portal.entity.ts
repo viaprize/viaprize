@@ -33,7 +33,7 @@ export class Portals {
   @Column('boolean')
   isMultiSignatureReciever: boolean;
 
-  @Column({ nullable: true })
+  @Column('timestamptz', { nullable: true })
   deadline: Date;
 
   @Column('boolean')

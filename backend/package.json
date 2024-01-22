@@ -131,7 +131,7 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "trigger.dev": {
-      "endpointId": "viaprize-prod"
+      "endpointId": "nestjs-backend"
     }
   }
 }

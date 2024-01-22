@@ -248,7 +248,7 @@ export default function AmountDonateCard({
               }
             }}
           >
-            Refund and End Campaign
+            Refund and End Campaign Early
           </Button>
         ) : null}
         {address &&
