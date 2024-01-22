@@ -130,6 +130,14 @@ contract SubmissionAVLTree {
         return submissions[node].votes;
     }
 
+    function getAllSubmitters() public view returns (address[] memory) {
+        address[] memory submitters = new address[](submissions.length);
+        for (uint256 i = 0; i < submissions.length; i++) {
+            submitters[i] = submissions[i].submitter;
+        }
+        return submitters;
+    }
+
     function find(uint256 node, bytes32 submissionHash) private view returns (uint256) {
         if (node == 0) {
             return 0;
