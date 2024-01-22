@@ -224,7 +224,7 @@ contract ViaPrize {
         platform_reward = (total_funds * platformFee ) / 100;
         proposer_reward = (total_funds * proposerFee ) / 100;
         /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
-        if(allSubmissions.length > 0) {
+        if(allSubmissions.length > 0 && totalVotes > 0) {
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if (allSubmissions[i].funded) {
                     uint256 reward = (allSubmissions[i].votes);
@@ -245,12 +245,16 @@ contract ViaPrize {
             payable(proposerAddress).transfer(send_proposer_reward);
         }
 
-        if(allSubmissions.length == 0 || judges.length == 0 || allPatrons.length == 0 || totalVotes == 0) {
-            for(uint256 i=0; i<allPatrons.length; i++) {
-                payable(allPatrons[i]).transfer(patronAmount[allPatrons[i]]);
+        if(allSubmissions.length == 0 || totalVotes == 0) {
+            for(uint256 i=0; i<allPatrons.length;) {
+                uint256 reward = patronAmount[allPatrons[i]];
                 patronAmount[allPatrons[i]] = 0;
+                payable(allPatrons[i]).transfer(reward);
+                unchecked {++i;}
             }
             distributed = true;
+            total_rewards = 0;
+            total_funds = 0;
         }
     }
 
@@ -277,6 +281,7 @@ contract ViaPrize {
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
         submissionTree.addVotes(_submissionHash, amount);
+        totalVotes.add(amount);
         judgeVotes[msg.sender][_submissionHash] += amount;
         submissionTree.updateFunderBalance(_submissionHash, msg.sender, (judgeVotes[msg.sender][_submissionHash]*(100-platformFee))/100);
         SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
@@ -327,23 +332,23 @@ contract ViaPrize {
     function distribute_use_unused_votes_v2() public returns(uint256, uint256, uint256){
        if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
 
-       uint256 total_votes_voted = 0;
+    //    uint256 total_votes_voted = 0;
 
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-       for(uint256 i=0; i<allSubmissions.length; i++) {
-           total_votes_voted += allSubmissions[i].votes;
-       }
-       uint256 total_unused_votes = total_rewards.sub(total_votes_voted);
+    //    for(uint256 i=0; i<allSubmissions.length; i++) {
+    //        total_votes_voted += allSubmissions[i].votes;
+    //    }
+       uint256 total_unused_votes = total_funds.sub(totalVotes);
        if(total_unused_votes < 0) revert("total_unused_votes cant be negative");
-       if(total_unused_votes > 0) {
+       if(total_unused_votes > 0 && totalVotes > 0) {
             for(uint256 i=0; i<allSubmissions.length; i++) {
-                uint256 individual_percentage = (allSubmissions[i].votes.mul(100)).div(total_votes_voted); 
+                uint256 individual_percentage = (allSubmissions[i].votes.mul(100)).div(totalVotes); 
                 uint256 transferable_amount = (total_unused_votes.mul(individual_percentage)).div(100);
                 payable(allSubmissions[i].submitter).transfer(transferable_amount);
             }
        }
 
-       return (total_votes_voted, total_unused_votes, total_rewards);
+       return (totalVotes, total_unused_votes, total_rewards);
    }
 
     function assignJudgeVotes() public {
@@ -352,5 +357,17 @@ contract ViaPrize {
         for(uint i=0; i<judges.length; i++) {
             judgeFunds[judges[i]] += judge_funds;
         }
+    }
+
+    function getPatrons() public view returns(address[] memory) {
+        return allPatrons;
+    }
+
+    function getJudges() public view returns(address[] memory) {
+        return judges;
+    }
+
+    function getAllSubmitters() public view returns (address[] memory) {
+        return submissionTree.getAllSubmitters();
     }
 }
