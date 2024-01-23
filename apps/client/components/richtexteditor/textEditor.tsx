@@ -10,7 +10,7 @@ import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; 
+import 'react-quill/dist/quill.snow.css';
 
 interface TextEditorProps {
   disabled?: boolean;
@@ -44,11 +44,11 @@ export function TextEditor({
     },
   });
 
-   const handleQuillChange = (content: string) => {
-     if (setRichtext) {
-       setRichtext(content);
-     }
-   };
+  const handleQuillChange = (content: string) => {
+    if (setRichtext) {
+      setRichtext(content);
+    }
+  };
 
   return (
     <>
