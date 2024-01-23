@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./helperContracts/owner.sol";
+import "../helperContracts/owner.sol";
 
 contract SubmissionAVLTree {
 
@@ -10,7 +10,8 @@ contract SubmissionAVLTree {
     struct SubmissionInfo {
         bytes32 submissionHash;
         string submissionText;
-        uint256 votes;
+        uint256 usdcVotes;
+        uint256 usdcBridgedVotes;
         address submitter;
         // uint256 threshhold;
         bool funded;
@@ -81,7 +82,7 @@ contract SubmissionAVLTree {
 
     function add_submission(address submitter, bytes32 submissionHash, string memory submissionText) external {
         uint256 newNodeIndex = submissions.length;
-        submissions.push(SubmissionInfo(submissionHash, submissionText, 0, submitter, false, 0, 0, 0));
+        submissions.push(SubmissionInfo(submissionHash, submissionText, 0, 0, submitter, false, 0, 0, 0));
 
         if (newNodeIndex == 0) {
             root = newNodeIndex;
@@ -91,8 +92,8 @@ contract SubmissionAVLTree {
     }
 
     function updateFunderBalance(bytes32 _submissionHash, address funder, uint256 balances) external {
-    submissionFunderBalances[_submissionHash][funder] = balances;
-}
+        submissionFunderBalances[_submissionHash][funder] = balances;
+    }
 
     function insert(uint256 node, uint256 newNode) private returns (uint256) {
         if (node == 0) {
@@ -125,18 +126,15 @@ contract SubmissionAVLTree {
         return submissions;
     }
 
-    function getSubmissionVote(bytes32 submissionHash) public view returns (uint256){
-        uint256 node = find(root, submissionHash);
-        return submissions[node].votes;
-    }
+    // function getSubmissionUsdcVote(bytes32 submissionHash) public view returns (uint256){
+    //     uint256 node = find(root, submissionHash);
+    //     return submissions[node].usdcVotes;
+    // }
 
-    function getAllSubmitters() public view returns (address[] memory) {
-        address[] memory submitters = new address[](submissions.length);
-        for (uint256 i = 0; i < submissions.length; i++) {
-            submitters[i] = submissions[i].submitter;
-        }
-        return submitters;
-    }
+    // function getSubmissionUsdcBridgedVote(bytes32 submissionHash) public view returns (uint256){
+    //     uint256 node = find(root, submissionHash);
+    //     return submissions[node].usdcBridgedVotes;
+    // }
 
     function find(uint256 node, bytes32 submissionHash) private view returns (uint256) {
         if (node == 0) {
@@ -155,9 +153,14 @@ contract SubmissionAVLTree {
     }
 
     //thresholdCrossed is a function that returns true if the number of votes is greater than or equal to the threshold, and takes in a submissionhash
-    function votesGreaterThanZero(bytes32 submissionHash) external view returns (bool) {
+    function usdcVotesGreaterThanZero(bytes32 submissionHash) external view returns (bool) {
         uint256 node = find(root, submissionHash);
-        return submissions[node].votes > 0;
+        return submissions[node].usdcVotes > 0;
+    }
+
+    function usdcBridgedVotesGreaterThanZero(bytes32 submissionHash) external view returns (bool) {
+        uint256 node = find(root, submissionHash);
+        return submissions[node].usdcBridgedVotes > 0;
     }
 
     //setThresholdCrossed also takes in a submissionhash and sets the funded boolean to true
@@ -166,17 +169,31 @@ contract SubmissionAVLTree {
         submissions[node].funded = status;
     }
 
-    function addVotes(bytes32 submissionHash, uint256 votes) external {
+    function addUsdcVotes(bytes32 submissionHash, uint256 _votes) external {
         uint256 node = find(root, submissionHash);
         unchecked {
-        submissions[node].votes += votes;
+        submissions[node].usdcVotes += _votes;
         }
     }
 
-    function subVotes(bytes32 submissionHash, uint256 votes) external {
+    function addUsdcBridgedVotes(bytes32 submissionHash, uint256 _votes) external {
         uint256 node = find(root, submissionHash);
         unchecked {
-        submissions[node].votes -= votes;
+        submissions[node].usdcBridgedVotes += _votes;
+        }
+    }
+
+    function subUsdcVotes(bytes32 submissionHash, uint256 votes) external {
+        uint256 node = find(root, submissionHash);
+        unchecked {
+        submissions[node].usdcVotes -= votes;
+        }
+    }
+
+    function subBridgedUsdcVotes(bytes32 submissionHash, uint256 votes) external {
+        uint256 node = find(root, submissionHash);
+        unchecked {
+        submissions[node].usdcVotes -= votes;
         }
     }
 
