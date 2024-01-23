@@ -33,6 +33,8 @@ contract ViaPrize {
     address[] public proposers;
     /// @notice this will be a mapping of the addresses of the patrons to the amount of eth they have contributed
     mapping (address => uint256) public patronAmount;
+    /// @notice this will be a mapping of the addresses of the patrons to the amount of eth they have contributed and to keep track of the original amount they donated
+    mapping (address => uint256) public patronAmountForRefund;
     /// @notice array of patrons
     address[] public allPatrons;
     mapping(address => bool) public isPatron;
@@ -191,9 +193,11 @@ contract ViaPrize {
         if (msg.value == 0) revert NotEnoughFunds();
         if(isPatron[msg.sender]) {
             patronAmount[msg.sender] += msg.value;
+            patronAmountForRefund[msg.sender] += msg.value;
         }
         if(!isPatron[msg.sender]) {
             patronAmount[msg.sender] += msg.value;
+            patronAmountForRefund[msg.sender] += msg.value;
             allPatrons.push(msg.sender);
             isPatron[msg.sender] = true;
         }
@@ -223,7 +227,6 @@ contract ViaPrize {
                 unchecked { ++i; }
             }
             total_rewards = 0;
-            total_funds = 0;
             /// @notice  Send the platform reward
             uint256 send_platform_reward = platform_reward;
             platform_reward = 0;
@@ -343,5 +346,27 @@ contract ViaPrize {
 
    function getAllSubmitters() public view returns (address[] memory) {
         return submissionTree.getAllSubmitters();
+    }
+
+    function earlyRefund() public onlyPlatformAdmin {
+        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+        totalVotes = 0;
+        for (uint256 i = 0; i < allSubmissions.length;) {
+            if (allSubmissions[i].funded) {
+                allSubmissions[i].votes = 0;
+            } 
+            unchecked { ++i; }
+        }
+        for(uint256 i=0; i<allPatrons.length;) {
+            uint256 reward = patronAmountForRefund[allPatrons[i]];
+            patronAmountForRefund[allPatrons[i]] = 0;
+            patronAmount[allPatrons[i]] = 0;
+            payable(allPatrons[i]).transfer(reward);
+            unchecked {++i;}
+        }
+        total_rewards = 0;
+        total_funds = 0;
+        distributed = true;
+        isActive = false;
     }
 }
