@@ -41,7 +41,6 @@ export function TextEditor({
       }
     },
   });
-  console.log(richtext, 'richtext');
 
   return (
     <>

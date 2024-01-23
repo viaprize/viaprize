@@ -4,20 +4,14 @@ import type { ReactElement } from 'react';
 import { useState } from 'react';
 
 import { PrizeSubmissionTemplate } from '@/components/Prize/prizepage/defaultcontent';
+import useAppUser from '@/components/hooks/useAppUser';
 import AppShellLayout from '@/components/layout/appshell';
-import useAppUser from '@/context/hooks/useAppUser';
 import { backendApi } from '@/lib/backend';
-import {
-  prepareWriteViaPrize,
-  usePrepareViaPrizeAddSubmission,
-  useViaPrizeAddSubmission,
-  writeViaPrize,
-} from '@/lib/smartContract';
+import { prepareWriteViaPrize, writeViaPrize } from '@/lib/smartContract';
+import { useWallets } from '@privy-io/react-auth';
 import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/router';
 import { toast } from 'sonner';
-import { useAccount } from 'wagmi';
-import { useWallets } from '@privy-io/react-auth';
 
 function EditorsPage() {
   const [content, setContent] = useState<JSONContent | undefined>(

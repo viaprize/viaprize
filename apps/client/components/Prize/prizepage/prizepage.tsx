@@ -1,5 +1,5 @@
 'use client';
-import useAppUser from '@/context/hooks/useAppUser';
+import useAppUser from '@/components/hooks/useAppUser';
 import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import {
   ActionIcon,
@@ -92,6 +92,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
           const config = await prepareSendTransaction({
             to: contractAddress,
             value: debounced ? parseEther(debounced) : undefined,
+            data: '0x',
           });
 
           const { hash } = await sendTransaction(config);

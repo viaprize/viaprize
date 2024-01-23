@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { Repository } from 'typeorm';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { CreatePortalProposalDto } from '../dto/create-portal-proposal.dto';
 import { UpdatePortalPropsalDto } from '../dto/update-portal-proposal.dto';
 import { PortalProposals } from '../entities/portal-proposals.entity';
@@ -14,7 +15,7 @@ export class PortalProposalsService {
     @InjectRepository(PortalProposals)
     private portalProposalsRepository: Repository<PortalProposals>,
     private userService: UsersService,
-  ) {}
+  ) { }
   async create(
     createPortalProposalDto: CreatePortalProposalDto,
     userId: string,
@@ -29,6 +30,7 @@ export class PortalProposalsService {
       ...createPortalProposalDto,
       user: user,
       slug: slug,
+
     });
     return portalProposal;
   }
@@ -158,6 +160,7 @@ export class PortalProposalsService {
     await this.portalProposalsRepository.update(id, {
       isApproved: false,
       isRejected: true,
+      rejectionComment: comment,
     });
     portalProposal.isApproved = false;
     portalProposal.isRejected = true;
@@ -166,10 +169,12 @@ export class PortalProposalsService {
     // await this.mailService.rejected(portalProposal.user.email, comment);
   }
 
-  async update(id: string, updatePortalProposal: UpdatePortalPropsalDto) {
+  async update(id: string, updatePortalProposal: QueryDeepPartialEntity<PortalProposals>) {
     await this.portalProposalsRepository.update(id, updatePortalProposal);
     return this.findOne(id);
   }
+
+
 
   async remove(id: string) {
     await this.portalProposalsRepository.delete({

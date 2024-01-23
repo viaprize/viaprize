@@ -7,7 +7,7 @@ export const officialURL = 'https://securecenter-poc.soulwallets.me';
 export const backendURL = 'https://api.pactsmith.com';
 
 export const infuraId = '997ec38ed1ff4c818b45a09f14546530';
-
+export const platformFeePercentage = 5;
 export const socials = {
   discord: 'https://discord.org',
   twitter: 'https://twitter.com',

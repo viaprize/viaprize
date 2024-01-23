@@ -15,8 +15,11 @@ import { PactsModule } from './pacts/pacts.module';
 import { PrizesModule } from './prizes/prizes.module';
 import { UsersModule } from './users/users.module';
 // import { EthersModule } from 'nestjs-ethers';
+import { CacheModule } from '@nestjs/cache-manager';
 import { BlockchainModule } from './blockchain/blockchain.module';
+import { IndexerModule } from './indexer/indexer.module';
 import { PortalsModule } from './portals/portals.module';
+import { PriceController } from './price/price.controller';
 
 @Module({
   imports: [
@@ -31,6 +34,7 @@ import { PortalsModule } from './portals/portals.module';
         return new DataSource(options).initialize();
       },
     }),
+    CacheModule.register(),
     // TriggerDevModule.registerAsync({
     //   useFactory: (configService: ConfigService) => {
     //     console.log(configService.get<string>("TRIGGER_API_KEY"), "hiiiiiiiiiiiiiiiiiiiiiii")
@@ -61,8 +65,9 @@ import { PortalsModule } from './portals/portals.module';
     JobsModule,
     BlockchainModule,
     PortalsModule,
+    IndexerModule,
   ],
   providers: [],
-  controllers: [],
+  controllers: [PriceController],
 })
 export class AppModule { }

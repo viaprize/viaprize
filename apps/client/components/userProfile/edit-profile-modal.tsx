@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 
-import useAppUser from '@/context/hooks/useAppUser';
+import useAppUser from '@/components/hooks/useAppUser';
 import { ActionIcon, Avatar, Button, Flex, TagsInput, TextInput } from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
@@ -19,7 +19,7 @@ interface EditProfileModalProps {
   IPriorities: string[];
   IAvatar: string;
   fetchUser: () => void;
-  close: () => void;
+  closeModal: () => void;
 }
 
 export default function EditProfileModal({
@@ -29,6 +29,7 @@ export default function EditProfileModal({
   IPriorities,
   IAvatar,
   fetchUser,
+  closeModal,
 }: EditProfileModalProps) {
   const openRef = useRef<() => void>(null);
   const { updateUser } = useUser();
@@ -40,8 +41,11 @@ export default function EditProfileModal({
   const [name, setName] = useState<string>(IName);
   const [priorities, setPriorities] = useState<string[]>(IPriorities);
 
-  const { mutateAsync: updateUserProfile, isLoading: updatingProfile } =
-    useMutation(updateUser);
+  const {
+    mutateAsync: updateUserProfile,
+    isLoading: updatingProfile,
+    error: updatingError,
+  } = useMutation(updateUser);
   const [uploadingImage, setUploadingImage] = useState(false);
 
   const { uploadImages } = usePortalProposal();
@@ -53,39 +57,38 @@ export default function EditProfileModal({
   };
 
   const handleUploadImages = async () => {
+    if (profileImage.length === 0) return `${IAvatar}`;
     const newImages = await uploadImages(profileImage);
     return newImages;
   };
 
   const handleUpdateProfile = async () => {
-    try {
-      const userName = appUser?.username;
-      if (!userName) {
-        toast.error('User name is not defined');
-        return;
-      }
-      setUploadingImage(true);
-      const profileImageAvatar = await handleUploadImages();
-      setUploadingImage(false);
-      await updateUserProfile({
-        userName,
-        name,
-        priorities,
-        proficiencies,
-        bio,
-        avatar: profileImageAvatar,
-      });
-      fetchUser();
-    } catch (e) {
-      console.log(e);
+    const userName = appUser?.username;
+    if (!userName) {
+      toast.error('User name is not defined');
+      return;
     }
+    setUploadingImage(true);
+    const profileImageAvatar = await handleUploadImages();
+    setUploadingImage(false);
+    // console.log(profileImageAvatar, 'profileImageAvatar');
+    await updateUserProfile({
+      userName,
+      name,
+      priorities,
+      proficiencies,
+      bio,
+      avatar: profileImageAvatar,
+    });
+    fetchUser();
+    closeModal();
   };
 
   const submit = () => {
     toast.promise(handleUpdateProfile(), {
       loading: 'Updating profile',
       success: 'Profile updated',
-      error: 'Error updating profile',
+      error: `Error updating profile`,
     });
   };
 
@@ -112,7 +115,6 @@ export default function EditProfileModal({
       </Dropzone>
       <TextInput
         label="Name"
-        data-autoFocus
         placeholder="Whizzy"
         mt="md"
         value={name}
@@ -173,8 +175,12 @@ export default function EditProfileModal({
         <Button
           my="md"
           className="w-full"
-          variant="outline"
+          variant="subtle"
           disabled={updatingProfile || uploadingImage}
+          onClick={() => {
+            console.log('clicked');
+            closeModal();
+          }}
         >
           Cancel
         </Button>

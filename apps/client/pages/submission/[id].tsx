@@ -9,11 +9,6 @@ export default function SubmissionPage({
   console.log(submission);
   return (
     <Paper>
-      {/* <div className="w-full flex justify-center my-3 relative">
-             <div className="relative  min-w-[70vw] max-w-screen-lg border-stone-200 sm:pb-[calc(10vh)] sm:rounded-lg sm:border sm:shadow-lg">
-                   
-                </div>
-            </div> * */}
       <NovalEditor
         className=""
         disableLocalStorage

@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlockchainModule } from 'src/blockchain/blockchain.module';
@@ -14,6 +15,7 @@ import { SubmissionService } from './services/submissions.service';
 @Module({
   controllers: [PrizesController],
   imports: [
+    CacheModule.register(),
     TypeOrmModule.forFeature([PrizeProposals, Prize, Submission]),
     UsersModule,
     MailModule,
@@ -21,4 +23,4 @@ import { SubmissionService } from './services/submissions.service';
   ],
   providers: [PrizesService, SubmissionService, PrizeProposalsService],
 })
-export class PrizesModule {}
+export class PrizesModule { }

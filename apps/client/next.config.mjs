@@ -1,6 +1,6 @@
 /** @type {import("next").NextConfig} */
-import './env.mjs';
 import BundleAnalyzer from '@next/bundle-analyzer';
+import './env.mjs';
 
 const withBundleAnalyzer = BundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',

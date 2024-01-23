@@ -35,6 +35,7 @@ export default function RootLayout({
           config={{
             loginMethods: ['email', 'wallet'],
             additionalChains: [],
+
             defaultChain: configureChainsConfig.chains[0],
             appearance: {
               theme: 'dark',
