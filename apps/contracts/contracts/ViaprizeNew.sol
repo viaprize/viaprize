@@ -40,7 +40,7 @@ contract ViaPrize {
     mapping(address => mapping(bytes32 => uint256)) public patronVotes;
     /// @notice to keep track the campaign is Alive or not
     bool public isActive = false;
-    uint256 public totalVotes = 0;
+    uint256 public totalVotes;
 
     using SafeMath for uint256;
     uint proposerFee;
@@ -223,6 +223,7 @@ contract ViaPrize {
                 unchecked { ++i; }
             }
             total_rewards = 0;
+            total_funds = 0;
             /// @notice  Send the platform reward
             uint256 send_platform_reward = platform_reward;
             platform_reward = 0;
@@ -240,6 +241,7 @@ contract ViaPrize {
                 payable(allPatrons[i]).transfer(reward);
                 unchecked {++i;}
             }
+            distributed = true;
             total_rewards = 0;
             total_funds = 0;
         }
@@ -267,7 +269,8 @@ contract ViaPrize {
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
         submissionTree.addVotes(_submissionHash, amount);
-        totalVotes.add(amount);
+        // totalVotes.add(amount);
+        totalVotes+=amount;
         patronVotes[msg.sender][_submissionHash] += amount;
         submissionTree.updateFunderBalance(_submissionHash, msg.sender, (patronVotes[msg.sender][_submissionHash]*(100-platformFee))/100);
         SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
@@ -321,11 +324,12 @@ contract ViaPrize {
     //    for(uint256 i=0; i<allSubmissions.length; i++) {
     //        total_votes += allSubmissions[i].votes;
     //    }
-       uint256 total_unused_votes = total_funds.sub(totalVotes);
+       uint256 total_unused_votes = total_rewards.sub(totalVotes);
        if(totalVotes > 0 && total_unused_votes > 0) {
             for(uint256 i=0; i<allSubmissions.length; i++) {
                 uint256 individual_percentage = (allSubmissions[i].votes.mul(100)).div(totalVotes); 
                 uint256 transferable_amount = (total_unused_votes.mul(individual_percentage)).div(100);
+                total_rewards -= transferable_amount;
                 payable(allSubmissions[i].submitter).transfer(transferable_amount);
             }
        }
