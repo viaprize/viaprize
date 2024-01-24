@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@mantine/core';
 import { Link, RichTextEditor } from '@mantine/tiptap';
 import { Highlight } from '@tiptap/extension-highlight';
@@ -9,8 +11,10 @@ import type { AnyExtension } from '@tiptap/react';
 import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
-import ReactQuill from 'react-quill';
+// import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import dynamic from 'next/dynamic';
+import { useMemo } from 'react';
 
 interface TextEditorProps {
   disabled?: boolean;
@@ -25,6 +29,13 @@ export function TextEditor({
   setRichtext,
   canSetRichtext,
 }: TextEditorProps) {
+
+   const ReactQuill = useMemo(
+     () => dynamic(() => import('react-quill'), { ssr: false }),
+     [],
+   );
+
+   
   const editor = useEditor({
     editable: !disabled,
     extensions: [
