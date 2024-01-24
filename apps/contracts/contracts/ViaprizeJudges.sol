@@ -27,6 +27,7 @@ contract ViaPrize {
     uint256 public voting_time; 
     /// @notice this will be the time that the submission period ends
     uint256 public submission_time;
+    uint256 track_submission_time;
     /// @notice  this will be a mapping of the addresses of the proposers to a boolean value of true or false
     mapping (address => bool) public isProposer;
     /// @notice array of proposers;
@@ -146,19 +147,9 @@ contract ViaPrize {
     /// @notice create a function to start the submission period
     function start_submission_period(uint256 _submission_time) public {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
-
         /// @notice submission time will be in days
-        submission_time = block.timestamp + _submission_time * 1 days;     
-    }
-
-    /// @notice getter for submission time
-    function get_submission_time() public view returns (uint256) {
-        return submission_time;
-    }
-
-    /// @notice getter for voting time
-    function get_voting_time() public view returns (uint256) {
-        return voting_time;
+        submission_time = block.timestamp + _submission_time * 1 days;
+        track_submission_time = block.timestamp + _submission_time * 1 days;      
     }
 
     function end_submission_period() public onlyPlatformAdmin {
@@ -169,6 +160,7 @@ contract ViaPrize {
     /// @notice start the voting period 
     function start_voting_period(uint256 _voting_time) public {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
+        if(track_submission_time == 0) revert("before starting voting period you need to start and end the submission period");
         if(block.timestamp < submission_time) revert SubmissionPeriodActive();
         /// @notice voting time also in days
         voting_time = block.timestamp + _voting_time * 1 days;
@@ -185,13 +177,14 @@ contract ViaPrize {
     function increase_submission_period(uint256 _submissionTime) public onlyPlatformAdmin {
         if(voting_time > 0) revert VotingPeriodActive();
         if(submission_time == 0) revert SubmissionPeriodNotActive();
-        submission_time = block.timestamp + _submissionTime * 1 days;
+        submission_time = submission_time + _submissionTime * 1 days;
+        track_submission_time = track_submission_time + _submissionTime * 1 days;
     }
 
     function increase_voting_period(uint256 _votingTime) public onlyPlatformAdmin {
         if(voting_time == 0) revert VotingPeriodNotActive();
         if(distributed == true) revert RewardsAlreadyDistributed();
-        voting_time = block.timestamp + _votingTime * 1 days;
+        voting_time = voting_time + _votingTime * 1 days;
     }
 
         /// @notice function to allow patrons to add funds to the contract
