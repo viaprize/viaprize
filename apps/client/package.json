@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "sst bind next dev",
+    "dev": "next dev",
     "build": "next build ",
     "docs": "typedoc",
     "analyze": "ANALYZE=true next build",
@@ -48,6 +48,7 @@
     "@vercel/speed-insights": "^1.0.1",
     "@wagmi/chains": "^1.8.0",
     "@wagmi/core": "^1.4.5",
+    "bignumber.js": "^9.0.1",
     "clsx": "^2.0.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-config-turbo": "^1.10.16",
@@ -66,6 +67,7 @@
     "react-icons": "^4.10.1",
     "react-photo-album": "^2.3.0",
     "react-query": "^3.39.3",
+    "react-quill": "^2.0.0",
     "react-router": "^6.16.0",
     "react-router-dom": "^6.16.0",
     "sonner": "^0.7.1",
@@ -75,8 +77,7 @@
     "wagmi": "1.4.13",
     "webextension-polyfill": "^0.10.0",
     "zod": "^3.22.2",
-    "zustand": "^4.4.1",
-    "bignumber.js": "^9.0.1"
+    "zustand": "^4.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.22.1",
@@ -100,7 +101,9 @@
     "@vercel/style-guide": "^5.0.1",
     "@wagmi/cli": "^1.5.2",
     "autoprefixer": "^10.4.15",
+    "aws-cdk-lib": "2.110.1",
     "babel-loader": "^9.1.2",
+    "constructs": "10.3.0",
     "eslint": "^8.46.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
@@ -121,13 +124,11 @@
     "postcss-preset-mantine": "1.6.0",
     "postcss-simple-vars": "^7.0.1",
     "prettier": ">=3.0.0",
+    "sst": "^2.39.7",
     "storybook": "^7.0.18",
     "storybook-dark-mode": "^3.0.0",
     "tailwindcss": "^3.3.3",
     "ts-jest": "^29.1.0",
-    "typescript": "5.0.4",
-    "sst": "^2.39.7",
-    "aws-cdk-lib": "2.110.1",
-    "constructs": "10.3.0"
+    "typescript": "5.0.4"
   }
 }
