@@ -283,12 +283,11 @@ contract ViaPrize {
         /// @notice submission should return a struct with the submissionHash, the submitter, the submissionText, the threshhold, the votes, and the funded status 
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
-
-        submissionTree.addVotes(_submissionHash, amount);
-        // totalVotes.add(amount);
-        totalVotes+=amount;
+        uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+        submissionTree.addVotes(_submissionHash, amountToSubmission);
+        totalVotes+=amountToSubmission;
         judgeVotes[msg.sender][_submissionHash] += amount;
-        submissionTree.updateFunderBalance(_submissionHash, msg.sender, (judgeVotes[msg.sender][_submissionHash]*(100-platformFee))/100);
+        submissionTree.updateFunderBalance(_submissionHash, msg.sender, (judgeVotes[msg.sender][_submissionHash]*(100-platformFee-proposerFee))/100);
         SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
         if (submission.votes > 0) {
             submissionTree.setFundedTrue(_submissionHash, true);
@@ -300,10 +299,11 @@ contract ViaPrize {
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
         if (judgeVotes[msg.sender][_previous_submissionHash] < amount) revert NotYourVote();
 
-        submissionTree.subVotes(_previous_submissionHash, amount);
-        submissionTree.addVotes(_new_submissionHash, amount);
-        submissionTree.updateFunderBalance(_previous_submissionHash, msg.sender, (judgeVotes[msg.sender][_previous_submissionHash]*(100-platformFee))/100);
-        submissionTree.updateFunderBalance(_new_submissionHash, msg.sender, (judgeVotes[msg.sender][_new_submissionHash]*(100-platformFee))/100);
+        uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+        submissionTree.subVotes(_previous_submissionHash, amountToSubmission);
+        submissionTree.addVotes(_new_submissionHash, amountToSubmission);
+        submissionTree.updateFunderBalance(_previous_submissionHash, msg.sender, (judgeVotes[msg.sender][_previous_submissionHash]*(100-platformFee-proposerFee))/100);
+        submissionTree.updateFunderBalance(_new_submissionHash, msg.sender, (judgeVotes[msg.sender][_new_submissionHash]*(100-platformFee-proposerFee))/100);
         judgeVotes[msg.sender][_previous_submissionHash] -= amount;
         judgeVotes[msg.sender][_new_submissionHash] += amount;
 
