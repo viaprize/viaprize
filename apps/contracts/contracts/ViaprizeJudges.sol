@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./SubmissionAVLTree.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "./helperContracts/safemath.sol";
 
 library SubmissionLibrary {
     function deploySubmission() external returns(address) {
@@ -33,6 +33,8 @@ contract ViaPrize {
     address[] public proposers;
     /// @notice this will be a mapping of the addresses of the patrons to the amount of eth they have contributed
     mapping (address => uint256) public patronAmount;
+    /// @notice this will be a mapping of the addresses of the patrons to the amount of eth they have contributed and to keep track of original amount they donated
+    mapping (address => uint256) public patronAmountForRefund;
     address[] public allPatrons;
     mapping(address => bool) public isPatron;
     /// @notice to keep track the campaign is Alive or not
@@ -199,9 +201,11 @@ contract ViaPrize {
         if (total_judge_votes > 0) revert("total judge votes not zero");
         if(isPatron[msg.sender]) {
             patronAmount[msg.sender] += msg.value;
+            patronAmountForRefund[msg.sender] += msg.value;
         }
         if(!isPatron[msg.sender]) {
             patronAmount[msg.sender] += msg.value;
+            patronAmountForRefund[msg.sender] += msg.value;
             allPatrons.push(msg.sender);
             isPatron[msg.sender] = true;
         }
@@ -287,7 +291,7 @@ contract ViaPrize {
         submissionTree.updateFunderBalance(_submissionHash, msg.sender, (judgeVotes[msg.sender][_submissionHash]*(100-platformFee))/100);
         SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
         if (submission.votes > 0) {
-        submissionTree.setFundedTrue(_submissionHash, true);
+            submissionTree.setFundedTrue(_submissionHash, true);
         }
     }
 
@@ -359,6 +363,32 @@ contract ViaPrize {
         for(uint i=0; i<judges.length; i++) {
             judgeFunds[judges[i]] += judge_funds;
         }
+    }
+
+    function earlyRefund() public onlyPlatformAdmin {
+        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+        totalVotes = 0;
+        total_judge_votes = 0;
+        for (uint256 i = 0; i < allSubmissions.length;) {
+            if (allSubmissions[i].funded) {
+                allSubmissions[i].votes = 0;
+            } 
+            unchecked { ++i; }
+        }
+        for(uint i=0; i<judges.length; i++) {
+            judgeFunds[judges[i]] = 0;
+        }
+        for(uint256 i=0; i<allPatrons.length;) {
+            uint256 reward = patronAmountForRefund[allPatrons[i]];
+            patronAmountForRefund[allPatrons[i]] = 0;
+            patronAmount[allPatrons[i]] = 0;
+            payable(allPatrons[i]).transfer(reward);
+            unchecked {++i;}
+        }
+        total_rewards = 0;
+        total_funds = 0;
+        distributed = true;
+        isActive = false;
     }
 
     function getPatrons() public view returns(address[] memory) {
