@@ -105,7 +105,7 @@ export class MailService {
   }
   async proposalSent(to: string, name: string, proposalTitle: string) {
     await this.mailerService.sendMail({
-      to: [to, "support@viaprize.org"],
+      to: [to, 'support@viaprize.org'],
       subject: 'Hi your proposal is sent',
       context: {
         name,

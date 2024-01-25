@@ -18,7 +18,6 @@ export const env = createEnv({
       .enum(['mainnet', 'testnet'])
       .default('mainnet')
       .optional(),
-    NEXT_PUBLIC_WEB3_STORAGE: z.string(),
     NEXT_PUBLIC_PRIVY_APP_ID: z.string(),
     NEXT_PUBLIC_BACKEND_URL: z
       .enum([
@@ -29,6 +28,7 @@ export const env = createEnv({
       .default('https://api.pactsmith.com/api'),
     NEXT_PUBLIC_SUPABASE_URL: z.string(),
     NEXT_PUBLIC_SUPABASE_API_KEY: z.string(),
+    NEXT_PUBLIC_RPC_URL: z.string(),
   },
   /*
    * Due to how Next.js bundles enironment variables on Edge and Client,
@@ -39,10 +39,10 @@ export const env = createEnv({
   runtimeEnv: {
     NEXT_PUBLIC_CHAIN: process.env.NEXT_PUBLIC_CHAIN,
     NEXT_PUBLIC_NETWORK_TYPE: process.env.NEXT_PUBLIC_NETWORK_TYPE,
-    NEXT_PUBLIC_WEB3_STORAGE: process.env.NEXT_PUBLIC_WEB3_STORAGE,
     NEXT_PUBLIC_PRIVY_APP_ID: process.env.NEXT_PUBLIC_PRIVY_APP_ID,
     NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_API_KEY: process.env.NEXT_PUBLIC_SUPABASE_API_KEY,
+    NEXT_PUBLIC_RPC_URL: process.env.NEXT_PUBLIC_RPC_URL,
   },
 });

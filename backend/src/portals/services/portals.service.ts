@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated, paginate } from 'nestjs-paginate';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { Repository } from 'typeorm';
 import { Portals } from '../entities/portal.entity';
-import { PortalPaginateQuery } from '../entities/types';
+import { PortalPaginateQuery, PortalPaginateResponse } from '../entities/types';
 
 @Injectable()
 export class PortalsService {
@@ -53,15 +52,51 @@ export class PortalsService {
 
     return portal;
   }
-
   async findAllPendingWithPagination(
-    paginationOptions: IPaginationOptions<Portals>,
+    paginationOptions: PortalPaginateResponse,
   ) {
-    return this.portalRepository.find({
-      skip: (paginationOptions.page - 1) * paginationOptions.limit,
-      take: paginationOptions.limit,
-      relations: ['user'],
-      where: paginationOptions.where,
+    const queryBuilder = this.portalRepository.createQueryBuilder('portal');
+
+    queryBuilder.skip((paginationOptions.page - 1) * paginationOptions.limit);
+    queryBuilder.take(paginationOptions.limit);
+    queryBuilder.leftJoinAndSelect('portal.user', 'user');
+
+    if (paginationOptions.search) {
+      queryBuilder.andWhere(
+        '(portal.title ILIKE :search OR portal.description ILIKE :search)',
+        { search: `%${paginationOptions.search}%` },
+      );
+    }
+
+    const tags =
+      typeof paginationOptions.tags === 'string'
+        ? [paginationOptions.tags]
+        : paginationOptions.tags;
+
+    if (tags && tags.length > 0) {
+      queryBuilder.andWhere('portal.tags ILIKE ANY(:tags)', {
+        tags: tags.map((tag) => `%${tag}%`),
+      });
+    }
+
+    const orderDirection = paginationOptions.sort === 'ASC' ? 'ASC' : 'DESC';
+
+    // queryBuilder.addOrderBy(
+    //   '(SELECT CASE WHEN portal.deadline > CURRENT_TIMESTAMP THEN 1 ELSE 2 END)',
+    //   'ASC',
+    // );
+    queryBuilder.addOrderBy('portal.createdAt', orderDirection);
+
+    return queryBuilder.getMany();
+  }
+
+  async findAllUserPortals(username: string) {
+    return await this.portalRepository.find({
+      where: {
+        user: {
+          username,
+        },
+      },
     });
   }
 

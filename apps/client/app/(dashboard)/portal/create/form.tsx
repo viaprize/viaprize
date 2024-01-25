@@ -1,16 +1,19 @@
 'use client';
 
 import ImageComponent from '@/components/Prize/dropzone';
+import useAppUser from '@/components/hooks/useAppUser';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
-import useAppUser from '@/context/hooks/useAppUser';
-import { ConvertUSD } from '@/lib/types';
+import { platformFeePercentage } from '@/config';
+import { campaignsTags } from '@/lib/constants';
+import type { ConvertUSD } from '@/lib/types';
 import { chain } from '@/lib/wagmi';
 import {
   Button,
   Checkbox,
   CloseButton,
   Group,
+  MultiSelect,
   NumberInput,
   Radio,
   Text,
@@ -22,7 +25,7 @@ import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FaCalendar } from 'react-icons/fa';
 import { useQuery } from 'react-query';
 import { toast } from 'sonner';
@@ -34,28 +37,28 @@ export default function PortalForm() {
   const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');
   const [address, setAddress] = useState('');
-  const [fundingGoal, setFundingGoal] = useState<number>();
+  const [fundingGoal, setFundingGoal] = useState<number>(0);
   const [deadline, setDeadline] = useState<Date | null>(null);
   const [allowFundsAboveGoal, setAllowFundsAboveGoal] = useState(false);
   const [images, setImages] = useState<string>();
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
   const [portalType, setPortalType] = useState('pass-through');
+  const [categories, setCategories] = useState<string[]>([]);
 
   const { addProposals, uploadImages } = usePortalProposal();
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
+
   const { data: crytoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
     const final = await (
-      await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
-      )
+      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
     ).json();
     return Object.keys(final).length === 0
       ? {
           [chain.name.toLowerCase()]: {
-            usd: 2357.89,
+            usd: 0,
           },
         }
       : final;
@@ -66,7 +69,7 @@ export default function PortalForm() {
       toast.error('Error converting USD to Crypto');
       return 0;
     }
-    const cryto_to_usd_value = crytoToUsd['ethereum'].usd;
+    const cryto_to_usd_value = crytoToUsd.ethereum.usd;
     const eth_to_cryto = usd / cryto_to_usd_value;
     return parseFloat(eth_to_cryto.toFixed(4));
   }
@@ -101,7 +104,7 @@ export default function PortalForm() {
   //   });
   // };
   const generateTags = () => {
-    const tags = [];
+    const tags: string[] = [];
     const sendNow = portalType === 'pass-through';
     if (!sendNow) {
       tags.push('All-or-Nothing');
@@ -116,44 +119,75 @@ export default function PortalForm() {
     if (fundingGoal) {
       tags.push('Funding Goal');
     }
-    return tags;
+    setCategories((prev) => {
+      return [...prev, ...tags];
+    });
   };
   const submit = async () => {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-    const finalFundingGoal = fundingGoal ? convertUSDToCrypto(fundingGoal) : undefined;
-
+    generateTags();
     const newImages = await handleUploadImages();
     await addProposalsMutation({
       allowDonationAboveThreshold: allowFundsAboveGoal,
       deadline: deadline?.toISOString() ?? undefined,
       description: richtext,
-      tags: generateTags(),
+      tags: categories,
       images: [newImages] as string[],
-      title: title,
+      title,
       proposerAddress: wallet.address,
       termsAndCondition: 'test',
       isMultiSignatureReciever: false,
       treasurers: [address],
-      fundingGoal: finalFundingGoal,
+      fundingGoal: fundingGoal === 0 ? undefined : finalFundingGoalEth.toString(),
       sendImmediately: portalType === 'pass-through',
     });
     router.push(`/profile/${appUser?.username}`);
     setLoading(false);
   };
 
+  const finalFundingGoalWithPlatformFees = useMemo(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+    const ethValue = convertUSDToCrypto(fundingGoal);
+    return parseFloat(
+      (ethValue + ethValue * (platformFeePercentage / 100)).toPrecision(4),
+    );
+  }, [fundingGoal]);
+
+  const finalFundingGoalEth = useMemo(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+    const ethValue = convertUSDToCrypto(fundingGoal);
+    return ethValue;
+  }, [fundingGoal]);
+
+  const finalFundingGoalUsd = useMemo<number>(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+    console.log({ fundingGoal });
+    const fundingGoalPercentage =
+      parseFloat(fundingGoal.toString()) * (platformFeePercentage / 100);
+    console.log({ fundingGoalPercentage });
+    return parseFloat(fundingGoal.toString()) + fundingGoalPercentage;
+  }, [fundingGoal]);
+
+  console.log({ finalFundingGoalUsd });
+
   const handleSubmit = () => {
     setLoading(true);
     try {
       // console.log(images, 'images');
       toast.promise(submit(), {
-        loading: 'Submitting Proposal...',
-        success: 'Proposal Submitted',
-        error: 'Error Submitting Proposal',
+        loading: 'Submitting proposal...',
+        success: 'Proposal submitted',
+        error: 'Error submitting proposal',
       });
     } catch (e: any) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       /* eslint-disable */
       toast.error(e.message);
     } finally {
@@ -191,6 +225,7 @@ export default function PortalForm() {
         <Text>Aim for 200-500 words</Text>
       </div>
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
+      {/* <NovelEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext /> */}
       <div>
         <Title order={4}>Receiving funds</Title>
         <p className="my-0">
@@ -210,36 +245,13 @@ export default function PortalForm() {
         }}
         required
       />
-      {/* {address.length > 1 && (
-              <Button
-                color="red"
-                className="my-2"
-                onClick={() => {
-                  removeAddress(index);
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </Button>
-            )}
-          </div>
-        ))}
-      </SimpleGrid> */}
-      {/* <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
-        <IconPlus />
-      </ActionIcon> */}
+      <MultiSelect
+        label="Pick Categories"
+        placeholder="Pick value"
+        data={campaignsTags}
+        value={categories}
+        onChange={setCategories}
+      />
       <Radio.Group
         name="favoriteFramework"
         label="Select your portal type"
@@ -264,23 +276,34 @@ export default function PortalForm() {
         </Group>
       </Radio.Group>
       <div className="my-2">
-        {portalType === 'all-or-nothing' ? (
+        {portalType === 'all-or-nothing' && crytoToUsd ? (
           <div>
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
               <Text>
-                Funding Goal in {`( ${convertUSDToCrypto(fundingGoal ?? 0)}`}{' '}
+                Funding goal in total (+ platform fee of {platformFeePercentage}% ){' '}
+                {`$${finalFundingGoalUsd}`} ({`${finalFundingGoalWithPlatformFees}`}{' '}
                 {chain.nativeCurrency.symbol} {')'}
               </Text>
             </div>
             <NumberInput
               required
               min={0}
+              description={`You will get in total $${fundingGoal} and Platform would get $${
+                fundingGoal * (platformFeePercentage / 100)
+              }`}
               label="Funding Goal"
               leftSection="$"
               placeholder="Enter Funding Goal in USD"
               className="w-full"
+              allowLeadingZeros={false}
+              allowNegative={false}
               value={fundingGoal}
               onChange={(e) => {
+                if (parseInt(e.toString()) === 0) {
+                  console.log('hiii');
+                  setFundingGoal(0);
+                  return;
+                }
                 setFundingGoal(e as number);
               }}
             />
@@ -310,6 +333,7 @@ export default function PortalForm() {
           label="Allow funds above goal"
         />
       ) : null}
+
       <Button
         color="primary"
         radius="md"

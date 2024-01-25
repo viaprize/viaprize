@@ -3,9 +3,7 @@ import { Module } from '@nestjs/common';
 import { JobService } from './jobs.service';
 
 @Module({
-    providers: [JobService],
-
-    exports: [JobService],
+  providers: [JobService],
+  exports: [JobService],
 })
-export class JobsModule {
-}
+export class JobsModule {}

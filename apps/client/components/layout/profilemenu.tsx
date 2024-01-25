@@ -1,34 +1,12 @@
-import useAppUser from '@/context/hooks/useAppUser';
-import {
-  ActionIcon,
-  Avatar,
-  Button,
-  Card,
-  CopyButton,
-  Flex,
-  Group,
-  Menu,
-  Modal,
-  Tooltip,
-  useMantineColorScheme,
-} from '@mantine/core';
-import { useWallets } from '@privy-io/react-auth';
-import {
-  IconArrowsLeftRight,
-  IconCheck,
-  IconCopy,
-  IconMoonStars,
-  IconSun,
-  IconUser,
-} from '@tabler/icons-react';
-import Image from 'next/image';
+import useAppUser from '@/components/hooks/useAppUser';
+import { Avatar, Button, Menu, Modal } from '@mantine/core';
+import { IconArrowsLeftRight, IconUser } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { IoExit } from 'react-icons/io5';
 import { TbTopologyStarRing2 } from 'react-icons/tb';
 import { toast } from 'sonner';
 import SwitchAccount from './switchWallet';
-import { useDisclosure } from '@mantine/hooks';
 
 function ProfileMenu() {
   const { logoutUser, appUser, loginUser } = useAppUser();

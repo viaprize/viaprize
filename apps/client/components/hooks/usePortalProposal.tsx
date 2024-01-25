@@ -1,11 +1,11 @@
-import { storeFiles } from '@/context/tools';
-import {
+import type {
   CreatePortalProposalDto,
   PortalProposals,
   UpdatePortalPropsalDto,
 } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
-import { Query } from '@/lib/types';
+import type { Query } from '@/lib/types';
+import { storeFiles } from '@/lib/utils';
 import { useState } from 'react';
 
 export default function usePortalProposal() {
@@ -16,11 +16,10 @@ export default function usePortalProposal() {
     return res;
   };
 
-
   const getProposalById = async (id: string) => {
     const res = await (await backendApi()).portals.proposalsDetail(id);
     return res.data;
-  }
+  };
 
   const updateProposal = async ({
     id,
@@ -29,10 +28,9 @@ export default function usePortalProposal() {
     id: string;
     dto: UpdatePortalPropsalDto;
   }) => {
-    const res = await (await backendApi()).portals.proposalsUpdate(id, dto);
+    const res = await (await backendApi()).portals.proposalsPartialUpdate(id, dto);
     return res.data;
   };
-
 
   const uploadImages = async (files: File[]) => {
     const images = await storeFiles(files);

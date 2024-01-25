@@ -23,7 +23,6 @@ function Proposals({
     <>
       {isSuccess ? (
         <>
-          {' '}
           {data.prizesProposals?.map((proposal: PrizeProposals) => (
             <AdminCard
               key={proposal.id}
@@ -50,13 +49,17 @@ function Proposals({
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
               id={portalProposal.id}
+              fundingGoalWithPlatfromFeePercentage={
+                portalProposal.fundingGoalWithPlatformFee
+              }
               platfromFeePercentage={portalProposal.platformFeePercentage}
               key={portalProposal.id}
+              sendImmediately={portalProposal.sendImmediately}
             />
           ))}
         </>
       ) : (
-        <Text>Error</Text>
+        <Text>Error </Text>
       )}
     </>
   );
@@ -72,7 +75,6 @@ function AccpetedProposals({
     portalsProposals: PortalProposals[] | undefined;
   };
 }) {
-  console.log({ data }, 'hiii');
   return (
     <>
       {isSuccess ? (
@@ -100,9 +102,13 @@ function AccpetedProposals({
               title={portalProposal.title}
               user={portalProposal.user}
               fundingGoal={portalProposal.fundingGoal}
+              sendImmediately={portalProposal.sendImmediately}
+              fundingGoalWithPlatfromFeePercentage={
+                portalProposal.fundingGoalWithPlatformFee
+              }
               platfromFeePercentage={portalProposal.platformFeePercentage}
               id={portalProposal.id}
-              disableButton
+              portalAccepted
             />
           ))}
         </>
@@ -177,21 +183,23 @@ export default function AdminPage() {
       </Tabs.Panel>
 
       <Tabs.Panel value="accepted" pt="xs">
-        {getAcceptedPrizeProposalMutation.isLoading ? (
-          <Loader size="xl" variant="bars" />
-        ) : (
-          <AccpetedProposals
-            isSuccess={
-              getAcceptedPrizeProposalMutation.isSuccess
-                ? getAcceptedPortalProposalMutation.isSuccess
-                : false
-            }
-            data={{
-              portalsProposals: getAcceptedPortalProposalMutation.data,
-              prizesProposals: getAcceptedPrizeProposalMutation.data,
-            }}
-          />
-        )}
+        <div className="grid grid-cols-3 gap-4">
+          {getAcceptedPrizeProposalMutation.isLoading ? (
+            <Loader size="xl" variant="bars" />
+          ) : (
+            <AccpetedProposals
+              isSuccess={
+                getAcceptedPrizeProposalMutation.isSuccess
+                  ? getAcceptedPortalProposalMutation.isSuccess
+                  : false
+              }
+              data={{
+                portalsProposals: getAcceptedPortalProposalMutation.data,
+                prizesProposals: getAcceptedPrizeProposalMutation.data,
+              }}
+            />
+          )}
+        </div>
       </Tabs.Panel>
     </Tabs>
   );

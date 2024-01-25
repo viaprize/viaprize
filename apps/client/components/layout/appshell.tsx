@@ -1,6 +1,6 @@
 'use client';
-import { chain } from '@/lib/wagmi';
 import {
+  ActionIcon,
   AppShell,
   Burger,
   Button,
@@ -8,14 +8,19 @@ import {
   Flex,
   Modal,
   useComputedColorScheme,
+  useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import { optimism } from '@wagmi/chains';
 import { switchNetwork } from '@wagmi/core';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, type ReactNode } from 'react';
+import { useNetwork } from 'wagmi';
+import useIsMounted from '../hooks/useIsMounted';
 import Footer from './footer';
 import HeaderLayout from './headerLayout';
 import MobileNavbar from './mobileNavbar';
@@ -23,18 +28,24 @@ import ProfileMenu from './profilemenu';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
+  const { chain: currentChain } = useNetwork();
   const [opened, { toggle }] = useDisclosure();
+  const { wallets } = useWallets();
   const [openedChainModal, { open: openChainModal, close: closeChainModal }] =
     useDisclosure(false);
   const computedColorScheme = useComputedColorScheme('light');
+  const isMounted = useIsMounted();
+  const { ready } = usePrivy();
   useEffect(() => {
-    if (chain.id !== optimism.id) {
+    if (currentChain?.id !== optimism.id && wallets[0] && wallets[0].address && ready) {
       openChainModal();
     }
-  }, [chain.id]);
+  }, [currentChain, isMounted, ready]);
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
   const switchToOptimism = async () => {
     await switchNetwork({
-      chainId: 1,
+      chainId: optimism.id,
     }).then(() => {
       closeChainModal();
     });
@@ -61,6 +72,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         withCloseButton={false}
         size="sm"
         centered
+        closeOnClickOutside={false}
         title="Wrong Network"
       >
         <Button onClick={() => switchToOptimism()}> Switch To Optimism</Button>
@@ -78,14 +90,30 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
             </Link>
           </div>
           <HeaderLayout />
-          <ProfileMenu />
+          <div className="flex gap-2 items-center">
+            <ActionIcon
+              variant="outline"
+              color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}
+              onClick={() => {
+                toggleColorScheme();
+              }}
+              title="Toggle color scheme"
+            >
+              {colorScheme === 'dark' ? (
+                <IconSun size="1.1rem" />
+              ) : (
+                <IconMoonStars size="1.1rem" />
+              )}
+            </ActionIcon>
+            <ProfileMenu />
+          </div>
         </Flex>
       </AppShell.Header>
       <AppShell.Navbar>
         <MobileNavbar close={toggle} open={opened} />
       </AppShell.Navbar>
       <AppShell.Main>
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center min-w-0">
           <Center className="max-w-screen-xl w-full">{children}</Center>
         </div>
         <Footer />

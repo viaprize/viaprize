@@ -1,15 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument -- wont need it*/
-/* eslint-disable @typescript-eslint/no-unsafe-return -- wont need it */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment -- didnt need it */
 /* eslint-disable @typescript-eslint/no-explicit-any -- it was important */
 'use client';
 
 import ImageComponent from '@/components/Prize/dropzone';
+import useAppUser from '@/components/hooks/useAppUser';
 import usePortalProposal from '@/components/hooks/usePortalProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
-import useAppUser from '@/context/hooks/useAppUser';
+import { platformFeePercentage } from '@/config';
 import type { PortalProposals } from '@/lib/api';
-import type { ConvertUSD } from '@/lib/types';
 import { chain } from '@/lib/wagmi';
 import {
   Button,
@@ -27,15 +24,15 @@ import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FaCalendar } from 'react-icons/fa';
-import { useQuery } from 'react-query';
 import { toast } from 'sonner';
 import { isAddress } from 'viem';
 import { useMutation } from 'wagmi';
 
 interface PortalProposalForm extends Partial<PortalProposals> {
   id: string;
+  ethPriceInUSD: number;
 }
 
 export default function PortalProposalForm({
@@ -49,6 +46,7 @@ export default function PortalProposalForm({
   treasurers: proposalTreasurers,
   user: proposalUser,
   sendImmediately: proposalSendImmediately,
+  ethPriceInUSD,
 }: PortalProposalForm) {
   const { updateProposal, uploadImages } = usePortalProposal();
 
@@ -62,42 +60,21 @@ export default function PortalProposalForm({
   const [allowFundsAboveGoal, setAllowFundsAboveGoal] = useState(
     proposalAllowDonationAboveThreshold,
   );
-  const [images, setImages] = useState<string>();
+  const [images, setImages] = useState<string>(proposalImages?.[0] ?? '');
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
   const [portalType, setPortalType] = useState(
     proposalSendImmediately ? 'pass-through' : 'all-or-nothing',
   );
-  const [fundingGoal, setFundingGoal] = useState<number | undefined>(proposalFundingGoal);
-  const [image,setImage] = useState(proposalImages?.[0]);
-  console.log(image, 'image')
+  const [fundingGoal, setFundingGoal] = useState<number | undefined>(
+    parseFloat(proposalFundingGoal ?? '0'),
+  );
 
   const { mutateAsync: updateProposalsMutation, isLoading: updatatingProposal } =
     useMutation(updateProposal);
 
-  const { data: crytoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
-    const final = await (
-      await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd`,
-      )
-    ).json();
-    return Object.keys(final).length === 0
-      ? {
-          [chain.name.toLowerCase()]: {
-            usd: 2357.89,
-          },
-        }
-      : final;
-  });
-
   function convertUSDToCrypto(usd: number) {
-    if (!crytoToUsd) {
-      toast.error('Error converting USD to Crypto');
-      return 0;
-    }
-
-    const cryptoToUsd = crytoToUsd.ethereum.usd;
-    const ethToCrypto = usd / cryptoToUsd;
+    const ethToCrypto = usd / ethPriceInUSD;
     return parseFloat(ethToCrypto.toFixed(4));
   }
 
@@ -105,8 +82,10 @@ export default function PortalProposalForm({
   const router = useRouter();
 
   const handleUploadImages = async () => {
+    if (files.length === 0) {
+      return images;
+    }
     const newImages = await uploadImages(files);
-
     setImages(newImages);
     return newImages;
   };
@@ -130,19 +109,30 @@ export default function PortalProposalForm({
     return tags;
   };
 
+  const finalFundingGoal = useMemo<number>(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+    const ethValue = convertUSDToCrypto(fundingGoal);
+    return parseFloat(
+      (ethValue + ethValue * (platformFeePercentage / 100)).toPrecision(4),
+    );
+  }, [fundingGoal]);
   const submit = async () => {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
-    const finalFundingGoal = fundingGoal ? convertUSDToCrypto(fundingGoal) : undefined;
 
     const newImages = await handleUploadImages();
-    console.log(deadline?.toISOString(), 'deadline');
+    console.log(newImages, 'image');
     await updateProposalsMutation({
       id,
       dto: {
         allowDonationAboveThreshold: allowFundsAboveGoal,
-        deadline: deadline?.toISOString() ?? undefined,
+        deadline:
+          portalType === 'all-or-nothing'
+            ? deadline?.toISOString() ?? undefined
+            : undefined,
         description: richtext,
         tags: generateTags(),
         images: [newImages],
@@ -151,9 +141,10 @@ export default function PortalProposalForm({
         termsAndCondition: 'test',
         isMultiSignatureReciever: false,
         treasurers: [address],
-        fundingGoal: finalFundingGoal,
+        fundingGoal:
+          portalType === 'all-or-nothing' ? finalFundingGoal.toString() : undefined,
         sendImmediately: portalType === 'pass-through',
-        platformFeePercentage: 5,
+        platformFeePercentage: platformFeePercentage,
       },
     });
     router.push(`/profile/${appUser?.username}`);
@@ -183,7 +174,7 @@ export default function PortalProposalForm({
 
   return (
     <div className="flex flex-col gap-4">
-      <ImageComponent files={files} setfiles={setFiles} image={image} />
+      <ImageComponent files={files} setfiles={setFiles} image={images} />
       <TextInput
         label="Portal Name"
         placeholder="Waste Management System for the City of Lagos"
@@ -311,7 +302,7 @@ export default function PortalProposalForm({
           !title ||
           !richtext ||
           !address ||
-          !files.length ||
+          (!files.length && !images) ||
           (portalType === 'all-or-nothing' && (!fundingGoal || !deadline))
         }
       >

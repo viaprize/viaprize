@@ -1,4 +1,5 @@
 import { getAccessToken } from '@privy-io/react-auth';
+import useAppUserStore from 'store/app-user';
 import { Api } from './api';
 
 export const backendApi = async (withoutAuth?: boolean) => {
@@ -16,6 +17,14 @@ export const backendApi = async (withoutAuth?: boolean) => {
         },
       },
     });
+  }
+
+  if (!token) {
+    const user = useAppUserStore.getState().user;
+    if (user) {
+      useAppUserStore.getState().clearUser();
+    }
+    return api;
   }
   return api;
 };

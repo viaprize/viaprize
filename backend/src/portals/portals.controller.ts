@@ -1,14 +1,19 @@
 import { TypedBody, TypedParam } from '@nestia/core';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
   Get,
   HttpException,
+  Inject,
+  Param,
+  Patch,
   Post,
   Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
@@ -19,7 +24,6 @@ import { RejectProposalDto } from 'src/prizes/dto/reject-proposal.dto';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
-import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
 import {
   TestTrigger,
@@ -31,6 +35,7 @@ import { Portals } from './entities/portal.entity';
 import { PortalWithBalance } from './entities/types';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
+import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 
 function addMinutes(date: Date, minutes: number): Date {
   date.setMinutes(date.getMinutes() + minutes);
@@ -65,7 +70,16 @@ export class PortalsController {
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
+  @Get('/clear_cache')
+  async clearCache(): Promise<Http200Response> {
+    await this.cacheManager.reset();
+    return {
+      message: 'Cache cleared',
+    };
+  }
 
   @Post('')
   @UseGuards(AuthGuard)
@@ -91,6 +105,7 @@ export class PortalsController {
       treasurers: portalProposal.treasurers,
       user: portalProposal.user,
       sendImmediately: portalProposal.sendImmediately,
+      fundingGoalWithPlatformFee: portalProposal.fundingGoalWithPlatformFee,
     });
     if (!portalProposal.sendImmediately) {
       const properMinutes = extractMinutes(
@@ -121,6 +136,9 @@ export class PortalsController {
       portalProposal.user.name,
       portalProposal.title,
     );
+
+    await this.cacheManager.reset();
+
     return portal;
   }
 
@@ -143,70 +161,152 @@ export class PortalsController {
     page: number = 1,
     @Query('limit')
     limit: number = 10,
-  ): Promise<Readonly<{ data: PortalWithBalance[]; hasNextPage: boolean }>> {
-    const PortalWithoutBalance = infinityPagination(
-      await this.portalsService.findAllPendingWithPagination({
-        page,
-        limit,
-      }),
-      {
-        limit,
-        page,
-      },
+    @Query('tags')
+    tags?: string[],
+    @Query('search')
+    search?: string,
+    @Query('sort')
+    sort?: 'DESC' | 'ASC',
+  ): Promise<
+    Readonly<{
+      data: PortalWithBalance[];
+      hasNextPage: boolean;
+    }>
+  > {
+    let portalWithoutBalance: {
+      data: Portals[];
+      hasNextPage: boolean;
+    };
+    const key = `portals-${page}-${limit}-${tags}-${search}-${sort}`;
+    const cachePortalWithoutBalance = await this.cacheManager.get(key);
+    if (cachePortalWithoutBalance) {
+      portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
+    } else {
+      portalWithoutBalance = infinityPagination(
+        await this.portalsService.findAllPendingWithPagination({
+          page,
+          limit,
+          tags: tags,
+          search: search,
+          sort: sort,
+        }),
+        {
+          limit,
+          page,
+        },
+      );
+      await this.cacheManager.set(
+        key,
+        JSON.stringify(portalWithoutBalance),
+        21600000,
+      );
+    }
+    const results = await this.blockchainService.getPortalsPublicVariables(
+      portalWithoutBalance.data.map((portal) => portal.contract_address),
     );
-    const PortalWithBalanceData: PortalWithBalance[] = await Promise.all(
-      PortalWithoutBalance.data.map(async (Portal) => {
-        const balance = await this.blockchainService.getBalanceOfAddress(
-          Portal.contract_address,
-        );
-        const totalRewards =
-          await this.blockchainService.getTotalRewardsOfPortal(
-            Portal.contract_address,
-          );
-        const totalFunds = await this.blockchainService.getTotalFundsOfPortal(
-          Portal.contract_address,
-        );
-        const isActive = await this.blockchainService.isPortalActive(
-          Portal.contract_address,
-        );
+    console.log({ results });
+    let start = 0;
+    let end = 4;
+    const portalWithBalanceData: PortalWithBalance[] =
+      portalWithoutBalance.data.map((portal) => {
+        const portalResults = results.slice(start, end);
+        start += 4;
+        end += 4;
         return {
-          ...Portal,
-          balance: parseInt(balance.toString()),
-          totalFunds: parseInt(totalFunds.toString()),
-          totalRewards: parseInt(totalRewards.toString()),
-          isActive: isActive,
+          ...portal,
+          balance: parseInt((portalResults[0].result as bigint).toString()),
+          totalFunds: parseInt((portalResults[1].result as bigint).toString()),
+          totalRewards: parseInt(
+            (portalResults[2].result as bigint).toString(),
+          ),
+          isActive: portalResults[3].result as boolean,
         } as PortalWithBalance;
-      }),
-    );
+      });
     return {
-      data: PortalWithBalanceData as PortalWithBalance[],
-      hasNextPage: PortalWithoutBalance.hasNextPage,
+      data: portalWithBalanceData,
+      hasNextPage: portalWithoutBalance.hasNextPage,
     };
   }
 
   @Get('/:id')
   async getPortal(@TypedParam('id') id: string): Promise<PortalWithBalance> {
-    const Portal = await this.portalsService.findOne(id);
-    const balance = await this.blockchainService.getBalanceOfAddress(
-      Portal.contract_address,
+    const portal = await this.portalsService.findOne(id);
+    const results = await this.blockchainService.getPortalPublicVariables(
+      portal.contract_address,
     );
-    const totalFunds = await this.blockchainService.getTotalFundsOfPortal(
-      Portal.contract_address,
-    );
-    const totalRewards = await this.blockchainService.getTotalRewardsOfPortal(
-      Portal.contract_address,
-    );
-    const isActive = await this.blockchainService.isPortalActive(
-      Portal.contract_address,
+    const contributors = await this.blockchainService.getPortalContributors(
+      portal.contract_address,
     );
 
     return {
-      ...Portal,
-      balance: parseInt(balance.toString()),
-      totalFunds: parseInt(totalFunds.toString()),
-      totalRewards: parseInt(totalRewards.toString()),
-      isActive: isActive,
+      ...portal,
+      balance: parseInt((results[0].result as bigint).toString()),
+      totalFunds: parseInt((results[1].result as bigint).toString()),
+      totalRewards: parseInt((results[2].result as bigint).toString()),
+      isActive: results[3].result as boolean,
+      contributors: contributors,
     };
+  }
+
+  /**
+   * The code snippet you provided is a method in the `PortalsController` class. It is a route handler
+   * for the GET request to `/user/{username}` endpoint. Here's a breakdown of what it does:
+   * Gets page
+   *
+   * @summary Get all Portal of a single user
+   *
+   * @date 9/25/2023 - 4:06:45 AM
+   * @security bearer
+   * @async
+   * @param {page=1} this is the page number of the return pending proposals
+   * @param {limit=10} this is the limit of the return type of the pending proposals
+   * @returns {Promise<Readonly<{data: PortalProposals[];hasNextPage: boolean;}>>}
+   */
+
+  @Get('/user/:username')
+  @UseGuards(AuthGuard)
+  async getPortalByUser(
+    @Param('username') username: string,
+  ): Promise<PortalWithBalance[]> {
+    let portalWithoutBalance: Portals[];
+
+    const key = `user-portals-${username}`;
+    const cachePortalWithoutBalance = await this.cacheManager.get(key);
+    if (cachePortalWithoutBalance) {
+      portalWithoutBalance = JSON.parse(cachePortalWithoutBalance as string);
+    } else {
+      (portalWithoutBalance = await this.portalsService.findAllUserPortals(
+        username,
+      )),
+        await this.cacheManager.set(
+          key,
+          JSON.stringify(portalWithoutBalance),
+          21600000,
+        );
+    }
+    const results = await this.blockchainService.getPortalsPublicVariables(
+      portalWithoutBalance.map((portal) => portal.contract_address),
+    );
+    console.log({ results });
+    let start = 0;
+    let end = 4;
+    const portalWithBalanceData: PortalWithBalance[] = portalWithoutBalance.map(
+      (portal) => {
+        const portalResults = results.slice(start, end);
+        start += 4;
+        end += 4;
+        return {
+          ...portal,
+          balance: parseInt((portalResults[0].result as bigint).toString()),
+          totalFunds: parseInt((portalResults[1].result as bigint).toString()),
+          totalRewards: parseInt(
+            (portalResults[2].result as bigint).toString(),
+          ),
+          isActive: portalResults[3].result as boolean,
+        } as PortalWithBalance;
+      },
+    );
+    return portalWithBalanceData;
   }
 
   /**
@@ -451,13 +551,19 @@ export class PortalsController {
    * @param {string} id
    * @returns {Promise<Http200Response>}
    */
-  @Post('/proposals/:id')
+  @Patch('/proposals/:id')
+  @UseGuards(AuthGuard)
   async updateProposal(
     @TypedParam('id') id: string,
-    @TypedBody() updateBody: UpdatePortalPropsalDto,
+    @Body() updateBody: UpdatePortalPropsalDto,
   ): Promise<Http200Response> {
-    await this.portalProposalsService.update(id, updateBody);
-
+    console.log(updateBody, 'updateBody');
+    const removeRejection = {
+      ...updateBody,
+      isRejected: false,
+    };
+    await this.portalProposalsService.update(id, removeRejection);
+    await this.cacheManager.reset();
     return {
       message: `Proposal with id ${id} has been updated`,
     };

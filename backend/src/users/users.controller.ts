@@ -1,12 +1,15 @@
 import { TypedBody, TypedParam } from '@nestia/core';
-import { Controller, Get, Post } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Controller, Get, Inject, Post } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { MailService } from 'src/mail/mail.service';
 import { Prize } from 'src/prizes/entities/prize.entity';
 import { Submission } from 'src/prizes/entities/submission.entity';
+import { Http200Response } from 'src/utils/types/http.type';
 import { CreateUser } from './dto/create-user.dto';
+import { UpdateUser } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
-import { UpdateUser } from './dto/update-user.dto';
 
 /**
  * The Users controller is responsible for handling requests from the client related to user data.
@@ -17,6 +20,7 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   /**
@@ -28,26 +32,34 @@ export class UsersController {
    */
   @Post()
   async create(@TypedBody() createUserDto: CreateUser): Promise<User> {
-    console.log({ ...createUserDto }, 'hi');
     const user = await this.usersService.create(createUserDto);
-    console.log({ ...user }, 'user');
+
+    await this.cacheManager.reset();
     await this.mailService.welcome(user.email, user.name);
     return user;
   }
 
   @Post('update/:username')
-  async update(
+  async updateByUsername(
     @TypedBody() updateDtoUser: UpdateUser,
     @TypedParam('username') username: string,
-  ): Promise<User> {
-    const user = await this.usersService.update(username, updateDtoUser);
-    return user;
+  ) {
+    try {
+      const user = await this.usersService.update(username, updateDtoUser);
+      await this.cacheManager.reset();
+      return user;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
-  // async update(@TypedBody() updateUserDto: UpdateUser): Promise<User> {
-  //   const user = await this.usersService.update(updateUserDto);
-  //   return user;
-  // }
+  @Get('/clear_cache')
+  async clearCache(): Promise<Http200Response> {
+    await this.cacheManager.reset();
+    return {
+      message: 'Cache cleared',
+    };
+  }
 
   /**
    * Get a user by ID.
@@ -55,9 +67,13 @@ export class UsersController {
    * @returns {Promise<User>} The user object.
    */
   @Get(':authId')
-  async findOneByAuthId(@TypedParam('authId') userId: string): Promise<User> {
-    const user = await this.usersService.findOneByAuthId(userId);
-
+  async findOneByAuthId(@TypedParam('authId') authId: string): Promise<User> {
+    const cacheUser = await this.cacheManager.get<User>(authId);
+    if (cacheUser) {
+      return cacheUser;
+    }
+    const user = await this.usersService.findOneByAuthId(authId);
+    await this.cacheManager.set(authId, user);
     return user;
   }
 
@@ -70,9 +86,12 @@ export class UsersController {
   async findOneByUsername(
     @TypedParam('username') username: string,
   ): Promise<User> {
-    console.log('here is the user: ', username);
+    const cacheUser = await this.cacheManager.get<User>(username);
+    if (cacheUser) {
+      return cacheUser;
+    }
     const user = await this.usersService.findOneByUsername(username);
-
+    await this.cacheManager.set(username, user);
     return user;
   }
   /**
