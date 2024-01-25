@@ -68,6 +68,18 @@ export default function SendCard() {
     setLoading(false);
   };
 
+  const buyCrypto = () => {
+    wallet?.fund({
+      config: {
+        currencyCode: 'ETH_ETHEREUM', // Purchase ETH on Ethereum mainnet
+        quoteCurrencyAmount: 0.05, // Purchase 0.05 ETH
+        paymentMethod: 'credit_debit_card', // Purchase with credit or debit card
+        uiConfig: { accentColor: '#696FFD', theme: 'light' }, // Styling preferences for MoonPay's UIs
+      },
+      provider: 'moonpay',
+    });
+  };
+
   return (
     <Group mt="sm" p="sm">
       {appUser && balance ? (
@@ -107,6 +119,13 @@ export default function SendCard() {
           >
             Send
           </Button>
+          {/* <Button
+            onClick={async () => {
+              await buyCrypto();
+            }}
+          >
+            Buy Crypto
+          </Button> */}
         </Stack>
       ) : null}
     </Group>
