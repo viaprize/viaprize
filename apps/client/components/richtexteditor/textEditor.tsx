@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@mantine/core';
 import { Link, RichTextEditor } from '@mantine/tiptap';
 import { Highlight } from '@tiptap/extension-highlight';
@@ -9,6 +11,10 @@ import type { AnyExtension } from '@tiptap/react';
 import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
+// import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import dynamic from 'next/dynamic';
+import { useMemo } from 'react';
 
 interface TextEditorProps {
   disabled?: boolean;
@@ -23,6 +29,13 @@ export function TextEditor({
   setRichtext,
   canSetRichtext,
 }: TextEditorProps) {
+
+   const ReactQuill = useMemo(
+     () => dynamic(() => import('react-quill'), { ssr: false }),
+     [],
+   );
+
+   
   const editor = useEditor({
     editable: !disabled,
     extensions: [
@@ -42,9 +55,15 @@ export function TextEditor({
     },
   });
 
+  const handleQuillChange = (content: string) => {
+    if (setRichtext) {
+      setRichtext(content);
+    }
+  };
+
   return (
     <>
-      <RichTextEditor editor={editor}>
+      {/* <RichTextEditor editor={editor}>
         {disabled ? null : (
           <RichTextEditor.Toolbar sticky stickyOffset={60}>
             <RichTextEditor.ControlsGroup>
@@ -87,7 +106,26 @@ export function TextEditor({
           </RichTextEditor.Toolbar>
         )}
         <RichTextEditor.Content />
-      </RichTextEditor>
+      </RichTextEditor> */}
+
+      <ReactQuill
+        value={richtext}
+        onChange={handleQuillChange}
+        readOnly={disabled}
+        theme="snow"
+        modules={{
+          toolbar: disabled
+            ? []
+            : [
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ header: [1, 2, 3, 4] }],
+                ['blockquote', 'code-block'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link', 'image'],
+                [{ align: [] }],
+              ],
+        }}
+      />
       {canSetRichtext ? (
         <Button
           className="my-2"
