@@ -12,7 +12,7 @@ library SubmissionLibrary {
 }
  
 
-contract ViaPrize {
+contract PrizeJudges {
     /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
     /// @notice this will be the total amount of rewards available
@@ -27,7 +27,7 @@ contract ViaPrize {
     uint256 public voting_time; 
     /// @notice this will be the time that the submission period ends
     uint256 public submission_time;
-    uint256 track_submission_time;
+    bool track_submission_time;
     /// @notice  this will be a mapping of the addresses of the proposers to a boolean value of true or false
     mapping (address => bool) public isProposer;
     /// @notice array of proposers;
@@ -112,7 +112,7 @@ contract ViaPrize {
     event SubmissionCreated(address indexed submitter, bytes32 indexed submissionHash);
 
 
-    constructor(address[] memory _proposers, address[] memory _platformAdmins, address[] memory _judges, uint _platFormFee, uint _proposerFee, address _platformAddress) {
+    constructor(address[] memory _proposers, address[] memory _platformAdmins, address[] memory _judges, uint _platFormFee, uint _proposerFee, address _platformAddress,uint _submission_time) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
         
         for(uint i=0; i<_proposers.length; i++) {
@@ -136,6 +136,8 @@ contract ViaPrize {
         proposerFee = _proposerFee;
         platformFee = _platFormFee;
         isActive = true;
+        submission_time = block.timestamp +  _submission_time * 1 days;
+        track_submission_time = true;
     }
 
 
@@ -149,7 +151,7 @@ contract ViaPrize {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         /// @notice submission time will be in days
         submission_time = block.timestamp + _submission_time * 1 days;
-        track_submission_time = block.timestamp + _submission_time * 1 days;      
+        track_submission_time = true;      
     }
 
     function end_submission_period() public onlyPlatformAdmin {
@@ -160,7 +162,7 @@ contract ViaPrize {
     /// @notice start the voting period 
     function start_voting_period(uint256 _voting_time) public {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
-        if(track_submission_time == 0) revert("before starting voting period you need to start and end the submission period");
+        if(track_submission_time == false) revert("before starting voting period you need to start and end the submission period");
         if(block.timestamp < submission_time) revert SubmissionPeriodActive();
         /// @notice voting time also in days
         voting_time = block.timestamp + _voting_time * 1 days;
@@ -178,7 +180,7 @@ contract ViaPrize {
         if(voting_time > 0) revert VotingPeriodActive();
         if(submission_time == 0) revert SubmissionPeriodNotActive();
         submission_time = submission_time + _submissionTime * 1 days;
-        track_submission_time = track_submission_time + _submissionTime * 1 days;
+        track_submission_time = true;
     }
 
     function increase_voting_period(uint256 _votingTime) public onlyPlatformAdmin {
@@ -204,7 +206,7 @@ contract ViaPrize {
         }
         total_funds += msg.value;
         total_rewards += (msg.value * (100-platformFee-proposerFee)) / 100; /// @notice  platform fee will depend on the prize
-        total_judge_votes = (msg.value * (100-platformFee-proposerFee)) / 100;
+        total_judge_votes = msg.value;
         assignJudgeVotes();
     }
 
@@ -276,7 +278,7 @@ contract ViaPrize {
         /// @notice submission should return a struct with the submissionHash, the submitter, the submissionText, the threshhold, the votes, and the funded status 
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
-        uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+        uint256 amountToSubmission = amount * (100 - platformFee - proposerFee)) / 100;
         submissionTree.addVotes(_submissionHash, amountToSubmission);
         totalVotes+=amountToSubmission;
         judgeVotes[msg.sender][_submissionHash] += amount;
