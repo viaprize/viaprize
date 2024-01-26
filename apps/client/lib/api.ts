@@ -232,6 +232,17 @@ export interface Contribution {
   donationTime: string;
 }
 
+/** Result object returned by DeleteQueryBuilder execution. */
+export interface DeleteResult {
+  /** Raw SQL result returned by executed query. */
+  raw: any;
+  /**
+   * Number of affected rows/documents
+   * Not all drivers support this
+   */
+  affected?: number | null;
+}
+
 /** Make all properties in T readonly */
 export interface ReadonlyTypeO1 {
   data: PortalProposals[];
@@ -858,6 +869,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     portalsDetail: (id: string, params: RequestParams = {}) =>
       this.request<PortalWithBalance, any>({
         path: `/portals/${id}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteDetail
+     * @request GET:/portals/delete/{id}
+     */
+    deleteDetail: (id: string, params: RequestParams = {}) =>
+      this.request<DeleteResult, any>({
+        path: `/portals/delete/${id}`,
         method: 'GET',
         format: 'json',
         ...params,

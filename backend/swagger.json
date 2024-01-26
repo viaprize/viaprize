@@ -410,6 +410,38 @@
         "x-nestia-method": "GET"
       }
     },
+    "/portals/delete/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResult"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.delete.getDeletePortalById",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/portals/user/{username}": {
       "get": {
         "tags": [],
@@ -4146,6 +4178,29 @@
           "amount",
           "donationTime"
         ],
+        "x-typia-jsDocTags": []
+      },
+      "DeleteResult": {
+        "type": "object",
+        "properties": {
+          "raw": {
+            "description": "Raw SQL result returned by executed query.",
+            "x-typia-required": true,
+            "x-typia-optional": false
+          },
+          "affected": {
+            "description": "Number of affected rows/documents\nNot all drivers support this",
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "nullable": false,
+        "required": [
+          "raw"
+        ],
+        "description": "Result object returned by DeleteQueryBuilder execution.",
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o1": {

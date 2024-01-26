@@ -71,7 +71,7 @@ export class PortalsController {
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -136,7 +136,6 @@ export class PortalsController {
       portalProposal.user.name,
       portalProposal.title,
     );
-
     await this.cacheManager.reset();
 
     return portal;
@@ -247,6 +246,13 @@ export class PortalsController {
       isActive: results[3].result as boolean,
       contributors: contributors,
     };
+  }
+
+  @Get('/delete/:id')
+  async getDeletePortalById(@TypedParam('id') id: string) {
+    await this.portalProposalsService.remove(id);
+    await this.cacheManager.reset();
+    return true;
   }
 
   /**

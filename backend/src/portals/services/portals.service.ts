@@ -10,7 +10,7 @@ export class PortalsService {
   constructor(
     @InjectRepository(Portals)
     private portalRepository: Repository<Portals>,
-  ) {}
+  ) { }
 
   async findAll(query: PortalPaginateQuery): Promise<Paginated<Portals>> {
     const { tags, ...paginateQuery } = query;
@@ -104,7 +104,10 @@ export class PortalsService {
     const portal = this.portalRepository.create(portalData);
     return await this.portalRepository.save(portal);
   }
-  remove(id: number) {
-    return `This action removes a #${id} portal`;
+
+  async remove(id: string) {
+    const res = await this.portalRepository.delete(id);
+    console.log(res);
+    return res;
   }
 }

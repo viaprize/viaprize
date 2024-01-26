@@ -5,6 +5,7 @@ import type { ProposalStatus } from '@/lib/types';
 import { Button, Text, Title } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/navigation';
+import { useMutation } from 'react-query';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
 import { useQuery } from 'wagmi';
@@ -24,16 +25,20 @@ const getProposalStatus = (item: PortalProposals): ProposalStatus => {
 export default function PortalProposalsTabs({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { createPortal } = usePortal();
-  const { getProposalsOfUser: getPortalProposalsOfUser } = usePortalProposal();
+  const { getProposalsOfUser: getPortalProposalsOfUser, deleteProposal } =
+    usePortalProposal();
 
-  const { data, isSuccess, isLoading } = useQuery(
-    ['getPortalProposals', undefined],
+  const { data, isSuccess, isLoading,refetch:refetchPortals } = useQuery(
+    [`getPortalProposals${params.id}`, undefined],
     () => {
       return getPortalProposalsOfUser({ limit: 10, page: 1 }, params.id);
     },
   );
 
-  if (isLoading) return <SkeletonLoad numberOfCards={3} />;
+  const { mutateAsync: DeletePortalProposal, isLoading: deletingProposal } =
+    useMutation(deleteProposal);
+
+  if (isLoading) return <SkeletonLoad gridedSkeleton numberOfCards={3} />;
 
   if (data?.length === 0)
     return (
@@ -56,6 +61,13 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
         {isSuccess
           ? data?.map((item) => (
               <ProposalExploreCard
+                onDeleted={async () => {
+                  toast.loading('Deleting Proposal...');
+                  await DeletePortalProposal(item.id);
+                  await refetchPortals();
+                  toast.dismiss();
+                  toast.success('Deleted Proposal');
+                }}
                 status={getProposalStatus(item)}
                 key={item.id}
                 imageUrl={item.images[0]}
