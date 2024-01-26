@@ -24,6 +24,7 @@ import { RejectProposalDto } from 'src/prizes/dto/reject-proposal.dto';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
+import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
 import {
   TestTrigger,
@@ -35,7 +36,6 @@ import { Portals } from './entities/portal.entity';
 import { PortalWithBalance } from './entities/types';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
-import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
 
 function addMinutes(date: Date, minutes: number): Date {
   date.setMinutes(date.getMinutes() + minutes);
@@ -71,7 +71,7 @@ export class PortalsController {
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -237,6 +237,7 @@ export class PortalsController {
     const contributors = await this.blockchainService.getPortalContributors(
       portal.contract_address,
     );
+    console.log({ contributors });
 
     return {
       ...portal,
@@ -287,7 +288,7 @@ export class PortalsController {
     const results = await this.blockchainService.getPortalsPublicVariables(
       portalWithoutBalance.map((portal) => portal.contract_address),
     );
-    console.log({ results });
+    // console.log({ results });
     let start = 0;
     let end = 4;
     const portalWithBalanceData: PortalWithBalance[] = portalWithoutBalance.map(

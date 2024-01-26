@@ -3965,14 +3965,7 @@
             "type": "number"
           },
           "contributors": {
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "array",
-            "items": {
-              "x-typia-required": false,
-              "x-typia-optional": true,
-              "type": "string"
-            }
+            "$ref": "#/components/schemas/Contributions"
           },
           "id": {
             "x-typia-required": true,
@@ -4107,6 +4100,51 @@
           "images",
           "title",
           "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Contributions": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contribution"
+            }
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Contribution": {
+        "type": "object",
+        "properties": {
+          "contributor": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "amount": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "donationTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "contributor",
+          "amount",
+          "donationTime"
         ],
         "x-typia-jsDocTags": []
       },
