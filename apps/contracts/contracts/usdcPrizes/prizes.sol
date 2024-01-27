@@ -1,18 +1,15 @@
 /// @notice  SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
 import "../helperContracts/safemath.sol";
 import "../helperContracts/ierc20.sol";
 
+
 // import "./helperContracts/safemath.sol";
 
-library SubmissionLibrary {
-    function deploySubmission() external returns(address) {
-        SubmissionAVLTree new_SubmissionAVLTree = new SubmissionAVLTree();
-        return address(new_SubmissionAVLTree);
-    }
-}
+
  
 contract ViaPrize {
     /// @notice this will be the total amount of funds raised

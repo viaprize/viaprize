@@ -3,13 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./SubmissionAVLTree.sol";
 import "./helperContracts/safemath.sol";
-
-library SubmissionLibrary {
-    function deploySubmission() external returns(address) {
-        SubmissionAVLTree new_SubmissionAVLTree = new SubmissionAVLTree();
-        return address(new_SubmissionAVLTree);
-    }
-}
+import "./SubmissionLibrary.sol";
  
 
 contract PrizeJudges {
@@ -278,7 +272,7 @@ contract PrizeJudges {
         /// @notice submission should return a struct with the submissionHash, the submitter, the submissionText, the threshhold, the votes, and the funded status 
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
-        uint256 amountToSubmission = amount * (100 - platformFee - proposerFee)) / 100;
+        uint256 amountToSubmission = amount * ((100 - platformFee - proposerFee)) / 100;
         submissionTree.addVotes(_submissionHash, amountToSubmission);
         totalVotes+=amountToSubmission;
         judgeVotes[msg.sender][_submissionHash] += amount;

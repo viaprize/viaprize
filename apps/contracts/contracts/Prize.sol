@@ -3,14 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./SubmissionAVLTree.sol";
 import "./helperContracts/safemath.sol";
-
-library SubmissionLibrary {
-    function deploySubmission() external returns(address) {
-        SubmissionAVLTree new_SubmissionAVLTree = new SubmissionAVLTree();
-        return address(new_SubmissionAVLTree);
-    }
-}
- 
+import "./SubmissionLibrary.sol";
 
 contract Prize {
     /// @notice this will be the total amount of funds raised

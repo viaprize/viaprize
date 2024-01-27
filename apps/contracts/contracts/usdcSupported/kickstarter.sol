@@ -6,7 +6,7 @@ pragma solidity ^0.8.0;
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../helperContracts/safemath.sol";
 import "../helperContracts/ierc20.sol";
-// import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 
 contract Kickstarter {
@@ -35,7 +35,7 @@ contract Kickstarter {
     bool internal locked;
     IERC20 private _usdc;
     mapping(address => bool) public isEtherContributor;
-    // AggregatorV3Interface internal priceFeed;
+    AggregatorV3Interface internal priceFeed;
 
 
     error NotEnoughFunds();
