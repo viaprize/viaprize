@@ -1,6 +1,7 @@
 import {
   PrepareWriteContractConfig,
   WriteContractArgs,
+  WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
   prepareWriteContract,
