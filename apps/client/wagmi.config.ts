@@ -12,10 +12,21 @@ export default defineConfig({
     }),
     hardhat({
       project: '../contracts',
+      include: [
+        "contracts/PrizeFactory.sol/*.json",
+        "contracts/PrizeJudgesFactory.sol/*.json",
+        "contracts/Prize.sol/*.json",
+        "contracts/PrizeJudges.sol/*.json",
+        "contracts/portal.sol/*.json",
+        "contracts/portalFactory.sol/*.json",
+
+      ],
       deployments: {
-        ViaPrizeFactory: {
-          // 80001: '0x0dd8d97E5b41010F5a47dAA2217aed175Ad15dd4',
-          10: '0x6f951e2C1fD898435C0773db4CdA3f78ce2ec1AC',
+        PrizeFactory: {
+          10: '0x4D7489969513124394134865270240df5940541f'
+        },
+        PrizeJudgesFactory: {
+          10: '0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D'
         },
         portalFactory: {
           // 80001: '0xAe37824e718488787D1bbD87E35985ED107a0C7E',
@@ -23,6 +34,10 @@ export default defineConfig({
         },
       },
     }),
-    react(),
+    react({
+      useContractEvent: false,
+      useContractItemEvent: false,
+
+    })
   ],
 });

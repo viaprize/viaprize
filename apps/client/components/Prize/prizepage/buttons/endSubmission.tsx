@@ -1,4 +1,4 @@
-import { useViaPrizeEndSubmissionPeriod } from '@/lib/smartContract';
+import { usePrizeEndSubmissionPeriod } from '@/lib/smartContract';
 import { Button } from '@mantine/core';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
@@ -8,7 +8,7 @@ export default function EndSubmission({ contractAddress }: { contractAddress: st
   // const { config } = usePrepareViaPrizeEndSubmissionPeriod({
 
   // });
-  const { writeAsync, isLoading } = useViaPrizeEndSubmissionPeriod({
+  const { writeAsync, isLoading } = usePrizeEndSubmissionPeriod({
     account: address,
     address: contractAddress as `0x${string}`,
     onSuccess() {
