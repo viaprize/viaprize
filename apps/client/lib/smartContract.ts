@@ -1,26 +1,24 @@
 import {
-  writeContract,
+  PrepareWriteContractConfig,
   WriteContractArgs,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
   prepareWriteContract,
-  PrepareWriteContractConfig,
-  WriteContractMode,
+  writeContract,
 } from 'wagmi/actions';
 
 import {
-  useContractRead,
-  UseContractReadConfig,
-  useContractWrite,
-  UseContractWriteConfig,
-  usePrepareContractWrite,
-  UsePrepareContractWriteConfig,
   Address,
+  UseContractReadConfig,
+  UseContractWriteConfig,
+  UsePrepareContractWriteConfig,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
 } from 'wagmi';
 import {
-  ReadContractResult,
-  WriteContractMode,
   PrepareWriteContractResult,
+  ReadContractResult,
 } from 'wagmi/actions';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1153,19 +1151,19 @@ export function writePrizeFactory<
 >(
   config:
     | (Omit<
-        WriteContractPreparedArgs<typeof prizeFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof prizeFactoryAddress;
-      })
+      WriteContractPreparedArgs<typeof prizeFactoryABI, TFunctionName>,
+      'abi' | 'address'
+    > & {
+      mode: TMode;
+      chainId?: TMode extends 'prepared' ? TChainId : keyof typeof prizeFactoryAddress;
+    })
     | (Omit<
-        WriteContractUnpreparedArgs<typeof prizeFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof prizeFactoryAddress;
-      }),
+      WriteContractUnpreparedArgs<typeof prizeFactoryABI, TFunctionName>,
+      'abi' | 'address'
+    > & {
+      mode: TMode;
+      chainId?: TMode extends 'prepared' ? TChainId : keyof typeof prizeFactoryAddress;
+    }),
 ) {
   return writeContract({
     abi: prizeFactoryABI,
@@ -1233,23 +1231,23 @@ export function writePrizeJudgesFactory<
 >(
   config:
     | (Omit<
-        WriteContractPreparedArgs<typeof prizeJudgesFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared'
-          ? TChainId
-          : keyof typeof prizeJudgesFactoryAddress;
-      })
+      WriteContractPreparedArgs<typeof prizeJudgesFactoryABI, TFunctionName>,
+      'abi' | 'address'
+    > & {
+      mode: TMode;
+      chainId?: TMode extends 'prepared'
+      ? TChainId
+      : keyof typeof prizeJudgesFactoryAddress;
+    })
     | (Omit<
-        WriteContractUnpreparedArgs<typeof prizeJudgesFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared'
-          ? TChainId
-          : keyof typeof prizeJudgesFactoryAddress;
-      }),
+      WriteContractUnpreparedArgs<typeof prizeJudgesFactoryABI, TFunctionName>,
+      'abi' | 'address'
+    > & {
+      mode: TMode;
+      chainId?: TMode extends 'prepared'
+      ? TChainId
+      : keyof typeof prizeJudgesFactoryAddress;
+    }),
 ) {
   return writeContract({
     abi: prizeJudgesFactoryABI,
@@ -1290,19 +1288,19 @@ export function writePortalFactory<
 >(
   config:
     | (Omit<
-        WriteContractPreparedArgs<typeof portalFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
-      })
+      WriteContractPreparedArgs<typeof portalFactoryABI, TFunctionName>,
+      'abi' | 'address'
+    > & {
+      mode: TMode;
+      chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
+    })
     | (Omit<
-        WriteContractUnpreparedArgs<typeof portalFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
-      }),
+      WriteContractUnpreparedArgs<typeof portalFactoryABI, TFunctionName>,
+      'abi' | 'address'
+    > & {
+      mode: TMode;
+      chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
+    }),
 ) {
   return writeContract({
     abi: portalFactoryABI,
@@ -1705,13 +1703,13 @@ export function usePortalWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof portalABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      >
+      PrepareWriteContractResult<typeof portalABI, string>['request']['abi'],
+      TFunctionName,
+      TMode
+    >
     : UseContractWriteConfig<typeof portalABI, TFunctionName, TMode> & {
-        abi?: never;
-      } = {} as any,
+      abi?: never;
+    } = {} as any,
 ) {
   return useContractWrite<typeof portalABI, TFunctionName, TMode>({
     abi: portalABI,
@@ -1725,14 +1723,14 @@ export function usePortalWrite<
 export function usePortalAddFunds<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof portalABI, 'addFunds'>['request']['abi'],
-        'addFunds',
-        TMode
-      > & { functionName?: 'addFunds' }
+      PrepareWriteContractResult<typeof portalABI, 'addFunds'>['request']['abi'],
+      'addFunds',
+      TMode
+    > & { functionName?: 'addFunds' }
     : UseContractWriteConfig<typeof portalABI, 'addFunds', TMode> & {
-        abi?: never;
-        functionName?: 'addFunds';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'addFunds';
+    } = {} as any,
 ) {
   return useContractWrite<typeof portalABI, 'addFunds', TMode>({
     abi: portalABI,
@@ -1747,14 +1745,14 @@ export function usePortalAddFunds<TMode extends WriteContractMode = undefined>(
 export function usePortalEndCampaign<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof portalABI, 'endCampaign'>['request']['abi'],
-        'endCampaign',
-        TMode
-      > & { functionName?: 'endCampaign' }
+      PrepareWriteContractResult<typeof portalABI, 'endCampaign'>['request']['abi'],
+      'endCampaign',
+      TMode
+    > & { functionName?: 'endCampaign' }
     : UseContractWriteConfig<typeof portalABI, 'endCampaign', TMode> & {
-        abi?: never;
-        functionName?: 'endCampaign';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'endCampaign';
+    } = {} as any,
 ) {
   return useContractWrite<typeof portalABI, 'endCampaign', TMode>({
     abi: portalABI,
@@ -1769,17 +1767,17 @@ export function usePortalEndCampaign<TMode extends WriteContractMode = undefined
 export function usePortalEndEarlyandRefund<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof portalABI,
-          'endEarlyandRefund'
-        >['request']['abi'],
-        'endEarlyandRefund',
-        TMode
-      > & { functionName?: 'endEarlyandRefund' }
+      PrepareWriteContractResult<
+        typeof portalABI,
+        'endEarlyandRefund'
+      >['request']['abi'],
+      'endEarlyandRefund',
+      TMode
+    > & { functionName?: 'endEarlyandRefund' }
     : UseContractWriteConfig<typeof portalABI, 'endEarlyandRefund', TMode> & {
-        abi?: never;
-        functionName?: 'endEarlyandRefund';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'endEarlyandRefund';
+    } = {} as any,
 ) {
   return useContractWrite<typeof portalABI, 'endEarlyandRefund', TMode>({
     abi: portalABI,
@@ -1796,17 +1794,17 @@ export function usePortalEndKickStarterCampaign<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof portalABI,
-          'endKickStarterCampaign'
-        >['request']['abi'],
-        'endKickStarterCampaign',
-        TMode
-      > & { functionName?: 'endKickStarterCampaign' }
+      PrepareWriteContractResult<
+        typeof portalABI,
+        'endKickStarterCampaign'
+      >['request']['abi'],
+      'endKickStarterCampaign',
+      TMode
+    > & { functionName?: 'endKickStarterCampaign' }
     : UseContractWriteConfig<typeof portalABI, 'endKickStarterCampaign', TMode> & {
-        abi?: never;
-        functionName?: 'endKickStarterCampaign';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'endKickStarterCampaign';
+    } = {} as any,
 ) {
   return useContractWrite<typeof portalABI, 'endKickStarterCampaign', TMode>({
     abi: portalABI,
@@ -2378,13 +2376,13 @@ export function usePrizeWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      >
+      PrepareWriteContractResult<typeof prizeABI, string>['request']['abi'],
+      TFunctionName,
+      TMode
+    >
     : UseContractWriteConfig<typeof prizeABI, TFunctionName, TMode> & {
-        abi?: never;
-      } = {} as any,
+      abi?: never;
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, TFunctionName, TMode>({
     abi: prizeABI,
@@ -2398,14 +2396,14 @@ export function usePrizeWrite<
 export function usePrizeAddFunds<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'addFunds'>['request']['abi'],
-        'addFunds',
-        TMode
-      > & { functionName?: 'addFunds' }
+      PrepareWriteContractResult<typeof prizeABI, 'addFunds'>['request']['abi'],
+      'addFunds',
+      TMode
+    > & { functionName?: 'addFunds' }
     : UseContractWriteConfig<typeof prizeABI, 'addFunds', TMode> & {
-        abi?: never;
-        functionName?: 'addFunds';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'addFunds';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'addFunds', TMode>({
     abi: prizeABI,
@@ -2420,14 +2418,14 @@ export function usePrizeAddFunds<TMode extends WriteContractMode = undefined>(
 export function usePrizeAddSubmission<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'addSubmission'>['request']['abi'],
-        'addSubmission',
-        TMode
-      > & { functionName?: 'addSubmission' }
+      PrepareWriteContractResult<typeof prizeABI, 'addSubmission'>['request']['abi'],
+      'addSubmission',
+      TMode
+    > & { functionName?: 'addSubmission' }
     : UseContractWriteConfig<typeof prizeABI, 'addSubmission', TMode> & {
-        abi?: never;
-        functionName?: 'addSubmission';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'addSubmission';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'addSubmission', TMode>({
     abi: prizeABI,
@@ -2442,14 +2440,14 @@ export function usePrizeAddSubmission<TMode extends WriteContractMode = undefine
 export function usePrizeChangeVote<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'change_vote'>['request']['abi'],
-        'change_vote',
-        TMode
-      > & { functionName?: 'change_vote' }
+      PrepareWriteContractResult<typeof prizeABI, 'change_vote'>['request']['abi'],
+      'change_vote',
+      TMode
+    > & { functionName?: 'change_vote' }
     : UseContractWriteConfig<typeof prizeABI, 'change_vote', TMode> & {
-        abi?: never;
-        functionName?: 'change_vote';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'change_vote';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'change_vote', TMode>({
     abi: prizeABI,
@@ -2464,14 +2462,14 @@ export function usePrizeChangeVote<TMode extends WriteContractMode = undefined>(
 export function usePrizeEarlyRefund<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'earlyRefund'>['request']['abi'],
-        'earlyRefund',
-        TMode
-      > & { functionName?: 'earlyRefund' }
+      PrepareWriteContractResult<typeof prizeABI, 'earlyRefund'>['request']['abi'],
+      'earlyRefund',
+      TMode
+    > & { functionName?: 'earlyRefund' }
     : UseContractWriteConfig<typeof prizeABI, 'earlyRefund', TMode> & {
-        abi?: never;
-        functionName?: 'earlyRefund';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'earlyRefund';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'earlyRefund', TMode>({
     abi: prizeABI,
@@ -2486,17 +2484,17 @@ export function usePrizeEarlyRefund<TMode extends WriteContractMode = undefined>
 export function usePrizeEndSubmissionPeriod<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'end_submission_period'
-        >['request']['abi'],
-        'end_submission_period',
-        TMode
-      > & { functionName?: 'end_submission_period' }
+      PrepareWriteContractResult<
+        typeof prizeABI,
+        'end_submission_period'
+      >['request']['abi'],
+      'end_submission_period',
+      TMode
+    > & { functionName?: 'end_submission_period' }
     : UseContractWriteConfig<typeof prizeABI, 'end_submission_period', TMode> & {
-        abi?: never;
-        functionName?: 'end_submission_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'end_submission_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'end_submission_period', TMode>({
     abi: prizeABI,
@@ -2511,17 +2509,17 @@ export function usePrizeEndSubmissionPeriod<TMode extends WriteContractMode = un
 export function usePrizeEndVotingPeriod<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'end_voting_period'
-        >['request']['abi'],
-        'end_voting_period',
-        TMode
-      > & { functionName?: 'end_voting_period' }
+      PrepareWriteContractResult<
+        typeof prizeABI,
+        'end_voting_period'
+      >['request']['abi'],
+      'end_voting_period',
+      TMode
+    > & { functionName?: 'end_voting_period' }
     : UseContractWriteConfig<typeof prizeABI, 'end_voting_period', TMode> & {
-        abi?: never;
-        functionName?: 'end_voting_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'end_voting_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'end_voting_period', TMode>({
     abi: prizeABI,
@@ -2538,17 +2536,17 @@ export function usePrizeIncreaseSubmissionPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'increase_submission_period'
-        >['request']['abi'],
-        'increase_submission_period',
-        TMode
-      > & { functionName?: 'increase_submission_period' }
+      PrepareWriteContractResult<
+        typeof prizeABI,
+        'increase_submission_period'
+      >['request']['abi'],
+      'increase_submission_period',
+      TMode
+    > & { functionName?: 'increase_submission_period' }
     : UseContractWriteConfig<typeof prizeABI, 'increase_submission_period', TMode> & {
-        abi?: never;
-        functionName?: 'increase_submission_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'increase_submission_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'increase_submission_period', TMode>({
     abi: prizeABI,
@@ -2563,17 +2561,17 @@ export function usePrizeIncreaseSubmissionPeriod<
 export function usePrizeIncreaseVotingPeriod<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'increase_voting_period'
-        >['request']['abi'],
-        'increase_voting_period',
-        TMode
-      > & { functionName?: 'increase_voting_period' }
+      PrepareWriteContractResult<
+        typeof prizeABI,
+        'increase_voting_period'
+      >['request']['abi'],
+      'increase_voting_period',
+      TMode
+    > & { functionName?: 'increase_voting_period' }
     : UseContractWriteConfig<typeof prizeABI, 'increase_voting_period', TMode> & {
-        abi?: never;
-        functionName?: 'increase_voting_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'increase_voting_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'increase_voting_period', TMode>({
     abi: prizeABI,
@@ -2590,17 +2588,17 @@ export function usePrizeStartSubmissionPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'start_submission_period'
-        >['request']['abi'],
-        'start_submission_period',
-        TMode
-      > & { functionName?: 'start_submission_period' }
+      PrepareWriteContractResult<
+        typeof prizeABI,
+        'start_submission_period'
+      >['request']['abi'],
+      'start_submission_period',
+      TMode
+    > & { functionName?: 'start_submission_period' }
     : UseContractWriteConfig<typeof prizeABI, 'start_submission_period', TMode> & {
-        abi?: never;
-        functionName?: 'start_submission_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'start_submission_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'start_submission_period', TMode>({
     abi: prizeABI,
@@ -2615,17 +2613,17 @@ export function usePrizeStartSubmissionPeriod<
 export function usePrizeStartVotingPeriod<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'start_voting_period'
-        >['request']['abi'],
-        'start_voting_period',
-        TMode
-      > & { functionName?: 'start_voting_period' }
+      PrepareWriteContractResult<
+        typeof prizeABI,
+        'start_voting_period'
+      >['request']['abi'],
+      'start_voting_period',
+      TMode
+    > & { functionName?: 'start_voting_period' }
     : UseContractWriteConfig<typeof prizeABI, 'start_voting_period', TMode> & {
-        abi?: never;
-        functionName?: 'start_voting_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'start_voting_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'start_voting_period', TMode>({
     abi: prizeABI,
@@ -2640,14 +2638,14 @@ export function usePrizeStartVotingPeriod<TMode extends WriteContractMode = unde
 export function usePrizeVote<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'vote'>['request']['abi'],
-        'vote',
-        TMode
-      > & { functionName?: 'vote' }
+      PrepareWriteContractResult<typeof prizeABI, 'vote'>['request']['abi'],
+      'vote',
+      TMode
+    > & { functionName?: 'vote' }
     : UseContractWriteConfig<typeof prizeABI, 'vote', TMode> & {
-        abi?: never;
-        functionName?: 'vote';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'vote';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeABI, 'vote', TMode>({
     abi: prizeABI,
@@ -2859,15 +2857,15 @@ export function usePrizeFactoryWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeFactoryABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      > & { address?: Address; chainId?: TChainId }
+      PrepareWriteContractResult<typeof prizeFactoryABI, string>['request']['abi'],
+      TFunctionName,
+      TMode
+    > & { address?: Address; chainId?: TChainId }
     : UseContractWriteConfig<typeof prizeFactoryABI, TFunctionName, TMode> & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-      } = {} as any,
+      abi?: never;
+      address?: never;
+      chainId?: TChainId;
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeFactoryABI, TFunctionName, TMode>({
     abi: prizeFactoryABI,
@@ -2887,19 +2885,19 @@ export function usePrizeFactoryCreateViaPrize<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeFactoryABI,
-          'createViaPrize'
-        >['request']['abi'],
-        'createViaPrize',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'createViaPrize' }
+      PrepareWriteContractResult<
+        typeof prizeFactoryABI,
+        'createViaPrize'
+      >['request']['abi'],
+      'createViaPrize',
+      TMode
+    > & { address?: Address; chainId?: TChainId; functionName?: 'createViaPrize' }
     : UseContractWriteConfig<typeof prizeFactoryABI, 'createViaPrize', TMode> & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-        functionName?: 'createViaPrize';
-      } = {} as any,
+      abi?: never;
+      address?: never;
+      chainId?: TChainId;
+      functionName?: 'createViaPrize';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeFactoryABI, 'createViaPrize', TMode>({
     abi: prizeFactoryABI,
@@ -3525,13 +3523,13 @@ export function usePrizeJudgesWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeJudgesABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      >
+      PrepareWriteContractResult<typeof prizeJudgesABI, string>['request']['abi'],
+      TFunctionName,
+      TMode
+    >
     : UseContractWriteConfig<typeof prizeJudgesABI, TFunctionName, TMode> & {
-        abi?: never;
-      } = {} as any,
+      abi?: never;
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, TFunctionName, TMode>({
     abi: prizeJudgesABI,
@@ -3545,14 +3543,14 @@ export function usePrizeJudgesWrite<
 export function usePrizeJudgesAddFunds<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeJudgesABI, 'addFunds'>['request']['abi'],
-        'addFunds',
-        TMode
-      > & { functionName?: 'addFunds' }
+      PrepareWriteContractResult<typeof prizeJudgesABI, 'addFunds'>['request']['abi'],
+      'addFunds',
+      TMode
+    > & { functionName?: 'addFunds' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'addFunds', TMode> & {
-        abi?: never;
-        functionName?: 'addFunds';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'addFunds';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'addFunds', TMode>({
     abi: prizeJudgesABI,
@@ -3567,17 +3565,17 @@ export function usePrizeJudgesAddFunds<TMode extends WriteContractMode = undefin
 export function usePrizeJudgesAddSubmission<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'addSubmission'
-        >['request']['abi'],
-        'addSubmission',
-        TMode
-      > & { functionName?: 'addSubmission' }
+      PrepareWriteContractResult<
+        typeof prizeJudgesABI,
+        'addSubmission'
+      >['request']['abi'],
+      'addSubmission',
+      TMode
+    > & { functionName?: 'addSubmission' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'addSubmission', TMode> & {
-        abi?: never;
-        functionName?: 'addSubmission';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'addSubmission';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'addSubmission', TMode>({
     abi: prizeJudgesABI,
@@ -3594,17 +3592,17 @@ export function usePrizeJudgesAssignJudgeVotes<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'assignJudgeVotes'
-        >['request']['abi'],
-        'assignJudgeVotes',
-        TMode
-      > & { functionName?: 'assignJudgeVotes' }
+      PrepareWriteContractResult<
+        typeof prizeJudgesABI,
+        'assignJudgeVotes'
+      >['request']['abi'],
+      'assignJudgeVotes',
+      TMode
+    > & { functionName?: 'assignJudgeVotes' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'assignJudgeVotes', TMode> & {
-        abi?: never;
-        functionName?: 'assignJudgeVotes';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'assignJudgeVotes';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'assignJudgeVotes', TMode>({
     abi: prizeJudgesABI,
@@ -3619,17 +3617,17 @@ export function usePrizeJudgesAssignJudgeVotes<
 export function usePrizeJudgesChangeVote<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'change_vote'
-        >['request']['abi'],
-        'change_vote',
-        TMode
-      > & { functionName?: 'change_vote' }
+      PrepareWriteContractResult<
+        typeof prizeJudgesABI,
+        'change_vote'
+      >['request']['abi'],
+      'change_vote',
+      TMode
+    > & { functionName?: 'change_vote' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'change_vote', TMode> & {
-        abi?: never;
-        functionName?: 'change_vote';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'change_vote';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'change_vote', TMode>({
     abi: prizeJudgesABI,
@@ -3646,21 +3644,21 @@ export function usePrizeJudgesDistributeUseUnusedVotesV2<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'distribute_use_unused_votes_v2'
-        >['request']['abi'],
-        'distribute_use_unused_votes_v2',
-        TMode
-      > & { functionName?: 'distribute_use_unused_votes_v2' }
-    : UseContractWriteConfig<
+      PrepareWriteContractResult<
         typeof prizeJudgesABI,
-        'distribute_use_unused_votes_v2',
-        TMode
-      > & {
-        abi?: never;
-        functionName?: 'distribute_use_unused_votes_v2';
-      } = {} as any,
+        'distribute_use_unused_votes_v2'
+      >['request']['abi'],
+      'distribute_use_unused_votes_v2',
+      TMode
+    > & { functionName?: 'distribute_use_unused_votes_v2' }
+    : UseContractWriteConfig<
+      typeof prizeJudgesABI,
+      'distribute_use_unused_votes_v2',
+      TMode
+    > & {
+      abi?: never;
+      functionName?: 'distribute_use_unused_votes_v2';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'distribute_use_unused_votes_v2', TMode>(
     {
@@ -3677,17 +3675,17 @@ export function usePrizeJudgesDistributeUseUnusedVotesV2<
 export function usePrizeJudgesEarlyRefund<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'earlyRefund'
-        >['request']['abi'],
-        'earlyRefund',
-        TMode
-      > & { functionName?: 'earlyRefund' }
+      PrepareWriteContractResult<
+        typeof prizeJudgesABI,
+        'earlyRefund'
+      >['request']['abi'],
+      'earlyRefund',
+      TMode
+    > & { functionName?: 'earlyRefund' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'earlyRefund', TMode> & {
-        abi?: never;
-        functionName?: 'earlyRefund';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'earlyRefund';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'earlyRefund', TMode>({
     abi: prizeJudgesABI,
@@ -3704,17 +3702,17 @@ export function usePrizeJudgesEndSubmissionPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'end_submission_period'
-        >['request']['abi'],
-        'end_submission_period',
-        TMode
-      > & { functionName?: 'end_submission_period' }
+      PrepareWriteContractResult<
+        typeof prizeJudgesABI,
+        'end_submission_period'
+      >['request']['abi'],
+      'end_submission_period',
+      TMode
+    > & { functionName?: 'end_submission_period' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'end_submission_period', TMode> & {
-        abi?: never;
-        functionName?: 'end_submission_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'end_submission_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'end_submission_period', TMode>({
     abi: prizeJudgesABI,
@@ -3731,17 +3729,17 @@ export function usePrizeJudgesEndVotingPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'end_voting_period'
-        >['request']['abi'],
-        'end_voting_period',
-        TMode
-      > & { functionName?: 'end_voting_period' }
+      PrepareWriteContractResult<
+        typeof prizeJudgesABI,
+        'end_voting_period'
+      >['request']['abi'],
+      'end_voting_period',
+      TMode
+    > & { functionName?: 'end_voting_period' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'end_voting_period', TMode> & {
-        abi?: never;
-        functionName?: 'end_voting_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'end_voting_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'end_voting_period', TMode>({
     abi: prizeJudgesABI,
@@ -3758,21 +3756,21 @@ export function usePrizeJudgesIncreaseSubmissionPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'increase_submission_period'
-        >['request']['abi'],
-        'increase_submission_period',
-        TMode
-      > & { functionName?: 'increase_submission_period' }
-    : UseContractWriteConfig<
+      PrepareWriteContractResult<
         typeof prizeJudgesABI,
-        'increase_submission_period',
-        TMode
-      > & {
-        abi?: never;
-        functionName?: 'increase_submission_period';
-      } = {} as any,
+        'increase_submission_period'
+      >['request']['abi'],
+      'increase_submission_period',
+      TMode
+    > & { functionName?: 'increase_submission_period' }
+    : UseContractWriteConfig<
+      typeof prizeJudgesABI,
+      'increase_submission_period',
+      TMode
+    > & {
+      abi?: never;
+      functionName?: 'increase_submission_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'increase_submission_period', TMode>({
     abi: prizeJudgesABI,
@@ -3789,17 +3787,17 @@ export function usePrizeJudgesIncreaseVotingPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'increase_voting_period'
-        >['request']['abi'],
-        'increase_voting_period',
-        TMode
-      > & { functionName?: 'increase_voting_period' }
+      PrepareWriteContractResult<
+        typeof prizeJudgesABI,
+        'increase_voting_period'
+      >['request']['abi'],
+      'increase_voting_period',
+      TMode
+    > & { functionName?: 'increase_voting_period' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'increase_voting_period', TMode> & {
-        abi?: never;
-        functionName?: 'increase_voting_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'increase_voting_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'increase_voting_period', TMode>({
     abi: prizeJudgesABI,
@@ -3816,17 +3814,17 @@ export function usePrizeJudgesStartSubmissionPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'start_submission_period'
-        >['request']['abi'],
-        'start_submission_period',
-        TMode
-      > & { functionName?: 'start_submission_period' }
+      PrepareWriteContractResult<
+        typeof prizeJudgesABI,
+        'start_submission_period'
+      >['request']['abi'],
+      'start_submission_period',
+      TMode
+    > & { functionName?: 'start_submission_period' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'start_submission_period', TMode> & {
-        abi?: never;
-        functionName?: 'start_submission_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'start_submission_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'start_submission_period', TMode>({
     abi: prizeJudgesABI,
@@ -3843,17 +3841,17 @@ export function usePrizeJudgesStartVotingPeriod<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesABI,
-          'start_voting_period'
-        >['request']['abi'],
-        'start_voting_period',
-        TMode
-      > & { functionName?: 'start_voting_period' }
+      PrepareWriteContractResult<
+        typeof prizeJudgesABI,
+        'start_voting_period'
+      >['request']['abi'],
+      'start_voting_period',
+      TMode
+    > & { functionName?: 'start_voting_period' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'start_voting_period', TMode> & {
-        abi?: never;
-        functionName?: 'start_voting_period';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'start_voting_period';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'start_voting_period', TMode>({
     abi: prizeJudgesABI,
@@ -3868,14 +3866,14 @@ export function usePrizeJudgesStartVotingPeriod<
 export function usePrizeJudgesVote<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeJudgesABI, 'vote'>['request']['abi'],
-        'vote',
-        TMode
-      > & { functionName?: 'vote' }
+      PrepareWriteContractResult<typeof prizeJudgesABI, 'vote'>['request']['abi'],
+      'vote',
+      TMode
+    > & { functionName?: 'vote' }
     : UseContractWriteConfig<typeof prizeJudgesABI, 'vote', TMode> & {
-        abi?: never;
-        functionName?: 'vote';
-      } = {} as any,
+      abi?: never;
+      functionName?: 'vote';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesABI, 'vote', TMode>({
     abi: prizeJudgesABI,
@@ -4128,18 +4126,18 @@ export function usePrizeJudgesFactoryWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesFactoryABI,
-          string
-        >['request']['abi'],
-        TFunctionName,
-        TMode
-      > & { address?: Address; chainId?: TChainId }
+      PrepareWriteContractResult<
+        typeof prizeJudgesFactoryABI,
+        string
+      >['request']['abi'],
+      TFunctionName,
+      TMode
+    > & { address?: Address; chainId?: TChainId }
     : UseContractWriteConfig<typeof prizeJudgesFactoryABI, TFunctionName, TMode> & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-      } = {} as any,
+      abi?: never;
+      address?: never;
+      chainId?: TChainId;
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesFactoryABI, TFunctionName, TMode>({
     abi: prizeJudgesFactoryABI,
@@ -4159,23 +4157,23 @@ export function usePrizeJudgesFactoryCreateViaPrizeJudges<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesFactoryABI,
-          'createViaPrizeJudges'
-        >['request']['abi'],
-        'createViaPrizeJudges',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'createViaPrizeJudges' }
-    : UseContractWriteConfig<
+      PrepareWriteContractResult<
         typeof prizeJudgesFactoryABI,
-        'createViaPrizeJudges',
-        TMode
-      > & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-        functionName?: 'createViaPrizeJudges';
-      } = {} as any,
+        'createViaPrizeJudges'
+      >['request']['abi'],
+      'createViaPrizeJudges',
+      TMode
+    > & { address?: Address; chainId?: TChainId; functionName?: 'createViaPrizeJudges' }
+    : UseContractWriteConfig<
+      typeof prizeJudgesFactoryABI,
+      'createViaPrizeJudges',
+      TMode
+    > & {
+      abi?: never;
+      address?: never;
+      chainId?: TChainId;
+      functionName?: 'createViaPrizeJudges';
+    } = {} as any,
 ) {
   return useContractWrite<typeof prizeJudgesFactoryABI, 'createViaPrizeJudges', TMode>({
     abi: prizeJudgesFactoryABI,
@@ -4237,15 +4235,15 @@ export function usePortalFactoryWrite<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof portalFactoryABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      > & { address?: Address; chainId?: TChainId }
+      PrepareWriteContractResult<typeof portalFactoryABI, string>['request']['abi'],
+      TFunctionName,
+      TMode
+    > & { address?: Address; chainId?: TChainId }
     : UseContractWriteConfig<typeof portalFactoryABI, TFunctionName, TMode> & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-      } = {} as any,
+      abi?: never;
+      address?: never;
+      chainId?: TChainId;
+    } = {} as any,
 ) {
   return useContractWrite<typeof portalFactoryABI, TFunctionName, TMode>({
     abi: portalFactoryABI,
@@ -4265,19 +4263,19 @@ export function usePortalFactoryCreatePortal<
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof portalFactoryABI,
-          'createPortal'
-        >['request']['abi'],
-        'createPortal',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'createPortal' }
+      PrepareWriteContractResult<
+        typeof portalFactoryABI,
+        'createPortal'
+      >['request']['abi'],
+      'createPortal',
+      TMode
+    > & { address?: Address; chainId?: TChainId; functionName?: 'createPortal' }
     : UseContractWriteConfig<typeof portalFactoryABI, 'createPortal', TMode> & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-        functionName?: 'createPortal';
-      } = {} as any,
+      abi?: never;
+      address?: never;
+      chainId?: TChainId;
+      functionName?: 'createPortal';
+    } = {} as any,
 ) {
   return useContractWrite<typeof portalFactoryABI, 'createPortal', TMode>({
     abi: portalFactoryABI,
