@@ -1,4 +1,5 @@
-import { prepareWritePrize, usePrizePatronAmount, writePrize } from '@/lib/smartContract';
+import { useFunderBalance } from '@/components/hooks/useFunderBalance';
+import { prepareWritePrize, writePrize } from '@/lib/smartContract';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -32,6 +33,7 @@ interface SubmissionsCardProps {
   description: string;
   allowVoting: boolean;
   showVote: boolean;
+  judges?: string[];
 }
 export default function SubmissionsCard({
   fullname,
@@ -44,20 +46,24 @@ export default function SubmissionsCard({
   allowVoting,
   submissionId,
   showVote = true,
+  judges,
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { address } = useAccount();
   const [sendLoading, setSendLoading] = useState(false);
   const [value, setValue] = useState('0');
   const [debounced] = useDebouncedValue(value, 500);
+
   const {
     data: funderBalance,
     refetch,
-    isLoading,
-  } = usePrizePatronAmount({
-    address: contractAddress as `0x${string}`,
-    args: [address ?? '0x'],
+    loading,
+  } = useFunderBalance({
+    hasJudges: !!judges && judges.length > 0,
+    address: address ?? '0x',
+    contractAddress: contractAddress,
   });
+
   // const { config } = usePrepareViaPrizeVote({});
   // console.log({ config });
   // console.log([hash as `0x${string}`, parseEther(debounced)], 'hiiii');
@@ -84,7 +90,7 @@ export default function SubmissionsCard({
         <Stack>
           <NumberInput
             label={
-              isLoading
+              loading
                 ? 'Loading.....'
                 : `Total Votes you can allocate(Max: ${formatEther(
                     BigInt(parseInt(funderBalance?.toString() ?? '1') - 1),
