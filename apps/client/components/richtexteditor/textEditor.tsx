@@ -29,13 +29,11 @@ export function TextEditor({
   setRichtext,
   canSetRichtext,
 }: TextEditorProps) {
+  const ReactQuill = useMemo(
+    () => dynamic(() => import('react-quill'), { ssr: false }),
+    [],
+  );
 
-   const ReactQuill = useMemo(
-     () => dynamic(() => import('react-quill'), { ssr: false }),
-     [],
-   );
-
-   
   const editor = useEditor({
     editable: !disabled,
     extensions: [

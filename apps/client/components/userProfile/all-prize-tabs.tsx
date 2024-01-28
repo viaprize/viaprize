@@ -26,7 +26,8 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
     return prizesWithBalance;
   });
 
-  if (getPrizesOfUserMutation.isLoading) return <SkeletonLoad numberOfCards={3} />;
+  if (getPrizesOfUserMutation.isLoading)
+    return <SkeletonLoad gridedSkeleton numberOfCards={3} />;
 
   if (!getPrizesOfUserMutation.data || getPrizesOfUserMutation.data.length === 0)
     return (

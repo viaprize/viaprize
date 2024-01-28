@@ -9,7 +9,7 @@ export default function ProfilePrizeSubmission({ params }: { params: { id: strin
     return (await backendApi()).users.usernameSubmissionsDetail(params.id);
   });
 
-  if (isLoading) return <SkeletonLoad numberOfCards={2} />;
+  if (isLoading) return <SkeletonLoad numberOfCards={2} gridedSkeleton />;
 
   if (!data || data.data.length === 0)
     return <Shell>You dont have any Submissions</Shell>;

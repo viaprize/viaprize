@@ -30,7 +30,6 @@ export class PortalProposalsService {
       ...createPortalProposalDto,
       user: user,
       slug: slug,
-
     });
     return portalProposal;
   }
@@ -169,12 +168,13 @@ export class PortalProposalsService {
     // await this.mailService.rejected(portalProposal.user.email, comment);
   }
 
-  async update(id: string, updatePortalProposal: QueryDeepPartialEntity<PortalProposals>) {
+  async update(
+    id: string,
+    updatePortalProposal: QueryDeepPartialEntity<PortalProposals>,
+  ) {
     await this.portalProposalsRepository.update(id, updatePortalProposal);
     return this.findOne(id);
   }
-
-
 
   async remove(id: string) {
     await this.portalProposalsRepository.delete({
