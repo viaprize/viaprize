@@ -10,6 +10,7 @@ import { waitForTransaction } from '@wagmi/core';
 import router from 'next/router';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { usePrize } from '../hooks/usePrize';
 import ViewDetails from './details';
 
 interface AdminCardProps {
@@ -44,6 +45,8 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
 }) => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const currentTimestamp = useRef(Date.now());
+
+  const { createPrize } = usePrize();
 
   const deployPrize = async () => {
     const firstLoadingToast = toast.loading('Transaction Waiting To Be approved', {
@@ -139,6 +142,7 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
           >
             View Details
           </Button>
+          <Button onClick={deployPrize}>Deploy</Button>
         </Group>
       </Card>
       <Modal
@@ -164,6 +168,3 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
 };
 
 export default AdminAcceptedCard;
-function createPrize(arg0: { address: string; proposal_id: any }) {
-  throw new Error('Function not implemented.');
-}
