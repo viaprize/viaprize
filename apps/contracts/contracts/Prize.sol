@@ -270,6 +270,16 @@ contract Prize {
         }
     }
 
+     /// @notice getter for submission time
+    function get_submission_time() public view returns (uint256) {
+        return submission_time;
+    }
+
+    /// @notice getter for voting time
+    function get_voting_time() public view returns (uint256) {
+        return voting_time;
+    }
+
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
     function change_vote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount) public {
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();

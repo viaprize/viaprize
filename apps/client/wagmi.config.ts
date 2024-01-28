@@ -23,7 +23,7 @@ export default defineConfig({
       ],
       deployments: {
         PrizeFactory: {
-          10: '0x4D7489969513124394134865270240df5940541f'
+          10: '0xAd5a14F8a94125e265ED12FBB153A92652540283'
         },
         PrizeJudgesFactory: {
           10: '0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D'
