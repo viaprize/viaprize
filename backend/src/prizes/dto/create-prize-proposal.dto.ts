@@ -103,6 +103,14 @@ export class CreatePrizeProposalDto {
   @IsArray()
   images: string[];
 
+
+  @ApiProperty({
+    type: [String]
+  })
+  @IsArray()
+  @IsOptional()
+  judges?: string[];
+
   // @ApiProperty({ type: 'string' })
   // @IsString()
   // user: User;

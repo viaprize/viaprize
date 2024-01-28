@@ -1,8 +1,4 @@
-import {
-  prepareWriteViaPrize,
-  useViaPrizePatrons,
-  writeViaPrize,
-} from '@/lib/smartContract';
+import { prepareWritePrize, usePrizePatronAmount, writePrize } from '@/lib/smartContract';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -58,7 +54,7 @@ export default function SubmissionsCard({
     data: funderBalance,
     refetch,
     isLoading,
-  } = useViaPrizePatrons({
+  } = usePrizePatronAmount({
     address: contractAddress as `0x${string}`,
     args: [address ?? '0x'],
   });
@@ -127,12 +123,12 @@ export default function SubmissionsCard({
                   }
                   setSendLoading(true);
 
-                  const { request } = await prepareWriteViaPrize({
+                  const { request } = await prepareWritePrize({
                     address: contractAddress as `0x${string}`,
                     functionName: 'vote',
                     args: [hash as `0x${string}`, parseEther(debounced)],
                   });
-                  const { hash: transactionHash } = await writeViaPrize(request);
+                  const { hash: transactionHash } = await writePrize(request);
                   console.log({ transactionHash }, 'transactionHash');
                   toast.success(`Transaction Hash ${transactionHash}`);
                   setSendLoading(false);

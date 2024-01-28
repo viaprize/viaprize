@@ -1,5 +1,10 @@
 import type { PrizeProposals } from '@/lib/api';
-import { prepareWriteViaPrizeFactory, writeViaPrizeFactory } from '@/lib/smartContract';
+import {
+  prepareWritePrizeFactory,
+  prepareWritePrizeJudgesFactory,
+  writePrizeFactory,
+  writePrizeJudgesFactory,
+} from '@/lib/smartContract';
 import type { ProposalStatus } from '@/lib/types';
 import { Button, Text } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
@@ -89,46 +94,65 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                         dismissible: false,
                       },
                     );
+                    let out;
+                    if (item.judges && item.judges.length > 0) {
+                      const requestJudges = await prepareWritePrizeJudgesFactory({
+                        functionName: 'createViaPrizeJudges',
+                        args: [
+                          item.admins as `0x${string}`[],
+                          [
+                            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
+                            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
+                            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
+                          ] as `0x${string}`[],
+                          item.judges as `0x${string}`[],
+                          BigInt(item.platformFeePercentage),
+                          BigInt(item.proposerFeePercentage),
+                          '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
+                          BigInt(item.submission_time),
+                          BigInt(currentTimestamp.current),
+                        ],
+                      });
+                      out = await writePrizeJudgesFactory(requestJudges);
+                      console.log(out, 'outJudges');
+                    } else {
+                      const requestJudges = await prepareWritePrizeFactory({
+                        functionName: 'createViaPrize',
+                        args: [
+                          item.admins as `0x${string}`[],
+                          [
+                            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
+                            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
+                            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
+                          ] as `0x${string}`[],
+                          BigInt(item.platformFeePercentage),
+                          BigInt(item.proposerFeePercentage),
+                          '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
+                          BigInt(item.submission_time),
+                          BigInt(currentTimestamp.current),
+                        ],
+                      });
+                      out = await writePrizeFactory(requestJudges);
+                      console.log(out, 'out');
+                    }
+                    // const request = await prepareWriteViaPrizeFactory({
+                    //   functionName: 'createViaPrize',
+                    //   args: [
+                    //     item.admins as `0x${string}`[],
+                    //     [
+                    //       '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
+                    //       '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
+                    //     ] as `0x${string}`[],
+                    //     BigInt(item.platformFeePercentage),
+                    //     BigInt(item.proposerFeePercentage),
+                    //     '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
+                    //     BigInt(currentTimestamp.current),
+                    //   ],
+                    // });
+                    // const out = await writeViaPrizeFactory(request);
+                    // toast.dismiss(firstLoadingToast);
 
-                    console.log('approved');
-                    console.log(
-                      [
-                        item.admins as `0x${string}`[],
-                        [
-                          '0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2',
-                          '0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB',
-                          '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-                        ] as `0x${string}`[],
-                        BigInt(10),
-                        BigInt(10),
-                        '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-                      ],
-                      'args',
-                    );
-                    const request = await prepareWriteViaPrizeFactory({
-                      functionName: 'createViaPrize',
-                      args: [
-                        item.admins as `0x${string}`[],
-                        [
-                          '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-                          '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-                        ] as `0x${string}`[],
-                        BigInt(item.platformFeePercentage),
-                        BigInt(item.proposerFeePercentage),
-                        '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-                        BigInt(currentTimestamp.current),
-                      ],
-                    });
-                    const out = await writeViaPrizeFactory(request);
-                    toast.dismiss(firstLoadingToast);
-                    const secondToast = toast.loading(
-                      'Waiting for transaction Confirmation...',
-                      {
-                        dismissible: false,
-                        delete: false,
-                      },
-                    );
-                    console.log(out, 'out');
+                    // console.log(out, 'out');
                     const waitForTransactionOut = await waitForTransaction({
                       hash: out.hash,
                       confirmations: 1,
@@ -142,7 +166,7 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                       address: prizeAddress,
                       proposal_id: item.id,
                     });
-                    toast.dismiss(secondToast);
+                    toast.dismiss(firstLoadingToast);
                     console.log(prize, 'prize');
                     toast.success(`Prize Address ${prizeAddress} `);
                     toast.loading('Redirecting Please Wait');

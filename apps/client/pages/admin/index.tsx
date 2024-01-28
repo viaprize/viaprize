@@ -81,6 +81,7 @@ function AccpetedProposals({
         <>
           {data.prizesProposals?.map((proposal: PrizeProposals) => (
             <AdminAcceptedCard
+              id={proposal.id}
               key={proposal.id}
               admins={proposal.admins}
               description={proposal.description}
@@ -89,6 +90,10 @@ function AccpetedProposals({
               title={proposal.title}
               user={proposal.user}
               voting={proposal.voting_time}
+              platfromFeePercentage={proposal.platformFeePercentage}
+              proposerFeePercentage={proposal.proposerFeePercentage}
+              submission_time={proposal.submission_time}
+              judges={proposal.judges}
             />
           ))}
           {data.portalsProposals?.map((portalProposal: PortalProposals) => (

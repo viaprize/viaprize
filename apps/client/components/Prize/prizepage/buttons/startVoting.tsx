@@ -1,4 +1,4 @@
-import { useViaPrizeStartVotingPeriod } from '@/lib/smartContract';
+import { usePrizeStartVotingPeriod } from '@/lib/smartContract';
 import { Button } from '@mantine/core';
 import { useAccount } from 'wagmi';
 
@@ -10,7 +10,7 @@ export default function StartVoting({
   votingTime: number;
 }) {
   const { address } = useAccount();
-  const { writeAsync, isLoading } = useViaPrizeStartVotingPeriod({
+  const { writeAsync, isLoading } = usePrizeStartVotingPeriod({
     account: address,
     address: contractAddress as `0x${string}`,
     args: [BigInt(votingTime)],

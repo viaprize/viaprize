@@ -6,10 +6,20 @@ import ShouldLogin from '@/components/custom/should-login';
 import useAppUser from '@/components/hooks/useAppUser';
 import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
-import { Button, Card, NumberInput, SimpleGrid, TextInput, Title } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Card,
+  Checkbox,
+  NumberInput,
+  SimpleGrid,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { IconPlus } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -17,6 +27,8 @@ import { useMutation } from 'wagmi';
 
 function Prize() {
   const [address, setAddress] = useState(['']);
+  const [judges, setJudges] = useState<string[]>([]);
+  const [showJudges, setShowJudges] = useState(false);
   const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');
   const [isAutomatic, setIsAutomatic] = useState(false);
@@ -33,12 +45,12 @@ function Prize() {
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
-  // const onAddressChange = (index: number, value: string) => {
-  //   setAddress((prev) => {
-  //     prev[index] = value;
-  //     return [...prev];
-  //   });
-  // };
+  const onJudgesChange = (index: number, value: string) => {
+    setJudges((prev) => {
+      prev[index] = value;
+      return [...prev];
+    });
+  };
   const handleUploadImages = async () => {
     const newImages = await uploadImages(files);
 
@@ -61,6 +73,8 @@ function Prize() {
       proficiencies: [],
       submission_time: proposalTime,
       images: newImages ? [newImages] : [],
+      judges: showJudges ? judges : [],
+
       title,
     });
     setLoading(false);
@@ -89,19 +103,19 @@ function Prize() {
   //   setRichtext(PrizeCreationTemplate);
   // };
 
-  // const addAddress = () => {
-  //   setAddress((prev: string[]) => {
-  //     return [...prev, ''];
-  //   });
-  // };
+  const addJudges = () => {
+    setJudges((prev: string[]) => {
+      return [...prev, ''];
+    });
+  };
 
-  // const removeAddress = (index: number) => {
-  //   setAddress((prev) => {
-  //     const arr: string[] = JSON.parse(JSON.stringify(prev)) as string[];
-  //     arr.splice(index, 1);
-  //     return [...arr];
-  //   });
-  // };
+  const removeJudges = (index: number) => {
+    setJudges((prev) => {
+      const arr: string[] = JSON.parse(JSON.stringify(prev)) as string[];
+      arr.splice(index, 1);
+      return [...arr];
+    });
+  };
   if (!appUser) {
     return <ShouldLogin text="Please login to create a prize" />;
   }
@@ -112,6 +126,7 @@ function Prize() {
         Create a Prize
       </Title>
       <ImageComponent files={files} setfiles={setFiles} />
+
       <TextInput
         className="my-2"
         placeholder="Waster Management System"
@@ -121,6 +136,65 @@ function Prize() {
           setTitle(e.target.value);
         }}
       />
+      <Checkbox
+        my={'xl'}
+        checked={showJudges}
+        onChange={(event) => setShowJudges(event.currentTarget.checked)}
+        label="Give Judges Voting Power"
+      />
+
+      {showJudges && (
+        <>
+          {judges.map((item, index) => (
+            <div className="" key={index}>
+              <TextInput
+                type="text"
+                placeholder="Enter Judges Address (Must start with 0x)"
+                className=""
+                my={'lg'}
+                value={item}
+                onChange={(e) => {
+                  onJudgesChange(index, e.target.value);
+                }}
+              />
+              {judges.length > 1 && (
+                <Button
+                  color="red"
+                  className="my-2"
+                  onClick={() => {
+                    removeJudges(index);
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-6 h-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </Button>
+              )}
+            </div>
+          ))}
+          <ActionIcon
+            my={'md'}
+            variant="filled"
+            color="blue"
+            size="lg"
+            onClick={addJudges}
+          >
+            <IconPlus />
+          </ActionIcon>
+        </>
+      )}
+
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
 
       <SimpleGrid cols={2} className="my-3">
@@ -152,47 +226,6 @@ function Prize() {
             setVotingTime(parseInt(e.toString()));
           }}
         />
-
-        {/* {address.map((item, index) => (
-          <div className="" key={index}>
-            <TextInput
-              type="text"
-              placeholder="Enter Admin Address"
-              className=""
-              value={item}
-              onChange={(e) => {
-                onAddressChange(index, e.target.value);
-              }}
-            />
-            {address.length > 1 && (
-              <Button
-                color="red"
-                className="my-2"
-                onClick={() => {
-                  removeAddress(index);
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </Button>
-            )}
-          </div>
-        ))} */}
-        {/* <ActionIcon variant="filled" color="blue" size="lg" onClick={addAddress}>
-          <IconPlus />
-        </ActionIcon> */}
       </SimpleGrid>
       <Button
         className="mt-3 "

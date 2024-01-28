@@ -113,6 +113,8 @@ export class PrizesController {
       startSubmissionDate: prizeProposal.startSubmissionDate,
       startVotingDate: prizeProposal.startVotingDate,
       user: prizeProposal.user,
+      judges: prizeProposal.judges
+
     });
 
     await this.prizeProposalsService.remove(prizeProposal.id);

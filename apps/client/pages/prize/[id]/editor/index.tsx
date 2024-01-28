@@ -7,7 +7,7 @@ import { PrizeSubmissionTemplate } from '@/components/Prize/prizepage/defaultcon
 import useAppUser from '@/components/hooks/useAppUser';
 import AppShellLayout from '@/components/layout/appshell';
 import { backendApi } from '@/lib/backend';
-import { prepareWriteViaPrize, writeViaPrize } from '@/lib/smartContract';
+import { prepareWritePrize, writePrize } from '@/lib/smartContract';
 import { useWallets } from '@privy-io/react-auth';
 import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/router';
@@ -28,13 +28,13 @@ function EditorsPage() {
 
     const address = wallets[0].address as `0x${string}`;
     // await writeAsync?.();
-    const request = await prepareWriteViaPrize({
+    const request = await prepareWritePrize({
       account: address,
       address: router.query.contract as `0x${string}`,
       args: [address ? address : '0x', `${appUser?.id}${router.query.id as string}`],
       functionName: 'addSubmission',
     });
-    const { hash } = await writeViaPrize(request);
+    const { hash } = await writePrize(request);
     const waitForTransactionOut = await waitForTransaction({
       hash: hash,
       confirmations: 1,
