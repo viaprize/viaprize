@@ -1,4 +1,4 @@
-import { CreatePrizeProposalDto, PrizeProposals, UpdatePrizeDto } from '@/lib/api';
+import type { CreatePrizeProposalDto, PrizeProposals, UpdatePrizeDto } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
 import { storeFiles } from '@/lib/utils';
 import { useState } from 'react';
@@ -13,6 +13,11 @@ export default function usePrizeProposal() {
 
   const addProposals = async (proposalDto: CreatePrizeProposalDto) => {
     const res = await (await backendApi()).prizes.proposalsCreate(proposalDto);
+    return res;
+  };
+
+  const deleteProposal = async (proposalId: string) => {
+    const res = await (await backendApi()).prizes.proposalsDeletedDelete(proposalId);
     return res;
   };
 
@@ -104,5 +109,6 @@ export default function usePrizeProposal() {
     rejectProposal,
     getAcceptedProposals,
     updateProposal,
+    deleteProposal,
   };
 }

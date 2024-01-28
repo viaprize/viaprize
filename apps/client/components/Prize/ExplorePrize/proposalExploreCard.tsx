@@ -1,6 +1,17 @@
 import type { ProposalStatus } from '@/lib/types';
 import { htmlToPlainText } from '@/lib/utils';
-import { Badge, Button, Card, Divider, Group, Image, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Group,
+  Image,
+  Text,
+} from '@mantine/core';
+import { modals } from '@mantine/modals';
+import { MdDelete } from 'react-icons/md';
 
 interface ExploreCardProps {
   imageUrl: string;
@@ -9,6 +20,7 @@ interface ExploreCardProps {
   status: ProposalStatus;
   onStatusClick: (status: ProposalStatus) => void | Promise<void>;
   rejectedReason?: string;
+  onDeleted: () => void | Promise<void>;
 }
 
 function ProposalExploreCard({
@@ -18,7 +30,27 @@ function ProposalExploreCard({
   status,
   onStatusClick,
   rejectedReason,
+  onDeleted,
 }: ExploreCardProps) {
+  const openDeleteModal = () => {
+    modals.openConfirmModal({
+      title: 'Delete Proposal',
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete your proposal? This action is destructive and
+          you will have to contact support to restore your data.
+        </Text>
+      ),
+      labels: { confirm: 'Delete Proposal', cancel: "No don't delete it" },
+      confirmProps: { color: 'red' },
+      onCancel: () => {
+        console.log('Cancel');
+      },
+      onConfirm: () => void onDeleted(),
+    });
+  };
+
   return (
     <Card padding="lg" radius="md" shadow="sm" withBorder>
       <Card.Section>
@@ -53,6 +85,16 @@ function ProposalExploreCard({
       <Button my="xs" onClick={() => void onStatusClick(status)}>
         {status === 'approved' ? 'Deploy Proposal' : 'Edit Proposal'}
       </Button>
+      <div className="absolute top-2 right-2">
+        <ActionIcon
+          color="red"
+          onClick={() => {
+            openDeleteModal();
+          }}
+        >
+          <MdDelete />
+        </ActionIcon>
+      </div>
     </Card>
   );
 }

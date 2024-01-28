@@ -23,7 +23,7 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
   const currentTimestamp = useRef(Date.now());
   const { createPrize } = usePrize();
 
-  const { getProposalsOfUser } = usePrizeProposal();
+  const { getProposalsOfUser, deleteProposal } = usePrizeProposal();
   const { data, isSuccess, isLoading } = useQuery(
     ['getProposalsOfUser', undefined],
     () => {
@@ -68,6 +68,13 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
         {isSuccess ? (
           data.map((item) => (
             <ProposalExploreCard
+              onDeleted={() => {
+                toast.promise(deleteProposal(item.id), {
+                  loading: 'Deleting Proposal',
+                  success: 'Proposal Deleted Successfully',
+                  error: 'Error Deleting Proposal',
+                });
+              }}
               status={getProposalStatus(item)}
               key={item.id}
               imageUrl={item.images[0]}

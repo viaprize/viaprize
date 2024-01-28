@@ -7,6 +7,7 @@ import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/dropzone/styles.css';
+import { ModalsProvider } from '@mantine/modals';
 import '@mantine/tiptap/styles.css';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
@@ -49,8 +50,10 @@ export default function RootLayout({
           <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
             <QueryClientProvider client={queryClient}>
               <MantineProvider theme={theme} defaultColorScheme="auto">
-                <Toaster />
-                <NavigationProvider>{children}</NavigationProvider>
+                <ModalsProvider>
+                  <Toaster />
+                  <NavigationProvider>{children}</NavigationProvider>
+                </ModalsProvider>
               </MantineProvider>
             </QueryClientProvider>
           </PrivyWagmiConnector>

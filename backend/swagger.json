@@ -410,6 +410,38 @@
         "x-nestia-method": "GET"
       }
     },
+    "/portals/proposal/delete/{id}": {
+      "delete": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.proposal.delete.getDeletePortalProposalById",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "DELETE"
+      }
+    },
     "/portals/user/{username}": {
       "get": {
         "tags": [],
@@ -1699,6 +1731,38 @@
           }
         ],
         "x-nestia-method": "PUT"
+      }
+    },
+    "/prizes/proposals/deleted/{id}": {
+      "delete": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.proposals.deleted.deleteProposal",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "DELETE"
       }
     },
     "/prizes/{id}/submission": {
@@ -3985,14 +4049,7 @@
             "type": "number"
           },
           "contributors": {
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "array",
-            "items": {
-              "x-typia-required": false,
-              "x-typia-optional": true,
-              "type": "string"
-            }
+            "$ref": "#/components/schemas/Contributions"
           },
           "id": {
             "x-typia-required": true,
@@ -4127,6 +4184,51 @@
           "images",
           "title",
           "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Contributions": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contribution"
+            }
+          }
+        },
+        "nullable": false,
+        "required": [
+          "data"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "Contribution": {
+        "type": "object",
+        "properties": {
+          "contributor": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "amount": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "donationTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "contributor",
+          "amount",
+          "donationTime"
         ],
         "x-typia-jsDocTags": []
       },

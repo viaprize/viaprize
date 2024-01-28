@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   Inject,
   Post,
@@ -226,10 +227,19 @@ export class PrizesController {
     @TypedBody() updateBody: UpdatePrizeDto,
   ): Promise<Http200Response> {
     await this.prizeProposalsService.update(id, updateBody);
-    await this.cacheManager.reset()
+    await this.cacheManager.reset();
 
     return {
       message: `Proposal with id ${id} has been updated`,
+    };
+  }
+
+  @Delete('/proposals/deleted/:id')
+  @UseGuards(AuthGuard)
+  async deleteProposal(@TypedParam('id') id: string): Promise<Http200Response> {
+    await this.prizeProposalsService.remove(id);
+    return {
+      message: `Proposal with id ${id} has been deleted`,
     };
   }
 
