@@ -573,8 +573,9 @@ export enum ContentType {
   Text = 'text/plain',
 }
 
+import {env} from '@env'
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'http://localhost:3001/api';
+  public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
