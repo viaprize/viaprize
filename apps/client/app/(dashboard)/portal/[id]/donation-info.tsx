@@ -50,7 +50,6 @@ export default function DonationInfo({ contributors }: { contributors?: Contribu
             horizontalSpacing="sm"
             verticalSpacing="sm"
             className="w-full"
-            
           >
             <Table.Thead>
               <Table.Tr>
@@ -69,7 +68,10 @@ export default function DonationInfo({ contributors }: { contributors?: Contribu
                     <Table.Td>
                       {new Date(parseInt(donation.donationTime) * 1000).toDateString()}
                     </Table.Td>
-                    <Table.Td>{donation.contributor.slice(0,7)}......{donation.contributor.slice(-5)}</Table.Td>
+                    <Table.Td>
+                      {donation.contributor.slice(0, 7)}......
+                      {donation.contributor.slice(-5)}
+                    </Table.Td>
                     {/* <Table.Td>{donation.network}</Table.Td> */}
                     <Table.Td>{formatEther(BigInt(donation.amount))}</Table.Td>
                     <Table.Td>

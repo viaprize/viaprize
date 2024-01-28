@@ -37,9 +37,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           sendImmediately={portal.sendImmediately}
         />
       </div>
-      <PortalTabs description={portal.description} 
-        contributors={portal.contributors}
-      />
+      <PortalTabs description={portal.description} contributors={portal.contributors} />
     </div>
   );
 }

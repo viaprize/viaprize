@@ -28,12 +28,14 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
   const { getProposalsOfUser: getPortalProposalsOfUser, deleteProposal } =
     usePortalProposal();
 
-  const { data, isSuccess, isLoading,refetch:refetchPortals } = useQuery(
-    [`getPortalProposals${params.id}`, undefined],
-    () => {
-      return getPortalProposalsOfUser({ limit: 10, page: 1 }, params.id);
-    },
-  );
+  const {
+    data,
+    isSuccess,
+    isLoading,
+    refetch: refetchPortals,
+  } = useQuery([`getPortalProposals${params.id}`, undefined], () => {
+    return getPortalProposalsOfUser({ limit: 10, page: 1 }, params.id);
+  });
 
   const { mutateAsync: DeletePortalProposal, isLoading: deletingProposal } =
     useMutation(deleteProposal);
