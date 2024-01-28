@@ -197,7 +197,7 @@ export interface PortalWithBalance {
   isActive: boolean;
   totalFunds?: number;
   totalRewards?: number;
-  contributors?: string[];
+  contributors?: Contributions;
   id: string;
   description: string;
   slug: string;
@@ -220,6 +220,16 @@ export interface PortalWithBalance {
   images: string[];
   title: string;
   user: User;
+}
+
+export interface Contributions {
+  data: Contribution[];
+}
+
+export interface Contribution {
+  contributor: string;
+  amount: string;
+  donationTime: string;
 }
 
 /** Make all properties in T readonly */
@@ -566,10 +576,9 @@ export enum ContentType {
   Text = 'text/plain',
 }
 
-import { env } from 'env.mjs';
-
+import { env } from '@env';
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = `${env.NEXT_PUBLIC_BACKEND_URL}`;
+  public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -869,6 +878,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<PortalWithBalance, any>({
         path: `/portals/${id}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ProposalDeleteDelete
+     * @request DELETE:/portals/proposal/delete/{id}
+     */
+    proposalDeleteDelete: (id: string, params: RequestParams = {}) =>
+      this.request<boolean, any>({
+        path: `/portals/proposal/delete/${id}`,
+        method: 'DELETE',
         format: 'json',
         ...params,
       }),
@@ -1201,6 +1224,20 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ProposalsDeletedDelete
+     * @request DELETE:/prizes/proposals/deleted/{id}
+     */
+    proposalsDeletedDelete: (id: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/proposals/deleted/${id}`,
+        method: 'DELETE',
         format: 'json',
         ...params,
       }),

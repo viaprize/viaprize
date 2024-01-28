@@ -45,6 +45,7 @@ export default function PortalForm() {
   const [loading, setLoading] = useState(false);
   const [portalType, setPortalType] = useState('pass-through');
   const [categories, setCategories] = useState<string[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   const { addProposals, uploadImages } = usePortalProposal();
 
@@ -78,8 +79,9 @@ export default function PortalForm() {
   const router = useRouter();
 
   const handleUploadImages = async () => {
+    setUploadingImages(true);
     const newImages = await uploadImages(files);
-
+    setUploadingImages(false);
     setImages(newImages);
     return newImages;
   };
@@ -337,7 +339,7 @@ export default function PortalForm() {
       <Button
         color="primary"
         radius="md"
-        loading={submittingProposal || loading}
+        loading={submittingProposal || loading || uploadingImages}
         onClick={handleSubmit}
         disabled={
           !isAddress(address) ||

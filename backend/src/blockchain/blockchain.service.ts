@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { AllConfigType } from 'src/config/config.type';
 import { PublicClient, createPublicClient, http, parseAbi } from 'viem';
 import { optimism } from 'viem/chains';
+import { Contributions, TransactionApiResponse } from './blockchain';
 @Injectable()
 export class BlockchainService {
   provider: PublicClient;
@@ -378,38 +379,23 @@ export class BlockchainService {
     return results;
   }
 
-  async getPortalContributors(portalContractAddress: string) {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-        name: 'patrons',
-        outputs: [{ name: '', internalType: 'address', type: 'address' }],
-      },
-    ] as const;
+  async getPortalContributors(
+    portalContractAddress: string,
+  ): Promise<Contributions> {
+    console.log(process.env.ETHERSCAN_API_KEY, 'ehterscan');
+    const res = await fetch(
+      `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`,
+    );
+    const result = (await res.json()) as TransactionApiResponse;
 
-    let i = 1n;
-    const contributors: string[] = [];
-    let loop = true;
-    while (loop) {
-      const data = await this.provider
-        .readContract({
-          address: portalContractAddress as `0x${string}`,
-          abi: abi,
-          functionName: 'patrons',
-          args: [i],
-        })
-        .catch((e) => {
-          console.log(e);
-          loop = false;
-        });
-      if (data) {
-        contributors.push(data);
-        i = i + 1n;
-      }
-    }
-    return contributors;
+    const contributions: Contributions = {
+      data: result.result.map((transaction) => ({
+        contributor: transaction.from,
+        amount: transaction.value,
+        donationTime: transaction.timeStamp,
+      })),
+    };
+    return contributions;
   }
 
   async getPortalPublicVariables(portalContractAddress: string) {
