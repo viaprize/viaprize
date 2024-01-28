@@ -1,6 +1,6 @@
 import {
-  usePrepareViaPrizeEndVotingPeriod,
-  useViaPrizeEndVotingPeriod,
+  usePreparePrizeEndVotingPeriod,
+  usePrizeEndVotingPeriod,
 } from '@/lib/smartContract';
 import { Button } from '@mantine/core';
 import { toast } from 'sonner';
@@ -8,11 +8,11 @@ import { useAccount } from 'wagmi';
 
 export default function EndVoting({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
-  const { config } = usePrepareViaPrizeEndVotingPeriod({
+  const { config } = usePreparePrizeEndVotingPeriod({
     account: address,
     address: contractAddress as `0x${string}`,
   });
-  const { writeAsync, isLoading } = useViaPrizeEndVotingPeriod({
+  const { writeAsync, isLoading } = usePrizeEndVotingPeriod({
     ...config,
     onError(error) {
       toast.error(`Failed With Error ${error.name}`);

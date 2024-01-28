@@ -48,6 +48,13 @@ export class Prize {
   @Column('simple-array')
   admins: string[];
 
+  @Column({
+    type: "text",
+    array: true,
+    nullable: true
+  })
+  judges?: string[];
+
   @Column('simple-array')
   proficiencies: string[];
 

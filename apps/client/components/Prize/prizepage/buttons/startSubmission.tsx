@@ -1,8 +1,4 @@
-import {
-  prepareWriteViaPrize,
-  usePrepareViaPrizeStartSubmissionPeriod,
-  writeViaPrize,
-} from '@/lib/smartContract';
+import { prepareWritePrize, writePrize } from '@/lib/smartContract';
 import { Button } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
 import { useState } from 'react';
@@ -19,12 +15,6 @@ export default function StartSubmission({
   const [isLoading, setIsLoading] = useState(false);
   console.log({ submissionTime }, 'submission time ');
   const { address } = useAccount();
-  const { config } = usePrepareViaPrizeStartSubmissionPeriod({
-    account: address,
-    address: contractAddress as `0x${string}`,
-    args: [BigInt(submissionTime)],
-  });
-  console.log({ config }, 'wtfff');
 
   return (
     <Button
@@ -34,13 +24,13 @@ export default function StartSubmission({
       onClick={async () => {
         setIsLoading(true);
         try {
-          const request = await prepareWriteViaPrize({
+          const request = await prepareWritePrize({
             address: contractAddress as `0x${string}`,
             account: address,
             functionName: 'start_submission_period',
             args: [BigInt(submissionTime)],
           });
-          const { hash } = await writeViaPrize(request);
+          const { hash } = await writePrize(request);
 
           const waitTransaction = await waitForTransaction({
             confirmations: 1,

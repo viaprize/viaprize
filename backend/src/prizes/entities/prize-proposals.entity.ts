@@ -18,6 +18,13 @@ export class PrizeProposals {
   @Column('simple-array')
   admins: string[];
 
+  @Column({
+    type: "text",
+    array: true,
+    nullable: true,
+  })
+  judges?: string[];
+
   /** The Columns here are not part of the smart contract */
 
   @Column({ default: false })
