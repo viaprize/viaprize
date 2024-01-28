@@ -10,8 +10,8 @@ import {
   Image,
   Text,
 } from '@mantine/core';
-import { MdDelete } from 'react-icons/md';
 import { modals } from '@mantine/modals';
+import { MdDelete } from 'react-icons/md';
 
 interface ExploreCardProps {
   imageUrl: string;
@@ -32,22 +32,24 @@ function ProposalExploreCard({
   rejectedReason,
   onDeleted,
 }: ExploreCardProps) {
-
-    const openDeleteModal = () =>
-      modals.openConfirmModal({
-        title: 'Delete Proposal',
-        centered: true,
-        children: (
-          <Text size="sm">
-            Are you sure you want to delete your proposal? This action is destructive and
-            you will have to contact support to restore your data.
-          </Text>
-        ),
-        labels: { confirm: 'Delete Proposal', cancel: "No don't delete it" },
-        confirmProps: { color: 'red' },
-        onCancel: () => console.log('Cancel'),
-        onConfirm: () => void onDeleted(),
-      });
+  const openDeleteModal = () => {
+    modals.openConfirmModal({
+      title: 'Delete Proposal',
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete your proposal? This action is destructive and
+          you will have to contact support to restore your data.
+        </Text>
+      ),
+      labels: { confirm: 'Delete Proposal', cancel: "No don't delete it" },
+      confirmProps: { color: 'red' },
+      onCancel: () => {
+        console.log('Cancel');
+      },
+      onConfirm: () => void onDeleted(),
+    });
+  };
 
   return (
     <Card padding="lg" radius="md" shadow="sm" withBorder>
@@ -84,7 +86,12 @@ function ProposalExploreCard({
         {status === 'approved' ? 'Deploy Proposal' : 'Edit Proposal'}
       </Button>
       <div className="absolute top-2 right-2">
-        <ActionIcon color="red" onClick={() => void openDeleteModal()}>
+        <ActionIcon
+          color="red"
+          onClick={() => {
+            openDeleteModal();
+          }}
+        >
           <MdDelete />
         </ActionIcon>
       </div>

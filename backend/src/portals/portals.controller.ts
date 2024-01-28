@@ -3,6 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   Inject,
@@ -248,8 +249,9 @@ export class PortalsController {
     };
   }
 
-  @Get('/delete/:id')
-  async getDeletePortalById(@TypedParam('id') id: string) {
+  @Delete('/proposal/delete/:id')
+  @UseGuards(AuthGuard)
+  async getDeletePortalProposalById(@TypedParam('id') id: string) {
     await this.portalProposalsService.remove(id);
     await this.cacheManager.reset();
     return true;

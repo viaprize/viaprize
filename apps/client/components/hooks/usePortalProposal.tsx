@@ -17,9 +17,9 @@ export default function usePortalProposal() {
   };
 
   const deleteProposal = async (id: string) => {
-    const res = await (await backendApi()).portals.deleteDetail(id);
+    const res = await (await backendApi()).portals.proposalDeleteDelete(id);
     return res;
-  }
+  };
 
   const getProposalById = async (id: string) => {
     const res = await (await backendApi()).portals.proposalsDetail(id);
@@ -122,6 +122,6 @@ export default function usePortalProposal() {
     getAcceptedProposals,
     updateProposal,
     getProposalById,
-    deleteProposal
+    deleteProposal,
   };
 }
