@@ -7,9 +7,11 @@ import "./SubmissionLibrary.sol";
 
 contract Prize {
     /// @notice this will be the total amount of funds raised
-    uint256 public total_funds; 
+    uint256 private total_funds; 
+    uint256 public totalFunds;
     /// @notice this will be the total amount of rewards available
-    uint256 public total_rewards; 
+    uint256 private total_rewards; 
+    uint256 public totalRewards;
     /// @notice this will be the total amount of rewards available for the platform
     uint256 public platform_reward;
     /// @notice this will be the total amount of rewards available for the proposer
@@ -190,7 +192,9 @@ contract Prize {
             isPatron[msg.sender] = true;
         }
         total_funds += msg.value;
+        totalFunds += msg.value;
         total_rewards += (msg.value * (100-platformFee-proposerFee)) / 100; /// @notice  platform fee will depend on the prize
+        totalRewards += (msg.value * (100-platformFee-proposerFee)) / 100;
     }
 
     receive () external payable {
@@ -335,7 +339,8 @@ contract Prize {
    function getPatrons() public view returns(address[] memory) {
         return allPatrons;
    }
-    function earlyRefund() public onlyPlatformAdmin {
+   
+   function earlyRefund() public onlyPlatformAdmin {
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         totalVotes = 0;
         for (uint256 i = 0; i < allSubmissions.length;) {

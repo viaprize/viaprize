@@ -8,9 +8,11 @@ import "./SubmissionLibrary.sol";
 
 contract PrizeJudges {
     /// @notice this will be the total amount of funds raised
-    uint256 public total_funds; 
+    uint256 private total_funds; 
+    uint256 public totalFunds;
     /// @notice this will be the total amount of rewards available
-    uint256 public total_rewards; 
+    uint256 private total_rewards; 
+    uint256 public totalRewards;
     /// @notice this will be the total amount of rewards available for the platform
     uint256 public platform_reward;
     /// @notice this will be the total amount of rewards available for the proposer
@@ -199,6 +201,8 @@ contract PrizeJudges {
             isPatron[msg.sender] = true;
         }
         total_funds += msg.value;
+        totalFunds += msg.value;
+        totalRewards += (msg.value * (100-platformFee-proposerFee)) / 100;
         total_rewards += (msg.value * (100-platformFee-proposerFee)) / 100; /// @notice  platform fee will depend on the prize
         total_judge_votes = msg.value;
         assignJudgeVotes();
@@ -246,6 +250,7 @@ contract PrizeJudges {
                 unchecked {++i;}
             }
             distributed = true;
+            isActive = false;
             total_rewards = 0;
             total_funds = 0;
         }
@@ -326,12 +331,8 @@ contract PrizeJudges {
     function distribute_use_unused_votes_v2() public returns(uint256, uint256, uint256){
        if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
 
-    //    uint256 total_votes_voted = 0;
-
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-    //    for(uint256 i=0; i<allSubmissions.length; i++) {
-    //        total_votes_voted += allSubmissions[i].votes;
-    //    }
+
        uint256 total_unused_votes = total_rewards.sub(totalVotes);
        if(total_unused_votes < 0) revert("total_unused_votes cant be negative");
        if(total_unused_votes > 0 && totalVotes > 0) {
