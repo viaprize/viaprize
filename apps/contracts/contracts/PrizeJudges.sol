@@ -8,11 +8,9 @@ import "./helperContracts/nonReentrant.sol";
 
 contract PrizeJudges is ReentrancyGuard {
     /// @notice this will be the total amount of funds raised
-    uint256 private total_funds; 
-    uint256 public totalFunds;
+    uint256 public total_funds; 
     /// @notice this will be the total amount of rewards available
-    uint256 private total_rewards; 
-    uint256 public totalRewards;
+    uint256 public total_rewards; 
     /// @notice this will be the total amount of rewards available for the platform
     uint256 public platform_reward;
     /// @notice this will be the total amount of rewards available for the proposer
@@ -205,8 +203,6 @@ contract PrizeJudges is ReentrancyGuard {
             isPatron[msg.sender] = true;
         }
         total_funds += msg.value;
-        totalFunds += msg.value;
-        totalRewards += (msg.value * (100-platformFee-proposerFee)) / 100;
         total_rewards += (msg.value * (100-platformFee-proposerFee)) / 100; /// @notice  platform fee will depend on the prize
         total_judge_votes = msg.value;
         assignJudgeVotes();
@@ -228,22 +224,13 @@ contract PrizeJudges is ReentrancyGuard {
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if (allSubmissions[i].funded) {
                     uint256 reward = (allSubmissions[i].votes);
-                    total_rewards -= reward;
                     payable(allSubmissions[i].submitter).transfer(reward);
                 } 
                 unchecked { ++i; }
             }
-            total_rewards = 0;
-            total_funds = 0;
-            /// @notice  Send the platform reward
-            uint256 send_platform_reward = platform_reward;
-            platform_reward = 0;
-            /// @notice  Send the proposer reward
-            uint256 send_proposer_reward = proposer_reward;
-            proposer_reward = 0;
             distributed = true;
-            payable(platformAddress).transfer(send_platform_reward);
-            payable(proposerAddress).transfer(send_proposer_reward);
+            payable(platformAddress).transfer(platform_reward);
+            payable(proposerAddress).transfer(proposer_reward);
         }
 
         if(allSubmissions.length == 0 || totalVotes == 0) {
@@ -254,9 +241,6 @@ contract PrizeJudges is ReentrancyGuard {
                 unchecked {++i;}
             }
             refunded = true;
-            isActive = false;
-            total_rewards = 0;
-            total_funds = 0;
         }
     }
 
@@ -343,7 +327,6 @@ contract PrizeJudges is ReentrancyGuard {
             for(uint256 i=0; i<allSubmissions.length; i++) {
                 uint256 individual_percentage = (allSubmissions[i].votes.mul(100)).div(totalVotes); 
                 uint256 transferable_amount = (total_unused_votes.mul(individual_percentage)).div(100);
-                total_rewards -= transferable_amount;
                 payable(allSubmissions[i].submitter).transfer(transferable_amount);
             }
        }
@@ -377,8 +360,6 @@ contract PrizeJudges is ReentrancyGuard {
             payable(allPatrons[i]).transfer(reward);
             unchecked {++i;}
         }
-        total_rewards = 0;
-        total_funds = 0;
         refunded = true;
         isActive = false;
     }
