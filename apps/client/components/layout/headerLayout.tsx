@@ -28,7 +28,7 @@ export default function HeaderLayout() {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       logoutUser();
     }
-  }, []);
+  }, [user, ready, appUser]);
 
   return (
     <Flex

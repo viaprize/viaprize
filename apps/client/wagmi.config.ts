@@ -23,10 +23,10 @@ export default defineConfig({
       ],
       deployments: {
         PrizeFactory: {
-          10: '0xAd5a14F8a94125e265ED12FBB153A92652540283'
+          10: '0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A'
         },
         PrizeJudgesFactory: {
-          10: '0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D'
+          10: '0x7f1aF102d6EBaa0F673C3C574c58EB052db93675'
         },
         portalFactory: {
           // 80001: '0xAe37824e718488787D1bbD87E35985ED107a0C7E',

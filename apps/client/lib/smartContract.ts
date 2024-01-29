@@ -559,7 +559,7 @@ export const prizeABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xAd5a14F8a94125e265ED12FBB153A92652540283)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A)
  */
 export const prizeFactoryABI = [
   {
@@ -594,14 +594,14 @@ export const prizeFactoryABI = [
 ] as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xAd5a14F8a94125e265ED12FBB153A92652540283)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A)
  */
 export const prizeFactoryAddress = {
-  10: '0xAd5a14F8a94125e265ED12FBB153A92652540283',
+  10: '0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A',
 } as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xAd5a14F8a94125e265ED12FBB153A92652540283)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A)
  */
 export const prizeFactoryConfig = {
   address: prizeFactoryAddress,
@@ -984,7 +984,7 @@ export const prizeJudgesABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
  */
 export const prizeJudgesFactoryABI = [
   {
@@ -1020,14 +1020,14 @@ export const prizeJudgesFactoryABI = [
 ] as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
  */
 export const prizeJudgesFactoryAddress = {
-  10: '0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D',
+  10: '0x7f1aF102d6EBaa0F673C3C574c58EB052db93675',
 } as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
  */
 export const prizeJudgesFactoryConfig = {
   address: prizeJudgesFactoryAddress,
@@ -1143,7 +1143,7 @@ export function prepareWritePrize<
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xAd5a14F8a94125e265ED12FBB153A92652540283)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A)
  */
 export function writePrizeFactory<
   TFunctionName extends string,
@@ -1176,7 +1176,7 @@ export function writePrizeFactory<
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xAd5a14F8a94125e265ED12FBB153A92652540283)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A)
  */
 export function prepareWritePrizeFactory<
   TAbi extends readonly unknown[] = typeof prizeFactoryABI,
@@ -1223,7 +1223,7 @@ export function prepareWritePrizeJudges<
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeJudgesFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
  */
 export function writePrizeJudgesFactory<
   TFunctionName extends string,
@@ -1260,7 +1260,7 @@ export function writePrizeJudgesFactory<
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeJudgesFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
  */
 export function prepareWritePrizeJudgesFactory<
   TAbi extends readonly unknown[] = typeof prizeJudgesFactoryABI,
@@ -2849,7 +2849,7 @@ export function usePreparePrizeVote(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xAd5a14F8a94125e265ED12FBB153A92652540283)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A)
  */
 export function usePrizeFactoryWrite<
   TFunctionName extends string,
@@ -2878,7 +2878,7 @@ export function usePrizeFactoryWrite<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xAd5a14F8a94125e265ED12FBB153A92652540283)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A)
  */
 export function usePrizeFactoryCreateViaPrize<
   TMode extends WriteContractMode = undefined,
@@ -2911,7 +2911,7 @@ export function usePrizeFactoryCreateViaPrize<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xAd5a14F8a94125e265ED12FBB153A92652540283)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A)
  */
 export function usePreparePrizeFactoryWrite<TFunctionName extends string>(
   config: Omit<
@@ -2929,7 +2929,7 @@ export function usePreparePrizeFactoryWrite<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xAd5a14F8a94125e265ED12FBB153A92652540283)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A)
  */
 export function usePreparePrizeFactoryCreateViaPrize(
   config: Omit<
@@ -4118,7 +4118,7 @@ export function usePreparePrizeJudgesVote(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeJudgesFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
  */
 export function usePrizeJudgesFactoryWrite<
   TFunctionName extends string,
@@ -4150,7 +4150,7 @@ export function usePrizeJudgesFactoryWrite<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeJudgesFactoryABI}__ and `functionName` set to `"createViaPrizeJudges"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
  */
 export function usePrizeJudgesFactoryCreateViaPrizeJudges<
   TMode extends WriteContractMode = undefined,
@@ -4187,7 +4187,7 @@ export function usePrizeJudgesFactoryCreateViaPrizeJudges<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeJudgesFactoryABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
  */
 export function usePreparePrizeJudgesFactoryWrite<TFunctionName extends string>(
   config: Omit<
@@ -4205,7 +4205,7 @@ export function usePreparePrizeJudgesFactoryWrite<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeJudgesFactoryABI}__ and `functionName` set to `"createViaPrizeJudges"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x515878E82EbEB6130d7C6Ee5CE674D2aF6cF344D)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
  */
 export function usePreparePrizeJudgesFactoryCreateViaPrizeJudges(
   config: Omit<

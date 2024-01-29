@@ -18,6 +18,8 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
 import { useAccount, useBalance } from 'wagmi';
+import ChangeSubmission from './buttons/changeSubmission';
+import ChangeVoting from './buttons/changeVoting';
 import EarlyRefund from './buttons/earlyRefund';
 import EndSubmission from './buttons/endSubmission';
 import EndVoting from './buttons/endVoting';
@@ -175,12 +177,27 @@ export default function PrizePageComponent({
       {appUser?.isAdmin && prize.submission_time_blockchain > 0 && (
         <EndSubmission contractAddress={prize.contract_address} />
       )}
+
+      {appUser?.isAdmin && prize.submission_time_blockchain && (
+        <ChangeSubmission
+          contractAddress={prize.contract_address}
+          submissionTime={prize.submission_time_blockchain}
+        />
+      )}
+
       {appUser?.isAdmin && !prize.distributed && (
         <EarlyRefund contractAddress={prize.contract_address} />
       )}
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
         <EndVoting contractAddress={prize.contract_address} />
       ) : null}
+      {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
+        <ChangeVoting
+          contractAddress={prize.contract_address}
+          votingTime={prize.voting_time_blockchain}
+        />
+      ) : null}
+
       <Submissions
         allowVoting={prize.voting_time_blockchain > 0}
         allowSubmission={prize.submission_time_blockchain > 0}
