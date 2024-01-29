@@ -93,7 +93,7 @@ export default function SubmissionsCard({
               loading
                 ? 'Loading.....'
                 : `Total Votes you can allocate(Max: ${formatEther(
-                    BigInt(parseInt(funderBalance?.toString() ?? '1') - 1),
+                    BigInt(parseInt(funderBalance?.toString() ?? 0)),
                   )} ${chain.nativeCurrency.symbol} )`
             }
             placeholder="Enter Value of Votes"

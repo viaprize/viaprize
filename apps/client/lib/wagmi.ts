@@ -5,6 +5,7 @@ import { configureChains, createConfig } from 'wagmi';
 import { optimism, optimismGoerli, polygonMumbai } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 
+
 const getChain = (chainName: string): Chain => {
   switch (chainName) {
     case 'op': {
