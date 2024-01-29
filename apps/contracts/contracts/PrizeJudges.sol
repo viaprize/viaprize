@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import "./SubmissionAVLTree.sol";
 import "./helperContracts/safemath.sol";
 import "./SubmissionLibrary.sol";
- 
+import "./helperContracts/nonReentrant.sol";
 
-contract PrizeJudges {
+contract PrizeJudges is ReentrancyGuard {
     /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
     /// @notice this will be the total amount of rewards available
@@ -17,6 +17,8 @@ contract PrizeJudges {
     uint256 public proposer_reward;
     /// @notice bool to check if rewards have been distributed with end_voting_period
     bool public distributed;
+    /// @notice bool to check if rewards have been refunded or not
+    bool public refunded;
     /// @notice this will be the time that the voting period ends
     uint256 public voting_time; 
     /// @notice this will be the time that the submission period ends
@@ -132,6 +134,8 @@ contract PrizeJudges {
         isActive = true;
         submission_time = block.timestamp +  _submission_time * 1 days;
         track_submission_time = true;
+        distributed = false;
+        refunded = false;
     }
 
 
@@ -184,7 +188,7 @@ contract PrizeJudges {
     }
 
         /// @notice function to allow patrons to add funds to the contract
-    function addFunds() public payable {
+    function addFunds() public payable nonReentrant {
         if(isActive == false) revert("campaign already ended");
         if (msg.value == 0) revert NotEnoughFunds();
         if (total_judge_votes > 0) revert("total judge votes not zero");
@@ -209,7 +213,7 @@ contract PrizeJudges {
     }
 
     /// @notice Distribute rewards
-    function distributeRewards() private {
+    function distributeRewards() private nonReentrant {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(distributed == true) revert RewardsAlreadyDistributed();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
@@ -220,22 +224,13 @@ contract PrizeJudges {
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if (allSubmissions[i].funded) {
                     uint256 reward = (allSubmissions[i].votes);
-                    total_rewards -= reward;
                     payable(allSubmissions[i].submitter).transfer(reward);
                 } 
                 unchecked { ++i; }
             }
-            total_rewards = 0;
-            total_funds = 0;
-            /// @notice  Send the platform reward
-            uint256 send_platform_reward = platform_reward;
-            platform_reward = 0;
-            /// @notice  Send the proposer reward
-            uint256 send_proposer_reward = proposer_reward;
-            proposer_reward = 0;
             distributed = true;
-            payable(platformAddress).transfer(send_platform_reward);
-            payable(proposerAddress).transfer(send_proposer_reward);
+            payable(platformAddress).transfer(platform_reward);
+            payable(proposerAddress).transfer(proposer_reward);
         }
 
         if(allSubmissions.length == 0 || totalVotes == 0) {
@@ -245,9 +240,7 @@ contract PrizeJudges {
                 payable(allPatrons[i]).transfer(reward);
                 unchecked {++i;}
             }
-            distributed = true;
-            total_rewards = 0;
-            total_funds = 0;
+            refunded = true;
         }
     }
 
@@ -262,7 +255,7 @@ contract PrizeJudges {
 
     /// @notice create a function to allow patrons to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 amount) public {
+    function vote(bytes32 _submissionHash, uint256 amount) public nonReentrant{
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
         if(!isJudge[msg.sender]) revert NotJudgeToVote();
         if (amount > judgeFunds[msg.sender]) revert NotEnoughFunds();
@@ -284,7 +277,7 @@ contract PrizeJudges {
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
-    function change_vote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount) public {
+    function change_vote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount) public nonReentrant {
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
         if (judgeVotes[msg.sender][_previous_submissionHash] < amount) revert NotYourVote();
 
@@ -323,27 +316,20 @@ contract PrizeJudges {
     }
 
    /// @notice this fn sends the unused votes to the submitter based on their previous votes.
-    function distribute_use_unused_votes_v2() public returns(uint256, uint256, uint256){
+    function distribute_use_unused_votes_v2() public nonReentrant {
        if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
 
-    //    uint256 total_votes_voted = 0;
-
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-    //    for(uint256 i=0; i<allSubmissions.length; i++) {
-    //        total_votes_voted += allSubmissions[i].votes;
-    //    }
+
        uint256 total_unused_votes = total_rewards.sub(totalVotes);
        if(total_unused_votes < 0) revert("total_unused_votes cant be negative");
        if(total_unused_votes > 0 && totalVotes > 0) {
             for(uint256 i=0; i<allSubmissions.length; i++) {
                 uint256 individual_percentage = (allSubmissions[i].votes.mul(100)).div(totalVotes); 
                 uint256 transferable_amount = (total_unused_votes.mul(individual_percentage)).div(100);
-                total_rewards -= transferable_amount;
                 payable(allSubmissions[i].submitter).transfer(transferable_amount);
             }
        }
-
-       return (totalVotes, total_unused_votes, total_rewards);
    }
 
     function assignJudgeVotes() public {
@@ -354,7 +340,7 @@ contract PrizeJudges {
         }
     }
 
-    function earlyRefund() public onlyPlatformAdmin {
+    function earlyRefund() public nonReentrant onlyPlatformAdmin {
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         totalVotes = 0;
         total_judge_votes = 0;
@@ -374,9 +360,7 @@ contract PrizeJudges {
             payable(allPatrons[i]).transfer(reward);
             unchecked {++i;}
         }
-        total_rewards = 0;
-        total_funds = 0;
-        distributed = true;
+        refunded = true;
         isActive = false;
     }
 
