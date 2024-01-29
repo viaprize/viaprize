@@ -19,6 +19,8 @@ contract Prize is ReentrancyGuard {
     uint256 public proposer_reward;
     /// @notice bool to check if rewards have been distributed with end_voting_period
     bool public distributed;
+    /// @notice bool to check if rewards have been refunded or not
+    bool public refunded;
     /// @notice this will be the time that the voting period ends
     uint256 public voting_time; 
     /// @notice this will be the time that the submission period ends
@@ -124,6 +126,8 @@ contract Prize is ReentrancyGuard {
         isActive = true;
         submission_time = block.timestamp +  _submission_time * 1 days;
         track_submission_time = true;
+        refunded = false;
+        distributed = false;
     }
 
 
@@ -235,7 +239,8 @@ contract Prize is ReentrancyGuard {
                 payable(allPatrons[i]).transfer(reward);
                 unchecked {++i;}
             }
-            distributed = true;
+            refunded = true;
+            isActive = false;
             total_rewards = 0;
             total_funds = 0;
         }
@@ -355,7 +360,7 @@ contract Prize is ReentrancyGuard {
         }
         total_rewards = 0;
         total_funds = 0;
-        distributed = true;
+        refunded = true;
         isActive = false;
     }
 }
