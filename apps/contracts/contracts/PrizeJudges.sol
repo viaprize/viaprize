@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import "./SubmissionAVLTree.sol";
 import "./helperContracts/safemath.sol";
 import "./SubmissionLibrary.sol";
- 
+import "./helperContracts/nonReentrant.sol";
 
-contract PrizeJudges {
+contract PrizeJudges is ReentrancyGuard {
     /// @notice this will be the total amount of funds raised
     uint256 private total_funds; 
     uint256 public totalFunds;
@@ -186,7 +186,7 @@ contract PrizeJudges {
     }
 
         /// @notice function to allow patrons to add funds to the contract
-    function addFunds() public payable {
+    function addFunds() public payable nonReentrant {
         if(isActive == false) revert("campaign already ended");
         if (msg.value == 0) revert NotEnoughFunds();
         if (total_judge_votes > 0) revert("total judge votes not zero");
@@ -213,7 +213,7 @@ contract PrizeJudges {
     }
 
     /// @notice Distribute rewards
-    function distributeRewards() private {
+    function distributeRewards() private nonReentrant {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
         if(distributed == true) revert RewardsAlreadyDistributed();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
@@ -267,7 +267,7 @@ contract PrizeJudges {
 
     /// @notice create a function to allow patrons to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 amount) public {
+    function vote(bytes32 _submissionHash, uint256 amount) public nonReentrant{
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
         if(!isJudge[msg.sender]) revert NotJudgeToVote();
         if (amount > judgeFunds[msg.sender]) revert NotEnoughFunds();
@@ -289,7 +289,7 @@ contract PrizeJudges {
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
-    function change_vote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount) public {
+    function change_vote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount) public nonReentrant {
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
         if (judgeVotes[msg.sender][_previous_submissionHash] < amount) revert NotYourVote();
 
@@ -328,7 +328,7 @@ contract PrizeJudges {
     }
 
    /// @notice this fn sends the unused votes to the submitter based on their previous votes.
-    function distribute_use_unused_votes_v2() public returns(uint256, uint256, uint256){
+    function distribute_use_unused_votes_v2() public nonReentrant {
        if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
 
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
@@ -343,8 +343,6 @@ contract PrizeJudges {
                 payable(allSubmissions[i].submitter).transfer(transferable_amount);
             }
        }
-
-       return (totalVotes, total_unused_votes, total_rewards);
    }
 
     function assignJudgeVotes() public {
@@ -355,7 +353,7 @@ contract PrizeJudges {
         }
     }
 
-    function earlyRefund() public onlyPlatformAdmin {
+    function earlyRefund() public nonReentrant onlyPlatformAdmin {
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         totalVotes = 0;
         total_judge_votes = 0;
