@@ -178,12 +178,12 @@ export default function PrizePageComponent({
         <EndSubmission contractAddress={prize.contract_address} />
       )}
 
-      {appUser?.isAdmin && prize.submission_time_blockchain && (
+      {appUser?.isAdmin && prize.submission_time_blockchain ? (
         <ChangeSubmission
           contractAddress={prize.contract_address}
           submissionTime={prize.submission_time_blockchain}
         />
-      )}
+      ) : null}
 
       {appUser?.isAdmin && !prize.distributed && (
         <EarlyRefund contractAddress={prize.contract_address} />
