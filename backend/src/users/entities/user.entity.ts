@@ -44,6 +44,11 @@ export class User {
   @Column('simple-array', { default: [] })
   priorities: string[];
 
+
+  @Column({ nullable: true })
+  walletAddress: string;
+
+
   @OneToMany(() => Submission, (submission) => submission.user)
   submissions: Submission[];
 
@@ -58,4 +63,6 @@ export class User {
 
   @OneToMany(() => PortalProposals, (portalProposals) => portalProposals.user)
   portalProposals: PortalProposals[];
+
+
 }

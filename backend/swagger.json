@@ -2969,6 +2969,28 @@
         ],
         "x-nestia-method": "GET"
       }
+    },
+    "/users/migrate_wallet": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "users.migrate_wallet.migrateWallet",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
     }
   },
   "components": {
@@ -3442,6 +3464,11 @@
               "type": "string"
             }
           },
+          "walletAddress": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "submissions": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3495,6 +3522,7 @@
           "isAdmin",
           "proficiencies",
           "priorities",
+          "walletAddress",
           "submissions",
           "prizeProposals",
           "prizes",

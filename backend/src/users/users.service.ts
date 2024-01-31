@@ -10,10 +10,43 @@ import { User } from './entities/user.entity';
 /* The UsersService class is responsible for creating and retrieving user data from a repository. */
 @Injectable()
 export class UsersService {
+
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) { }
+
+  async migrateWallet(usersWallets: { wallet: string; did: string; }[]) {
+    // this.userRepository.queryRunner?.startTransaction();
+    // const users = await this.userRepository.queryRunner?.manager.find(User)
+    // if (!users) throw new HttpException('Users not found', HttpStatus.NOT_FOUND)
+    await this.userRepository.queryRunner?.startTransaction()
+    console.log("hiii")
+    try {
+      for (const wallet of usersWallets) {
+
+        if (wallet) {
+          console.log({ wallet })
+          const user = await this.userRepository.manager.findOneBy(User, {
+            authId: wallet.did
+          })
+          console.log("user", user)
+          if (user) {
+            await this.userRepository.manager.update(User, user.id, {
+              walletAddress: wallet.wallet
+            });
+          }
+        }
+      }
+      await this.userRepository.queryRunner?.commitTransaction()
+    } catch (error) {
+      console.log(error)
+      await this.userRepository.queryRunner?.rollbackTransaction()
+    }
+    finally {
+      await this.userRepository.queryRunner?.release()
+    }
+  }
 
   /**
    * The function creates a new user by inserting the provided user data into the user repository, and

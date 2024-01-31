@@ -10,7 +10,6 @@ import { CreateUser } from './dto/create-user.dto';
 import { UpdateUser } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
-
 /**
  * The Users controller is responsible for handling requests from the client related to user data.
  * This includes creating a new user, getting a user by ID, and getting a user by username.
@@ -21,7 +20,7 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
 
   /**
    * Creates a new user and sends welcome email.
