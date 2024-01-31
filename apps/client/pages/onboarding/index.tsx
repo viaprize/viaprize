@@ -67,6 +67,7 @@ export default function Details() {
           name,
           username,
           bio,
+          walletAddress: user?.wallet?.address,
         }),
         {
           loading: 'Logging In',

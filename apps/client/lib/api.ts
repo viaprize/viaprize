@@ -93,6 +93,7 @@ export interface User {
   isAdmin: boolean;
   proficiencies: string[];
   priorities: string[];
+  walletAddress: string;
   submissions: Submission[];
   prizeProposals: PrizeProposals[];
   prizes: Prize[];
@@ -511,6 +512,7 @@ export interface CreateUser {
   avatar?: string;
   proficiencies?: string[];
   priorities?: string[];
+  walletAddress?: string;
 }
 
 export interface UpdateUser {
@@ -533,6 +535,7 @@ export interface UpdateUser {
   avatar?: string;
   proficiencies?: string[];
   priorities?: string[];
+  walletAddress?: string;
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -579,7 +582,6 @@ export enum ContentType {
   UrlEncoded = 'application/x-www-form-urlencoded',
   Text = 'text/plain',
 }
-
 
 export class HttpClient<SecurityDataType = unknown> {
   public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;

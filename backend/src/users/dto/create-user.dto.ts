@@ -37,4 +37,6 @@ export interface CreateUser {
   avatar?: string;
   proficiencies?: string[];
   priorities?: string[];
+
+  walletAddress?: string;
 }
