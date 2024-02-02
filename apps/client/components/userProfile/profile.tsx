@@ -26,6 +26,7 @@ export default function Profile() {
   const { data: userData, refetch: fetchUser } = useQuery('getUserByUserName', () =>
     getUserByUserName(appUser?.username || ''),
   );
+  
   return (
     <Card
       shadow="md"

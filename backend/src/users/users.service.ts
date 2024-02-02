@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Prize } from 'src/prizes/entities/prize.entity';
 import { Submission } from 'src/prizes/entities/submission.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateUser } from './dto/create-user.dto';
 import { UpdateUser } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -10,41 +10,38 @@ import { User } from './entities/user.entity';
 /* The UsersService class is responsible for creating and retrieving user data from a repository. */
 @Injectable()
 export class UsersService {
-
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) { }
 
-  async migrateWallet(usersWallets: { wallet: string; did: string; }[]) {
+  async migrateWallet(usersWallets: { wallet: string; did: string }[]) {
     // this.userRepository.queryRunner?.startTransaction();
     // const users = await this.userRepository.queryRunner?.manager.find(User)
     // if (!users) throw new HttpException('Users not found', HttpStatus.NOT_FOUND)
-    await this.userRepository.queryRunner?.startTransaction()
-    console.log("hiii")
+    await this.userRepository.queryRunner?.startTransaction();
+    console.log('hiii');
     try {
       for (const wallet of usersWallets) {
-
         if (wallet) {
-          console.log({ wallet })
+          console.log({ wallet });
           const user = await this.userRepository.manager.findOneBy(User, {
-            authId: wallet.did
-          })
-          console.log("user", user)
+            authId: wallet.did,
+          });
+          console.log('user', user);
           if (user) {
             await this.userRepository.manager.update(User, user.id, {
-              walletAddress: wallet.wallet
+              walletAddress: wallet.wallet,
             });
           }
         }
       }
-      await this.userRepository.queryRunner?.commitTransaction()
+      await this.userRepository.queryRunner?.commitTransaction();
     } catch (error) {
-      console.log(error)
-      await this.userRepository.queryRunner?.rollbackTransaction()
-    }
-    finally {
-      await this.userRepository.queryRunner?.release()
+      console.log(error);
+      await this.userRepository.queryRunner?.rollbackTransaction();
+    } finally {
+      await this.userRepository.queryRunner?.release();
     }
   }
 
@@ -80,6 +77,19 @@ export class UsersService {
       console.log(error);
       throw new HttpException(`There is some Problem`, HttpStatus.NOT_FOUND);
     }
+  }
+
+  async findUserByWallett(walletAddress: string): Promise<string> {
+    console.log('fetching', new Date().toDateString());
+    const user = await this.userRepository.findOne({
+      where: {
+        walletAddress: ILike(walletAddress),
+      },
+    });
+    if (!user) {
+      return 'Anonymous';
+    }
+    return user.username;
   }
 
   /**

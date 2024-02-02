@@ -30,7 +30,6 @@ export class Portals {
   @Column('decimal', { nullable: true })
   fundingGoal?: string;
 
-
   @Column('decimal', { nullable: true })
   fundingGoalWithPlatformFee?: string;
 
@@ -69,6 +68,9 @@ export class Portals {
 
   @Column({ default: '' })
   title: string;
+
+  @Column('simple-array', { default: [] })
+  updates: string[];
 
   @ManyToOne(() => User, (user) => user.portals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
