@@ -6,7 +6,7 @@ export default async function AddUpdate({ params }: { params: { id: string } }) 
   const portal = (
     await new Api().portals.portalsDetail(params.id, {
       next: {
-        revalidate: 10000,
+        revalidate: 0,
       },
     })
   ).data;

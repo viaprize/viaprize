@@ -1,10 +1,15 @@
 'use client';
 import { Tabs } from '@mantine/core';
 
+import Shell from '@/components/custom/shell';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import type { Contributions } from '@/lib/api';
 import DonationInfo from './donation-info';
-import Shell from '@/components/custom/shell';
+
+const extractUpdateAndDate = (update: string) => {
+  const [date, updateText] = update.split(', update:');
+  return { date, updateText };
+};
 
 export default function PortalTabs({
   description,
@@ -15,6 +20,9 @@ export default function PortalTabs({
   contributors?: Contributions;
   updates: string[];
 }) {
+
+  console.log(updates, 'updates');
+
   return (
     <Tabs variant="pills" defaultValue="about" mt="md">
       <Tabs.List grow>
@@ -38,8 +46,12 @@ export default function PortalTabs({
           <div className="my-5">
             {updates.length > 1 ? (
               updates.map((update) => (
-                <div key={update.slice(10)} className="my-3">
-                  <TextEditor disabled richtext={update} />
+                <div key={update.slice(10)} className="my-3 w-full max-w-[70vw]">
+                  <h3>{extractUpdateAndDate(update).date}</h3>
+                  <TextEditor
+                    disabled
+                    richtext={extractUpdateAndDate(update).updateText}
+                  />
                 </div>
               ))
             ) : (

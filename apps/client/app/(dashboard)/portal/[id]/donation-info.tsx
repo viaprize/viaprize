@@ -66,7 +66,7 @@ export default function DonationInfo({ contributors }: { contributors?: Contribu
               {contributors.data.map((donation) => {
                 console.log(formatEther(BigInt(donation.amount)), 'dontai');
                 return (
-                  <Table.Tr key={donation.contributor}>
+                  <Table.Tr key={donation.donationTime}>
                     <Table.Td>
                       {new Date(parseInt(donation.donationTime) * 1000).toDateString()}
                     </Table.Td>
