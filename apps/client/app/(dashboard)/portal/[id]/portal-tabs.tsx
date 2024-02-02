@@ -28,6 +28,8 @@ export default function PortalTabs({
 
   console.log(updates, 'updates');
 
+  const launched = false;
+
   return (
     <Tabs variant="pills" defaultValue="about" mt="md">
       <Tabs.List grow>
@@ -48,20 +50,28 @@ export default function PortalTabs({
           <DonationInfo contributors={contributors} />
         </Tabs.Panel>
         <Tabs.Panel value="updates">
-          <div className="flex justify-between w-full p-4">
-            <h3>Updates</h3>
-            {isOwner ? (
-              <Button
-                className="my-3"
-                onClick={() => {
-                  router.push(`/portal/${param}/add-update`);
-                }}
-              >
-                Add Update
-              </Button>
-            ) : null}
-          </div>
-          <Updates updates={updates} />
+          {launched ? (
+            <>
+              <div className="flex justify-between w-full p-4">
+                <h3>Updates</h3>
+                {isOwner ? (
+                  <Button
+                    className="my-3"
+                    onClick={() => {
+                      router.push(`/portal/${param}/add-update`);
+                    }}
+                  >
+                    Add Update
+                  </Button>
+                ) : null}
+              </div>
+              <Updates updates={updates} />{' '}
+            </>
+          ) : (
+            <div className="flex justify-center items-center h-40">
+              <h3>Feature Coming Soon.....</h3>
+            </div>
+          )}
         </Tabs.Panel>
       </div>
     </Tabs>
