@@ -1,26 +1,30 @@
 'use client';
 import { Button, Tabs } from '@mantine/core';
 
+import useAppUser from '@/components/hooks/useAppUser';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import type { Contributions } from '@/lib/api';
+import { useRouter } from 'next/navigation';
 import DonationInfo from './donation-info';
 import Updates from './updates';
-import useAppUser from '@/components/hooks/useAppUser';
 
 export default function PortalTabs({
   description,
   contributors,
   updates,
   owner,
+  param,
 }: {
   description: string;
   contributors?: Contributions;
   updates: string[];
   owner: string;
+  param: string;
 }) {
   const { appUser } = useAppUser();
 
   const isOwner = owner === appUser?.username || appUser?.isAdmin; // TODO: replace with actual username
+  const router = useRouter();
 
   console.log(updates, 'updates');
 
@@ -46,7 +50,16 @@ export default function PortalTabs({
         <Tabs.Panel value="updates">
           <div className="flex justify-between w-full p-4">
             <h3>Updates</h3>
-            {isOwner ? <Button className="my-3">Add Update</Button> : null}
+            {isOwner ? (
+              <Button
+                className="my-3"
+                onClick={() => {
+                  router.push(`/portal/${param}/add-update`);
+                }}
+              >
+                Add Update
+              </Button>
+            ) : null}
           </div>
           <Updates updates={updates} />
         </Tabs.Panel>

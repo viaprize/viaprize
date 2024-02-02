@@ -11,7 +11,7 @@ import { useMutation } from 'react-query';
 import { toast } from 'sonner';
 
 const updateWithDate = (update: string) => {
-  return `${new Date().toString()}, update:${update}`;
+  return `${new Date().toString()}: update:${update}`;
 };
 
 const extractUpdateAndDate = (update: string) => {
