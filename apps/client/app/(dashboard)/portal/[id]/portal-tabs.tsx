@@ -1,25 +1,26 @@
 'use client';
-import { Tabs } from '@mantine/core';
+import { Button, Tabs } from '@mantine/core';
 
-import Shell from '@/components/custom/shell';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import type { Contributions } from '@/lib/api';
 import DonationInfo from './donation-info';
-
-const extractUpdateAndDate = (update: string) => {
-  const [date, updateText] = update.split(', update:');
-  return { date, updateText };
-};
+import Updates from './updates';
+import useAppUser from '@/components/hooks/useAppUser';
 
 export default function PortalTabs({
   description,
   contributors,
   updates,
+  owner,
 }: {
   description: string;
   contributors?: Contributions;
   updates: string[];
+  owner: string;
 }) {
+  const { appUser } = useAppUser();
+
+  const isOwner = owner === appUser?.username || appUser?.isAdmin; // TODO: replace with actual username
 
   console.log(updates, 'updates');
 
@@ -43,21 +44,11 @@ export default function PortalTabs({
           <DonationInfo contributors={contributors} />
         </Tabs.Panel>
         <Tabs.Panel value="updates">
-          <div className="my-5">
-            {updates.length > 1 ? (
-              updates.map((update) => (
-                <div key={update.slice(10)} className="my-3 w-full max-w-[70vw]">
-                  <h3>{extractUpdateAndDate(update).date}</h3>
-                  <TextEditor
-                    disabled
-                    richtext={extractUpdateAndDate(update).updateText}
-                  />
-                </div>
-              ))
-            ) : (
-              <Shell>No Updates Yet</Shell>
-            )}
+          <div className="flex justify-between w-full p-4">
+            <h3>Updates</h3>
+            {isOwner ? <Button className="my-3">Add Update</Button> : null}
           </div>
+          <Updates updates={updates} />
         </Tabs.Panel>
       </div>
     </Tabs>
