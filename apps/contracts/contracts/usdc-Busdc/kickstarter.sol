@@ -5,6 +5,9 @@ pragma solidity ^0.8.0;
 import "../helperContracts/ierc20.sol";
 import "../helperContracts/safemath.sol";
 
+interface IERC20Permit is IERC20 {
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
+}
 contract Kickstarter {
     address[] public proposers;
     mapping(address => bool) public isProposer;
@@ -28,9 +31,10 @@ contract Kickstarter {
     bool public allowDonationAboveGoalAmount;
     bool public isActive;
     bool internal locked;
-    IERC20 private _usdc;
-    IERC20 private _usdcBridged;
+    IERC20Permit private _usdc;
+    IERC20Permit private _usdcBridged;
     mapping(address => bool) public isUsdcContributer;
+    
 
     error NotEnoughFunds();
     error FundingToContractEnded();
@@ -78,8 +82,8 @@ contract Kickstarter {
 
         receiverAddress = proposers[0];
         platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
-        _usdc = IERC20(0xFd4fF6863A9069cFdc006524432ce661866C5D97);
-        _usdcBridged = IERC20(0xFd4fF6863A9069cFdc006524432ce661866C5D97);
+        _usdc = IERC20Permit(0x9999f7Fea5938fD3b1E26A12c3f2fb024e194f97);
+        _usdcBridged = IERC20Permit(0x9999f7Fea5938fD3b1E26A12c3f2fb024e194f97);
         platformFee = _platformFee;
         goalAmount = _goal;
         deadline = _deadline;
@@ -99,8 +103,9 @@ contract Kickstarter {
         _;
     }
 
-    function addUsdcFunds(uint256 _amountUsdc) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
+    function addUsdcFunds(uint256 _amountUsdc, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
         require(_amountUsdc > 0, "funds should be greater than 0");
+        _usdc.permit(msg.sender, address(this), _amountUsdc, block.timestamp + 1 days, v, r, s);
         require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
@@ -217,8 +222,9 @@ contract Kickstarter {
         );
     }
 
-    function addBridgedUsdcFunds(uint256 _amountUsdc) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
+    function addBridgedUsdcFunds(uint256 _amountUsdc, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
         require(_amountUsdc > 0, "funds should be greater than 0");
+        _usdc.permit(msg.sender, address(this), _amountUsdc, block.timestamp + 1 days, v, r, s);
         require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
