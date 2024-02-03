@@ -10,6 +10,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Request,
   UseGuards,
@@ -17,11 +18,13 @@ import {
 import { Cache } from 'cache-manager';
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Contributions } from 'src/blockchain/blockchain';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { JobService } from 'src/jobs/jobs.service';
 import { MailService } from 'src/mail/mail.service';
 import { CreatePortalDto } from 'src/portals/dto/create-portal.dto';
 import { RejectProposalDto } from 'src/prizes/dto/reject-proposal.dto';
+import { UsersService } from 'src/users/users.service';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
@@ -71,8 +74,9 @@ export class PortalsController {
     private readonly portalsService: PortalsService,
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
+    private readonly userService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -107,6 +111,7 @@ export class PortalsController {
       user: portalProposal.user,
       sendImmediately: portalProposal.sendImmediately,
       fundingGoalWithPlatformFee: portalProposal.fundingGoalWithPlatformFee,
+      updates: [],
     });
     if (!portalProposal.sendImmediately) {
       const properMinutes = extractMinutes(
@@ -237,7 +242,19 @@ export class PortalsController {
     const contributors = await this.blockchainService.getPortalContributors(
       portal.contract_address,
     );
-    console.log({ contributors });
+
+    const ContributorsWithUser = contributors.data.map(async (contributor) => {
+      return {
+        ...contributor,
+        contributor: await this.userService.findUserByWallett(
+          contributor.contributor,
+        ),
+      };
+    });
+
+    const resultsWithContributors = {
+      data: await Promise.all(ContributorsWithUser),
+    };
 
     return {
       ...portal,
@@ -245,8 +262,19 @@ export class PortalsController {
       totalFunds: parseInt((results[1].result as bigint).toString()),
       totalRewards: parseInt((results[2].result as bigint).toString()),
       isActive: results[3].result as boolean,
-      contributors: contributors,
+      contributors: resultsWithContributors,
     };
+  }
+
+  @Put('/:id/add-update')
+  @UseGuards(AuthGuard)
+  async addUpdate(
+    @TypedParam('id') id: string,
+    @TypedBody() update: string,
+  ): Promise<Portals> {
+    const portal = await this.portalsService.addPortalUpdate(id, update);
+    await this.cacheManager.reset();
+    return portal;
   }
 
   @Delete('/proposal/delete/:id')

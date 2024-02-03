@@ -41,9 +41,11 @@ export default function DonationInfo({ contributors }: { contributors?: Contribu
     getCryptoToUsd(),
   );
 
+  console.log(contributors, 'contributors')
+
   return (
     <div className="lg:flex  gap-4 px-3 sm:px-6 md:px-14 lg:px-20 justify-between mt-5 w-full max-w-[90vw]">
-      {contributors ? (
+      {contributors?.data && contributors.data.length > 0 ? (
         <div className="overflow-x-auto w-full">
           <Table
             highlightOnHover
@@ -64,13 +66,12 @@ export default function DonationInfo({ contributors }: { contributors?: Contribu
               {contributors.data.map((donation) => {
                 console.log(formatEther(BigInt(donation.amount)), 'dontai');
                 return (
-                  <Table.Tr key={donation.contributor}>
+                  <Table.Tr key={donation.donationTime}>
                     <Table.Td>
                       {new Date(parseInt(donation.donationTime) * 1000).toDateString()}
                     </Table.Td>
                     <Table.Td>
-                      {donation.contributor.slice(0, 7)}......
-                      {donation.contributor.slice(-5)}
+                      {donation.contributor}
                     </Table.Td>
                     {/* <Table.Td>{donation.network}</Table.Td> */}
                     <Table.Td>{formatEther(BigInt(donation.amount))}</Table.Td>

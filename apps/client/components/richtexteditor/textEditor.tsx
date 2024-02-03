@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@mantine/core';
-import { Link, RichTextEditor } from '@mantine/tiptap';
+import { Link } from '@mantine/tiptap';
 import { Highlight } from '@tiptap/extension-highlight';
 import SubScript from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
@@ -12,9 +12,9 @@ import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
 // import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
+import 'react-quill/dist/quill.snow.css';
 
 interface TextEditorProps {
   disabled?: boolean;

@@ -8,12 +8,11 @@ export default async function CreatePortal({ params }: { params: { id: string } 
   const portal = (
     await new Api().portals.portalsDetail(params.id, {
       next: {
-        revalidate: 10000,
+        revalidate: 0,
       },
     })
   ).data;
 
-  console.log(portal);
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
       <div className="w-full lg:flex gap-4 justify-between">
@@ -37,7 +36,13 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           sendImmediately={portal.sendImmediately}
         />
       </div>
-      <PortalTabs description={portal.description} contributors={portal.contributors} />
+      <PortalTabs
+        description={portal.description}
+        contributors={portal.contributors}
+        updates={portal.updates}
+        owner={portal.user.username}
+        param={params.id}
+      />
     </div>
   );
 }

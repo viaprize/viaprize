@@ -79,6 +79,7 @@ export interface Portals {
   updatedAt: string;
   images: string[];
   title: string;
+  updates: string[];
   user: User;
 }
 
@@ -223,6 +224,7 @@ export interface PortalWithBalance {
   updatedAt: string;
   images: string[];
   title: string;
+  updates: string[];
   user: User;
 }
 
@@ -644,8 +646,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-              ? JSON.stringify(property)
-              : `${property}`,
+            ? JSON.stringify(property)
+            : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -725,18 +727,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-          .then((data) => {
-            if (r.ok) {
-              r.data = data;
-            } else {
-              r.error = data;
-            }
-            return r;
-          })
-          .catch((e) => {
-            r.error = e;
-            return r;
-          });
+            .then((data) => {
+              if (r.ok) {
+                r.data = data;
+              } else {
+                r.error = data;
+              }
+              return r;
+            })
+            .catch((e) => {
+              r.error = e;
+              return r;
+            });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
@@ -867,6 +869,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<PortalWithBalance, any>({
         path: `/portals/${id}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AddUpdateUpdate
+     * @request PUT:/portals/{id}/add-update
+     */
+    addUpdateUpdate: (id: string, data: string, params: RequestParams = {}) =>
+      this.request<Portals, any>({
+        path: `/portals/${id}/add-update`,
+        method: 'PUT',
+        body: data,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
