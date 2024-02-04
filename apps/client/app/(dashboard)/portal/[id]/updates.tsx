@@ -1,6 +1,6 @@
 import Shell from '@/components/custom/shell';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
-import React from 'react'
+import React from 'react';
 
 const extractUpdateAndDate = (update: string) => {
   const [date, updateText] = update.split(': update:');
@@ -26,8 +26,7 @@ function formatDateString(inputString: string): string {
   return formattedDate;
 }
 
-export default function Updates({updates}:{updates:string[]}) {
-
+export default function Updates({ updates }: { updates: string[] }) {
   console.log(updates, 'updates');
 
   return (

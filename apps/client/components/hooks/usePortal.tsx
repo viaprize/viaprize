@@ -7,10 +7,15 @@ export const usePortal = () => {
     return portal.data;
   };
 
-  const addUpdatesToPortal = async ({portalId, update}:{portalId: string, update:string }) => {
-    const portal = await(await backendApi()).portals.addUpdateUpdate(portalId,update);
+  const addUpdatesToPortal = async ({
+    portalId,
+    update,
+  }: {
+    portalId: string;
+    update: string;
+  }) => {
+    const portal = await (await backendApi()).portals.addUpdateUpdate(portalId, update);
     return portal.data;
-  }
+  };
   return { createPortal, addUpdatesToPortal };
-  
 };

@@ -12,7 +12,7 @@ export default async function AddUpdate({ params }: { params: { id: string } }) 
   ).data;
 
   return (
-    <section className='p-9 w-full'>
+    <section className="p-9 w-full">
       <AddUpdateCard params={params} portal={portal} />
     </section>
   );
