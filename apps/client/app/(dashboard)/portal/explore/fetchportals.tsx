@@ -74,6 +74,7 @@ export default async function FetchPortals({
             fundingGoalWithPlatformFee={parseFloat(portal.fundingGoal ?? '0')}
             deadline={portal.deadline}
             tags={portal.tags}
+            isIframe={false}
           />
         );
       })}

@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
+import Link from 'next/link';
 import { PiTimerFill } from 'react-icons/pi';
 
 interface PortalCardProps {
@@ -30,6 +31,7 @@ interface PortalCardProps {
   deadline?: string;
   isActive: boolean;
   tags: string[];
+  isIframe: boolean;
 }
 
 export default function PortalCard({
@@ -44,6 +46,7 @@ export default function PortalCard({
   ethToUsd,
   isActive,
   tags,
+  isIframe,
 }: PortalCardProps) {
   return (
     <Card
@@ -121,18 +124,31 @@ export default function PortalCard({
         </Text>
       ) : null}
 
-      <Button
-        color="primary"
-        component="a"
-        fullWidth
-        mt="md"
-        radius="md"
-        href={`/portal/${id}`}
-      >
-        Details
-      </Button>
+      {isIframe ? (
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`https://viaprize.org/portal/${id}`}
+        >
+          <Button color="primary" component="a" fullWidth mt="md" radius="md">
+            Details
+          </Button>
+        </Link>
+      ) : (
+        <Button
+          color="primary"
+          component="a"
+          fullWidth
+          mt="md"
+          radius="md"
+          href={`/portal/${id}`}
+        >
+          Details
+        </Button>
+      )}
+
       <div className="absolute top-2 right-2">
-        <CopyButton value={`https://viaprize.org/portal/${id}`}>
+        <CopyButton value={`https://www.viaprize.org/portal/${id}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'primary'}>

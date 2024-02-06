@@ -1,24 +1,10 @@
+'use client';
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { useRouter } from 'next/router';
 import { Api } from '@/lib/api';
 import type { SearchParams } from '@/lib/types';
 import { formatEther } from 'viem';
 import PortalCard from '@/components/portals/portal-card';
-
-async function fetchPortalData(id: string) {
-  //   try {
-  //     const api = new Api();
-  //     const response = await api.get(`/portals/${id}`);
-  //     if (response.status === 200) {
-  //       const portalData = await response.json();
-  //       return portalData;
-  //     }
-  //     return null;
-  //   } catch (error) {
-  //     console.error('Error fetching portal data:', error);
-  //     return null;
-  //   }
-}
 
 export default async function PortalEmbed({ params }: { params: { id: string } }) {
   const portal = (
@@ -56,6 +42,7 @@ export default async function PortalEmbed({ params }: { params: { id: string } }
           fundingGoalWithPlatformFee={parseFloat(portal.fundingGoal ?? '0')}
           deadline={portal.deadline}
           tags={portal.tags}
+          isIframe={true}
         />
       ) : null}
     </div>
