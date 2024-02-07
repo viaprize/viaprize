@@ -41,7 +41,7 @@ export default function DonationInfo({ contributors }: { contributors?: Contribu
     getCryptoToUsd(),
   );
 
-  console.log(contributors, 'contributors')
+  console.log(contributors, 'contributors');
 
   return (
     <div className="lg:flex  gap-4 px-3 sm:px-6 md:px-14 lg:px-20 justify-between mt-5 w-full max-w-[90vw]">
@@ -70,9 +70,7 @@ export default function DonationInfo({ contributors }: { contributors?: Contribu
                     <Table.Td>
                       {new Date(parseInt(donation.donationTime) * 1000).toDateString()}
                     </Table.Td>
-                    <Table.Td>
-                      {donation.contributor}
-                    </Table.Td>
+                    <Table.Td>{donation.contributor}</Table.Td>
                     {/* <Table.Td>{donation.network}</Table.Td> */}
                     <Table.Td>{formatEther(BigInt(donation.amount))}</Table.Td>
                     <Table.Td>

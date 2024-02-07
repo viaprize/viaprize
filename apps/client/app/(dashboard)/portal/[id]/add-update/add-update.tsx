@@ -17,7 +17,7 @@ const updateWithDate = (update: string) => {
 const extractUpdateAndDate = (update: string) => {
   const [date, updateText] = update.split(', update:');
   return { date, updateText };
-}
+};
 
 export default function AddUpdateCard({
   params,
@@ -31,17 +31,20 @@ export default function AddUpdateCard({
 
   const { addUpdatesToPortal } = usePortal();
 
-  const {mutateAsync: updatePortal} = useMutation(addUpdatesToPortal);
+  const { mutateAsync: updatePortal } = useMutation(addUpdatesToPortal);
 
-  const handlePortalUpdate =  () => {
-    const update=updateWithDate(richtext);
+  const handlePortalUpdate = () => {
+    const update = updateWithDate(richtext);
     console.log(extractUpdateAndDate(update));
-    toast.promise(updatePortal({portalId: params.id, update: updateWithDate(richtext)}), {
-      loading: 'Adding Update',
-      success: 'Update Added',
-      error: 'Failed to add Update',
-    });
-  }
+    toast.promise(
+      updatePortal({ portalId: params.id, update: updateWithDate(richtext) }),
+      {
+        loading: 'Adding Update',
+        success: 'Update Added',
+        error: 'Failed to add Update',
+      },
+    );
+  };
 
   if (appUser?.username !== portal.user.username && !appUser?.isAdmin) {
     return <NotAutherized />;

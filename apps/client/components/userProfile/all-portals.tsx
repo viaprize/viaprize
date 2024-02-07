@@ -53,6 +53,7 @@ export default function AllPortals({ params }: { params: { id: string } }) {
             fundingGoalWithPlatformFee={parseFloat(portal.fundingGoal ?? '0')}
             deadline={portal.deadline}
             tags={portal.tags}
+            isIframe={false}
           />
         );
       })}
