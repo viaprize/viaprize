@@ -5,7 +5,7 @@ async function getPermitSignature(signer, token, spender, value, deadline) {
   const [nonce, name, version, chainId] = await Promise.all([
     token.nonces(signer.address),
     token.name(),
-    "1",
+    "2",
     signer.getChainId(),
   ]);
 
@@ -54,15 +54,17 @@ async function getPermitSignature(signer, token, spender, value, deadline) {
 
 describe("ERC20Permit", function () {
   it("ERC20 permit", async function () {
+    this.timeout(220000);
     const accounts = await ethers.getSigners(1);
     const signer = accounts[0];
 
     const Token = await ethers.getContractFactory("Token");
     const token = await Token.deploy();
     await token.deployed();
+    console.log(token.address);
 
-    const proposers = [];
-    const admins = [];
+    const proposers = ["0x657bB607086679EC3223e4Cdd18485c14CaC1e36"];
+    const admins = ["0x5923203a92ABa3Eb92940F42f6eB5267BA377D5f"];
     const goal = 10000;
     const deadline = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
     const allowDonationAboveGoalAmount = true;
@@ -79,6 +81,7 @@ describe("ERC20Permit", function () {
       platformFee
     );
     await vault.deployed();
+    console.log(vault.address);
 
     const amount = 1000;
     await token.mint(signer.address, amount);
@@ -93,8 +96,22 @@ describe("ERC20Permit", function () {
       txDeadline
     );
 
-    await vault.addUsdcFunds(amount, deadline, v, r, s);
+    // const gas = await vault.estimateGas.addUsdcFunds(signer.address, vault.address, amount, deadline, v, r, s)
+    // console.log(gas)
+    await vault.addUsdcFunds(
+      signer.address,
+      vault.address,
+      amount,
+      txDeadline,
+      v,
+      r,
+      s,
+      {
+        gasLimit: 100000,
+      }
+    );
     console.log(v, r, s);
-    // expect(await token.balanceOf(vault.address)).to.equal(amount)
+
+    expect(await token.balanceOf(vault.address)).to.equal(amount);
   });
 });
