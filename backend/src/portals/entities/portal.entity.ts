@@ -69,8 +69,12 @@ export class Portals {
   @Column({ default: '' })
   title: string;
 
-  @Column('simple-array', { default: [] })
-  updates: string[];
+  @Column({
+    type: "text",
+    array: true,
+    nullable: true,
+  })
+  updates?: string[]
 
   @ManyToOne(() => User, (user) => user.portals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
