@@ -28,7 +28,7 @@ export default function PortalTabs({
 
   console.log(updates, 'updates');
 
-  const launched = false;
+  const launched = true;
 
   return (
     <Tabs variant="pills" defaultValue="about" mt="md">

@@ -39,7 +39,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
       <PortalTabs
         description={portal.description}
         contributors={portal.contributors}
-        updates={portal.updates}
+        updates={portal.updates ?? []}
         owner={portal.user.username}
         param={params.id}
       />

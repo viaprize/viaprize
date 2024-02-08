@@ -5,7 +5,7 @@ import { AllConfigType } from 'src/config/config.type';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  constructor(private configService: ConfigService<AllConfigType>) {}
+  constructor(private configService: ConfigService<AllConfigType>) { }
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
@@ -19,6 +19,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       synchronize: this.configService.get('database.synchronize', {
         infer: true,
       }),
+      poolSize: 20,
       dropSchema: false,
       keepConnectionAlive: true,
       logging:
@@ -36,20 +37,20 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
         max: this.configService.get('database.maxConnections', { infer: true }),
         ssl: this.configService.get('database.sslEnabled', { infer: true })
           ? {
-              rejectUnauthorized: this.configService.get(
-                'database.rejectUnauthorized',
-                { infer: true },
-              ),
-              ca:
-                this.configService.get('database.ca', { infer: true }) ??
-                undefined,
-              key:
-                this.configService.get('database.key', { infer: true }) ??
-                undefined,
-              cert:
-                this.configService.get('database.cert', { infer: true }) ??
-                undefined,
-            }
+            rejectUnauthorized: this.configService.get(
+              'database.rejectUnauthorized',
+              { infer: true },
+            ),
+            ca:
+              this.configService.get('database.ca', { infer: true }) ??
+              undefined,
+            key:
+              this.configService.get('database.key', { infer: true }) ??
+              undefined,
+            cert:
+              this.configService.get('database.cert', { infer: true }) ??
+              undefined,
+          }
           : undefined,
       },
     } as TypeOrmModuleOptions;

@@ -10,7 +10,7 @@ export class PortalsService {
   constructor(
     @InjectRepository(Portals)
     private portalRepository: Repository<Portals>,
-  ) {}
+  ) { }
 
   async findAll(query: PortalPaginateQuery): Promise<Paginated<Portals>> {
     const { tags, ...paginateQuery } = query;
@@ -106,8 +106,10 @@ export class PortalsService {
         id: portalId,
       },
     });
-    portal.updates.push(update);
-    return this.portalRepository.save(portal);
+    await this.portalRepository.save(portal);
+    this.portalRepository.update(portalId, { updates: [update, ...portal.updates ?? []] })
+    portal.updates = [update, ...portal.updates ?? []];
+    return portal;
   }
 
   async create(portalData: Omit<Portals, 'id' | 'createdAt' | 'updatedAt'>) {
