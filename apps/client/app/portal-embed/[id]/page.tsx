@@ -1,16 +1,14 @@
 'use client';
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { useRouter } from 'next/router';
-import { Api } from '@/lib/api';
-import type { SearchParams } from '@/lib/types';
-import { formatEther } from 'viem';
 import PortalCard from '@/components/portals/portal-card';
+import { Api } from '@/lib/api';
+import { formatEther } from 'viem';
 
 export default async function PortalEmbed({ params }: { params: { id: string } }) {
   const portal = (
     await new Api().portals.portalsDetail(params.id, {
       next: {
-        revalidate: 0,
+        revalidate: 5,
       },
     })
   ).data;
