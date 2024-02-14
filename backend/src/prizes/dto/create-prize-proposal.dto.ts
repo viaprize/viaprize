@@ -103,9 +103,8 @@ export class CreatePrizeProposalDto {
   @IsArray()
   images: string[];
 
-
   @ApiProperty({
-    type: [String]
+    type: [String],
   })
   @IsArray()
   @IsOptional()

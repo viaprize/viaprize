@@ -76,7 +76,7 @@ export class PortalsController {
     private readonly jobService: JobService,
     private readonly userService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {

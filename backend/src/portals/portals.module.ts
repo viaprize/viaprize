@@ -23,4 +23,4 @@ import { PortalsService } from './services/portals.service';
   ],
   providers: [PortalsService, PortalProposalsService],
 })
-export class PortalsModule { }
+export class PortalsModule {}

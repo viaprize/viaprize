@@ -88,9 +88,12 @@ export class PortalProposals {
   @BeforeInsert()
   updateFundingGoalWithPlatformFee() {
     if (!this.sendImmediately && this.fundingGoal) {
-      console.log("funding platfee insert and update")
-      const fundingGoalNumber = parseFloat(this.fundingGoal)
-      this.fundingGoalWithPlatformFee = (fundingGoalNumber + (fundingGoalNumber * (this.platformFeePercentage / 100))).toString()
+      console.log('funding platfee insert and update');
+      const fundingGoalNumber = parseFloat(this.fundingGoal);
+      this.fundingGoalWithPlatformFee = (
+        fundingGoalNumber +
+        fundingGoalNumber * (this.platformFeePercentage / 100)
+      ).toString();
     }
   }
 }

@@ -20,7 +20,7 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   /**
    * Creates a new user and sends welcome email.

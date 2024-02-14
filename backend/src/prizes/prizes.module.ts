@@ -23,4 +23,4 @@ import { SubmissionService } from './services/submissions.service';
   ],
   providers: [PrizesService, SubmissionService, PrizeProposalsService],
 })
-export class PrizesModule { }
+export class PrizesModule {}

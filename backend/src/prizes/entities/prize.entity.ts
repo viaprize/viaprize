@@ -49,9 +49,9 @@ export class Prize {
   admins: string[];
 
   @Column({
-    type: "text",
+    type: 'text',
     array: true,
-    nullable: true
+    nullable: true,
   })
   judges?: string[];
 

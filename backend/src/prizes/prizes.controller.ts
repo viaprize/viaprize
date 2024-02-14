@@ -83,7 +83,7 @@ export class PrizesController {
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -113,8 +113,7 @@ export class PrizesController {
       startSubmissionDate: prizeProposal.startSubmissionDate,
       startVotingDate: prizeProposal.startVotingDate,
       user: prizeProposal.user,
-      judges: prizeProposal.judges
-
+      judges: prizeProposal.judges,
     });
 
     await this.prizeProposalsService.remove(prizeProposal.id);
@@ -202,9 +201,7 @@ export class PrizesController {
     return {
       ...prize,
       distributed: results[3].result as boolean,
-      balance: parseInt(
-        (results[4].result as bigint).toString(),
-      ),
+      balance: parseInt((results[4].result as bigint).toString()),
       submission_time_blockchain: parseInt(
         (results[1].result as bigint).toString(),
       ),

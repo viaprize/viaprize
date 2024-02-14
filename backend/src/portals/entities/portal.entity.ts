@@ -70,11 +70,11 @@ export class Portals {
   title: string;
 
   @Column({
-    type: "text",
+    type: 'text',
     array: true,
     nullable: true,
   })
-  updates?: string[]
+  updates?: string[];
 
   @ManyToOne(() => User, (user) => user.portals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })

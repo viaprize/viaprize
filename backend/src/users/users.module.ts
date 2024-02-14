@@ -9,12 +9,13 @@ import { UsersService } from './users.service';
 @Module({
   imports: [
     CacheModule.register({
-      ttl: 600000
+      ttl: 600000,
     }),
-    TypeOrmModule.forFeature([User]), MailModule
+    TypeOrmModule.forFeature([User]),
+    MailModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],
 })
-export class UsersModule { }
+export class UsersModule {}
