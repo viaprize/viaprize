@@ -1,6 +1,8 @@
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
 import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
+import { ConvertUSD } from '@/lib/types';
+import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
   Button,
@@ -14,10 +16,10 @@ import { useDebouncedValue } from '@mantine/hooks';
 import { IconRefresh } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useQuery } from 'wagmi';
 import ChangeSubmission from './buttons/changeSubmission';
 import ChangeVoting from './buttons/changeVoting';
 import EarlyRefund from './buttons/earlyRefund';
@@ -41,6 +43,29 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
   // });
   const [sendLoading, setSendLoading] = useState(false);
 
+  const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
+    const final = await (
+      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
+    ).json();
+    return Object.keys(final).length === 0
+      ? {
+          [chain.name.toLowerCase()]: {
+            usd: 0,
+          },
+        }
+      : final;
+  });
+
+  const ethOfDonateValue = useMemo(() => {
+    if (!cryptoToUsd) {
+      console.error('cryptoToUsd is undefined');
+      return 0;
+    }
+    const cryto_to_usd_value = cryptoToUsd.ethereum.usd;
+    const usd_to_eth = parseFloat(value) / cryto_to_usd_value;
+    return isNaN(usd_to_eth) ? 0 : usd_to_eth;
+  }, [value]);
+
   // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
   //   ...config,
   //   async onSuccess(data) {
@@ -54,13 +79,25 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
   return (
     <Stack my="md">
       <NumberInput
-        label={
+        description={
           isLoading
             ? 'Loading.....'
-            : `Enter Value To Donate (Max: ${balance?.formatted} ${balance?.symbol} )`
+            : `Wallet Balance: ${
+                balance
+                  ? `$${(
+                      parseFloat(balance.formatted.toString()) *
+                      (cryptoToUsd?.ethereum.usd ?? 0)
+                    ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${
+                      balance.symbol
+                    })`
+                  : `Login To See Balance`
+              })`
         }
-        placeholder="Custom right section"
+        placeholder="Enter Value  in $ To Donate"
         mt="md"
+        label={`You will donate ${ethOfDonateValue.toFixed(4) ?? 0} ${
+          chain.nativeCurrency.symbol
+        } (${value} USD)`}
         rightSection={
           <ActionIcon>
             <IconRefresh onClick={() => refetch({})} />
@@ -73,7 +110,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
         value={value}
         onChange={(v) => {
           if (!v) {
-            console.log({ v }, 'inner v');
+            // console.log({ v }, 'inner v');
             setValue('0');
           }
           setValue(v.toString());
@@ -86,24 +123,25 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
         onClick={async () => {
           await refetch();
 
-          if (parseInt(debounced.toString()) > parseInt(balance?.formatted as string)) {
-            toast.error('Insufficient Balance');
-            return;
-          }
           setSendLoading(true);
 
-          const config = await prepareSendTransaction({
-            to: contractAddress,
-            value: debounced ? parseEther(debounced) : undefined,
-            data: '0x',
-          });
+          try {
+            const config = await prepareSendTransaction({
+              to: contractAddress,
+              value: debounced ? parseEther(ethOfDonateValue.toString()) : undefined,
+              data: '0x',
+            });
+            const { hash } = await sendTransaction(config);
+            toast.success(`Transaction ${hash}`, {
+              duration: 6000,
+            });
 
-          const { hash } = await sendTransaction(config);
-          toast.success(`Transaction ${hash}`, {
-            duration: 6000,
-          });
-          setSendLoading(false);
-          window.location.reload();
+            window.location.reload();
+          } catch (e: unknown) {
+            toast.error((e as any)?.message);
+          } finally {
+            setSendLoading(false);
+          }
         }}
       >
         Donate

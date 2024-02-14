@@ -202,7 +202,9 @@ export class PrizesController {
     return {
       ...prize,
       distributed: results[3].result as boolean,
-      balance: parseInt((results[0].result as bigint).toString()),
+      balance: parseInt(
+        (results[4].result as bigint).toString(),
+      ),
       submission_time_blockchain: parseInt(
         (results[1].result as bigint).toString(),
       ),

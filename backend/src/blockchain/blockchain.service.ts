@@ -350,6 +350,13 @@ export class BlockchainService {
         name: 'distributed',
         outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
       },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'total_funds',
+        outputs: [{ name: '', internalType: 'bool', type: 'bool' }]
+      }
     ];
     const wagmiContract = {
       address: prizeContractAddress as `0x${string}`,
@@ -374,6 +381,10 @@ export class BlockchainService {
           ...wagmiContract,
           functionName: 'distributed',
         },
+        {
+          ...wagmiContract,
+          functionName: 'total_funds',
+        }
       ],
     });
     return results;
