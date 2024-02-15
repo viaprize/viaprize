@@ -83,7 +83,7 @@ export class PrizesController {
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -197,7 +197,9 @@ export class PrizesController {
     const results = await this.blockchainService.getPrizePublicVariables(
       prize.contract_address,
     );
-    console.log(results, 'results');
+    // console.log({ results })
+    // console.log(results, 'results');
+    console.log(results[4], 'resultsssn3');
     return {
       ...prize,
       distributed: results[3].result as boolean,

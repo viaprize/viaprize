@@ -3397,12 +3397,12 @@
             "type": "string"
           },
           "updates": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "array",
             "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
+              "x-typia-required": false,
+              "x-typia-optional": true,
               "type": "string"
             }
           },
@@ -3428,7 +3428,6 @@
           "updatedAt",
           "images",
           "title",
-          "updates",
           "user"
         ],
         "x-typia-jsDocTags": []
@@ -4220,12 +4219,12 @@
             "type": "string"
           },
           "updates": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "array",
             "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
+              "x-typia-required": false,
+              "x-typia-optional": true,
               "type": "string"
             }
           },
@@ -4253,7 +4252,6 @@
           "updatedAt",
           "images",
           "title",
-          "updates",
           "user"
         ],
         "x-typia-jsDocTags": []

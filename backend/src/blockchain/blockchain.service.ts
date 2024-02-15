@@ -299,6 +299,13 @@ export class BlockchainService {
         stateMutability: 'view',
         type: 'function',
         inputs: [],
+        name: 'total_funds',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
         name: 'distributed',
         outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
       },
@@ -311,9 +318,8 @@ export class BlockchainService {
       } as const;
       calls.push(
         {
-          ...this.multiCallContract,
-          functionName: 'getEthBalance',
-          args: [address as `0x${string}`],
+          ...wagmiContract,
+          functionName: 'total_funds',
         },
         {
           ...wagmiContract,
@@ -355,7 +361,7 @@ export class BlockchainService {
         type: 'function',
         inputs: [],
         name: 'total_funds',
-        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
       },
     ];
     const wagmiContract = {
