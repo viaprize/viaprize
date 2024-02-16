@@ -17,6 +17,7 @@ import { Toaster } from 'sonner';
 import { theme } from 'utils/theme';
 import '../styles/globals.css';
 import '../styles/index.css';
+import '@mantine/spotlight/styles.css';
 
 const queryClient = new QueryClient();
 

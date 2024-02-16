@@ -20,6 +20,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, type ReactNode } from 'react';
 import { useNetwork } from 'wagmi';
+import SpotlightSearch from '../custom/spotlight';
 import useIsMounted from '../hooks/useIsMounted';
 import Footer from './footer';
 import HeaderLayout from './headerLayout';
@@ -91,6 +92,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
           </div>
           <HeaderLayout />
           <div className="flex gap-2 items-center">
+            <SpotlightSearch />
             <ActionIcon
               variant="outline"
               color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}
