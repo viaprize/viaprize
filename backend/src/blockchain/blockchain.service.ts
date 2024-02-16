@@ -4,7 +4,11 @@ import { ethers } from 'ethers';
 import { AllConfigType } from 'src/config/config.type';
 import { PublicClient, createPublicClient, http, parseAbi } from 'viem';
 import { optimism } from 'viem/chains';
-import { Contributions, TransactionApiResponse } from './blockchain';
+import {
+  Contribution,
+  Contributions,
+  TransactionApiResponse,
+} from './blockchain';
 @Injectable()
 export class BlockchainService {
   provider: PublicClient;
@@ -400,18 +404,29 @@ export class BlockchainService {
     portalContractAddress: string,
   ): Promise<Contributions> {
     console.log(process.env.ETHERSCAN_API_KEY, 'ehterscan');
-    const res = await fetch(
-      `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`,
-    );
+    const fetchUrl = `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`;
+    const res = await fetch(fetchUrl);
+    console.log(fetchUrl, 'url');
     const result = (await res.json()) as TransactionApiResponse;
 
     const contributions: Contributions = {
-      data: result.result.map((transaction) => ({
-        contributor: transaction.from,
-        amount: transaction.value,
-        donationTime: transaction.timeStamp,
-      })),
+      data: result.result
+        .map((transaction) => {
+          if (transaction.isError !== '1') {
+            return {
+              contributor: transaction.from,
+              amount: transaction.value,
+              donationTime: transaction.timeStamp,
+            };
+          } else {
+            return null;
+          }
+        })
+        .filter((transaction) => transaction !== null) as Contribution[],
     };
+
+    console.log(contributions, 'contributions');
+
     return contributions;
   }
 
