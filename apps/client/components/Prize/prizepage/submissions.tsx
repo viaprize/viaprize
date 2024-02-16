@@ -17,7 +17,7 @@ export default function Submissions({
   const id = usePathname();
 
   return (
-    <div className="w-full flex flex-col gap-3">
+    <div className="w-full flex flex-col gap-3 dont-break-out">
       {allowSubmission && (
         <Button
           component="a"

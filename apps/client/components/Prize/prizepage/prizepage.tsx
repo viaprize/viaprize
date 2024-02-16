@@ -1,7 +1,7 @@
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
 import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
-import { ConvertUSD } from '@/lib/types';
+import type { ConvertUSD } from '@/lib/types';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -203,7 +203,7 @@ export default function PrizePageComponent({
           )
         : null}
       {appUser
-        ? (appUser.username === prize.user.username || appUser?.isAdmin) &&
+        ? (appUser.username === prize.user.username || appUser.isAdmin) &&
           prize.submission_time_blockchain === 0 &&
           prize.voting_time_blockchain === 0 && (
             <StartVoting
@@ -212,9 +212,9 @@ export default function PrizePageComponent({
             />
           )
         : null}
-      {appUser?.isAdmin && prize.submission_time_blockchain > 0 && (
+      {appUser?.isAdmin && prize.submission_time_blockchain > 0 ? (
         <EndSubmission contractAddress={prize.contract_address} />
-      )}
+      ) : null}
 
       {appUser?.isAdmin && prize.submission_time_blockchain ? (
         <ChangeSubmission
@@ -223,9 +223,9 @@ export default function PrizePageComponent({
         />
       ) : null}
 
-      {appUser?.isAdmin && !prize.distributed && (
+      {appUser?.isAdmin && !prize.distributed ? (
         <EarlyRefund contractAddress={prize.contract_address} />
-      )}
+      ) : null}
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
         <EndVoting contractAddress={prize.contract_address} />
       ) : null}
