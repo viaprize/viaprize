@@ -3,7 +3,15 @@
 
 'use client';
 
-import { Button, CloseButton, Drawer, Group, Menu, TextInput } from '@mantine/core';
+import {
+  Button,
+  CloseButton,
+  Drawer,
+  Group,
+  Loader,
+  Menu,
+  TextInput,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -61,7 +69,7 @@ export default function SearchFiltersPortals() {
   useEffect(() => {
     startTransition(() => {
       const newQueryString = createQueryString({
-        search: `${search}`,
+        search,
       });
       router.push(`${pathname}?${newQueryString}`, {
         scroll: false,
@@ -93,13 +101,19 @@ export default function SearchFiltersPortals() {
             setSearch(event.currentTarget.value);
           }}
           rightSection={
-            <CloseButton
-              aria-label="Clear input"
-              onClick={() => {
-                clearSearch();
-              }}
-              style={{ display: search ? undefined : 'none' }}
-            />
+            !isPending ? (
+              <CloseButton
+                aria-label="Clear input"
+                onClick={() => {
+                  clearSearch();
+                }}
+                style={{ display: search ? undefined : 'none' }}
+              />
+            ) : (
+              <div className="p-2 h-full flex items-center justify-center">
+                <Loader size="sm" color="red" />
+              </div>
+            )
           }
         />
         <Group justify="space-between">
@@ -129,7 +143,7 @@ export default function SearchFiltersPortals() {
                         );
                       });
                     }}
-                    className={`${key.value === sort ? 'font-bold' : 'font-normal'}`}
+                    className={key.value === sort ? 'font-bold' : 'font-normal'}
                   >
                     {key.label}
                   </Menu.Item>
