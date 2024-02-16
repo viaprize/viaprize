@@ -22,7 +22,7 @@ export default function AboutPrize({
 }) {
   console.log({ contractAddress }, 'contractAddress');
   return (
-    <div className="w-full mt-4">
+    <div className="w-full mt-4 min-w-0">
       <Group justify="space-between">
         <Badge color="green" className="h-8 font-bold">
           {balanceWithDenomation}
