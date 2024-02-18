@@ -62,6 +62,7 @@ contract Kickstarter {
     constructor(
         address[] memory _proposers,
         address[] memory _admins,
+        address _token,
         uint256 _goal,
         uint256 _deadline,
         bool _allowDonationAboveGoalAmount,
@@ -82,8 +83,8 @@ contract Kickstarter {
 
         receiverAddress = proposers[0];
         platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
-        _usdc = IERC20Permit(0x9999f7Fea5938fD3b1E26A12c3f2fb024e194f97);
-        _usdcBridged = IERC20Permit(0x9999f7Fea5938fD3b1E26A12c3f2fb024e194f97);
+        _usdc = IERC20Permit(_token);
+        _usdcBridged = IERC20Permit(_token);
         platformFee = _platformFee;
         goalAmount = _goal;
         deadline = _deadline;
@@ -103,11 +104,11 @@ contract Kickstarter {
         _;
     }
 
-    function addUsdcFunds(uint256 _amountUsdc, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
+    function addUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
         require(_amountUsdc > 0, "funds should be greater than 0");
-        _usdc.permit(msg.sender, address(this), _amountUsdc, block.timestamp + 1 days, v, r, s);
-        require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
-        _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
+        _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
+        // require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
+        _usdc.transferFrom(sender, spender, _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
         patrons.push(msg.sender);
@@ -222,10 +223,10 @@ contract Kickstarter {
         );
     }
 
-    function addBridgedUsdcFunds(uint256 _amountUsdc, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
+    function addBridgedUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
         require(_amountUsdc > 0, "funds should be greater than 0");
-        _usdc.permit(msg.sender, address(this), _amountUsdc, block.timestamp + 1 days, v, r, s);
-        require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
+        _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
+        // require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
