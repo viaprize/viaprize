@@ -71,6 +71,7 @@ export default function SendCard() {
   const buyCrypto = () => {
     wallet?.fund({
       config: {
+        //@ts-ignore
         currencyCode: 'ETH_OPTIMISM', // Purchase ETH on Ethereum mainnet
         quoteCurrencyAmount: 0.05, // Purchase 0.05 ETH
         // paymentMethod: 'credit_debit_card', // Purchase with credit or debit card
