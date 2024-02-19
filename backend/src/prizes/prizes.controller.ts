@@ -25,13 +25,16 @@ import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
+import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
+import { PrizesComments } from './entities/prizes-comments.entity';
 import { Submission } from './entities/submission.entity';
+import { PrizeCommentService } from './services/prize-comment.service';
 import { SubmissionService } from './services/submissions.service';
 
 interface PrizeWithBalance extends Prize {
@@ -82,6 +85,7 @@ export class PrizesController {
     private readonly blockchainService: BlockchainService,
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
+    private readonly prizeCommentsService: PrizeCommentService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) { }
 
@@ -308,6 +312,51 @@ export class PrizesController {
       data: finalSubmissions,
       hasNextPage: submissions.hasNextPage,
     };
+  }
+
+  /**
+   * The function `createComment` is an asynchronous function that takes a `comment` parameter calls
+   * the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {Promise<Http200Response>}
+   */
+  @Post('/:id/comment')
+  @UseGuards(AuthGuard)
+  async createComment(
+    @TypedParam('id') id: string,
+    @TypedBody() body: CreateCommentDto,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.prizeCommentsService.create(
+      body.comment,
+      req.user.userId,
+      id
+    )
+    return {
+      message: `Prize  with id ${id} has been updated with comment`,
+    };
+  }
+
+
+  /**
+   * The function `getComments` is an asynchronous function that takes a `comment` parameter calls
+   * the `getComment` method of the `prizeCommentService` with the given `id`. 
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} id
+   * @returns {Promise<PrizesComments[]>}
+   */
+  @Get('/:id/comment')
+  async getComment(
+    @TypedParam('id') id: string,
+  ): Promise<PrizesComments[]> {
+
+    return await this.prizeCommentsService.getCommentsByPrizeId(id);
   }
 
   /**

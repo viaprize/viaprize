@@ -31,7 +31,7 @@ export class PrizesService {
   constructor(
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
-  ) {}
+  ) { }
 
   async findAll(query: PrizePaginateQuery): Promise<Paginated<Prize>> {
     const { proficiencies, priorities, ...paginateQuery } = query;
@@ -69,7 +69,7 @@ export class PrizesService {
     return paginations;
   }
 
-  getSmartContractDetails() {}
+  getSmartContractDetails() { }
 
   async findOne(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
@@ -80,6 +80,15 @@ export class PrizesService {
     });
 
     return prize;
+  }
+
+  async findAndGetByIdOnly(id: string) {
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        id
+      }
+    })
+    return prize
   }
 
   async findAllPendingWithPagination(

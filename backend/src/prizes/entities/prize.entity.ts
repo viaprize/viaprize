@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PrizesComments } from './prizes-comments.entity';
 import { Submission } from './submission.entity';
 
 /* The Prize class represents a prize in a TypeScript application, with various properties such as
@@ -75,6 +76,9 @@ export class Prize {
 
   @OneToMany(() => Submission, (submission) => submission.prize)
   submissions: Submission[];
+
+  @OneToMany(() => PrizesComments, (prizeComment) => prizeComment.prize)
+  comments: PrizesComments[];
 
   @ManyToOne(() => User, (user) => user.prizeProposals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
