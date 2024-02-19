@@ -1899,6 +1899,150 @@
         "x-nestia-method": "GET"
       }
     },
+    "/prizes/{id}/comment": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `createComment` is an asynchronous function that takes a `comment` parameter calls\nthe `create` method of the `prizeCommentService` with the given `id` and  `userAuthId`",
+        "description": "The function `createComment` is an asynchronous function that takes a `comment` parameter calls\nthe `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "prizes.comment.createComment",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrizesComments"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `prizeCommentService` with the given `id`",
+        "description": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `prizeCommentService` with the given `id`.",
+        "x-nestia-namespace": "prizes.comment.getComment",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
     "/prizes/proposals": {
       "get": {
         "tags": [],
@@ -3516,6 +3660,14 @@
               "$ref": "#/components/schemas/PrizeProposals"
             }
           },
+          "prizeComments": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizesComments"
+            }
+          },
           "prizes": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3556,6 +3708,7 @@
           "walletAddress",
           "submissions",
           "prizeProposals",
+          "prizeComments",
           "prizes",
           "portals",
           "portalProposals"
@@ -3735,6 +3888,14 @@
               "$ref": "#/components/schemas/Submission"
             }
           },
+          "comments": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizesComments"
+            }
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           }
@@ -3758,7 +3919,37 @@
           "images",
           "title",
           "submissions",
+          "comments",
           "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "PrizesComments": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "prize": {
+            "$ref": "#/components/schemas/Prize"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "comment",
+          "user",
+          "prize"
         ],
         "x-typia-jsDocTags": []
       },
@@ -4793,6 +4984,14 @@
               "$ref": "#/components/schemas/Submission"
             }
           },
+          "comments": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizesComments"
+            }
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           }
@@ -4818,6 +5017,7 @@
           "images",
           "title",
           "submissions",
+          "comments",
           "user"
         ],
         "x-typia-jsDocTags": []
@@ -4967,6 +5167,14 @@
               "$ref": "#/components/schemas/Submission"
             }
           },
+          "comments": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizesComments"
+            }
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           }
@@ -4994,6 +5202,7 @@
           "images",
           "title",
           "submissions",
+          "comments",
           "user"
         ],
         "x-typia-jsDocTags": []
@@ -5237,6 +5446,21 @@
           "created_at",
           "user",
           "prize"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "CreateCommentDto": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "comment"
         ],
         "x-typia-jsDocTags": []
       },
