@@ -6,6 +6,7 @@ import { usePublicClient, useQuery } from 'wagmi';
 import ExploreCard from '../Prize/ExplorePrize/explorePrize';
 import Shell from '../custom/shell';
 import SkeletonLoad from '../custom/skeleton-load-explore';
+import getCryptoToUsd from '../hooks/server-actions/CryptotoUsd';
 
 export default function PrizeTabs({ params }: { params: { id: string } }) {
   const client = usePublicClient();
@@ -25,6 +26,10 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
 
     return prizesWithBalance;
   });
+
+  const { data: ethToUsd } = useQuery(['cryptoToUsd', undefined], async () =>
+    getCryptoToUsd(),
+  );
 
   if (getPrizesOfUserMutation.isLoading)
     return <SkeletonLoad gridedSkeleton numberOfCards={3} />;
@@ -54,8 +59,12 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
             submissionDays={prize.submissionTime}
             createdAt={prize.created_at}
             imageUrl={prize.images[0]}
-            money={formatEther(BigInt(prize.balance))}
             profileName=""
+            ethAmount={formatEther(BigInt(prize.balance))}
+            usdAmount={(
+              parseFloat(formatEther(BigInt(prize.balance))) *
+              (ethToUsd?.ethereum.usd ?? 0)
+            ).toFixed(2)}
             title={prize.title}
             key={prize.id}
             id={prize.id}

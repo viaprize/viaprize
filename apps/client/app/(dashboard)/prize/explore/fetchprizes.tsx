@@ -16,6 +16,14 @@ export default async function FetchPrizes() {
       },
     )
   ).data.data;
+  const usdToEth: { ethereum: { usd: number } } = await (
+    await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    })
+  ).json();
 
   return (
     <>
@@ -27,7 +35,10 @@ export default async function FetchPrizes() {
             imageUrl={prize.images[0]}
             createdAt={prize.created_at}
             submissionDays={prize.submissionTime}
-            money={formatEther(BigInt(prize.balance))}
+            ethAmount={formatEther(BigInt(prize.balance))}
+            usdAmount={(
+              parseFloat(formatEther(BigInt(prize.balance))) * usdToEth.ethereum.usd
+            ).toFixed(2)}
             profileName={prize.user.name}
             title={prize.title}
             key={prize.id}

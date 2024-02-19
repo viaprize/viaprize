@@ -43,7 +43,7 @@ export default function AllPortals({ params }: { params: { id: string } }) {
             description={portal.description}
             imageUrl={portal.images[0]}
             amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
-            authorName={portal.user.name}
+            authorName={""}
             totalContributors="0"
             isActive={portal.isActive ?? false}
             title={portal.title}

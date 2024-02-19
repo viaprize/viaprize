@@ -23,7 +23,8 @@ interface ExploreCardProps {
   title: string;
   profileName: string;
   description: string;
-  money: string;
+  ethAmount: string;
+  usdAmount: string;
   createdAt: string;
   id: string;
   skills: string[];
@@ -35,7 +36,8 @@ function ExploreCard({
   profileName,
   title,
   description,
-  money,
+  ethAmount,
+  usdAmount,
   createdAt,
   id,
   skills,
@@ -91,7 +93,10 @@ function ExploreCard({
       {/*  >{htmlToPlainText(description)}</p> */}
       <Flex gap="sm">{skills}</Flex>
       <Text fw="bold" size="xl">
-        {money} {chain.nativeCurrency.symbol}
+        {usdAmount} USD
+      </Text>
+      <Text size="sm" c="gray">
+        {ethAmount} {chain.nativeCurrency.symbol}
       </Text>
       <Text fw="bold">Submission Deadline : {deadlineString.dateString}</Text>
 
