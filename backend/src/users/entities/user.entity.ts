@@ -1,6 +1,6 @@
 import { PortalProposals } from 'src/portals/entities/portal-proposals.entity';
 import { Portals } from 'src/portals/entities/portal.entity';
-import { PortalsComments } from 'src/portals/entities/portals-comments';
+import { PortalsComments } from 'src/portals/entities/portals-comments.entity';
 import { PrizeProposals } from 'src/prizes/entities/prize-proposals.entity';
 import { Prize } from 'src/prizes/entities/prize.entity';
 import { PrizesComments } from 'src/prizes/entities/prizes-comments.entity';

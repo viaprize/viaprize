@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
-import { PortalsComments } from '../entities/portals-comments';
+import { PortalsComments } from '../entities/portals-comments.entity';
 import { PortalsService } from './portals.service';
 
 
@@ -23,7 +23,7 @@ export class PortalCommentService {
         const portalComment = await this.portalCommentsRepository.save({
             comment: comment,
             user: user,
-            Portal: portal,
+            portal: portal
         });
         return portalComment;
     }
