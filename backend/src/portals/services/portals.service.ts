@@ -10,7 +10,7 @@ export class PortalsService {
   constructor(
     @InjectRepository(Portals)
     private portalRepository: Repository<Portals>,
-  ) {}
+  ) { }
 
   async findAll(query: PortalPaginateQuery): Promise<Paginated<Portals>> {
     const { tags, ...paginateQuery } = query;
@@ -51,6 +51,15 @@ export class PortalsService {
     });
 
     return portal;
+  }
+
+  async findAndGetByIdOnly(id: string) {
+    const portal = await this.portalRepository.findOneOrFail({
+      where: {
+        id
+      }
+    })
+    return portal
   }
   async findAllPendingWithPagination(
     paginationOptions: PortalPaginateResponse,

@@ -117,6 +117,8 @@ export class PrizesController {
       startSubmissionDate: prizeProposal.startSubmissionDate,
       startVotingDate: prizeProposal.startVotingDate,
       user: prizeProposal.user,
+
+
       judges: prizeProposal.judges,
     });
 

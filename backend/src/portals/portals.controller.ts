@@ -18,7 +18,6 @@ import {
 import { Cache } from 'cache-manager';
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Contributions } from 'src/blockchain/blockchain';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { JobService } from 'src/jobs/jobs.service';
 import { MailService } from 'src/mail/mail.service';
@@ -29,6 +28,7 @@ import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
+import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
 import {
   TestTrigger,
@@ -37,7 +37,9 @@ import {
 import { UpdatePortalPropsalDto } from './dto/update-portal-proposal.dto';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
+import { PortalsComments } from './entities/portals-comments';
 import { PortalWithBalance } from './entities/types';
+import { PortalCommentService } from './services/portal-comments.service';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
 
@@ -75,8 +77,9 @@ export class PortalsController {
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
     private readonly userService: UsersService,
+    private readonly portalCommentService: PortalCommentService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+  ) { }
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -112,6 +115,7 @@ export class PortalsController {
       sendImmediately: portalProposal.sendImmediately,
       fundingGoalWithPlatformFee: portalProposal.fundingGoalWithPlatformFee,
       updates: [],
+
     });
     if (!portalProposal.sendImmediately) {
       const properMinutes = extractMinutes(
@@ -145,6 +149,7 @@ export class PortalsController {
     await this.cacheManager.reset();
 
     return portal;
+
   }
 
   /**
@@ -265,6 +270,53 @@ export class PortalsController {
       contributors: resultsWithContributors,
     };
   }
+
+
+  /**
+   * The function `createComment` is an asynchronous function that takes a `comment` parameter calls
+   * the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {Promise<Http200Response>}
+   */
+  @Post('/:id/comment')
+  @UseGuards(AuthGuard)
+  async createComment(
+    @TypedParam('id') id: string,
+    @TypedBody() body: CreateCommentDto,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.create(
+      body.comment,
+      req.user.userId,
+      id
+    )
+    return {
+      message: `Prize  with id ${id} has been updated with comment`,
+    };
+  }
+
+
+  /**
+   * The function `getComments` is an asynchronous function that takes a `comment` parameter calls
+   * the `getComment` method of the `portalCommentService` with the given `id`. 
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} id
+   * @returns {Promise<PortalsComments[]>}
+   */
+  @Get('/:id/comment')
+  async getComment(
+    @TypedParam('id') id: string,
+  ): Promise<PortalsComments[]> {
+
+    return await this.portalCommentService.getCommentsByPortalId(id);
+  }
+
 
   @Put('/:id/add-update')
   @UseGuards(AuthGuard)

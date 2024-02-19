@@ -1,5 +1,6 @@
 import { PortalProposals } from 'src/portals/entities/portal-proposals.entity';
 import { Portals } from 'src/portals/entities/portal.entity';
+import { PortalsComments } from 'src/portals/entities/portals-comments';
 import { PrizeProposals } from 'src/prizes/entities/prize-proposals.entity';
 import { Prize } from 'src/prizes/entities/prize.entity';
 import { PrizesComments } from 'src/prizes/entities/prizes-comments.entity';
@@ -56,6 +57,9 @@ export class User {
 
   @OneToMany(() => PrizesComments, (prizeComment) => prizeComment.user)
   prizeComments: PrizesComments[];
+
+  @OneToMany(() => PortalsComments, (portalComment) => portalComment.user)
+  portalComments: PortalsComments[];
 
   @OneToMany(() => Prize, (prize) => prize.user)
   prizes: Prize[];

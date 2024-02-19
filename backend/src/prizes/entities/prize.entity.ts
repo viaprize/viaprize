@@ -78,7 +78,7 @@ export class Prize {
   submissions: Submission[];
 
   @OneToMany(() => PrizesComments, (prizeComment) => prizeComment.prize)
-  comments: PrizesComments[];
+  comments?: PrizesComments[];
 
   @ManyToOne(() => User, (user) => user.prizeProposals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })

@@ -5,9 +5,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PortalsComments } from './portals-comments';
 
 /* The Prize class represents a prize in a TypeScript application, with various properties such as
 description, start dates, addresses, and arrays of admins, proficiencies, and priorities. */
@@ -79,4 +81,7 @@ export class Portals {
   @ManyToOne(() => User, (user) => user.portals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
   user: User;
+
+  @OneToMany(() => PortalsComments, (portalComment) => portalComment.portal)
+  comments?: PortalsComments[];
 }
