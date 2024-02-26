@@ -29,6 +29,7 @@ import StartSubmission from './buttons/startSubmission';
 import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import Submissions from './submissions';
+import CommentSection from '@/components/comment/comment-section';
 
 function FundCard({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
@@ -242,6 +243,7 @@ export default function PrizePageComponent({
         submissions={submissions}
         contractAddress={prize.contract_address}
       />
+      <CommentSection />
     </div>
   );
 }
