@@ -4,11 +4,11 @@ pragma solidity ^0.8.0;
 
 import "../helperContracts/ierc20.sol";
 import "../helperContracts/safemath.sol";
-
+import "@opengsn/contracts/src/BaseRelayRecipient.sol";
 interface IERC20Permit is IERC20 {
     function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 }
-contract Kickstarter {
+contract Kickstarter is BaseRelayRecipient {
     address[] public proposers;
     mapping(address => bool) public isProposer;
     address[] public admins;
@@ -63,10 +63,12 @@ contract Kickstarter {
         address[] memory _proposers,
         address[] memory _admins,
         address _token,
+        address _bridgedToken,
         uint256 _goal,
         uint256 _deadline,
         bool _allowDonationAboveGoalAmount,
-        uint256 _platformFee
+        uint256 _platformFee,
+        address _trustedForwarder
     ) {
         if(_goal == 0 || _deadline == 0) revert RequireGoalAndDeadline();
 
@@ -74,7 +76,7 @@ contract Kickstarter {
             proposers.push(_proposers[i]);
             isProposer[_proposers[i]] = true;
         }
-        proposers.push(msg.sender);
+        proposers.push(_msgSender());
 
         for(uint256 i=0; i<_admins.length; i++) {
             admins.push(_admins[i]);
@@ -84,11 +86,12 @@ contract Kickstarter {
         receiverAddress = proposers[0];
         platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
         _usdc = IERC20Permit(_token);
-        _usdcBridged = IERC20Permit(_token);
+        _usdcBridged = IERC20Permit(_bridgedToken);
         platformFee = _platformFee;
         goalAmount = _goal;
         deadline = _deadline;
         allowDonationAboveGoalAmount = _allowDonationAboveGoalAmount;
+        _setTrustedForwarder(_trustedForwarder);
         isActive = true;
     }
 
@@ -100,21 +103,32 @@ contract Kickstarter {
     }
 
     modifier onlyProposerOrAdmin {
-        require(isProposer[msg.sender] == true || isAdmin[msg.sender] == true, "You are not a proposer or admin.");
+        require(isProposer[_msgSender()] == true || isAdmin[_msgSender()] == true, "You are not a proposer or admin.");
         _;
+    }
+
+    function versionRecipient() external override pure returns (string memory) {
+        return "1.0.0"; // Example version, adjust as needed
+    }
+
+    function _msgSender() internal override(BaseRelayRecipient) view returns (address) {
+        return BaseRelayRecipient._msgSender();
+    }
+
+    function _msgData() internal override(BaseRelayRecipient) view returns (bytes calldata) {
+        return BaseRelayRecipient._msgData();
     }
 
     function addUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
         require(_amountUsdc > 0, "funds should be greater than 0");
         _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
-        // require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
         _usdc.transferFrom(sender, spender, _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
-        patrons.push(msg.sender);
-        isPatron[msg.sender] = true;
-        isUsdcContributer[msg.sender] = true;
-        patronAmount[msg.sender] = patronAmount[msg.sender].add(_donation);
+        patrons.push(_msgSender());
+        isPatron[_msgSender()] = true;
+        isUsdcContributer[_msgSender()] = true;
+        patronAmount[_msgSender()] = patronAmount[_msgSender()].add(_donation);
         totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
         totalUsdcFunds = totalUsdcFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
@@ -165,7 +179,7 @@ contract Kickstarter {
                     uint256 usdcMoneyToPlatform = (totalUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
                     _usdc.transfer(platformAddress, usdcMoneyToPlatform);
                     _usdc.transfer(receiverAddress, totalUsdcRewards);
-                    _usdc.transfer(msg.sender, excessUsdcAmount);
+                    _usdc.transfer(_msgSender(), excessUsdcAmount);
                     totalUsdcRewards = 0;
                     usdcMoneyToPlatform = 0;
                     uint256 bridgedUsdcMoneyToPlatform = (totalBridgedUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
@@ -225,15 +239,14 @@ contract Kickstarter {
 
     function addBridgedUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
         require(_amountUsdc > 0, "funds should be greater than 0");
-        _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
-        // require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
-        _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
+        _usdcBridged.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
+        _usdcBridged.transferFrom(_msgSender(), address(this), _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
-        patrons.push(msg.sender);
-        isPatron[msg.sender] = true;
-        isUsdcContributer[msg.sender] = false;
-        patronAmount[msg.sender] = patronAmount[msg.sender].add(_donation);
+        patrons.push(_msgSender());
+        isPatron[_msgSender()] = true;
+        isUsdcContributer[_msgSender()] = false;
+        patronAmount[_msgSender()] = patronAmount[_msgSender()].add(_donation);
         totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
         totalBridgedUsdcFunds = totalBridgedUsdcFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
@@ -289,7 +302,7 @@ contract Kickstarter {
                     uint256 bridgedUsdcMoneyToPlatform = (totalBridgedUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
                     _usdcBridged.transfer(platformAddress, bridgedUsdcMoneyToPlatform);
                     _usdcBridged.transfer(receiverAddress, totalBridgedUsdcRewards);
-                    _usdcBridged.transfer(msg.sender, excessBridgedUsdcAmount);
+                    _usdcBridged.transfer(_msgSender(), excessBridgedUsdcAmount);
                     totalBridgedUsdcRewards = 0;
                     bridgedUsdcMoneyToPlatform = 0;
                 }
