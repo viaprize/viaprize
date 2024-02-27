@@ -5,6 +5,10 @@ pragma solidity ^0.8.0;
 import "../helperContracts/ierc20.sol";
 import "../helperContracts/safemath.sol";
 
+interface IERC20Permit is IERC20 {
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
+}
+
 contract Gofundme {
     address[] public proposers;
     mapping(address => bool) public isProposer;
@@ -21,8 +25,8 @@ contract Gofundme {
     uint256 public totalRewards;
     bool public isActive;
     bool internal locked;
-    IERC20 private _usdc;
-    IERC20 private _usdcBridged;
+    IERC20Permit private _usdc;
+    IERC20Permit private _usdcBridged;
 
     error NotEnoughFunds();
     error FundingToContractEnded();
@@ -38,6 +42,8 @@ contract Gofundme {
     constructor(
         address[] memory _proposers,
         address[] memory _admins,
+        address _token,
+        address _bridgedToken,
         uint256 _platformFee
     ) {
 
@@ -55,8 +61,8 @@ contract Gofundme {
         platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
         platformFee = _platformFee;
         isActive = true;
-        _usdc = IERC20(0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85);
-        _usdcBridged = IERC20(0x7F5c764cBc14f9669B88837ca1490cCa17c31607);
+        _usdc = IERC20Permit(_token);
+        _usdcBridged = IERC20Permit(_bridgedToken);
     }
 
     modifier noReentrant() {
@@ -71,10 +77,10 @@ contract Gofundme {
         _;
     }
 
-    function addUSDCFunds(uint256 _amountUsdc) public noReentrant payable {
-        require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
+    function addUSDCFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable {
+        require(_amountUsdc > 0, "funds should be greater than 0");
+        _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
-        
         uint256 _donation = _amountUsdc;
         patrons.push(msg.sender);
         isPatron[msg.sender] = true;
@@ -86,10 +92,10 @@ contract Gofundme {
         emit Values(receiverAddress, totalFunds, totalRewards);
     }
     
-    function addBridgedUSDCFunds(uint256 _amountUsdc) public noReentrant payable {
-        require(_usdcBridged.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
+    function addBridgedUSDCFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable {
+        require(_amountUsdc > 0, "funds should be greater than 0");
+        _usdcBridged.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
         _usdcBridged.transferFrom(msg.sender, address(this), _amountUsdc);
-        
         uint256 _donation = _amountUsdc;
         patrons.push(msg.sender);
         isPatron[msg.sender] = true;
