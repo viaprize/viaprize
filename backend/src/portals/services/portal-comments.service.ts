@@ -5,14 +5,13 @@ import { Repository } from 'typeorm';
 import { PortalsComments } from '../entities/portals-comments.entity';
 import { PortalsService } from './portals.service';
 
-
 @Injectable()
 export class PortalCommentService {
     constructor(
         @InjectRepository(PortalsComments)
         private portalCommentsRepository: Repository<PortalsComments>,
         private userService: UsersService,
-        private portalService: PortalsService
+        private portalService: PortalsService,
     ) { }
 
     async create(comment: string, userAuthId: string, portalId: string) {
@@ -23,7 +22,7 @@ export class PortalCommentService {
         const portalComment = await this.portalCommentsRepository.save({
             comment: comment,
             user: user,
-            portal: portal
+            portal: portal,
         });
         return portalComment;
     }
@@ -32,12 +31,11 @@ export class PortalCommentService {
         const portalComments = await this.portalCommentsRepository.find({
             where: {
                 portal: {
-                    id: portalId
-                }
+                    id: portalId,
+                },
             },
             relations: ['user'],
         });
         return portalComments;
     }
-
 }
