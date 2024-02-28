@@ -12,23 +12,19 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useEffect } from 'react';
 import useAppUser from '../hooks/useAppUser';
 
 export default function HeaderLayout() {
   const { user, ready } = usePrivy();
   const { appUser, logoutUser } = useAppUser();
+  const { wallet, ready: walletReady } = usePrivyWagmi();
+  console.log({ wallet }, 'walletttttttttttt');
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
-  useEffect(() => {
-    if (!user && appUser && ready) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      logoutUser();
-    }
-  }, [user, ready, appUser]);
 
   return (
     <Flex

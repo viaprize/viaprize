@@ -20,6 +20,7 @@ export const backendApi = async (withoutAuth?: boolean) => {
   }
 
   if (!token) {
+    console.error('No token found');
     const user = useAppUserStore.getState().user;
     if (user) {
       useAppUserStore.getState().clearUser();
