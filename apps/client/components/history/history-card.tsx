@@ -35,7 +35,7 @@ export default function HistoryCard({
       <p className="text-md h-15 overflow-y-auto">{description}</p>
       <Group justify="space-between">
         <Text fw={500}>
-          AWARDED : <span className='font-extrabold text-black'>{awarded}</span>
+          AWARDED : <span className='font-extrabold'>{awarded}</span>
         </Text>
         <Badge color="gray" variant="light" radius="sm">
           HACKATHON
