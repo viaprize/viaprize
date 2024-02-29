@@ -21,6 +21,7 @@ import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
 import { UsersService } from 'src/users/users.service';
 import { Http200Response } from 'src/utils/types/http.type';
+import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
@@ -37,15 +38,6 @@ import { Submission } from './entities/submission.entity';
 import { PrizeCommentService } from './services/prize-comment.service';
 import { SubmissionService } from './services/submissions.service';
 
-interface PrizeWithBalance extends Prize {
-  distributed: boolean;
-  balance: number;
-}
-interface PrizeWithBlockchainData extends PrizeWithBalance {
-  distributed: boolean;
-  submission_time_blockchain: number;
-  voting_time_blockchain: number;
-}
 
 interface SubmissionWithBlockchainData extends Submission {
   voting_blockchain: number;
