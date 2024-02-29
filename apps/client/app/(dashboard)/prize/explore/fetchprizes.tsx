@@ -44,6 +44,7 @@ export default async function FetchPrizes() {
             key={prize.id}
             id={prize.id}
             skills={prize.proficiencies}
+            startingTimeBlockchain={prize.submission_time_blockchain}
           />
         );
       })}

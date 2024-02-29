@@ -2,7 +2,7 @@ import { Tabs } from '@mantine/core';
 import { BsInfoLg } from 'react-icons/bs';
 import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 
-import { useBalance } from 'wagmi';
+import { formatEther } from 'viem';
 import AboutPrize from './aboutprize';
 import PrizeFunderCard from './prizeFunderCard';
 
@@ -11,25 +11,16 @@ export default function PrizePageTabs({
   description,
   name,
   email,
+  totalFunds,
 }: {
   contractAddress: string;
   description: string;
   name: string;
   email: string;
+  totalFunds: number;
 }) {
-  const { data: balance } = useBalance({
-    address: contractAddress as `0x${string}`,
-  });
   console.log(contractAddress, 'contractAddress');
-  // const interval = useInterval(async () => {
-  //   console.log("hiii")
-  //   await refetch()
-  // }
-  //   , 5000)
-  // useEffect(() => {
-  //   interval.start()
-
-  // }, [])
+  console.log(totalFunds.toString(), 'HIIIIIIIIIIIIIIii');
   return (
     <Tabs className="w-full" variant="pills" defaultValue="about">
       <Tabs.List justify="center" grow>
@@ -43,7 +34,7 @@ export default function PrizePageTabs({
       <Tabs.Panel value="about">
         <AboutPrize
           description={description}
-          balanceWithDenomation={`${balance?.formatted} ${balance?.symbol}`}
+          amount={formatEther(BigInt(totalFunds)).toString()}
           contractAddress={contractAddress}
         />
       </Tabs.Panel>

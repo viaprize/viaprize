@@ -108,18 +108,33 @@ export const calculateRemainingTime = (submissionDate: string) => {
   const days = Math.floor(remainingTime / (24 * 60 * 60 * 1000));
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
 };
-
-export const calculateDeadline = (
-  startSubmissionTime: string,
-  submissionDays: number,
-) => {
-  const start = new Date(startSubmissionTime);
-  const submissionDate = new Date(startSubmissionTime);
-  submissionDate.setDate(start.getDate() + submissionDays);
-  const remainingTime = calculateRemainingTime(submissionDate.toISOString());
-  const dateString = submissionDate.toISOString().split('T')[0];
-  return { remainingTime, dateString };
-};
+export const calculateDeadline = (createdDate: Date, endDate: Date) => {
+  const remainingTime = endDate.getTime() - createdDate.getTime();
+  if (remainingTime <= 0) {
+    return 'Time is up!';
+  } else if (remainingTime < 60 * 60 * 1000) {
+    // Less than 1 hour in milliseconds
+    const minutes = Math.floor(remainingTime / (60 * 1000));
+    return `${minutes} minute${minutes !== 1 ? 's' : ''} remaining`;
+  } else if (remainingTime < 24 * 60 * 60 * 1000) {
+    // Less than 1 day in milliseconds
+    const hours = Math.floor(remainingTime / (60 * 60 * 1000));
+    return `${hours} hour${hours !== 1 ? 's' : ''} remaining`;
+  }
+  const days = Math.floor(remainingTime / (24 * 60 * 60 * 1000));
+  return `${days} day${days !== 1 ? 's' : ''} remaining`;
+}
+// export const calculateDeadline = (
+//   startSubmissionTime: string,
+//   submissionDays: number,
+// ) => {
+//   const start = new Date(startSubmissionTime);
+//   const submissionDate = new Date(startSubmissionTime);
+//   submissionDate.setDate(start.getDate() + submissionDays);
+//   const remainingTime = calculateRemainingTime(submissionDate.toISOString());
+//   const dateString = submissionDate.toISOString().split('T')[0];
+//   return { remainingTime, dateString };
+// };
 
 export const formatDate = (date: string): string => {
   const format = new Intl.DateTimeFormat('en-ZA', {

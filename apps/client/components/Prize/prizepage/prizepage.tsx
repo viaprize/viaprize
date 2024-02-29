@@ -190,6 +190,7 @@ export default function PrizePageComponent({
           name={prize.user.name}
           description={prize.description}
           contractAddress={prize.contract_address}
+          totalFunds={prize.balance}
         />
       </Center>
       {appUser ? <FundCard contractAddress={prize.contract_address} /> : null}

@@ -29,6 +29,7 @@ interface ExploreCardProps {
   id: string;
   skills: string[];
   submissionDays: number;
+  startingTimeBlockchain: number;
 }
 
 function ExploreCard({
@@ -42,11 +43,15 @@ function ExploreCard({
   id,
   skills,
   distributed,
+  startingTimeBlockchain,
   submissionDays,
 }: ExploreCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const deadlineString = calculateDeadline(createdAt, submissionDays);
-
+  const deadlineString = calculateDeadline(
+    new Date(),
+    new Date(startingTimeBlockchain * 1000),
+  );
+  console.log(deadlineString, 'this is the deadline string');
   return (
     <Card
       padding="lg"
@@ -73,7 +78,7 @@ function ExploreCard({
           // c="red"
           fw="bold"
         >
-          {deadlineString.remainingTime}
+          {deadlineString}
         </Text>
 
         {distributed ? <Text>Prize Has Ended</Text> : null}
@@ -98,7 +103,12 @@ function ExploreCard({
       <Text size="sm" c="gray">
         {ethAmount} {chain.nativeCurrency.symbol}
       </Text>
-      <Text fw="bold">Submission Deadline : {deadlineString.dateString}</Text>
+      <Text fw="bold">
+        Submission Deadline :{' '}
+        {startingTimeBlockchain != 0
+          ? new Date(startingTimeBlockchain * 1000).toLocaleDateString()
+          : 'Gone'}
+      </Text>
 
       <Button
         color="primary"
