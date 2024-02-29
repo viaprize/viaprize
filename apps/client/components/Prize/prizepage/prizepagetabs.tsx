@@ -1,4 +1,4 @@
-import { Tabs } from '@mantine/core';
+import { Tabs, Text } from '@mantine/core';
 import { BsInfoLg } from 'react-icons/bs';
 import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 
@@ -12,12 +12,16 @@ export default function PrizePageTabs({
   name,
   email,
   totalFunds,
+  submissionDeadline,
+  votingDeadline,
 }: {
   contractAddress: string;
   description: string;
   name: string;
   email: string;
   totalFunds: number;
+  submissionDeadline?: Date;
+  votingDeadline?: Date;
 }) {
   console.log(contractAddress, 'contractAddress');
   console.log(totalFunds.toString(), 'HIIIIIIIIIIIIIIii');
@@ -37,6 +41,21 @@ export default function PrizePageTabs({
           amount={formatEther(BigInt(totalFunds)).toString()}
           contractAddress={contractAddress}
         />
+        <div className="flex justify-between">
+          <div>
+            {submissionDeadline && (
+              <Text size="lg">
+                Submission Deadline:{' '}
+                <Text c="red">{submissionDeadline?.toLocaleString()}</Text>
+              </Text>
+            )}
+            {votingDeadline && (
+              <Text size="lg">
+                Voting Deadline: <Text c="red">{votingDeadline?.toLocaleString()}</Text>
+              </Text>
+            )}
+          </div>
+        </div>
       </Tabs.Panel>
       <Tabs.Panel value="creators">
         <PrizeFunderCard name={name} email={email} />

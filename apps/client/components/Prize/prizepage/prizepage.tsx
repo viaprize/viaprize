@@ -191,6 +191,16 @@ export default function PrizePageComponent({
           description={prize.description}
           contractAddress={prize.contract_address}
           totalFunds={prize.balance}
+          submissionDeadline={
+            prize.submission_time_blockchain != 0
+              ? new Date(prize.submission_time_blockchain * 1000)
+              : undefined
+          }
+          votingDeadline={
+            prize.voting_time_blockchain != 0
+              ? new Date(prize.voting_time_blockchain * 1000)
+              : undefined
+          }
         />
       </Center>
       {appUser ? <FundCard contractAddress={prize.contract_address} /> : null}
