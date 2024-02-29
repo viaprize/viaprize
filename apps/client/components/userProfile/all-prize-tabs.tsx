@@ -11,20 +11,11 @@ import getCryptoToUsd from '../hooks/server-actions/CryptotoUsd';
 export default function PrizeTabs({ params }: { params: { id: string } }) {
   const client = usePublicClient();
   const router = useRouter();
+
   const getPrizesOfUserMutation = useQuery(['getPrizesOfUser', undefined], async () => {
     const prizes = await (await backendApi()).users.usernamePrizesDetail(params.id);
-    const prizesWithBalancePromise = prizes.data.map(async (prize) => {
-      const balance = await client.getBalance({
-        address: prize.contract_address as `0x${string}`,
-      });
-      return {
-        ...prize,
-        balance,
-      };
-    });
-    const prizesWithBalance = await Promise.all(prizesWithBalancePromise);
 
-    return prizesWithBalance;
+    return prizes.data;
   });
 
   const { data: ethToUsd } = useQuery(['cryptoToUsd', undefined], async () =>
@@ -54,6 +45,7 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
       {getPrizesOfUserMutation.data.map((prize) => {
         return (
           <ExploreCard
+            startingTimeBlockchain={prize.submission_time_blockchain}
             distributed={false}
             description={prize.description}
             submissionDays={prize.submissionTime}

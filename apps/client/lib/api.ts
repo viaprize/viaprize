@@ -1611,7 +1611,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      * @request GET:/users/username/{username}/prizes
      */
     usernamePrizesDetail: (username: string, params: RequestParams = {}) =>
-      this.request<Prize[], any>({
+      this.request<PrizeWithBlockchainData[], any>({
         path: `/users/username/${username}/prizes`,
         method: 'GET',
         format: 'json',
