@@ -143,7 +143,7 @@ export class PrizesController {
    * @async
    * @param {page=1} this is the page number of the return pending proposals
    * @param {limit=10} this is the limit of the return type of the pending proposals
-   * @returns {Promise<Readonly<{data: PrizeWithBalance[];hasNextPage: boolean;}>>>}
+   * @returns {Promise<Readonly<{data: PrizeWithBlockchainData[];hasNextPage: boolean;}>>>}
    */
   @Get('')
   async getPrizes(
@@ -151,7 +151,7 @@ export class PrizesController {
     page: number = 1,
     @Query('limit')
     limit: number = 10,
-  ): Promise<Readonly<{ data: PrizeWithBalance[]; hasNextPage: boolean }>> {
+  ): Promise<Readonly<{ data: PrizeWithBlockchainData[]; hasNextPage: boolean }>> {
     const key = `prizes-${page}-${limit}`;
     let prizeWithoutBalance: { data: Prize[]; hasNextPage: boolean };
     const cachedprizeWithoutBalance = await this.cacheManager.get(key);
@@ -178,19 +178,21 @@ export class PrizesController {
       prizeWithoutBalance.data.map((prize) => prize.contract_address),
     );
     let start = 0;
-    let end = 2;
+    let end = 4;
     const prizeWithBalanceData = prizeWithoutBalance.data.map((prize) => {
       const portalResults = results.slice(start, end);
-      start += 2;
-      end += 2;
+      start += 4;
+      end += 4;
       return {
         ...prize,
         balance: parseInt((portalResults[0].result as bigint).toString()),
         distributed: portalResults[1].result as boolean,
-      } as PrizeWithBalance;
+        submission_time_blockchain: parseInt((portalResults[2].result as bigint).toString()),
+        voting_time_blockchain: parseInt((portalResults[3].result as bigint).toString()),
+      } as PrizeWithBlockchainData;
     });
     return {
-      data: prizeWithBalanceData as PrizeWithBalance[],
+      data: prizeWithBalanceData as PrizeWithBlockchainData[],
       hasNextPage: prizeWithoutBalance.hasNextPage,
     };
   }

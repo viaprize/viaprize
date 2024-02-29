@@ -303,6 +303,20 @@ export class BlockchainService {
         stateMutability: 'view',
         type: 'function',
         inputs: [],
+        name: 'get_voting_time',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'get_submission_time',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
         name: 'total_funds',
         outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
       },
@@ -329,11 +343,20 @@ export class BlockchainService {
           ...wagmiContract,
           functionName: 'distributed',
         },
+        {
+          ...wagmiContract,
+          functionName: 'get_submission_time',
+        },
+        {
+          ...wagmiContract,
+          functionName: 'get_voting_time',
+        },
       );
     });
     const results = await this.provider.multicall({
       contracts: calls,
     });
+    console.log(results, 'results');
     return results;
   }
 

@@ -410,6 +410,150 @@
         "x-nestia-method": "GET"
       }
     },
+    "/portals/{id}/comment": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `createComment` is an asynchronous function that takes a `comment` parameter calls\nthe `create` method of the `prizeCommentService` with the given `id` and  `userAuthId`",
+        "description": "The function `createComment` is an asynchronous function that takes a `comment` parameter calls\nthe `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.comment.createComment",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortalsComments"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `portalCommentService` with the given `id`",
+        "description": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `portalCommentService` with the given `id`.",
+        "x-nestia-namespace": "portals.comment.getComment",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
     "/portals/{id}/add-update": {
       "put": {
         "tags": [],
@@ -1917,7 +2061,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateCommentDto"
+                "$ref": "#/components/schemas/CreateCommentDto.o1"
               }
             }
           },
@@ -3550,6 +3694,14 @@
               "type": "string"
             }
           },
+          "comments": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalsComments"
+            }
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           }
@@ -3573,6 +3725,35 @@
           "images",
           "title",
           "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "PortalsComments": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "portal": {
+            "$ref": "#/components/schemas/Portals"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "comment",
+          "user",
+          "portal"
         ],
         "x-typia-jsDocTags": []
       },
@@ -3668,6 +3849,14 @@
               "$ref": "#/components/schemas/PrizesComments"
             }
           },
+          "portalComments": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalsComments"
+            }
+          },
           "prizes": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3709,6 +3898,7 @@
           "submissions",
           "prizeProposals",
           "prizeComments",
+          "portalComments",
           "prizes",
           "portals",
           "portalProposals"
@@ -3889,8 +4079,8 @@
             }
           },
           "comments": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PrizesComments"
@@ -3919,7 +4109,6 @@
           "images",
           "title",
           "submissions",
-          "comments",
           "user"
         ],
         "x-typia-jsDocTags": []
@@ -4419,6 +4608,14 @@
               "type": "string"
             }
           },
+          "comments": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalsComments"
+            }
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           }
@@ -4489,6 +4686,21 @@
           "contributor",
           "amount",
           "donationTime"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "CreateCommentDto": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "comment"
         ],
         "x-typia-jsDocTags": []
       },
@@ -4832,7 +5044,7 @@
             "x-typia-optional": false,
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PrizeWithBalance"
+              "$ref": "#/components/schemas/PrizeWithBlockchainData"
             }
           },
           "hasNextPage": {
@@ -4847,179 +5059,6 @@
           "hasNextPage"
         ],
         "description": "Make all properties in T readonly",
-        "x-typia-jsDocTags": []
-      },
-      "PrizeWithBalance": {
-        "type": "object",
-        "properties": {
-          "distributed": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "boolean"
-          },
-          "balance": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "id": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "description": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "isAutomatic": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "boolean"
-          },
-          "submissionTime": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "votingTime": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "startVotingDate": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          "startSubmissionDate": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          "proposer_address": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "contract_address": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "admins": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "judges": {
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "array",
-            "items": {
-              "x-typia-required": false,
-              "x-typia-optional": true,
-              "type": "string"
-            }
-          },
-          "proficiencies": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "priorities": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "created_at": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          "images": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "title": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "submissions": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Submission"
-            }
-          },
-          "comments": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PrizesComments"
-            }
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "distributed",
-          "balance",
-          "id",
-          "description",
-          "isAutomatic",
-          "submissionTime",
-          "votingTime",
-          "startVotingDate",
-          "startSubmissionDate",
-          "proposer_address",
-          "contract_address",
-          "admins",
-          "proficiencies",
-          "priorities",
-          "created_at",
-          "updated_at",
-          "images",
-          "title",
-          "submissions",
-          "comments",
-          "user"
-        ],
         "x-typia-jsDocTags": []
       },
       "PrizeWithBlockchainData": {
@@ -5168,8 +5207,8 @@
             }
           },
           "comments": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PrizesComments"
@@ -5202,7 +5241,6 @@
           "images",
           "title",
           "submissions",
-          "comments",
           "user"
         ],
         "x-typia-jsDocTags": []
@@ -5449,7 +5487,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "CreateCommentDto": {
+      "CreateCommentDto.o1": {
         "type": "object",
         "properties": {
           "comment": {
