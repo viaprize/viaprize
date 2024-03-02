@@ -130,6 +130,7 @@ export default function Details() {
           value={username}
           onChange={handleUsernameChange}
           label="Username"
+          withAsterisk
           placeholder="Enter your username"
         />
 
@@ -148,6 +149,7 @@ export default function Details() {
           onChange={(e) => {
             setName(e.currentTarget.value);
           }}
+          withAsterisk
           label="Name"
           placeholder="Enter your name"
           my="sm"
@@ -156,6 +158,7 @@ export default function Details() {
           value={email}
           onChange={handleChange}
           label="Email"
+          withAsterisk
           placeholder="Enter your email"
           data={data}
           my="sm"
@@ -164,7 +167,6 @@ export default function Details() {
           size="lg"
           radius="xs"
           label="User Bio"
-          withAsterisk
           description="Type in something about yourself"
           value={bio}
           onChange={(e) => setBio(e.currentTarget.value)}
