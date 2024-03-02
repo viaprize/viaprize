@@ -4,13 +4,15 @@ pragma solidity ^0.8.0;
 import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
 import "../helperContracts/safemath.sol";
-import "../helperContracts/ierc20.sol";
+import "../helperContracts/ierc20.sol";                                         
 
 
 // import "./helperContracts/safemath.sol";
+interface IERC20Permit is IERC20 {
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
+}
 
 
- 
 contract ViaPrize {
     /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
@@ -60,8 +62,8 @@ contract ViaPrize {
     address[] public platformAdmins;
     mapping(address => bool) public isPlatformAdmin;
 
-    IERC20 private _usdc;
-    IERC20 private _usdcBridged;
+    IERC20Permit private _usdc;
+    IERC20Permit private _usdcBridged;
 
     ///@notice to test the things i am hardcoding this proposer contract
     address public proposerAddress;
@@ -134,8 +136,8 @@ contract ViaPrize {
         submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission());
         proposerFee = _proposerFee;
         platformFee = _platFormFee;
-        _usdc = IERC20(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
-        _usdcBridged = IERC20(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
+        _usdc = IERC20Permit(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
+        _usdcBridged = IERC20Permit(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
         isActive = true;
     }
 
@@ -368,9 +370,10 @@ contract ViaPrize {
         return submission;
     }
 
-    function addUsdcFunds(uint256 _amountUsdc) public noReentrant payable {
+    function addUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable {
         require(_amountUsdc > 0, "funds should be greater than 0");
-        require(_usdc.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
+         require(_amountUsdc > 0, "funds should be greater than 0");
+        _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
         if(!isActive) revert("Funding to contract ended");
         uint256 _donation = _amountUsdc;
@@ -385,9 +388,10 @@ contract ViaPrize {
         allPatrons.push(msg.sender);
     }
 
-    function addBridgedUsdcFunds(uint256 _amountUsdc) public noReentrant payable {
+    function addBridgedUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable {
         require(_amountUsdc > 0, "funds should be greater than 0");
-        require(_usdcBridged.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
+         require(_amountUsdc > 0, "funds should be greater than 0");
+        _usdcBridged.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
         _usdcBridged.transferFrom(msg.sender, address(this), _amountUsdc);
         if(!isActive) revert("Funding to contract ended");
         uint256 _donation = _amountUsdc;
