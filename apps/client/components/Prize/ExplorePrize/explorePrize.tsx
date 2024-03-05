@@ -103,11 +103,15 @@ function ExploreCard({
       <Text size="sm" c="gray">
         {ethAmount} {chain.nativeCurrency.symbol}
       </Text>
-      <Text fw="bold">
+      <Text fw="bold" className="flex">
         Submission Deadline :{' '}
-        {startingTimeBlockchain != 0
-          ? new Date(startingTimeBlockchain * 1000).toLocaleDateString()
-          : 'Gone'}
+        {startingTimeBlockchain != 0 ? (
+          new Date(startingTimeBlockchain * 1000).toLocaleDateString()
+        ) : (
+          <Text c="red" fw="bold" className="pl-2">
+            Ended
+          </Text>
+        )}
       </Text>
 
       <Button
