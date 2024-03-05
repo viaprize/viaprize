@@ -33,7 +33,7 @@ export default function ChangeSubmission({
             setnewSubmissionTime(parseInt(event.toString()));
           }}
           placeholder="Enter in %"
-          description={`This will increase submission time by ${newSubmissionTime} days from ${submissionTime}`}
+          description={`This will increase submission time by ${newSubmissionTime} days from ${new Date(submissionTime * 1000)}`}
         />
 
         <Button

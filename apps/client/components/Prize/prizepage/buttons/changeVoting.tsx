@@ -33,7 +33,7 @@ export default function ChangeVoting({
             setnewVotingTime(parseInt(event.toString()));
           }}
           placeholder="Enter in %"
-          description={`This will increase voting time by ${newVotingTime} days from ${votingTime}`}
+          description={`This will increase voting time by ${newVotingTime} days from ${new Date(votingTime * 1000)}`}
         />
 
         <Button
