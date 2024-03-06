@@ -3,6 +3,7 @@ import { Button, Group, Text } from '@mantine/core';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchPrizes from './fetchprizes';
+import HistoryPage from '@/components/history/history-page';
 
 function ExplorePage() {
   return (
@@ -33,6 +34,8 @@ function ExplorePage() {
         </Suspense>
         {/* Add as many ExploreCard components as you need */}
       </div>
+      {/* @ts-expect-error Server Component */}
+      <HistoryPage />
     </div>
   );
 }
