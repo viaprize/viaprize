@@ -27,6 +27,9 @@ import StartSubmission from './buttons/startSubmission';
 import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import Submissions from './submissions';
+import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
+import { parseEther } from 'viem';
+import { toast } from 'sonner';
 
 function FundCard({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
@@ -140,6 +143,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       <Button
         disabled={!value}
         loading={sendLoading}
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onClick={async () => {
           if (!address) {
             openDeleteModal();
