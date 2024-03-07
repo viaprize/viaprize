@@ -9,6 +9,9 @@
  * ---------------------------------------------------------------
  */
 
+import { env } from "@env";
+
+
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
   /** Name of the pact i.e the title, which is gotten in the pact form */
@@ -588,8 +591,9 @@ export enum ContentType {
   Text = 'text/plain',
 }
 
+
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'http://localhost:3001/api';
+  public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
