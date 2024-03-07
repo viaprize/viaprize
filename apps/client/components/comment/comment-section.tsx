@@ -55,7 +55,7 @@ export default function CommentSection() {
       <h2>Comments ({data.length})</h2>
       <Divider my="md" />
       <section>
-        <CommentForm />
+        <CommentForm portalId='test' />
         {data != null && data.length > 0 && (
           <div className="mt-4">
             <CommentList comments={data} />

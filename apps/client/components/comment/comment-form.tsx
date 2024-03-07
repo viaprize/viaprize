@@ -7,27 +7,32 @@ import { useMutation } from 'react-query';
 import { usePortal } from '../hooks/usePortal';
 import CommentList from './comment-list';
 
-export default function CommentForm({ portalId }: { portalId: string }) {
+interface CommentFormProps {
+  portalId?: string;
+  isReply: boolean;
+  commentId?: string;
+}
+
+export default function CommentForm({ portalId, commentId,isReply }: CommentFormProps) {
   const [message, setMessage] = useState('');
   const [comments, setComments] = useState([]);
 
   const { createComment } = usePortal();
 
-  // const {mutateAsync:createPortalComment} = useMutation();
+  const { mutateAsync: createPortalComment } = useMutation(
+    async ({ portalIdfn, comment }: { portalIdfn: string; comment: string }) => {
+      const response = await createComment(portalIdfn, comment);
+      return response;
+    },
+  );
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // const newComment = {
-    //   id: Date.now().toString(),
-    //   message,
-    //   user: 'Test User',
-    //   createdAt: new Date().toISOString(),
-    //   likeCount: 0,
-    //   likedByMe: false,
-    //   dislikeCount: 0,
-    //   dislikeByMe: false,
-    //   children: [],
-    // };
+    if (!portalId){
+      // here we reply to a comment
+      return;
+    }
+    await createPortalComment({ portalIdfn: portalId, comment: message });
     // setComments([...comments, newComment]);
     // setMessage('');
   }

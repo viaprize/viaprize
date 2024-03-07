@@ -91,11 +91,11 @@ export default function Comment({ comment }: CommentProps) {
 
         {isEditing ? (
           <div className="relative">
-            <CommentForm />
+            <CommentForm portalId='' />
             <Button
               className="absolute right-0 top-2"
               onClick={() => {
-                setIsEditing(0);
+                setIsEditing(false);
               }}
             >
               Cancel
@@ -151,7 +151,7 @@ export default function Comment({ comment }: CommentProps) {
 
       {isReplying ? (
         <div className="relative mt-1 ml-3">
-          <CommentForm />
+          <CommentForm portalId='1' />
           <Button
             className="absolute right-0 top-2"
             onClick={() => {
