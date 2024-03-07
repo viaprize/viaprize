@@ -140,7 +140,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       <Button
         disabled={!value}
         loading={sendLoading}
-        onClick={() => {
+        onClick={async () => {
           if (!address) {
             openDeleteModal();
           }
