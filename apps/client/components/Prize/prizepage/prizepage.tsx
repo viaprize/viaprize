@@ -13,12 +13,10 @@ import {
   Title,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { IconRefresh } from '@tabler/icons-react';
-import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
-import { toast } from 'sonner';
-import { parseEther } from 'viem';
 import { useAccount, useBalance, useQuery } from 'wagmi';
 import ChangeSubmission from './buttons/changeSubmission';
 import ChangeVoting from './buttons/changeVoting';
@@ -29,12 +27,12 @@ import StartSubmission from './buttons/startSubmission';
 import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import Submissions from './submissions';
-import CommentSection from '@/components/comment/comment-section';
 
 function FundCard({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
   const [value, setValue] = useState('');
   const [debounced] = useDebouncedValue(value, 500);
+  const { loginUser } = useAppUser();
 
   const { data: balance, isLoading, refetch } = useBalance({ address });
 
@@ -42,6 +40,27 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
   //   to: contractAddress,
   //   value: debounced ? parseEther(debounced) : undefined,
   // });
+
+  const openDeleteModal = () => {
+    modals.openConfirmModal({
+      title: 'Please Login to Donate',
+      centered: true,
+      children: (
+        <p>
+          Please Login to donate to the prize, orelse you wont be able to get the refund
+        </p>
+      ),
+      labels: { confirm: 'Login', cancel: 'Cancel' },
+      onCancel: () => {
+        console.log('Cancel');
+      },
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      onConfirm: async () => {
+        await loginUser();
+      },
+    });
+  };
+
   const [sendLoading, setSendLoading] = useState(false);
 
   const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
@@ -121,11 +140,12 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       <Button
         disabled={!value}
         loading={sendLoading}
-        onClick={async () => {
+        onClick={() => {
+          if (!address) {
+            openDeleteModal();
+          }
           await refetch();
-
           setSendLoading(true);
-
           try {
             const config = await prepareSendTransaction({
               to: contractAddress,
@@ -136,7 +156,6 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
             toast.success(`Transaction ${hash}`, {
               duration: 6000,
             });
-
             window.location.reload();
           } catch (e: unknown) {
             toast.error((e as any)?.message);
@@ -204,7 +223,7 @@ export default function PrizePageComponent({
           }
         />
       </Center>
-      {appUser ? <FundCard contractAddress={prize.contract_address} /> : null}
+      <FundCard contractAddress={prize.contract_address} />
       {appUser
         ? (appUser.username === prize.user.username || appUser.isAdmin) &&
           prize.submission_time_blockchain === 0 && (
@@ -234,7 +253,6 @@ export default function PrizePageComponent({
           submissionTime={prize.submission_time_blockchain}
         />
       ) : null}
-
       {appUser?.isAdmin && !prize.distributed ? (
         <EarlyRefund contractAddress={prize.contract_address} />
       ) : null}
@@ -254,7 +272,7 @@ export default function PrizePageComponent({
         submissions={submissions}
         contractAddress={prize.contract_address}
       />
-      <CommentSection />
+      {/* <CommentSection /> */}
     </div>
   );
 }
