@@ -1,4 +1,7 @@
 /* eslint-disable import/no-cycle */
+
+'use client';
+
 import { ActionIcon, Avatar, Button, Flex, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowBackUp,
@@ -11,6 +14,18 @@ import { useState } from 'react';
 import CommentForm from './comment-form';
 import CommentList from './comment-list';
 
+interface CommentChildren {
+  id: string;
+  message: string;
+  user: string;
+  createdAt: string;
+  likeCount: number;
+  likedByMe: boolean;
+  dislikeCount: number;
+  dislikeByMe: boolean;
+  children?: CommentChildren[];
+}
+
 interface CommentProps {
   comment: {
     id: string;
@@ -21,17 +36,7 @@ interface CommentProps {
     likedByMe: boolean;
     dislikeCount: number;
     dislikeByMe: boolean;
-    children?: {
-      id: string;
-      message: string;
-      user: string;
-      createdAt: string;
-      likeCount: number;
-      likedByMe: boolean;
-      dislikeCount: number;
-      dislikeByMe: boolean;
-      children?: any[];
-    }[];
+    children?: CommentChildren[];
   };
 }
 
@@ -87,7 +92,12 @@ export default function Comment({ comment }: CommentProps) {
         {isEditing ? (
           <div className="relative">
             <CommentForm />
-            <Button className="absolute right-0 top-2" onClick={() => setIsEditing(0)}>
+            <Button
+              className="absolute right-0 top-2"
+              onClick={() => {
+                setIsEditing(0);
+              }}
+            >
               Cancel
             </Button>
           </div>
@@ -117,7 +127,9 @@ export default function Comment({ comment }: CommentProps) {
             variant="transparent"
             color="blue"
             size="md"
-            onClick={() => setIsReplying(true)}
+            onClick={() => {
+              setIsReplying(true);
+            }}
           >
             <IconArrowBackUp />
           </ActionIcon>
@@ -125,7 +137,9 @@ export default function Comment({ comment }: CommentProps) {
             variant="transparent"
             color="blue"
             size="md"
-            onClick={() => setIsEditing(true)}
+            onClick={() => {
+              setIsEditing(true);
+            }}
           >
             <IconEdit />
           </ActionIcon>
@@ -138,7 +152,12 @@ export default function Comment({ comment }: CommentProps) {
       {isReplying ? (
         <div className="relative mt-1 ml-3">
           <CommentForm />
-          <Button className="absolute right-0 top-2" onClick={() => setIsReplying(false)}>
+          <Button
+            className="absolute right-0 top-2"
+            onClick={() => {
+              setIsReplying(false);
+            }}
+          >
             Cancel
           </Button>
         </div>
@@ -167,7 +186,7 @@ export default function Comment({ comment }: CommentProps) {
               setAreChildrenHidden(false);
             }}
           >
-            {comment.children && comment.children.length > 0
+            { comment.children.length > 0
               ? comment.children.length
               : 0}{' '}
             replies

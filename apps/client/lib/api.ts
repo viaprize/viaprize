@@ -9,8 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-import { env } from "@env";
-
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
   /** Name of the pact i.e the title, which is gotten in the pact form */
@@ -86,8 +84,12 @@ export interface Portals {
 }
 
 export interface PortalsComments {
-  id: number;
+  id: string;
   comment: string;
+  likes: string[];
+  dislikes: string[];
+  parentComment: PortalsComments;
+  childComments: PortalsComments[];
   user: User;
   portal: Portals;
 }
@@ -587,7 +589,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
+  public baseUrl: string = 'http://localhost:3001/api';
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -647,8 +649,8 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-              ? JSON.stringify(property)
-              : `${property}`,
+            ? JSON.stringify(property)
+            : `${property}`,
         );
         return formData;
       }, new FormData()),
@@ -728,18 +730,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-          .then((data) => {
-            if (r.ok) {
-              r.data = data;
-            } else {
-              r.error = data;
-            }
-            return r;
-          })
-          .catch((e) => {
-            r.error = e;
-            return r;
-          });
+            .then((data) => {
+              if (r.ok) {
+                r.data = data;
+              } else {
+                r.error = data;
+              }
+              return r;
+            })
+            .catch((e) => {
+              r.error = e;
+              return r;
+            });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
@@ -906,6 +908,50 @@ the `getComment` method of the `portalCommentService` with the given `id`
       this.request<PortalsComments[], any>({
         path: `/portals/${id}/comment`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CommentReplyCreate
+     * @request POST:/portals/{id}/comment/reply
+     */
+    commentReplyCreate: (id: string, data: CreateCommentDto, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/${id}/comment/reply`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CommentLikeCreate
+     * @request POST:/portals/{id}/comment/like
+     */
+    commentLikeCreate: (id: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/${id}/comment/like`,
+        method: 'POST',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CommentDislikeCreate
+     * @request POST:/portals/{id}/comment/dislike
+     */
+    commentDislikeCreate: (id: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/${id}/comment/dislike`,
+        method: 'POST',
         format: 'json',
         ...params,
       }),

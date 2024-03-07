@@ -1,7 +1,6 @@
-import { Divider, Text } from '@mantine/core';
-import CommentList from './comment-list';
+import { Divider } from '@mantine/core';
 import CommentForm from './comment-form';
-import Comment from './comment';
+import CommentList from './comment-list';
 
 const data = [
   {
