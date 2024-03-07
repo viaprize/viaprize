@@ -11,8 +11,9 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDidUpdate, useDisclosure } from '@mantine/hooks';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import { optimism } from '@wagmi/chains';
 import { switchNetwork } from '@wagmi/core';
@@ -20,6 +21,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, type ReactNode } from 'react';
 import { useNetwork } from 'wagmi';
+import useAppUser from '../hooks/useAppUser';
 import useIsMounted from '../hooks/useIsMounted';
 import Footer from './footer';
 import HeaderLayout from './headerLayout';
@@ -36,11 +38,12 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   const computedColorScheme = useComputedColorScheme('light');
   const isMounted = useIsMounted();
   const { ready } = usePrivy();
+  const { appUser, logoutUser } = useAppUser();
   useEffect(() => {
-    if (currentChain?.id !== optimism.id && wallets[0] && wallets[0].address && ready) {
+    if (currentChain && currentChain?.id !== optimism.id && ready && appUser) {
       openChainModal();
     }
-  }, [currentChain, isMounted, ready]);
+  }, [currentChain, isMounted, ready, appUser]);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
   const switchToOptimism = async () => {
@@ -50,6 +53,15 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
       closeChainModal();
     });
   };
+
+  const { wallet, ready: walletReady } = usePrivyWagmi();
+  useDidUpdate(() => {
+    if (!wallet && appUser && ready && walletReady) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      logoutUser();
+    }
+  }, [walletReady, appUser, wallet]);
+
   return (
     <AppShell
       header={{ height: 60 }}

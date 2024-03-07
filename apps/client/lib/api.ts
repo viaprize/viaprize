@@ -1,4 +1,3 @@
-import { env } from '@env';
 /* eslint-disable */
 /* tslint:disable */
 /*
@@ -9,6 +8,8 @@ import { env } from '@env';
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
+
+import { env } from "@env";
 
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
@@ -79,8 +80,16 @@ export interface Portals {
   updatedAt: string;
   images: string[];
   title: string;
-  updates: string[];
+  updates?: string[];
+  comments?: PortalsComments[];
   user: User;
+}
+
+export interface PortalsComments {
+  id: number;
+  comment: string;
+  user: User;
+  portal: Portals;
 }
 
 export interface User {
@@ -97,6 +106,8 @@ export interface User {
   walletAddress: string;
   submissions: Submission[];
   prizeProposals: PrizeProposals[];
+  prizeComments: PrizesComments[];
+  portalComments: PortalsComments[];
   prizes: Prize[];
   portals: Portals[];
   portalProposals: PortalProposals[];
@@ -136,7 +147,15 @@ export interface Prize {
   images: string[];
   title: string;
   submissions: Submission[];
+  comments?: PrizesComments[];
   user: User;
+}
+
+export interface PrizesComments {
+  id: number;
+  comment: string;
+  user: User;
+  prize: Prize;
 }
 
 export interface PrizeProposals {
@@ -224,7 +243,8 @@ export interface PortalWithBalance {
   updatedAt: string;
   images: string[];
   title: string;
-  updates: string[];
+  updates?: string[];
+  comments?: PortalsComments[];
   user: User;
 }
 
@@ -236,6 +256,10 @@ export interface Contribution {
   contributor: string;
   amount: string;
   donationTime: string;
+}
+
+export interface CreateCommentDto {
+  comment: string;
 }
 
 /** Make all properties in T readonly */
@@ -309,36 +333,8 @@ export interface CreatePrizeDto {
 
 /** Make all properties in T readonly */
 export interface ReadonlyTypeO4 {
-  data: PrizeWithBalance[];
+  data: PrizeWithBlockchainData[];
   hasNextPage: boolean;
-}
-
-export interface PrizeWithBalance {
-  distributed: boolean;
-  balance: number;
-  id: string;
-  description: string;
-  isAutomatic: boolean;
-  submissionTime: number;
-  votingTime: number;
-  /** @format date-time */
-  startVotingDate: string;
-  /** @format date-time */
-  startSubmissionDate: string;
-  proposer_address: string;
-  contract_address: string;
-  admins: string[];
-  judges?: string[];
-  proficiencies: string[];
-  priorities: string[];
-  /** @format date-time */
-  created_at: string;
-  /** @format date-time */
-  updated_at: string;
-  images: string[];
-  title: string;
-  submissions: Submission[];
-  user: User;
 }
 
 export interface PrizeWithBlockchainData {
@@ -368,6 +364,7 @@ export interface PrizeWithBlockchainData {
   images: string[];
   title: string;
   submissions: Submission[];
+  comments?: PrizesComments[];
   user: User;
 }
 
@@ -434,6 +431,10 @@ export interface SubmissionWithBlockchainData {
   created_at: string;
   user: User;
   prize: Prize;
+}
+
+export interface CreateCommentDtoO1 {
+  comment: string;
 }
 
 /** Make all properties in T readonly */
@@ -567,14 +568,11 @@ export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>;
-  securityWorker?: (
-    securityData: SecurityDataType | null,
-  ) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown>
-  extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
   data: D;
   error: E;
 }
@@ -593,8 +591,7 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
-    fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: 'same-origin',
@@ -629,11 +626,7 @@ export class HttpClient<SecurityDataType = unknown> {
     const query = rawQuery || {};
     const keys = Object.keys(query).filter((key) => 'undefined' !== typeof query[key]);
     return keys
-      .map((key) =>
-        Array.isArray(query[key])
-          ? this.addArrayQueryParam(query, key)
-          : this.addQueryParam(query, key),
-      )
+      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
       .join('&');
   }
 
@@ -644,11 +637,8 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === 'object' || typeof input === 'string')
-        ? JSON.stringify(input)
-        : input,
-    [ContentType.Text]: (input: any) =>
-      input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
+      input !== null && (typeof input === 'object' || typeof input === 'string') ? JSON.stringify(input) : input,
+    [ContentType.Text]: (input: any) => (input !== null && typeof input !== 'string' ? JSON.stringify(input) : input),
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -665,10 +655,7 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(
-    params1: RequestParams,
-    params2?: RequestParams,
-  ): RequestParams {
+  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -725,21 +712,15 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(
-      `${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`,
-      {
-        ...requestParams,
-        headers: {
-          ...(requestParams.headers || {}),
-          ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
-        },
-        signal:
-          (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) ||
-          null,
-        body:
-          typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
+    return this.customFetch(`${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`, {
+      ...requestParams,
+      headers: {
+        ...(requestParams.headers || {}),
+        ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
       },
-    ).then(async (response) => {
+      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
+      body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
+    }).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -747,18 +728,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-            .then((data) => {
-              if (r.ok) {
-                r.data = data;
-              } else {
-                r.error = data;
-              }
-              return r;
-            })
-            .catch((e) => {
-              r.error = e;
-              return r;
-            });
+          .then((data) => {
+            if (r.ok) {
+              r.data = data;
+            } else {
+              r.error = data;
+            }
+            return r;
+          })
+          .catch((e) => {
+            r.error = e;
+            return r;
+          });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
@@ -894,6 +875,42 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
+ * @description The function `createComment` is an asynchronous function that takes a `comment` parameter calls the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
+ *
+ * @name CommentCreate
+ * @summary The function `createComment` is an asynchronous function that takes a `comment` parameter calls
+the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId`
+ * @request POST:/portals/{id}/comment
+ * @secure
+ */
+    commentCreate: (id: string, data: CreateCommentDto, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/${id}/comment`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description The function `getComments` is an asynchronous function that takes a `comment` parameter calls the `getComment` method of the `portalCommentService` with the given `id`.
+ *
+ * @name CommentDetail
+ * @summary The function `getComments` is an asynchronous function that takes a `comment` parameter calls
+the `getComment` method of the `portalCommentService` with the given `id`
+ * @request GET:/portals/{id}/comment
+ */
+    commentDetail: (id: string, params: RequestParams = {}) =>
+      this.request<PortalsComments[], any>({
+        path: `/portals/${id}/comment`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * No description
      *
      * @name AddUpdateUpdate
@@ -1004,11 +1021,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PATCH:/portals/proposals/{id}
      * @secure
      */
-    proposalsPartialUpdate: (
-      id: string,
-      data: UpdatePortalPropsalDto,
-      params: RequestParams = {},
-    ) =>
+    proposalsPartialUpdate: (id: string, data: UpdatePortalPropsalDto, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/${id}`,
         method: 'PATCH',
@@ -1076,11 +1089,7 @@ parameters
      * @request POST:/portals/proposals/reject/{id}
      * @secure
      */
-    proposalsRejectCreate: (
-      id: string,
-      data: RejectProposalDto,
-      params: RequestParams = {},
-    ) =>
+    proposalsRejectCreate: (id: string, data: RejectProposalDto, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/reject/${id}`,
         method: 'POST',
@@ -1118,11 +1127,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
  * @request POST:/portals/proposals/platformFee/{id}
  * @secure
  */
-    proposalsPlatformFeeCreate: (
-      id: string,
-      data: UpdatePlatformFeeDto,
-      params: RequestParams = {},
-    ) =>
+    proposalsPlatformFeeCreate: (id: string, data: UpdatePlatformFeeDto, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/platformFee/${id}`,
         method: 'POST',
@@ -1141,11 +1146,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
 the ``setPlatformFee method of the `portalProposalsService` with the given `id`
  * @request POST:/portals/trigger/{contractAddress}
  */
-    triggerCreate: (
-      contractAddress: string,
-      data: TestTrigger,
-      params: RequestParams = {},
-    ) =>
+    triggerCreate: (contractAddress: string, data: TestTrigger, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/portals/trigger/${contractAddress}`,
         method: 'POST',
@@ -1275,11 +1276,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      * @name SubmissionCreate
      * @request POST:/prizes/{id}/submission
      */
-    submissionCreate: (
-      id: string,
-      data: CreateSubmissionDto,
-      params: RequestParams = {},
-    ) =>
+    submissionCreate: (id: string, data: CreateSubmissionDto, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/prizes/${id}/submission`,
         method: 'POST',
@@ -1309,6 +1306,42 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         path: `/prizes/${id}/submission`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description The function `createComment` is an asynchronous function that takes a `comment` parameter calls the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
+ *
+ * @name CommentCreate
+ * @summary The function `createComment` is an asynchronous function that takes a `comment` parameter calls
+the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId`
+ * @request POST:/prizes/{id}/comment
+ * @secure
+ */
+    commentCreate: (id: string, data: CreateCommentDtoO1, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/${id}/comment`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+ * @description The function `getComments` is an asynchronous function that takes a `comment` parameter calls the `getComment` method of the `prizeCommentService` with the given `id`.
+ *
+ * @name CommentDetail
+ * @summary The function `getComments` is an asynchronous function that takes a `comment` parameter calls
+the `getComment` method of the `prizeCommentService` with the given `id`
+ * @request GET:/prizes/{id}/comment
+ */
+    commentDetail: (id: string, params: RequestParams = {}) =>
+      this.request<PrizesComments[], any>({
+        path: `/prizes/${id}/comment`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),
@@ -1413,11 +1446,7 @@ parameters
      * @request POST:/prizes/proposals/reject/{id}
      * @secure
      */
-    proposalsRejectCreate: (
-      id: string,
-      data: RejectProposalDto,
-      params: RequestParams = {},
-    ) =>
+    proposalsRejectCreate: (id: string, data: RejectProposalDto, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/prizes/proposals/reject/${id}`,
         method: 'POST',
@@ -1455,11 +1484,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
  * @request POST:/prizes/proposals/platformFee/{id}
  * @secure
  */
-    proposalsPlatformFeeCreate: (
-      id: string,
-      data: UpdatePlatformFeeDto,
-      params: RequestParams = {},
-    ) =>
+    proposalsPlatformFeeCreate: (id: string, data: UpdatePlatformFeeDto, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
         path: `/prizes/proposals/platformFee/${id}`,
         method: 'POST',
@@ -1586,7 +1611,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      * @request GET:/users/username/{username}/prizes
      */
     usernamePrizesDetail: (username: string, params: RequestParams = {}) =>
-      this.request<Prize[], any>({
+      this.request<PrizeWithBlockchainData[], any>({
         path: `/users/username/${username}/prizes`,
         method: 'GET',
         format: 'json',

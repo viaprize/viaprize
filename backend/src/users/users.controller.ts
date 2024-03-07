@@ -2,10 +2,11 @@ import { TypedBody, TypedParam } from '@nestia/core';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Controller, Get, Inject, Post } from '@nestjs/common';
 import { Cache } from 'cache-manager';
+import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
-import { Prize } from 'src/prizes/entities/prize.entity';
 import { Submission } from 'src/prizes/entities/submission.entity';
 import { Http200Response } from 'src/utils/types/http.type';
+import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
 import { CreateUser } from './dto/create-user.dto';
 import { UpdateUser } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -20,7 +21,8 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly mailService: MailService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {}
+    private readonly blockchainService: BlockchainService,
+  ) { }
 
   /**
    * Creates a new user and sends welcome email.
@@ -120,11 +122,31 @@ export class UsersController {
   /**
    * Endpoint for getting prizes of a specified username.
    * @param username The username to check.
-   * @returns {Promise<Prize[]>} The prize object.
+   * @returns {Promise<PrizeWithBlockchainData[]>} The prize object.
    */
   @Get('username/:username/prizes')
-  async getPrizes(@TypedParam('username') username: string): Promise<Prize[]> {
+  async getPrizes(@TypedParam('username') username: string): Promise<PrizeWithBlockchainData[]> {
     const prizes = await this.usersService.findUserPrizesByUsername(username);
-    return prizes;
+    const results = await this.blockchainService.getPrizesPublicVariables(
+      prizes.map((prize) => prize.contract_address),
+    );
+
+    let start = 0;
+    let end = 4;
+
+    const prizeWithBalanceData = prizes.map((prize) => {
+      const portalResults = results.slice(start, end);
+      start += 4;
+      end += 4;
+      return {
+        ...prize,
+        balance: parseInt((portalResults[0].result as bigint).toString()),
+        distributed: portalResults[1].result as boolean,
+        submission_time_blockchain: parseInt((portalResults[2].result as bigint).toString()),
+        voting_time_blockchain: parseInt((portalResults[3].result as bigint).toString()),
+      } as PrizeWithBlockchainData;
+    });
+
+    return prizeWithBalanceData;
   }
 }

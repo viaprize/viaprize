@@ -16,7 +16,6 @@ export default async function FetchPrize({ params }: { params: { id: string } })
       },
     })
   ).data;
- 
 
   const submissions = (
     await new Api().prizes.submissionDetail2(params.id, {

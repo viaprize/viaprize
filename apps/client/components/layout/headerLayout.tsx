@@ -1,7 +1,9 @@
 import {
   ActionIcon,
+  Box,
   Button,
   Card,
+  Center,
   CopyButton,
   Divider,
   Flex,
@@ -9,26 +11,31 @@ import {
   Pill,
   Stack,
   Text,
+  ThemeIcon,
   Tooltip,
+  rem,
 } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
-import { IconCheck, IconCopy } from '@tabler/icons-react';
+import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import {
+  IconCheck,
+  IconChevronDown,
+  IconCopy,
+  IconInfoCircle,
+  IconInfoCircleFilled,
+  IconSearch,
+} from '@tabler/icons-react';
 import Link from 'next/link';
-import { useEffect } from 'react';
 import useAppUser from '../hooks/useAppUser';
 
 export default function HeaderLayout() {
   const { user, ready } = usePrivy();
   const { appUser, logoutUser } = useAppUser();
+  const { wallet, ready: walletReady } = usePrivyWagmi();
+  console.log({ wallet }, 'walletttttttttttt');
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
-  useEffect(() => {
-    if (!user && appUser && ready) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      logoutUser();
-    }
-  }, [user, ready, appUser]);
 
   return (
     <Flex
@@ -43,22 +50,36 @@ export default function HeaderLayout() {
         <Link href="/" className="font-bold">
           HOME
         </Link>
-        <Menu withArrow shadow="md" position="bottom" trigger="hover">
+        <Menu shadow="md" position="bottom" trigger="hover">
           <Menu.Target>
-            <Link href="/prize/explore" className="pl-3 font-bold">
-              PRIZES
-            </Link>
+            <Center>
+              <Box
+                // href="/prize/explore"
+                className="pl-3 font-bold hover:text-blue-600 "
+              >
+                PRIZES
+              </Box>
+              <IconChevronDown style={{ width: rem(20), height: rem(16) }} />
+            </Center>
           </Menu.Target>
           <Menu.Dropdown>
             <Stack gap="md" p="md">
               <Menu.Item>
-                <Link href="/prize/about">
-                  <Text>About</Text>
+                <Link href="/prize/about" className="flex items-center">
+                  <IconInfoCircleFilled />
+
+                  <Text size="md" fw={500} className="pl-1">
+                    About
+                  </Text>
                 </Link>
               </Menu.Item>
               <Menu.Item>
-                <Link href="/prize/explore">
-                  <Text>Explore Prizes</Text>
+                <Link href="/prize/explore" className="flex items-center">
+                  <IconSearch />
+
+                  <Text size="md" fw={500} className="pl-1">
+                    Explore Prizes
+                  </Text>
                 </Link>
               </Menu.Item>
               <Divider />
@@ -71,20 +92,33 @@ export default function HeaderLayout() {
 
         <Menu withArrow shadow="md" position="bottom" trigger="hover">
           <Menu.Target>
-            <Link href="/portal/explore" className="pl-3 font-bold">
-              PORTALS
-            </Link>
+            <Center>
+              <Box
+                // href="/portal/explore"
+                className="pl-3 font-bold hover:text-blue-600"
+              >
+                PORTALS
+              </Box>
+              <IconChevronDown style={{ width: rem(20), height: rem(16) }} />
+            </Center>
           </Menu.Target>
           <Menu.Dropdown>
             <Stack gap="md" p="md">
               <Menu.Item>
-                <Link href="/portal/about">
-                  <Text>About</Text>
+                <Link href="/portal/about" className="flex items-center">
+                  <IconInfoCircleFilled />
+                  <Text size="md" fw={500} className="pl-1">
+                    About
+                  </Text>
                 </Link>
               </Menu.Item>
               <Menu.Item>
-                <Link href="/portal/explore">
-                  <Text>Explore Portals</Text>
+                <Link href="/portal/explore" className="flex items-center">
+                  <IconSearch />
+
+                  <Text size="md" fw={500} className="pl-1">
+                    Explore Portals
+                  </Text>
                 </Link>
               </Menu.Item>
               <Divider />

@@ -2,8 +2,11 @@
 
 import { chain } from '@/lib/wagmi';
 import {
+  ActionIcon,
   Badge,
   Button,
+  CopyButton,
+  Flex,
   Group,
   Input,
   Modal,
@@ -11,16 +14,47 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useForm } from '@mantine/form';
+import { useClipboard, useDisclosure } from '@mantine/hooks';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction, waitForTransaction } from '@wagmi/core';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { isAddress, parseEther } from 'viem';
-import { useBalance } from 'wagmi';
+import { useBalance, useQuery } from 'wagmi';
+import getCryptoToUsd from '../hooks/server-actions/CryptotoUsd';
 import useAppUser from '../hooks/useAppUser';
 
+interface MoonpayFormValues {
+  email: string;
+  number: number;
+  amount: number;
+}
+
+interface ConversionRates {
+  ethToUsd: number;
+  usdToEth: number;
+}
+
 export default function SendCard() {
+  const { data: conversionRates } = useQuery(['cryptoToUsd', undefined], async () => {
+    const data = await getCryptoToUsd();
+    return {
+      ethToUsd: data.ethereum.usd,
+      usdToEth: 1 / data.ethereum.usd,
+    };
+  });
+  const form = useForm<MoonpayFormValues>({
+    initialValues: {
+      email: '',
+      number: 0,
+      amount: 0,
+    },
+    validate: {
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+    },
+  });
   const { appUser } = useAppUser();
   const [recieverAddress, setRecieverAddress] = useState<string>('');
   const [amount, setAmount] = useState<string>('0');
@@ -33,6 +67,7 @@ export default function SendCard() {
   const { data: balance, refetch } = useBalance({
     address: wallet?.address as `0x${string}`,
   });
+
   useEffect(() => {
     if (!balance) {
       void refetch();
@@ -80,7 +115,29 @@ export default function SendCard() {
     }
     setLoading(false);
   };
+  const clipboard = useClipboard({ timeout: 500 });
 
+  const [ethAmount, setEthAmount] = useState<number | string>('');
+  const [usdAmount, setUsdAmount] = useState<number | string>('');
+
+  const handleEthChange = (value: number | string) => {
+    setEthAmount(value);
+    const convertedValue =
+      typeof value === 'number' ? value * (conversionRates!.ethToUsd ?? 0) : '';
+    setUsdAmount(convertedValue);
+  };
+
+  const handleUsdChange = (value: number | string) => {
+    setUsdAmount(value);
+    const convertedValue =
+      typeof value === 'number' ? value * (conversionRates!.usdToEth ?? 0) : '';
+    setEthAmount(convertedValue);
+  };
+
+  const copyWalletAddresToClipboard = () => {
+    clipboard.copy(wallet?.address ?? '');
+    toast('Wallet Address Copied To Clipboard');
+  };
   const buyCrypto = () => {
     wallet?.fund({
       config: {
@@ -95,12 +152,15 @@ export default function SendCard() {
   };
 
   const buyCryptoWithOnramper = () => {
+    copyWalletAddresToClipboard();
     open();
   };
 
   const buyCryptoWithChangeNow = () => {
+    copyWalletAddresToClipboard();
     openChangeNow();
   };
+
   return (
     <Group mt="sm" p="sm">
       <Modal
@@ -111,13 +171,35 @@ export default function SendCard() {
         radius={0}
         transitionProps={{ transition: 'fade', duration: 200 }}
       >
-        <iframe
-          src={`https://buy.onramper.com?apiKey=pk_prod_01HKCG8FGCY3QA5EAZAJYRG6GH&mode=buy&onlyCryptos=eth_optimism&wallets=eth_optimism:${wallet?.address}&onlyCryptoNetworks=optimism`}
-          title="Onramper Widget"
-          height="630px"
-          width="420px"
-          allow="accelerometer; autoplay; camera; gyroscope; payment"
-        />
+        <Flex align="center" direction={'column'}>
+          <Text>Wallet Address :</Text>
+          <Flex align={'center'}>
+            <Badge size="lg" variant="light" color="primary.2" my="sm">
+              {wallet?.address}
+            </Badge>
+            <CopyButton value={wallet?.address ?? 'wallet-null'}>
+              {({ copied, copy }) => (
+                <ActionIcon
+                  ml="md"
+                  onClick={copy}
+                  style={{
+                    backgroundColor: copied ? '#3d4070' : '#3d4070',
+                  }}
+                >
+                  {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+                </ActionIcon>
+              )}
+            </CopyButton>
+          </Flex>
+
+          <iframe
+            src={`https://buy.onramper.com?apiKey=pk_prod_01HKCG8FGCY3QA5EAZAJYRG6GH&mode=buy&onlyCryptos=eth_optimism&wallets=eth_optimism:${wallet?.address}&onlyCryptoNetworks=optimism`}
+            title="Onramper Widget"
+            height="630px"
+            width="420px"
+            allow="accelerometer; autoplay; camera; gyroscope; payment"
+          />
+        </Flex>
       </Modal>
       <Modal
         opened={openedChangeNow}
@@ -127,11 +209,11 @@ export default function SendCard() {
         radius={0}
         transitionProps={{ transition: 'fade', duration: 200 }}
       >
-        <iframe
+        {/* <iframe
           id="iframe-widget"
-          src="https://changenow.io/embeds/exchange-widget/v2/widget.html?FAQ=true&amount=0.1&amountFiat=1500&backgroundColor=FFFFFF&darkMode=false&from=btc&fromFiat=eur&horizontal=false&isFiat=true&lang=en-US&link_id=1608fc18eda548&locales=true&logo=true&primaryColor=00C26F&to=eth&toFiat=eth&toTheMoon=true"
+          src="https://changenow.io/embeds/exchange-widget/v2/widget.html?FAQ=true&amount=2000&amountFiat=1500&backgroundColor=FFFFFF&darkMode=false&from=usdtop&fromFiat=eur&horizontal=true&isFiat&lang=en-US&link_id=1608fc18eda548&locales=true&logo=true&primaryColor=00C26F&to=ethop&toFiat=eth&toTheMoon=true"
           style={{
-            height: '356px',
+            height: '205px',
             width: '100%',
             border: 'none',
           }}
@@ -140,12 +222,65 @@ export default function SendCard() {
           defer
           type="text/javascript"
           src="https://changenow.io/embeds/exchange-widget/v2/stepper-connector.js"
-        ></script>
+        ></script> */}
+        {/* <Box w={{ maxWidth: 300 }} mx="auto">
+          <NumberInput
+            label="ETH"
+            placeholder="Amount in ETH"
+            value={ethAmount}
+            onChange={handleEthChange}
+            step={0.01}
+          />
+
+          <NumberInput
+            label="USD"
+            placeholder="Amount in USD"
+            value={usdAmount}
+            onChange={handleUsdChange}
+            mt="md"
+            step={1}
+          />
+
+          <Button onClick={handleBuy} mt="md">
+            Buy
+          </Button>
+        </Box> */}
+
+        <Flex align="center" direction={'column'}>
+          <Text>Wallet Address :</Text>
+          <Flex align={'center'}>
+            <Badge size="lg" variant="light" color="primary.2" my="sm">
+              {wallet?.address}
+            </Badge>
+            <CopyButton value={wallet?.address ?? 'wallet-null'}>
+              {({ copied, copy }) => (
+                <ActionIcon
+                  ml="md"
+                  onClick={copy}
+                  style={{
+                    backgroundColor: copied ? '#3d4070' : '#3d4070',
+                  }}
+                >
+                  {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+                </ActionIcon>
+              )}
+            </CopyButton>
+          </Flex>
+
+          <iframe
+            style={{
+              marginInline: 'auto',
+            }}
+            height="280"
+            title="Guardarian Widget"
+            src="https://guardarian.com/calculator/v1?partner_api_token=4203ec36-1b62-4e80-b850-8d5b69f16bcc&theme=blue&type=narrow&default_fiat_currency=USD&default_crypto_currency=ETH_OP&side_toggle_disabled=true&crypto_currencies_list=%5B%7B%22ticker%22%3A%22ETH%22%2C%22network%22%3A%22OP%22%7D%5D"
+          />
+        </Flex>
       </Modal>
       {appUser && balance ? (
         <Stack>
           <Badge variant="light" radius="md">
-            Address : {wallet?.address.slice(0, 6)}.....{wallet?.address.slice(-6)}
+            Address : {wallet?.address}
           </Badge>
           <Badge size="lg" color="green" radius="md">
             Balance : {balance.formatted} {balance.symbol}
