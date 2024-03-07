@@ -38,4 +38,45 @@ export class PortalCommentService {
     });
     return portalComments;
   }
+
+  async replyToComment(commentId: string, comment: string, userAuthId: string) {
+    const user = await this.userService.findOneByAuthId(userAuthId);
+    const parentComment = await this.portalCommentsRepository.findOneBy({
+      id: commentId,
+    });
+
+    if (!parentComment) {
+      throw new Error('Comment not found');
+    }
+    const portalComment = await this.portalCommentsRepository.save({
+      comment: comment,
+      user: user,
+      portal: parentComment.portal,
+    });
+    return portalComment;
+  }
+  async likeComment(commentId: string, userAuthId: string) {
+    const comment = await this.portalCommentsRepository.findOneBy({
+      id: commentId,
+    });
+
+    if (!comment) {
+      throw new Error('Comment not found');
+    }
+    comment.likes = [...comment.likes, userAuthId];
+    await this.portalCommentsRepository.save(comment);
+    return comment;
+  }
+
+  async dislikeComment(commentId: string, userAuthId: string) {
+    const comment = await this.portalCommentsRepository.findOneBy({
+      id: commentId,
+    });
+    if (!comment) {
+      throw new Error('Comment not found');
+    }
+    comment.dislikes = [...comment.dislikes, userAuthId];
+    await this.portalCommentsRepository.save(comment);
+    return comment;
+  }
 }

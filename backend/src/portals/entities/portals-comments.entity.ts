@@ -11,11 +11,25 @@ import { Portals } from './portal.entity';
 
 @Entity()
 export class PortalsComments {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   comment: string;
+
+  @Column({
+    type: 'text',
+    array: true,
+    default: '',
+  })
+  likes: string[];
+
+  @Column({
+    type: 'text',
+    array: true,
+    default: '',
+  })
+  dislikes: string[];
 
   // Define self-referencing parent-child relationship
   @ManyToOne(
