@@ -10,10 +10,10 @@ export default function PortalAbout() {
           <h1>Pass-through</h1>
           <p>
             If the author chooses to immediately forward contributions to the recipient,
-            then it functions just like GoFundMe. There is a 5% platform fee. It is not
-            required, but the author may choose to add a funding goal and a deadline for
-            when the campaign will automatically end. In this style, the funding goal and
-            the deadline are editable. The campaign only ends if the author ends it
+            then it functions just like pass-through. There is a 5% platform fee. It is
+            not required, but the author may choose to add a funding goal and a deadline
+            for when the campaign will automatically end. In this style, the funding goal
+            and the deadline are editable. The campaign only ends if the author ends it
             manually.
           </p>
         </Card>
@@ -21,9 +21,9 @@ export default function PortalAbout() {
           <h1>All-or-nothing</h1>
           <p>
             If the author chooses to send all the contributions at once, they must choose
-            a deadline and a goal. This is similar to campaigns on Kickstarter. The author
-            must also choose whether to disburse funds as soon as the funding goal is met
-            or to allow contributions above the goal that are all disbursed at the
+            a deadline and a goal. This is similar to campaigns on All-or-nothing. The
+            author must also choose whether to disburse funds as soon as the funding goal
+            is met or to allow contributions above the goal that are all disbursed at the
             deadline minus a 5% platform fee. If the funding goal is not met by the
             deadline, then all the contributions are automatically refunded and there are
             no fees. In this style, the funding goal and deadline are immutable. The

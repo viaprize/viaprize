@@ -123,7 +123,7 @@ export const calculateDeadline = (createdDate: Date, endDate: Date) => {
   }
   const days = Math.floor(remainingTime / (24 * 60 * 60 * 1000));
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
-}
+};
 // export const calculateDeadline = (
 //   startSubmissionTime: string,
 //   submissionDays: number,

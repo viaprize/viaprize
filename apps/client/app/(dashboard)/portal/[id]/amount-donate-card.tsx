@@ -313,7 +313,7 @@ export default function AmountDonateCard({
             onClick={async () => {
               try {
                 const config = await prepareWritePortal({
-                  functionName: 'endKickStarterCampaign',
+                  functionName: 'endAllOrNothingCampaign',
                   address: contractAddress as `0x${string}`,
                 });
 

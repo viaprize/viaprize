@@ -202,7 +202,7 @@ export default function Home() {
           />
           <FunctionCard
             Title="Portals"
-            Description="Create GoFundMe style pass-through campaigns or Kickstarter style all-or-nothing campaigns"
+            Description="Create pass-through campaigns or  all-or-nothing campaigns"
             know="portal/about"
             explore="portal/explore"
           />

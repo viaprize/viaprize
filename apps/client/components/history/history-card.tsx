@@ -38,7 +38,7 @@ export default function HistoryCard({
           }
         />
       </Card.Section>
-      <Group mt='xs' justify="space-between ">
+      <Group mt="xs" justify="space-between ">
         <Badge color={statusColor}>{status}</Badge>
         <Badge color="blue" variant="light" p="sm">
           Date Posted : {datePosted}
