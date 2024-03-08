@@ -97,7 +97,7 @@ export default function About() {
         <section className="flex flex-col items-center my-14">
           <h1 className="text-3xl font-bold">3 Roles in a Prize</h1>
           <Image
-            src="/home/rolesInPrize.png"
+            src="/rolesInPrize.png"
             width={1000}
             height={500}
             alt="How it works"
