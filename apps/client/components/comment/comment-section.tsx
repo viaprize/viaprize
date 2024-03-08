@@ -1,64 +1,21 @@
+import { Api } from '@/lib/api';
 import { Divider } from '@mantine/core';
 import CommentForm from './comment-form';
 import CommentList from './comment-list';
 
-const data = [
-  {
-    id: '1',
-    message: 'This is a comment',
-    user: 'John Doe',
-    createdAt: '2021-09-01',
-    likeCount: 0,
-    likedByMe: false,
-    dislikeCount: 0,
-    dislikeByMe: false,
-    children: [
-      {
-        id: '3',
-        message: 'This is a reply',
-        user: 'Jane Doe',
-        createdAt: '2021-09-03',
-        likeCount: 0,
-        likedByMe: false,
-        dislikeCount: 0,
-        dislikeByMe: false,
-        children: [
-          {
-            id: '5',
-            message: 'This is a nested reply',
-            user: 'John Doe',
-            createdAt: '2021-09-05',
-            likeCount: 0,
-            likedByMe: false,
-            dislikeCount: 0,
-            dislikeByMe: false,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: '2',
-    message: 'This is another comment',
-    user: 'Jane Doe',
-    createdAt: '2021-09-02',
-    likeCount: 0,
-    likedByMe: false,
-    dislikeCount: 0,
-    dislikeByMe: false,
-  },
-];
+export default async function CommentSection({ portalId }: { portalId: string }) {
+  const portalComments = (await new Api().portals.commentDetail(portalId)).data;
+  console.log(portalComments, 'portal');
 
-export default function CommentSection() {
   return (
     <>
-      <h2>Comments ({data.length})</h2>
+      <h2>Comments ({portalComments.length})</h2>
       <Divider my="md" />
       <section>
-        <CommentForm portalId='test' />
-        {data != null && data.length > 0 && (
+        <CommentForm portalId={portalId} isReply={false} />
+        {portalComments.length > 0 && (
           <div className="mt-4">
-            <CommentList comments={data} />
+            <CommentList portalComments={portalComments} />
           </div>
         )}
       </section>

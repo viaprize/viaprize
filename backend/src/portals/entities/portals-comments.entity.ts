@@ -1,6 +1,7 @@
 import { User } from 'src/users/entities/user.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -20,16 +21,24 @@ export class PortalsComments {
   @Column({
     type: 'text',
     array: true,
-    default: '',
+    default: [],
   })
   likes: string[];
 
   @Column({
     type: 'text',
     array: true,
-    default: '',
+    default: [],
   })
   dislikes: string[];
+
+  @CreateDateColumn({
+    type: 'timestamp with time zone',
+  })
+  created_at: Date;
+
+  @Column({ default: 0 })
+  reply_count: number;
 
   // Define self-referencing parent-child relationship
   @ManyToOne(
@@ -37,7 +46,7 @@ export class PortalsComments {
     (parentComment) => parentComment.childComments,
     { nullable: true },
   )
-  @JoinColumn({ name: 'parent_comment_id' })
+  @JoinColumn({ name: 'parent_id' })
   parentComment: PortalsComments;
 
   @OneToMany(

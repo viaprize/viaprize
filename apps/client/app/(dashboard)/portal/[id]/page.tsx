@@ -3,6 +3,7 @@ import { formatEther } from 'viem';
 import AmountDonateCard from './amount-donate-card';
 import ImageTitleHeroCard from './image-title-hero-card';
 import PortalTabs from './portal-tabs';
+import CommentSection from '@/components/comment/comment-section';
 
 export default async function CreatePortal({ params }: { params: { id: string } }) {
   const portal = (
@@ -43,7 +44,8 @@ export default async function CreatePortal({ params }: { params: { id: string } 
         owner={portal.user.username}
         param={params.id}
       />
-      {/* <CommentSection /> */}
+      {/* @ts-expect-error Server Component */}
+      <CommentSection portalId={params.id} />
     </div>
   );
 }

@@ -1,36 +1,19 @@
-/* eslint-disable import/no-cycle */
+/* eslint-disable import/no-cycle  -- we are using comments*/
+'use client';
+
+import type { PortalsComments } from '@/lib/api';
 import Comment from './comment';
 
-interface CommentListProps {
-  comments: {
-    id: string;
-    message: string;
-    user: string;
-    createdAt: string;
-    likeCount: number;
-    likedByMe: boolean;
-    dislikeCount: number;
-    dislikeByMe: boolean;
-    children?: {
-      id: string;
-      message: string;
-      user: string;
-      createdAt: string;
-      likeCount: number;
-      likedByMe: boolean;
-      dislikeCount: number;
-      dislikeByMe: boolean;
-      children?: any[];
-    }[];
-  }[];
-}
-
-export default function CommentList({ comments }: CommentListProps) {
+export default function CommentList({
+  portalComments,
+}: {
+  portalComments: PortalsComments[];
+}) {
   return (
     <>
-      {comments.map((comment) => (
-        <div key={comment.id} className="my-2 mx-0">
-          <Comment comment={comment} />
+      {portalComments.map((c) => (
+        <div key={c.id} className="my-2 mx-0">
+          <Comment portalComment={c} />
         </div>
       ))}
     </>

@@ -1,78 +1,41 @@
-/* eslint-disable import/no-cycle */
-
 'use client';
 
+/* eslint-disable import/no-cycle -- use for multiple comments */
+import type { PortalsComments } from '@/lib/api';
 import { ActionIcon, Avatar, Button, Flex, Group, Paper, Text } from '@mantine/core';
 import {
   IconArrowBackUp,
-  IconEdit,
   IconThumbDown,
   IconThumbUp,
   IconTrash,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
+import useAppUser from '../hooks/useAppUser';
 import CommentForm from './comment-form';
-import CommentList from './comment-list';
+import FetchChildComment from './fetch-child-comments';
 
-interface CommentChildren {
-  id: string;
-  message: string;
-  user: string;
-  createdAt: string;
-  likeCount: number;
-  likedByMe: boolean;
-  dislikeCount: number;
-  dislikeByMe: boolean;
-  children?: CommentChildren[];
-}
-
-interface CommentProps {
-  comment: {
-    id: string;
-    message: string;
-    user: string;
-    createdAt: string;
-    likeCount: number;
-    likedByMe: boolean;
-    dislikeCount: number;
-    dislikeByMe: boolean;
-    children?: CommentChildren[];
-  };
-}
-
-export default function Comment({ comment }: CommentProps) {
+export default function Comment({ portalComment }: { portalComment: PortalsComments }) {
   const [areChildrenHidden, setAreChildrenHidden] = useState(true);
+  console.log(portalComment, 'portalComment');
+
+  const { appUser } = useAppUser();
+
+  const isLikedByMe = portalComment.likes.includes(appUser?.authId ?? '');
+  const isDislikedByMe = portalComment.dislikes.includes(appUser?.authId ?? '');
 
   /// #if DEBUG
-  const [likeCount, setLikeCount] = useState(comment.likeCount);
-  const [dislikeCount, setDislikeCount] = useState(comment.dislikeCount);
-  const [likedByMe, setLikedByMe] = useState(comment.likedByMe);
-  const [dislikedByMe, setDislikedByMe] = useState(comment.dislikeByMe);
-  const [isEditing, setIsEditing] = useState(false);
+  const [likeCount, setLikeCount] = useState(portalComment.likes.length);
+  const [dislikeCount, setDislikeCount] = useState(portalComment.dislikes.length);
+  const [likedByMe, setLikedByMe] = useState(isLikedByMe);
+  const [dislikedByMe, setDislikedByMe] = useState(isDislikedByMe);
   const [isReplying, setIsReplying] = useState(false);
 
   const handleLike = () => {
-    if (!likedByMe && !dislikedByMe) {
-      setLikeCount(likeCount + 1);
-      setLikedByMe(true);
-    } else if (!likedByMe && dislikedByMe) {
-      setLikeCount(likeCount + 1);
-      setDislikeCount(dislikeCount - 1);
-      setLikedByMe(true);
-      setDislikedByMe(false);
-    }
+    console.log('handleLike');
   };
 
   const handleDislike = () => {
-    if (!likedByMe && !dislikedByMe) {
-      setDislikeCount(dislikeCount + 1);
-      setDislikedByMe(true);
-    } else if (likedByMe && !dislikedByMe) {
-      setLikeCount(likeCount - 1);
-      setDislikeCount(dislikeCount + 1);
-      setLikedByMe(false);
-      setDislikedByMe(true);
-    }
+    console.log('handleDislike');
   };
   ///
 
@@ -81,31 +44,21 @@ export default function Comment({ comment }: CommentProps) {
       <Paper shadow="xs" radius="lg" withBorder p="sm">
         <Group justify="space-between">
           <Group>
-            <Avatar radius="xl" />
+            <Avatar radius="xl" src={portalComment.user.avatar}>
+              {portalComment.user.name[0]}
+            </Avatar>
             <Text size="md" fw={600}>
-              {comment.user}
+              {portalComment.user.name}
             </Text>
           </Group>
-          <Text size="sm">{comment.createdAt}</Text>
+          <Text size="sm">
+            created at {new Date(portalComment.created_at).toLocaleTimeString()}
+          </Text>
         </Group>
 
-        {isEditing ? (
-          <div className="relative">
-            <CommentForm portalId='' />
-            <Button
-              className="absolute right-0 top-2"
-              onClick={() => {
-                setIsEditing(false);
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
-        ) : (
-          <Text size="sm" m="sm">
-            {comment.message}
-          </Text>
-        )}
+        <Text size="sm" m="sm">
+          {portalComment.comment}
+        </Text>
         <Flex gap="md" justify="flex-start" align="center" direction="row">
           <ActionIcon
             color={likedByMe ? 'blue' : 'gray'}
@@ -133,16 +86,6 @@ export default function Comment({ comment }: CommentProps) {
           >
             <IconArrowBackUp />
           </ActionIcon>
-          <ActionIcon
-            variant="transparent"
-            color="blue"
-            size="md"
-            onClick={() => {
-              setIsEditing(true);
-            }}
-          >
-            <IconEdit />
-          </ActionIcon>
           <ActionIcon variant="transparent" size="md" color="red">
             <IconTrash />
           </ActionIcon>
@@ -151,7 +94,7 @@ export default function Comment({ comment }: CommentProps) {
 
       {isReplying ? (
         <div className="relative mt-1 ml-3">
-          <CommentForm portalId='1' />
+          <CommentForm commentId={portalComment.id} isReply />
           <Button
             className="absolute right-0 top-2"
             onClick={() => {
@@ -163,34 +106,38 @@ export default function Comment({ comment }: CommentProps) {
         </div>
       ) : null}
 
-      {comment.children && comment.children.length > 0 ? (
+      {portalComment.reply_count > 0 ? (
         <>
-          <div className={`flex ${areChildrenHidden ? 'hidden' : ''}`}>
-            <button
-              className="border-none bg-none p-0 w-2 mt-2 relative cursor-pointer outline-none transform -translate-x-1/2"
-              aria-label="Hide Replies"
-              onClick={() => {
-                setAreChildrenHidden(true);
-              }}
-            />
-            <div className="pl-4 flex-grow">
-              <CommentList comments={comment.children} />
+          {!areChildrenHidden ? (
+            <div className={`flex `}>
+              <button
+                className="border-none bg-none p-0 w-2 mt-2 relative cursor-pointer outline-none transform -translate-x-1/2"
+                aria-label="Hide Replies"
+                onClick={() => {
+                  setAreChildrenHidden(true);
+                }}
+              />
+              <div className="pl-4 flex-grow">
+                <Suspense fallback={<div>Loading...</div>}>
+                  {/* @ts-expect-error Server Component */}
+                  <FetchChildComment parentCommentId={portalComment.id} />
+                </Suspense>
+                {/* <CommentList portalComments={portalComment.childComments} /> */}
+              </div>
             </div>
-          </div>
-          <Text
-            c="blue"
-            size="sm"
-            fw={700}
-            className={`underline cursor-pointer mt-1 ${!areChildrenHidden ? 'hidden' : ''}`}
-            onClick={() => {
-              setAreChildrenHidden(false);
-            }}
-          >
-            { comment.children.length > 0
-              ? comment.children.length
-              : 0}{' '}
-            replies
-          </Text>
+          ) : (
+            <Text
+              c="blue"
+              size="sm"
+              fw={700}
+              className={`underline cursor-pointer mt-1 `}
+              onClick={() => {
+                setAreChildrenHidden(false);
+              }}
+            >
+              {portalComment.reply_count} replies
+            </Text>
+          )}
         </>
       ) : null}
     </>

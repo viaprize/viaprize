@@ -554,6 +554,41 @@
         "x-nestia-method": "GET"
       }
     },
+    "/portals/comment/{commentId}/replies": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortalsComments"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.comment.replies.getReplies",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/portals/{id}/comment/reply": {
       "post": {
         "tags": [],
@@ -3868,6 +3903,17 @@
               "type": "string"
             }
           },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "reply_count": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
           "parentComment": {
             "$ref": "#/components/schemas/PortalsComments"
           },
@@ -3892,6 +3938,8 @@
           "comment",
           "likes",
           "dislikes",
+          "created_at",
+          "reply_count",
           "parentComment",
           "childComments",
           "user",

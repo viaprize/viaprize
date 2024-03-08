@@ -9,7 +9,6 @@ export default function PrizePage({ params }: { params: { id: string } }) {
       <Suspense fallback={<PrizeLoading />}>
         {/* @ts-expect-error Server Component */}
         <FetchPrize params={params} />
-        
       </Suspense>
     </div>
   );

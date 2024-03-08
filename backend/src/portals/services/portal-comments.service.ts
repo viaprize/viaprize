@@ -34,6 +34,19 @@ export class PortalCommentService {
           id: portalId,
         },
       },
+
+      relations: ['user'],
+    });
+    return portalComments;
+  }
+
+  async getChildCommentsByParentCommentId(commentId: string) {
+    const portalComments = await this.portalCommentsRepository.find({
+      where: {
+        parentComment: {
+          id: commentId,
+        },
+      },
       relations: ['user'],
     });
     return portalComments;
@@ -48,10 +61,17 @@ export class PortalCommentService {
     if (!parentComment) {
       throw new Error('Comment not found');
     }
+
+    const replyCount = parentComment.reply_count + 1;
+    console.log(replyCount);
+    await this.portalCommentsRepository.update(parentComment.id, {
+      reply_count: replyCount,
+    });
     const portalComment = await this.portalCommentsRepository.save({
       comment: comment,
       user: user,
       portal: parentComment.portal,
+      parentComment: parentComment,
     });
     return portalComment;
   }

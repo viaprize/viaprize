@@ -292,20 +292,29 @@ export class PortalsController {
     };
   }
 
+  @Get('/comment/:commentId/replies')
+  async getReplies(
+    @TypedParam('commentId') commentId: string,
+  ): Promise<PortalsComments[]> {
+    return await this.portalCommentService.getChildCommentsByParentCommentId(
+      commentId,
+    );
+  }
+
   @Post('/:id/comment/reply')
   @UseGuards(AuthGuard)
   async replyToComment(
-    @TypedParam('id') id: string,
+    @TypedParam('id') commentId: string,
     @TypedBody() body: CreateCommentDto,
     @Request() req,
   ): Promise<Http200Response> {
     await this.portalCommentService.replyToComment(
-      id,
+      commentId,
       body.comment,
       req.user.userId,
     );
     return {
-      message: `Prize  with id ${id} has been updated with comment`,
+      message: `Prize  with id ${commentId} has been updated with comment`,
     };
   }
 
