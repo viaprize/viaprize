@@ -1,19 +1,25 @@
-import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Prize } from "./prize.entity";
+import { User } from 'src/users/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Prize } from './prize.entity';
 
 @Entity()
 export class PrizesComments {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    comment: string;
+  @Column()
+  comment: string;
 
-    @ManyToOne(() => User, (user) => user.prizeComments)
-    @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
-    user: User;
+  @ManyToOne(() => User, (user) => user.prizeComments)
+  @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
+  user: User;
 
-    @ManyToOne(() => Prize, (prize) => prize.comments)
-    prize: Prize;
+  @ManyToOne(() => Prize, (prize) => prize.comments)
+  prize: Prize;
 }

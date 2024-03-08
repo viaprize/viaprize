@@ -79,7 +79,7 @@ export class PortalsController {
     private readonly userService: UsersService,
     private readonly portalCommentService: PortalCommentService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -115,7 +115,6 @@ export class PortalsController {
       sendImmediately: portalProposal.sendImmediately,
       fundingGoalWithPlatformFee: portalProposal.fundingGoalWithPlatformFee,
       updates: [],
-
     });
     if (!portalProposal.sendImmediately) {
       const properMinutes = extractMinutes(
@@ -149,7 +148,6 @@ export class PortalsController {
     await this.cacheManager.reset();
 
     return portal;
-
   }
 
   /**
@@ -271,7 +269,6 @@ export class PortalsController {
     };
   }
 
-
   /**
    * The function `createComment` is an asynchronous function that takes a `comment` parameter calls
    * the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
@@ -289,20 +286,77 @@ export class PortalsController {
     @TypedBody() body: CreateCommentDto,
     @Request() req,
   ): Promise<Http200Response> {
-    await this.portalCommentService.create(
-      body.comment,
-      req.user.userId,
-      id
-    )
+    await this.portalCommentService.create(body.comment, req.user.userId, id);
     return {
       message: `Prize  with id ${id} has been updated with comment`,
     };
   }
 
+  @Get('/comment/:commentId/replies')
+  async getReplies(
+    @TypedParam('commentId') commentId: string,
+  ): Promise<PortalsComments[]> {
+    return await this.portalCommentService.getChildCommentsByParentCommentId(
+      commentId,
+    );
+  }
+
+  @Post('/:id/comment/reply')
+  @UseGuards(AuthGuard)
+  async replyToComment(
+    @TypedParam('id') commentId: string,
+    @TypedBody() body: CreateCommentDto,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.replyToComment(
+      commentId,
+      body.comment,
+      req.user.userId,
+    );
+    return {
+      message: `Prize  with id ${commentId} has been updated with comment`,
+    };
+  }
+
+  @Post('/:id/comment/like')
+  @UseGuards(AuthGuard)
+  async likeComment(
+    @TypedParam('id') id: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.likeComment(id, req.user.userId);
+    return {
+      message: `Prize  with id ${id} has been updated with comment`,
+    };
+  }
+
+  @Post('/:id/comment/dislike')
+  @UseGuards(AuthGuard)
+  async dislikeComment(
+    @TypedParam('id') id: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.dislikeComment(id, req.user.userId);
+    return {
+      message: `Prize  with id ${id} has been updated with comment`,
+    };
+  }
+
+  @Delete('/:commentId/comment/delete')
+  @UseGuards(AuthGuard)
+  async deleteComment(
+    @TypedParam('commentId') commentId: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.deleteComment(commentId, req.user.userId);
+    return {
+      message: `Prize  with id ${commentId} has been deleted`,
+    };
+  }
 
   /**
    * The function `getComments` is an asynchronous function that takes a `comment` parameter calls
-   * the `getComment` method of the `portalCommentService` with the given `id`. 
+   * the `getComment` method of the `portalCommentService` with the given `id`.
    *
    * @date 9/25/2023 - 5:35:35 AM
    * @async
@@ -310,13 +364,9 @@ export class PortalsController {
    * @returns {Promise<PortalsComments[]>}
    */
   @Get('/:id/comment')
-  async getComment(
-    @TypedParam('id') id: string,
-  ): Promise<PortalsComments[]> {
-
+  async getComment(@TypedParam('id') id: string): Promise<PortalsComments[]> {
     return await this.portalCommentService.getCommentsByPortalId(id);
   }
-
 
   @Put('/:id/add-update')
   @UseGuards(AuthGuard)

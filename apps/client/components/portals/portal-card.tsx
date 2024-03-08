@@ -48,6 +48,8 @@ export default function PortalCard({
   tags,
   isIframe,
 }: PortalCardProps) {
+  const isRefunded = !isActive && parseFloat(amountRaised) < fundingGoalWithPlatformFee;
+
   return (
     <Card
       padding="lg"
@@ -74,7 +76,7 @@ export default function PortalCard({
       ) : (
         <div className="flex items-center mt-3 gap-2 text-red-600">
           <PiTimerFill />
-          <Text fw="bold">Campaign Ended</Text>
+          <Text fw="bold">{isRefunded ? 'Refunded' : 'Campaign Ended Successfully'}</Text>
         </div>
       )}
       <Group mt="sm" justify="space-between">

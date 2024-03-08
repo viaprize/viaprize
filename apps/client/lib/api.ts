@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { env } from "@env";
+import { env } from '@env';
 
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
@@ -86,8 +86,15 @@ export interface Portals {
 }
 
 export interface PortalsComments {
-  id: number;
+  id: string;
   comment: string;
+  likes: string[];
+  dislikes: string[];
+  /** @format date-time */
+  created_at: string;
+  reply_count: number;
+  parentComment: PortalsComments;
+  childComments: PortalsComments[];
   user: User;
   portal: Portals;
 }
@@ -568,11 +575,14 @@ export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D;
   error: E;
 }
@@ -591,7 +601,8 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: 'same-origin',
@@ -626,7 +637,11 @@ export class HttpClient<SecurityDataType = unknown> {
     const query = rawQuery || {};
     const keys = Object.keys(query).filter((key) => 'undefined' !== typeof query[key]);
     return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key),
+      )
       .join('&');
   }
 
@@ -637,8 +652,11 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === 'object' || typeof input === 'string') ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== 'string' ? JSON.stringify(input) : input),
+      input !== null && (typeof input === 'object' || typeof input === 'string')
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -655,7 +673,10 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams,
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -712,15 +733,21 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
+        },
+        signal:
+          (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) ||
+          null,
+        body:
+          typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
       },
-      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-      body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
+    ).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -728,18 +755,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-          .then((data) => {
-            if (r.ok) {
-              r.data = data;
-            } else {
-              r.error = data;
-            }
-            return r;
-          })
-          .catch((e) => {
-            r.error = e;
-            return r;
-          });
+            .then((data) => {
+              if (r.ok) {
+                r.data = data;
+              } else {
+                r.error = data;
+              }
+              return r;
+            })
+            .catch((e) => {
+              r.error = e;
+              return r;
+            });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
@@ -913,6 +940,82 @@ the `getComment` method of the `portalCommentService` with the given `id`
     /**
      * No description
      *
+     * @name CommentRepliesDetail
+     * @request GET:/portals/comment/{commentId}/replies
+     */
+    commentRepliesDetail: (commentId: string, params: RequestParams = {}) =>
+      this.request<PortalsComments[], any>({
+        path: `/portals/comment/${commentId}/replies`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CommentReplyCreate
+     * @request POST:/portals/{id}/comment/reply
+     */
+    commentReplyCreate: (
+      id: string,
+      data: CreateCommentDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<Http200Response, any>({
+        path: `/portals/${id}/comment/reply`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CommentLikeCreate
+     * @request POST:/portals/{id}/comment/like
+     */
+    commentLikeCreate: (id: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/${id}/comment/like`,
+        method: 'POST',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CommentDislikeCreate
+     * @request POST:/portals/{id}/comment/dislike
+     */
+    commentDislikeCreate: (id: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/${id}/comment/dislike`,
+        method: 'POST',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CommentDeleteDelete
+     * @request DELETE:/portals/{commentId}/comment/delete
+     */
+    commentDeleteDelete: (commentId: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/${commentId}/comment/delete`,
+        method: 'DELETE',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @name AddUpdateUpdate
      * @request PUT:/portals/{id}/add-update
      */
@@ -1021,7 +1124,11 @@ the `getComment` method of the `portalCommentService` with the given `id`
      * @request PATCH:/portals/proposals/{id}
      * @secure
      */
-    proposalsPartialUpdate: (id: string, data: UpdatePortalPropsalDto, params: RequestParams = {}) =>
+    proposalsPartialUpdate: (
+      id: string,
+      data: UpdatePortalPropsalDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/${id}`,
         method: 'PATCH',
@@ -1089,7 +1196,11 @@ parameters
      * @request POST:/portals/proposals/reject/{id}
      * @secure
      */
-    proposalsRejectCreate: (id: string, data: RejectProposalDto, params: RequestParams = {}) =>
+    proposalsRejectCreate: (
+      id: string,
+      data: RejectProposalDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/reject/${id}`,
         method: 'POST',
@@ -1127,7 +1238,11 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
  * @request POST:/portals/proposals/platformFee/{id}
  * @secure
  */
-    proposalsPlatformFeeCreate: (id: string, data: UpdatePlatformFeeDto, params: RequestParams = {}) =>
+    proposalsPlatformFeeCreate: (
+      id: string,
+      data: UpdatePlatformFeeDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/platformFee/${id}`,
         method: 'POST',
@@ -1146,7 +1261,11 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
 the ``setPlatformFee method of the `portalProposalsService` with the given `id`
  * @request POST:/portals/trigger/{contractAddress}
  */
-    triggerCreate: (contractAddress: string, data: TestTrigger, params: RequestParams = {}) =>
+    triggerCreate: (
+      contractAddress: string,
+      data: TestTrigger,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/trigger/${contractAddress}`,
         method: 'POST',
@@ -1276,7 +1395,11 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      * @name SubmissionCreate
      * @request POST:/prizes/{id}/submission
      */
-    submissionCreate: (id: string, data: CreateSubmissionDto, params: RequestParams = {}) =>
+    submissionCreate: (
+      id: string,
+      data: CreateSubmissionDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/prizes/${id}/submission`,
         method: 'POST',
@@ -1446,7 +1569,11 @@ parameters
      * @request POST:/prizes/proposals/reject/{id}
      * @secure
      */
-    proposalsRejectCreate: (id: string, data: RejectProposalDto, params: RequestParams = {}) =>
+    proposalsRejectCreate: (
+      id: string,
+      data: RejectProposalDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/prizes/proposals/reject/${id}`,
         method: 'POST',
@@ -1484,7 +1611,11 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
  * @request POST:/prizes/proposals/platformFee/{id}
  * @secure
  */
-    proposalsPlatformFeeCreate: (id: string, data: UpdatePlatformFeeDto, params: RequestParams = {}) =>
+    proposalsPlatformFeeCreate: (
+      id: string,
+      data: UpdatePlatformFeeDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/prizes/proposals/platformFee/${id}`,
         method: 'POST',
