@@ -3,6 +3,7 @@
 /* eslint-disable import/no-cycle -- use for multiple comments */
 import type { PortalsComments } from '@/lib/api';
 import { ActionIcon, Avatar, Button, Flex, Group, Paper, Text } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import {
   IconArrowBackUp,
   IconThumbDown,
@@ -10,7 +11,10 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { Suspense, useState } from 'react';
+import { useMutation } from 'react-query';
+import { toast } from 'sonner';
 import useAppUser from '../hooks/useAppUser';
+import { usePortal } from '../hooks/usePortal';
 import CommentForm from './comment-form';
 import FetchChildComment from './fetch-child-comments';
 
@@ -19,9 +23,46 @@ export default function Comment({ portalComment }: { portalComment: PortalsComme
   console.log(portalComment, 'portalComment');
 
   const { appUser } = useAppUser();
+  const { likeComment, dislikeComment, deleteComment } = usePortal();
+  const { mutateAsync: likeCommentfn } = useMutation(likeComment);
+  const { mutateAsync: dislikeCommentfn } = useMutation(dislikeComment);
+  const { mutateAsync: deleteCommentfn } = useMutation(deleteComment);
 
   const isLikedByMe = portalComment.likes.includes(appUser?.authId ?? '');
+  console.log(
+    appUser?.authId,
+    'authId',
+    portalComment.likes,
+    'likes',
+    isLikedByMe,
+    'isLikedByMe',
+  );
   const isDislikedByMe = portalComment.dislikes.includes(appUser?.authId ?? '');
+
+  const openDeleteModal = () => {
+    modals.openConfirmModal({
+      title: 'Delete your Comment ?',
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete your comment? This action is destructive and you
+          will have to contact support to restore your data.
+        </Text>
+      ),
+      labels: { confirm: 'Delete Comment', cancel: "No don't delete it" },
+      confirmProps: { color: 'red' },
+      onCancel: () => {
+        console.log('Cancel');
+      },
+      onConfirm: () => {
+        toast.promise(deleteCommentfn(portalComment.id), {
+          loading: 'Deleting comment',
+          success: 'Comment deleted',
+          error: 'Error deleting comment',
+        });
+      },
+    });
+  };
 
   /// #if DEBUG
   const [likeCount, setLikeCount] = useState(portalComment.likes.length);
@@ -30,12 +71,52 @@ export default function Comment({ portalComment }: { portalComment: PortalsComme
   const [dislikedByMe, setDislikedByMe] = useState(isDislikedByMe);
   const [isReplying, setIsReplying] = useState(false);
 
-  const handleLike = () => {
-    console.log('handleLike');
+  const handleLikeState = () => {
+    if (likedByMe) {
+      setLikeCount((prev) => prev - 1);
+      setLikedByMe(false);
+    }
+    if (dislikedByMe) {
+      setDislikeCount((prev) => prev - 1);
+      setDislikedByMe(false);
+      setLikeCount((prev) => prev + 1);
+      setLikedByMe(true);
+    } else {
+      setLikeCount((prev) => prev + 1);
+      setLikedByMe(true);
+    }
   };
 
-  const handleDislike = () => {
-    console.log('handleDislike');
+  const handleLike = async () => {
+    handleLikeState();
+    await likeCommentfn(portalComment.id).catch(() => {
+      handleLikeState();
+      toast.error('Error liking comment');
+    });
+  };
+
+  const handleDislikeState = () => {
+    if (dislikedByMe) {
+      setDislikeCount((prev) => prev - 1);
+      setDislikedByMe(false);
+    }
+    if (likedByMe) {
+      setLikeCount((prev) => prev - 1);
+      setLikedByMe(false);
+      setDislikeCount((prev) => prev + 1);
+      setDislikedByMe(true);
+    } else {
+      setDislikeCount((prev) => prev + 1);
+      setDislikedByMe(true);
+    }
+  };
+
+  const handleDislike = async () => {
+    handleDislikeState();
+    await dislikeCommentfn(portalComment.id).catch(() => {
+      handleDislikeState();
+      toast.error('Error disliking comment');
+    });
   };
   ///
 
@@ -86,7 +167,12 @@ export default function Comment({ portalComment }: { portalComment: PortalsComme
           >
             <IconArrowBackUp />
           </ActionIcon>
-          <ActionIcon variant="transparent" size="md" color="red">
+          <ActionIcon
+            variant="transparent"
+            size="md"
+            color="red"
+            onClick={openDeleteModal}
+          >
             <IconTrash />
           </ActionIcon>
         </Flex>

@@ -83,7 +83,18 @@ export class PortalCommentService {
     if (!comment) {
       throw new Error('Comment not found');
     }
-    comment.likes = [...comment.likes, userAuthId];
+    if (comment.likes.includes(userAuthId)) {
+      comment.likes = comment.likes.filter((id) => id !== userAuthId);
+      await this.portalCommentsRepository.save(comment);
+      return comment;
+    }
+    if (comment.dislikes.includes(userAuthId)) {
+      comment.dislikes = comment.dislikes.filter((id) => id !== userAuthId);
+      comment.likes = [...comment.likes, userAuthId];
+    } else {
+      comment.likes = [...comment.likes, userAuthId];
+    }
+
     await this.portalCommentsRepository.save(comment);
     return comment;
   }
@@ -95,8 +106,37 @@ export class PortalCommentService {
     if (!comment) {
       throw new Error('Comment not found');
     }
-    comment.dislikes = [...comment.dislikes, userAuthId];
+    if (comment.dislikes.includes(userAuthId)) {
+      console.log('remove dislike');
+      comment.dislikes = comment.dislikes.filter((id) => id !== userAuthId);
+    }
+    if (comment.likes.includes(userAuthId)) {
+      console.log('remove like add dislike');
+      comment.likes = comment.likes.filter((id) => id !== userAuthId);
+      comment.dislikes = [...comment.dislikes, userAuthId];
+    } else {
+      console.log('add dislike');
+      comment.dislikes = [...comment.dislikes, userAuthId];
+    }
     await this.portalCommentsRepository.save(comment);
     return comment;
+  }
+  async deleteComment(commentId: string, userAuthId: string) {
+    console.log(commentId, userAuthId);
+    const comment = await this.portalCommentsRepository.find({
+      where: {
+        id: commentId,
+      },
+      relations: ['user'],
+    });
+    console.log(comment);
+    if (!comment) {
+      throw new Error('Comment not found');
+    }
+    if (comment[0].user.authId !== userAuthId) {
+      throw new Error('You are not authorized to delete this comment');
+    }
+    await this.portalCommentsRepository.delete(commentId);
+    return true;
   }
 }

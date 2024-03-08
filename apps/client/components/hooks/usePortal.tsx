@@ -47,6 +47,11 @@ export const usePortal = () => {
     return comments;
   };
 
+  const deleteComment = async (commentId: string) => {
+    const comments = await (await backendApi()).portals.commentDeleteDelete(commentId);
+    return comments;
+  };
+
   return {
     createPortal,
     addUpdatesToPortal,
@@ -55,5 +60,6 @@ export const usePortal = () => {
     likeComment,
     dislikeComment,
     createComment,
+    deleteComment,
   };
 };

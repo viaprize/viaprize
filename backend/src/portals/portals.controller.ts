@@ -342,6 +342,18 @@ export class PortalsController {
     };
   }
 
+  @Delete('/:commentId/comment/delete')
+  @UseGuards(AuthGuard)
+  async deleteComment(
+    @TypedParam('commentId') commentId: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.deleteComment(commentId, req.user.userId);
+    return {
+      message: `Prize  with id ${commentId} has been deleted`,
+    };
+  }
+
   /**
    * The function `getComments` is an asynchronous function that takes a `comment` parameter calls
    * the `getComment` method of the `portalCommentService` with the given `id`.

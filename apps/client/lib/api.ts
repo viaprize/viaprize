@@ -1002,6 +1002,20 @@ the `getComment` method of the `portalCommentService` with the given `id`
     /**
      * No description
      *
+     * @name CommentDeleteDelete
+     * @request DELETE:/portals/{commentId}/comment/delete
+     */
+    commentDeleteDelete: (commentId: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/${commentId}/comment/delete`,
+        method: 'DELETE',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @name AddUpdateUpdate
      * @request PUT:/portals/{id}/add-update
      */

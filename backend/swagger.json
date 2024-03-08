@@ -696,6 +696,38 @@
         "x-nestia-method": "POST"
       }
     },
+    "/portals/{commentId}/comment/delete": {
+      "delete": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.comment.delete.deleteComment",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "DELETE"
+      }
+    },
     "/portals/{id}/add-update": {
       "put": {
         "tags": [],
