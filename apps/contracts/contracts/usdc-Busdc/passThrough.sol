@@ -9,18 +9,17 @@ interface IERC20Permit is IERC20 {
     function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 }
 
-contract Gofundme {
-    address[] public proposers;
+contract passThrough {
+    address public proposer;
     mapping(address => bool) public isProposer;
-    address[] public admins;
-    mapping(address => bool) public isAdmin;
-    address public receiverAddress;
+    address[] public platformAdmins;
+    mapping(address => bool) public isplatformAdmin;
+    address public receipent;
     uint256 public platformFee;
     address public platformAddress;
-    address[] public patrons; 
-    mapping(address => bool) public isPatron;
-    mapping(address => uint256) public patronAmount;
-    mapping(address => uint256) public refundPatronsAmount;
+    address[] public funders; 
+    mapping(address => bool) public isFunder;
+    mapping(address => uint256) public funderAmount;
     uint256 public totalFunds;
     uint256 public totalRewards;
     bool public isActive;
@@ -34,30 +33,26 @@ contract Gofundme {
     using SafeMath for uint256;
 
     event Values(
-        address receiverAddress,
+        address receipent,
         uint256 totalFunds,
         uint256 totalRewards
     );
 
     constructor(
-        address[] memory _proposers,
-        address[] memory _admins,
+        address _proposer,
+        address[] memory _platformAdmins,
         address _token,
         address _bridgedToken,
         uint256 _platformFee
     ) {
 
-        for (uint256 i = 0; i < _proposers.length; i++) {
-            proposers.push(_proposers[i]);
-            isProposer[_proposers[i]] = true;
-        }
-        proposers.push(msg.sender);
+        proposer = _proposer;
 
-        for(uint256 i=0; i<_admins.length; i++) {
-            admins.push(_admins[i]);
-            isAdmin[_admins[i]] = true;
+        for(uint256 i=0; i<_platformAdmins.length; i++) {
+            platformAdmins.push(_platformAdmins[i]);
+            isplatformAdmin[_platformAdmins[i]] = true;
         }
-        receiverAddress = proposers[0];
+        receipent = _proposer;
         platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
         platformFee = _platformFee;
         isActive = true;
@@ -66,14 +61,14 @@ contract Gofundme {
     }
 
     modifier noReentrant() {
-        require(!locked, "No Re-entrancy");
+        require(!locked, "No cheat, No Re-entrancy");
         locked = true;
         _;
         locked = false;
     }
 
     modifier onlyProposerOrAdmin {
-        require(isProposer[msg.sender] == true || isAdmin[msg.sender] == true, "You are not a proposer or admin.");
+        require(isProposer[msg.sender] == true || isplatformAdmin[msg.sender] == true, "You are not a proposer or platformAdmin.");
         _;
     }
 
@@ -82,14 +77,14 @@ contract Gofundme {
         _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
         uint256 _donation = _amountUsdc;
-        patrons.push(msg.sender);
-        isPatron[msg.sender] = true;
+        funders.push(msg.sender);
+        isFunder[msg.sender] = true;
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        _usdc.transfer(receiverAddress, (_donation.mul(100 - platformFee)).div(100));
+        _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
 
-        emit Values(receiverAddress, totalFunds, totalRewards);
+        emit Values(receipent, totalFunds, totalRewards);
     }
     
     function addBridgedUSDCFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable {
@@ -97,18 +92,22 @@ contract Gofundme {
         _usdcBridged.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
         _usdcBridged.transferFrom(msg.sender, address(this), _amountUsdc);
         uint256 _donation = _amountUsdc;
-        patrons.push(msg.sender);
-        isPatron[msg.sender] = true;
+        funders.push(msg.sender);
+        isFunder[msg.sender] = true;
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        _usdcBridged.transfer(receiverAddress, (_donation.mul(100 - platformFee)).div(100));
+        _usdcBridged.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
         _usdcBridged.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
 
-        emit Values(receiverAddress, totalFunds, totalRewards);
+        emit Values(receipent, totalFunds, totalRewards);
+    }
+
+    function retrieveAllFunders() public view onlyProposerOrAdmin returns(address[] memory){
+        return funders;
     }
 
     function endCampaign() public onlyProposerOrAdmin {
-        if(!isActive) revert("campaign is not active");
+        if(!isActive) revert("campaign is not active or already ended");
         isActive = false;
     }
 }
