@@ -8,20 +8,19 @@ import "@opengsn/contracts/src/BaseRelayRecipient.sol";
 interface IERC20Permit is IERC20 {
     function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 }
-contract Kickstarter is BaseRelayRecipient {
-    address[] public proposers;
+contract AllOrNothing is BaseRelayRecipient {
+    address public proposer;
     mapping(address => bool) public isProposer;
-    address[] public admins;
-    mapping(address => bool) public isAdmin;
+    address[] public platformAdmins;
+    mapping(address => bool) public isPlatformAdmin;
     address public receiverAddress;
     uint256 public goalAmount = 0;
     uint256 public deadline = 0;
     uint256 public platformFee;
     address public platformAddress;
-    address[] public patrons; 
-    mapping(address => bool) public isPatron;
-    mapping(address => uint256) public patronAmount;
-    mapping(address => uint256) public refundPatronsAmount;
+    address[] public funders; 
+    mapping(address => bool) public isFunder;
+    mapping(address => uint256) public funderAmount;
     uint256 public totalUsdcFunds;
     uint256 public totalUsdcRewards;
     uint256 public totalBridgedUsdcFunds;
@@ -36,14 +35,8 @@ contract Kickstarter is BaseRelayRecipient {
     mapping(address => bool) public isUsdcContributer;
     
 
-    error NotEnoughFunds();
     error FundingToContractEnded();
     error RequireGoalAndDeadline();
-    error GoalAndDeadlineNotRequired();
-    error CantEndKickstarterTypeCampaign();
-    error GoalAndDeadlineAlreadyMet();
-    error CantGetRefundForGoFundMeTypeCampaign();
-    error DeadlineNotMet();
 
     using SafeMath for uint256;
 
@@ -60,8 +53,8 @@ contract Kickstarter is BaseRelayRecipient {
     );
 
     constructor(
-        address[] memory _proposers,
-        address[] memory _admins,
+        address _proposer,
+        address[] memory _platformAdmins,
         address _token,
         address _bridgedToken,
         uint256 _goal,
@@ -72,18 +65,14 @@ contract Kickstarter is BaseRelayRecipient {
     ) {
         if(_goal == 0 || _deadline == 0) revert RequireGoalAndDeadline();
 
-        for(uint256 i=0; i<_proposers.length; i++) {
-            proposers.push(_proposers[i]);
-            isProposer[_proposers[i]] = true;
-        }
-        proposers.push(_msgSender());
+        proposer = _proposer;
 
-        for(uint256 i=0; i<_admins.length; i++) {
-            admins.push(_admins[i]);
-            isAdmin[_admins[i]] = true;
+        for(uint256 i=0; i<_platformAdmins.length; i++) {
+            platformAdmins.push(_platformAdmins[i]);
+            isPlatformAdmin[_platformAdmins[i]] = true;
         }
 
-        receiverAddress = proposers[0];
+        receiverAddress = _proposer;
         platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
         _usdc = IERC20Permit(_token);
         _usdcBridged = IERC20Permit(_bridgedToken);
@@ -103,12 +92,12 @@ contract Kickstarter is BaseRelayRecipient {
     }
 
     modifier onlyProposerOrAdmin {
-        require(isProposer[_msgSender()] == true || isAdmin[_msgSender()] == true, "You are not a proposer or admin.");
+        require(isProposer[_msgSender()] == true || isPlatformAdmin[_msgSender()] == true, "You are not a proposer or admin.");
         _;
     }
 
     function versionRecipient() external override pure returns (string memory) {
-        return "1.0.0"; // Example version, adjust as needed
+        return "1.0.0";
     }
 
     function _msgSender() internal override(BaseRelayRecipient) view returns (address) {
@@ -125,10 +114,10 @@ contract Kickstarter is BaseRelayRecipient {
         _usdc.transferFrom(sender, spender, _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
-        patrons.push(_msgSender());
-        isPatron[_msgSender()] = true;
+        funders.push(_msgSender());
+        isFunder[_msgSender()] = true;
         isUsdcContributer[_msgSender()] = true;
-        patronAmount[_msgSender()] = patronAmount[_msgSender()].add(_donation);
+        funderAmount[_msgSender()] = funderAmount[_msgSender()].add(_donation);
         totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
         totalUsdcFunds = totalUsdcFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
@@ -156,14 +145,14 @@ contract Kickstarter is BaseRelayRecipient {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<patrons.length; i++) {
-                    uint transferableAmount = patronAmount[patrons[i]];
-                    patronAmount[patrons[i]] = 0;
-                    if(isUsdcContributer[patrons[i]]){
-                        _usdc.transfer(patrons[i], transferableAmount);
+                for(uint i=0; i<funders.length; i++) {
+                    uint transferableAmount = funderAmount[funders[i]];
+                    funderAmount[funders[i]] = 0;
+                    if(isUsdcContributer[funders[i]]){
+                        _usdc.transfer(funders[i], transferableAmount);
                     }
-                    if(!isUsdcContributer[patrons[i]]) {
-                        _usdcBridged.transfer(patrons[i], transferableAmount);
+                    if(!isUsdcContributer[funders[i]]) {
+                        _usdcBridged.transfer(funders[i], transferableAmount);
                     }
             }
                 isActive = false;
@@ -203,14 +192,14 @@ contract Kickstarter is BaseRelayRecipient {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<patrons.length; i++) {
-                    uint transferableAmount = patronAmount[patrons[i]];
-                    patronAmount[patrons[i]] = 0;
-                    if(isUsdcContributer[patrons[i]]){
-                        _usdc.transfer(patrons[i], transferableAmount);
+                for(uint i=0; i<funders.length; i++) {
+                    uint transferableAmount = funderAmount[funders[i]];
+                    funderAmount[funders[i]] = 0;
+                    if(isUsdcContributer[funders[i]]){
+                        _usdc.transfer(funders[i], transferableAmount);
                     }
-                    if(!isUsdcContributer[patrons[i]]) {
-                        _usdcBridged.transfer(patrons[i], transferableAmount);
+                    if(!isUsdcContributer[funders[i]]) {
+                        _usdcBridged.transfer(funders[i], transferableAmount);
                     }
                 }
                 isActive = false;
@@ -243,10 +232,10 @@ contract Kickstarter is BaseRelayRecipient {
         _usdcBridged.transferFrom(_msgSender(), address(this), _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
-        patrons.push(_msgSender());
-        isPatron[_msgSender()] = true;
+        funders.push(_msgSender());
+        isFunder[_msgSender()] = true;
         isUsdcContributer[_msgSender()] = false;
-        patronAmount[_msgSender()] = patronAmount[_msgSender()].add(_donation);
+        funderAmount[_msgSender()] = funderAmount[_msgSender()].add(_donation);
         totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
         totalBridgedUsdcFunds = totalBridgedUsdcFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
@@ -274,14 +263,14 @@ contract Kickstarter is BaseRelayRecipient {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<patrons.length; i++) {
-                    uint transferableAmount = patronAmount[patrons[i]];
-                    patronAmount[patrons[i]] = 0;
-                    if(isUsdcContributer[patrons[i]]){
-                        _usdc.transfer(patrons[i], transferableAmount);
+                for(uint i=0; i<funders.length; i++) {
+                    uint transferableAmount = funderAmount[funders[i]];
+                    funderAmount[funders[i]] = 0;
+                    if(isUsdcContributer[funders[i]]){
+                        _usdc.transfer(funders[i], transferableAmount);
                     }
-                    if(!isUsdcContributer[patrons[i]]) {
-                        _usdcBridged.transfer(patrons[i], transferableAmount);
+                    if(!isUsdcContributer[funders[i]]) {
+                        _usdcBridged.transfer(funders[i], transferableAmount);
                     }
             }
                 isActive = false;
@@ -321,14 +310,14 @@ contract Kickstarter is BaseRelayRecipient {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<patrons.length; i++) {
-                    uint transferableAmount = patronAmount[patrons[i]];
-                    patronAmount[patrons[i]] = 0;
-                    if(isUsdcContributer[patrons[i]]){
-                        _usdc.transfer(patrons[i], transferableAmount);
+                for(uint i=0; i<funders.length; i++) {
+                    uint transferableAmount = funderAmount[funders[i]];
+                    funderAmount[funders[i]] = 0;
+                    if(isUsdcContributer[funders[i]]){
+                        _usdc.transfer(funders[i], transferableAmount);
                     }
-                    if(!isUsdcContributer[patrons[i]]) {
-                        _usdcBridged.transfer(patrons[i], transferableAmount);
+                    if(!isUsdcContributer[funders[i]]) {
+                        _usdcBridged.transfer(funders[i], transferableAmount);
                     }
                 }
                 isActive = false;
@@ -357,15 +346,15 @@ contract Kickstarter is BaseRelayRecipient {
 
     function endEarlyandRefund() public noReentrant onlyProposerOrAdmin {
         if(!isActive) revert("campaign is not active");
-        if(patrons.length > 0) {
-            for(uint256 i=0; i<patrons.length; i++) {
-                uint256 transferableAmount = patronAmount[patrons[i]];
-                patronAmount[patrons[i]] = 0;
-                if(isUsdcContributer[patrons[i]]){
-                    _usdc.transfer(patrons[i], transferableAmount);
+        if(funders.length > 0) {
+            for(uint256 i=0; i<funders.length; i++) {
+                uint256 transferableAmount = funderAmount[funders[i]];
+                funderAmount[funders[i]] = 0;
+                if(isUsdcContributer[funders[i]]){
+                    _usdc.transfer(funders[i], transferableAmount);
                 }
-                if(!isUsdcContributer[patrons[i]]) {
-                    _usdcBridged.transfer(patrons[i], transferableAmount);
+                if(!isUsdcContributer[funders[i]]) {
+                    _usdcBridged.transfer(funders[i], transferableAmount);
                 }
             }
             isActive = false;
@@ -396,14 +385,14 @@ contract Kickstarter is BaseRelayRecipient {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<patrons.length; i++) {
-                    uint transferableAmount = patronAmount[patrons[i]];
-                    patronAmount[patrons[i]] = 0;
-                    if(isUsdcContributer[patrons[i]]){
-                        _usdc.transfer(patrons[i], transferableAmount);
+                for(uint i=0; i<funders.length; i++) {
+                    uint transferableAmount = funderAmount[funders[i]];
+                    funderAmount[funders[i]] = 0;
+                    if(isUsdcContributer[funders[i]]){
+                        _usdc.transfer(funders[i], transferableAmount);
                     }
-                    if(!isUsdcContributer[patrons[i]]) {
-                        _usdcBridged.transfer(patrons[i], transferableAmount);
+                    if(!isUsdcContributer[funders[i]]) {
+                        _usdcBridged.transfer(funders[i], transferableAmount);
                     }
                 }
                 isActive = false;
@@ -426,14 +415,14 @@ contract Kickstarter is BaseRelayRecipient {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<patrons.length; i++) {
-                    uint transferableAmount = patronAmount[patrons[i]];
-                    patronAmount[patrons[i]] = 0;
-                    if(isUsdcContributer[patrons[i]]){
-                        _usdc.transfer(patrons[i], transferableAmount);
+                for(uint i=0; i<funders.length; i++) {
+                    uint transferableAmount = funderAmount[funders[i]];
+                    funderAmount[funders[i]] = 0;
+                    if(isUsdcContributer[funders[i]]){
+                        _usdc.transfer(funders[i], transferableAmount);
                     }
-                    if(!isUsdcContributer[patrons[i]]) {
-                        _usdcBridged.transfer(patrons[i], transferableAmount);
+                    if(!isUsdcContributer[funders[i]]) {
+                        _usdcBridged.transfer(funders[i], transferableAmount);
                     }
                 }
                 isActive = false; 
