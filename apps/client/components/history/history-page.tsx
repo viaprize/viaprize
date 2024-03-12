@@ -4,8 +4,7 @@ import { FetchPrizesCsv } from './fetch-csv';
 export default async function HistoryPage() {
   const data = await FetchPrizesCsv();
   return (
-    <section className="p-1 pb-3">
-      <h1>Web2 Prizes History</h1>
+    <section className="p-2 pb-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
         {data.map((prize) => {
           if (
@@ -16,16 +15,17 @@ export default async function HistoryPage() {
             prize.AwardedUSDe ||
             prize.WinnersAmount // Changed this line
           ) {
-            const status = prize.WinnersAmount ? 'Won' : 'Not Won'; // Adjusted status based on WinnersAmount existence
+            const status = prize.WinnersAmount ? 'Won' : 'Refunded'; // Adjusted status based on WinnersAmount existence
             return (
               <HistoryCard
+                key={prize.Id}
                 imageUrl={prize.Image}
-                key={prize.PrizeName}
+                id={prize.Id}
                 status={status} // Passed the adjusted status here
                 datePosted={prize.DatePosted}
                 title={prize.PrizeName}
-                description={prize.WinnersAmount}
-                awarded={`${prize.AwardedUSDe}USD`}
+                description={prize.Description}
+                awarded={`${prize.AwardedUSDe} USD`}
               />
             );
           }
