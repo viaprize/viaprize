@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchPortals from './fetchportals';
 import SearchFiltersPortals from './search-filters-portals';
+import Paging from '@/components/custom/paging';
 
 export default function ExplorePortal({ searchParams }: { searchParams: SearchParams }) {
   return (
@@ -35,6 +36,7 @@ export default function ExplorePortal({ searchParams }: { searchParams: SearchPa
           <FetchPortals searchParams={searchParams} />
         </Suspense>
       </div>
+      <Paging />
     </div>
   );
 }
