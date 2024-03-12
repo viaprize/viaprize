@@ -20,7 +20,8 @@ export default async function FetchPortals({
     searchParams.categories = parseCategories(searchParams.categories as string);
   }
 
-  const { search, sort, categories } = campaignSearchParamsSchema.parse(searchParams);
+  const { search, sort, categories, page } =
+    campaignSearchParamsSchema.parse(searchParams);
 
   console.log(searchParams, 'searchParams.categories');
 
@@ -30,7 +31,7 @@ export default async function FetchPortals({
     await new Api().portals.portalsList(
       {
         limit: 10,
-        page: 1,
+        page,
         tags: categories,
         search,
         sort,
@@ -78,6 +79,14 @@ export default async function FetchPortals({
           />
         );
       })}
+      {portals.length === 0 && (
+        <>
+          <p />
+          <div className="w-full flex justify-center my-4 h-full">
+            <p>No portals found</p>
+          </div>
+        </>
+      )}
     </>
   );
 }

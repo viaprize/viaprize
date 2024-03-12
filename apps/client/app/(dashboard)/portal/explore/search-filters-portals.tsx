@@ -58,10 +58,11 @@ export default function SearchFiltersPortals() {
     },
     [searchParams],
   );
+  
   useEffect(() => {
     startTransition(() => {
       const newQueryString = createQueryString({
-        search: `${search}`,
+        search,
       });
       router.push(`${pathname}?${newQueryString}`, {
         scroll: false,
@@ -129,7 +130,7 @@ export default function SearchFiltersPortals() {
                         );
                       });
                     }}
-                    className={`${key.value === sort ? 'font-bold' : 'font-normal'}`}
+                    className={key.value === sort ? 'font-bold' : 'font-normal'}
                   >
                     {key.label}
                   </Menu.Item>
