@@ -1,7 +1,9 @@
 'use client';
-import { Badge, Card, Group, Text, Image } from '@mantine/core';
+import { Badge, Card, Group, Text, Image, Button, ActionIcon, CopyButton, Tooltip } from '@mantine/core';
+import { IconCheck, IconCopy } from '@tabler/icons-react';
 
 interface HistoryCardProps {
+  id: number;
   status: string;
   datePosted: string;
   title: string;
@@ -17,13 +19,14 @@ export default function HistoryCard({
   description,
   awarded,
   imageUrl,
+  id
 }: HistoryCardProps) {
-  const statusColor = status.toLowerCase() === 'won' ? 'green' : 'red';
+  const statusColor = status.toLowerCase() === 'won' ? 'green' : 'yellow';
 
   return (
     <Card
       padding="lg"
-      radius="lg"
+      radius="md"
       withBorder
       className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out"
       pos="relative"
@@ -40,9 +43,15 @@ export default function HistoryCard({
       </Card.Section>
       <Group mt="xs" justify="space-between ">
         <Badge color={statusColor}>{status}</Badge>
-        <Badge color="blue" variant="light" p="sm">
-          Date Posted : {datePosted}
-        </Badge>
+        {datePosted?.length > 0 ? (
+          <Badge color="blue" variant="light" p="sm">
+            Date Posted : {datePosted}
+          </Badge>
+        ) : (
+          <Text>
+            No date posted
+          </Text>
+        )}
       </Group>
       <Text size="xl" mt="sm" fw={600}>
         {title}
@@ -56,6 +65,27 @@ export default function HistoryCard({
           HACKATHON
         </Badge>
       </Group>
+      <Button
+        color="primary"
+        component="a"
+        fullWidth
+        mt="md"
+        radius="md"
+        href={`/prize/old/${id}`}
+      >
+        Details
+      </Button>
+      <div className="absolute top-2 right-2">
+        <CopyButton value={`https://viaprize.org/prize/old/${id}`}>
+          {({ copied, copy }) => (
+            <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
+              <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>
+                {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+              </ActionIcon>
+            </Tooltip>
+          )}
+        </CopyButton>
+      </div>
     </Card>
   );
 }

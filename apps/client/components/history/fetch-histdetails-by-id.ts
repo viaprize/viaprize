@@ -4,8 +4,8 @@ import csvParser from 'csv-parser';
 import { Readable } from 'node:stream';
 
 interface CSVData {
-  Id:number;
-  Description: string;
+  Id: number;
+Description: string;
   Image: string;
   PrizeName: string;
   WonRefunded: string; // Assuming this is a string, adjust according to actual data
@@ -40,19 +40,24 @@ interface CSVData {
   OptionalNotes: string;
 }
 
-export async function FetchPrizesCsv() {
+export async function FetchPrizesCsvId(id: number) {
   const csvUrl =
     'https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/old_viaprize_data/oldprizefinal.csv?t=2024-03-12T19%3A38%3A01.614Z';
-  const data: CSVData[] = [];
-
   const response = await fetch(csvUrl);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch prize details');
+  }
 
   const text = await response.text();
   const readableStream = Readable.from(text);
   for await (const row of readableStream.pipe(csvParser())) {
     const csvData = row as CSVData;
-    data.push(csvData);
+    if (csvData.Id === id) {
+      return csvData; // Return the matched object directly
+    }
   }
 
-  return data;
+  // Return null if no match found for the ID
+  return null;
 }
