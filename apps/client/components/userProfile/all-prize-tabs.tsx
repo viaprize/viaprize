@@ -12,15 +12,17 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
   const client = usePublicClient();
   const router = useRouter();
 
-  const getPrizesOfUserMutation = useQuery(['getPrizesOfUser', undefined], async () => {
+  const getPrizesOfUserMutation = useQuery(['getPrizesOfUser'], async () => {
     const prizes = await (await backendApi()).users.usernamePrizesDetail(params.id);
 
     return prizes.data;
   });
 
-  const { data: ethToUsd } = useQuery(['cryptoToUsd', undefined], async () =>
+
+  const { data: ethToUsd } = useQuery(['cryptoToUsd',undefined], async () =>
     getCryptoToUsd(),
   );
+
 
   if (getPrizesOfUserMutation.isLoading)
     return <SkeletonLoad gridedSkeleton numberOfCards={3} />;

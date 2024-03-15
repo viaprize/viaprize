@@ -13,9 +13,10 @@ export default function AllPortals({ params }: { params: { id: string } }) {
     return (await backendApi()).portals.userDetail(params.id);
   });
 
-  const { data: final } = useQuery(['cryptoToUsd', undefined], async () =>
+  const { data: final } = useQuery(['cryptoToUsd'], async () =>
     getCryptoToUsd(),
   );
+  
   const router = useRouter();
 
   if (isLoading) return <SkeletonLoad numberOfCards={3} gridedSkeleton />;
