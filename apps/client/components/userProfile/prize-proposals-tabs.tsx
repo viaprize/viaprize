@@ -25,7 +25,7 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
 
   const { getProposalsOfUser, deleteProposal } = usePrizeProposal();
   const { data, isSuccess, isLoading } = useQuery(
-    ['getProposalsOfUser', undefined],
+    ['getProposalsOfUser'],
     () => {
       return getProposalsOfUser({ limit: 10, page: 1 }, params.id);
     },

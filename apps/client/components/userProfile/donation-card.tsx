@@ -38,7 +38,7 @@ interface ConversionRates {
 }
 
 export default function SendCard() {
-  const { data: conversionRates } = useQuery(['cryptoToUsd', undefined], async () => {
+  const { data: conversionRates } = useQuery(['cryptoToUsd'], async () => {
     const data = await getCryptoToUsd();
     return {
       ethToUsd: data.ethereum.usd,

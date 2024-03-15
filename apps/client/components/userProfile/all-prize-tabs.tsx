@@ -7,6 +7,7 @@ import ExploreCard from '../Prize/ExplorePrize/explorePrize';
 import Shell from '../custom/shell';
 import SkeletonLoad from '../custom/skeleton-load-explore';
 import getCryptoToUsd from '../hooks/server-actions/CryptotoUsd';
+import { ConvertUSD } from '@/lib/types';
 
 export default function PrizeTabs({ params }: { params: { id: string } }) {
   const client = usePublicClient();
@@ -18,10 +19,18 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
     return prizes.data;
   });
 
-
-  const { data: ethToUsd } = useQuery(['cryptoToUsd',undefined], async () =>
-    getCryptoToUsd(),
-  );
+  const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
+    const final = await (
+      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
+    ).json();
+    return Object.keys(final).length === 0
+      ? {
+          [chain.name.toLowerCase()]: {
+            usd: 0,
+          },
+        }
+      : final;
+  });
 
 
   if (getPrizesOfUserMutation.isLoading)
@@ -57,7 +66,7 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
             ethAmount={formatEther(BigInt(prize.balance))}
             usdAmount={(
               parseFloat(formatEther(BigInt(prize.balance))) *
-              (ethToUsd?.ethereum.usd ?? 0)
+              (cryptoToUsd?.ethereum.usd ?? 0)
             ).toFixed(2)}
             title={prize.title}
             key={prize.id}

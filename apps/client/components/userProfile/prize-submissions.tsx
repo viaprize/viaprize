@@ -5,7 +5,7 @@ import SubmissionsCard from '../Prize/prizepage/submissionsCard';
 import Shell from '../custom/shell';
 
 export default function ProfilePrizeSubmission({ params }: { params: { id: string } }) {
-  const { isLoading, data } = useQuery(['getSubmissionsOfUser', undefined], async () => {
+  const { isLoading, data } = useQuery(['getSubmissionsOfUser'], async () => {
     return (await backendApi()).users.usernameSubmissionsDetail(params.id);
   });
 
