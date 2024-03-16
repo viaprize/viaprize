@@ -30,11 +30,11 @@ export default function About() {
               align="center"
             >
               <div>
-                <h3 className="my-0">$32,460</h3>
+                <h3 className="my-0"> $50,000+ </h3>
                 <p className="my-0">Total contributions</p>
               </div>
               <div>
-                <h3 className="my-0">63</h3>
+                <h3 className="my-0">100+</h3>
                 <p className="my-0">Prize winners</p>
               </div>
               <div>

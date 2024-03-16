@@ -1,5 +1,15 @@
 'use client';
-import { Badge, Card, Group, Text, Image, Button, ActionIcon, CopyButton, Tooltip } from '@mantine/core';
+import {
+  Badge,
+  Card,
+  Group,
+  Text,
+  Image,
+  Button,
+  ActionIcon,
+  CopyButton,
+  Tooltip,
+} from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 
 interface HistoryCardProps {
@@ -10,6 +20,7 @@ interface HistoryCardProps {
   description: string;
   awarded: string;
   imageUrl: string;
+  category: string;
 }
 
 export default function HistoryCard({
@@ -19,7 +30,8 @@ export default function HistoryCard({
   description,
   awarded,
   imageUrl,
-  id
+  id,
+  category,
 }: HistoryCardProps) {
   const statusColor = status.toLowerCase() === 'won' ? 'green' : 'yellow';
 
@@ -35,6 +47,7 @@ export default function HistoryCard({
         <Image
           alt="Image"
           height={160}
+          fit="fill"
           src={
             imageUrl ||
             'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
@@ -48,9 +61,7 @@ export default function HistoryCard({
             Date Posted : {datePosted}
           </Badge>
         ) : (
-          <Text>
-            No date posted
-          </Text>
+          <Text>No date posted</Text>
         )}
       </Group>
       <Text size="xl" mt="sm" fw={600}>
@@ -61,8 +72,13 @@ export default function HistoryCard({
         <Text fw={500}>
           AWARDED : <span className="font-extrabold">{awarded}</span>
         </Text>
-        <Badge color="gray" variant="light" radius="sm">
-          HACKATHON
+        <Badge
+          color="gray"
+          variant="gradient"
+          gradient={{ from: 'blue', to: 'cyan', deg: 90 }}
+          radius="sm"
+        >
+          {category}
         </Badge>
       </Group>
       <Button

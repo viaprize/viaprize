@@ -116,11 +116,11 @@ export default function Home() {
               align="center"
             >
               <div className="text-center">
-                <h3 className="my-0">$32,460</h3>
+                <h3 className="my-0">$50,000+</h3>
                 <p className="my-0">Total contributions</p>
               </div>
               <div className="text-center">
-                <h3 className="my-0">63</h3>
+                <h3 className="my-0">100+</h3>
                 <p className="my-0">Total campaigns</p>
               </div>
             </Flex>
