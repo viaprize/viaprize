@@ -4,10 +4,11 @@ pragma solidity ^0.8.0;
 
 import "../helperContracts/ierc20.sol";
 import "../helperContracts/safemath.sol";
+import "@opengsn/contracts/src/BaseRelayRecipient.sol";
 interface IERC20Permit is IERC20 {
     function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 }
-contract AllOrNothing {
+contract AllOrNothing is BaseRelayRecipient {
     address public proposer;
     mapping(address => bool) public isProposer;
     address[] public platformAdmins;
@@ -59,7 +60,8 @@ contract AllOrNothing {
         uint256 _goal,
         uint256 _deadline,
         bool _allowDonationAboveGoalAmount,
-        uint256 _platformFee
+        uint256 _platformFee,
+        address _trustedForwarder
     ) {
         if(_goal == 0 || _deadline == 0) revert RequireGoalAndDeadline();
 
@@ -78,6 +80,7 @@ contract AllOrNothing {
         goalAmount = _goal;
         deadline = _deadline;
         allowDonationAboveGoalAmount = _allowDonationAboveGoalAmount;
+        _setTrustedForwarder(_trustedForwarder);
         isActive = true;
     }
 
@@ -89,8 +92,20 @@ contract AllOrNothing {
     }
 
     modifier onlyProposerOrAdmin {
-        require(isProposer[msg.sender] == true || isPlatformAdmin[msg.sender] == true, "You are not a proposer or admin.");
+        require(isProposer[_msgSender()] == true || isPlatformAdmin[_msgSender()] == true, "You are not a proposer or admin.");
         _;
+    }
+
+    function versionRecipient() external override pure returns (string memory) {
+        return "1.0.0";
+    }
+
+    function _msgSender() internal override(BaseRelayRecipient) view returns (address) {
+        return BaseRelayRecipient._msgSender();
+    }
+
+    function _msgData() internal override(BaseRelayRecipient) view returns (bytes calldata) {
+        return BaseRelayRecipient._msgData();
     }
 
     function addUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
@@ -99,10 +114,10 @@ contract AllOrNothing {
         _usdc.transferFrom(sender, spender, _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
-        funders.push(msg.sender);
-        isFunder[msg.sender] = true;
-        isUsdcContributer[msg.sender] = true;
-        funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
+        funders.push(_msgSender());
+        isFunder[_msgSender()] = true;
+        isUsdcContributer[_msgSender()] = true;
+        funderAmount[_msgSender()] = funderAmount[_msgSender()].add(_donation);
         totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
         totalUsdcFunds = totalUsdcFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
@@ -153,7 +168,7 @@ contract AllOrNothing {
                     uint256 usdcMoneyToPlatform = (totalUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
                     _usdc.transfer(platformAddress, usdcMoneyToPlatform);
                     _usdc.transfer(receiverAddress, totalUsdcRewards);
-                    _usdc.transfer(msg.sender, excessUsdcAmount);
+                    _usdc.transfer(_msgSender(), excessUsdcAmount);
                     totalUsdcRewards = 0;
                     usdcMoneyToPlatform = 0;
                     uint256 bridgedUsdcMoneyToPlatform = (totalBridgedUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
@@ -214,13 +229,13 @@ contract AllOrNothing {
     function addBridgedUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
         require(_amountUsdc > 0, "funds should be greater than 0");
         _usdcBridged.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
-        _usdcBridged.transferFrom(msg.sender, address(this), _amountUsdc);
+        _usdcBridged.transferFrom(_msgSender(), address(this), _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
-        funders.push(msg.sender);
-        isFunder[msg.sender] = true;
-        isUsdcContributer[msg.sender] = false;
-        funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
+        funders.push(_msgSender());
+        isFunder[_msgSender()] = true;
+        isUsdcContributer[_msgSender()] = false;
+        funderAmount[_msgSender()] = funderAmount[_msgSender()].add(_donation);
         totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
         totalBridgedUsdcFunds = totalBridgedUsdcFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
@@ -276,7 +291,7 @@ contract AllOrNothing {
                     uint256 bridgedUsdcMoneyToPlatform = (totalBridgedUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
                     _usdcBridged.transfer(platformAddress, bridgedUsdcMoneyToPlatform);
                     _usdcBridged.transfer(receiverAddress, totalBridgedUsdcRewards);
-                    _usdcBridged.transfer(msg.sender, excessBridgedUsdcAmount);
+                    _usdcBridged.transfer(_msgSender(), excessBridgedUsdcAmount);
                     totalBridgedUsdcRewards = 0;
                     bridgedUsdcMoneyToPlatform = 0;
                 }
