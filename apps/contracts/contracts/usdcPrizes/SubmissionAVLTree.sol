@@ -12,7 +12,7 @@ contract SubmissionAVLTree {
         string submissionText;
         uint256 usdcVotes;
         uint256 usdcBridgedVotes;
-        address submitter;
+        address contestant;
         // uint256 threshhold;
         bool funded;
         int256 height;
@@ -80,9 +80,9 @@ contract SubmissionAVLTree {
         return node;
     }
 
-    function add_submission(address submitter, bytes32 submissionHash, string memory submissionText) external {
+    function add_submission(address contestant, bytes32 submissionHash, string memory submissionText) external {
         uint256 newNodeIndex = submissions.length;
-        submissions.push(SubmissionInfo(submissionHash, submissionText, 0, 0, submitter, false, 0, 0, 0));
+        submissions.push(SubmissionInfo(submissionHash, submissionText, 0, 0, contestant, false, 0, 0, 0));
 
         if (newNodeIndex == 0) {
             root = newNodeIndex;
