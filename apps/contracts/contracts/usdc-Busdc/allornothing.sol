@@ -354,7 +354,7 @@ contract AllOrNothing {
         bool metGoal = totalRewards >= goalAmount;
 
         if(allowDonationAboveGoalAmount) {
-            if (metDeadline && metGoal) {
+            if ((metDeadline && metGoal) || (!metDeadline && metGoal)) {
                 uint256 totalusdcrewards = totalUsdcRewards;
                 uint256 adminusdcrewards = totalUsdcFunds.sub(totalUsdcRewards);
                 uint256 totalbridgedusdcrewards = totalBridgedUsdcRewards;
