@@ -1,11 +1,11 @@
 import { backendApi } from '@/lib/backend';
+import { ConvertUSD } from '@/lib/types';
 import { Button, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useQuery } from 'react-query';
 import { formatEther } from 'viem';
 import Shell from '../custom/shell';
 import SkeletonLoad from '../custom/skeleton-load-explore';
-import getCryptoToUsd from '../hooks/server-actions/CryptotoUsd';
 import PortalCard from '../portals/portal-card';
 
 export default function AllPortals({ params }: { params: { id: string } }) {
@@ -13,9 +13,18 @@ export default function AllPortals({ params }: { params: { id: string } }) {
     return (await backendApi()).portals.userDetail(params.id);
   });
 
-  const { data: final } = useQuery(['cryptoToUsd', undefined], async () =>
-    getCryptoToUsd(),
-  );
+  const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
+    const final = await (
+      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
+    ).json();
+    return Object.keys(final).length === 0
+      ? {
+          ethereum: {
+            usd: 0,
+          },
+        }
+      : final;
+  });
   const router = useRouter();
 
   if (isLoading) return <SkeletonLoad numberOfCards={3} gridedSkeleton />;
@@ -39,7 +48,7 @@ export default function AllPortals({ params }: { params: { id: string } }) {
       {data.data.map((portal) => {
         return (
           <PortalCard
-            ethToUsd={final?.ethereum.usd ?? 2100}
+            ethToUsd={cryptoToUsd?.ethereum.usd ?? 2100}
             description={portal.description}
             imageUrl={portal.images[0]}
             amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
