@@ -58,7 +58,7 @@ export default function SearchFiltersPortals() {
     },
     [searchParams],
   );
-  
+
   useEffect(() => {
     startTransition(() => {
       const newQueryString = createQueryString({

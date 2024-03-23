@@ -5,7 +5,8 @@ import { Readable } from 'node:stream';
 
 interface CSVData {
   Id: number;
-Description: string;
+  Comment: string;
+  Description: string;
   Image: string;
   PrizeName: string;
   WonRefunded: string; // Assuming this is a string, adjust according to actual data
@@ -42,7 +43,7 @@ Description: string;
 
 export async function FetchPrizesCsvId(id: number) {
   const csvUrl =
-    'https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/old_viaprize_data/oldprizefinal.csv?t=2024-03-12T19%3A38%3A01.614Z';
+    'https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/old_viaprize_data/oldprizefinal104.csv?t=2024-03-23T07%3A56%3A40.566Z';
   const response = await fetch(csvUrl);
 
   if (!response.ok) {

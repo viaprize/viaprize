@@ -8,28 +8,31 @@ import {
   Box,
   Paper,
   Group,
+  Image,
 } from '@mantine/core';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { TextEditor } from '../richtexteditor/textEditor';
 
 interface AboutHistoryProps {
   title: string;
   imageUrl: string;
   awarded: string;
-  description: string;
+  comment: string;
   winnersAmount: string;
   worklink: string;
   status: string;
+  rawDescription: string;
 }
 
 export default function AboutHistory({
   title,
   imageUrl,
   awarded,
-  description,
+  comment,
   winnersAmount,
   worklink,
   status,
+  rawDescription,
 }: AboutHistoryProps) {
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
@@ -38,10 +41,11 @@ export default function AboutHistory({
       </Title>
 
       <Image
-        className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md"
+        // className="aspect-video sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md o "
         src={imageUrl}
-        width={1280}
-        height={768}
+        fit="fill"
+        width={1180}
+        height={500}
         alt="prize info tumbnail"
       />
       <Center my="xl">
@@ -73,8 +77,14 @@ export default function AboutHistory({
             <Text size="xl" fw="bold" className="mb-2 ">
               About this Prize
             </Text>
-
-            <TextEditor disabled richtext={description} />
+            <Divider my="sm" />
+            <p
+              // eslint-disable-next-line react/no-danger
+              className="border-solid border-2  px-3"
+              dangerouslySetInnerHTML={{ __html: rawDescription }}
+            />
+            {/* <TextEditor disabled richtext={description} /> */}
+            {/* <p>{description}</p> */}
           </div>
           <Paper shadow="sm" radius="md" p="md">
             <Flex align="center">
@@ -93,6 +103,18 @@ export default function AboutHistory({
               <Divider />
               <Text size="md">{worklink ? worklink : 'No work link available'}</Text>
             </Flex>
+            <Divider my="md" variant="dotted" />
+            {comment && (
+              <>
+                <Text size="lg" fw="bold" c="gray">
+                  Comment by Winner
+                </Text>
+                <p
+                  // eslint-disable-next-line react/no-danger
+                  dangerouslySetInnerHTML={{ __html: comment }}
+                />
+              </>
+            )}
           </Paper>
         </div>
       </Center>

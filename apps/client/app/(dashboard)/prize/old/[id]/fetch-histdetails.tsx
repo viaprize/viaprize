@@ -9,10 +9,11 @@ export default async function FetchHistDetails({ params }: { params: { id: numbe
       title={data.PrizeName}
       imageUrl={data.Image}
       awarded={data.AwardedUSDe}
-      description={data.Description}
+      comment={data.Comment}
       winnersAmount={data.WinnersAmount}
       worklink={data.WorkLink}
       status={data.WinnersAmount ? 'Won' : 'Refunded'}
+      rawDescription={data.Description}
     />
   ) : (
     <div>No prize details found for the given ID.</div>
