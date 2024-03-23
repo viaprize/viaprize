@@ -46,7 +46,7 @@ export default function HistoryCard({
       <Card.Section>
         <Image
           alt="Image"
-          height={160}
+          height={190}
           fit="fill"
           src={
             imageUrl ||

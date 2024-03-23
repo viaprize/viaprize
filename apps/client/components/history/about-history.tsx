@@ -8,8 +8,9 @@ import {
   Box,
   Paper,
   Group,
+  Image,
 } from '@mantine/core';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { TextEditor } from '../richtexteditor/textEditor';
 
 interface AboutHistoryProps {
@@ -40,10 +41,11 @@ export default function AboutHistory({
       </Title>
 
       <Image
-        className="aspect-video object-fill sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md o "
+        // className="aspect-video sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md o "
         src={imageUrl}
-        width={1280}
-        height={768}
+        fit="fill"
+        width={1180}
+        height={500}
         alt="prize info tumbnail"
       />
       <Center my="xl">
