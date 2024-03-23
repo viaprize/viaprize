@@ -1,5 +1,6 @@
 import { backendApi } from '@/lib/backend';
-import { ConvertUSD } from '@/lib/types';
+import type { ConvertUSD } from '@/lib/types';
+import { chain } from '@/lib/wagmi';
 import { Button, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { formatEther } from 'viem';
@@ -12,17 +13,19 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
   const client = usePublicClient();
   const router = useRouter();
 
-  const getPrizesOfUserMutation = useQuery(['getPrizesOfUser', undefined], async () => {
+  const getPrizesOfUserMutation = useQuery(['getPrizesOfUser'], async () => {
     const prizes = await (await backendApi()).users.usernamePrizesDetail(params.id);
 
     return prizes.data;
   });
 
   const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const final = await (
       await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
     ).json();
-    return Object.keys(final).length === 0
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
+   return Object.keys(final).length === 0
       ? {
           ethereum: {
             usd: 0,
