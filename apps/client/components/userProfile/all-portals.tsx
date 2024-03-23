@@ -1,6 +1,5 @@
 import { backendApi } from '@/lib/backend';
 import type { ConvertUSD } from '@/lib/types';
-import { chain } from '@/lib/wagmi';
 import { Button, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useQuery } from 'react-query';
@@ -22,7 +21,7 @@ export default function AllPortals({ params }: { params: { id: string } }) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
     return Object.keys(final).length === 0
       ? {
-          [chain.name.toLowerCase()]: {
+          ethereum: {
             usd: 0,
           },
         }

@@ -25,9 +25,9 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
       await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
     ).json();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
-    return Object.keys(final).length === 0
+   return Object.keys(final).length === 0
       ? {
-          [chain.name.toLowerCase()]: {
+          ethereum: {
             usd: 0,
           },
         }
