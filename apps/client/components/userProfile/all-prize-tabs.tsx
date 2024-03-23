@@ -1,4 +1,6 @@
 import { backendApi } from '@/lib/backend';
+import type { ConvertUSD } from '@/lib/types';
+import { chain } from '@/lib/wagmi';
 import { Button, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { formatEther } from 'viem';
@@ -6,8 +8,6 @@ import { usePublicClient, useQuery } from 'wagmi';
 import ExploreCard from '../Prize/ExplorePrize/explorePrize';
 import Shell from '../custom/shell';
 import SkeletonLoad from '../custom/skeleton-load-explore';
-import getCryptoToUsd from '../hooks/server-actions/CryptotoUsd';
-import { ConvertUSD } from '@/lib/types';
 
 export default function PrizeTabs({ params }: { params: { id: string } }) {
   const client = usePublicClient();
@@ -20,9 +20,11 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
   });
 
   const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const final = await (
       await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
     ).json();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
     return Object.keys(final).length === 0
       ? {
           [chain.name.toLowerCase()]: {
@@ -31,7 +33,6 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
         }
       : final;
   });
-
 
   if (getPrizesOfUserMutation.isLoading)
     return <SkeletonLoad gridedSkeleton numberOfCards={3} />;
