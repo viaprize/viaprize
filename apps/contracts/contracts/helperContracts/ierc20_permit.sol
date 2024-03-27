@@ -6,7 +6,7 @@ pragma solidity ^0.8.0;
 /**
  * @dev Interface of the ERC-20 standard as defined in the ERC.
  */
-interface IERC20 {
+interface IERC20Permit{
     /**
      * @dev Emitted when `value` tokens are moved from one account (`from`) to
      * another (`to`).
@@ -76,4 +76,7 @@ interface IERC20 {
      * Emits a {Transfer} event.
      */
     function transferFrom(address from, address to, uint256 value) external returns (bool);
+
+
+    function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 }
