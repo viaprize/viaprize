@@ -1,5 +1,15 @@
 'use client';
-import { Badge, Card, Group, Text, Image, Button, ActionIcon, CopyButton, Tooltip } from '@mantine/core';
+import {
+  Badge,
+  Card,
+  Group,
+  Text,
+  Image,
+  Button,
+  ActionIcon,
+  CopyButton,
+  Tooltip,
+} from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 
 interface HistoryCardProps {
@@ -19,7 +29,7 @@ export default function HistoryCard({
   description,
   awarded,
   imageUrl,
-  id
+  id,
 }: HistoryCardProps) {
   const statusColor = status.toLowerCase() === 'won' ? 'green' : 'yellow';
 
@@ -48,9 +58,7 @@ export default function HistoryCard({
             Date Posted : {datePosted}
           </Badge>
         ) : (
-          <Text>
-            No date posted
-          </Text>
+          <Text>No date posted</Text>
         )}
       </Group>
       <Text size="xl" mt="sm" fw={600}>

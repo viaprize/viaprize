@@ -193,6 +193,10 @@ function generateRandomThreeDigitNumber() {
 
   return randomNum;
 }
+
+const cleanImageName = (name: string) => {
+  return name.replace(/[^a-zA-Z0-9]/g, '');
+};
 export const storeFiles = async (files: File[]) => {
   const supabase = createClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
@@ -200,7 +204,14 @@ export const storeFiles = async (files: File[]) => {
   );
   const { data, error } = await supabase.storage
     .from('campaigns')
-    .upload(`${generateRandomThreeDigitNumber()}${files[0].name}`, files[0]);
+    .upload(
+      `${generateRandomThreeDigitNumber()}${cleanImageName(files[0].name)}`,
+      files[0],
+    )
+    .catch((error) => {
+      console.error('Error uploading file:', error);
+      throw error;
+    });
   console.log(data, 'data');
 
   if (!files[0] || error) {

@@ -4,7 +4,7 @@ import csvParser from 'csv-parser';
 import { Readable } from 'node:stream';
 
 interface CSVData {
-  Id:number;
+  Id: number;
   Description: string;
   Image: string;
   PrizeName: string;

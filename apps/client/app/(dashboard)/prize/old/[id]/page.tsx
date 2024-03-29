@@ -1,9 +1,6 @@
-import React, { Suspense } from 'react'
+import React, { Suspense } from 'react';
 import FetchHistDetails from './fetch-histdetails';
 import PrizeLoading from '../../[id]/loading';
-
-
-
 
 export default function OldPage({ params }: { params: { id: string } }) {
   return (

@@ -5,7 +5,7 @@ import { Readable } from 'node:stream';
 
 interface CSVData {
   Id: number;
-Description: string;
+  Description: string;
   Image: string;
   PrizeName: string;
   WonRefunded: string; // Assuming this is a string, adjust according to actual data

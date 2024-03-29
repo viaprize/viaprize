@@ -5,9 +5,9 @@ import { CreatePrizeProposalDto } from './create-prize-proposal.dto';
 export class UpdatePrizeDto extends PartialType(CreatePrizeProposalDto) {
   @IsNumber()
   @IsOptional()
-  platformFeePercentage: number;
+  platformFeePercentage?: number;
 
   @IsNumber()
   @IsOptional()
-  proposerFeePercentage: number;
+  proposerFeePercentage?: number;
 }
