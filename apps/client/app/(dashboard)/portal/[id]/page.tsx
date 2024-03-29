@@ -1,11 +1,11 @@
+import CommentSection from '@/components/comment/comment-section';
 import { Api } from '@/lib/api';
 import { formatEther } from 'viem';
 import AmountDonateCard from './amount-donate-card';
 import ImageTitleHeroCard from './image-title-hero-card';
 import PortalTabs from './portal-tabs';
-import CommentSection from '@/components/comment/comment-section';
 
-export default async function CreatePortal({ params }: { params: { id: string } }) {
+export default async function Portal({ params }: { params: { id: string } }) {
   const portal = (
     await new Api().portals.portalsDetail(params.id, {
       next: {
@@ -30,6 +30,9 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           fundingGoalWithPlatformFee={parseFloat(
             portal.fundingGoalWithPlatformFee ?? '0',
           )}
+           id={portal.id}
+
+
           typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
           deadline={portal.deadline}
           isActive={portal.isActive ?? false}
@@ -43,6 +46,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
         updates={portal.updates ?? []}
         owner={portal.user.username}
         param={params.id}
+
       />
       {/* @ts-expect-error Server Component */}
       <CommentSection portalId={params.id} />
