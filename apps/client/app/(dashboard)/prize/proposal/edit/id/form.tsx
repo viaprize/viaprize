@@ -25,15 +25,29 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 
-function Prize() {
+interface ProposalEditProps {
+  tadmins: string[];
+  tdescription: string;
+  tisAutomatic: boolean;
+  tvotingTime: number;
+  tproposerAddress: string;
+  tpriorities: string[];
+  tproficiencies: string[];
+  tsubmissionTime: number;
+  timages: string[];
+  tjudges: string[];
+  ttitle: string;
+}
+
+function PrizeEdit({tadmins,tdescription,timages,tisAutomatic,tjudges,tpriorities,tproficiencies,tproposerAddress,tsubmissionTime,ttitle,tvotingTime}: ProposalEditProps) {
   const [address, setAddress] = useState(['']);
-  const [judges, setJudges] = useState<string[]>([]);
+  const [judges, setJudges] = useState<string[]>(tjudges);
   const [showJudges, setShowJudges] = useState(false);
-  const [title, setTitle] = useState('');
-  const [richtext, setRichtext] = useState('');
-  const [isAutomatic, setIsAutomatic] = useState(false);
-  const [votingTime, setVotingTime] = useState(0);
-  const [proposalTime, setProposalTime] = useState(0);
+  const [title, setTitle] = useState(ttitle);
+  const [richtext, setRichtext] = useState(tdescription);
+  const [isAutomatic, setIsAutomatic] = useState(tisAutomatic);
+  const [votingTime, setVotingTime] = useState(tvotingTime);
+  const [proposalTime, setProposalTime] = useState(tsubmissionTime);
   const { user } = usePrivy();
   const { appUser } = useAppUser();
   const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -74,6 +88,7 @@ function Prize() {
       submission_time: proposalTime,
       images: newImages ? [newImages] : [],
       judges: showJudges ? judges : [],
+
       title,
     });
     setLoading(false);
@@ -240,8 +255,4 @@ function Prize() {
   );
 }
 
-// Prize.getLayout = function getLayout(page: ReactElement) {
-//   return <AppShellLayout>{page}</AppShellLayout>;
-// };
-
-export default Prize;
+export default PrizeEdit;

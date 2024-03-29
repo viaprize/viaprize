@@ -24,12 +24,9 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
   const { createPrize } = usePrize();
 
   const { getProposalsOfUser, deleteProposal } = usePrizeProposal();
-  const { data, isSuccess, isLoading } = useQuery(
-    ['getProposalsOfUser'],
-    () => {
-      return getProposalsOfUser({ limit: 10, page: 1 }, params.id);
-    },
-  );
+  const { data, isSuccess, isLoading } = useQuery(['getProposalsOfUser'], () => {
+    return getProposalsOfUser({ limit: 10, page: 1 }, params.id);
+  });
   const getProposalStatus = (item: PrizeProposals): ProposalStatus => {
     if (data) {
       if (item.isApproved) {
@@ -83,7 +80,7 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                 console.log({ status }, 'status');
                 switch (status) {
                   case 'pending': {
-                    // router.push(`/prize/edit/${item.id}`);
+                    router.push(`/prize/proposal/edit/${item.id}`);
                     break;
                   }
                   case 'approved': {
@@ -176,6 +173,7 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                   }
                   case 'rejected': {
                     console.log('rejected');
+                    router.push(`/prize/proposal/edit/${item.id}`);
 
                     break;
                   }
