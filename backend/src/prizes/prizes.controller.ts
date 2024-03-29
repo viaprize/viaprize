@@ -38,7 +38,6 @@ import { Submission } from './entities/submission.entity';
 import { PrizeCommentService } from './services/prize-comment.service';
 import { SubmissionService } from './services/submissions.service';
 
-
 interface SubmissionWithBlockchainData extends Submission {
   voting_blockchain: number;
 }
@@ -79,7 +78,7 @@ export class PrizesController {
     private readonly userService: UsersService,
     private readonly prizeCommentsService: PrizeCommentService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('/submission/:id')
   async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
@@ -109,7 +108,6 @@ export class PrizesController {
       startSubmissionDate: prizeProposal.startSubmissionDate,
       startVotingDate: prizeProposal.startVotingDate,
       user: prizeProposal.user,
-
 
       judges: prizeProposal.judges,
     });
@@ -143,7 +141,9 @@ export class PrizesController {
     page: number = 1,
     @Query('limit')
     limit: number = 10,
-  ): Promise<Readonly<{ data: PrizeWithBlockchainData[]; hasNextPage: boolean }>> {
+  ): Promise<
+    Readonly<{ data: PrizeWithBlockchainData[]; hasNextPage: boolean }>
+  > {
     const key = `prizes-${page}-${limit}`;
     let prizeWithoutBalance: { data: Prize[]; hasNextPage: boolean };
     const cachedprizeWithoutBalance = await this.cacheManager.get(key);
@@ -179,8 +179,12 @@ export class PrizesController {
         ...prize,
         balance: parseInt((portalResults[0].result as bigint).toString()),
         distributed: portalResults[1].result as boolean,
-        submission_time_blockchain: parseInt((portalResults[2].result as bigint).toString()),
-        voting_time_blockchain: parseInt((portalResults[3].result as bigint).toString()),
+        submission_time_blockchain: parseInt(
+          (portalResults[2].result as bigint).toString(),
+        ),
+        voting_time_blockchain: parseInt(
+          (portalResults[3].result as bigint).toString(),
+        ),
       } as PrizeWithBlockchainData;
     });
     return {
@@ -222,11 +226,19 @@ export class PrizesController {
    * @returns {Promise<Http200Response>}
    */
   @Put('/proposals/:id')
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(AuthGuard)
   async updateProposal(
     @TypedParam('id') id: string,
     @TypedBody() updateBody: UpdatePrizeDto,
+    @Request() req,
   ): Promise<Http200Response> {
+    const proposalCreator = (await this.prizeProposalsService.findOne(id)).user
+      .authId;
+
+    if (proposalCreator !== req.user.userId) {
+      throw new Error('You are not authorized to update this proposal');
+    }
+    console.log(updateBody, 'body');
     await this.prizeProposalsService.update(id, updateBody);
     await this.cacheManager.reset();
 
@@ -235,9 +247,22 @@ export class PrizesController {
     };
   }
 
+  @Get('/proposals/:id')
+  async getProposal(@TypedParam('id') id: string): Promise<PrizeProposals> {
+    return await this.prizeProposalsService.findOne(id);
+  }
+
   @Delete('/proposals/deleted/:id')
   @UseGuards(AuthGuard)
-  async deleteProposal(@TypedParam('id') id: string): Promise<Http200Response> {
+  async deleteProposal(
+    @TypedParam('id') id: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    const proposalCreator = (await this.prizeProposalsService.findOne(id)).user
+      .authId;
+    if (proposalCreator !== req.user.id) {
+      throw new Error('You are not authorized to delete this proposal');
+    }
     await this.prizeProposalsService.remove(id);
     return {
       message: `Proposal with id ${id} has been deleted`,
@@ -327,20 +352,15 @@ export class PrizesController {
     @TypedBody() body: CreateCommentDto,
     @Request() req,
   ): Promise<Http200Response> {
-    await this.prizeCommentsService.create(
-      body.comment,
-      req.user.userId,
-      id
-    )
+    await this.prizeCommentsService.create(body.comment, req.user.userId, id);
     return {
       message: `Prize  with id ${id} has been updated with comment`,
     };
   }
 
-
   /**
    * The function `getComments` is an asynchronous function that takes a `comment` parameter calls
-   * the `getComment` method of the `prizeCommentService` with the given `id`. 
+   * the `getComment` method of the `prizeCommentService` with the given `id`.
    *
    * @date 9/25/2023 - 5:35:35 AM
    * @async
@@ -348,10 +368,7 @@ export class PrizesController {
    * @returns {Promise<PrizesComments[]>}
    */
   @Get('/:id/comment')
-  async getComment(
-    @TypedParam('id') id: string,
-  ): Promise<PrizesComments[]> {
-
+  async getComment(@TypedParam('id') id: string): Promise<PrizesComments[]> {
     return await this.prizeCommentsService.getCommentsByPrizeId(id);
   }
 

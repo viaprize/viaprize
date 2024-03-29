@@ -2092,6 +2092,36 @@
           }
         ],
         "x-nestia-method": "PUT"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeProposals"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.proposals.getProposal",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
       }
     },
     "/prizes/proposals/deleted/{id}": {
@@ -5471,13 +5501,13 @@
         "type": "object",
         "properties": {
           "platformFeePercentage": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "proposerFeePercentage": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "voting_time": {
@@ -5597,10 +5627,6 @@
           }
         },
         "nullable": false,
-        "required": [
-          "platformFeePercentage",
-          "proposerFeePercentage"
-        ],
         "x-typia-jsDocTags": []
       },
       "CreateSubmissionDto": {

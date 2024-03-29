@@ -376,8 +376,8 @@ export interface PrizeWithBlockchainData {
 }
 
 export interface UpdatePrizeDto {
-  platformFeePercentage: number;
-  proposerFeePercentage: number;
+  platformFeePercentage?: number;
+  proposerFeePercentage?: number;
   voting_time?: number;
   submission_time?: number;
   admins?: string[];
@@ -1371,6 +1371,20 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ProposalsDetail
+     * @request GET:/prizes/proposals/{id}
+     */
+    proposalsDetail: (id: string, params: RequestParams = {}) =>
+      this.request<PrizeProposals, any>({
+        path: `/prizes/proposals/${id}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

@@ -25,26 +25,52 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 
-function Prize() {
+interface ProposalEditProps {
+  tadmins: string[];
+  tdescription: string;
+  tisAutomatic: boolean;
+  tvotingTime: number;
+  tpriorities: string[];
+  tproficiencies: string[];
+  tsubmissionTime: number;
+  timages: string[];
+  tjudges: string[];
+  ttitle: string;
+  proposalId: string;
+}
+
+function PrizeEdit({
+  tadmins,
+  tdescription,
+  timages,
+  tisAutomatic,
+  tjudges,
+  tpriorities,
+  tproficiencies,
+  tsubmissionTime,
+  ttitle,
+  tvotingTime,
+  proposalId,
+}: ProposalEditProps) {
   const [address, setAddress] = useState(['']);
-  const [judges, setJudges] = useState<string[]>([]);
-  const [showJudges, setShowJudges] = useState(false);
-  const [title, setTitle] = useState('');
-  const [richtext, setRichtext] = useState('');
-  const [isAutomatic, setIsAutomatic] = useState(false);
-  const [votingTime, setVotingTime] = useState(0);
-  const [proposalTime, setProposalTime] = useState(0);
+  const [judges, setJudges] = useState<string[]>(tjudges);
+  const [showJudges, setShowJudges] = useState(tjudges.length > 0);
+  const [title, setTitle] = useState(ttitle);
+  const [richtext, setRichtext] = useState(tdescription);
+  const [isAutomatic, setIsAutomatic] = useState(tisAutomatic);
+  const [votingTime, setVotingTime] = useState(tvotingTime);
+  const [proposalTime, setProposalTime] = useState(tsubmissionTime);
   const { user } = usePrivy();
   const { appUser } = useAppUser();
   const [files, setFiles] = useState<FileWithPath[]>([]);
-  const [images, setImages] = useState<string>();
-  const { addProposals, uploadImages } = usePrizeProposal();
+  const [images, setImages] = useState<string>(timages[0]);
+  const { updateProposal, uploadImages } = usePrizeProposal();
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
-    useMutation(addProposals);
+  const { mutateAsync: updateProposalsMutation, isLoading: submittingProposal } =
+    useMutation(updateProposal);
   const onJudgesChange = (index: number, value: string) => {
     setJudges((prev) => {
       prev[index] = value;
@@ -52,6 +78,9 @@ function Prize() {
     });
   };
   const handleUploadImages = async () => {
+    if (files.length === 0) {
+      return images;
+    }
     const newImages = await uploadImages(files);
     setImages(newImages);
     return newImages;
@@ -61,20 +90,28 @@ function Prize() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
+    if (!wallet.address) {
+      throw Error('Wallet address is undefined');
+    }
     const newImages = await handleUploadImages();
+    if (!newImages || newImages === '') {
+      throw Error('Images are required');
+    }
     // const finalAddress = address.filter((x) => x);
-    await addProposalsMutation({
-      admins: [wallet.address, ...address],
-      description: richtext,
-      isAutomatic,
-      voting_time: votingTime,
-      proposer_address: wallet.address,
-      priorities: [],
-      proficiencies: [],
-      submission_time: proposalTime,
-      images: newImages ? [newImages] : [],
-      judges: showJudges ? judges : [],
-      title,
+    await updateProposalsMutation({
+      id: proposalId,
+      dto: {
+        admins: [wallet.address, ...address],
+        description: richtext,
+        isAutomatic,
+        voting_time: votingTime,
+        priorities: [],
+        proficiencies: [],
+        submission_time: proposalTime,
+        images: newImages ? [newImages] : [],
+        judges: showJudges ? judges : [],
+        title,
+      },
     });
     setLoading(false);
     router.push(`/profile/${appUser?.username}`);
@@ -88,7 +125,7 @@ function Prize() {
       toast.promise(submit(), {
         loading: 'Submitting Proposal...',
         success: 'Proposal Submitted',
-        error: 'Error Submitting Proposal',
+        error: (e) => `error submitting, ${e}`,
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -125,7 +162,7 @@ function Prize() {
       <Title order={1} className="my-2">
         Create a Prize
       </Title>
-      <ImageComponent files={files} setfiles={setFiles} />
+      <ImageComponent files={files} setfiles={setFiles} image={images} />
 
       <TextInput
         className="my-2"
@@ -234,14 +271,10 @@ function Prize() {
         loading={submittingProposal || loading}
         onClick={handleSubmit}
       >
-        Request for Approval
+        Update Proposal
       </Button>
     </Card>
   );
 }
 
-// Prize.getLayout = function getLayout(page: ReactElement) {
-//   return <AppShellLayout>{page}</AppShellLayout>;
-// };
-
-export default Prize;
+export default PrizeEdit;
