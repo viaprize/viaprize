@@ -39,11 +39,22 @@ interface AmountDonateCardProps {
   deadline?: string;
   isActive: boolean;
   sendImmediately: boolean;
-  id: string
+  id: string;
 }
 
-
-const DonateButton = ({ value, refetch, sendLoading, setSendLoading, contractAddress, cryptoToUsd, balance, setValue, isLoading, ethOfDonateValue, debounced }: {
+const DonateButton = ({
+  value,
+  refetch,
+  sendLoading,
+  setSendLoading,
+  contractAddress,
+  cryptoToUsd,
+  balance,
+  setValue,
+  isLoading,
+  ethOfDonateValue,
+  debounced,
+}: {
   isLoading: boolean;
   balance: FetchBalanceResult | undefined;
   value: string;
@@ -54,7 +65,7 @@ const DonateButton = ({ value, refetch, sendLoading, setSendLoading, contractAdd
   setValue: React.Dispatch<React.SetStateAction<string>>;
   cryptoToUsd: ConvertUSD | undefined;
   refetch: any;
-  debounced: string
+  debounced: string;
 }) => {
   return (
     <>
@@ -62,19 +73,22 @@ const DonateButton = ({ value, refetch, sendLoading, setSendLoading, contractAdd
         description={
           isLoading
             ? 'Loading.....'
-            : `Wallet Balance: ${balance
-              ? `$${(
-                parseFloat(balance.formatted.toString()) *
-                (cryptoToUsd?.ethereum.usd ?? 0)
-              ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${balance.symbol
-              }`
-              : `Login To See Balance`
-            })`
+            : `Wallet Balance: ${
+                balance
+                  ? `$${(
+                      parseFloat(balance.formatted.toString()) *
+                      (cryptoToUsd?.ethereum.usd ?? 0)
+                    ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${
+                      balance.symbol
+                    }`
+                  : `Login To See Balance`
+              })`
         }
         placeholder="Enter Value  in $ To Donate"
         mt="md"
-        label={`You will donate ${value} USD (${ethOfDonateValue.toFixed(4) ?? 0}) ${chain.nativeCurrency.symbol
-          } `}
+        label={`You will donate ${value} USD (${ethOfDonateValue.toFixed(4) ?? 0}) ${
+          chain.nativeCurrency.symbol
+        } `}
         rightSection={
           <ActionIcon>
             <IconRefresh onClick={() => refetch({})} />
@@ -124,8 +138,8 @@ const DonateButton = ({ value, refetch, sendLoading, setSendLoading, contractAdd
         Donate
       </Button>
     </>
-  )
-}
+  );
+};
 export default function AmountDonateCard({
   recipientAddress,
   amountRaised,
@@ -137,7 +151,7 @@ export default function AmountDonateCard({
   treasurers,
   sendImmediately,
   isActive,
-  id
+  id,
 }: AmountDonateCardProps) {
   const [value, setValue] = useState('');
   const [debounced] = useDebouncedValue(value, 500);
@@ -160,10 +174,10 @@ export default function AmountDonateCard({
     ).json();
     return Object.keys(final).length === 0
       ? {
-        [chain.name.toLowerCase()]: {
-          usd: 0,
-        },
-      }
+          [chain.name.toLowerCase()]: {
+            usd: 0,
+          },
+        }
       : final;
   });
 
@@ -338,36 +352,41 @@ export default function AmountDonateCard({
           Donate
         </Button> */}
 
-        {id === "bacb6584-7e45-465b-b4af-a3ed24a84233" ? <>
-          <Link href={"https://donate.stripe.com/14k00A0Jt8QcfDibII"} className="hover:text-blue-400">
-          </Link>
-          <NavLink
-            href="https://donate.stripe.com/14k00A0Jt8QcfDibII"
-            label="Donate With Card"
-
-            rightSection={
-              <IconChevronRight size="0.8rem" stroke={1.5} className="mantine-rotate-rtl" />
-            }
-            variant="filled"
-            active
+        {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
+          <>
+            <Link
+              href={'https://donate.stripe.com/14k00A0Jt8QcfDibII'}
+              className="hover:text-blue-400"
+            ></Link>
+            <NavLink
+              href="https://donate.stripe.com/14k00A0Jt8QcfDibII"
+              label="Donate With Card"
+              rightSection={
+                <IconChevronRight
+                  size="0.8rem"
+                  stroke={1.5}
+                  className="mantine-rotate-rtl"
+                />
+              }
+              variant="filled"
+              active
+            />
+          </>
+        ) : (
+          <DonateButton
+            balance={balance}
+            value={value}
+            ethOfDonateValue={ethOfDonateValue}
+            sendLoading={sendLoading}
+            setSendLoading={setSendLoading}
+            contractAddress={contractAddress}
+            cryptoToUsd={cryptoToUsd}
+            refetch={refetch}
+            debounced={debounced}
+            isLoading={isLoading}
+            setValue={setValue}
           />
-
-
-        </> : <DonateButton
-          balance={balance}
-          value={value}
-          ethOfDonateValue={ethOfDonateValue}
-          sendLoading={sendLoading}
-          setSendLoading={setSendLoading}
-          contractAddress={contractAddress}
-          cryptoToUsd={cryptoToUsd}
-          refetch={refetch}
-          debounced={debounced}
-          isLoading={isLoading}
-          setValue={setValue}
-
-
-        />}
+        )}
 
         {wallet?.address && treasurers.includes(wallet?.address) && sendImmediately ? (
           <Button
@@ -395,9 +414,9 @@ export default function AmountDonateCard({
           </Button>
         ) : null}
         {wallet?.address &&
-          isActive &&
-          (treasurers.includes(wallet?.address) || appUser?.isAdmin) &&
-          !sendImmediately ? (
+        isActive &&
+        (treasurers.includes(wallet?.address) || appUser?.isAdmin) &&
+        !sendImmediately ? (
           <Button
             variant="outline"
             onClick={async () => {
@@ -423,11 +442,11 @@ export default function AmountDonateCard({
           </Button>
         ) : null}
         {wallet?.address &&
-          deadline &&
-          isActive &&
-          new Date(deadline) < new Date() &&
-          (treasurers.includes(wallet?.address) || appUser?.isAdmin) &&
-          !sendImmediately ? (
+        deadline &&
+        isActive &&
+        new Date(deadline) < new Date() &&
+        (treasurers.includes(wallet?.address) || appUser?.isAdmin) &&
+        !sendImmediately ? (
           <Button
             variant="outline"
             onClick={async () => {
