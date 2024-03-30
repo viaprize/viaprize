@@ -221,8 +221,10 @@ export default function AmountDonateCard({
               {cryptoToUsd ? (
                 <>
                   $
-                  {parseFloat(amountRaised) * cryptoToUsd.ethereum.usd +
-                    parseInt(extraData?.data.funds.toString() ?? '0')}{' '}
+                  {(
+                    parseFloat(amountRaised) * cryptoToUsd.ethereum.usd +
+                    parseInt(extraData?.data.funds.toString() ?? '0')
+                  ).toFixed(2)}{' '}
                   USD
                 </>
               ) : null}

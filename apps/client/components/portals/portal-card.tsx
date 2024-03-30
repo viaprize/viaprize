@@ -51,11 +51,13 @@ export default function PortalCard({
   isIframe,
 }: PortalCardProps) {
   const isRefunded = !isActive && parseFloat(amountRaised) < fundingGoalWithPlatformFee;
-  const { data: extraData } = useQuery(['get-extra-data'], async () => {
-    const final = (await backendApi(false)).portals.extraDataDetail(id);
+  const { data: extraData } = useQuery([`get-extra-data-${id}`], async () => {
+    const final = await (await backendApi(false)).portals.extraDataDetail(id);
+    console.log({ final }, 'fionaodjs');
     return final;
   });
 
+  console.log(extraData?.data.funds, 'klsldfjl');
   return (
     <Card
       padding="lg"
@@ -103,10 +105,8 @@ export default function PortalCard({
       <Text fw="bold" size="xl">
         {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
           <>
-            {(
-              parseFloat(amountRaised) * ethToUsd +
-              parseInt(extraData?.data.funds.toString() ?? '0')
-            ).toFixed(2)}{' '}
+            {parseFloat(amountRaised) * ethToUsd +
+              parseInt(extraData?.data.funds.toString() ?? '0')}{' '}
             USD
           </>
         ) : (
