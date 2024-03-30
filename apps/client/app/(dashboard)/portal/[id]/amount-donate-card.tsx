@@ -1,5 +1,6 @@
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
+import { backendApi } from '@/lib/backend';
 import { prepareWritePortal, writePortal } from '@/lib/smartContract';
 import type { ConvertUSD } from '@/lib/types';
 import { formatDate } from '@/lib/utils';
@@ -181,6 +182,10 @@ export default function AmountDonateCard({
       : final;
   });
 
+  const { data: extraData } = useQuery(['get-extra-data'], async () => {
+    const final = (await backendApi(false)).portals.extraDataDetail(id);
+    return final;
+  });
   useEffect(() => {
     if (!balance) {
       void refetch();
@@ -211,12 +216,36 @@ export default function AmountDonateCard({
           Total Amount Raised
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
+          {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
+            <>
+              {cryptoToUsd ? (
+                <>
+                  $
+                  {(parseFloat(amountRaised) * cryptoToUsd.ethereum.usd).toFixed(2) +
+                    (extraData?.data.funds ?? 0)}{' '}
+                  USD
+                </>
+              ) : null}
+            </>
+          ) : (
+            <>
+              {cryptoToUsd ? (
+                <>
+                  ${(parseFloat(amountRaised) * cryptoToUsd.ethereum.usd).toFixed(2)} USD
+                </>
+              ) : null}
+            </>
+          )}
           {cryptoToUsd ? (
             <>${(parseFloat(amountRaised) * cryptoToUsd.ethereum.usd).toFixed(2)} USD</>
           ) : null}
         </Text>
         <Text c="blue" className="lg:text-3xl md:text-2xl text-sm">
-          ({parseFloat(amountRaised).toPrecision(4)} {chain.nativeCurrency.symbol} )
+          {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? null : (
+            <>
+              {parseFloat(amountRaised).toPrecision(4)} {chain.nativeCurrency.symbol}
+            </>
+          )}
         </Text>
         <Text fw="bold" size="xl">
           {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
