@@ -9,6 +9,7 @@ import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
 import { PortalsComments } from './entities/portals-comments.entity';
 import { PortalsController } from './portals.controller';
+import { ExtraPortalDataService } from './services/extra-portal-data.service';
 import { PortalCommentService } from './services/portal-comments.service';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
@@ -23,6 +24,6 @@ import { PortalsService } from './services/portals.service';
     BlockchainModule,
     JobsModule,
   ],
-  providers: [PortalsService, PortalProposalsService, PortalCommentService],
+  providers: [PortalsService, PortalProposalsService, PortalCommentService,ExtraPortalDataService],
 })
 export class PortalsModule {}
