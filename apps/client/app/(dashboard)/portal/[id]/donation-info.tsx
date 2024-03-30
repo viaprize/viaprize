@@ -1,5 +1,6 @@
 import getCryptoToUsd from '@/components/hooks/server-actions/CryptotoUsd';
 import type { Contributions } from '@/lib/api';
+import { backendApi } from '@/lib/backend';
 import { Table } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { formatEther } from 'viem';
@@ -36,12 +37,24 @@ import { formatEther } from 'viem';
 //   // Add more donation objects as needed
 // ];
 
-export default function DonationInfo({ contributors }: { contributors?: Contributions }) {
+export default function DonationInfo({
+  contributors,
+  id,
+}: {
+  contributors?: Contributions;
+  id: string;
+}) {
   const { data: ethToUsd } = useQuery(['cryptoToUsd', undefined], async () =>
     getCryptoToUsd(),
   );
 
   console.log(contributors, 'contributors');
+
+  const { data: extraData } = useQuery(['get-extra-data-donation'], async () => {
+    if ('bacb6584-7e45-465b-b4af-a3ed24a84233' === id) {
+      return await (await backendApi(false)).portals.extraDonationDataDetail(id);
+    }
+  });
 
   return (
     <div className="lg:flex  gap-4 px-3 sm:px-6 md:px-14 lg:px-20 justify-between mt-5 w-full max-w-[90vw]">
@@ -80,6 +93,20 @@ export default function DonationInfo({ contributors }: { contributors?: Contribu
                   </Table.Tr>
                 );
               })}
+
+              {extraData &&
+                extraData?.data.length > 0 &&
+                extraData?.data.map((donation) => {
+                  return (
+                    <Table.Tr key={donation.id}>
+                      <Table.Td>{new Date(donation.donatedAt).toDateString()}</Table.Td>
+                      <Table.Td>{donation.donor}</Table.Td>
+                      {/* <Table.Td>{donation.network}</Table.Td> */}
+                      <Table.Td>Paid in USD</Table.Td>
+                      <Table.Td>{donation.usdValue}</Table.Td>
+                    </Table.Tr>
+                  );
+                })}
             </Table.Tbody>
           </Table>
         </div>

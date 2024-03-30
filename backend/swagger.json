@@ -1846,6 +1846,67 @@
         "x-nestia-method": "GET"
       }
     },
+    "/portals/extra_donation_data/{externalId}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "externalId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExtraDonationPortalData"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "The function `getExtraDonationPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data",
+        "x-nestia-namespace": "portals.extra_donation_data.getExtraDonationPortalData",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "externalId",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
     "/price/usd_to_eth": {
       "get": {
         "tags": [],
@@ -5348,6 +5409,46 @@
         "required": [
           "id",
           "funds",
+          "externalId"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "ExtraDonationPortalData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "donatedAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "donor": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "usdValue": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "externalId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "donatedAt",
+          "donor",
+          "usdValue",
           "externalId"
         ],
         "x-typia-jsDocTags": []
