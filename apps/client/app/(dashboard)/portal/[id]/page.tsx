@@ -9,7 +9,7 @@ export default async function Portal({ params }: { params: { id: string } }) {
   const portal = (
     await new Api().portals.portalsDetail(params.id, {
       next: {
-        revalidate: 5,
+        revalidate: false,
       },
     })
   ).data;
@@ -30,9 +30,7 @@ export default async function Portal({ params }: { params: { id: string } }) {
           fundingGoalWithPlatformFee={parseFloat(
             portal.fundingGoalWithPlatformFee ?? '0',
           )}
-           id={portal.id}
-
-
+          id={portal.id}
           typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
           deadline={portal.deadline}
           isActive={portal.isActive ?? false}
@@ -46,7 +44,6 @@ export default async function Portal({ params }: { params: { id: string } }) {
         updates={portal.updates ?? []}
         owner={portal.user.username}
         param={params.id}
-
       />
       {/* @ts-expect-error Server Component */}
       <CommentSection portalId={params.id} />
