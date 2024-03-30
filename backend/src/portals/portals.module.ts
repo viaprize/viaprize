@@ -5,6 +5,7 @@ import { BlockchainModule } from 'src/blockchain/blockchain.module';
 import { JobsModule } from 'src/jobs/jobs.module';
 import { MailModule } from 'src/mail/mail.module';
 import { UsersModule } from 'src/users/users.module';
+import { ExtraPortal } from './entities/extra-portal-data.entity';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
 import { PortalsComments } from './entities/portals-comments.entity';
@@ -18,7 +19,7 @@ import { PortalsService } from './services/portals.service';
   controllers: [PortalsController],
   imports: [
     CacheModule.register(),
-    TypeOrmModule.forFeature([Portals, PortalProposals, PortalsComments]),
+    TypeOrmModule.forFeature([Portals, PortalProposals, PortalsComments,ExtraPortal]),
     UsersModule,
     MailModule,
     BlockchainModule,
