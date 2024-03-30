@@ -10,12 +10,19 @@ export class ExtraPortalDataService {
     private portalRepository: Repository<ExtraPortal>,
   ) {}
 
-  async getFundByExternalId(externalId: string) : Promise<ExtraPortal> {
-    const portalData = await this.portalRepository.findOneOrFail({
+  async getFundByExternalId(externalId: string): Promise<ExtraPortal> {
+    const portalData = await this.portalRepository.findOne({
       where: {
         externalId: externalId,
       },
     });
-    return portalData;
+    return (
+      portalData ??
+      ({
+        id: '',
+        funds: 0,
+        externalId: externalId,
+      } as ExtraPortal)
+    );
   }
 }
