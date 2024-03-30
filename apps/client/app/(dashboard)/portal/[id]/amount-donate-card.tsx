@@ -275,29 +275,33 @@ export default function AmountDonateCard({
         </Text> */}
       </div>
       <div>
-        <Text>Project Donation Address </Text>
-        <Flex align="center">
-          <Badge size="lg" variant="light" color="primary.2" my="sm">
-            {recipientAddress.slice(0, 8)}........{recipientAddress.slice(-5)}
-          </Badge>
-          <CopyButton value={recipientAddress}>
-            {({ copied, copy }) => (
-              <ActionIcon
-                ml="md"
-                onClick={copy}
-                style={{
-                  backgroundColor: copied ? '#3d4070' : '#3d4070',
-                }}
-              >
-                {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
-              </ActionIcon>
-            )}
-          </CopyButton>
-        </Flex>
-        <Badge color="red" variant="light" radius="md" my="sm" size="lg">
-          Donation only on OP Mainnet !
-        </Badge>
-        <Divider my="sm" />
+        {id !== 'bacb6584-7e45-465b-b4af-a3ed24a84233' && (
+          <>
+            <Text>Project Donation Address </Text>
+            <Flex align="center">
+              <Badge size="lg" variant="light" color="primary.2" my="sm">
+                {recipientAddress.slice(0, 8)}........{recipientAddress.slice(-5)}
+              </Badge>
+              <CopyButton value={recipientAddress}>
+                {({ copied, copy }) => (
+                  <ActionIcon
+                    ml="md"
+                    onClick={copy}
+                    style={{
+                      backgroundColor: copied ? '#3d4070' : '#3d4070',
+                    }}
+                  >
+                    {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
+                  </ActionIcon>
+                )}
+              </CopyButton>
+            </Flex>
+            <Badge color="red" variant="light" radius="md" my="sm" size="lg">
+              Donation only on OP Mainnet !
+            </Badge>
+            <Divider my="sm" />
+          </>
+        )}
       </div>
 
       {/* // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
