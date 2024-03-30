@@ -1,5 +1,6 @@
 'use client';
 
+import { backendApi } from '@/lib/backend';
 import { formatDate, htmlToPlainText } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
@@ -16,6 +17,7 @@ import {
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 import Link from 'next/link';
 import { PiTimerFill } from 'react-icons/pi';
+import { useQuery } from 'wagmi';
 
 interface PortalCardProps {
   ethToUsd: number;
@@ -49,6 +51,10 @@ export default function PortalCard({
   isIframe,
 }: PortalCardProps) {
   const isRefunded = !isActive && parseFloat(amountRaised) < fundingGoalWithPlatformFee;
+  const { data: extraData } = useQuery(['get-extra-data'], async () => {
+    const final = (await backendApi(false)).portals.extraDataDetail(id);
+    return final;
+  });
 
   return (
     <Card
@@ -95,9 +101,19 @@ export default function PortalCard({
       </p>
 
       <Text fw="bold" size="xl">
-        {(parseFloat(amountRaised) * ethToUsd).toFixed(2)} USD (
-        {parseFloat(amountRaised).toFixed(3)}
-        {chain.nativeCurrency.symbol} )
+        {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
+          <>
+            {(parseFloat(amountRaised) * ethToUsd).toFixed(2) +
+              (extraData?.data.funds ?? 0)}{' '}
+            USD
+          </>
+        ) : (
+          <>
+            {(parseFloat(amountRaised) * ethToUsd).toFixed(2)} USD (
+            {parseFloat(amountRaised).toFixed(3)}
+            {chain.nativeCurrency.symbol} )
+          </>
+        )}
       </Text>
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => {

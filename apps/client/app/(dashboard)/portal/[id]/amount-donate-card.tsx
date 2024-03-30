@@ -236,9 +236,6 @@ export default function AmountDonateCard({
               ) : null}
             </>
           )}
-          {cryptoToUsd ? (
-            <>${(parseFloat(amountRaised) * cryptoToUsd.ethereum.usd).toFixed(2)} USD</>
-          ) : null}
         </Text>
         <Text c="blue" className="lg:text-3xl md:text-2xl text-sm">
           {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? null : (
