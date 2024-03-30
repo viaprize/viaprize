@@ -105,8 +105,10 @@ export default function PortalCard({
       <Text fw="bold" size="xl">
         {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
           <>
-            {parseFloat(amountRaised) * ethToUsd +
-              parseInt(extraData?.data.funds.toString() ?? '0')}{' '}
+            {(
+              parseFloat(amountRaised) * ethToUsd +
+              parseInt(extraData?.data.funds.toString() ?? '0')
+            ).toFixed(2)}{' '}
             USD
           </>
         ) : (
