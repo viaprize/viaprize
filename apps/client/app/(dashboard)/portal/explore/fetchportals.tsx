@@ -85,7 +85,6 @@ export default async function FetchPortals({
             deadline={portal.deadline}
             tags={portal.tags}
             isIframe={false}
-            extraFund={portal.extraFund}
           />
         );
       })}
