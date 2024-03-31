@@ -8,6 +8,7 @@ import PortalTabs from './portal-tabs';
 export default async function Portal({ params }: { params: { id: string } }) {
   const portal = (
     await new Api().portals.portalsDetail(params.id, {
+      cache: 'no-store',
       next: {
         revalidate: false,
       },
