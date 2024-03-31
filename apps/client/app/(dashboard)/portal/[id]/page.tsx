@@ -4,7 +4,7 @@ import { formatEther } from 'viem';
 import AmountDonateCard from './amount-donate-card';
 import ImageTitleHeroCard from './image-title-hero-card';
 import PortalTabs from './portal-tabs';
-
+export const dynamic = 'force-dynamic';
 export default async function Portal({ params }: { params: { id: string } }) {
   const portal = (
     await new Api().portals.portalsDetail(params.id, {
