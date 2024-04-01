@@ -387,6 +387,24 @@ export default function AmountDonateCard({
         {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
           <>
             <Link
+              href={'https://buy.stripe.com/00g8x6dwf7M8gHm7st'}
+              className="hover:text-blue-400"
+            ></Link>
+            <NavLink
+              href="https://buy.stripe.com/00g8x6dwf7M8gHm7st"
+              label="Donate With Recurring Subscription"
+              rightSection={
+                <IconChevronRight
+                  size="0.8rem"
+                  stroke={1.5}
+                  className="mantine-rotate-rtl"
+                />
+              }
+              variant="filled"
+              active
+            />
+
+            <Link
               href={'https://donate.stripe.com/14k00A0Jt8QcfDibII'}
               className="hover:text-blue-400"
             ></Link>
