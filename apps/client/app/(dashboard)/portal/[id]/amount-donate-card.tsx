@@ -392,7 +392,7 @@ export default function AmountDonateCard({
             ></Link>
             <NavLink
               href="https://buy.stripe.com/00g8x6dwf7M8gHm7st"
-              label="Donate With Recurring Subscription"
+              label="Donate monthly"
               rightSection={
                 <IconChevronRight
                   size="0.8rem"
@@ -410,7 +410,7 @@ export default function AmountDonateCard({
             ></Link>
             <NavLink
               href="https://donate.stripe.com/14k00A0Jt8QcfDibII"
-              label="Donate With Card"
+              label="One time donation with card"
               rightSection={
                 <IconChevronRight
                   size="0.8rem"
