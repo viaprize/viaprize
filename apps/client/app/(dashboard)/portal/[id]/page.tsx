@@ -1,9 +1,33 @@
+import CommentSection from '@/components/comment/comment-section';
 import { Api } from '@/lib/api';
+import type { Metadata } from 'next';
 import { formatEther } from 'viem';
 import AmountDonateCard from './amount-donate-card';
 import ImageTitleHeroCard from './image-title-hero-card';
 import PortalTabs from './portal-tabs';
-import CommentSection from '@/components/comment/comment-section';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const portal = (
+    await new Api().portals.portalsDetail(params.id, {
+      next: {
+        revalidate: 5,
+      },
+    })
+  ).data;
+  return {
+    title: portal.title,
+    description: portal.description,
+    openGraph: {
+      images: {
+        url: portal.images[0],
+      },
+    },
+  };
+}
 
 export default async function CreatePortal({ params }: { params: { id: string } }) {
   const portal = (
