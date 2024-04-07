@@ -1,5 +1,6 @@
 import PrizePageComponent from '@/components/Prize/prizepage/prizepage';
 import { Api } from '@/lib/api';
+import type { Metadata } from 'next';
 
 export const dynamic = 'auto';
 export const dynamicParams = true;
@@ -7,6 +8,30 @@ export const revalidate = 5;
 export const fetchCache = 'auto';
 export const preferredRegion = 'auto';
 export const maxDuration = 5;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const prize = (
+    await new Api().prizes.prizesDetail(params.id, {
+      next: {
+        revalidate: 0,
+      },
+    })
+  ).data;
+
+  return {
+    title: prize.title,
+    description: prize.description,
+    openGraph: {
+      images: {
+        url: prize.images[0],
+      },
+    },
+  };
+}
 
 export default async function FetchPrize({ params }: { params: { id: string } }) {
   const prize = (
