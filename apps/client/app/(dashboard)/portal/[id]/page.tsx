@@ -32,8 +32,9 @@ export async function generateMetadata({
 export default async function CreatePortal({ params }: { params: { id: string } }) {
   const portal = (
     await new Api().portals.portalsDetail(params.id, {
+      cache: 'no-store',
       next: {
-        revalidate: 5,
+        revalidate: false,
       },
     })
   ).data;
@@ -54,6 +55,7 @@ export default async function CreatePortal({ params }: { params: { id: string } 
           fundingGoalWithPlatformFee={parseFloat(
             portal.fundingGoalWithPlatformFee ?? '0',
           )}
+          id={portal.id}
           typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
           deadline={portal.deadline}
           isActive={portal.isActive ?? false}

@@ -56,6 +56,15 @@ export default async function FetchPortals({
     })
   ).json();
 
+  //  const extraData: { ethereum: { usd: number } } = await(
+  //    await fetch(`https://api-prod.pactsmith.com/api/price/bacb6584-7e45-465b-b4af-a3ed24a84233}`, {
+  //      method: 'GET',
+  //      headers: {
+  //        Accept: 'application/json',
+  //      },
+  //    }),
+  //  ).json();
+
   return (
     <>
       {portals.map((portal) => {

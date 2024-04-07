@@ -35,10 +35,14 @@ import {
   UpdatePlatformFeeDto,
 } from './dto/update-platform-fee.dto';
 import { UpdatePortalPropsalDto } from './dto/update-portal-proposal.dto';
+import { ExtraDonationPortalData } from './entities/extra-donation-portal-data.entity';
+import { ExtraPortal } from './entities/extra-portal-data.entity';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
 import { PortalsComments } from './entities/portals-comments.entity';
 import { PortalWithBalance } from './entities/types';
+import { ExtraDonationPortalDataService } from './services/extra-donation-portal-data.service';
+import { ExtraPortalDataService } from './services/extra-portal-data.service';
 import { PortalCommentService } from './services/portal-comments.service';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
@@ -78,6 +82,8 @@ export class PortalsController {
     private readonly jobService: JobService,
     private readonly userService: UsersService,
     private readonly portalCommentService: PortalCommentService,
+    private readonly portalDataService: ExtraPortalDataService,
+    private readonly portalExtraDonationService: ExtraDonationPortalDataService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -803,5 +809,39 @@ export class PortalsController {
     return {
       message: `Job has been registered`,
     };
+  }
+
+  /**
+   * The function `getExtraPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} externalId
+   * @returns {Promise<ExtraPortal>}
+   */
+  @Get('/extra_data/:externalId')
+  async getExtraPortalData(
+    @TypedParam('externalId') externalId: string,
+  ): Promise<ExtraPortal> {
+    const funds = await this.portalDataService.getFundByExternalId(externalId);
+    return funds;
+  }
+
+  /**
+   * The function `getExtraDonationPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} externalId
+   * @returns {Promise<ExtraDonationPortalData[]>}
+   */
+  @Get('/extra_donation_data/:externalId')
+  async getExtraDonationPortalData(
+    @TypedParam('externalId') externalId: string,
+  ): Promise<ExtraDonationPortalData[]> {
+    const funds = await this.portalExtraDonationService.getDonationByExternalId(
+      externalId,
+    );
+    return funds;
   }
 }

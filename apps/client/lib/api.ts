@@ -333,6 +333,21 @@ export interface TestTrigger {
   date: string;
 }
 
+export interface ExtraPortal {
+  id: string;
+  funds: number;
+  externalId: string;
+}
+
+export interface ExtraDonationPortalData {
+  id: string;
+  /** @format date-time */
+  donatedAt: string;
+  donor: string;
+  usdValue: number;
+  externalId: string;
+}
+
 export interface CreatePrizeDto {
   address: string;
   proposal_id: string;
@@ -1271,6 +1286,34 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The function `getExtraPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data
+     *
+     * @name ExtraDataDetail
+     * @request GET:/portals/extra_data/{externalId}
+     */
+    extraDataDetail: (externalId: string, params: RequestParams = {}) =>
+      this.request<ExtraPortal, any>({
+        path: `/portals/extra_data/${externalId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The function `getExtraDonationPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data
+     *
+     * @name ExtraDonationDataDetail
+     * @request GET:/portals/extra_donation_data/{externalId}
+     */
+    extraDonationDataDetail: (externalId: string, params: RequestParams = {}) =>
+      this.request<ExtraDonationPortalData[], any>({
+        path: `/portals/extra_donation_data/${externalId}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

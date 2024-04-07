@@ -47,7 +47,7 @@ export default function PortalTabs({
           </div>
         </Tabs.Panel>
         <Tabs.Panel value="donations">
-          <DonationInfo contributors={contributors} />
+          <DonationInfo contributors={contributors} id={param} />
         </Tabs.Panel>
         <Tabs.Panel value="updates">
           {launched ? (
