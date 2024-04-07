@@ -30,7 +30,7 @@ export default async function FetchPortals({
   const portals = (
     await new Api().portals.portalsList(
       {
-        limit: 10,
+        limit: 12,
         page,
         tags: categories,
         search,
