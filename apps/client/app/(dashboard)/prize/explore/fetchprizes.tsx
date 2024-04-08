@@ -1,6 +1,9 @@
 import ExploreCard from '@/components/Prize/ExplorePrize/explorePrize';
+import HistoryCard from '@/components/history/history-card';
 import { Api } from '@/lib/api';
 import { formatEther } from 'viem';
+import {FetchPrizesCsv} from '@/components/history/fetch-csv';
+import Paging from '@/components/custom/paging';
 
 export default async function FetchPrizes() {
   const prizes = (
@@ -25,6 +28,8 @@ export default async function FetchPrizes() {
     })
   ).json();
 
+  const data = await FetchPrizesCsv();
+
   return (
     <>
       {prizes.map((prize) => {
@@ -48,6 +53,37 @@ export default async function FetchPrizes() {
           />
         );
       })}
+
+      {data.reverse().map((prize) => {
+        // Reverse the data array
+        if (
+          (prize.Awarded &&
+            // prize.WonRefunded &&
+            prize.PrizeName) ||
+          prize.DatePosted ||
+          prize.AwardedUSDe ||
+          prize.WinnersAmount // Changed this line
+        ) {
+          const status = prize.WinnersAmount ? 'Won' : 'Refunded'; // Adjusted status based on WinnersAmount existence
+          return (
+            <HistoryCard
+              key={prize.Id}
+              imageUrl={prize.CardImage}
+              id={prize.Id}
+
+              status={status} // Passed the adjusted status here
+              datePosted={prize.DatePosted}
+              title={prize.PrizeName}
+              description={prize.SimpleDescription}
+              awarded={`${prize.AwardedUSDe} USD`}
+              category={prize.Category}
+            />
+          );
+        }
+        return null;
+      })}
+
+      
     </>
   );
 }
