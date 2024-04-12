@@ -76,6 +76,7 @@ contract PassThrough {
         address[] memory _platformAdmins,
         address _token,
         address _bridgedToken,
+        address _wethCoin,
         uint256 _platformFee
     ) {
 
@@ -92,10 +93,12 @@ contract PassThrough {
         isActive = true;
         _usdc = IERC20Permit(_token);
         _usdcBridged = IERC20Permit(_bridgedToken);
-        _weth = IWETH(WETH);
+        _weth = IWETH(_wethCoin);
+        USDC = _token;
+        USDC_E = _bridgedToken;
+        WETH = _wethCoin;
         swapRouter = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
         swap2Router = IUniswapV2Router02(0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45);
-
     }
 
     /// @notice re-entrancy modifier
