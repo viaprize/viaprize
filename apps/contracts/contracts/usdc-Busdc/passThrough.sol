@@ -1,5 +1,4 @@
 //SPDX-License-Identifier:MIT
-
 pragma solidity ^0.8.0;
 
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
@@ -7,9 +6,9 @@ import "../helperContracts/safemath.sol";
 import "../helperContracts/ierc20_permit.sol";
 import "../helperContracts/ierc20_weth.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-
-
-
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
+// import "@uniswap/v3-core/contracts/libraries/FullMath.sol";
 
 contract PassThrough {
     address public proposer;
@@ -31,6 +30,8 @@ contract PassThrough {
     IWETH private _weth;
 
     ISwapRouter public immutable swapRouter;
+
+    IUniswapV2Router02 public immutable swap2Router;
 
     address public constant USDC = 0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85;
 
@@ -73,6 +74,7 @@ contract PassThrough {
         _usdcBridged = IERC20Permit(_bridgedToken);
         _weth = IWETH(WETH);
         swapRouter = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
+        swap2Router = IUniswapV2Router02(0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45);
 
     }
 
@@ -87,13 +89,22 @@ contract PassThrough {
         require(isProposer[msg.sender] == true || isplatformAdmin[msg.sender] == true, "You are not a proposer or platformAdmin.");
         _;
     }
+    // function sqrtPriceX96ToUint(uint160 sqrtPriceX96, uint8 decimalsToken0)
+    // internal
+    // pure
+    // returns (uint256)
+    // {
+    // uint256 numerator1 = uint256(sqrtPriceX96) * uint256(sqrtPriceX96);
+    // uint256 numerator2 = 10**decimalsToken0;
+    // return FullMath.mulDiv(numerator1, numerator2, 1 << 192);
+    // }   
 
 
 
-    function addUSDCFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant  {
+    function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant  {
         require(_amountUsdc > 0, "funds should be greater than 0");
         if (!isActive) revert FundingToContractEnded();
-        _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
+        _usdc.permit(_sender, address(this), _amountUsdc, _deadline, v, r, s);
         TransferHelper.safeTransferFrom(USDC, msg.sender, address(this), _amountUsdc);
         
         uint256 _donation = _amountUsdc;
@@ -136,10 +147,12 @@ contract PassThrough {
 
     }
 
+
     
     function addBridgedUSDCFunds(uint256 _amountUsdc) public noReentrant {
         require(_amountUsdc > 0, "funds should be greater than 0");
         require(_usdcBridged.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
+        
         if (!isActive) revert FundingToContractEnded();
         // _usdcBridged.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
         // TransferHelper.safeApprove(USDC_E,msg.sender,_amountUsdc);
@@ -147,19 +160,38 @@ contract PassThrough {
         // TransferHelper.safeApprove(USDC_E,platformAddress,_amountUsdc);
         TransferHelper.safeTransferFrom(USDC_E, msg.sender, address(this), _amountUsdc);
         TransferHelper.safeApprove(USDC_E, address(swapRouter), _amountUsdc);
-        ISwapRouter.ExactInputSingleParams memory params =
-            ISwapRouter.ExactInputSingleParams({
-                tokenIn: USDC_E,
-                tokenOut: USDC,
-                fee: 3000,
+
+        IUniswapV3Pool pool = IUniswapV3Pool(0x2aB22ac86b25BD448A4D9dC041Bd2384655299c4);
+
+        // ISwapRouter.ExactInputSingleParams memory params =
+        //     ISwapRouter.ExactInputSingleParams({
+        //         tokenIn: USDC_E,
+        //         tokenOut: USDC,
+        //         fee: pool.fee(),
+        //         recipient: address(this),
+        //         deadline: block.timestamp,
+        //         amountIn: _amountUsdc,
+        //         amountOutMinimum: 0,
+        //         sqrtPriceLimitX96: sqrtPriceX96
+        // });
+
+        // uint256 _donation = swapRouter.exactInputSingle(params);
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: abi.encodePacked(USDC_E, pool.fee(), USDC),
                 recipient: address(this),
                 deadline: block.timestamp,
                 amountIn: _amountUsdc,
-                amountOutMinimum: 1,
-                sqrtPriceLimitX96: 0
+                amountOutMinimum: 8000000
         });
 
-        uint256 _donation = swapRouter.exactInputSingle(params);
+        // Executes the swap.
+        uint256 _donation  = swapRouter.exactInput(params);
+        // address[] memory path = new address[](2);
+        // path[0] = USDC_E;
+        // path[1] = USDC;
+        // address[2] memory paths = [address(USDC_E),address(USDC)];
+        // uint256 _donation = swap2Router.swapExactTokensForTokens(_amountUsdc, 0, path, address(this), block.timestamp)[0];
         funders.push(msg.sender);
         isFunder[msg.sender] = true;
         totalFunds = totalFunds.add(_donation);
