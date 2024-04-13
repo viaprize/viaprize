@@ -55,7 +55,9 @@ contract PassThrough {
     address public USDC_E;
     /// @notice this is an Eth address which will be assigned while deploying the contract.
     address public WETH;
+    /// @notice this mapping will be to track of revokeVotes for all the platformAdmins
     mapping(address => uint) public revokeVotes;
+    /// @notice to keep track of total platformAdmins
     uint256 public totalPlatformAdmins;
     /// @notice error indicating insufficient funds while funding to the contract.
     error NotEnoughFunds();
@@ -84,7 +86,7 @@ contract PassThrough {
         proposer = _proposer;
         isProposer[_proposer] = true;
         totalPlatformAdmins = _platformAdmins.length;
-        for(uint256 i=0; i<_platformAdmins.length; i++) {
+        for(uint256 i=0; i<totalPlatformAdmins; i++) {
             platformAdmins.push(_platformAdmins[i]);
             isplatformAdmin[_platformAdmins[i]] = true;
         }
@@ -243,6 +245,7 @@ contract PassThrough {
         isActive = false;
     }
 
+    /// @notice function to vote to revoke as a platformAdmin
     function voteToRevokePlatformAdmin(address _admin) public {
         require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
         revokeVotes[_admin] +=1;
@@ -250,7 +253,7 @@ contract PassThrough {
             finalRevoke(_admin);
         }
     }
-
+    /// @notice function to revoke access for platform admin, it will be called in voteToRevokePlatformAdmin
     function finalRevoke(address _admin) private {
         isplatformAdmin[_admin] = false;
     }
