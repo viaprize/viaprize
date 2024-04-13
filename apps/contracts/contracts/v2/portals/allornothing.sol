@@ -54,8 +54,9 @@ contract PassThrough {
     /// @notice this is an usdc token address which will be assigned while deploying the contract.
     address public USDC_E;
     /// @notice this is an Eth address which will be assigned while deploying the contract.
-    address  public WETH;
-
+    address public WETH;
+    mapping(address => uint) public revokeVotes;
+    uint256 public totalPlatformAdmins;
     /// @notice error indicating insufficient funds while funding to the contract.
     error NotEnoughFunds();
     /// @notice error indicating the funding to the contract has ended
@@ -82,7 +83,7 @@ contract PassThrough {
 
         proposer = _proposer;
         isProposer[_proposer] = true;
-
+        totalPlatformAdmins = _platformAdmins.length;
         for(uint256 i=0; i<_platformAdmins.length; i++) {
             platformAdmins.push(_platformAdmins[i]);
             isplatformAdmin[_platformAdmins[i]] = true;
@@ -240,5 +241,17 @@ contract PassThrough {
     function endCampaign() public onlyProposerOrAdmin {
         if(!isActive) revert("campaign is not active or already ended");
         isActive = false;
+    }
+
+    function voteToRevokePlatformAdmin(address _admin) public {
+        require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
+        revokeVotes[_admin] +=1;
+        if(revokeVotes[_admin] >= (2 * totalPlatformAdmins) / 3) {
+            finalRevoke(_admin);
+        }
+    }
+
+    function finalRevoke(address _admin) private {
+        isplatformAdmin[_admin] = false;
     }
 }
