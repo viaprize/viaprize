@@ -3,7 +3,8 @@ import WrapperLayout from './wrapper';
 
 export const metadata: Metadata = {
   title: 'viaPrize',
-  description: 'viaPrize is a platform for creating and funding prizes for the Ethereum community.',
+  description:
+    'viaPrize is a platform for creating and funding prizes for the Ethereum community.',
   twitter: {
     card: 'summary_large_image',
   },

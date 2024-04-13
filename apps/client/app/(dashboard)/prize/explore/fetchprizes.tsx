@@ -2,7 +2,7 @@ import ExploreCard from '@/components/Prize/ExplorePrize/explorePrize';
 import HistoryCard from '@/components/history/history-card';
 import { Api } from '@/lib/api';
 import { formatEther } from 'viem';
-import {FetchPrizesCsv} from '@/components/history/fetch-csv';
+import { FetchPrizesCsv } from '@/components/history/fetch-csv';
 import Paging from '@/components/custom/paging';
 
 export default async function FetchPrizes() {
@@ -70,7 +70,6 @@ export default async function FetchPrizes() {
               key={prize.Id}
               imageUrl={prize.CardImage}
               id={prize.Id}
-
               status={status} // Passed the adjusted status here
               datePosted={prize.DatePosted}
               title={prize.PrizeName}
@@ -82,8 +81,6 @@ export default async function FetchPrizes() {
         }
         return null;
       })}
-
-      
     </>
   );
 }

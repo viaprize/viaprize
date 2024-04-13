@@ -36,7 +36,7 @@ export default function ExplorePortal({ searchParams }: { searchParams: SearchPa
           <FetchPortals searchParams={searchParams} />
         </Suspense>
       </div>
-      <Paging  total={2}/>
+      <Paging total={2} />
     </div>
   );
 }
