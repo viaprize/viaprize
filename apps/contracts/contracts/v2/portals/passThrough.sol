@@ -2,67 +2,97 @@
 pragma solidity ^0.8.0;
 
 import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
-import "../helperContracts/safemath.sol";
-import "../helperContracts/ierc20_permit.sol";
-import "../helperContracts/ierc20_weth.sol";
+import "../../helperContracts/safemath.sol";
+import "../../helperContracts/ierc20_permit.sol";
+import "../../helperContracts/ierc20_weth.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 // import "@uniswap/v3-core/contracts/libraries/FullMath.sol";
 
 contract PassThrough {
+    /// @notice this is the address of proposer who deploys a contract
     address public proposer;
+    /// @notice this will be a mapping of the address of a proposer to a boolean value of true or false
     mapping(address => bool) public isProposer;
+    ///@notice array of platformAdmins address, there can be multiple platform admins
     address[] public platformAdmins;
+    /// @notice this will be a mapping of the addresses of a platformAdmins to a boolean value of true or false
     mapping(address => bool) public isplatformAdmin;
+    /// @notice this will be the address to receive campaign funds, it can be similar to proposer address
     address public receipent;
-    uint256 public platformFee;
+    /// @notice this will be the address to receive platform Fee
     address public platformAddress;
+    /// @notice this will the percentage from totalFunds which goes to the platform address as Fee
+    uint256 public platformFee;
+    /// @notice this will be an array of address who funding to this campaign
     address[] public funders; 
+    /// @notice this will be a mapping of the addresses of a funder to a boolean value of true or false
     mapping(address => bool) public isFunder;
+    /// @notice this will be a mapping of the addresses of the funders to the amount they have contributed
     mapping(address => uint256) public funderAmount;
+    /// @notice this will be the total funds yet contributed to this campaign by funders
     uint256 public totalFunds;
+    /// @notice this will be the total Rewards which goes to recipent after deducting platform fees
     uint256 public totalRewards;
+    /// @notice bool to check status of campaign
     bool public isActive;
+    /// @notice To-Do
     bool internal locked;
+    /// @notice initializing the erc20 interface for usdc token
     IERC20Permit private _usdc;
+    /// @notice initializing the erc20 interface for usdc bridged usdc token
     IERC20Permit private _usdcBridged;
+    /// @notice initializing the interface for weth
     IWETH private _weth;
-
+    /// @notice initializing swaprouter interface
     ISwapRouter public immutable swapRouter;
-
+    /// @notice initializing uniswaprouter interface
     IUniswapV2Router02 public immutable swap2Router;
-
-    address public constant USDC = 0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85;
-
-    address public constant USDC_E = 0x7F5c764cBc14f9669B88837ca1490cCa17c31607;
-
-    address  public constant WETH = 0x4200000000000000000000000000000000000006;
-
-
-
+    /// @notice this is an usdc token address which will be assigned while deploying the contract.
+    address public USDC;
+    /// @notice this is an usdc token address which will be assigned while deploying the contract.
+    address public USDC_E;
+    /// @notice this is an Eth address which will be assigned while deploying the contract.
+    address public WETH;
+    /// @notice this mapping will be to track of revokeVotes for all the platformAdmins
+    mapping(address => uint) public revokeVotes;
+    /// @notice to keep track of total platformAdmins
+    uint256 public totalPlatformAdmins;
+    /// @notice error indicating insufficient funds while funding to the contract.
     error NotEnoughFunds();
+    /// @notice error indicating the funding to the contract has ended
     error FundingToContractEnded();
 
+    /// @notice initializing the use of safemath
     using SafeMath for uint256;
-
+    /// @notice this event for just testing, need to remove
     event Values(
         address receipent,
         uint256 totalFunds,
         uint256 totalRewards
     );
 
+    /// @notice constructor where we pass all the required parameters before deploying the contract
+    /// @param _proposer who creates this campaign
+    /// @param _platformAdmins array of address of platform admins
+    /// @param _token contract address of usdc token
+    /// @param _bridgedToken contract address of usdc.e token
+    /// @param _wethCoin contract address of eth
+    /// @param _platformFee percentage of amount that goes to the platformAddess 
     constructor(
         address _proposer,
         address[] memory _platformAdmins,
         address _token,
         address _bridgedToken,
+        address _wethCoin,
         uint256 _platformFee
     ) {
 
         proposer = _proposer;
-
-        for(uint256 i=0; i<_platformAdmins.length; i++) {
+        isProposer[_proposer] = true;
+        totalPlatformAdmins = _platformAdmins.length;
+        for(uint256 i=0; i<totalPlatformAdmins; i++) {
             platformAdmins.push(_platformAdmins[i]);
             isplatformAdmin[_platformAdmins[i]] = true;
         }
@@ -72,19 +102,22 @@ contract PassThrough {
         isActive = true;
         _usdc = IERC20Permit(_token);
         _usdcBridged = IERC20Permit(_bridgedToken);
-        _weth = IWETH(WETH);
+        _weth = IWETH(_wethCoin);
+        USDC = _token;
+        USDC_E = _bridgedToken;
+        WETH = _wethCoin;
         swapRouter = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
         swap2Router = IUniswapV2Router02(0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45);
+    } 
 
-    }
-
+    /// @notice re-entrancy modifier
     modifier noReentrant() {
         require(!locked, "No cheat, No Re-entrancy");
         locked = true;
         _;
         locked = false;
     }
-
+    /// @notice modifer where only proposer or platformAdmin can call the functions.
     modifier onlyProposerOrAdmin {
         require(isProposer[msg.sender] == true || isplatformAdmin[msg.sender] == true, "You are not a proposer or platformAdmin.");
         _;
@@ -100,7 +133,7 @@ contract PassThrough {
     // }   
 
 
-
+    /// @notice function to donate the usdc tokens into the campaign
     function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant  {
         require(_amountUsdc > 0, "funds should be greater than 0");
         if (!isActive) revert FundingToContractEnded();
@@ -118,6 +151,7 @@ contract PassThrough {
         emit Values(receipent, totalFunds, totalRewards);
     }
 
+    /// @notice function to donate eth into the campaign
     function addEthFunds() public noReentrant payable  {
         if (msg.value == 0) revert NotEnoughFunds();
         if (!isActive) revert FundingToContractEnded();
@@ -148,7 +182,7 @@ contract PassThrough {
     }
 
 
-    
+    /// function to donate bridged tokens into campaign and swap to the usdc then sends to the campaign
     function addBridgedUSDCFunds(uint256 _amountUsdc) public noReentrant {
         require(_amountUsdc > 0, "funds should be greater than 0");
         require(_usdcBridged.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved");
@@ -201,17 +235,34 @@ contract PassThrough {
         emit Values(receipent, totalFunds, totalRewards);
     }
 
-
+    /// @notice external function to receive eth funds
     receive() external payable {
         addEthFunds();
     }
 
+    ///@notice function to get all the funders who donated to this campaign
     function retrieveAllFunders() public view  returns(address[] memory){
         return funders;
     }
 
+    /// @notice function to end campaign manually and only proposer or admin can do this
     function endCampaign() public onlyProposerOrAdmin {
         if(!isActive) revert("campaign is not active or already ended");
         isActive = false;
+    }
+
+    /// @notice function to vote to revoke as a platformAdmin
+    /// @param _admin address of platformAdmin to vote for revoke
+    function voteToRevokePlatformAdmin(address _admin) public {
+        require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
+        revokeVotes[_admin] +=1;
+        if(revokeVotes[_admin] >= (2 * totalPlatformAdmins) / 3) {
+            finalRevoke(_admin);
+        }
+    }
+    /// @notice function to revoke access for platform admin, it will be called in voteToRevokePlatformAdmin
+    /// @param _admin address of platformAdmin to vote for revoke
+    function finalRevoke(address _admin) private {
+        isplatformAdmin[_admin] = false;
     }
 }
