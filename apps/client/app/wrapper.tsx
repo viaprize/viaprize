@@ -28,35 +28,35 @@ export default function WrapperLayout({
   children: React.ReactNode;
 }) {
   return (
-      <div>
-        <SpeedInsights />
-        <PrivyProvider
-          appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
-          config={{
-            loginMethods: ['email', 'wallet'],
-            additionalChains: [],
+    <div>
+      <SpeedInsights />
+      <PrivyProvider
+        appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
+        config={{
+          loginMethods: ['email', 'wallet'],
+          additionalChains: [],
 
-            defaultChain: configureChainsConfig.chains[0],
-            appearance: {
-              theme: 'dark',
-              accentColor: '#676FFF',
-              showWalletLoginFirst: true,
+          defaultChain: configureChainsConfig.chains[0],
+          appearance: {
+            theme: 'dark',
+            accentColor: '#676FFF',
+            showWalletLoginFirst: true,
 
-              // logo: 'https://your-logo-url',
-            },
-          }}
-        >
-          <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
-            <QueryClientProvider client={queryClient}>
-              <MantineProvider theme={theme} defaultColorScheme="auto">
-                <ModalsProvider>
-                  <Toaster />
-                  <NavigationProvider>{children}</NavigationProvider>
-                </ModalsProvider>
-              </MantineProvider>
-            </QueryClientProvider>
-          </PrivyWagmiConnector>
-        </PrivyProvider>
-      </div>
+            // logo: 'https://your-logo-url',
+          },
+        }}
+      >
+        <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
+          <QueryClientProvider client={queryClient}>
+            <MantineProvider theme={theme} defaultColorScheme="auto">
+              <ModalsProvider>
+                <Toaster />
+                <NavigationProvider>{children}</NavigationProvider>
+              </ModalsProvider>
+            </MantineProvider>
+          </QueryClientProvider>
+        </PrivyWagmiConnector>
+      </PrivyProvider>
+    </div>
   );
 }

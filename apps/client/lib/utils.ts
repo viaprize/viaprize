@@ -137,7 +137,7 @@ export const calculateDeadline = (createdDate: Date, endDate: Date) => {
 // };
 
 export const formatDate = (date: string): string => {
-  const format = new Intl.DateTimeFormat('en-ZA', {
+  const format = new Intl.DateTimeFormat('en', {
     weekday: 'short',
     year: 'numeric',
     month: 'short',

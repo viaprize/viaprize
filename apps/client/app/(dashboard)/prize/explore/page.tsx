@@ -35,9 +35,8 @@ function ExplorePage() {
         </Suspense>
         {/* Add as many ExploreCard components as you need */}
       </div>
-      
+
       {/* <HistoryPage /> */}
-      
     </div>
   );
 }

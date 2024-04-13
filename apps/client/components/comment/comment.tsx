@@ -167,14 +167,17 @@ export default function Comment({ portalComment }: { portalComment: PortalsComme
           >
             <IconArrowBackUp />
           </ActionIcon>
-          <ActionIcon
-            variant="transparent"
-            size="md"
-            color="red"
-            onClick={openDeleteModal}
-          >
-            <IconTrash />
-          </ActionIcon>
+
+          {appUser?.authId === portalComment.user.authId ? (
+            <ActionIcon
+              variant="transparent"
+              size="md"
+              color="red"
+              onClick={openDeleteModal}
+            >
+              <IconTrash />
+            </ActionIcon>
+          ) : null}
         </Flex>
       </Paper>
 
