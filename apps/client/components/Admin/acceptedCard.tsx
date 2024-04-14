@@ -75,6 +75,7 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
       out = await writePrizeJudgesFactory(requestJudges);
       console.log(out, 'outJudges');
     } else {
+      console.log({ admins });
       const requestJudges = await prepareWritePrizeFactory({
         functionName: 'createViaPrize',
         args: [
