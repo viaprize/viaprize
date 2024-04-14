@@ -64,7 +64,7 @@ function Prize() {
     const newImages = await handleUploadImages();
     // const finalAddress = address.filter((x) => x);
     await addProposalsMutation({
-      admins: [wallet.address, ...address],
+      admins: [wallet.address],
       description: richtext,
       isAutomatic,
       voting_time: votingTime,
