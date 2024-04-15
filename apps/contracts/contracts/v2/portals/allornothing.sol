@@ -46,6 +46,10 @@ contract AllOrNothing {
     uint256 public totalFunds;
     /// @notice bool to check does proposer need to allow donations above the goalAmount or not
     bool public allowDonationAboveGoalAmount;
+    /// @notice this mapping will be to track of revokeVotes for all the platformAdmins
+    mapping(address => uint) public revokeVotes;
+    /// @notice to keep track of total platformAdmins
+    uint256 public totalPlatformAdmins;
     /// @notice bool to check status of campaign
     bool public isActive;
     /// @notice To-Do
@@ -98,8 +102,9 @@ contract AllOrNothing {
         if(_goal == 0 || _deadline == 0) revert RequireGoalAndDeadline();
 
         proposer = _proposer;
-
-        for(uint256 i=0; i<_platformAdmins.length; i++) {
+        isProposer[_proposer] = true;
+        totalPlatformAdmins = _platformAdmins.length;
+        for(uint256 i=0; i<totalPlatformAdmins; i++) {
             platformAdmins.push(_platformAdmins[i]);
             isPlatformAdmin[_platformAdmins[i]] = true;
         }
@@ -454,5 +459,20 @@ contract AllOrNothing {
                 isActive = false; 
             }
         }
+    }
+
+    /// @notice function to vote to revoke as a platformAdmin
+    /// @param _admin address of platformAdmin to vote for revoke
+    function voteToRevokePlatformAdmin(address _admin) public {
+        require(isPlatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
+        revokeVotes[_admin] +=1;
+        if(revokeVotes[_admin] >= (2 * totalPlatformAdmins) / 3) {
+            finalRevoke(_admin);
+        }
+    }
+    /// @notice function to revoke access for platform admin, it will be called in voteToRevokePlatformAdmin
+    /// @param _admin address of platformAdmin to vote for revoke
+    function finalRevoke(address _admin) private {
+        isPlatformAdmin[_admin] = false;
     }
 }
