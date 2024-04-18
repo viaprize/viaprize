@@ -107,7 +107,7 @@ export function TextEditor({
       </RichTextEditor> */}
 
       <ReactQuill
-        className="max-w-fit min-w-0 dont-break-out"
+        className="max-w-full w-full min-w-0 dont-break-out"
         value={richtext}
         onChange={handleQuillChange}
         readOnly={disabled}

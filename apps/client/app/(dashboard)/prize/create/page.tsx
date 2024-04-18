@@ -10,9 +10,9 @@ import {
   ActionIcon,
   Button,
   Card,
-  Checkbox,
   NumberInput,
   SimpleGrid,
+  Switch,
   TextInput,
   Title,
 } from '@mantine/core';
@@ -136,15 +136,17 @@ function Prize() {
           setTitle(e.target.value);
         }}
       />
-      <Checkbox
-        my={'xl'}
-        checked={showJudges}
-        onChange={(event) => setShowJudges(event.currentTarget.checked)}
-        label="Give Judges Voting Power"
-      />
+      <div className="flex gap-2 my-3 items-center justify-start">
+        <p>Funders are judges</p>
+        <Switch
+          checked={showJudges}
+          onChange={(event) => setShowJudges(event.currentTarget.checked)}
+        />
+        <p>Custom judges</p>
+      </div>
 
       {showJudges && (
-        <div className='lg:grid-cols-2 gap-2 grid-cols-1 grid mb-3'>
+        <div className="lg:grid-cols-2 gap-2 grid-cols-1 grid mb-3">
           {judges.map((item, index) => (
             <div className="flex gap-1 justify-center items-center w-full" key={index}>
               <TextInput
@@ -184,9 +186,8 @@ function Prize() {
           ))}
           <ActionIcon
             variant="filled"
-            color="blue"
             size="lg"
-            className='self-center'
+            className="self-center"
             onClick={addJudges}
           >
             <IconPlus />
