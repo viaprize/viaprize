@@ -2,6 +2,7 @@ import { SubmissionWithBlockchainData } from '@/lib/api';
 import { Button, Title } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation';
 import SubmissionsCard from './submissionsCard';
+import { formatEther } from 'viem';
 
 export default function Submissions({
   contractAddress,
@@ -38,6 +39,7 @@ export default function Submissions({
           contractAddress={contractAddress}
           hash={submission.submissionHash}
           showVote={true}
+          won={`won ${parseFloat(formatEther(BigInt(submission.voting_blockchain)))} eth`}
           wallet={submission.submitterAddress}
           time={''}
           votes={submission.voting_blockchain}

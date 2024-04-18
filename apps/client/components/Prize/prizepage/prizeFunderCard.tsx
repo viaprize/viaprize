@@ -1,13 +1,14 @@
-import { Avatar, Card, Group, Text } from '@mantine/core';
+import { Avatar, Card, Text } from '@mantine/core';
 
 interface PrizeFunderCardProps {
   name: string;
   email?: string;
   budget?: number;
   walletAddress?: string;
+  avatar: string;
 }
 
-export default function PrizeFunderCard({ name, email }: PrizeFunderCardProps) {
+export default function PrizeFunderCard({ name, avatar }: PrizeFunderCardProps) {
   return (
     <Card
       shadow="xs"
@@ -15,22 +16,17 @@ export default function PrizeFunderCard({ name, email }: PrizeFunderCardProps) {
       my="md"
       radius="md"
       withBorder
-      className="flex justify-between items-center"
+      className="flex flex-row justify-start items-center gap-4"
     >
-      <Group>
-        <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
-        <div>
-          <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
-            {name}
-          </Text>
-          {/* <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+      <Avatar radius="md" alt="creator" className="rounded-sm" src={avatar} />
+      <div>
+        <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+          {name}
+        </Text>
+        {/* <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
             Proposer Email: {email}
           </Text> */}
-        </div>
-      </Group>
-      {/* <Badge>
-                $500
-            </Badge> */}
+      </div>
     </Card>
   );
 }

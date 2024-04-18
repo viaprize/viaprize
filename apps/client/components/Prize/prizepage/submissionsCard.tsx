@@ -34,11 +34,11 @@ interface SubmissionsCardProps {
   allowVoting: boolean;
   showVote: boolean;
   judges?: string[];
+  won?: string;
 }
 export default function SubmissionsCard({
   fullname,
   votes,
-  wallet,
   time,
   contractAddress,
   hash,
@@ -47,6 +47,7 @@ export default function SubmissionsCard({
   submissionId,
   showVote = true,
   judges,
+  won,
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { address } = useAccount();
@@ -59,31 +60,11 @@ export default function SubmissionsCard({
     refetch,
     loading,
   } = useFunderBalance({
-    hasJudges: !!judges && judges.length > 0,
+    hasJudges: Boolean(judges) && judges.length > 0,
     address: address ?? '0x',
-    contractAddress: contractAddress,
+    contractAddress,
   });
 
-  // const { config } = usePrepareViaPrizeVote({});
-  // console.log({ config });
-  // console.log([hash as `0x${string}`, parseEther(debounced)], 'hiiii');
-
-  // console.log({ debounced }, 'debounced');
-  // const {
-  //   isLoading: sendLoading,
-  //   writeAsync,
-  //   write,
-  // } = useViaPrizeVote({
-  //   address: contractAddress as `0x${string}`,
-  //   account: address,
-  //   args: [hash as `0x${string}`, parseEther(debounced)],
-
-  //   onSuccess(data) {
-  //     toast.success(`Transaction Sent with Hash ${data?.hash}`, {
-  //       duration: 6000,
-  //     });
-  //   },
-  // });
   return (
     <Card className="flex flex-col justify-center gap-3 my-2">
       <Modal opened={opened} onClose={close} title="Voting For this submission">
@@ -114,7 +95,7 @@ export default function SubmissionsCard({
               setValue(v.toString());
             }}
           />
-          {showVote && (
+          {showVote ? (
             <Button
               onClick={async () => {
                 try {
@@ -152,21 +133,21 @@ export default function SubmissionsCard({
             >
               Vote!
             </Button>
-          )}
+          ) : null}
         </Stack>
       </Modal>
       <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-        <Group>
-          <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
-          <div>
-            <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
-              {fullname}
-            </Text>
-            {/* <Text c="dimmed" fz="sm">
-              {wallet.slice(0, 10)}...{wallet.slice(-10)}
-            </Text> */}
-          </div>
-        </Group>
+        <div className='flex items-center justify-between w-full'>
+          <Group>
+            <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
+            <div>
+              <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+                {fullname}
+              </Text>
+            </div>
+          </Group>
+          {won ? <Badge bg="green">{won}</Badge> : null}
+        </div>
         <div>
           <Text c="dimmed" fz="sm">
             {time}
@@ -175,11 +156,11 @@ export default function SubmissionsCard({
             <Button color="black" mr="5px" onClick={open} disabled={!allowVoting}>
               {allowVoting && showVote ? 'Vote' : ''}
             </Button>
-            {allowVoting && showVote && (
-              <Badge variant="filled" w={'auto'} size="lg" color="blue">
+            {allowVoting && showVote ? (
+              <Badge variant="filled" w="auto" size="lg" color="blue">
                 {formatEther(BigInt(votes.toString()))} {chain.nativeCurrency.symbol}
               </Badge>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
