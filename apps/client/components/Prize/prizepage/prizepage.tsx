@@ -16,8 +16,11 @@ import {
 import { useDebouncedValue } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconRefresh } from '@tabler/icons-react';
+import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { parseEther } from 'viem';
 import { useAccount, useBalance, useQuery } from 'wagmi';
 import ChangeSubmission from './buttons/changeSubmission';
 import ChangeVoting from './buttons/changeVoting';
@@ -28,9 +31,6 @@ import StartSubmission from './buttons/startSubmission';
 import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import Submissions from './submissions';
-import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
-import { parseEther } from 'viem';
-import { toast } from 'sonner';
 
 function FundCard({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
@@ -86,9 +86,9 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       console.error('cryptoToUsd is undefined');
       return 0;
     }
-    const cryto_to_usd_value = cryptoToUsd.ethereum.usd;
-    const usd_to_eth = parseFloat(value) / cryto_to_usd_value;
-    return isNaN(usd_to_eth) ? 0 : usd_to_eth;
+    const cryptoToUsdValue = cryptoToUsd.ethereum.usd;
+    const useToEth = parseFloat(value) / cryptoToUsdValue;
+    return isNaN(useToEth) ? 0 : useToEth;
   }, [value]);
 
   // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
@@ -212,6 +212,7 @@ export default function PrizePageComponent({
       />
       <Center my="xl">
         <PrizePageTabs
+          avatar={prize.user.avatar}
           email={prize.user.email}
           name={prize.user.name}
           description={prize.description}

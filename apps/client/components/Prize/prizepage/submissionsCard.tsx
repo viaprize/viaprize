@@ -1,3 +1,4 @@
+/* eslint-disable no-implicit-coercion */
 import { useFunderBalance } from '@/components/hooks/useFunderBalance';
 import { prepareWritePrize, writePrize } from '@/lib/smartContract';
 import { chain } from '@/lib/wagmi';
@@ -60,7 +61,7 @@ export default function SubmissionsCard({
     refetch,
     loading,
   } = useFunderBalance({
-    hasJudges: Boolean(judges) && judges.length > 0,
+    hasJudges: !!judges && judges.length > 0,
     address: address ?? '0x',
     contractAddress,
   });

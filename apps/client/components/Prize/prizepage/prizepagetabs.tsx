@@ -14,6 +14,7 @@ export default function PrizePageTabs({
   totalFunds,
   submissionDeadline,
   votingDeadline,
+  avatar,
 }: {
   contractAddress: string;
   description: string;
@@ -22,9 +23,8 @@ export default function PrizePageTabs({
   totalFunds: number;
   submissionDeadline?: Date;
   votingDeadline?: Date;
+  avatar: string;
 }) {
-  console.log(contractAddress, 'contractAddress');
-  console.log(totalFunds.toString(), 'HIIIIIIIIIIIIIIii');
   return (
     <Tabs className="w-full" variant="pills" defaultValue="about">
       <Tabs.List justify="center" grow>
@@ -43,22 +43,22 @@ export default function PrizePageTabs({
         />
         <div className="flex justify-between">
           <div>
-            {submissionDeadline && (
+            {submissionDeadline ? (
               <Text size="lg">
                 Submission Deadline:{' '}
-                <Text c="red">{submissionDeadline?.toLocaleString()}</Text>
+                <Text c="red">{submissionDeadline.toLocaleString()}</Text>
               </Text>
-            )}
-            {votingDeadline && (
+            ) : null}
+            {votingDeadline ? (
               <Text size="lg">
-                Voting Deadline: <Text c="red">{votingDeadline?.toLocaleString()}</Text>
+                Voting Deadline: <Text c="red">{votingDeadline.toLocaleString()}</Text>
               </Text>
-            )}
+            ) : null}
           </div>
         </div>
       </Tabs.Panel>
       <Tabs.Panel value="creators">
-        <PrizeFunderCard name={name} email={email} />
+        <PrizeFunderCard name={name} email={email} avatar={avatar} />
       </Tabs.Panel>
     </Tabs>
   );
