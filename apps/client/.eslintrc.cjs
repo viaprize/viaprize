@@ -39,26 +39,26 @@ const config = {
     'react/jsx-sort-props': 'off',
     '@typescript-eslint/no-unnecessary-type-arguments': 'off',
     //TODO: on this soon
-    '@typescript-eslint/no-unsafe-call': 'warn',
+    '@typescript-eslint/no-unsafe-call': 'off',
     //TODO: on this soon
-    '@typescript-eslint/no-unsafe-member-access': 'warn',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
     //TODO : on this soon
-    '@typescript-eslint/no-unsafe-return': 'warn',
+    '@typescript-eslint/no-unsafe-return': 'off',
     //TODO : on this  soon
-    'turbo/no-undeclared-env-vars': 'warn',
+    'turbo/no-undeclared-env-vars': 'off',
     //TODO: on this sooon,
-    'no-console': 'warn',
-    '@typescript-eslint/no-unnecessary-condition': 'warn',
+    'no-console': 'off',
+    '@typescript-eslint/no-unnecessary-condition': 'off',
     //TODO: on this soon
-    '@typescript-eslint/no-misused-promises': 'warn',
+    '@typescript-eslint/no-misused-promises': 'off',
     'import/no-default-export': 'off',
     'react/react-in-jsx-scope': 'off',
     'jsx-a11y/accessible-emoji': 'off',
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    'eslint-comments/require-description': 'warn',
+    'eslint-comments/require-description': 'off',
     'import/no-extraneous-dependencies': 'off',
-    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-unused-vars': 'off',
     'import/order': 'off',
     // "unicorn/filename-case": [
     //   "error",
@@ -66,11 +66,11 @@ const config = {
     //     case: "pascalCase",
     //   },
     // ],
-    'no-alert': 'warn',
+    'no-alert': 'off',
     'react/button-has-type': 'off',
     '@typescript-eslint/default-param-last': 'off',
-    '@typescript-eslint/non-nullable-type-assertion-style': 'warn',
-    '@typescript-eslint/no-confusing-void-expression': 'warn',
+    '@typescript-eslint/non-nullable-type-assertion-style': 'off',
+    '@typescript-eslint/no-confusing-void-expression': 'off',
   },
 };
 

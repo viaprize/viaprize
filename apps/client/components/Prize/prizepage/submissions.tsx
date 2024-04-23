@@ -25,7 +25,7 @@ export default function Submissions({
           w="40%"
           className="self-end"
           // target="_blank"
-          href={`${id!}/editor?contract=${contractAddress}`}
+          href={`${id}/editor?contract=${contractAddress}`}
         >
           Submit your work
         </Button>
