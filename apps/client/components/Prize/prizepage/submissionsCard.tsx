@@ -165,7 +165,7 @@ export default function SubmissionsCard({
           </div>
         </div>
       </div>
-      <Text lineClamp={3}>{extractPlainTextFromEditor(description).slice(0, 350)}</Text>
+      <Text lineClamp={4}>{extractPlainTextFromEditor(description).slice(0, 350)}....</Text>
       <Button
         rightSection={<IconArrowAutofitUp size="1rem" />}
         onClick={() => {
