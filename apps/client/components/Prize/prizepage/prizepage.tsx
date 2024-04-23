@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
 import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
@@ -15,8 +17,11 @@ import {
 import { useDebouncedValue } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconRefresh } from '@tabler/icons-react';
+import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { parseEther } from 'viem';
 import { useAccount, useBalance, useQuery } from 'wagmi';
 import ChangeSubmission from './buttons/changeSubmission';
 import ChangeVoting from './buttons/changeVoting';
@@ -27,9 +32,6 @@ import StartSubmission from './buttons/startSubmission';
 import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import Submissions from './submissions';
-import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
-import { parseEther } from 'viem';
-import { toast } from 'sonner';
 
 function FundCard({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
@@ -67,6 +69,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
   const [sendLoading, setSendLoading] = useState(false);
 
   const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const final = await (
       await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
     ).json();
@@ -84,9 +87,9 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       console.error('cryptoToUsd is undefined');
       return 0;
     }
-    const cryto_to_usd_value = cryptoToUsd.ethereum.usd;
-    const usd_to_eth = parseFloat(value) / cryto_to_usd_value;
-    return isNaN(usd_to_eth) ? 0 : usd_to_eth;
+    const cryptoToUsdValue = cryptoToUsd.ethereum.usd;
+    const useToEth = parseFloat(value) / cryptoToUsdValue;
+    return isNaN(useToEth) ? 0 : useToEth;
   }, [value]);
 
   // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
@@ -143,7 +146,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       <Button
         disabled={!value}
         loading={sendLoading}
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises -- will replace later
         onClick={async () => {
           if (!address) {
             openDeleteModal();
@@ -162,6 +165,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
             });
             window.location.reload();
           } catch (e: unknown) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
             toast.error((e as any)?.message);
           } finally {
             setSendLoading(false);
@@ -181,7 +185,6 @@ export default function PrizePageComponent({
   submissions: SubmissionWithBlockchainData[];
 }) {
   const { appUser } = useAppUser();
-  console.log({ prize });
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
@@ -210,18 +213,19 @@ export default function PrizePageComponent({
       />
       <Center my="xl">
         <PrizePageTabs
+          avatar={prize.user.avatar}
           email={prize.user.email}
           name={prize.user.name}
           description={prize.description}
           contractAddress={prize.contract_address}
           totalFunds={prize.balance}
           submissionDeadline={
-            prize.submission_time_blockchain != 0
+            prize.submission_time_blockchain !== 0
               ? new Date(prize.submission_time_blockchain * 1000)
               : undefined
           }
           votingDeadline={
-            prize.voting_time_blockchain != 0
+            prize.voting_time_blockchain !== 0
               ? new Date(prize.voting_time_blockchain * 1000)
               : undefined
           }

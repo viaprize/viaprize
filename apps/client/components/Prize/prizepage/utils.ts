@@ -11,7 +11,7 @@ function extractTextFromNode(node: Node): string {
   }
 
   if (node.content) {
-    return node.content.map(extractTextFromNode).join(' ');
+    return node.content.map(extractTextFromNode).join('\n');
   }
 
   return '';

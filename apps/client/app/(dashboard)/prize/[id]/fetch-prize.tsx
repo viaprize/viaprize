@@ -48,5 +48,7 @@ export default async function FetchPrize({ params }: { params: { id: string } })
       page: 1,
     })
   ).data.data;
+  console.log(submissions,'sub')
+  
   return <PrizePageComponent prize={prize} submissions={submissions} />;
 }
