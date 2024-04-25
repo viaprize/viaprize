@@ -27,14 +27,13 @@ export class PortalCommentService {
     return portalComment;
   }
 
-  async getCommentsByPortalId(portalId: string) {
+  async getCommentsByPortalId(portalSlug: string) {
     const portalComments = await this.portalCommentsRepository.find({
       where: {
         portal: {
-          id: portalId,
+          slug: portalSlug,
         },
       },
-
       relations: ['user'],
     });
     return portalComments;

@@ -45,7 +45,7 @@ export class PortalsService {
   async findOne(id: string) {
     const portal = await this.portalRepository.findOneOrFail({
       where: {
-        id,
+        slug: id,
       },
       relations: ['user'],
     });

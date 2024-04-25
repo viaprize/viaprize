@@ -244,6 +244,7 @@ export class PortalsController {
 
   @Get('/:id')
   async getPortal(@TypedParam('id') id: string): Promise<PortalWithBalance> {
+    console.log(id, 'slug');
     const portal = await this.portalsService.findOne(id);
     const results = await this.blockchainService.getPortalPublicVariables(
       portal.contract_address,
