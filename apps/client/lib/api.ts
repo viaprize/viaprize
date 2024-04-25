@@ -1489,7 +1489,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         format: 'json',
         ...params,
       }),
-      
+
     /**
  * @description The function `createComment` is an asynchronous function that takes a `comment` parameter calls the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
  *
