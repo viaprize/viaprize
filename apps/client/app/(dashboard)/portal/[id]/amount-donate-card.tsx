@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
 import { backendApi } from '@/lib/backend';
@@ -200,9 +200,9 @@ export default function AmountDonateCard({
       console.error('cryptoToUsd is undefined');
       return 0;
     }
-    const cryto_to_usd_value = cryptoToUsd.ethereum.usd;
-    const usd_to_eth = parseFloat(value) / cryto_to_usd_value;
-    return isNaN(usd_to_eth) ? 0 : usd_to_eth;
+    const cryptoToUsdValue = cryptoToUsd.ethereum.usd;
+    const usdToEth = parseFloat(value) / cryptoToUsdValue;
+    return isNaN(usdToEth) ? 0 : usdToEth;
   }, [value]);
 
   const [sendLoading, setSendLoading] = useState(false);
@@ -456,7 +456,7 @@ export default function AmountDonateCard({
                   duration: 6000,
                 });
               } catch (e: unknown) {
-                toast.error((e as unknown)?.message);
+                toast.error((e as any)?.message);
               } finally {
                 setSendLoading(false);
                 window.location.reload();
