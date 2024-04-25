@@ -583,10 +583,13 @@ export class PortalsController {
   ): Promise<PortalProposals> {
     console.log({ createPortalProposal });
     console.log(req.user, 'user');
+    const slug = await this.portalsService.checkAndReturnUniqueSlug(
+      stringToSlug(createPortalProposal.title),
+    );
     const proposals = await this.portalProposalsService.create(
       createPortalProposal,
       req.user.userId,
-      stringToSlug(createPortalProposal.title),
+      slug,
     );
     await this.mailService.proposalSent(
       proposals.user.email,
