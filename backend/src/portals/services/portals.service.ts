@@ -53,6 +53,15 @@ export class PortalsService {
     return portal;
   }
 
+  async findAndGetBySlugOnly(slug: string) {
+    const portal = await this.portalRepository.findOneOrFail({
+      where: {
+        slug,
+      },
+    });
+    return portal;
+  }
+
   async findAndGetByIdOnly(id: string) {
     const portal = await this.portalRepository.findOneOrFail({
       where: {

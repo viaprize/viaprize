@@ -14,10 +14,10 @@ export class PortalCommentService {
     private portalService: PortalsService,
   ) {}
 
-  async create(comment: string, userAuthId: string, portalId: string) {
+  async create(comment: string, userAuthId: string, portalSlug: string) {
     const user = await this.userService.findOneByAuthId(userAuthId);
 
-    const portal = await this.portalService.findAndGetByIdOnly(portalId);
+    const portal = await this.portalService.findAndGetBySlugOnly(portalSlug);
 
     const portalComment = await this.portalCommentsRepository.save({
       comment: comment,
