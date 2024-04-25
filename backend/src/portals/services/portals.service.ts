@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { customAlphabet } from 'nanoid';
 import { Paginated, paginate } from 'nestjs-paginate';
 import { Repository } from 'typeorm';
 import { Portals } from '../entities/portal.entity';
@@ -63,6 +62,14 @@ export class PortalsService {
     return portal;
   }
 
+  async generateId() {
+    const { customAlphabet } = await import('nanoid');
+    return customAlphabet(
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      5,
+    );
+  }
+
   async checkAndReturnUniqueSlug(slug: string) {
     const portal = await this.portalRepository.exist({
       where: {
@@ -70,11 +77,8 @@ export class PortalsService {
       },
     });
     if (portal) {
-      const nanoid = customAlphabet(
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
-        5,
-      );
-      return `${slug}-${nanoid()}`;
+      const nanoid = await this.generateId();
+      return `${slug}-${nanoid}`;
     }
     return slug;
   }
