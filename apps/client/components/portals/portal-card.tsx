@@ -49,6 +49,7 @@ export default function PortalCard({
   isActive,
   tags,
   isIframe,
+  
 }: PortalCardProps) {
   const isRefunded = !isActive && parseFloat(amountRaised) < fundingGoalWithPlatformFee;
   const { data: extraData } = useQuery([`get-extra-data-${id}`], async () => {
