@@ -21,6 +21,7 @@ export async function generateMetadata({
   return {
     title: portal.title,
     description: portal.description,
+    metadataBase: new URL('https://viaprize.org/'),
     openGraph: {
       images: {
         url: portal.images[0],
