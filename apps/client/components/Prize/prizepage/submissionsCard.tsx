@@ -138,7 +138,7 @@ export default function SubmissionsCard({
         </Stack>
       </Modal>
       <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-        <div className='flex items-center justify-between w-full'>
+        <div className="flex items-center justify-between w-full">
           <Group>
             <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
             <div>
@@ -165,7 +165,9 @@ export default function SubmissionsCard({
           </div>
         </div>
       </div>
-      <Text lineClamp={4}>{extractPlainTextFromEditor(description).slice(0, 350)}....</Text>
+      <Text lineClamp={4}>
+        {extractPlainTextFromEditor(description).slice(0, 350)}....
+      </Text>
       <Button
         rightSection={<IconArrowAutofitUp size="1rem" />}
         onClick={() => {

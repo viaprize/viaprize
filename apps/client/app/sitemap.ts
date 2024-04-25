@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ).data.data;
 
   const portalsIndex: MetadataRoute.Sitemap = portals.map((portal) => ({
-    url: `${url}/portal/${portal.id}`,
+    url: `${url}/portal/${portal.slug}`,
     lastModified: new Date(portal.updatedAt),
   }));
 

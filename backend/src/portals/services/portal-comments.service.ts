@@ -14,10 +14,10 @@ export class PortalCommentService {
     private portalService: PortalsService,
   ) {}
 
-  async create(comment: string, userAuthId: string, portalId: string) {
+  async create(comment: string, userAuthId: string, portalSlug: string) {
     const user = await this.userService.findOneByAuthId(userAuthId);
 
-    const portal = await this.portalService.findAndGetByIdOnly(portalId);
+    const portal = await this.portalService.findAndGetBySlugOnly(portalSlug);
 
     const portalComment = await this.portalCommentsRepository.save({
       comment: comment,
@@ -27,14 +27,13 @@ export class PortalCommentService {
     return portalComment;
   }
 
-  async getCommentsByPortalId(portalId: string) {
+  async getCommentsByPortalId(portalSlug: string) {
     const portalComments = await this.portalCommentsRepository.find({
       where: {
         portal: {
-          id: portalId,
+          slug: portalSlug,
         },
       },
-
       relations: ['user'],
     });
     return portalComments;

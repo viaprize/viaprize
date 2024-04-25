@@ -45,12 +45,42 @@ export class PortalsService {
   async findOne(id: string) {
     const portal = await this.portalRepository.findOneOrFail({
       where: {
-        id,
+        slug: id,
       },
       relations: ['user'],
     });
 
     return portal;
+  }
+
+  async findAndGetBySlugOnly(slug: string) {
+    const portal = await this.portalRepository.findOneOrFail({
+      where: {
+        slug,
+      },
+    });
+    return portal;
+  }
+
+  async generateId() {
+    const { customAlphabet } = await import('nanoid');
+    return customAlphabet(
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
+      5,
+    );
+  }
+
+  async checkAndReturnUniqueSlug(slug: string) {
+    const portal = await this.portalRepository.exist({
+      where: {
+        slug: slug,
+      },
+    });
+    if (portal) {
+      const nanoid = await this.generateId();
+      return `${slug}-${nanoid}`;
+    }
+    return slug;
   }
 
   async findAndGetByIdOnly(id: string) {
@@ -109,14 +139,13 @@ export class PortalsService {
     });
   }
 
-  async addPortalUpdate(portalId: string, update: string) {
+  async addPortalUpdate(portalSlug: string, update: string) {
     const portal = await this.portalRepository.findOneOrFail({
       where: {
-        id: portalId,
+        slug: portalSlug,
       },
     });
-    await this.portalRepository.save(portal);
-    this.portalRepository.update(portalId, {
+    await this.portalRepository.update(portal.id, {
       updates: [update, ...(portal.updates ?? [])],
     });
     portal.updates = [update, ...(portal.updates ?? [])];

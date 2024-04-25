@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -24,6 +25,7 @@ export class Portals {
   @Column('varchar', {
     unique: true,
   })
+  @Index()
   slug: string;
 
   @Column()

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
 import { backendApi } from '@/lib/backend';
@@ -21,7 +23,8 @@ import {
 import { useDebouncedValue } from '@mantine/hooks';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconChevronRight, IconCopy, IconRefresh } from '@tabler/icons-react';
-import { FetchBalanceResult, prepareSendTransaction, sendTransaction } from '@wagmi/core';
+import type { FetchBalanceResult } from '@wagmi/core';
+import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -43,7 +46,7 @@ interface AmountDonateCardProps {
   id: string;
 }
 
-const DonateButton = ({
+function DonateButton({
   value,
   refetch,
   sendLoading,
@@ -67,7 +70,7 @@ const DonateButton = ({
   cryptoToUsd: ConvertUSD | undefined;
   refetch: any;
   debounced: string;
-}) => {
+}) {
   return (
     <>
       <NumberInput
@@ -140,7 +143,7 @@ const DonateButton = ({
       </Button>
     </>
   );
-};
+}
 export default function AmountDonateCard({
   recipientAddress,
   amountRaised,
@@ -197,9 +200,9 @@ export default function AmountDonateCard({
       console.error('cryptoToUsd is undefined');
       return 0;
     }
-    const cryto_to_usd_value = cryptoToUsd.ethereum.usd;
-    const usd_to_eth = parseFloat(value) / cryto_to_usd_value;
-    return isNaN(usd_to_eth) ? 0 : usd_to_eth;
+    const cryptoToUsdValue = cryptoToUsd.ethereum.usd;
+    const usdToEth = parseFloat(value) / cryptoToUsdValue;
+    return isNaN(usdToEth) ? 0 : usdToEth;
   }, [value]);
 
   const [sendLoading, setSendLoading] = useState(false);
@@ -387,9 +390,9 @@ export default function AmountDonateCard({
         {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
           <>
             <Link
-              href={'https://buy.stripe.com/00g8x6dwf7M8gHm7st'}
+              href="https://buy.stripe.com/00g8x6dwf7M8gHm7st"
               className="hover:text-blue-400"
-            ></Link>
+            />
             <NavLink
               href="https://buy.stripe.com/00g8x6dwf7M8gHm7st"
               label="Donate monthly"
@@ -405,9 +408,9 @@ export default function AmountDonateCard({
             />
 
             <Link
-              href={'https://donate.stripe.com/14k00A0Jt8QcfDibII'}
+              href="https://donate.stripe.com/14k00A0Jt8QcfDibII"
               className="hover:text-blue-400"
-            ></Link>
+            />
             <NavLink
               href="https://donate.stripe.com/14k00A0Jt8QcfDibII"
               label="One time donation with card"

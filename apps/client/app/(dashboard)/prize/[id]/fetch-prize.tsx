@@ -25,6 +25,7 @@ export async function generateMetadata({
   return {
     title: prize.title,
     description: prize.description,
+    metadataBase: new URL('https://viaprize.org/'),
     openGraph: {
       images: {
         url: prize.images[0],
@@ -48,7 +49,7 @@ export default async function FetchPrize({ params }: { params: { id: string } })
       page: 1,
     })
   ).data.data;
-  console.log(submissions,'sub')
-  
+  console.log(submissions, 'sub');
+
   return <PrizePageComponent prize={prize} submissions={submissions} />;
 }
