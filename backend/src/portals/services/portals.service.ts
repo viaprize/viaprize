@@ -109,14 +109,13 @@ export class PortalsService {
     });
   }
 
-  async addPortalUpdate(portalId: string, update: string) {
+  async addPortalUpdate(portalSlug: string, update: string) {
     const portal = await this.portalRepository.findOneOrFail({
       where: {
-        id: portalId,
+        slug: portalSlug,
       },
     });
-    await this.portalRepository.save(portal);
-    this.portalRepository.update(portalId, {
+    await this.portalRepository.update(portal.id, {
       updates: [update, ...(portal.updates ?? [])],
     });
     portal.updates = [update, ...(portal.updates ?? [])];

@@ -6,6 +6,7 @@ import { usePortal } from '@/components/hooks/usePortal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import type { PortalWithBalance } from '@/lib/api';
 import { Button, Card } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { toast } from 'sonner';
@@ -28,12 +29,15 @@ export default function AddUpdateCard({
 }) {
   const { appUser } = useAppUser();
   const [richtext, setRichtext] = useState('');
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const { addUpdatesToPortal } = usePortal();
 
   const { mutateAsync: updatePortal } = useMutation(addUpdatesToPortal);
 
   const handlePortalUpdate = () => {
+    setIsLoading(true);
     const update = updateWithDate(richtext);
     console.log(extractUpdateAndDate(update));
     toast.promise(
@@ -44,6 +48,8 @@ export default function AddUpdateCard({
         error: 'Failed to add Update',
       },
     );
+    router.push(`/portal/${params.id}`);
+    setIsLoading(false);
   };
 
   if (appUser?.username !== portal.user.username && !appUser?.isAdmin) {
@@ -55,7 +61,12 @@ export default function AddUpdateCard({
       <h1>{portal.title}</h1>
       <h3>Add a New Update for {new Date().toDateString()}</h3>
       <TextEditor richtext={richtext} setRichtext={setRichtext} />
-      <Button className="my-3" onClick={handlePortalUpdate}>
+      <Button
+        className="my-3"
+        onClick={handlePortalUpdate}
+        disabled={isLoading}
+        loading={isLoading}
+      >
         Add Update
       </Button>
     </Card>
