@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 'use client';
 
 import { calculateDeadline, htmlToPlainText } from '@/lib/utils';
@@ -70,18 +71,27 @@ function ExploreCard({
           }
         />
       </Card.Section>
-      <div className="flex items-center my-3 gap-2 text-red-600">
-        <PiTimerFill
-        // color='red'
-        />
-        <Text
-          // c="red"
-          fw="bold"
-        >
-          {deadlineString}
-        </Text>
+      <div className="flex justify-between items-center my-3 gap-2 text-red-600">
+        <div className="flex items-center space-x-2">
+          <PiTimerFill
+          // color='red'
+          />
+          <Text
+            // c="red"
+            fw="bold"
+          >
+            {deadlineString}
+          </Text>
+        </div>
 
-        {distributed ? <Text>Prize Has Ended</Text> : null}
+        {/* {distributed ? <Text>Prize Has Ended</Text> : null} */}
+
+        {deadlineString === 'Time is up!' && distributed === true ? (
+          <Badge color="green">Won</Badge>
+        ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+        deadlineString === 'Time is up!' && distributed === false ? (
+          <Badge color="yellow">Refunded</Badge>
+        ) : null}
       </div>
       <Group mb="xs" mt="md" justify="space-between">
         <Text fw={500}>{title}</Text>
