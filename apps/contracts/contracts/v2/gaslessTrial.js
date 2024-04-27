@@ -12,15 +12,13 @@ import { optimismSepolia } from "viem/chains";
 
 const trx = async () => {
   const config = {
-    privateKey:
-      "9e2cd1b489890a7476c20ead1c8c195d93c9544bc88d5c712f7c7233b76b97ac",
-    biconomyPaymasterApiKey: "TZG4TFMtL.6d3bcbd7-42e3-4464-9d85-a25cd0e0a56a",
+    privateKey: "",
+    biconomyPaymasterApiKey: "",
     bundlerUrl:
       "https://bundler.biconomy.io/api/v2/11155420/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44", // <-- Read about this at https://docs.biconomy.io/dashboard#bundler-url
   };
   const paymaster = await createPaymaster({
-    paymasterUrl:
-      "https://paymaster.biconomy.io/api/v1/11155420/TZG4TFMtL.6d3bcbd7-42e3-4464-9d85-a25cd0e0a56a", // <-- Read about at https://docs.biconomy.io/dashboard/paymaster
+    paymasterUrl: "", // <-- Read about at https://docs.biconomy.io/dashboard/paymaster
     strictMode: true,
   });
 

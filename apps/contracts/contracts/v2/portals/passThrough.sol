@@ -69,8 +69,10 @@ contract PassThrough {
     address public USDC_E;
     /// @notice this is an Eth address which will be assigned while deploying the contract.
     address public WETH;
-    /// @notice this mapping will be to track of revokeVotes for all the platformAdmins
-    mapping(address => uint) public revokeVotes;
+    /// @notice this mapping will be to track of votesToRevokePlatformAdmin for all the platformAdmins
+    mapping(address => uint) public votesToRevokePlatformAdmin;
+    /// @notice this mapping will be to track of votes to add platformAdmin for all the platformAdmins
+    mapping(address => uint) public votesToAddPlatformAdmin;
     /// @notice to keep track of total platformAdmins
     uint256 public totalPlatformAdmins;
     /// @notice error indicating insufficient funds while funding to the contract.
@@ -292,19 +294,40 @@ contract PassThrough {
         isActive = false;
     }
 
+    /// @notice function to revoke access for platform admin, it will be called in voteToRevokePlatformAdmin
+    /// @param _admin address of platformAdmin to vote for revoke
+    function finalRevokePlatformAdmin(address _admin) private {
+        isplatformAdmin[_admin] = false;
+        totalPlatformAdmins -= 1;
+    }
+
+    /// @notice function to add access for platform admin, it will be called in voteToAddPlatformAdmin
+    /// @param _admin address of platformAdmin to vote for add
+    function finalAddPlatformAdmin(address _admin) private {
+        isplatformAdmin[_admin] = true;
+        totalPlatformAdmins += 1;
+    }
+
+    /// @notice function to vote to add as a platformAdmin
+    /// @param _admin is the address to vote for platform Admin
+    function voteToAddPlatformAdmin(address _admin) public {
+        require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
+        require(!isplatformAdmin[_admin], "the address you want to vote is already a platform admin");
+        votesToAddPlatformAdmin[_admin] +=1;
+        if(votesToAddPlatformAdmin[_admin] >= (2 * totalPlatformAdmins) / 3) {
+            finalAddPlatformAdmin(_admin);
+        }
+    }
+
     /// @notice function to vote to revoke as a platformAdmin
     /// @param _admin address of platformAdmin to vote for revoke
     function voteToRevokePlatformAdmin(address _admin) public {
         require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
-        revokeVotes[_admin] +=1;
-        if(revokeVotes[_admin] >= (2 * totalPlatformAdmins) / 3) {
-            finalRevoke(_admin);
+        require(isplatformAdmin[_admin], "the address you want to vote is not a platform admin");
+        votesToRevokePlatformAdmin[_admin] +=1;
+        if(votesToRevokePlatformAdmin[_admin] >= (2 * totalPlatformAdmins) / 3) {
+            finalRevokePlatformAdmin(_admin);
         }
-    }
-    /// @notice function to revoke access for platform admin, it will be called in voteToRevokePlatformAdmin
-    /// @param _admin address of platformAdmin to vote for revoke
-    function finalRevoke(address _admin) private {
-        isplatformAdmin[_admin] = false;
     }
 
 
