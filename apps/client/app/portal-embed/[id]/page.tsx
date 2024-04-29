@@ -41,6 +41,7 @@ export default async function PortalEmbed({ params }: { params: { id: string } }
           deadline={portal.deadline}
           tags={portal.tags}
           isIframe={true}
+          slug={portal.slug}
         />
       ) : null}
     </div>

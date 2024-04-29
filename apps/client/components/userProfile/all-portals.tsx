@@ -66,6 +66,7 @@ export default function AllPortals({ params }: { params: { id: string } }) {
             deadline={portal.deadline}
             tags={portal.tags}
             isIframe={false}
+            slug={portal.slug}
           />
         );
       })}
