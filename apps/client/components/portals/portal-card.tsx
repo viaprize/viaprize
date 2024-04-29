@@ -34,6 +34,7 @@ interface PortalCardProps {
   isActive: boolean;
   tags: string[];
   isIframe: boolean;
+  slug: string;
 }
 
 export default function PortalCard({
@@ -49,6 +50,7 @@ export default function PortalCard({
   isActive,
   tags,
   isIframe,
+  slug,
 }: PortalCardProps) {
   const isRefunded = !isActive && parseFloat(amountRaised) < fundingGoalWithPlatformFee;
   const { data: extraData } = useQuery([`get-extra-data-${id}`], async () => {
@@ -150,7 +152,7 @@ export default function PortalCard({
         <Link
           target="_blank"
           rel="noopener noreferrer"
-          href={`https://viaprize.org/portal/${id}`}
+          href={`https://viaprize.org/portal/${slug}`}
         >
           <Button color="primary" component="a" fullWidth mt="md" radius="md">
             Details
@@ -163,14 +165,14 @@ export default function PortalCard({
           fullWidth
           mt="md"
           radius="md"
-          href={`/portal/${id}`}
+          href={`/portal/${slug}`}
         >
           Details
         </Button>
       )}
 
       <div className="absolute top-2 right-2">
-        <CopyButton value={`https://www.viaprize.org/portal/${id}`}>
+        <CopyButton value={`https://www.viaprize.org/portal/${slug}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'primary'}>

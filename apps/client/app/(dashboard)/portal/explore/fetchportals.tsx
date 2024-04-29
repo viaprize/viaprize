@@ -80,11 +80,12 @@ export default async function FetchPortals({
             title={portal.title}
             key={portal.id}
             typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
-            id={portal.slug}
+            id={portal.id}
             fundingGoalWithPlatformFee={parseFloat(portal.fundingGoal ?? '0')}
             deadline={portal.deadline}
             tags={portal.tags}
             isIframe={false}
+            slug={portal.slug}
           />
         );
       })}
