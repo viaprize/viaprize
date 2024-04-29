@@ -1,5 +1,6 @@
 'use client';
 
+import { backendApi } from '@/lib/backend';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -19,7 +20,7 @@ import { useClipboard, useDisclosure } from '@mantine/hooks';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction, waitForTransaction } from '@wagmi/core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { isAddress, parseEther } from 'viem';
 import { useBalance, useQuery } from 'wagmi';
@@ -74,13 +75,8 @@ export default function SendCard() {
     }
   }, [balance]);
 
-  const handleSend = async () => {
+  const handleSend = useCallback(async () => {
     setLoading(true);
-    if (!isAddress(recieverAddress)) {
-      toast.error('Invalid Address');
-      setLoading(false);
-      return;
-    }
     if (!balance) {
       toast.error('Invalid Balance');
       setLoading(false);
@@ -92,11 +88,17 @@ export default function SendCard() {
       setLoading(false);
       return;
     }
+    let finalReceiverAddress = recieverAddress;
     try {
+      if (!isAddress(recieverAddress)) {
+        const a = (await (await backendApi()).users.usernameDetail(recieverAddress)).data;
+        finalReceiverAddress = a.walletAddress;
+      }
       const config = await prepareSendTransaction({
-        to: recieverAddress,
+        to: finalReceiverAddress,
         value: parseEther(amount),
       });
+      setRecieverAddress(finalReceiverAddress);
       const { hash } = await sendTransaction(config);
       toast.promise(
         waitForTransaction({
@@ -112,9 +114,10 @@ export default function SendCard() {
     } catch (e: any) {
       /* eslint-disable */
       toast.error(e.message);
+      console.log({ e });
     }
     setLoading(false);
-  };
+  }, [recieverAddress, amount, balance]);
   const clipboard = useClipboard({ timeout: 500 });
 
   const [ethAmount, setEthAmount] = useState<number | string>('');
@@ -288,7 +291,7 @@ export default function SendCard() {
           {/* Total Amount Raised */}
           <Text>Network : {chain.name.toUpperCase()}</Text>
           <Input
-            placeholder="Receiver Address"
+            placeholder="Receiver Address or Username"
             value={recieverAddress}
             onChange={(e) => {
               setRecieverAddress(e.currentTarget.value);
@@ -307,7 +310,7 @@ export default function SendCard() {
             }}
           />
           <Button
-            disabled={!isAddress(recieverAddress) || loading}
+            disabled={loading}
             onClick={async () => {
               await handleSend();
             }}
