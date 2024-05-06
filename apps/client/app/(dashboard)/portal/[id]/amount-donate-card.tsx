@@ -84,15 +84,15 @@ function DonateButton({
                       (cryptoToUsd?.ethereum.usd ?? 0)
                     ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${
                       balance.symbol
-                    }`
+                    })`
                   : `Login To See Balance`
-              })`
+              }`
         }
         placeholder="Enter Value  in $ To Donate"
         mt="md"
-        label={`You will donate ${value} USD (${ethOfDonateValue.toFixed(4) ?? 0}) ${
+        label={`You will donate ${value} USD (${ethOfDonateValue.toFixed(4) ?? 0} ${
           chain.nativeCurrency.symbol
-        } `}
+        })`}
         rightSection={
           <ActionIcon>
             <IconRefresh onClick={() => refetch({})} />

@@ -32,6 +32,7 @@ import StartSubmission from './buttons/startSubmission';
 import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import Submissions from './submissions';
+import { calculateDeadline } from '@/lib/utils';
 
 function FundCard({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
@@ -117,13 +118,13 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
                       balance.symbol
                     })`
                   : `Login To See Balance`
-              })`
+              }`
         }
         placeholder="Enter Value  in $ To Donate"
         mt="md"
-        label={`You will donate ${ethOfDonateValue.toFixed(4) ?? 0} ${
+        label={`You will donate ${value} USD (${ethOfDonateValue.toFixed(4) ?? 0} ${
           chain.nativeCurrency.symbol
-        } (${value} USD)`}
+        })`}
         rightSection={
           <ActionIcon>
             <IconRefresh onClick={() => refetch({})} />
@@ -185,6 +186,10 @@ export default function PrizePageComponent({
   submissions: SubmissionWithBlockchainData[];
 }) {
   const { appUser } = useAppUser();
+    const deadlineString = calculateDeadline(
+      new Date(),
+      new Date(prize.submission_time_blockchain * 1000),
+    );
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
@@ -201,7 +206,7 @@ export default function PrizePageComponent({
         </Group> */}
       </Group>
       <Image
-        className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-[430px] max-w-full rounded-md"
+        className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-fit max-w-full  rounded-md"
         src={
           prize.images[0] ||
           'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
@@ -251,7 +256,7 @@ export default function PrizePageComponent({
             />
           )
         : null}
-      {appUser?.isAdmin && prize.submission_time_blockchain > 0 ? (
+      {appUser?.isAdmin && !(deadlineString === 'Time is up!') && prize.submission_time_blockchain > 0 ? (
         <EndSubmission contractAddress={prize.contract_address} />
       ) : null}
 
