@@ -23,6 +23,7 @@ import { JobService } from 'src/jobs/jobs.service';
 import { MailService } from 'src/mail/mail.service';
 import { CreatePortalDto } from 'src/portals/dto/create-portal.dto';
 import { RejectProposalDto } from 'src/prizes/dto/reject-proposal.dto';
+import { PrizesService } from 'src/prizes/services/prizes.service';
 import { UsersService } from 'src/users/users.service';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
@@ -83,6 +84,7 @@ export class PortalsController {
     private readonly userService: UsersService,
     private readonly portalCommentService: PortalCommentService,
     private readonly portalDataService: ExtraPortalDataService,
+    private readonly prizeService: PrizesService,
     private readonly portalExtraDonationService: ExtraDonationPortalDataService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
@@ -240,6 +242,14 @@ export class PortalsController {
       data: portalWithBalanceData,
       hasNextPage: portalWithoutBalance.hasNextPage,
     };
+  }
+
+  @Get('/all-smart-contracts')
+  async getAllSmartContracts() {
+    const portals = await this.portalsService.findAllSmartContracts();
+    const prizes = await this.prizeService.finalAllSmartContracts();
+    const allContracts = [...portals, ...prizes];
+    return allContracts;
   }
 
   @Get('/:id')

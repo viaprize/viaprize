@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated, paginate } from 'nestjs-paginate';
 import { User } from 'src/users/entities/user.entity';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { Prize } from '../entities/prize.entity';
 import { Submission } from '../entities/submission.entity';
 import { PrizePaginateQuery } from '../entities/types';
@@ -31,7 +31,7 @@ export class PrizesService {
   constructor(
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
-  ) { }
+  ) {}
 
   async findAll(query: PrizePaginateQuery): Promise<Paginated<Prize>> {
     const { proficiencies, priorities, ...paginateQuery } = query;
@@ -69,7 +69,22 @@ export class PrizesService {
     return paginations;
   }
 
-  getSmartContractDetails() { }
+  async finalAllSmartContracts() {
+    const prizes = await this.prizeRepository.find({
+      where: {
+        contract_address: Not(IsNull()),
+      },
+    });
+    return prizes.map((prize) => {
+      return {
+        id: prize.id,
+        title: prize.title,
+        contract_address: prize.contract_address,
+      };
+    });
+  }
+
+  getSmartContractDetails() {}
 
   async findOne(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
@@ -85,10 +100,10 @@ export class PrizesService {
   async findAndGetByIdOnly(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
       where: {
-        id
-      }
-    })
-    return prize
+        id,
+      },
+    });
+    return prize;
   }
 
   async findAllPendingWithPagination(
