@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated, paginate } from 'nestjs-paginate';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Portals } from '../entities/portal.entity';
 import { PortalPaginateQuery, PortalPaginateResponse } from '../entities/types';
 
@@ -40,21 +40,6 @@ export class PortalsService {
     }
 
     return paginations;
-  }
-
-  async findAllSmartContracts() {
-    const portals = await this.portalRepository.find({
-      where: {
-        contract_address: Not(IsNull()),
-      },
-    });
-    return portals.map((portal) => {
-      return {
-        id: portal.id,
-        title: portal.title,
-        contract_address: portal.contract_address,
-      };
-    });
   }
 
   async findOne(id: string) {

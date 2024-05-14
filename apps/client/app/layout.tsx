@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import WrapperLayout from './wrapper';
-import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'viaPrize',
@@ -21,12 +20,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <Script
-          defer
-          data-domain="viaprize.org"
-          src="https://plausible.io/js/script.js"
-        />
-
         <WrapperLayout>{children}</WrapperLayout>
       </body>
     </html>
