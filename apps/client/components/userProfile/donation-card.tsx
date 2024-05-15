@@ -324,13 +324,13 @@ export default function SendCard() {
           >
             Buy Crypto Using Moon Pay
           </Button>
-          <Button
+          {/* <Button
             onClick={async () => {
               buyCryptoWithOnramper();
             }}
           >
             Buy Crypto Using Onramper
-          </Button>
+          </Button> */}
           <Button
             onClick={async () => {
               buyCryptoWithChangeNow();
