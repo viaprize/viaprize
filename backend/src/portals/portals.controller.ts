@@ -242,10 +242,20 @@ export class PortalsController {
     };
   }
 
-  @Get('/:id')
-  async getPortal(@TypedParam('id') id: string): Promise<PortalWithBalance> {
-    console.log(id, 'slug');
-    const portal = await this.portalsService.findOne(id);
+  /**
+   * The function `getPortal` is an asynchronous function that takes a `slug` parameter and gets the associated portal
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} slug
+   * @returns {Promise<PortalWithBalance>}
+   */
+  @Get('/:slug')
+  async getPortal(
+    @TypedParam('slug') slug: string,
+  ): Promise<PortalWithBalance> {
+    console.log(slug, 'slug');
+    const portal = await this.portalsService.findOneBySlug(slug);
     const results = await this.blockchainService.getPortalPublicVariables(
       portal.contract_address,
     );
@@ -367,21 +377,23 @@ export class PortalsController {
    *
    * @date 9/25/2023 - 5:35:35 AM
    * @async
-   * @param {string} id
+   * @param {string} slug
    * @returns {Promise<PortalsComments[]>}
    */
-  @Get('/:id/comment')
-  async getComment(@TypedParam('id') id: string): Promise<PortalsComments[]> {
-    return await this.portalCommentService.getCommentsByPortalId(id);
+  @Get('/:slug/comment')
+  async getComment(
+    @TypedParam('slug') slug: string,
+  ): Promise<PortalsComments[]> {
+    return await this.portalCommentService.getCommentsBySlugId(slug);
   }
 
-  @Put('/:id/add-update')
+  @Put('/:slug/add-update')
   @UseGuards(AuthGuard)
   async addUpdate(
-    @TypedParam('id') id: string,
+    @TypedParam('slug') slug: string,
     @TypedBody() update: string,
   ): Promise<Portals> {
-    const portal = await this.portalsService.addPortalUpdate(id, update);
+    const portal = await this.portalsService.addPortalUpdate(slug, update);
     await this.cacheManager.reset();
     return portal;
   }
@@ -847,5 +859,23 @@ export class PortalsController {
       externalId,
     );
     return funds;
+  }
+
+  /**
+   * The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} id
+   * @returns {Promise<Pick<Portals,'slug'>>}
+   */
+  @Get('/slug/:id')
+  async getSlugById(
+    @TypedParam('id') id: string,
+  ): Promise<Pick<Portals, 'slug'>> {
+    const slug = await this.portalsService.getPortalSlugById(id);
+    return {
+      slug,
+    };
   }
 }

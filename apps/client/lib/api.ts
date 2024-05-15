@@ -348,6 +348,11 @@ export interface ExtraDonationPortalData {
   externalId: string;
 }
 
+/** From T, pick a set of properties whose keys are in the union K */
+export interface PickPortalsslug {
+  slug: string;
+}
+
 export interface CreatePrizeDto {
   address: string;
   proposal_id: string;
@@ -903,14 +908,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * No description
+     * @description The function `getPortal` is an asynchronous function that takes a `slug` parameter and gets the associated portal
      *
      * @name PortalsDetail
-     * @request GET:/portals/{id}
+     * @request GET:/portals/{slug}
      */
-    portalsDetail: (id: string, params: RequestParams = {}) =>
+    portalsDetail: (slug: string, params: RequestParams = {}) =>
       this.request<PortalWithBalance, any>({
-        path: `/portals/${id}`,
+        path: `/portals/${slug}`,
         method: 'GET',
         format: 'json',
         ...params,
@@ -932,22 +937,6 @@ the `create` method of the `prizeCommentService` with the given `id` and  `userA
         body: data,
         secure: true,
         type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
- * @description The function `getComments` is an asynchronous function that takes a `comment` parameter calls the `getComment` method of the `portalCommentService` with the given `id`.
- *
- * @name CommentDetail
- * @summary The function `getComments` is an asynchronous function that takes a `comment` parameter calls
-the `getComment` method of the `portalCommentService` with the given `id`
- * @request GET:/portals/{id}/comment
- */
-    commentDetail: (id: string, params: RequestParams = {}) =>
-      this.request<PortalsComments[], any>({
-        path: `/portals/${id}/comment`,
-        method: 'GET',
         format: 'json',
         ...params,
       }),
@@ -1029,14 +1018,30 @@ the `getComment` method of the `portalCommentService` with the given `id`
       }),
 
     /**
+ * @description The function `getComments` is an asynchronous function that takes a `comment` parameter calls the `getComment` method of the `portalCommentService` with the given `id`.
+ *
+ * @name CommentDetail
+ * @summary The function `getComments` is an asynchronous function that takes a `comment` parameter calls
+the `getComment` method of the `portalCommentService` with the given `id`
+ * @request GET:/portals/{slug}/comment
+ */
+    commentDetail: (slug: string, params: RequestParams = {}) =>
+      this.request<PortalsComments[], any>({
+        path: `/portals/${slug}/comment`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * No description
      *
      * @name AddUpdateUpdate
-     * @request PUT:/portals/{id}/add-update
+     * @request PUT:/portals/{slug}/add-update
      */
-    addUpdateUpdate: (id: string, data: string, params: RequestParams = {}) =>
+    addUpdateUpdate: (slug: string, data: string, params: RequestParams = {}) =>
       this.request<Portals, any>({
-        path: `/portals/${id}/add-update`,
+        path: `/portals/${slug}/add-update`,
         method: 'PUT',
         body: data,
         type: ContentType.Json,
@@ -1313,6 +1318,20 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
     extraDonationDataDetail: (externalId: string, params: RequestParams = {}) =>
       this.request<ExtraDonationPortalData[], any>({
         path: `/portals/extra_donation_data/${externalId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+     *
+     * @name SlugDetail
+     * @request GET:/portals/slug/{id}
+     */
+    slugDetail: (id: string, params: RequestParams = {}) =>
+      this.request<PickPortalsslug, any>({
+        path: `/portals/slug/${id}`,
         method: 'GET',
         format: 'json',
         ...params,

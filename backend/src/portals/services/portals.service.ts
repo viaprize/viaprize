@@ -52,6 +52,16 @@ export class PortalsService {
 
     return portal;
   }
+  async findOneBySlug(slug: string) {
+    const portal = await this.portalRepository.findOneOrFail({
+      where: {
+        slug: slug,
+      },
+      relations: ['user'],
+    });
+
+    return portal;
+  }
 
   async findAndGetBySlugOnly(slug: string) {
     const portal = await this.portalRepository.findOneOrFail({
@@ -161,5 +171,15 @@ export class PortalsService {
     const res = await this.portalRepository.delete(id);
     console.log(res);
     return res;
+  }
+
+  async getPortalSlugById(id: string) {
+    const portal = await this.portalRepository.findOneOrFail({
+      where: {
+        id,
+      },
+      select: ['slug'],
+    });
+    return portal.slug;
   }
 }

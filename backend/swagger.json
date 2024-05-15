@@ -378,12 +378,12 @@
         "x-nestia-method": "GET"
       }
     },
-    "/portals/{id}": {
+    "/portals/{slug}": {
       "get": {
         "tags": [],
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -405,8 +405,34 @@
             "x-nestia-encrypted": false
           }
         },
+        "description": "The function `getPortal` is an asynchronous function that takes a `slug` parameter and gets the associated portal",
         "x-nestia-namespace": "portals.getPortal",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "slug",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
         "x-nestia-method": "GET"
       }
     },
@@ -492,66 +518,6 @@
           }
         ],
         "x-nestia-method": "POST"
-      },
-      "get": {
-        "tags": [],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "description": "",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PortalsComments"
-                  }
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "summary": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `portalCommentService` with the given `id`",
-        "description": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `portalCommentService` with the given `id`.",
-        "x-nestia-namespace": "portals.comment.getComment",
-        "x-nestia-jsDocTags": [
-          {
-            "name": "date",
-            "text": [
-              {
-                "text": "9/25/2023 - 5:35:35 AM",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "async"
-          },
-          {
-            "name": "param",
-            "text": [
-              {
-                "text": "id",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "returns"
-          }
-        ],
-        "x-nestia-method": "GET"
       }
     },
     "/portals/comment/{commentId}/replies": {
@@ -728,12 +694,74 @@
         "x-nestia-method": "DELETE"
       }
     },
-    "/portals/{id}/add-update": {
+    "/portals/{slug}/comment": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortalsComments"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `portalCommentService` with the given `id`",
+        "description": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `portalCommentService` with the given `id`.",
+        "x-nestia-namespace": "portals.comment.getComment",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "slug",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/{slug}/add-update": {
       "put": {
         "tags": [],
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -1896,6 +1924,64 @@
             "text": [
               {
                 "text": "externalId",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/slug/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PickPortalsslug"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals",
+        "x-nestia-namespace": "portals.slug.getSlugById",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
                 "kind": "text"
               }
             ]
@@ -5451,6 +5537,22 @@
           "usdValue",
           "externalId"
         ],
+        "x-typia-jsDocTags": []
+      },
+      "PickPortalsslug": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "slug"
+        ],
+        "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
       "CreatePrizeDto": {

@@ -27,7 +27,19 @@ export class PortalCommentService {
     return portalComment;
   }
 
-  async getCommentsByPortalId(portalSlug: string) {
+  async getCommentsByPortalId(portalId: string) {
+    const portalComments = await this.portalCommentsRepository.find({
+      where: {
+        portal: {
+          id: portalId,
+        },
+      },
+      relations: ['user'],
+    });
+    return portalComments;
+  }
+
+  async getCommentsBySlugId(portalSlug: string) {
     const portalComments = await this.portalCommentsRepository.find({
       where: {
         portal: {
