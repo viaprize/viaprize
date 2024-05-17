@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -79,6 +80,14 @@ export class Prize {
 
   @OneToMany(() => PrizesComments, (prizeComment) => prizeComment.prize)
   comments?: PrizesComments[];
+
+  @Column({
+    unique: true,
+    default:null,
+    nullable:true,
+  })
+  @Index()
+  slug: string;
 
   @ManyToOne(() => User, (user) => user.prizeProposals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })

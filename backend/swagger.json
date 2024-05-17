@@ -3288,6 +3288,28 @@
         "x-nestia-method": "POST"
       }
     },
+    "/prizes/generate_slug": {
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.generate_slug.generateSlug",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
     "/users": {
       "post": {
         "tags": [],
@@ -4543,6 +4565,11 @@
               "$ref": "#/components/schemas/PrizesComments"
             }
           },
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           }
@@ -4566,6 +4593,7 @@
           "images",
           "title",
           "submissions",
+          "slug",
           "user"
         ],
         "x-typia-jsDocTags": []
@@ -5754,6 +5782,11 @@
               "$ref": "#/components/schemas/PrizesComments"
             }
           },
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           }
@@ -5781,6 +5814,7 @@
           "images",
           "title",
           "submissions",
+          "slug",
           "user"
         ],
         "x-typia-jsDocTags": []
