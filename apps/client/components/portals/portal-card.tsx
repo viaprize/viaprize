@@ -59,7 +59,22 @@ export default function PortalCard({
     return final;
   });
 
-  console.log(extraData?.data.funds, 'klsldfjl');
+  const filteredTags = tags.filter(
+    (tag) =>
+      tag !== 'All-or-Nothing' &&
+      tag !== 'Refundable' &&
+      tag !== 'Pass-Through' &&
+      tag !== 'Pass-through' &&
+      tag !== 'Deadline' &&
+      tag !== 'Funding Goal' &&
+      tag !== 'All or Nothing',
+  );
+
+  const badgetags = tags.filter(
+    (tag) => tag === 'Refundable',
+  );
+
+
   return (
     <Card
       padding="lg"
@@ -96,7 +111,24 @@ export default function PortalCard({
         <Badge color="blue" variant="light" p="sm">
           {authorName}
         </Badge>
+        {badgetags.map((tag) => {
+          let badgeColor = 'gray'; // Default color for badges
+
+          // Check for specific tags and set badge color accordingly
+          if (tag === 'Refundable') {
+            badgeColor = 'yellow';
+          } else if (tag === 'Pass-Through' || tag === 'Pass-through') {
+            badgeColor = 'green';
+          }
+
+          return (
+            <Badge key={tag} color={badgeColor} radius="lg">
+              {tag}
+            </Badge>
+          );
+        })}
       </Group>
+
       <p
         className="text-md  h-20 overflow-y-auto"
         // dangerouslySetInnerHTML={{ __html: description }}
@@ -122,7 +154,7 @@ export default function PortalCard({
         )}
       </Text>
       <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => {
+        {filteredTags.map((tag) => {
           return (
             <Badge key={tag} color="gray" variant="light" radius="sm">
               {tag}
