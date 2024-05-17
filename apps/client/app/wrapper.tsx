@@ -12,12 +12,12 @@ import '@mantine/tiptap/styles.css';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import Script from 'next/script';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { theme } from 'utils/theme';
 import '../styles/globals.css';
 import '../styles/index.css';
-import Script from 'next/script';
 
 const queryClient = new QueryClient();
 
@@ -47,12 +47,6 @@ export default function WrapperLayout({
           },
         }}
       >
-        <Script
-          defer
-          data-domain="viaprize.org"
-          src="https://plausible.io/js/script.js"
-        />
-
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
           <QueryClientProvider client={queryClient}>
             <MantineProvider theme={theme} defaultColorScheme="auto">

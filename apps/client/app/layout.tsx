@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import WrapperLayout from './wrapper';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'viaPrize',
@@ -19,6 +20,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <Script
+          defer
+          data-domain="viaprize.org"
+          src="https://plausible.io/js/script.js"
+        />
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-HF9F0C1910" />
+        <Script id="google-analytics">
+          {`  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HF9F0C1910');`}
+        </Script>
+      </head>
       <body>
         <WrapperLayout>{children}</WrapperLayout>
       </body>
