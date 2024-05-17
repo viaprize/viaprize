@@ -31,7 +31,7 @@ function EditorsPage() {
     const request = await prepareWritePrize({
       account: address,
       address: router.query.contract as `0x${string}`,
-      args: [address ? address : '0x', `${appUser?.id}${router.query.id as string}`],
+      args: [address ? address : '0x', `${appUser?.id}${router.query.slug as string}`],
       functionName: 'addSubmission',
     });
     const { hash } = await writePrize(request);
@@ -46,14 +46,14 @@ function EditorsPage() {
     }
     const res = await (
       await backendApi()
-    ).prizes.submissionCreate(router.query.id as string, {
+    ).prizes.submissionCreate(router.query.slug as string, {
       submissionDescription: JSON.stringify(content),
       submissionHash: submissionHash as string,
       submitterAddress: address,
     });
     console.log({ res }, 'ressss');
 
-    toast.promise(router.push(`/prize/${router.query.id as string}`), {
+    toast.promise(router.push(`/prize/${router.query.slug as string}`), {
       loading: 'Redirecting please wait ',
       success: 'Submission Submitted',
       error: 'Error Submitting Proposal',

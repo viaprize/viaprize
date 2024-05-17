@@ -31,6 +31,7 @@ interface ExploreCardProps {
   skills: string[];
   submissionDays: number;
   startingTimeBlockchain: number;
+  slug: string;
 }
 
 function ExploreCard({
@@ -46,12 +47,14 @@ function ExploreCard({
   distributed,
   startingTimeBlockchain,
   submissionDays,
+  slug,
 }: ExploreCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const deadlineString = calculateDeadline(
     new Date(),
     new Date(startingTimeBlockchain * 1000),
   );
+  console.log({ slug }, 'slugs');
   console.log(deadlineString, 'this is the deadline string');
   return (
     <Card
@@ -130,12 +133,12 @@ function ExploreCard({
         fullWidth
         mt="md"
         radius="md"
-        href={`/prize/${id}`}
+        href={`/prize/${slug}`}
       >
         Details
       </Button>
       <div className="absolute top-2 right-2">
-        <CopyButton value={`https://viaprize.org/prize/${id}`}>
+        <CopyButton value={`https://viaprize.org/prize/${slug}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>

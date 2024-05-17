@@ -2013,38 +2013,6 @@
         "x-nestia-method": "GET"
       }
     },
-    "/prizes/submission/{id}": {
-      "get": {
-        "tags": [],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "description": "",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Submission"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "x-nestia-namespace": "prizes.submission.getSubmission",
-        "x-nestia-jsDocTags": [],
-        "x-nestia-method": "GET"
-      }
-    },
     "/prizes": {
       "post": {
         "tags": [],
@@ -2184,12 +2152,12 @@
         "x-nestia-method": "GET"
       }
     },
-    "/prizes/{id}": {
+    "/prizes/{slug}": {
       "get": {
         "tags": [],
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -2361,12 +2329,12 @@
         "x-nestia-method": "DELETE"
       }
     },
-    "/prizes/{id}/submission": {
+    "/prizes/{slug}/submission": {
       "post": {
         "tags": [],
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -2425,7 +2393,7 @@
             "required": true
           },
           {
-            "name": "id",
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -3285,28 +3253,6 @@
             "name": "returns"
           }
         ],
-        "x-nestia-method": "POST"
-      }
-    },
-    "/prizes/generate_slug": {
-      "post": {
-        "tags": [],
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Http200Response"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "x-nestia-namespace": "prizes.generate_slug.generateSlug",
-        "x-nestia-jsDocTags": [],
         "x-nestia-method": "POST"
       }
     },

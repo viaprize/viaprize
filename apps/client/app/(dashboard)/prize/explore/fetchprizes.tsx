@@ -1,9 +1,8 @@
 import ExploreCard from '@/components/Prize/ExplorePrize/explorePrize';
+import { FetchPrizesCsv } from '@/components/history/fetch-csv';
 import HistoryCard from '@/components/history/history-card';
 import { Api } from '@/lib/api';
 import { formatEther } from 'viem';
-import { FetchPrizesCsv } from '@/components/history/fetch-csv';
-import Paging from '@/components/custom/paging';
 
 export default async function FetchPrizes() {
   const prizes = (
@@ -50,6 +49,7 @@ export default async function FetchPrizes() {
             id={prize.id}
             skills={prize.proficiencies}
             startingTimeBlockchain={prize.submission_time_blockchain}
+            slug={prize.slug}
           />
         );
       })}
