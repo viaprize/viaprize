@@ -12,10 +12,10 @@ export const maxDuration = 5;
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: { slug: string };
 }): Promise<Metadata> {
   const prize = (
-    await new Api().prizes.prizesDetail(params.id, {
+    await new Api().prizes.prizesDetail(params.slug, {
       next: {
         revalidate: 0,
       },
@@ -34,9 +34,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function FetchPrize({ params }: { params: { id: string } }) {
+export default async function FetchPrize({ params }: { params: { slug: string } }) {
   const prize = (
-    await new Api().prizes.prizesDetail(params.id, {
+    await new Api().prizes.prizesDetail(params.slug, {
       next: {
         revalidate: 0,
       },
@@ -44,7 +44,7 @@ export default async function FetchPrize({ params }: { params: { id: string } })
   ).data;
 
   const submissions = (
-    await new Api().prizes.submissionDetail2(params.id, {
+    await new Api().prizes.submissionDetail(params.slug, {
       limit: 5,
       page: 1,
     })

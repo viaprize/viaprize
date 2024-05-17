@@ -81,11 +81,6 @@ export class PrizesController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  @Get('/submission/:id')
-  async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
-    return await this.submissionService.findSubmissionById(id);
-  }
-
   @Post('')
   @UseGuards(AuthGuard)
   async createPrize(
@@ -94,7 +89,9 @@ export class PrizesController {
     const prizeProposal = await this.prizeProposalsService.findOne(
       createPrizeDto.proposal_id,
     );
-    const slug = await this.prizeService.checkAndReturnUniqueSlug(stringToSlug(prizeProposal.title))
+    const slug = await this.prizeService.checkAndReturnUniqueSlug(
+      stringToSlug(prizeProposal.title),
+    );
     const prize = await this.prizeService.create({
       submissionTime: prizeProposal.submission_time,
       votingTime: prizeProposal.voting_time,
@@ -199,7 +196,7 @@ export class PrizesController {
   async getPrize(
     @TypedParam('slug') slug: string,
   ): Promise<PrizeWithBlockchainData> {
-    const prize = await this.prizeService.findAndReturnBySlug(slug)
+    const prize = await this.prizeService.findAndReturnBySlug(slug);
     const results = await this.blockchainService.getPrizePublicVariables(
       prize.contract_address,
     );
@@ -271,16 +268,16 @@ export class PrizesController {
     };
   }
 
-  @Post('/:id/submission')
+  @Post('/:slug/submission')
   @UseGuards(AuthGuard)
   async submit(
-    @TypedParam('id') id: string,
+    @TypedParam('slug') slug: string,
     @TypedBody() body: CreateSubmissionDto,
     @Request() req,
   ): Promise<Http200Response> {
     const user = await this.userService.findOneByAuthId(req.user.userId);
     const submission = await this.submissionService.create(body, user);
-    await this.prizeService.addSubmission(submission, id);
+    await this.prizeService.addSubmission(submission, slug);
 
     await this.mailService.submission(user.email);
 
@@ -289,27 +286,27 @@ export class PrizesController {
     };
   }
 
-  @Get('/:id/submission')
+  @Get('/:slug/submission')
   async getSubmissions(
     @Query('page')
     page: number = 1,
     @Query('limit')
     limit: number = 10,
-    @TypedParam('id') id: string,
+    @TypedParam('slug') slug: string,
   ): Promise<
     Readonly<{
       data: SubmissionWithBlockchainData[];
       hasNextPage: boolean;
     }>
   > {
-    const prize = await this.prizeService.findOne(id);
+    const prize = await this.prizeService.findAndReturnBySlug(slug);
     const submissions = await infinityPagination(
       await this.submissionService.findAllWithPagination({
         limit,
         page,
         where: {
           prize: {
-            id: id,
+            slug: slug,
           },
         },
       }),

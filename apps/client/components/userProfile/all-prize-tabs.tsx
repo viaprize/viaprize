@@ -1,6 +1,5 @@
 import { backendApi } from '@/lib/backend';
 import type { ConvertUSD } from '@/lib/types';
-import { chain } from '@/lib/wagmi';
 import { Button, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { formatEther } from 'viem';
@@ -73,6 +72,7 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
             key={prize.id}
             id={prize.id}
             skills={prize.proficiencies}
+            slug={prize.slug}
           />
         );
       })}

@@ -4,7 +4,7 @@ import { Paginated, paginate } from 'nestjs-paginate';
 import { User } from 'src/users/entities/user.entity';
 import { generateId } from 'src/utils/generate-id';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import { } from "typedoc.json";
+import {} from 'typedoc.json';
 import { FindManyOptions, Repository } from 'typeorm';
 import { Prize } from '../entities/prize.entity';
 import { Submission } from '../entities/submission.entity';
@@ -30,12 +30,11 @@ type CreatPrize = {
 
 @Injectable()
 export class PrizesService {
- 
   constructor(
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
-  ) { }
-  async findAll(options?: FindManyOptions<Prize> | undefined){
+  ) {}
+  async findAll(options?: FindManyOptions<Prize> | undefined) {
     return this.prizeRepository.find(options);
   }
   async findAllByQuery(query: PrizePaginateQuery): Promise<Paginated<Prize>> {
@@ -74,7 +73,7 @@ export class PrizesService {
     return paginations;
   }
 
-  getSmartContractDetails() { }
+  getSmartContractDetails() {}
 
   async findOne(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
@@ -88,6 +87,7 @@ export class PrizesService {
   }
 
   async findAndReturnBySlug(slug: string) {
+    console.log({ slug });
     const prize = await this.prizeRepository.findOneOrFail({
       where: {
         slug,
@@ -101,10 +101,10 @@ export class PrizesService {
   async findAndGetByIdOnly(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
       where: {
-        id
-      }
-    })
-    return prize
+        id,
+      },
+    });
+    return prize;
   }
 
   async findAllPendingWithPagination(
@@ -123,10 +123,10 @@ export class PrizesService {
     return await this.prizeRepository.save(prize);
   }
 
-  async addSubmission(submission: Submission, prizeId: string) {
+  async addSubmission(submission: Submission, slugId: string) {
     const prize = await this.prizeRepository.findOneOrFail({
       where: {
-        id: prizeId,
+        slug: slugId,
       },
       relations: ['submissions'],
     });
@@ -144,18 +144,20 @@ export class PrizesService {
       },
     });
     if (prize) {
-      const nanoid =  await generateId()
+      const nanoid = await generateId();
       return `${slug}-${nanoid}`;
     }
     return slug;
   }
 
-  async updateSlug(id: string, slug:string) {
-    return await this.prizeRepository.update({
-      id
-    }, {
-      slug
-    })
-    
+  async updateSlug(id: string, slug: string) {
+    return await this.prizeRepository.update(
+      {
+        id,
+      },
+      {
+        slug,
+      },
+    );
   }
 }
