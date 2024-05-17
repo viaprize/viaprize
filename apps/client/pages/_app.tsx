@@ -72,7 +72,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           defer
           src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/hourglass.js"
         />
-        <link rel="shortcut icon" href="/viaprizeBg.png" />
+        <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
       <head>
         <Script
