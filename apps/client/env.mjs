@@ -24,6 +24,7 @@ export const env = createEnv({
         'https://api-prod.pactsmith.com/api',
         'https://api.pactsmith.com/api',
         'http://localhost:3001/api',
+        'https://api-dev.viaprize.org/api',
       ])
       .default('https://api.pactsmith.com/api'),
     NEXT_PUBLIC_SUPABASE_URL: z.string(),
