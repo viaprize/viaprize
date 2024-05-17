@@ -20,6 +20,7 @@ import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
 import { UsersService } from 'src/users/users.service';
+import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
 import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
@@ -93,6 +94,7 @@ export class PrizesController {
     const prizeProposal = await this.prizeProposalsService.findOne(
       createPrizeDto.proposal_id,
     );
+    const slug = await this.prizeService.checkAndReturnUniqueSlug(stringToSlug(prizeProposal.title))
     const prize = await this.prizeService.create({
       submissionTime: prizeProposal.submission_time,
       votingTime: prizeProposal.voting_time,
@@ -108,7 +110,7 @@ export class PrizesController {
       startSubmissionDate: prizeProposal.startSubmissionDate,
       startVotingDate: prizeProposal.startVotingDate,
       user: prizeProposal.user,
-
+      slug: slug,
       judges: prizeProposal.judges,
     });
 
@@ -193,11 +195,11 @@ export class PrizesController {
     };
   }
 
-  @Get('/:id')
+  @Get('/:slug')
   async getPrize(
-    @TypedParam('id') id: string,
+    @TypedParam('slug') slug: string,
   ): Promise<PrizeWithBlockchainData> {
-    const prize = await this.prizeService.findOne(id);
+    const prize = await this.prizeService.findAndReturnBySlug(slug)
     const results = await this.blockchainService.getPrizePublicVariables(
       prize.contract_address,
     );
