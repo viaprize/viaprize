@@ -14,7 +14,7 @@ jobs:
       - name: Setup SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ec2-3-109-187-85.ap-south-1.compute.amazonaws.com
+          host: ec2-15-207-167-187.ap-south-1.compute.amazonaws.com
           username: ubuntu
           key: ${{ secrets.BACKEND_SSH_PRIVATE_KEY }}
           script: |
