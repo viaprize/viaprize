@@ -59,24 +59,22 @@ export default function PortalCard({
     return final;
   });
 
-const filteredTags = tags.filter(
-  (tag) =>
-    tag !== 'All-or-Nothing' &&
-    tag !== 'Refundable' &&
-    tag !== 'Pass-Through' &&
-    tag !== 'Pass-through' &&
-    tag !== 'Deadline' &&
-    tag !== 'Funding Goal' &&
-    tag !== 'All or Nothing' ,
-);
+  const filteredTags = tags.filter(
+    (tag) =>
+      tag !== 'All-or-Nothing' &&
+      tag !== 'Refundable' &&
+      tag !== 'Pass-Through' &&
+      tag !== 'Pass-through' &&
+      tag !== 'Deadline' &&
+      tag !== 'Funding Goal' &&
+      tag !== 'All or Nothing',
+  );
 
-const badgetags = tags.filter(
-  (tag) => tag === 'Refundable' || tag === 'Pass-Through' || tag == 'Pass-through',
-);
+  const badgetags = tags.filter(
+    (tag) => tag === 'Refundable',
+  );
 
-  // 
-console.log(filteredTags, 'filteredTags');
-  // console.log(extraData?.data.funds, 'klsldfjl');
+
   return (
     <Card
       padding="lg"
@@ -124,7 +122,7 @@ console.log(filteredTags, 'filteredTags');
           }
 
           return (
-            <Badge key={tag} color={badgeColor}  radius="lg" >
+            <Badge key={tag} color={badgeColor} radius="lg">
               {tag}
             </Badge>
           );
