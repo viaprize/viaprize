@@ -127,7 +127,7 @@ function DonateButton({
               data: '0x',
             });
             const { hash } = await sendTransaction(config);
-            toast.success(`Transaction ${hash}`, {
+            toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
               duration: 6000,
             });
 
@@ -206,6 +206,8 @@ export default function AmountDonateCard({
   }, [value]);
 
   const [sendLoading, setSendLoading] = useState(false);
+
+
   return (
     <Card
       p="md"
@@ -306,7 +308,6 @@ export default function AmountDonateCard({
           </>
         )}
       </div>
-
       {/* // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
   //   ...config,
   //   async onSuccess(data) {
@@ -316,7 +317,6 @@ export default function AmountDonateCard({
   //     await refetch();
   //   },
   // }); */}
-
       <Stack my="md">
         {/* <NumberInput
           description={
@@ -452,7 +452,7 @@ export default function AmountDonateCard({
                 });
 
                 const { hash } = await writePortal(config);
-                toast.success(`Transaction ${hash}`, {
+                toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
                   duration: 6000,
                 });
               } catch (e: unknown) {
@@ -480,7 +480,7 @@ export default function AmountDonateCard({
                 });
 
                 const { hash } = await writePortal(config);
-                toast.success(`Transaction ${hash}`, {
+                toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
                   duration: 6000,
                 });
               } catch (e: unknown) {
@@ -491,9 +491,40 @@ export default function AmountDonateCard({
               }
             }}
           >
-            Refund and End Campaign Early
+            Refund And End Campaign Early
           </Button>
         ) : null}
+
+        {wallet?.address &&
+        isActive &&
+        (treasurers.includes(wallet?.address) || appUser?.isAdmin) &&
+        !sendImmediately &&
+        parseInt(amountRaised) >= fundingGoalWithPlatformFee ? (
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                const config = await prepareWritePortal({
+                  functionName: 'endKickStarterCampaign',
+                  address: contractAddress as `0x${string}`,
+                });
+
+                const { hash } = await writePortal(config);
+                toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
+                  duration: 6000,
+                });
+              } catch (e: unknown) {
+                toast.error((e as any)?.message);
+              } finally {
+                setSendLoading(false);
+                window.location.reload();
+              }
+            }}
+          >
+            Collect Funds and End Campaign Early
+          </Button>
+        ) : null}
+
         {wallet?.address &&
         deadline &&
         isActive &&
@@ -510,7 +541,7 @@ export default function AmountDonateCard({
                 });
 
                 const { hash } = await writePortal(config);
-                toast.success(`Transaction ${hash}`, {
+                toast.success(`Transaction ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
                   duration: 6000,
                 });
               } catch (e: unknown) {

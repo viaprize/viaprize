@@ -161,7 +161,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
               data: '0x',
             });
             const { hash } = await sendTransaction(config);
-            toast.success(`Transaction ${hash}`, {
+            toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
               duration: 6000,
             });
             window.location.reload();

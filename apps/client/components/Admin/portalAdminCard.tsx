@@ -107,7 +107,9 @@ function PortalAdminCard({
         proposal_id: id,
       });
 
-      toast.success(`portal Address ${portalAddress} `);
+      toast.success(
+        `portal Address ${portalAddress.slice(0, 8)}...${portalAddress.slice(-8)} `,
+      );
       window.location.reload();
     } catch (e: any) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

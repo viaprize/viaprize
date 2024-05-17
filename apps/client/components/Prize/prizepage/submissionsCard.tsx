@@ -118,7 +118,9 @@ export default function SubmissionsCard({
                   });
                   const { hash: transactionHash } = await writePrize(request);
                   console.log({ transactionHash }, 'transactionHash');
-                  toast.success(`Transaction Hash ${transactionHash}`);
+                  toast.success(
+                    `Transaction Hash ${transactionHash.slice(0, 2)}...${transactionHash.slice(-2)}`,
+                  );
                   setSendLoading(false);
                   close();
                 } catch (e) {

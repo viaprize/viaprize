@@ -36,7 +36,9 @@ export default function StartSubmission({
             confirmations: 1,
             hash,
           });
-          toast.success(`Submission Period Started, Transaction Hash ${hash}`);
+          toast.success(
+            `Submission Period Started, Transaction Hash  ${hash.slice(0, 2)}...${hash.slice(-2)}`,
+          );
           console.log({ hash }, 'hash');
         } catch (error) {
           toast.error(`Failed With Error`);
