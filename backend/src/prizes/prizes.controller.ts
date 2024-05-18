@@ -285,6 +285,13 @@ export class PrizesController {
       message: `Submission has been sent`,
     };
   }
+  @Get('/:slug/submission/:id')
+  async getSubmission(
+    @TypedParam('id') id: string,
+    @TypedParam('slug') _: string,
+  ): Promise<Submission> {
+    return await this.submissionService.findSubmissionById(id);
+  }
 
   @Get('/:slug/submission')
   async getSubmissions(

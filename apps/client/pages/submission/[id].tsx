@@ -22,7 +22,8 @@ export default function SubmissionPage({
 }
 
 export const getServerSideProps = (async (context) => {
-  const data = (await new Api().prizes.submissionDetail(context.query.id as string)).data;
+  const data = (await new Api().prizes.submissionDetail2(context.query.id as string, ''))
+    .data;
   return { props: { submission: data } };
 }) satisfies GetServerSideProps<{
   submission: Submission;
