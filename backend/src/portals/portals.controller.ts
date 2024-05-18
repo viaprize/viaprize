@@ -873,7 +873,7 @@ export class PortalsController {
   async getSlugById(
     @TypedParam('id') id: string,
   ): Promise<Pick<Portals, 'slug'>> {
-    const slug = await this.portalsService.getPortalSlugById(id);
+    const slug = await this.portalsService.getPortalSlugById(id)
     return {
       slug,
     };

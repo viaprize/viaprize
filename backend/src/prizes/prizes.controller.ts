@@ -632,4 +632,22 @@ export class PrizesController {
       message: `Prize proposal with id ${id} has been updated`,
     };
   }
+
+  /**
+   * The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} id
+   * @returns {Promise<Pick<Prize,'slug'>>}
+   */
+  @Get('/slug/:id')
+  async getSlugById(
+    @TypedParam('id') id: string,
+  ): Promise<Pick<Prize, 'slug'>> {
+    const slug = await this.prizeService.getSlugById(id);
+    return {
+      slug,
+    };
+  }
 }

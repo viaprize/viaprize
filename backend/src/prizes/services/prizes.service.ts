@@ -160,4 +160,13 @@ export class PrizesService {
       },
     );
   }
+  async getSlugById(id: string) {
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        id,
+      },
+      select: ['slug'],
+    });
+    return prize.slug;
+  }
 }

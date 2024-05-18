@@ -523,6 +523,11 @@ export interface ReadonlyTypeO8 {
   hasNextPage: boolean;
 }
 
+/** From T, pick a set of properties whose keys are in the union K */
+export interface PickPrizeslug {
+  slug: string;
+}
+
 /** Interface of Create User , using this interface it create a new user in */
 export interface CreateUser {
   /**
@@ -1700,6 +1705,20 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+     *
+     * @name SlugDetail
+     * @request GET:/prizes/slug/{id}
+     */
+    slugDetail: (id: string, params: RequestParams = {}) =>
+      this.request<PickPrizeslug, any>({
+        path: `/prizes/slug/${id}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),
