@@ -156,7 +156,6 @@ export interface Prize {
   submissions: Submission[];
   comments?: PrizesComments[];
   slug: string;
-  slug: string;
   user: User;
 }
 
@@ -394,7 +393,6 @@ export interface PrizeWithBlockchainData {
   title: string;
   submissions: Submission[];
   comments?: PrizesComments[];
-  slug: string;
   slug: string;
   user: User;
 }
@@ -1405,12 +1403,9 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      *
      * @name PrizesDetail
      * @request GET:/prizes/{slug}
-     * @request GET:/prizes/{slug}
      */
     prizesDetail: (slug: string, params: RequestParams = {}) =>
-    prizesDetail: (slug: string, params: RequestParams = {}) =>
       this.request<PrizeWithBlockchainData, any>({
-        path: `/prizes/${slug}`,
         path: `/prizes/${slug}`,
         method: 'GET',
         format: 'json',
@@ -1468,7 +1463,6 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      *
      * @name SubmissionCreate
      * @request POST:/prizes/{slug}/submission
-     * @request POST:/prizes/{slug}/submission
      */
     submissionCreate: (
       slug: string,
@@ -1476,7 +1470,6 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       params: RequestParams = {},
     ) =>
       this.request<Http200Response, any>({
-        path: `/prizes/${slug}/submission`,
         path: `/prizes/${slug}/submission`,
         method: 'POST',
         body: data,
@@ -1490,11 +1483,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      *
      * @name SubmissionDetail
      * @request GET:/prizes/{slug}/submission
-     * @name SubmissionDetail
-     * @request GET:/prizes/{slug}/submission
      */
-    submissionDetail: (
-      slug: string,
     submissionDetail: (
       slug: string,
       query: {
@@ -1504,7 +1493,6 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       params: RequestParams = {},
     ) =>
       this.request<ReadonlyTypeO5, any>({
-        path: `/prizes/${slug}/submission`,
         path: `/prizes/${slug}/submission`,
         method: 'GET',
         query: query,
