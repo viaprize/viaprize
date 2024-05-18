@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+import { env } from '@env';
+
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
   /** Name of the pact i.e the title, which is gotten in the pact form */
@@ -521,6 +523,11 @@ export interface ReadonlyTypeO8 {
   hasNextPage: boolean;
 }
 
+/** From T, pick a set of properties whose keys are in the union K */
+export interface PickPrizeslug {
+  slug: string;
+}
+
 /** Interface of Create User , using this interface it create a new user in */
 export interface CreateUser {
   /**
@@ -595,11 +602,14 @@ export type RequestParams = Omit<FullRequestParams, 'body' | 'method' | 'query' 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D;
   error: E;
 }
@@ -614,11 +624,12 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'http://localhost:3001/api';
+  public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: 'same-origin',
@@ -653,7 +664,11 @@ export class HttpClient<SecurityDataType = unknown> {
     const query = rawQuery || {};
     const keys = Object.keys(query).filter((key) => 'undefined' !== typeof query[key]);
     return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key),
+      )
       .join('&');
   }
 
@@ -664,8 +679,11 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === 'object' || typeof input === 'string') ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== 'string' ? JSON.stringify(input) : input),
+      input !== null && (typeof input === 'object' || typeof input === 'string')
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -674,15 +692,18 @@ export class HttpClient<SecurityDataType = unknown> {
           property instanceof Blob
             ? property
             : typeof property === 'object' && property !== null
-            ? JSON.stringify(property)
-            : `${property}`,
+              ? JSON.stringify(property)
+              : `${property}`,
         );
         return formData;
       }, new FormData()),
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams,
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -739,15 +760,21 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ''}${path}${queryString ? `?${queryString}` : ''}`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData ? { 'Content-Type': type } : {}),
+        },
+        signal:
+          (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) ||
+          null,
+        body:
+          typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
       },
-      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-      body: typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
+    ).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -941,7 +968,11 @@ the `create` method of the `prizeCommentService` with the given `id` and  `userA
      * @name CommentReplyCreate
      * @request POST:/portals/{id}/comment/reply
      */
-    commentReplyCreate: (id: string, data: CreateCommentDto, params: RequestParams = {}) =>
+    commentReplyCreate: (
+      id: string,
+      data: CreateCommentDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/${id}/comment/reply`,
         method: 'POST',
@@ -1120,7 +1151,11 @@ the `getComment` method of the `portalCommentService` with the given `id`
      * @request PATCH:/portals/proposals/{id}
      * @secure
      */
-    proposalsPartialUpdate: (id: string, data: UpdatePortalPropsalDto, params: RequestParams = {}) =>
+    proposalsPartialUpdate: (
+      id: string,
+      data: UpdatePortalPropsalDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/${id}`,
         method: 'PATCH',
@@ -1188,7 +1223,11 @@ parameters
      * @request POST:/portals/proposals/reject/{id}
      * @secure
      */
-    proposalsRejectCreate: (id: string, data: RejectProposalDto, params: RequestParams = {}) =>
+    proposalsRejectCreate: (
+      id: string,
+      data: RejectProposalDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/reject/${id}`,
         method: 'POST',
@@ -1226,7 +1265,11 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
  * @request POST:/portals/proposals/platformFee/{id}
  * @secure
  */
-    proposalsPlatformFeeCreate: (id: string, data: UpdatePlatformFeeDto, params: RequestParams = {}) =>
+    proposalsPlatformFeeCreate: (
+      id: string,
+      data: UpdatePlatformFeeDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/proposals/platformFee/${id}`,
         method: 'POST',
@@ -1245,7 +1288,11 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
 the ``setPlatformFee method of the `portalProposalsService` with the given `id`
  * @request POST:/portals/trigger/{contractAddress}
  */
-    triggerCreate: (contractAddress: string, data: TestTrigger, params: RequestParams = {}) =>
+    triggerCreate: (
+      contractAddress: string,
+      data: TestTrigger,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/portals/trigger/${contractAddress}`,
         method: 'POST',
@@ -1417,7 +1464,11 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      * @name SubmissionCreate
      * @request POST:/prizes/{slug}/submission
      */
-    submissionCreate: (slug: string, data: CreateSubmissionDto, params: RequestParams = {}) =>
+    submissionCreate: (
+      slug: string,
+      data: CreateSubmissionDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/prizes/${slug}/submission`,
         method: 'POST',
@@ -1445,6 +1496,22 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         path: `/prizes/${slug}/submission`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name SubmissionDetail2
+     * @request GET:/prizes/{slug}/submission/{id}
+     * @originalName submissionDetail
+     * @duplicate
+     */
+    submissionDetail2: (id: string, slug: string, params: RequestParams = {}) =>
+      this.request<Submission, any>({
+        path: `/prizes/${slug}/submission/${id}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),
@@ -1585,7 +1652,11 @@ parameters
      * @request POST:/prizes/proposals/reject/{id}
      * @secure
      */
-    proposalsRejectCreate: (id: string, data: RejectProposalDto, params: RequestParams = {}) =>
+    proposalsRejectCreate: (
+      id: string,
+      data: RejectProposalDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/prizes/proposals/reject/${id}`,
         method: 'POST',
@@ -1623,13 +1694,31 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
  * @request POST:/prizes/proposals/platformFee/{id}
  * @secure
  */
-    proposalsPlatformFeeCreate: (id: string, data: UpdatePlatformFeeDto, params: RequestParams = {}) =>
+    proposalsPlatformFeeCreate: (
+      id: string,
+      data: UpdatePlatformFeeDto,
+      params: RequestParams = {},
+    ) =>
       this.request<Http200Response, any>({
         path: `/prizes/proposals/platformFee/${id}`,
         method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+     *
+     * @name SlugDetail
+     * @request GET:/prizes/slug/{id}
+     */
+    slugDetail: (id: string, params: RequestParams = {}) =>
+      this.request<PickPrizeslug, any>({
+        path: `/prizes/slug/${id}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

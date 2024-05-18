@@ -12,6 +12,7 @@ import '@mantine/tiptap/styles.css';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import Script from 'next/script';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { theme } from 'utils/theme';

@@ -165,7 +165,9 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                     });
                     toast.dismiss(firstLoadingToast);
                     console.log(prize, 'prize');
-                    toast.success(`Prize Address ${prizeAddress} `);
+                    toast.success(
+                      `Prize Address ${prizeAddress.slice(0, 4)}...${prizeAddress.slice(-4)}`,
+                    );
                     toast.loading('Redirecting Please Wait');
                     router.push('/prize/explore');
                     toast.success('Redirected to Prize Explore Page');

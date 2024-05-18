@@ -2420,6 +2420,47 @@
         "x-nestia-method": "GET"
       }
     },
+    "/prizes/{slug}/submission/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Submission"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.submission.getSubmission",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/prizes/{id}/comment": {
       "post": {
         "tags": [],
@@ -3254,6 +3295,64 @@
           }
         ],
         "x-nestia-method": "POST"
+      }
+    },
+    "/prizes/slug/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PickPrizeslug"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals",
+        "x-nestia-namespace": "prizes.slug.getSlugById",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
       }
     },
     "/users": {
@@ -6225,6 +6324,22 @@
           "hasNextPage"
         ],
         "description": "Make all properties in T readonly",
+        "x-typia-jsDocTags": []
+      },
+      "PickPrizeslug": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "slug"
+        ],
+        "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
       "CreateUser": {

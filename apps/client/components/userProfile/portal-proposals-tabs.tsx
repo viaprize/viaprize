@@ -131,7 +131,9 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                         proposal_id: item.id,
                       });
                       toast.dismiss(secondToast);
-                      toast.success(`portal Address ${portalAddress} `);
+                      toast.success(
+                        `portal Address ${portalAddress.slice(0, 4)}...${portalAddress.slice(-4)} `,
+                      );
                       toast.loading('Redirecting Please Wait');
                       router.push('/portal/explore');
                       toast.success('Redirected to portal Explore Page');
