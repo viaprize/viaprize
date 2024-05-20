@@ -6,7 +6,7 @@ import {
 import { createBundler } from "@biconomy/bundler";
 import { createWalletClient, encodeFunctionData, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { optimism } from "viem/chains";
+import { optimismSepolia } from "viem/chains";
 
 // import abi from "./abi.json" assert { type: "json" };
 
@@ -30,14 +30,14 @@ const trx = async () => {
   const account = privateKeyToAccount(`0x` + config.privateKey);
   const client = createWalletClient({
     account,
-    chain: optimism,
+    chain: optimismSepolia,
     transport: http(),
   });
 
   // Create Biconomy Smart Account instance
   const smartWallet = await createSmartAccountClient({
     signer: client,
-    chainId: 10,
+    chainId: 11155420,
     paymaster,
     bundler,
   });
@@ -46,34 +46,7 @@ const trx = async () => {
   console.log("SA Address", saAddress);
   // console.log("smart wallet", smartWallet);
 
-  const abi = [
-    {
-      anonymous: false,
-      inputs: [
-        {
-          indexed: true,
-          internalType: "address",
-          name: "user",
-          type: "address",
-        },
-      ],
-      name: "User",
-      type: "event",
-    },
-    {
-      inputs: [
-        {
-          internalType: "uint256",
-          name: "_count",
-          type: "uint256",
-        },
-      ],
-      name: "test",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-  ];
+  const abi = [];
   try {
     // const constructorArguments = [
     //     "0x18E1f76217D05F1FfBC3129a035ca29304706774",
@@ -92,12 +65,12 @@ const trx = async () => {
 
     const functionData = encodeFunctionData({
       abi: abi,
-      functionName: "test",
-      args: [1],
+      functionName: "voteToRevokePlatformAdmin",
+      args: ["0x5923203a92ABa3Eb92940F42f6eB5267BA377D5f"],
     });
     console.log("functionData....", functionData);
     const tx = {
-      to: "",
+      to: "0x3da3822d8a03d811d391da01528441518e66f1b1",
       data: functionData,
     };
     // const userOp = await smartWallet.buildUserOp([tx]);
