@@ -92,7 +92,8 @@ contract PassThrough {
         TOKEN
     }
     /// @notice Donation events triggered
-    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType,TokenType _tokenType,uint256    amount  );
+    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
+    event Sender(address indexed _sender, uint256 indexed _amount);
 
     /// @notice constructor where we pass all the required parameters before deploying the contract
     /// @param _proposer who creates this campaign
@@ -140,8 +141,6 @@ contract PassThrough {
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
     } 
 
-
-
     /// @notice re-entrancy modifier
     modifier noReentrant() {
         require(!locked, "No cheat, No Re-entrancy");
@@ -154,13 +153,38 @@ contract PassThrough {
         require(isProposer[msg.sender] == true || isplatformAdmin[msg.sender] == true, "You are not a proposer or platformAdmin.");
         _;
     }
+
+    function recoverSigner(
+        bytes32 _ethSignedMessageHash,
+        bytes memory _signature
+    ) public pure returns (address) {
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+
+        return ecrecover(_ethSignedMessageHash, v, r, s);
+    }
+
+    function splitSignature(bytes memory sig)
+        public
+        pure
+        returns (bytes32 r, bytes32 s, uint8 v)
+    {
+        require(sig.length == 65, "invalid signature length");
+
+        assembly {
+            r := mload(add(sig, 32))
+            s := mload(add(sig, 64))
+            v := byte(0, mload(add(sig, 96)))
+        }
+    }
     
     /// @notice function to donate the usdc tokens into the campaign
-    function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant  {
+    function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, uint256 _signature, bytes32 _ethSignedMessageHash ) public noReentrant  {
         require(_amountUsdc > 0, "funds should be greater than 0");
         if (!isActive) revert FundingToContractEnded();
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
         _usdc.permit(_sender, address(this), _amountUsdc, _deadline, v, r, s);
-        TransferHelper.safeTransferFrom(USDC, msg.sender, address(this), _amountUsdc);
+        address sender = recoverSigner(_ethSignedMessageHash, _signature);
+        TransferHelper.safeTransferFrom(USDC, sender, address(this), _amountUsdc);
         uint256 _donation = _amountUsdc;
         funders.push(msg.sender);
         isFunder[msg.sender] = true;
@@ -168,6 +192,7 @@ contract PassThrough {
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
+        emit Sender(sender, _amountUsdc);
     }
 
     /// @notice function to donate eth into the campaign
