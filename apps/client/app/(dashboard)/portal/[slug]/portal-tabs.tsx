@@ -13,13 +13,15 @@ export default function PortalTabs({
   contributors,
   updates,
   owner,
-  param,
+  id,
+  slug,
 }: {
   description: string;
   contributors?: Contributions;
   updates: string[];
   owner: string;
-  param: string;
+  id: string;
+  slug: string;
 }) {
   const { appUser } = useAppUser();
 
@@ -47,7 +49,7 @@ export default function PortalTabs({
           </div>
         </Tabs.Panel>
         <Tabs.Panel value="donations">
-          <DonationInfo contributors={contributors} id={param} />
+          <DonationInfo contributors={contributors} id={id} />
         </Tabs.Panel>
         <Tabs.Panel value="updates">
           {launched ? (
@@ -58,7 +60,7 @@ export default function PortalTabs({
                   <Button
                     className="my-3"
                     onClick={() => {
-                      router.push(`/portal/${param}/add-update`);
+                      router.push(`/portal/${slug}/add-update`);
                     }}
                   >
                     Add Update

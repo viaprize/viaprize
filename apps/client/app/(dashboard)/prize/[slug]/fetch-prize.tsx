@@ -1,6 +1,7 @@
 import PrizePageComponent from '@/components/Prize/prizepage/prizepage';
 import { Api } from '@/lib/api';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'auto';
 export const dynamicParams = true;
@@ -35,6 +36,14 @@ export async function generateMetadata({
 }
 
 export default async function FetchPrize({ params }: { params: { slug: string } }) {
+
+ if (params.slug.includes('-')) {
+   const slug = (await new Api().prizes.slugDetail(params.slug)).data;
+   if (slug) {
+     return redirect(`/prize/${slug.slug}`);
+   }
+ }
+
   const prize = (
     await new Api().prizes.prizesDetail(params.slug, {
       next: {
