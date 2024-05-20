@@ -1,6 +1,7 @@
 import CommentSection from '@/components/comment/comment-section';
 import { Api } from '@/lib/api';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 import { formatEther } from 'viem';
 import AmountDonateCard from './amount-donate-card';
 import ImageTitleHeroCard from './image-title-hero-card';
@@ -9,10 +10,10 @@ import PortalTabs from './portal-tabs';
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: { slug: string };
 }): Promise<Metadata> {
   const portal = (
-    await new Api().portals.portalsDetail(params.id, {
+    await new Api().portals.portalsDetail(params.slug, {
       next: {
         revalidate: 5,
       },
@@ -30,9 +31,15 @@ export async function generateMetadata({
   };
 }
 
-export default async function CreatePortal({ params }: { params: { id: string } }) {
+export default async function CreatePortal({ params }: { params: { slug: string } }) {
+  if (params.slug.includes('-')) {
+    const slug = (await new Api().portals.slugDetail(params.slug)).data;
+    if (slug) {
+      return redirect(`/portal/${slug.slug}`);
+    }
+  }
   const portal = (
-    await new Api().portals.portalsDetail(params.id, {
+    await new Api().portals.portalsDetail(params.slug, {
       cache: 'no-store',
       next: {
         revalidate: false,
@@ -69,10 +76,11 @@ export default async function CreatePortal({ params }: { params: { id: string } 
         contributors={portal.contributors}
         updates={portal.updates ?? []}
         owner={portal.user.username}
-        param={params.id}
+        id={portal.id}
+        slug={portal.slug}
       />
       {/* @ts-expect-error Server Component */}
-      <CommentSection portalId={params.id} />
+      <CommentSection portalId={params.slug} />
     </div>
   );
 }

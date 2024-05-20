@@ -52,7 +52,7 @@ export default function DonationInfo({
 
   const { data: extraData } = useQuery(['get-extra-data-donation'], async () => {
     if ('bacb6584-7e45-465b-b4af-a3ed24a84233' === id) {
-      return await (await backendApi(false)).portals.extraDonationDataDetail(id);
+      return (await backendApi(false)).portals.extraDonationDataDetail(id);
     }
   });
 
