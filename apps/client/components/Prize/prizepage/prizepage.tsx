@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
@@ -13,10 +14,12 @@ import {
   NumberInput,
   Stack,
   Title,
+  Text,
+  Badge,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { IconRefresh } from '@tabler/icons-react';
+import { IconCircleCheck, IconRefresh } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
@@ -33,6 +36,7 @@ import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import Submissions from './submissions';
 import { calculateDeadline } from '@/lib/utils';
+import Link from 'next/link';
 
 function FundCard({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
@@ -161,9 +165,27 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
               data: '0x',
             });
             const { hash } = await sendTransaction(config);
-            toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
-              duration: 6000,
-            });
+            toast.success(
+              <div className="flex items-center ">
+                <IconCircleCheck />{' '}
+                <Text fw="md" size="sm" className="ml-2">
+                  {' '}
+                  Transaction Successfull
+                </Text>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://optimistic.etherscan.io/tx/${hash}`}
+                >
+                  <Button variant="transparent" className="text-blue-400 underline">
+                    See here
+                  </Button>
+                </Link>
+              </div>,
+              {
+                duration: 6000,
+              },
+            );
             window.location.reload();
           } catch (e: unknown) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
@@ -194,7 +216,16 @@ export default function PrizePageComponent({
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
         <Title order={2}>{prize.title}</Title>
-        {prize.distributed ? <Title order={3}>Prize Has Ended</Title> : null}
+        {deadlineString === 'Time is up!' && prize.distributed === true ? (
+          <Badge size="lg" color="green">
+            Won
+          </Badge>
+        ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+        deadlineString === 'Time is up!' && prize.distributed === false ? (
+          <Badge size="lg" color="yellow">
+            Refunded
+          </Badge>
+        ) : null}
 
         {/* <Group justify="right" gap="0" wrap="nowrap">
           <Button color="black" mx="5px">
@@ -256,7 +287,9 @@ export default function PrizePageComponent({
             />
           )
         : null}
-      {appUser?.isAdmin && !(deadlineString === 'Time is up!') && prize.submission_time_blockchain > 0 ? (
+      {appUser?.isAdmin &&
+      !(deadlineString === 'Time is up!') &&
+      prize.submission_time_blockchain > 0 ? (
         <EndSubmission contractAddress={prize.contract_address} />
       ) : null}
 

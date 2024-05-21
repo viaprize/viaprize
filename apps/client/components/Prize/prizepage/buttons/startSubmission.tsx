@@ -1,6 +1,8 @@
 import { prepareWritePrize, writePrize } from '@/lib/smartContract';
-import { Button } from '@mantine/core';
+import { Button,Text } from '@mantine/core';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
+import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useAccount } from 'wagmi';
@@ -37,7 +39,22 @@ export default function StartSubmission({
             hash,
           });
           toast.success(
-            `Submission Period Started, Transaction Hash  ${hash.slice(0, 2)}...${hash.slice(-2)}`,
+            <div className="flex items-center ">
+              <IconCircleCheck />{' '}
+              <Text fw="md" size="sm" className="ml-2">
+                {' '}
+                Submission Period Started
+              </Text>
+              <Link
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://optimistic.etherscan.io/tx/${hash}`}
+              >
+                <Button variant="transparent" className="text-blue-400 underline">
+                  See here
+                </Button>
+              </Link>
+            </div>
           );
           console.log({ hash }, 'hash');
         } catch (error) {

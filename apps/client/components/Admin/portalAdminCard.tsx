@@ -20,6 +20,8 @@ import { parseEther } from 'viem';
 import { useMutation } from 'wagmi';
 import { usePortal } from '../hooks/usePortal';
 import usePortalProposal from '../hooks/usePortalProposal';
+import { IconCircleCheck } from '@tabler/icons-react';
+import Link from 'next/link';
 
 interface AdminCardProps {
   images: string[];
@@ -108,7 +110,22 @@ function PortalAdminCard({
       });
 
       toast.success(
-        `portal Address ${portalAddress.slice(0, 8)}...${portalAddress.slice(-8)} `,
+        <div className="flex items-center ">
+          <IconCircleCheck />{' '}
+          <Text fw="md" size="sm" className="ml-2">
+            {' '}
+            Portal Address
+          </Text>
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`https://optimistic.etherscan.io/address/${portalAddress}`}
+          >
+            <Button variant="transparent" className="text-blue-400 underline">
+              See here
+            </Button>
+          </Link>
+        </div>,
       );
       window.location.reload();
     } catch (e: any) {

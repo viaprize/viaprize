@@ -22,7 +22,7 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { IconCheck, IconChevronRight, IconCopy, IconRefresh } from '@tabler/icons-react';
+import { IconCheck, IconChevronRight, IconCircleCheck, IconCopy, IconRefresh } from '@tabler/icons-react';
 import type { FetchBalanceResult } from '@wagmi/core';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Link from 'next/link';
@@ -127,7 +127,22 @@ function DonateButton({
               data: '0x',
             });
             const { hash } = await sendTransaction(config);
-            toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
+            toast.success( <div className="flex items-center ">
+            <IconCircleCheck />{' '}
+            <Text fw="md" size="sm" className='ml-2'>
+              {' '}
+              Transaction successfull
+            </Text>
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href={`https://optimistic.etherscan.io/tx/${hash}`}
+            >
+              <Button variant="transparent" className="text-blue-400 underline">
+                See here
+              </Button>
+            </Link>
+          </div>, {
               duration: 6000,
             });
 
@@ -206,7 +221,6 @@ export default function AmountDonateCard({
   }, [value]);
 
   const [sendLoading, setSendLoading] = useState(false);
-
 
   return (
     <Card
@@ -386,7 +400,6 @@ export default function AmountDonateCard({
         >
           Donate
         </Button> */}
-
         {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
           <>
             <Link
@@ -440,7 +453,6 @@ export default function AmountDonateCard({
             setValue={setValue}
           />
         )}
-
         {wallet?.address && treasurers.includes(wallet?.address) && sendImmediately ? (
           <Button
             variant="outline"
@@ -452,9 +464,27 @@ export default function AmountDonateCard({
                 });
 
                 const { hash } = await writePortal(config);
-                toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
-                  duration: 6000,
-                });
+                toast.success(
+                  <div className="flex items-center ">
+                    <IconCircleCheck />{' '}
+                    <Text fw="md" size="sm" className="ml-2">
+                      {' '}
+                      Campaign ended successfully
+                    </Text>
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://optimistic.etherscan.io/tx/${hash}`}
+                    >
+                      <Button variant="transparent" className="text-blue-400 underline">
+                        See here
+                      </Button>
+                    </Link>
+                  </div>,
+                  {
+                    duration: 6000,
+                  },
+                );
               } catch (e: unknown) {
                 toast.error((e as any)?.message);
               } finally {
@@ -480,9 +510,27 @@ export default function AmountDonateCard({
                 });
 
                 const { hash } = await writePortal(config);
-                toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
-                  duration: 6000,
-                });
+                toast.success(
+                  <div className="flex items-center ">
+                    <IconCircleCheck />{' '}
+                    <Text fw="md" size="sm" className="ml-2">
+                      {' '}
+                      Campaign ended and refunded successfully
+                    </Text>
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://optimistic.etherscan.io/tx/${hash}`}
+                    >
+                      <Button variant="transparent" className="text-blue-400 underline">
+                        See here
+                      </Button>
+                    </Link>
+                  </div>,
+                  {
+                    duration: 6000,
+                  },
+                );
               } catch (e: unknown) {
                 toast.error((e as any)?.message);
               } finally {
@@ -494,7 +542,6 @@ export default function AmountDonateCard({
             Refund And End Campaign Early
           </Button>
         ) : null}
-
         {wallet?.address &&
         isActive &&
         (treasurers.includes(wallet?.address) || appUser?.isAdmin) &&
@@ -510,9 +557,27 @@ export default function AmountDonateCard({
                 });
 
                 const { hash } = await writePortal(config);
-                toast.success(`Transaction  ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
-                  duration: 6000,
-                });
+                toast.success(
+                  <div className="flex items-center ">
+                    <IconCircleCheck />{' '}
+                    <Text fw="md" size="sm" className="ml-2">
+                      {' '}
+                      Campaign ended successfully
+                    </Text>
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://optimistic.etherscan.io/tx/${hash}`}
+                    >
+                      <Button variant="transparent" className="text-blue-400 underline">
+                        See here
+                      </Button>
+                    </Link>
+                  </div>,
+                  {
+                    duration: 6000,
+                  },
+                );
               } catch (e: unknown) {
                 toast.error((e as any)?.message);
               } finally {
@@ -524,7 +589,6 @@ export default function AmountDonateCard({
             Collect Funds and End Campaign Early
           </Button>
         ) : null}
-
         {wallet?.address &&
         deadline &&
         isActive &&
@@ -541,9 +605,27 @@ export default function AmountDonateCard({
                 });
 
                 const { hash } = await writePortal(config);
-                toast.success(`Transaction ${hash.slice(0, 8)}...${hash.slice(-8)}`, {
-                  duration: 6000,
-                });
+                toast.success(
+                  <div className="flex items-center ">
+                    <IconCircleCheck />{' '}
+                    <Text fw="md" size="sm" className="ml-2">
+                      {' '}
+                      Campaign ended successfully
+                    </Text>
+                    <Link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://optimistic.etherscan.io/tx/${hash}`}
+                    >
+                      <Button variant="transparent" className="text-blue-400 underline">
+                        See here
+                      </Button>
+                    </Link>
+                  </div>,
+                  {
+                    duration: 6000,
+                  },
+                );
               } catch (e: unknown) {
                 toast.error((e as any)?.message);
               } finally {

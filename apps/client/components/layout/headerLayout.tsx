@@ -129,9 +129,7 @@ export default function HeaderLayout() {
           </Menu.Dropdown>
         </Menu>
       </Flex>
-      <Pill color="red" size="lg" radius="xs" className="lg:block hidden">
-        Live On OP Mainnet Only (Multichain Coming Soon)
-      </Pill>
+      
 
       <Flex gap="sm" align="center">
         <Card className="hidden sm:block py-1 my-2">
