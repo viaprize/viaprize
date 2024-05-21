@@ -25,7 +25,7 @@ export default function EndVoting({ contractAddress }: { contractAddress: string
       loading={isLoading}
       onClick={async () => {
         const result = await writeAsync?.();
-        toast.success('Rewards Distributed!!!!!', {
+        toast.success('Rewards Distributed!!', {
           duration: 7000,
         });
         console.log(result);

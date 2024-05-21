@@ -12,6 +12,8 @@ import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { usePrize } from '../hooks/usePrize';
 import ViewDetails from './details';
+import Link from 'next/link';
+import { IconCircleCheck } from '@tabler/icons-react';
 
 interface AdminCardProps {
   images: string[];
@@ -108,7 +110,22 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
     toast.dismiss(firstLoadingToast);
     console.log(prize, 'prize');
     toast.success(
-      `Prize Address ${prizeAddress.slice(0, 8)}...${prizeAddress.slice(-8)} `,
+      <div className="flex items-center ">
+        <IconCircleCheck />{' '}
+        <Text fw="md" size="sm" className="ml-2">
+          {' '}
+          Prize Address
+        </Text>
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`https://optimistic.etherscan.io/address/${prizeAddress}`}
+        >
+          <Button variant="transparent" className="text-blue-400 underline">
+            See here
+          </Button>
+        </Link>
+      </div>
     );
     toast.loading('Redirecting Please Wait');
     router.push('/prize/explore');

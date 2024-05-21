@@ -15,12 +15,13 @@ import {
   Text,
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
-import { IconArrowAutofitUp, IconRefresh } from '@tabler/icons-react';
+import { IconArrowAutofitUp, IconCircleCheck, IconRefresh } from '@tabler/icons-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { formatEther, parseEther } from 'viem';
 import { useAccount } from 'wagmi';
 import { extractPlainTextFromEditor } from './utils';
+import Link from 'next/link';
 
 interface SubmissionsCardProps {
   fullname: string;
@@ -119,7 +120,22 @@ export default function SubmissionsCard({
                   const { hash: transactionHash } = await writePrize(request);
                   console.log({ transactionHash }, 'transactionHash');
                   toast.success(
-                    `Transaction Hash ${transactionHash.slice(0, 2)}...${transactionHash.slice(-2)}`,
+                    <div className="flex items-center ">
+                      <IconCircleCheck />{' '}
+                      <Text fw="md" size="sm" className="ml-2">
+                        {' '}
+                        Voted Successfully
+                      </Text>
+                      <Link
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        href={`https://optimistic.etherscan.io/tx/${transactionHash}`}
+                      >
+                        <Button variant="transparent" className="text-blue-400 underline">
+                          See here
+                        </Button>
+                      </Link>
+                    </div>
                   );
                   setSendLoading(false);
                   close();
