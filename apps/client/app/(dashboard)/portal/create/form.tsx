@@ -171,6 +171,7 @@ export default function PortalForm() {
     if (!fundingGoal) {
       return 0;
     }
+
     console.log({ fundingGoal });
     const fundingGoalPercentage =
       parseFloat(fundingGoal.toString()) * (platformFeePercentage / 100);
