@@ -3,17 +3,18 @@ pragma solidity ^0.8.0;
 
 import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
-import "../../helperContracts/safemath.sol";
-import "../../helperContracts/ierc20_permit.sol";                                         
+import "../helperContracts/safemath.sol";
+import "../helperContracts/ierc20_permit.sol";                                         
+import "../helperContracts/nonReentrant.sol";
 
 
-// import "./helperContracts/safemath.sol";
+// // import "./helperContracts/safemath.sol";
 // interface IERC20Permit is IERC20 {
 //     function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 // }
 
 
-contract ViaPrize {
+contract ViaPrize is ReentrancyGuard {
     /// @notice this will be the total amount of funds raised
     uint256 public total_funds; 
     /// @notice this will be the total amount of rewards available
@@ -117,12 +118,15 @@ contract ViaPrize {
     error VotingPeriodActive();
 
     event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
+    event campaignCreated(address indexed proposer, address indexed contractAddress);
+    event voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
 
 
     constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
 
         proposer = _proposer;
+        isProposer[proposer] = true;
         recipient = _proposer;
         platformAddress = _platformAddress;
         for (uint i = 0; i < _platformAdmins.length; i++) {
@@ -136,6 +140,7 @@ contract ViaPrize {
         _usdc = IERC20Permit(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
         _usdcBridged = IERC20Permit(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
         isActive = true;
+        emit campaignCreated(proposer, address(this));
     }
 
     modifier noReentrant() {
@@ -266,7 +271,7 @@ contract ViaPrize {
     }
 
     /// @notice addSubmission should return the submissionHash
-    function addSubmission(address contestant, string memory submissionText) public returns(bytes32) {
+    function addSubmission(address contestant, string memory submissionText) public onlyPlatformAdmin returns(bytes32) {
         if (block.timestamp > submission_time) revert SubmissionPeriodNotActive();
         bytes32 submissionHash = keccak256(abi.encodePacked(contestant, submissionText));
         submissionTree.add_submission(contestant, submissionHash, submissionText);
@@ -274,39 +279,56 @@ contract ViaPrize {
         return submissionHash;
     }
 
+    function recoverSigner( bytes32 _ethSignedMessageHash, bytes memory _signature) public pure returns (address) {
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+        return ecrecover(_ethSignedMessageHash, v, r, s);
+    }
+
+    function splitSignature(bytes memory sig) public pure returns(bytes32 r, bytes32 s, uint8 v){
+        require(sig.length == 65, "invalid signature length");
+
+        assembly {
+            r := mload(add(sig, 32))
+            s := mload(add(sig, 64))
+            v := byte(0, mload(add(sig, 96)))
+        }
+    }
+
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 amount) public {
+    function vote(bytes32 _submissionHash, uint256 amount, bytes memory _signature, bytes32 _ethSignedMessageHash) public {
         if (block.timestamp > voting_time) revert VotingPeriodNotActive();
-        if (amount > funderAmount[msg.sender]) revert NotEnoughFunds();
+        address sender =  recoverSigner(_ethSignedMessageHash, _signature);
+        if (amount > funderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = submissionTree.getSubmission(_submissionHash);
         /// @notice submission should return a struct with the submissionHash, the contestant, the submissionText, the threshhold, the votes, and the funded status 
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
-        if(isUsdcContributor[msg.sender]) {
-            funderAmount[msg.sender] -= amount;
+        if(isUsdcContributor[sender]) {
+            funderAmount[sender] -= amount;
             submissionTree.addUsdcVotes(_submissionHash, amount);
-            funderVotes[msg.sender][_submissionHash].add(amount);
+            funderVotes[sender][_submissionHash].add(amount);
             totalVotes.add(amount);
-            submissionTree.updateFunderBalance(_submissionHash, msg.sender, (funderVotes[msg.sender][_submissionHash] * (100-platformFee))/100);
+            submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee))/100);
             SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
                 submissionTree.setFundedTrue(_submissionHash, true);
             }
         }
-        if(!isUsdcContributor[msg.sender]) {
-            funderAmount[msg.sender] -= amount;
+        if(!isUsdcContributor[sender]) {
+            funderAmount[sender] -= amount;
             submissionTree.addUsdcBridgedVotes(_submissionHash, amount);
-            funderVotes[msg.sender][_submissionHash] += amount;
+            funderVotes[sender][_submissionHash] += amount;
             totalVotes.add(amount);
-            submissionTree.updateFunderBalance(_submissionHash, msg.sender, (funderVotes[msg.sender][_submissionHash] * (100-platformFee))/100);
+            submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee))/100);
             SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
             if (submission.usdcBridgedVotes > 0) {
                 submissionTree.setFundedTrue(_submissionHash, true);
             }
         }
+        emit voted(_submissionHash, sender, amount);
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
@@ -367,40 +389,42 @@ contract ViaPrize {
         return submission;
     }
 
-    function addUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable {
+    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, bytes memory _signature, bytes32 _ethSignedMessageHash) public noReentrant payable {
         require(_amountUsdc > 0, "funds should be greater than 0");
-         require(_amountUsdc > 0, "funds should be greater than 0");
+        require(_amountUsdc > 0, "funds should be greater than 0");
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+        address sender = recoverSigner(_ethSignedMessageHash, _signature);
         _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
         if(!isActive) revert("Funding to contract ended");
         uint256 _donation = _amountUsdc;
-        isFunder[msg.sender] = true;
-        isUsdcContributor[msg.sender] = true;
-        funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
+        isFunder[sender] = true;
+        isUsdcContributor[sender] = true;
+        funderAmount[sender].add(_donation);
         totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
         totalUsdcFunds = totalUsdcFunds.add(_donation);
         total_rewards = total_rewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
         total_funds = total_funds.add(_donation);
-        funderAmount[msg.sender].add(msg.value);
-        allFunders.push(msg.sender);
+        allFunders.push(sender);
     }
 
-    function addBridgedUsdcFunds(address sender, address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant payable {
+    function addBridgedUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, bytes32 _ethSignedMessageHash, bytes memory _signature) public noReentrant payable {
         require(_amountUsdc > 0, "funds should be greater than 0");
-         require(_amountUsdc > 0, "funds should be greater than 0");
+        require(_amountUsdc > 0, "funds should be greater than 0");
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+        address sender = recoverSigner(_ethSignedMessageHash, _signature);
         _usdcBridged.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
-        _usdcBridged.transferFrom(msg.sender, address(this), _amountUsdc);
+        _usdcBridged.transferFrom(sender, address(this), _amountUsdc);
         if(!isActive) revert("Funding to contract ended");
         uint256 _donation = _amountUsdc;
-        isFunder[msg.sender] = true;
-        isUsdcContributor[msg.sender] = false;
-        funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
+        isFunder[sender] = true;
+        isUsdcContributor[sender] = false;
+        funderAmount[sender] = funderAmount[sender].add(_donation);
         totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
-        totalBridgedUsdcFunds = totalUsdcFunds.add(_donation);
+        totalUsdcFunds.add(_donation);
         total_rewards = total_rewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
         total_funds = total_funds.add(_donation);
-        funderAmount[msg.sender].add(msg.value);
-        allFunders.push(msg.sender);
+        allFunders.push(sender);
     }
 
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
