@@ -6,12 +6,33 @@ import { MailerService } from 'src/mailer/mailer.service';
 @Injectable()
 export class MailService {
   telegramLink: string;
+  linkedinLink: string;
+  twitterLink: string;
+  facebookLink: string;
   constructor(
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService<AllConfigType>,
   ) {
     this.telegramLink = this.configService.getOrThrow<AllConfigType>(
       'TELEGRAM_LINK',
+      {
+        infer: true,
+      },
+    );
+    this.linkedinLink = this.configService.getOrThrow<AllConfigType>(
+      'LINKEDIN_LINK',
+      {
+        infer: true,
+      },
+    );
+    this.twitterLink = this.configService.getOrThrow<AllConfigType>(
+      'TWITTER_LINK',
+      {
+        infer: true,
+      },
+    );
+    this.facebookLink = this.configService.getOrThrow<AllConfigType>(
+      'FACEBOOK_LINK',
       {
         infer: true,
       },
