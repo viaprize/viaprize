@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { User } from '@/lib/api';
 import { prepareWritePortalFactory, writePortalFactory } from '@/lib/smartContract';
 import {
@@ -70,7 +71,6 @@ function PortalAdminCard({
   const portalDeploy = async () => {
     try {
       const firstLoadingToast = toast.loading('Transaction Waiting To Be approved', {
-        delete: false,
         dismissible: false,
       });
       const finalFundingGoal = parseEther((fundingGoal ?? '0').toString());
@@ -96,7 +96,7 @@ function PortalAdminCard({
         'Waiting for transaction Confirmation...DO NOT CLOSE WINDOW',
         {
           dismissible: false,
-          delete: false,
+      
         },
       );
       const waitForTransactionOut = await waitForTransaction({

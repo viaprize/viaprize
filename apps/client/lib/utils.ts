@@ -9,6 +9,8 @@ import { getAccessToken } from '@privy-io/react-auth';
 import { createClient } from '@supabase/supabase-js';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
@@ -72,6 +74,12 @@ export const getAccessTokenWithFallback = async (): Promise<string | null> => {
     return null;
   }
 };
+
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
 
 export function htmlToPlainText(html: string): string {
   let textContent = '';

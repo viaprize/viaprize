@@ -86,7 +86,6 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                       const firstLoadingToast = toast.loading(
                         'Transaction Waiting To Be approved',
                         {
-                          delete: false,
                           dismissible: false,
                         },
                       );
@@ -118,7 +117,6 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                         'Waiting for transaction Confirmation...',
                         {
                           dismissible: false,
-                          delete: false,
                         },
                       );
                       const waitForTransactionOut = await waitForTransaction({
