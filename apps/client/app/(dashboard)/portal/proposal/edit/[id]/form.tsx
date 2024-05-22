@@ -78,6 +78,28 @@ export default function PortalProposalForm({
     return parseFloat(ethToCrypto.toFixed(4));
   }
 
+  const finalFundingGoalWithPlatformFees = useMemo(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+    const ethValue = convertUSDToCrypto(fundingGoal);
+    return parseFloat(
+      (ethValue + ethValue * (platformFeePercentage / 100)).toPrecision(4),
+    );
+  }, [fundingGoal]);
+
+  const finalFundingGoalUsd = useMemo<number>(() => {
+    if (!fundingGoal) {
+      return 0;
+    }
+
+    console.log({ fundingGoal });
+    const fundingGoalPercentage =
+      parseFloat(fundingGoal.toString()) * (platformFeePercentage / 100);
+    console.log({ fundingGoalPercentage });
+    return parseFloat(fundingGoal.toString()) + fundingGoalPercentage;
+  }, [fundingGoal]);
+
   const { appUser } = useAppUser();
   const router = useRouter();
 
@@ -114,9 +136,7 @@ export default function PortalProposalForm({
       return 0;
     }
     const ethValue = convertUSDToCrypto(fundingGoal);
-    return parseFloat(
-      (ethValue + ethValue * (platformFeePercentage / 100)).toPrecision(4),
-    );
+    return ethValue;
   }, [fundingGoal]);
   const submit = async () => {
     if (!wallet) {
@@ -249,8 +269,13 @@ export default function PortalProposalForm({
         {portalType === 'all-or-nothing' ? (
           <div>
             <div className="flex gap-1 items-center justify-start mt-3 mb-1">
-              <Text>
+              {/* <Text>
                 Funding Goal in {`( ${convertUSDToCrypto(fundingGoal ?? 0)}`}{' '}
+                {chain.nativeCurrency.symbol} {')'}
+              </Text> */}
+              <Text>
+                Funding goal in total (+ platform fee of {platformFeePercentage}% ){' '}
+                {`${finalFundingGoalUsd}`} ({`${finalFundingGoalWithPlatformFees}`}{' '}
                 {chain.nativeCurrency.symbol} {')'}
               </Text>
             </div>

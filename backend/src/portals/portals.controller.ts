@@ -878,4 +878,19 @@ export class PortalsController {
       slug,
     };
   }
+  /**
+   * The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @returns {Promise<Http200Response>}
+   */
+  @Get('/alkdslkf')
+  async testing(
+  ): Promise<Http200Response> {
+    await this.portalProposalsService.updateFundingGoal()
+    return {
+      message: 'done'
+    }
+  }
 }

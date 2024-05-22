@@ -222,6 +222,9 @@ export default function AmountDonateCard({
 
   const [sendLoading, setSendLoading] = useState(false);
 
+
+
+
   return (
     <Card
       p="md"
@@ -322,15 +325,6 @@ export default function AmountDonateCard({
           </>
         )}
       </div>
-      {/* // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
-  //   ...config,
-  //   async onSuccess(data) {
-  //     toast.success(`Transaction Sent with Hash ${data?.hash}`, {
-  //       duration: 6000,
-  //     });
-  //     await refetch();
-  //   },
-  // }); */}
       <Stack my="md">
         {/* <NumberInput
           description={
