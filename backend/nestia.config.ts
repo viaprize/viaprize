@@ -22,7 +22,7 @@ export const NESTIA_CONFIG: INestiaConfig = {
         description: 'Local server',
       },
       {
-        url: 'https://api.pactsmith.com/api',
+        url: 'https://api-dev.viaprize.org/api',
         description: 'Dev Server',
       },
       {
