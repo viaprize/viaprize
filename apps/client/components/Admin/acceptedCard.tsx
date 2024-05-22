@@ -1,4 +1,4 @@
-import { User } from '@/lib/api';
+import type { User } from '@/lib/api';
 import {
   prepareWritePrizeFactory,
   prepareWritePrizeJudgesFactory,
@@ -25,11 +25,11 @@ interface AdminCardProps {
   proposerFeePercentage: number;
   platfromFeePercentage: number;
   isAccepted?: boolean;
-  submission_time: number;
+  submissionTime: number;
   judges?: string[];
 }
 
-const AdminAcceptedCard: React.FC<AdminCardProps> = ({
+function AdminAcceptedCard({
   id,
   images,
   admins,
@@ -38,11 +38,11 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
   title,
   user,
   voting,
-  submission_time,
+  submissionTime,
   judges,
   platfromFeePercentage,
   proposerFeePercentage,
-}) => {
+}: AdminCardProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const currentTimestamp = useRef(Date.now());
 
@@ -50,7 +50,6 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
 
   const deployPrize = async () => {
     const firstLoadingToast = toast.loading('Transaction Waiting To Be approved', {
-      delete: false,
       dismissible: false,
     });
     let out;
@@ -68,7 +67,7 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
           BigInt(platfromFeePercentage),
           BigInt(proposerFeePercentage),
           '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-          BigInt(submission_time),
+          BigInt(submissionTime),
           BigInt(currentTimestamp.current),
         ],
       });
@@ -87,7 +86,7 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
           BigInt(platfromFeePercentage),
           BigInt(proposerFeePercentage),
           '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-          BigInt(submission_time),
+          BigInt(submissionTime),
           BigInt(currentTimestamp.current),
         ],
       });
@@ -111,7 +110,7 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
       `Prize Address ${prizeAddress.slice(0, 8)}...${prizeAddress.slice(-8)} `,
     );
     toast.loading('Redirecting Please Wait');
-    router.push('/prize/explore');
+    await router.push('/prize/explore');
     toast.success('Redirected to Prize Explore Page');
   };
   return (
@@ -167,6 +166,6 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
       </Modal>
     </>
   );
-};
+}
 
 export default AdminAcceptedCard;

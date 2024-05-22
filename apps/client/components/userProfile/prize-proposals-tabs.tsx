@@ -87,7 +87,6 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                     const firstLoadingToast = toast.loading(
                       'Transaction Waiting To Be approved',
                       {
-                        delete: false,
                         dismissible: false,
                       },
                     );
