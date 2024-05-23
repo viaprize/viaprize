@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
-import "../helperContracts/safemath.sol";
-import "../helperContracts/ierc20_permit.sol";                                         
-import "../helperContracts/nonReentrant.sol";
+import "../../helperContracts/safemath.sol";
+import "../../helperContracts/ierc20_permit.sol";                                         
+import "../../helperContracts/nonReentrant.sol";
 
 
 // // import "./helperContracts/safemath.sol";
@@ -155,6 +155,11 @@ contract ViaPrize is ReentrancyGuard {
     _;
     }
 
+    modifier onlyPlatformAdminOrProposer() {
+        require(isPlatformAdmin[msg.sender] || isProposer[msg.sender]);
+        _;
+    }
+
     /// @notice create a function to start the submission period
     function start_submission_period(uint256 _submission_time) public {
         if(isProposer[msg.sender] == false && isPlatformAdmin[msg.sender] == false) revert NotAdmin();
@@ -263,7 +268,7 @@ contract ViaPrize is ReentrancyGuard {
                 }
                 if(!isUsdcContributor[allFunders[i]]) {
                     _usdcBridged.transfer(allFunders[i], funderAmount[allFunders[i]]);
-                    funderAmount[allFunders[i]] = 0;
+                    funderAmount[allFunders[i]] = 0; 
                 }
             }
             distributed = true;
@@ -277,6 +282,13 @@ contract ViaPrize is ReentrancyGuard {
         submissionTree.add_submission(contestant, submissionHash, submissionText);
         emit SubmissionCreated(contestant, submissionHash);
         return submissionHash;
+    }
+
+    function restartPrize(uint256 _submission_time) public onlyPlatformAdminOrProposer {
+        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+        if(block.timestamp > submission_time && allSubmissions.length == 0) revert("submission time not ended or allSubmissions > 0");
+        submission_time = block.timestamp + _submission_time * 1 days;
+        submissionPeriod = true;
     }
 
     function recoverSigner( bytes32 _ethSignedMessageHash, bytes memory _signature) public pure returns (address) {
