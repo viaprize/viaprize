@@ -118,7 +118,7 @@ contract ViaPrize is ReentrancyGuard {
     error VotingPeriodActive();
 
     event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
-    event campaignCreated(address indexed proposer, address indexed contractAddress);
+    event CampaignCreated(address indexed proposer, address indexed contractAddress);
     event voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
 
 
@@ -140,7 +140,7 @@ contract ViaPrize is ReentrancyGuard {
         _usdc = IERC20Permit(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
         _usdcBridged = IERC20Permit(0x4DE0985B995666226f62855b1400D69ccbDa7d98);
         isActive = true;
-        emit campaignCreated(proposer, address(this));
+        emit CampaignCreated(proposer, address(this));
     }
 
     modifier noReentrant() {
