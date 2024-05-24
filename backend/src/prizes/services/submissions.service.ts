@@ -48,6 +48,7 @@ export class SubmissionService {
       where: { id: submissionId },
       relations: ['user'],
     });
+    console.log(submissionObject);
     if (!submissionObject) {
       throw new HttpException('Submission not found', 404);
     }

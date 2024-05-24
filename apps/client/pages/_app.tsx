@@ -103,10 +103,10 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           },
         }}
       >
+        <Toaster />
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
           <QueryClientProvider client={queryClient}>
             <MantineProvider theme={theme} defaultColorScheme="auto">
-              <Toaster />
               <NavigationProvider>
                 {getLayout(loading ? <OwnLoader /> : <Component {...pageProps} />)}
               </NavigationProvider>

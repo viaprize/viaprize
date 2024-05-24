@@ -310,7 +310,8 @@ export class PrizesController {
     @TypedBody() content: string,
     @Request() req,
   ): Promise<Http200Response> {
-    await this.submissionService.submissionEdit(id, req.user.userId, content);
+    const authId = req.user.userId as string;
+    await this.submissionService.submissionEdit(authId, id, content);
     return {
       message: `Submission with id ${id} has been Edited`,
     };
