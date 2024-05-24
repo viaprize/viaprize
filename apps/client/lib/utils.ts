@@ -75,11 +75,9 @@ export const getAccessTokenWithFallback = async (): Promise<string | null> => {
   }
 };
 
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
 
 export function htmlToPlainText(html: string): string {
   let textContent = '';
@@ -132,17 +130,18 @@ export const calculateDeadline = (createdDate: Date, endDate: Date) => {
   const days = Math.floor(remainingTime / (24 * 60 * 60 * 1000));
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
 };
-// export const calculateDeadline = (
-//   startSubmissionTime: string,
-//   submissionDays: number,
-// ) => {
-//   const start = new Date(startSubmissionTime);
-//   const submissionDate = new Date(startSubmissionTime);
-//   submissionDate.setDate(start.getDate() + submissionDays);
-//   const remainingTime = calculateRemainingTime(submissionDate.toISOString());
-//   const dateString = submissionDate.toISOString().split('T')[0];
-//   return { remainingTime, dateString };
-// };
+
+export const calculateDeadlineDate = (
+  startSubmissionTime: string,
+  submissionDays: number,
+) => {
+  const start = new Date(startSubmissionTime);
+  const submissionDate = new Date(startSubmissionTime);
+  submissionDate.setDate(start.getDate() + submissionDays);
+  const remainingTime = calculateRemainingTime(submissionDate.toISOString());
+  const dateString = submissionDate.toISOString().split('T')[0];
+  return { remainingTime, dateString };
+};
 
 export const formatDate = (date: string): string => {
   const format = new Intl.DateTimeFormat('en', {

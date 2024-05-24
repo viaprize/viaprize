@@ -3,6 +3,7 @@ import {
   Delete,
   Get,
   Inject,
+  Patch,
   Post,
   Put,
   Query,
@@ -31,6 +32,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
+import { FetchSubmissionDto } from './dto/submission.dto';
 import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
@@ -289,8 +291,30 @@ export class PrizesController {
   async getSubmission(
     @TypedParam('id') id: string,
     @TypedParam('slug') _: string,
-  ): Promise<Submission> {
-    return await this.submissionService.findSubmissionById(id);
+  ): Promise<FetchSubmissionDto> {
+    const sub = await this.submissionService.findSubmissionById(id);
+    const results = await this.blockchainService.getPrizePublicVariables(
+      sub.prize.contract_address,
+    );
+
+    return {
+      ...sub,
+      submissionDeadline: parseInt((results[1].result as bigint).toString()),
+    };
+  }
+
+  @Patch('/submission/:id')
+  @UseGuards(AuthGuard)
+  async EditSubmission(
+    @TypedParam('id') id: string,
+    @TypedBody() content: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    const authId = req.user.userId as string;
+    await this.submissionService.submissionEdit(authId, id, content);
+    return {
+      message: `Submission with id ${id} has been Edited`,
+    };
   }
 
   @Get('/:slug/submission')

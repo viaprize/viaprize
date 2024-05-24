@@ -129,7 +129,6 @@ export default function HeaderLayout() {
           </Menu.Dropdown>
         </Menu>
       </Flex>
-      
 
       <Flex gap="sm" align="center">
         <Card className="hidden sm:block py-1 my-2">

@@ -1,5 +1,5 @@
 import { prepareWritePrize, writePrize } from '@/lib/smartContract';
-import { Button, Modal, NumberInput,Text } from '@mantine/core';
+import { Button, Modal, NumberInput, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
@@ -71,7 +71,7 @@ export default function ChangeSubmission({
                       See here
                     </Button>
                   </Link>
-                </div>
+                </div>,
               );
               console.log({ hash }, 'hash');
               window.location.reload();
