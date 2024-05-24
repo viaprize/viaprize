@@ -124,7 +124,7 @@ function AdminAcceptedCard({
             See here
           </Button>
         </Link>
-      </div>
+      </div>,
     );
     toast.loading('Redirecting Please Wait');
     await router.push('/prize/explore');

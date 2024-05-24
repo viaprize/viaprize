@@ -208,10 +208,10 @@ export default function PrizePageComponent({
   submissions: SubmissionWithBlockchainData[];
 }) {
   const { appUser } = useAppUser();
-    const deadlineString = calculateDeadline(
-      new Date(),
-      new Date(prize.submission_time_blockchain * 1000),
-    );
+  const deadlineString = calculateDeadline(
+    new Date(),
+    new Date(prize.submission_time_blockchain * 1000),
+  );
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">

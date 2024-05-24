@@ -75,11 +75,9 @@ export const getAccessTokenWithFallback = async (): Promise<string | null> => {
   }
 };
 
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
 
 export function htmlToPlainText(html: string): string {
   let textContent = '';

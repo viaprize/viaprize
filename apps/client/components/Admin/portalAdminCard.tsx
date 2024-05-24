@@ -96,7 +96,6 @@ function PortalAdminCard({
         'Waiting for transaction Confirmation...DO NOT CLOSE WINDOW',
         {
           dismissible: false,
-      
         },
       );
       const waitForTransactionOut = await waitForTransaction({

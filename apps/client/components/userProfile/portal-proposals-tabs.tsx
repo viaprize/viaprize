@@ -150,7 +150,7 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                               See here
                             </Button>
                           </Link>
-                        </div>
+                        </div>,
                       );
                       toast.loading('Redirecting Please Wait');
                       router.push('/portal/explore');

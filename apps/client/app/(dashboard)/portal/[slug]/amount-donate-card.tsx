@@ -22,7 +22,13 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { IconCheck, IconChevronRight, IconCircleCheck, IconCopy, IconRefresh } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconChevronRight,
+  IconCircleCheck,
+  IconCopy,
+  IconRefresh,
+} from '@tabler/icons-react';
 import type { FetchBalanceResult } from '@wagmi/core';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Link from 'next/link';
@@ -127,24 +133,27 @@ function DonateButton({
               data: '0x',
             });
             const { hash } = await sendTransaction(config);
-            toast.success( <div className="flex items-center ">
-            <IconCircleCheck />{' '}
-            <Text fw="md" size="sm" className='ml-2'>
-              {' '}
-              Transaction successfull
-            </Text>
-            <Link
-              target="_blank"
-              rel="noopener noreferrer"
-              href={`https://optimistic.etherscan.io/tx/${hash}`}
-            >
-              <Button variant="transparent" className="text-blue-400 underline">
-                See here
-              </Button>
-            </Link>
-          </div>, {
-              duration: 6000,
-            });
+            toast.success(
+              <div className="flex items-center ">
+                <IconCircleCheck />{' '}
+                <Text fw="md" size="sm" className="ml-2">
+                  {' '}
+                  Transaction successfull
+                </Text>
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://optimistic.etherscan.io/tx/${hash}`}
+                >
+                  <Button variant="transparent" className="text-blue-400 underline">
+                    See here
+                  </Button>
+                </Link>
+              </div>,
+              {
+                duration: 6000,
+              },
+            );
 
             window.location.reload();
           } catch (e: unknown) {
@@ -221,9 +230,6 @@ export default function AmountDonateCard({
   }, [value]);
 
   const [sendLoading, setSendLoading] = useState(false);
-
-
-
 
   return (
     <Card
