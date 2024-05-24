@@ -89,7 +89,6 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                     const firstLoadingToast = toast.loading(
                       'Transaction Waiting To Be approved',
                       {
-                        delete: false,
                         dismissible: false,
                       },
                     );
@@ -186,7 +185,7 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                             See here
                           </Button>
                         </Link>
-                      </div>
+                      </div>,
                     );
                     toast.loading('Redirecting Please Wait');
                     router.push('/prize/explore');

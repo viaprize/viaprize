@@ -39,11 +39,35 @@ export class SubmissionService {
     });
   }
 
+  async submissionEdit(
+    authId: string,
+    submissionId: string,
+    submissionDescription: string,
+  ) {
+    const submissionObject = await this.submissionRepository.findOne({
+      where: { id: submissionId },
+      relations: ['user'],
+    });
+    console.log(submissionObject);
+    if (!submissionObject) {
+      throw new HttpException('Submission not found', 404);
+    }
+    if (submissionObject.user.authId !== authId) {
+      throw new HttpException('Unauthorized', 401);
+    }
+    const submission = {
+      ...submissionObject,
+      submissionDescription,
+    };
+    await this.submissionRepository.update(submissionId, submission);
+  }
+
   async findSubmissionById(id: string) {
     const submission = await this.submissionRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'prize'],
     });
+    console.log({ submission });
     if (!submission) {
       throw new HttpException('Submission not found', 404);
     }

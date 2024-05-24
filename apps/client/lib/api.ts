@@ -444,6 +444,18 @@ export interface CreateSubmissionDto {
   submitterAddress: string;
 }
 
+export interface FetchSubmissionDto {
+  submissionDeadline: number;
+  id: string;
+  submissionDescription: string;
+  submissionHash: string;
+  submitterAddress: string;
+  /** @format date-time */
+  created_at: string;
+  user: User;
+  prize: Prize;
+}
+
 /** Make all properties in T readonly */
 export interface ReadonlyTypeO5 {
   data: SubmissionWithBlockchainData[];
@@ -1343,6 +1355,20 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         format: 'json',
         ...params,
       }),
+
+    /**
+     * @description The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+     *
+     * @name AlkdslkfList
+     * @request GET:/portals/alkdslkf
+     */
+    alkdslkfList: (params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/portals/alkdslkf`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
   };
   price = {
     /**
@@ -1509,9 +1535,25 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      * @duplicate
      */
     submissionDetail2: (id: string, slug: string, params: RequestParams = {}) =>
-      this.request<Submission, any>({
+      this.request<FetchSubmissionDto, any>({
         path: `/prizes/${slug}/submission/${id}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name SubmissionPartialUpdate
+     * @request PATCH:/prizes/submission/{id}
+     */
+    submissionPartialUpdate: (id: string, data: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/submission/${id}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

@@ -1,5 +1,5 @@
 import { prepareWritePrize, writePrize } from '@/lib/smartContract';
-import { Button,Text } from '@mantine/core';
+import { Button, Text } from '@mantine/core';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
 import Link from 'next/link';
@@ -54,7 +54,7 @@ export default function StartSubmission({
                   See here
                 </Button>
               </Link>
-            </div>
+            </div>,
           );
           console.log({ hash }, 'hash');
         } catch (error) {

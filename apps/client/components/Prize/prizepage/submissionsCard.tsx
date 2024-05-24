@@ -135,7 +135,7 @@ export default function SubmissionsCard({
                           See here
                         </Button>
                       </Link>
-                    </div>
+                    </div>,
                   );
                   setSendLoading(false);
                   close();
