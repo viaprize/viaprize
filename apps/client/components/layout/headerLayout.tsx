@@ -128,8 +128,43 @@ export default function HeaderLayout() {
             </Stack>
           </Menu.Dropdown>
         </Menu>
-      </Flex>
+
+        <Menu withArrow shadow="md" position="bottom" trigger="hover">
+          <Menu.Target>
+            <Center>
+              <Box
+                // href="/portal/explore"
+                className="pl-3 font-bold hover:text-blue-600"
+              >
+                GITCOIN
+              </Box>
+              <IconChevronDown style={{ width: rem(20), height: rem(16) }} />
+            </Center>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Stack gap="md" p="md">
+              <Menu.Item>
+                <Link href="/portal/about" className="flex items-center">
+                  <IconInfoCircleFilled />
+                  <Text size="md" fw={500} className="pl-1">
+                    About
+                  </Text>
+                </Link>
+              </Menu.Item>
+              <Menu.Item>
+                <Link href="/portal/explore" className="flex items-center">
+                  <IconSearch />
+
+                  <Text size="md" fw={500} className="pl-1">
+                    Explore Hypercerts Round 
+                  </Text>
+                </Link>
+              </Menu.Item>
       
+            </Stack>
+          </Menu.Dropdown>
+        </Menu>
+      </Flex>
 
       <Flex gap="sm" align="center">
         <Card className="hidden sm:block py-1 my-2">
