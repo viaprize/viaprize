@@ -22,7 +22,7 @@ export class UsersController {
     private readonly mailService: MailService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly blockchainService: BlockchainService,
-  ) { }
+  ) {}
 
   /**
    * Creates a new user and sends welcome email.
@@ -125,7 +125,9 @@ export class UsersController {
    * @returns {Promise<PrizeWithBlockchainData[]>} The prize object.
    */
   @Get('username/:username/prizes')
-  async getPrizes(@TypedParam('username') username: string): Promise<PrizeWithBlockchainData[]> {
+  async getPrizes(
+    @TypedParam('username') username: string,
+  ): Promise<PrizeWithBlockchainData[]> {
     const prizes = await this.usersService.findUserPrizesByUsername(username);
     const results = await this.blockchainService.getPrizesPublicVariables(
       prizes.map((prize) => prize.contract_address),
@@ -142,8 +144,12 @@ export class UsersController {
         ...prize,
         balance: parseInt((portalResults[0].result as bigint).toString()),
         distributed: portalResults[1].result as boolean,
-        submission_time_blockchain: parseInt((portalResults[2].result as bigint).toString()),
-        voting_time_blockchain: parseInt((portalResults[3].result as bigint).toString()),
+        submission_time_blockchain: parseInt(
+          (portalResults[2].result as bigint).toString(),
+        ),
+        voting_time_blockchain: parseInt(
+          (portalResults[3].result as bigint).toString(),
+        ),
       } as PrizeWithBlockchainData;
     });
 

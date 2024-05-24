@@ -4,7 +4,7 @@ import { Paginated, paginate } from 'nestjs-paginate';
 import { User } from 'src/users/entities/user.entity';
 import { generateId } from 'src/utils/generate-id';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import { } from 'typedoc.json';
+import {} from 'typedoc.json';
 import { FindManyOptions, Repository } from 'typeorm';
 import { Prize } from '../entities/prize.entity';
 import { Submission } from '../entities/submission.entity';

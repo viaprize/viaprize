@@ -1,8 +1,10 @@
-import { Api, Submission } from '@/lib/api';
+import type { Submission } from '@/lib/api';
+import { Api } from '@/lib/api';
 import { Paper } from '@mantine/core';
-import { JSONContent } from '@tiptap/react';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import type { JSONContent } from '@tiptap/react';
+import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Editor as NovalEditor } from 'novel';
+
 export default function SubmissionPage({
   submission,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {

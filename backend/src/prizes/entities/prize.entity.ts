@@ -83,8 +83,8 @@ export class Prize {
 
   @Column({
     unique: true,
-    default:null,
-    nullable:true,
+    default: null,
+    nullable: true,
   })
   @Index()
   slug: string;

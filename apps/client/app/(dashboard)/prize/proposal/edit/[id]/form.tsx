@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
 'use client';
 
 import ImageComponent from '@/components/Prize/dropzone';
@@ -136,10 +135,6 @@ function PrizeEdit({
     }
   };
 
-  // const useTemplateForDescription = () => {
-  //   setRichtext(PrizeCreationTemplate);
-  // };
-
   const addJudges = () => {
     setJudges((prev: string[]) => {
       return [...prev, ''];
@@ -153,6 +148,7 @@ function PrizeEdit({
       return [...arr];
     });
   };
+
   if (!appUser) {
     return <ShouldLogin text="Please login to create a prize" />;
   }
