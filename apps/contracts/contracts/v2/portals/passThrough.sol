@@ -69,8 +69,10 @@ contract PassThrough {
     address public USDC_E;
     /// @notice this is an Eth address which will be assigned while deploying the contract.
     address public WETH;
-    /// @notice this mapping will be to track of revokeVotes for all the platformAdmins
-    mapping(address => uint) public revokeVotes;
+    /// @notice this mapping will be to track of votesToRevokePlatformAdmin for all the platformAdmins
+    mapping(address => uint) public votesToRevokePlatformAdmin;
+    /// @notice this mapping will be to track of votes to add platformAdmin for all the platformAdmins
+    mapping(address => uint) public votesToAddPlatformAdmin;
     /// @notice to keep track of total platformAdmins
     uint256 public totalPlatformAdmins;
     /// @notice error indicating insufficient funds while funding to the contract.
@@ -90,7 +92,8 @@ contract PassThrough {
         TOKEN
     }
     /// @notice Donation events triggered
-    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType,TokenType _tokenType,uint256    amount  );
+    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
+    event Sender(address indexed _sender, uint256 indexed _amount);
 
     /// @notice constructor where we pass all the required parameters before deploying the contract
     /// @param _proposer who creates this campaign
@@ -138,8 +141,6 @@ contract PassThrough {
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
     } 
 
-
-
     /// @notice re-entrancy modifier
     modifier noReentrant() {
         require(!locked, "No cheat, No Re-entrancy");
@@ -152,13 +153,38 @@ contract PassThrough {
         require(isProposer[msg.sender] == true || isplatformAdmin[msg.sender] == true, "You are not a proposer or platformAdmin.");
         _;
     }
+
+    function recoverSigner(
+        bytes32 _ethSignedMessageHash,
+        bytes memory _signature
+    ) public pure returns (address) {
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+
+        return ecrecover(_ethSignedMessageHash, v, r, s);
+    }
+
+    function splitSignature(bytes memory sig)
+        public
+        pure
+        returns (bytes32 r, bytes32 s, uint8 v)
+    {
+        require(sig.length == 65, "invalid signature length");
+
+        assembly {
+            r := mload(add(sig, 32))
+            s := mload(add(sig, 64))
+            v := byte(0, mload(add(sig, 96)))
+        }
+    }
     
     /// @notice function to donate the usdc tokens into the campaign
-    function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 r, bytes32 s) public noReentrant  {
+    function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, uint256 _signature, bytes32 _ethSignedMessageHash ) public noReentrant  {
         require(_amountUsdc > 0, "funds should be greater than 0");
         if (!isActive) revert FundingToContractEnded();
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
         _usdc.permit(_sender, address(this), _amountUsdc, _deadline, v, r, s);
-        TransferHelper.safeTransferFrom(USDC, msg.sender, address(this), _amountUsdc);
+        address sender = recoverSigner(_ethSignedMessageHash, _signature);
+        TransferHelper.safeTransferFrom(USDC, sender, address(this), _amountUsdc);
         uint256 _donation = _amountUsdc;
         funders.push(msg.sender);
         isFunder[msg.sender] = true;
@@ -293,19 +319,40 @@ contract PassThrough {
         isActive = false;
     }
 
+    /// @notice function to revoke access for platform admin, it will be called in voteToRevokePlatformAdmin
+    /// @param _admin address of platformAdmin to vote for revoke
+    function finalRevokePlatformAdmin(address _admin) private {
+        isplatformAdmin[_admin] = false;
+        totalPlatformAdmins -= 1;
+    }
+
+    /// @notice function to add access for platform admin, it will be called in voteToAddPlatformAdmin
+    /// @param _admin address of platformAdmin to vote for add
+    function finalAddPlatformAdmin(address _admin) private {
+        isplatformAdmin[_admin] = true;
+        totalPlatformAdmins += 1;
+    }
+
+    /// @notice function to vote to add as a platformAdmin
+    /// @param _admin is the address to vote for platform Admin
+    function voteToAddPlatformAdmin(address _admin) public {
+        require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
+        require(!isplatformAdmin[_admin], "the address you want to vote is already a platform admin");
+        votesToAddPlatformAdmin[_admin] +=1;
+        if(votesToAddPlatformAdmin[_admin] >= (2 * totalPlatformAdmins) / 3) {
+            finalAddPlatformAdmin(_admin);
+        }
+    }
+
     /// @notice function to vote to revoke as a platformAdmin
     /// @param _admin address of platformAdmin to vote for revoke
     function voteToRevokePlatformAdmin(address _admin) public {
         require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
-        revokeVotes[_admin] +=1;
-        if(revokeVotes[_admin] >= (2 * totalPlatformAdmins) / 3) {
-            finalRevoke(_admin);
+        require(isplatformAdmin[_admin], "the address you want to vote is not a platform admin");
+        votesToRevokePlatformAdmin[_admin] +=1;
+        if(votesToRevokePlatformAdmin[_admin] >= (2 * totalPlatformAdmins) / 3) {
+            finalRevokePlatformAdmin(_admin);
         }
-    }
-    /// @notice function to revoke access for platform admin, it will be called in voteToRevokePlatformAdmin
-    /// @param _admin address of platformAdmin to vote for revoke
-    function finalRevoke(address _admin) private {
-        isplatformAdmin[_admin] = false;
     }
 
 
