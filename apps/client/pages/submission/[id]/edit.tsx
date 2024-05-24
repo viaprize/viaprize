@@ -3,10 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { Submission } from '@/lib/api';
 import { Api } from '@/lib/api';
+import { backendApi } from '@/lib/backend';
 import type { JSONContent } from '@tiptap/react';
 import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { Editor as NovalEditor } from 'novel';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function SubmissionPage({
   submission,
@@ -19,6 +21,22 @@ export default function SubmissionPage({
   const subDeadline = new Date(submission.submissionDeadline * 1000);
   console.log(subDeadline);
   const { appUser } = useAppUser();
+
+  const onSubmit = async () => {
+    console.log(content);
+    console.log(submission.id);
+    toast.promise(
+      (await backendApi()).prizes.submissionPartialUpdate(
+        submission.id,
+        JSON.stringify(content),
+      ),
+      {
+        loading: 'Updating Submission',
+        success: 'Submission Updated',
+        error: 'Error Updating Submission',
+      },
+    );
+  };
 
   // Calculate the submission deadline by adding the submission days
 
@@ -71,6 +89,7 @@ export default function SubmissionPage({
         />
       </div>
       <Button
+        onClick={onSubmit}
         className="bg-blue-500  text-white hover:bg-blue-600"
         style={{
           borderRadius: '0.375rem',

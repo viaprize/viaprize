@@ -2498,21 +2498,14 @@
         "x-nestia-namespace": "prizes.submission.getSubmission",
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
-      },
-      "post": {
+      }
+    },
+    "/prizes/submission/{id}": {
+      "patch": {
         "tags": [],
         "parameters": [
           {
             "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "description": "",
-            "required": true
-          },
-          {
-            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -2525,7 +2518,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PartialSubmission"
+                "type": "string"
               }
             }
           },
@@ -2545,9 +2538,9 @@
             "x-nestia-encrypted": false
           }
         },
-        "x-nestia-namespace": "prizes.submission.vote",
+        "x-nestia-namespace": "prizes.submission.EditSubmission",
         "x-nestia-jsDocTags": [],
-        "x-nestia-method": "POST"
+        "x-nestia-method": "PATCH"
       }
     },
     "/prizes/{id}/comment": {
@@ -6164,46 +6157,6 @@
           "user",
           "prize"
         ],
-        "x-typia-jsDocTags": []
-      },
-      "PartialSubmission": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "string"
-          },
-          "submissionDescription": {
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "string"
-          },
-          "submissionHash": {
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "string"
-          },
-          "submitterAddress": {
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "string"
-          },
-          "created_at": {
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "string",
-            "format": "date-time"
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          },
-          "prize": {
-            "$ref": "#/components/schemas/Prize"
-          }
-        },
-        "nullable": false,
-        "description": "Make all properties in T optional",
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o5": {

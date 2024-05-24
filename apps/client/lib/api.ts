@@ -456,18 +456,6 @@ export interface FetchSubmissionDto {
   prize: Prize;
 }
 
-/** Make all properties in T optional */
-export interface PartialSubmission {
-  id?: string;
-  submissionDescription?: string;
-  submissionHash?: string;
-  submitterAddress?: string;
-  /** @format date-time */
-  created_at?: string;
-  user?: User;
-  prize?: Prize;
-}
-
 /** Make all properties in T readonly */
 export interface ReadonlyTypeO5 {
   data: SubmissionWithBlockchainData[];
@@ -1513,15 +1501,13 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
     /**
      * No description
      *
-     * @name SubmissionCreate2
-     * @request POST:/prizes/{slug}/submission/{id}
-     * @originalName submissionCreate
-     * @duplicate
+     * @name SubmissionPartialUpdate
+     * @request PATCH:/prizes/submission/{id}
      */
-    submissionCreate2: (id: string, slug: string, data: PartialSubmission, params: RequestParams = {}) =>
+    submissionPartialUpdate: (id: string, data: string, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
-        path: `/prizes/${slug}/submission/${id}`,
-        method: 'POST',
+        path: `/prizes/submission/${id}`,
+        method: 'PATCH',
         body: data,
         type: ContentType.Json,
         format: 'json',

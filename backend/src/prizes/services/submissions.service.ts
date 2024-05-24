@@ -42,7 +42,7 @@ export class SubmissionService {
   async submissionEdit(
     authId: string,
     submissionId: string,
-    submission: Partial<Submission>,
+    submissionDescription: string,
   ) {
     const submissionObject = await this.submissionRepository.findOne({
       where: { id: submissionId },
@@ -54,6 +54,10 @@ export class SubmissionService {
     if (submissionObject.user.authId !== authId) {
       throw new HttpException('Unauthorized', 401);
     }
+    const submission = {
+      ...submissionObject,
+      submissionDescription,
+    };
     await this.submissionRepository.update(submissionId, submission);
   }
 

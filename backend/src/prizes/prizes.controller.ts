@@ -3,6 +3,7 @@ import {
   Delete,
   Get,
   Inject,
+  Patch,
   Post,
   Put,
   Query,
@@ -302,17 +303,16 @@ export class PrizesController {
     };
   }
 
-  @Post('/:slug/submission/:id')
+  @Patch('/submission/:id')
   @UseGuards(AuthGuard)
-  async vote(
+  async EditSubmission(
     @TypedParam('id') id: string,
-    @TypedParam('slug') slug: string,
-    @TypedBody() body: Partial<Submission>,
+    @TypedBody() content: string,
     @Request() req,
   ): Promise<Http200Response> {
-    await this.submissionService.submissionEdit(id, req.user.userId, body);
+    await this.submissionService.submissionEdit(id, req.user.userId, content);
     return {
-      message: `Submission with id ${id} has been voted`,
+      message: `Submission with id ${id} has been Edited`,
     };
   }
 
