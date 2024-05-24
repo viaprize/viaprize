@@ -1,8 +1,20 @@
-'use client'
+'use client';
 import Paging from '@/components/custom/paging';
-import { Anchor, Badge, Breadcrumbs, Button, Divider, Flex, Group,Pill,Stepper,Text, TextInput } from '@mantine/core';
+import {
+  Anchor,
+  Badge,
+  Breadcrumbs,
+  Button,
+  Divider,
+  Flex,
+  Group,
+  Pill,
+  Stepper,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import Link from 'next/link';
-import React, { Suspense } from 'react'
+import React, { Suspense } from 'react';
 import SkeletonLoad from '../../portal/explore/loading';
 import SearchFiltersPortals from '../../portal/explore/search-filters-portals';
 import FetchGitcoin from './fetchGitcoin';
@@ -14,9 +26,6 @@ import {
   IconShoppingCartFilled,
   IconDna,
 } from '@tabler/icons-react';
-
-
-
 
 export default function ExploreGitcoin() {
   return (
@@ -120,8 +129,7 @@ export default function ExploreGitcoin() {
                   className="text-blue-400 underline"
                 >
                   {' '}
-                    See here
-                 
+                  See here
                 </Link>
               </div>
             }

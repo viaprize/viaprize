@@ -70,10 +70,7 @@ export default function PortalCard({
       tag !== 'All or Nothing',
   );
 
-  const badgetags = tags.filter(
-    (tag) => tag === 'Refundable',
-  );
-
+  const badgetags = tags.filter((tag) => tag === 'Refundable');
 
   return (
     <Card

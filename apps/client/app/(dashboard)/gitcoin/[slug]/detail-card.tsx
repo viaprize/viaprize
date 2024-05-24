@@ -1,12 +1,16 @@
-import {Text} from '@mantine/core';
+import { Text } from '@mantine/core';
 
 interface DetailProps {
   fundingRecieved: number;
   daysLeft: number;
   contributors: number;
-};
+}
 
-export default function DetailCard({fundingRecieved, daysLeft, contributors}: DetailProps) {
+export default function DetailCard({
+  fundingRecieved,
+  daysLeft,
+  contributors,
+}: DetailProps) {
   return (
     <div className=" bg-gray-200  p-2 rounded-md  w-full ">
       <div className="lg:flex items-center justify-between mx-2">
@@ -23,11 +27,13 @@ export default function DetailCard({fundingRecieved, daysLeft, contributors}: De
           <Text size="md">Round ended</Text>
         </div>
       </div>
-     
-      <Text size="lg" mt="md" ml='md' fw="bold">
+
+      <Text size="lg" mt="md" ml="md" fw="bold">
         {contributors}
       </Text>
-      <Text size="md" ml='md'>contributors</Text>
+      <Text size="md" ml="md">
+        contributors
+      </Text>
     </div>
   );
 }

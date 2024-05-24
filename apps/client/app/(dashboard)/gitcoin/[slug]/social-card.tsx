@@ -3,12 +3,12 @@ import Link from 'next/link';
 import { Divider, Text } from '@mantine/core';
 
 interface SocialCardProps {
-    createdOn: string;
-    website: string;
-    twitter: string;
-    }
+  createdOn: string;
+  website: string;
+  twitter: string;
+}
 
-export default function SocialCard( {createdOn, website, twitter}: SocialCardProps) {
+export default function SocialCard({ createdOn, website, twitter }: SocialCardProps) {
   return (
     <div className="space-y-5 w-full">
       <Divider />
@@ -26,12 +26,11 @@ export default function SocialCard( {createdOn, website, twitter}: SocialCardPro
         <div className="flex items-center">
           <IconBrandTwitter />
           <Link href="" className="text-blue-400 underline">
-           {twitter}
+            {twitter}
           </Link>
         </div>
       </div>
       <Divider />
     </div>
   );
-
 }

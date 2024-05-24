@@ -125,7 +125,7 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
             See here
           </Button>
         </Link>
-      </div>
+      </div>,
     );
     toast.loading('Redirecting Please Wait');
     router.push('/prize/explore');

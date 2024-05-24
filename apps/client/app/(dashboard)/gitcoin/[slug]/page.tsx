@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 import ImageTitleCard from './image-title-card';
 import DetailCard from './detail-card';
-import {Text} from '@mantine/core';
+import { Text } from '@mantine/core';
 import SocialCard from './social-card';
 
 export default function CreateGitcoin() {
