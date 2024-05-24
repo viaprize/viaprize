@@ -68,15 +68,15 @@ export default function SubmissionPage({
     );
   }
 
-  // if (new Date() > subDeadline || submission.submissionDeadline === 0) {
-  //   return (
-  //     <div className="w-screen h-[50vh] flex justify-center items-center">
-  //       <Card className="max-h-[20vh] flex justify-center items-center p-16 text-xl font-bold">
-  //         You Cant Edit this Submission its past deadline
-  //       </Card>
-  //     </div>
-  //   );
-  // }
+  if (new Date() > subDeadline || submission.submissionDeadline === 0) {
+    return (
+      <div className="w-screen h-[50vh] flex justify-center items-center">
+        <Card className="max-h-[20vh] flex justify-center items-center p-16 text-xl font-bold">
+          You Cant Edit this Submission its past deadline
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col items-center gap-3  justify-center my-3 relative">
