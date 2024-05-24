@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+import { env } from "@env";
+
 /** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
 export interface CreatePact {
   /** Name of the pact i.e the title, which is gotten in the pact form */
@@ -454,6 +456,18 @@ export interface FetchSubmissionDto {
   prize: Prize;
 }
 
+/** Make all properties in T optional */
+export interface PartialSubmission {
+  id?: string;
+  submissionDescription?: string;
+  submissionHash?: string;
+  submitterAddress?: string;
+  /** @format date-time */
+  created_at?: string;
+  user?: User;
+  prize?: Prize;
+}
+
 /** Make all properties in T readonly */
 export interface ReadonlyTypeO5 {
   data: SubmissionWithBlockchainData[];
@@ -631,7 +645,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = 'http://localhost:3001/api';
+  public baseUrl: string = env.NEXT_PUBLIC_BACKEND_URL;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -1492,6 +1506,24 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       this.request<FetchSubmissionDto, any>({
         path: `/prizes/${slug}/submission/${id}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name SubmissionCreate2
+     * @request POST:/prizes/{slug}/submission/{id}
+     * @originalName submissionCreate
+     * @duplicate
+     */
+    submissionCreate2: (id: string, slug: string, data: PartialSubmission, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/${slug}/submission/${id}`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

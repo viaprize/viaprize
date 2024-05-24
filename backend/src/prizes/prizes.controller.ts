@@ -30,8 +30,8 @@ import { InfinityPaginationResultType } from '../utils/types/infinity-pagination
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
-import { FetchSubmissionDto } from './dto/fetch-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
+import { FetchSubmissionDto } from './dto/submission.dto';
 import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
@@ -299,6 +299,20 @@ export class PrizesController {
     return {
       ...sub,
       submissionDeadline: parseInt((results[1].result as bigint).toString()),
+    };
+  }
+
+  @Post('/:slug/submission/:id')
+  @UseGuards(AuthGuard)
+  async vote(
+    @TypedParam('id') id: string,
+    @TypedParam('slug') slug: string,
+    @TypedBody() body: Partial<Submission>,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.submissionService.submissionEdit(id, req.user.userId, body);
+    return {
+      message: `Submission with id ${id} has been voted`,
     };
   }
 

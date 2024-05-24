@@ -39,6 +39,24 @@ export class SubmissionService {
     });
   }
 
+  async submissionEdit(
+    authId: string,
+    submissionId: string,
+    submission: Partial<Submission>,
+  ) {
+    const submissionObject = await this.submissionRepository.findOne({
+      where: { id: submissionId },
+      relations: ['user'],
+    });
+    if (!submissionObject) {
+      throw new HttpException('Submission not found', 404);
+    }
+    if (submissionObject.user.authId !== authId) {
+      throw new HttpException('Unauthorized', 401);
+    }
+    await this.submissionRepository.update(submissionId, submission);
+  }
+
   async findSubmissionById(id: string) {
     const submission = await this.submissionRepository.findOne({
       where: { id },
