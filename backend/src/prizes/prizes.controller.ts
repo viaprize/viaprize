@@ -30,6 +30,7 @@ import { InfinityPaginationResultType } from '../utils/types/infinity-pagination
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
+import { FetchSubmissionDto } from './dto/fetch-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
@@ -289,8 +290,16 @@ export class PrizesController {
   async getSubmission(
     @TypedParam('id') id: string,
     @TypedParam('slug') _: string,
-  ): Promise<Submission> {
-    return await this.submissionService.findSubmissionById(id);
+  ): Promise<FetchSubmissionDto> {
+    const sub = await this.submissionService.findSubmissionById(id);
+    const results = await this.blockchainService.getPrizePublicVariables(
+      sub.prize.contract_address,
+    );
+
+    return {
+      ...sub,
+      submissionDeadline: parseInt((results[1].result as bigint).toString()),
+    };
   }
 
   @Get('/:slug/submission')

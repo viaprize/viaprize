@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-boolean-literal-compare */
 /* eslint-disable no-nested-ternary */
 'use client';
 
@@ -118,7 +119,7 @@ function ExploreCard({
       </Text>
       <Text fw="bold" className="flex">
         Submission Deadline :{' '}
-        {startingTimeBlockchain != 0 ? (
+        {startingTimeBlockchain !== 0 ? (
           new Date(startingTimeBlockchain * 1000).toLocaleDateString()
         ) : (
           <Text c="red" fw="bold" className="pl-2">

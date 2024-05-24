@@ -42,8 +42,9 @@ export class SubmissionService {
   async findSubmissionById(id: string) {
     const submission = await this.submissionRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'prize'],
     });
+    console.log({ submission });
     if (!submission) {
       throw new HttpException('Submission not found', 404);
     }

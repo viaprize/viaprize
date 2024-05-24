@@ -2488,7 +2488,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Submission"
+                  "$ref": "#/components/schemas/FetchSubmissionDto"
                 }
               }
             },
@@ -6059,6 +6059,60 @@
           "submissionDescription",
           "submissionHash",
           "submitterAddress"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "FetchSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "submissionDeadline": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionDescription": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submissionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "submitterAddress": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "prize": {
+            "$ref": "#/components/schemas/Prize"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "submissionDeadline",
+          "id",
+          "submissionDescription",
+          "submissionHash",
+          "submitterAddress",
+          "created_at",
+          "user",
+          "prize"
         ],
         "x-typia-jsDocTags": []
       },
