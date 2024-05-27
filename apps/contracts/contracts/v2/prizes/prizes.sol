@@ -116,7 +116,7 @@ contract ViaPrize is ReentrancyGuard {
 
     event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
     event CampaignCreated(address indexed proposer, address indexed contractAddress);
-    event voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
+    event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
 
 
     constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress, address _usdcAddress, address _usdcBridgedAddress) {
@@ -336,7 +336,7 @@ contract ViaPrize is ReentrancyGuard {
                 submissionTree.setFundedTrue(_submissionHash, true);
             }
         }
-        emit voted(_submissionHash, sender, amount);
+        emit Voted(_submissionHash, sender, amount);
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
