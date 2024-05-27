@@ -20,6 +20,7 @@
     "storybook:build": "storybook build"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.4",
     "@hookform/resolvers": "^3.4.2",
     "@mantine/core": "^7.1.7",
     "@mantine/dates": "^7.1.7",
