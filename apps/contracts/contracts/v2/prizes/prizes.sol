@@ -1,4 +1,4 @@
-/// @notice  SPDX-License-Identifier: MIT
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "./SubmissionLibrary.sol";
@@ -7,6 +7,11 @@ import "../../helperContracts/safemath.sol";
 import "../../helperContracts/ierc20_permit.sol";                                         
 import "../../helperContracts/nonReentrant.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+import "../../helperContracts/ierc20_weth.sol";
+
 
 
 // // import "./helperContracts/safemath.sol";
@@ -43,13 +48,12 @@ contract ViaPrize is ReentrancyGuard {
     mapping(address => bool) public addressRefunded;
     /// @notice to keep track the campaign is Alive or not
     bool public isActive = false;
-    uint8 public constant VERSION = 2;
-    mapping(address => bool) public isUsdcContributor;
-    bool internal locked;
+    uint8 public constant  VERSION = 2;
+    bool private locked;
     uint256 public totalUsdcFunds;
-    uint256 public totalUsdcRewards;
-    uint256 public totalBridgedUsdcFunds;
-    uint256 public totalBridgedUsdcRewards;
+
+
+    using SafeMath for uint256;
 
     uint proposerFee;
     uint platformFee;
@@ -71,9 +75,6 @@ contract ViaPrize is ReentrancyGuard {
 
     /// @notice initializing swaprouter interface
     ISwapRouter public immutable swapRouter;
-
-    /// @notice initializing brdiged usdc and usdc pool 
-    IUniswapV3Pool public immutable bridgedUsdcPool;
 
     /// @notice initializing brdiged usdc and usdc pool 
     IUniswapV3Pool public immutable bridgedUsdcPool;
@@ -165,7 +166,7 @@ contract ViaPrize is ReentrancyGuard {
         _usdcBridged = IERC20Permit(_usdcBridgedAddress);
         isActive = true;
         swapRouter = ISwapRouter(_swapRouter);
-        ridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
+        bridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
         ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
         _weth = IWETH(_wethToken);
@@ -261,7 +262,6 @@ contract ViaPrize is ReentrancyGuard {
                 if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
                     uint256 reward = (allSubmissions[i].usdcVotes);
                     allSubmissions[i].usdcVotes = 0;
-                    totalUsdcRewards.sub(reward);
                     _usdc.transfer(allSubmissions[i].contestant, reward);
                 }
                 unchecked { ++i; }
@@ -384,7 +384,8 @@ contract ViaPrize is ReentrancyGuard {
         return submission;
     }
 
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, bytes memory _signature, bytes32 _ethSignedMessageHash) public isActive noReentrant payable {
+    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, bytes memory _signature, bytes32 _ethSignedMessageHash) public onlyActive
+     noReentrant payable {
         require(_amountUsdc > 0, "F<0");
         (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
         address sender = recoverSigner(_ethSignedMessageHash, _signature);
@@ -399,9 +400,10 @@ contract ViaPrize is ReentrancyGuard {
         emit Donation(msg.sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _donation);
     }
 
-    function addBridgedUsdcFunds(uint256 _amountUsdc) public isActive noReentrant payable {
-        require(_amountUsdc > 0, "F<0");      
-        _usdcBridged.transferFrom(msg.sender,address(this),_amountUsdc);
+    function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive noReentrant payable {
+        require(_amountUsdc > 0, "F<0");
+        address sender = msg.sender; 
+        _usdcBridged.transferFrom(sender,address(this),_amountUsdc);
         _usdcBridged.approve(address(swapRouter), _amountUsdc);
         ISwapRouter.ExactInputParams memory params =
             ISwapRouter.ExactInputParams({
@@ -422,14 +424,15 @@ contract ViaPrize is ReentrancyGuard {
     }
 
     /// @notice function to donate eth into the campaign
-    function addEthFunds(uint256 _amountOutMinimum) public isActive noReentrant payable  {
+    function addEthFunds(uint256 _amountOutMinimum) public onlyActive noReentrant payable  {
         if (msg.value == 0) revert NotEnoughFunds();
         uint256 eth_donation =  msg.value;
+        address sender = msg.sender;
         _weth.deposit{value:msg.value}();
         _weth.approve(address(swapRouter), eth_donation);
         ISwapRouter.ExactInputParams memory params =
             ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(WETH, ethUsdcPool.fee(), USDC),
+                path: abi.encodePacked(address(_weth), ethUsdcPool.fee(), address(_usdc)),
                 recipient: address(this),
                 deadline: block.timestamp,
                 amountIn: eth_donation,
@@ -455,17 +458,16 @@ contract ViaPrize is ReentrancyGuard {
     }
 
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
-    function distributeUnusedVotes() onlyPlatformAdminOrProposer private returns(uint256, uint256, uint256, uint256)  {
+    function distributeUnusedVotes() onlyPlatformAdminOrProposer private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
-       uint256 total_usdcBridged_votes = 0;
+       uint256 totalUsdcRewards = totalRewards;
 
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
        for(uint256 i=0; i<allSubmissions.length; i++) {
            total_usdc_votes += allSubmissions[i].usdcVotes;
-           total_usdcBridged_votes += allSubmissions[i].usdcBridgedVotes;
        }
        uint256 total_unused_usdc_votes = totalUsdcRewards.sub(total_usdc_votes);
-       uint256 total_unused_usdcBridged_votes = totalBridgedUsdcRewards.sub(total_usdcBridged_votes);
+    
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0) {
@@ -473,13 +475,9 @@ contract ViaPrize is ReentrancyGuard {
                 uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
                 _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
             }
-            if(total_unused_usdcBridged_votes > 0) {
-                uint256 individual_usdcBridged_percentage = (allSubmissions[i].usdcBridgedVotes.mul(100)).div(total_usdcBridged_votes); 
-                uint256 transferable_usdcBridged_amount = (total_unused_usdcBridged_votes.mul(individual_usdcBridged_percentage)).div(100);
-                _usdcBridged.transfer(allSubmissions[i].contestant, transferable_usdcBridged_amount);
-            }
+           
        }
-       return (total_usdc_votes, total_usdcBridged_votes, totalUsdcRewards, totalBridgedUsdcRewards);
+       return (total_usdc_votes, totalUsdcRewards);
    }
     function getAllFunders() public view returns(address[] memory) {
         return allFunders;
@@ -491,7 +489,7 @@ contract ViaPrize is ReentrancyGuard {
 
     /// @notice function to change slippage tolerance of other token donations
     /// @param _minimumSlipageFeePercentage of new minimumSlipageFeePercentage
-    function changeMinimumSlipageFeePercentage(uint256 _minimumSlipageFeePercentage) public onlyProposerOrAdmin {
+    function changeMinimumSlipageFeePercentage(uint256 _minimumSlipageFeePercentage) public onlyPlatformAdmin {
         minimumSlipageFeePercentage  = _minimumSlipageFeePercentage;
     } 
 }
