@@ -139,6 +139,7 @@ contract PassThrough {
         bridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
         ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
+    
     } 
 
     /// @notice re-entrancy modifier
@@ -192,7 +193,7 @@ contract PassThrough {
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
-        emit Donation(msg.sender,_nft,DonationType.GIFT,TokenType.NFT,_amount);
+        emit Donation(msg.sender,_nft,DonationType.PAYMENT,TokenType.TOKEN,_amount);
     }
 
     /// @notice function to donate eth into the campaign
@@ -217,7 +218,7 @@ contract PassThrough {
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
-        emit Donation(msg.sender,WETH,DonationType.PAYMENT,TokenType.NFT,_donation);
+        emit Donation(msg.sender,WETH,DonationType.PAYMENT,TokenType.TOKEN, _donation);
 
     }
 

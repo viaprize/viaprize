@@ -20,10 +20,6 @@ contract ViaPrize is ReentrancyGuard {
     uint256 public totalFunds; 
     /// @notice this will be the total amount of rewards available
     uint256 public totalRewards; 
-    /// @notice this will be the total amount of rewards available for the platform
-    // uint256 public platformReward;
-    /// @notice this will be the total amount of rewards available for the proposer
-    // uint256 public proposer_reward;
     /// @notice bool to check if rewards have been distributed with end_voting_period
     bool public distributed;
     /// @notice this will be the time that the voting period ends
@@ -34,7 +30,7 @@ contract ViaPrize is ReentrancyGuard {
     mapping (address => bool) public isProposer;
     /// @notice  person who proposed the prize;
     address public proposer;
-    /// @notice this will be a mapping of the addresses of the funders to the amount of eth they have contributed
+    /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
     mapping (address => uint256) public funderAmount;
     /// @notice array of funders
     address[] public allFunders;
@@ -55,7 +51,6 @@ contract ViaPrize is ReentrancyGuard {
     uint256 public totalBridgedUsdcFunds;
     uint256 public totalBridgedUsdcRewards;
 
-    using SafeMath for uint256;
     uint proposerFee;
     uint platformFee;
 
@@ -65,8 +60,14 @@ contract ViaPrize is ReentrancyGuard {
     address[] public platformAdmins;
     mapping(address => bool) public isPlatformAdmin;
 
-    IERC20Permit private _usdc;
-    IERC20Permit private _usdcBridged;
+    IERC20Permit private immutable _usdc;
+    IERC20Permit private immutable _usdcBridged;
+    
+    /// @notice minimum slippage fee percentage for minimum output in swap
+    uint public minimumSlipageFeePercentage = 2; 
+
+    /// @notice initializing the interface for weth
+    IWETH private _weth;
 
     /// @notice initializing swaprouter interface
     ISwapRouter public immutable swapRouter;
@@ -74,7 +75,14 @@ contract ViaPrize is ReentrancyGuard {
     /// @notice initializing brdiged usdc and usdc pool 
     IUniswapV3Pool public immutable bridgedUsdcPool;
 
-    /// @notice 
+    /// @notice initializing brdiged usdc and usdc pool 
+    IUniswapV3Pool public immutable bridgedUsdcPool;
+
+    /// @notice initalizing eth and usdc pool
+    IUniswapV3Pool public immutable ethUsdcPool;
+
+    /// @notice initializing chainlink or oracle price aggregator
+    AggregatorV3Interface public immutable ethPriceAggregator;
 
     /// @notice this will be the address of the platform
     address public platformAddress;
@@ -124,12 +132,22 @@ contract ViaPrize is ReentrancyGuard {
     /// @notice error for trying to claim a refund when the voting period is still active
     error VotingPeriodActive();
 
+    enum DonationType {
+        GIFT,
+        PAYMENT
+    }
+    enum TokenType {
+        NFT,
+        TOKEN
+    }
+
     event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
     event CampaignCreated(address indexed proposer, address indexed contractAddress);
     event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
+    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
 
 
-    constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator) {
+    constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
 
         proposer = _proposer;
@@ -150,6 +168,7 @@ contract ViaPrize is ReentrancyGuard {
         ridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
         ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
+        _weth = IWETH(_wethToken);
         
         emit CampaignCreated(proposer, address(this));
     }
@@ -159,6 +178,11 @@ contract ViaPrize is ReentrancyGuard {
         locked = true;
         _;
         locked = false;
+    }
+
+    modifier onlyActive() {
+        require(isActive, "FCE");
+        _;
     }
 
     modifier onlyPlatformAdmin() {
@@ -231,9 +255,6 @@ contract ViaPrize is ReentrancyGuard {
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         uint256 usdcPlatformReward;
         uint256 usdcProposerReward;
-        uint256 usdcBridgedPlatformReward;
-        uint256 usdcBridgedProposerReward;
-
         if(allSubmissions.length > 0) {
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
@@ -243,12 +264,6 @@ contract ViaPrize is ReentrancyGuard {
                     totalUsdcRewards.sub(reward);
                     _usdc.transfer(allSubmissions[i].contestant, reward);
                 }
-                if(allSubmissions[i].funded && allSubmissions[i].usdcBridgedVotes > 0) {
-                    uint256 reward = (allSubmissions[i].usdcBridgedVotes);
-                    allSubmissions[i].usdcBridgedVotes = 0;
-                    totalBridgedUsdcRewards.sub(reward);
-                    _usdcBridged.transfer(allSubmissions[i].contestant, reward);
-                } 
                 unchecked { ++i; }
             }
             totalRewards = 0;
@@ -260,27 +275,13 @@ contract ViaPrize is ReentrancyGuard {
                 _usdc.transfer(platformAddress, send_usdc_platform_reward);
                 _usdc.transfer(proposer, send_usdc_proposer_reward);
             }
-            if(totalBridgedUsdcFunds > 0) {
-                usdcBridgedPlatformReward = (totalUsdcFunds * platformFee) / 100;
-                usdcBridgedProposerReward = (totalUsdcFunds * proposerFee) / 100;
-                uint256 send_usdcBridged_platform_reward = usdcBridgedPlatformReward;
-                uint256 send_usdcBridged_proposer_reward = usdcBridgedProposerReward;
-                _usdcBridged.transfer(platformAddress, send_usdcBridged_platform_reward);
-                _usdcBridged.transfer(proposer, send_usdcBridged_proposer_reward);
-            }
             distributed = true;
         }
-
+        // refund if no submissions
         if(allSubmissions.length == 0 || allFunders.length == 0 || totalVotes == 0) {
             for(uint256 i=0; i<allFunders.length; i++) {
-                if(isUsdcContributor[allFunders[i]]) {
-                    _usdc.transfer(allFunders[i], funderAmount[allFunders[i]]);
-                    funderAmount[allFunders[i]] = 0;
-                }
-                if(!isUsdcContributor[allFunders[i]]) {
-                    _usdcBridged.transfer(allFunders[i], funderAmount[allFunders[i]]);
-                    funderAmount[allFunders[i]] = 0; 
-                }
+                _usdc.transfer(allFunders[i], funderAmount[allFunders[i]]);
+                funderAmount[allFunders[i]] = 0;
             }
             distributed = true;
         }
@@ -319,7 +320,7 @@ contract ViaPrize is ReentrancyGuard {
 
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 amount, bytes memory _signature, bytes32 _ethSignedMessageHash) public {
+    function vote(bytes32 _submissionHash, uint256 amount, bytes memory _signature, bytes32 _ethSignedMessageHash) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
         address sender =  recoverSigner(_ethSignedMessageHash, _signature);
         if (amount > funderAmount[sender]) revert NotEnoughFunds();
@@ -329,40 +330,30 @@ contract ViaPrize is ReentrancyGuard {
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
-        if(isUsdcContributor[sender]) {
+        if(isFunder[sender]) {
             funderAmount[sender] -= amount;
             submissionTree.addUsdcVotes(_submissionHash, amount);
-            funderVotes[sender][_submissionHash].add(amount);
-            totalVotes.add(amount);
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
+            totalVotes = totalVotes.add(amount);
             submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee))/100);
             SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
                 submissionTree.setFundedTrue(_submissionHash, true);
             }
+            emit Voted(_submissionHash, sender, amount);
         }
-        if(!isUsdcContributor[sender]) {
-            funderAmount[sender] -= amount;
-            submissionTree.addUsdcBridgedVotes(_submissionHash, amount);
-            funderVotes[sender][_submissionHash] += amount;
-            totalVotes.add(amount);
-            submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee))/100);
-            SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
-            if (submission.usdcBridgedVotes > 0) {
-                submissionTree.setFundedTrue(_submissionHash, true);
-            }
-        }
-        emit Voted(_submissionHash, sender, amount);
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
-    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount, bytes memory _signature, bytes32 _ethSignedMessageHash) public {
+    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount, bytes memory _signature, bytes32 _ethSignedMessageHash) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
         address sender = recoverSigner(_ethSignedMessageHash, _signature);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
-        if(!isFunder[sender]) revert("you are not a funder");
+        if(!isFunder[sender]) revert("NF");
         if(isUsdcContributor[sender]) {
             submissionTree.subUsdcVotes(_previous_submissionHash, amount);
             submissionTree.addUsdcVotes(_new_submissionHash, amount);
+            // where is proposer fee
             submissionTree.updateFunderBalance(_previous_submissionHash, sender, (funderVotes[sender][_previous_submissionHash]*(100-platformFee))/100);
             submissionTree.updateFunderBalance(_new_submissionHash, sender, (funderVotes[sender][_new_submissionHash]*(100-platformFee))/100);
             funderVotes[sender][_previous_submissionHash] -= amount;
@@ -380,26 +371,6 @@ contract ViaPrize is ReentrancyGuard {
                 submissionTree.setFundedTrue(_new_submissionHash, true);
             }
         }
-        if(!isUsdcContributor[sender]) {
-            submissionTree.subBridgedUsdcVotes(_previous_submissionHash, amount);
-            submissionTree.addUsdcBridgedVotes(_new_submissionHash, amount);
-            submissionTree.updateFunderBalance(_previous_submissionHash, sender, (funderVotes[sender][_previous_submissionHash]*(100-platformFee))/100);
-            submissionTree.updateFunderBalance(_new_submissionHash, sender, (funderVotes[sender][_new_submissionHash]*(100-platformFee))/100);
-            funderVotes[sender][_previous_submissionHash] -= amount;
-            funderVotes[sender][_new_submissionHash] += amount;
-
-            SubmissionAVLTree.SubmissionInfo memory previousSubmission = submissionTree.getSubmission(_previous_submissionHash);
-
-            if (previousSubmission.usdcBridgedVotes <= 0) {
-                submissionTree.setFundedTrue(_previous_submissionHash, false);
-            }
-
-            SubmissionAVLTree.SubmissionInfo memory newSubmission = submissionTree.getSubmission(_new_submissionHash);
-
-            if (newSubmission.usdcBridgedVotes > 0) {
-                submissionTree.setFundedTrue(_new_submissionHash, true);
-            }
-        }
     }
 
     /// @notice uses functionality of the AVL tree to get all submissions
@@ -413,41 +384,74 @@ contract ViaPrize is ReentrancyGuard {
         return submission;
     }
 
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, bytes memory _signature, bytes32 _ethSignedMessageHash) public noReentrant payable {
-        require(_amountUsdc > 0, "funds should be greater than 0");
-        require(_amountUsdc > 0, "funds should be greater than 0");
+    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, bytes memory _signature, bytes32 _ethSignedMessageHash) public isActive noReentrant payable {
+        require(_amountUsdc > 0, "F<0");
         (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
         address sender = recoverSigner(_ethSignedMessageHash, _signature);
         _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
-        if(!isActive) revert("Funding to contract ended");
         uint256 _donation = _amountUsdc;
         isFunder[sender] = true;
-        isUsdcContributor[sender] = true;
-        funderAmount[sender].add(_donation);
-        totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
-        totalUsdcFunds = totalUsdcFunds.add(_donation);
+        funderAmount[sender] = funderAmount[sender].add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
         totalFunds = totalFunds.add(_donation);
         allFunders.push(sender);
+        emit Donation(msg.sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _donation);
     }
 
-    function addBridgedUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, bytes32 _ethSignedMessageHash, bytes memory _signature) public noReentrant payable {
-        require(_amountUsdc > 0, "funds should be greater than 0");
-        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
-        address sender = recoverSigner(_ethSignedMessageHash, _signature);
-        _usdcBridged.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
-        _usdcBridged.transferFrom(sender, address(this), _amountUsdc);
-        if(!isActive) revert("Funding to contract ended");
-        uint256 _donation = _amountUsdc;
+    function addBridgedUsdcFunds(uint256 _amountUsdc) public isActive noReentrant payable {
+        require(_amountUsdc > 0, "F<0");      
+        _usdcBridged.transferFrom(msg.sender,address(this),_amountUsdc);
+        _usdcBridged.approve(address(swapRouter), _amountUsdc);
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: abi.encodePacked(address(_usdcBridged), bridgedUsdcPool.fee(), address(_usdc)),
+                recipient: address(this),
+                deadline: block.timestamp,
+                amountIn: _amountUsdc,
+                amountOutMinimum: _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100)
+        });
+
+        uint256 _donation  = swapRouter.exactInput(params);
         isFunder[sender] = true;
-        isUsdcContributor[sender] = false;
         funderAmount[sender] = funderAmount[sender].add(_donation);
-        totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
-        totalUsdcFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
         totalFunds = totalFunds.add(_donation);
         allFunders.push(sender);
+        emit Donation(msg.sender, address(_usdcBridged), DonationType.PAYMENT, TokenType.TOKEN, _donation);
+    }
+
+    /// @notice function to donate eth into the campaign
+    function addEthFunds(uint256 _amountOutMinimum) public isActive noReentrant payable  {
+        if (msg.value == 0) revert NotEnoughFunds();
+        uint256 eth_donation =  msg.value;
+        _weth.deposit{value:msg.value}();
+        _weth.approve(address(swapRouter), eth_donation);
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: abi.encodePacked(WETH, ethUsdcPool.fee(), USDC),
+                recipient: address(this),
+                deadline: block.timestamp,
+                amountIn: eth_donation,
+                amountOutMinimum: _amountOutMinimum
+        });
+        uint256 _donation = swapRouter.exactInput(params);
+        isFunder[sender] = true;
+        funderAmount[sender] = funderAmount[sender].add(_donation);
+        totalRewards = totalRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
+        totalFunds = totalFunds.add(_donation);
+        allFunders.push(sender);
+        emit Donation(msg.sender,address(_weth),DonationType.PAYMENT,TokenType.TOKEN,_donation);
+
+    }
+
+    /// @notice external function to receive eth funds
+    receive() external payable {
+        uint ethValue = msg.value;
+        uint decimals = ethPriceAggregator.decimals() - uint256(_usdc.decimals());
+        (, int256 latestPrice , , ,)  = ethPriceAggregator.latestRoundData();
+        uint price_in_correct_decimals = uint(latestPrice)/ (10 ** decimals);
+        addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
     }
 
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
@@ -484,4 +488,10 @@ contract ViaPrize is ReentrancyGuard {
    function getAllPlatformAdmins() public view returns(address[] memory) {
         return platformAdmins;
    }
+
+    /// @notice function to change slippage tolerance of other token donations
+    /// @param _minimumSlipageFeePercentage of new minimumSlipageFeePercentage
+    function changeMinimumSlipageFeePercentage(uint256 _minimumSlipageFeePercentage) public onlyProposerOrAdmin {
+        minimumSlipageFeePercentage  = _minimumSlipageFeePercentage;
+    } 
 }
