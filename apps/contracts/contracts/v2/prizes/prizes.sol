@@ -1,12 +1,11 @@
-//SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+//SPDX-License-Identifier:MIT
+pragma solidity ^0.8.1;
 
 import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
 import "../../helperContracts/safemath.sol";
 import "../../helperContracts/ierc20_permit.sol";                                         
 import "../../helperContracts/nonReentrant.sol";
-import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
@@ -86,7 +85,7 @@ contract ViaPrize is ReentrancyGuard {
     AggregatorV3Interface public immutable ethPriceAggregator;
 
     /// @notice this will be the address of the platform
-    address public platformAddress;
+    address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
     /// @notice / @notice submissionTree contract
     SubmissionAVLTree private submissionTree;
@@ -148,12 +147,11 @@ contract ViaPrize is ReentrancyGuard {
     event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
 
 
-    constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
+    constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
 
         proposer = _proposer;
         isProposer[proposer] = true;
-        platformAddress = _platformAddress;
         for (uint i = 0; i < _platformAdmins.length; i++) {
             platformAdmins.push(_platformAdmins[i]);
             isPlatformAdmin[_platformAdmins[i]] = true;
