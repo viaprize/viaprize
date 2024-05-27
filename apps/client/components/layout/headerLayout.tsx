@@ -144,19 +144,11 @@ export default function HeaderLayout() {
           <Menu.Dropdown>
             <Stack gap="md" p="md">
               <Menu.Item>
-                <Link href="/portal/about" className="flex items-center">
-                  <IconInfoCircleFilled />
-                  <Text size="md" fw={500} className="pl-1">
-                    About
-                  </Text>
-                </Link>
-              </Menu.Item>
-              <Menu.Item>
-                <Link href="/portal/explore" className="flex items-center">
+                <Link href="/gitcoin/explore" className="flex items-center">
                   <IconSearch />
 
                   <Text size="md" fw={500} className="pl-1">
-                    Explore Hypercerts Round
+                    Explore Gitcoin Round
                   </Text>
                 </Link>
               </Menu.Item>
