@@ -1,12 +1,19 @@
-import { fetchRoundByNodeId } from '@/lib/actions';
+import { fetchApplicationByNodeId } from '@/lib/actions';
 import { Text } from '@mantine/core';
 import DetailCard from './detail-card';
 import ImageTitleCard from './image-title-card';
 import SocialCard from './social-card';
 
-export default async function CreateGitcoin() {
-  const applicationsInRound = await fetchRoundByNodeId(
-    'WyJyb3VuZHMiLCIweDAwZDVlMGQzMWQzN2NjMTNjNjQ1ZDg2NDEwYWI0Y2I3Y2I0MjhjY2EiLDQyMTYxXQ==',
+export default async function GitcoinApplication({
+  params,
+}: {
+  params: {
+    slug: string;
+  };
+}) {
+  console.log(params.slug);
+  const applicationsInRound = await fetchApplicationByNodeId(
+    decodeURIComponent(params.slug),
   );
   console.log(applicationsInRound);
 

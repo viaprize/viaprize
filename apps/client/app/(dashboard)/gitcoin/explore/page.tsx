@@ -1,31 +1,24 @@
 'use client';
 import Paging from '@/components/custom/paging';
 import {
-  Anchor,
   Badge,
-  Breadcrumbs,
-  Button,
   Divider,
   Flex,
-  Group,
   Pill,
   Stepper,
   Text,
-  TextInput,
+  TextInput
 } from '@mantine/core';
-import Link from 'next/link';
-import React, { Suspense } from 'react';
-import SkeletonLoad from '../../portal/explore/loading';
-import SearchFiltersPortals from '../../portal/explore/search-filters-portals';
-import FetchGitcoin from './fetchGitcoin';
 import {
   IconCalendarMonth,
   IconCircleCheckFilled,
   IconCreditCardFilled,
+  IconDna,
   IconSearch,
   IconShoppingCartFilled,
-  IconDna,
 } from '@tabler/icons-react';
+import Link from 'next/link';
+import FetchGitcoin from './fetchGitcoin';
 
 export default function ExploreGitcoin() {
   return (
@@ -125,7 +118,7 @@ export default function ExploreGitcoin() {
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
-                  href={`https://www.google.com`}
+                  href="https://www.google.com"
                   className="text-blue-400 underline"
                 >
                   {' '}
