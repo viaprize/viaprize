@@ -350,27 +350,27 @@ contract ViaPrize is ReentrancyGuard {
         address sender = recoverSigner(_ethSignedMessageHash, _signature);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
         if(!isFunder[sender]) revert("NF");
-        if(isUsdcContributor[sender]) {
-            submissionTree.subUsdcVotes(_previous_submissionHash, amount);
-            submissionTree.addUsdcVotes(_new_submissionHash, amount);
-            // where is proposer fee
-            submissionTree.updateFunderBalance(_previous_submissionHash, sender, (funderVotes[sender][_previous_submissionHash]*(100-platformFee))/100);
-            submissionTree.updateFunderBalance(_new_submissionHash, sender, (funderVotes[sender][_new_submissionHash]*(100-platformFee))/100);
-            funderVotes[sender][_previous_submissionHash] -= amount;
-            funderVotes[sender][_new_submissionHash] += amount;
+        submissionTree.subUsdcVotes(_previous_submissionHash, amount);
+        submissionTree.addUsdcVotes(_new_submissionHash, amount);
+        // where is proposer fee
+        submissionTree.updateFunderBalance(_previous_submissionHash, sender, (funderVotes[sender][_previous_submissionHash]*(100-platformFee))/100);
+        submissionTree.updateFunderBalance(_new_submissionHash, sender, (funderVotes[sender][_new_submissionHash]*(100-platformFee))/100);
+        funderVotes[sender][_previous_submissionHash] -= amount;
+        funderVotes[sender][_new_submissionHash] += amount;
 
-            SubmissionAVLTree.SubmissionInfo memory previousSubmission = submissionTree.getSubmission(_previous_submissionHash);
+        SubmissionAVLTree.SubmissionInfo memory previousSubmission = submissionTree.getSubmission(_previous_submissionHash);
 
-            if (previousSubmission.usdcVotes <= 0) {
-                submissionTree.setFundedTrue(_previous_submissionHash, false);
-            }
-
-            SubmissionAVLTree.SubmissionInfo memory newSubmission = submissionTree.getSubmission(_new_submissionHash);
-
-            if (newSubmission.usdcVotes > 0) {
-                submissionTree.setFundedTrue(_new_submissionHash, true);
-            }
+        if (previousSubmission.usdcVotes <= 0) {
+            submissionTree.setFundedTrue(_previous_submissionHash, false);
         }
+
+        SubmissionAVLTree.SubmissionInfo memory newSubmission = submissionTree.getSubmission(_new_submissionHash);
+
+        if (newSubmission.usdcVotes > 0) {
+            submissionTree.setFundedTrue(_new_submissionHash, true);
+        }
+        emit Voted(_new_submissionHash, sender, amount);
+        
     }
 
     /// @notice uses functionality of the AVL tree to get all submissions
