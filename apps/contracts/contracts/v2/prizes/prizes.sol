@@ -6,6 +6,7 @@ import "./SubmissionAVLTree.sol";
 import "../../helperContracts/safemath.sol";
 import "../../helperContracts/ierc20_permit.sol";                                         
 import "../../helperContracts/nonReentrant.sol";
+import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 
 
 // // import "./helperContracts/safemath.sol";
@@ -67,6 +68,14 @@ contract ViaPrize is ReentrancyGuard {
     IERC20Permit private _usdc;
     IERC20Permit private _usdcBridged;
 
+    /// @notice initializing swaprouter interface
+    ISwapRouter public immutable swapRouter;
+
+    /// @notice initializing brdiged usdc and usdc pool 
+    IUniswapV3Pool public immutable bridgedUsdcPool;
+
+    /// @notice 
+
     /// @notice this will be the address of the platform
     address public platformAddress;
 
@@ -120,7 +129,7 @@ contract ViaPrize is ReentrancyGuard {
     event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
 
 
-    constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress, address _usdcAddress, address _usdcBridgedAddress) {
+    constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _platformAddress, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
 
         proposer = _proposer;
@@ -137,6 +146,11 @@ contract ViaPrize is ReentrancyGuard {
         _usdc = IERC20Permit(_usdcAddress);
         _usdcBridged = IERC20Permit(_usdcBridgedAddress);
         isActive = true;
+        swapRouter = ISwapRouter(_swapRouter);
+        ridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
+        ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
+        ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
+        
         emit CampaignCreated(proposer, address(this));
     }
 
