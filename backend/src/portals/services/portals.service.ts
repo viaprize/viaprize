@@ -80,8 +80,8 @@ export class PortalsService {
       },
     });
     if (portal) {
-      const nanoid =await generateId()
-      
+      const nanoid = await generateId();
+
       return `${slug}-${nanoid}`;
     }
     return slug;

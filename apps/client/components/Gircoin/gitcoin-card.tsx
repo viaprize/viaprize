@@ -9,12 +9,11 @@ import {
   ActionIcon,
   Text,
   Image,
-  Divider
+  Divider,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 
 import Link from 'next/link';
-
 
 interface GitcoinCardProps {
   imageURL: string;
@@ -25,7 +24,15 @@ interface GitcoinCardProps {
   contributors: number;
   link: string;
 }
-export default function GitcoinCard({ imageURL,by, title, description, raised, contributors, link }: GitcoinCardProps) {
+export default function GitcoinCard({
+  imageURL,
+  by,
+  title,
+  description,
+  raised,
+  contributors,
+  link,
+}: GitcoinCardProps) {
   return (
     <Card
       padding="lg"
@@ -35,13 +42,7 @@ export default function GitcoinCard({ imageURL,by, title, description, raised, c
       pos="relative"
     >
       <Card.Section>
-        <Image
-          alt="Image"
-          height={160}
-          src={
-           imageURL
-          }
-        />
+        <Image alt="Image" height={160} src={imageURL} />
       </Card.Section>
 
       <Group mt="sm" justify="space-between">
@@ -49,7 +50,7 @@ export default function GitcoinCard({ imageURL,by, title, description, raised, c
           {title}
         </Text>
         <Badge color="blue" variant="light" p="sm">
-       {by}
+          {by}
         </Badge>
       </Group>
 
@@ -59,7 +60,7 @@ export default function GitcoinCard({ imageURL,by, title, description, raised, c
       >
         {description}
       </p>
-  <Divider  className='mt-2'/>
+      <Divider className="mt-2" />
       <Text fw="bold" size="xl">
         ${raised}
       </Text>

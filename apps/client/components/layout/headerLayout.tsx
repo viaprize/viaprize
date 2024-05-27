@@ -156,11 +156,10 @@ export default function HeaderLayout() {
                   <IconSearch />
 
                   <Text size="md" fw={500} className="pl-1">
-                    Explore Hypercerts Round 
+                    Explore Hypercerts Round
                   </Text>
                 </Link>
               </Menu.Item>
-      
             </Stack>
           </Menu.Dropdown>
         </Menu>

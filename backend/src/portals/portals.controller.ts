@@ -873,7 +873,7 @@ export class PortalsController {
   async getSlugById(
     @TypedParam('id') id: string,
   ): Promise<Pick<Portals, 'slug'>> {
-    const slug = await this.portalsService.getPortalSlugById(id)
+    const slug = await this.portalsService.getPortalSlugById(id);
     return {
       slug,
     };
@@ -886,11 +886,10 @@ export class PortalsController {
    * @returns {Promise<Http200Response>}
    */
   @Get('/alkdslkf')
-  async testing(
-  ): Promise<Http200Response> {
-    await this.portalProposalsService.updateFundingGoal()
+  async testing(): Promise<Http200Response> {
+    await this.portalProposalsService.updateFundingGoal();
     return {
-      message: 'done'
-    }
+      message: 'done',
+    };
   }
 }
