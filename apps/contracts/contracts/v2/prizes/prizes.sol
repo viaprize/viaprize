@@ -462,4 +462,11 @@ contract ViaPrize is ReentrancyGuard {
        }
        return (total_usdc_votes, total_usdcBridged_votes, totalUsdcRewards, totalBridgedUsdcRewards);
    }
+    function getAllFunders() public view returns(address[] memory) {
+        return allFunders;
+   }
+
+   function getAllPlatformAdmins() public view returns(address[] memory) {
+        return platformAdmins;
+   }
 }
