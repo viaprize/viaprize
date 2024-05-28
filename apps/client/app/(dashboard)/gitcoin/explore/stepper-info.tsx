@@ -1,6 +1,10 @@
 'use client';
-import { Stepper,Text } from '@mantine/core';
-import { IconShoppingCartFilled, IconDna, IconCreditCardFilled } from '@tabler/icons-react';
+import { Stepper, Text } from '@mantine/core';
+import {
+  IconShoppingCartFilled,
+  IconDna,
+  IconCreditCardFilled,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 
 export default function StepperInfo() {

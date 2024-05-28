@@ -1,4 +1,4 @@
-import {Divider, Text} from '@mantine/core';
+import { Divider, Text } from '@mantine/core';
 import AddedProjects from './added-projects';
 import SummaryCard from './summary-card';
 

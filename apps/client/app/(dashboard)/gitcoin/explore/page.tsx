@@ -1,33 +1,26 @@
-
 import Paging from '@/components/custom/paging';
 import {
-  Anchor,
   Badge,
-  Breadcrumbs,
   Button,
   Divider,
   Flex,
-  Group,
   Pill,
   Stepper,
   Text,
   TextInput,
 } from '@mantine/core';
-import Link from 'next/link';
-import React, { Suspense } from 'react';
-import SkeletonLoad from '../../portal/explore/loading';
-import SearchFiltersPortals from '../../portal/explore/search-filters-portals';
-import FetchGitcoin from './fetchGitcoin';
 import {
   IconCalendarMonth,
   IconCircleCheckFilled,
   IconCreditCardFilled,
+  IconDna,
   IconSearch,
   IconShoppingCartFilled,
-  IconDna,
   IconShoppingCart,
 } from '@tabler/icons-react';
 import StepperInfo from './stepper-info';
+import Link from 'next/link';
+import FetchGitcoin from './fetchGitcoin';
 
 export default function ExploreGitcoin() {
   return (
