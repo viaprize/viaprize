@@ -11,15 +11,7 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 import "../../helperContracts/ierc20_weth.sol";
 
-
-
-// // import "./helperContracts/safemath.sol";
-// interface IERC20Permit is IERC20 {
-//     function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
-// }
-
-
-contract ViaPrize is ReentrancyGuard {
+contract ViaPrize {
     /// @notice this will be the total amount of funds raised
     uint256 public totalFunds; 
     /// @notice this will be the total amount of rewards available
@@ -91,10 +83,7 @@ contract ViaPrize is ReentrancyGuard {
     SubmissionAVLTree private submissionTree;
 
     uint256 public totalVotes;
- 
-    // Errors
-    /// @notice not admin error
-    error NotAdmin();
+
 
     /// @notice error for not enough funds to vote
     error NotEnoughFunds();
@@ -102,20 +91,8 @@ contract ViaPrize is ReentrancyGuard {
     /// @notice error for trying to change someone elses vote
     error NotYourVote();
 
-    /// @notice error for trying to claim a refund again
-    error RefundAlreadyClaimed();
-
-    /// @notice error for trying to claim a nonexistent refund
-    error RefundDoesntExist();
-
     /// @notice if distribution has already happened
     error RewardsAlreadyDistributed();
-
-    /// @notice error for trying to claim a refund when the voting period is still active
-    error RewardsNotDistributed();
-
-    /// @notice error for a submission that has already been made
-    error SubmissionAlreadyMade();
 
     /// @notice error for trying to vote on a submission that has not been made
     error SubmissionDoesntExist();
@@ -300,27 +277,11 @@ contract ViaPrize is ReentrancyGuard {
         submissionTime = block.timestamp + _submissionTime * 1 minutes;
         submissionPeriod = true;
     }
-
-    function recoverSigner( bytes32 _ethSignedMessageHash, bytes memory _signature) public pure returns (address) {
-        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
-        return ecrecover(_ethSignedMessageHash, v, r, s);
-    }
-
-    function splitSignature(bytes memory sig) public pure returns(bytes32 r, bytes32 s, uint8 v){
-        require(sig.length == 65, "IVG");
-
-        assembly {
-            r := mload(add(sig, 32))
-            s := mload(add(sig, 64))
-            v := byte(0, mload(add(sig, 96)))
-        }
-    }
-
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 amount, bytes memory _signature, bytes32 _ethSignedMessageHash) onlyActive public {
+    function vote(bytes32 _submissionHash, uint256 amount, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
-        address sender =  recoverSigner(_ethSignedMessageHash, _signature);
+        address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
         if (amount > funderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = submissionTree.getSubmission(_submissionHash);
@@ -343,16 +304,16 @@ contract ViaPrize is ReentrancyGuard {
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
-    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint256 amount, bytes memory _signature, bytes32 _ethSignedMessageHash) onlyActive public {
+    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint8 v, bytes32 s, bytes32 r, uint256 amount, bytes32 _ethSignedMessageHash) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
-        address sender = recoverSigner(_ethSignedMessageHash, _signature);
+        address sender = ecrecover(_ethSignedMessageHash, v, r, s);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
         if(!isFunder[sender]) revert("NF");
         submissionTree.subUsdcVotes(_previous_submissionHash, amount);
         submissionTree.addUsdcVotes(_new_submissionHash, amount);
         // where is proposer fee
-        submissionTree.updateFunderBalance(_previous_submissionHash, sender, (funderVotes[sender][_previous_submissionHash]*(100-platformFee))/100);
-        submissionTree.updateFunderBalance(_new_submissionHash, sender, (funderVotes[sender][_new_submissionHash]*(100-platformFee))/100);
+        submissionTree.updateFunderBalance(_previous_submissionHash, sender, (funderVotes[sender][_previous_submissionHash]*(100-platformFee-proposerFee))/100);
+        submissionTree.updateFunderBalance(_new_submissionHash, sender, (funderVotes[sender][_new_submissionHash]*(100-platformFee - proposerFee))/100);
         funderVotes[sender][_previous_submissionHash] -= amount;
         funderVotes[sender][_new_submissionHash] += amount;
 
@@ -382,20 +343,23 @@ contract ViaPrize is ReentrancyGuard {
         return submission;
     }
 
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, bytes memory _signature, bytes32 _ethSignedMessageHash) public onlyActive
+    function DepositLogic(address sender, uint256 donation) private {
+        isFunder[sender] = true;
+        funderAmount[sender] = funderAmount[sender].add(donation);
+        totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
+        totalFunds = totalFunds.add(donation);
+        allFunders.push(sender);
+    }
+
+    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bytes memory _signature) public onlyActive
      noReentrant payable {
         require(_amountUsdc > 0, "F<0");
-        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
-        address sender = recoverSigner(_ethSignedMessageHash, _signature);
-        _usdc.permit(sender, spender, _amountUsdc, _deadline, v, r, s);
+        // (uint8 v, bytes32 r, bytes32 s) = ECDSA.tryRecover(_ethSignedMessageHash, _signature);
+        address sender = ecrecover(_ethSignedMessageHash, v, r, s);
+        _usdc.permit(sender, spender, _amountUsdc, _deadline, _signature);
         _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
-        uint256 _donation = _amountUsdc;
-        isFunder[sender] = true;
-        funderAmount[sender] = funderAmount[sender].add(_donation);
-        totalRewards = totalRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
-        totalFunds = totalFunds.add(_donation);
-        allFunders.push(sender);
-        emit Donation(msg.sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _donation);
+        DepositLogic(sender, _amountUsdc);
+        emit Donation(msg.sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _amountUsdc);
     }
 
     function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive noReentrant payable {
@@ -413,11 +377,7 @@ contract ViaPrize is ReentrancyGuard {
         });
 
         uint256 _donation  = swapRouter.exactInput(params);
-        isFunder[sender] = true;
-        funderAmount[sender] = funderAmount[sender].add(_donation);
-        totalRewards = totalRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
-        totalFunds = totalFunds.add(_donation);
-        allFunders.push(sender);
+        DepositLogic(sender, _donation);
         emit Donation(msg.sender, address(_usdcBridged), DonationType.PAYMENT, TokenType.TOKEN, _donation);
     }
 
@@ -437,12 +397,8 @@ contract ViaPrize is ReentrancyGuard {
                 amountOutMinimum: _amountOutMinimum
         });
         uint256 _donation = swapRouter.exactInput(params);
-        isFunder[sender] = true;
-        funderAmount[sender] = funderAmount[sender].add(_donation);
-        totalRewards = totalRewards.add((_donation.mul(100 - (platformFee + proposerFee))).div(100));
-        totalFunds = totalFunds.add(_donation);
-        allFunders.push(sender);
-        emit Donation(msg.sender,address(_weth),DonationType.PAYMENT,TokenType.TOKEN,_donation);
+        DepositLogic(sender, _donation);
+        emit Donation(msg.sender,address(_weth),DonationType.PAYMENT,TokenType.TOKEN, _donation);
 
     }
 
