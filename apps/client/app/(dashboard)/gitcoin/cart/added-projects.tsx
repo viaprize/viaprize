@@ -22,23 +22,22 @@ export default function AddedProjects() {
         <div>
           {items.map((item) => (
             <>
-              <div key={item.id} className="flex items-center justify-between">
+              <div key={item.id} className="flex items-center gap-4 justify-between">
                 <Avatar alt="Image" radius="xl" size="lg" src={item.imageURL} />
-
                 <div className="mt-3">
                   <Text fw="bold" size="lg">
                     {item.title}
                   </Text>
-                  <Text className="text-md h-20 overflow-y-auto">{item.description}</Text>
+                  <p className="text-md h-20 overflow-hidden my-0">{item.description.slice(0,120)}</p>
                 </div>
-                <div className="flex items-center">
-                  <NumberInput placeholder="Enter the value" prefix="$" mb="md" />
-                  <Text fw="bold" ml="sm" mb="sm">
+                <div className="flex items-center justify-center">
+                  <NumberInput placeholder="10" prefix="$"  />
+                  <Text fw="bold" ml="sm" >
                     USD
                   </Text>
                 </div>
-                <ActionIcon variant="default" onClick={() => removeItem(item.id)}>
-                  <IconTrash />
+                <ActionIcon variant="light" p="3px" color='red' onClick={() => removeItem(item.id)}>
+                  <IconTrash color='red' />
                 </ActionIcon>
               </div>
               <Divider />

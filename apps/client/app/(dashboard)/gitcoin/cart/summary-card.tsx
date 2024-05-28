@@ -9,7 +9,7 @@ export default function SummaryCard() {
       <Divider />
       <div className="flex items-center justify-between">
         <div className="">
-          <Text>Your total contribution on </Text>
+          <Text>Your total contribution to </Text>
           <Text c="blue">Gitcoin</Text>
         </div>
         <Text fw="bold" size="lg">
