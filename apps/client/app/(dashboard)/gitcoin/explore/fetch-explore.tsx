@@ -1,4 +1,4 @@
-import GitcoinCard from '@/components/Gircoin/gitcoin-card';
+import GitcoinCard from '@/components/gitcoin/gitcoin-card';
 import { fetchRoundByNodeId } from '@/lib/actions';
 
 export default async function FetchGitcoins() {
@@ -9,6 +9,7 @@ export default async function FetchGitcoins() {
     <>
       {applicationsInRound.roundByNodeId.applications.map((application) => (
         <GitcoinCard
+          id={application.nodeId}
           key={application.nodeId}
           imageURL={application.project.name}
           title={application.project.name}
