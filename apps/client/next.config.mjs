@@ -28,6 +28,11 @@ export default withBundleAnalyzer({
       },
       {
         protocol: 'https',
+        hostname: 'ipfs.io',
+        
+      },
+      {
+        protocol: 'https',
         hostname: 'img.freepik.com',
         port: '',
         pathname: '/**',

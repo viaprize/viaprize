@@ -26,7 +26,6 @@ import FetchGitcoins from './fetch-explore';
 export default function ExploreGitcoin() {
   return (
     <div>
-      {' '}
       <div className="max-w-screen-xl w-screen">
         <div className="lg:flex items-center justify-between">
           <div className="lg:flex items-center ">
@@ -49,11 +48,6 @@ export default function ExploreGitcoin() {
               </Button>
             </Link>
           </div>
-          {/* <Link href="/portal/about" className="text-blue-600 underline">
-            <Text size="md" fw="initial" mt="xs" ml="md">
-              About Gitcoin{' '}
-            </Text>
-          </Link> */}
           <div className="bg-gray-200 p-3 rounded-md font-semibold w-[200px] ml-2 lg:mx-2 ">
             60,000 USDC <br /> Matching Pool
           </div>

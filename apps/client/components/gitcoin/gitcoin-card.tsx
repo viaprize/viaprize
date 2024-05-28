@@ -8,13 +8,14 @@ import {
   CopyButton,
   Divider,
   Group,
-  Image,
   Text,
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 import type { CartItem } from 'app/(dashboard)/(_config)/store/datastore';
 import { useCartStore } from 'app/(dashboard)/(_config)/store/datastore';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 // interface GitcoinCardProps {
@@ -40,7 +41,7 @@ export default function GitcoinCard({
 }: CartItem) {
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
-
+  const router = useRouter();
   const isItemInCart = (itemID: string) => cartItems.some((item) => item.id === itemID);
 
   const handleAddToCart = () => {
@@ -55,11 +56,12 @@ export default function GitcoinCard({
       padding="lg"
       radius="lg"
       withBorder
-      className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out"
+      className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out cursor-pointer"
       pos="relative"
+      onClick={() => router.push(link)}
     >
       <Card.Section>
-        <Image alt="Image" height={160} src={imageURL} />
+        <Image alt="Image" height={160} width={420} src={imageURL} />
       </Card.Section>
       <div className="flex flex-col justify-between h-full">
         <Group mt="sm" justify="space-between">
@@ -88,7 +90,10 @@ export default function GitcoinCard({
             fullWidth
             mt="md"
             radius="md"
-            onClick={handleAddToCart}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddToCart();
+            }}
             disabled={isItemInCart(id)}
           >
             {isItemInCart(id) ? 'Added to Cart' : 'Add to Cart'}
@@ -99,7 +104,14 @@ export default function GitcoinCard({
         <CopyButton value={`https://www.viaprize.org/portal/${link}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
-              <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'primary'}>
+              <ActionIcon
+                size="lg"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  copy();
+                }}
+                color={copied ? 'teal' : 'primary'}
+              >
                 {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
               </ActionIcon>
             </Tooltip>
