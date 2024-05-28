@@ -1,14 +1,5 @@
-'use client';
 import Paging from '@/components/custom/paging';
-import {
-  Badge,
-  Divider,
-  Flex,
-  Pill,
-  Stepper,
-  Text,
-  TextInput
-} from '@mantine/core';
+import { Badge, Divider, Flex, Pill, Stepper, Text, TextInput } from '@mantine/core';
 import {
   IconCalendarMonth,
   IconCircleCheckFilled,
@@ -18,7 +9,8 @@ import {
   IconShoppingCartFilled,
 } from '@tabler/icons-react';
 import Link from 'next/link';
-import FetchGitcoin from './fetchGitcoin';
+import { Suspense } from 'react';
+import FetchGitcoins from './fetch-explore';
 
 export default function ExploreGitcoin() {
   return (
@@ -136,7 +128,10 @@ export default function ExploreGitcoin() {
         />
 
         <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
-          <FetchGitcoin />
+          <Suspense fallback={<div>Loading...</div>}>
+            {/* @ts-expect-error Server Component */}
+            <FetchGitcoins />
+          </Suspense>
         </div>
         <Paging total={2} />
       </div>
