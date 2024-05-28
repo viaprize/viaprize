@@ -2,12 +2,13 @@
 
 import { gql } from '@apollo/client';
 import { gitcoinGraphClient } from 'config/graphql';
+import type { ApplicationByNodeIdResponse, RoundByNodeIdResponse } from './gitcoin-types';
 
 const FETCH_ROUND_BY_NODE_ID = gql`
   query MyQuery($nodeId: ID!) {
     roundByNodeId(nodeId: $nodeId) {
       id
-      applications {
+      applications(filter: { status: { equalTo: APPROVED } }) {
         chainId
         anchorAddress
         createdAtBlock
@@ -24,43 +25,11 @@ const FETCH_ROUND_BY_NODE_ID = gql`
         project {
           name
         }
+        metadata
       }
     }
   }
 `;
-
-export interface StatusSnapshot {
-  status: string;
-  updatedAt: string;
-  updatedAtBlock: string;
-}
-
-export interface Application {
-  chainId: number;
-  anchorAddress: string | null;
-  createdAtBlock: string;
-  createdByAddress: string;
-  distributionTransaction: string;
-  roundId: string;
-  status: string;
-  statusSnapshots: StatusSnapshot[];
-  statusUpdatedAtBlock: string;
-  totalAmountDonatedInUsd: number;
-  tags: string[];
-  totalDonationsCount: number;
-  uniqueDonorsCount: number;
-  nodeId: string;
-  project: {
-    name: string;
-  };
-}
-
-export interface RoundByNodeIdResponse {
-  roundByNodeId: {
-    id: string;
-    applications: Application[];
-  };
-}
 
 export const fetchRoundByNodeId = async (
   nodeId: string,
@@ -81,28 +50,6 @@ export const fetchRoundByNodeId = async (
   return data;
 };
 
-export interface Project {
-  projectNumber: number;
-  tags: string[];
-  name: string;
-  projectType: string;
-  createdByAddress: string;
-}
-
-export interface SingleApplication {
-  id: string;
-  nodeId: string;
-  status: string;
-  totalAmountDonatedInUsd: number;
-  totalDonationsCount: number;
-  uniqueDonorsCount: number;
-  metadataCid: string;
-  project: Project;
-}
-
-export interface ApplicationByNodeIdResponse {
-  applicationByNodeId: SingleApplication;
-}
 
 const FETCH_APPLICATION_BY_NODE_ID = gql`
   query MyQuery($nodeId: ID!) {

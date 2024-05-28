@@ -61,38 +61,40 @@ export default function GitcoinCard({
       <Card.Section>
         <Image alt="Image" height={160} src={imageURL} />
       </Card.Section>
-
-      <Group mt="sm" justify="space-between">
-        <Text fw="bold" size="lg">
-          {title}
-        </Text>
-        <Badge color="blue" variant="light" p="sm">
-          {by}
-        </Badge>
-      </Group>
-
-      <p className="text-md h-20 overflow-y-auto">{description}</p>
-      <Divider className="mt-2" />
-      <Text fw="bold" size="xl">
-        ${raised}
-      </Text>
-      <Text size="sm">
-        Total raised by <span className="text-gray font-bold">{contributors}</span>{' '}
-        contributors
-      </Text>
-
-      <Button
-        color="primary"
-        component="a"
-        fullWidth
-        mt="md"
-        radius="md"
-        onClick={handleAddToCart}
-        disabled={isItemInCart(id)}
-      >
-        {isItemInCart(id) ? 'Added to Cart' : 'Add to Cart'}
-      </Button>
-
+      <div className="flex flex-col justify-between h-full">
+        <Group mt="sm" justify="space-between">
+          <Text fw="bold" size="lg">
+            {title}
+          </Text>
+          <Badge color="blue" variant="light" p="sm">
+            {by}
+          </Badge>
+        </Group>
+        <div>
+          <div className="text-md h-20 overflow-y-auto overflow-x-hidden">
+            {description}
+          </div>
+          <Divider className="mt-2" />
+          <Text fw="bold" size="xl">
+            ${raised}
+          </Text>
+          <Text size="sm">
+            Total raised by <span className="text-gray font-bold">{contributors}</span>{' '}
+            contributors
+          </Text>
+          <Button
+            color="primary"
+            component="a"
+            fullWidth
+            mt="md"
+            radius="md"
+            onClick={handleAddToCart}
+            disabled={isItemInCart(id)}
+          >
+            {isItemInCart(id) ? 'Added to Cart' : 'Add to Cart'}
+          </Button>
+        </div>
+      </div>
       <div className="absolute top-2 right-2">
         <CopyButton value={`https://www.viaprize.org/portal/${link}`}>
           {({ copied, copy }) => (
