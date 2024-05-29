@@ -110,6 +110,7 @@ export interface SingleApplication {
   totalDonationsCount: number;
   uniqueDonorsCount: number;
   metadataCid: string;
+  metadata: ApplicationMetadata;
   project: Project;
 }
 

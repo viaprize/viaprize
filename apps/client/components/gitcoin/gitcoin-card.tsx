@@ -12,22 +12,12 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import type { CartItem } from 'app/(dashboard)/(_config)/store/datastore';
-import { useCartStore } from 'app/(dashboard)/(_config)/store/datastore';
+import type { CartItem } from 'app/(dashboard)/(_utils)/store/datastore';
+import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
+import { renderToPlainText } from 'app/(dashboard)/(_utils)/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-
-// interface GitcoinCardProps {
-//   id: string;
-//   imageURL: string;
-//   title: string;
-//   by: string;
-//   description: string;
-//   raised: number;
-//   contributors: number;
-//   link: string;
-// }
 
 export default function GitcoinCard({
   id,
@@ -40,6 +30,7 @@ export default function GitcoinCard({
   link,
 }: CartItem) {
   const addItem = useCartStore((state) => state.addItem);
+  const removeItem = useCartStore((state) => state.removeItem);
   const cartItems = useCartStore((state) => state.items);
   const router = useRouter();
   const isItemInCart = (itemID: string) => cartItems.some((item) => item.id === itemID);
@@ -48,6 +39,13 @@ export default function GitcoinCard({
     if (!isItemInCart(id)) {
       addItem({ id, imageURL, by, title, description, raised, contributors, link });
       toast.success(`${title} added to cart`);
+    }
+  };
+
+  const handleRemoveFromCart = () => {
+    if (isItemInCart(id)) {
+      removeItem(id);
+      toast.success(`${title} removed from cart`);
     }
   };
 
@@ -61,21 +59,34 @@ export default function GitcoinCard({
       onClick={() => router.push(link)}
     >
       <Card.Section>
-        <Image alt="Image" height={160} width={420} src={imageURL} />
+        <Image
+          alt="Image"
+          height={160}
+          width={420}
+          src={
+            imageURL ||
+            'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
+          }
+        />
       </Card.Section>
       <div className="flex flex-col justify-between h-full">
-        <Group mt="sm" justify="space-between">
+        {title.length > 35 ? (
+          <Text fw="bold" size="lg">
+            {title.substring(0, 35)}...
+          </Text>
+        ) : (
           <Text fw="bold" size="lg">
             {title}
           </Text>
-          <Badge color="blue" variant="light" p="sm">
-            {by}
-          </Badge>
-        </Group>
+        )}
+        <Badge color="blue" variant="light" p="sm" my="sm">
+          {by}
+        </Badge>
+
         <div>
-          <div className="text-md h-20 overflow-y-auto overflow-x-hidden">
-            {description}
-          </div>
+          <p className="text-md h-20 overflow-y-auto overflow-x-hidden">
+            {renderToPlainText(description).substring(0, 130)}...
+          </p>
           <Divider className="mt-2" />
           <Text fw="bold" size="xl">
             ${raised}
@@ -85,18 +96,17 @@ export default function GitcoinCard({
             contributors
           </Text>
           <Button
-            color="primary"
+            color={isItemInCart(id) ? 'red' : 'primary'}
             component="a"
             fullWidth
             mt="md"
             radius="md"
             onClick={(e) => {
               e.stopPropagation();
-              handleAddToCart();
+              isItemInCart(id) ? handleRemoveFromCart() : handleAddToCart();
             }}
-            disabled={isItemInCart(id)}
           >
-            {isItemInCart(id) ? 'Added to Cart' : 'Add to Cart'}
+            {isItemInCart(id) ? 'Remove from Cart' : 'Add to Cart'}
           </Button>
         </div>
       </div>

@@ -9,7 +9,8 @@ import {
   Text,
 } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
-import { useCartStore } from '../../(_config)/store/datastore';
+import { useCartStore } from '../../(_utils)/store/datastore';
+import { renderToPlainText } from 'app/(dashboard)/(_utils)/utils';
 
 export default function AddedProjects() {
   const { items, removeItem, clearCart } = useCartStore();
@@ -28,16 +29,23 @@ export default function AddedProjects() {
                   <Text fw="bold" size="lg">
                     {item.title}
                   </Text>
-                  <p className="text-md h-20 overflow-hidden my-0">{item.description.slice(0,120)}</p>
+                  <p className="text-md h-20 overflow-y-auto overflow-x-hidden">
+                    {renderToPlainText(item.description).substring(0, 130)}...
+                  </p>
                 </div>
                 <div className="flex items-center justify-center">
-                  <NumberInput placeholder="10" prefix="$"  />
-                  <Text fw="bold" ml="sm" >
+                  <NumberInput placeholder="10" prefix="$" />
+                  <Text fw="bold" ml="sm">
                     USD
                   </Text>
                 </div>
-                <ActionIcon variant="light" p="3px" color='red' onClick={() => removeItem(item.id)}>
-                  <IconTrash color='red' />
+                <ActionIcon
+                  variant="light"
+                  p="3px"
+                  color="red"
+                  onClick={() => removeItem(item.id)}
+                >
+                  <IconTrash color="red" />
                 </ActionIcon>
               </div>
               <Divider />

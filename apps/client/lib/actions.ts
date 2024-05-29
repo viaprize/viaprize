@@ -61,6 +61,7 @@ const FETCH_APPLICATION_BY_NODE_ID = gql`
       totalDonationsCount
       uniqueDonorsCount
       metadataCid
+      metadata
       project {
         projectNumber
         tags
