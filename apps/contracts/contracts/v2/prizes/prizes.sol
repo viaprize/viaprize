@@ -5,7 +5,6 @@ import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
 import "../../helperContracts/safemath.sol";
 import "../../helperContracts/ierc20_permit.sol";                                         
-import "../../helperContracts/nonReentrant.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
@@ -40,9 +39,7 @@ contract ViaPrize {
     /// @notice to keep track the campaign is Alive or not
     bool public isActive = false;
     uint8 public constant  VERSION = 2;
-    bool private locked;
-    uint256 public totalUsdcFunds;
-
+    bool private _locked;
 
     using SafeMath for uint256;
 
@@ -79,8 +76,8 @@ contract ViaPrize {
     /// @notice this will be the address of the platform
     address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
-    /// @notice / @notice submissionTree contract
-    SubmissionAVLTree private submissionTree;
+    /// @notice / @notice _submissionTree contract
+    SubmissionAVLTree private _submissionTree;
 
     uint256 public totalVotes;
 
@@ -133,8 +130,8 @@ contract ViaPrize {
             platformAdmins.push(_platformAdmins[i]);
             isPlatformAdmin[_platformAdmins[i]] = true;
         }
-        /// @notice  Initialize the submissionTree
-        submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission());
+        /// @notice  Initialize the _submissionTree
+        _submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission());
         proposerFee = _proposerFee;
         platformFee = _platFormFee;
         _usdc = IERC20Permit(_usdcAddress);
@@ -150,10 +147,10 @@ contract ViaPrize {
     }
 
     modifier noReentrant() {
-        require(!locked, "NR");
-        locked = true;
+        require(!_locked, "NR");
+        _locked = true;
         _;
-        locked = false;
+        _locked = false;
     }
 
     modifier onlyActive() {
@@ -206,8 +203,8 @@ contract ViaPrize {
     function endVotingPeriod() public onlyPlatformAdmin {
         if(votingTime == 0) revert VotingPeriodNotActive();
         votingTime = 0;
-        distributeUnusedVotes();
-        distributeRewards();
+        _distributeUnusedVotes();
+        _distributeRewards();
         votingPeriod = false;
         isActive = false;
 
@@ -226,7 +223,7 @@ contract ViaPrize {
     }
 
     /// @notice Distribute rewards
-    function distributeRewards() onlyPlatformAdminOrProposer private {
+    function _distributeRewards() private {
         if(distributed == true) revert RewardsAlreadyDistributed();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         uint256 usdcPlatformReward;
@@ -242,9 +239,9 @@ contract ViaPrize {
                 unchecked { ++i; }
             }
             totalRewards = 0;
-            if(totalUsdcFunds > 0) {
-                usdcPlatformReward = (totalUsdcFunds * platformFee) / 100;
-                usdcProposerReward = (totalUsdcFunds * proposerFee) / 100;
+            if(totalFunds > 0) {
+                usdcPlatformReward = (totalFunds * platformFee) / 100;
+                usdcProposerReward = (totalFunds * proposerFee) / 100;
                 uint256 send_usdc_platform_reward = usdcPlatformReward;
                 uint256 send_usdc_proposer_reward = usdcProposerReward;
                 _usdc.transfer(platformAddress, send_usdc_platform_reward);
@@ -266,7 +263,7 @@ contract ViaPrize {
     function addSubmission(address contestant, string memory submissionText) public onlyPlatformAdmin returns(bytes32) {
         if (block.timestamp > submissionTime) revert SubmissionPeriodNotActive();
         bytes32 submissionHash = keccak256(abi.encodePacked(contestant, submissionText));
-        submissionTree.add_submission(contestant, submissionHash, submissionText);
+        _submissionTree.add_submission(contestant, submissionHash, submissionText);
         emit SubmissionCreated(contestant, submissionHash);
         return submissionHash;
     }
@@ -284,20 +281,20 @@ contract ViaPrize {
         address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
         if (amount > funderAmount[sender]) revert NotEnoughFunds();
 
-        SubmissionAVLTree.SubmissionInfo memory submissionCheck = submissionTree.getSubmission(_submissionHash);
+        SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
         /// @notice submission should return a struct with the submissionHash, the contestant, the submissionText, the threshhold, the votes, and the funded status 
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
         if(isFunder[sender]) {
             funderAmount[sender] -= amount;
-            submissionTree.addUsdcVotes(_submissionHash, amount);
+            _submissionTree.addUsdcVotes(_submissionHash, amount);
             funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
             totalVotes = totalVotes.add(amount);
-            submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee))/100);
-            SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
+            _submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee))/100);
+            SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
-                submissionTree.setFundedTrue(_submissionHash, true);
+                _submissionTree.setFundedTrue(_submissionHash, true);
             }
             emit Voted(_submissionHash, sender, amount);
         }
@@ -309,24 +306,24 @@ contract ViaPrize {
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
         if(!isFunder[sender]) revert("NF");
-        submissionTree.subUsdcVotes(_previous_submissionHash, amount);
-        submissionTree.addUsdcVotes(_new_submissionHash, amount);
+        _submissionTree.subUsdcVotes(_previous_submissionHash, amount);
+        _submissionTree.addUsdcVotes(_new_submissionHash, amount);
         // where is proposer fee
-        submissionTree.updateFunderBalance(_previous_submissionHash, sender, (funderVotes[sender][_previous_submissionHash]*(100-platformFee-proposerFee))/100);
-        submissionTree.updateFunderBalance(_new_submissionHash, sender, (funderVotes[sender][_new_submissionHash]*(100-platformFee - proposerFee))/100);
+        _submissionTree.updateFunderBalance(_previous_submissionHash, sender, (funderVotes[sender][_previous_submissionHash]*(100-platformFee-proposerFee))/100);
+        _submissionTree.updateFunderBalance(_new_submissionHash, sender, (funderVotes[sender][_new_submissionHash]*(100-platformFee - proposerFee))/100);
         funderVotes[sender][_previous_submissionHash] -= amount;
         funderVotes[sender][_new_submissionHash] += amount;
 
-        SubmissionAVLTree.SubmissionInfo memory previousSubmission = submissionTree.getSubmission(_previous_submissionHash);
+        SubmissionAVLTree.SubmissionInfo memory previousSubmission = _submissionTree.getSubmission(_previous_submissionHash);
 
         if (previousSubmission.usdcVotes <= 0) {
-            submissionTree.setFundedTrue(_previous_submissionHash, false);
+            _submissionTree.setFundedTrue(_previous_submissionHash, false);
         }
 
-        SubmissionAVLTree.SubmissionInfo memory newSubmission = submissionTree.getSubmission(_new_submissionHash);
+        SubmissionAVLTree.SubmissionInfo memory newSubmission = _submissionTree.getSubmission(_new_submissionHash);
 
         if (newSubmission.usdcVotes > 0) {
-            submissionTree.setFundedTrue(_new_submissionHash, true);
+            _submissionTree.setFundedTrue(_new_submissionHash, true);
         }
         emit Voted(_new_submissionHash, sender, amount);
         
@@ -334,12 +331,12 @@ contract ViaPrize {
 
     /// @notice uses functionality of the AVL tree to get all submissions
     function getAllSubmissions() public view returns (SubmissionAVLTree.SubmissionInfo[] memory) {
-        return submissionTree.inOrderTraversal();
+        return _submissionTree.inOrderTraversal();
     }
 
     /// @notice get submission by submissionHash
     function getSubmissionByHash(bytes32 submissionHash) public view returns (SubmissionAVLTree.SubmissionInfo memory){
-        SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(submissionHash);
+        SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(submissionHash);
         return submission;
     }
 
@@ -412,7 +409,7 @@ contract ViaPrize {
     }
 
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
-    function distributeUnusedVotes() onlyPlatformAdminOrProposer private returns(uint256,uint256)  {
+    function _distributeUnusedVotes() private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
        uint256 totalUsdcRewards = totalRewards;
 
