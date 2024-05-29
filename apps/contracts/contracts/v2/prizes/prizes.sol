@@ -33,10 +33,12 @@ contract ViaPrize {
     /// @notice Add a new mapping to store each funder's votes on each submission
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
     /// @notice Add a new mapping to check if a funder has received their refunds
+    // remove this variabl
     mapping(bytes32 => mapping(address => bool)) public refunded;
     /// @notice add a new refund mapping for address to bool
     mapping(address => bool) public addressRefunded;
     /// @notice to keep track the campaign is Alive or not
+
     bool public isActive = false;
     uint8 public constant  VERSION = 2;
     bool private _locked;
@@ -249,7 +251,8 @@ contract ViaPrize {
             }
             distributed = true;
         }
-        // refund if no submissions
+        // refund if no submissions 
+        // dispute if no total votes
         if(allSubmissions.length == 0 || allFunders.length == 0 || totalVotes == 0) {
             for(uint256 i=0; i<allFunders.length; i++) {
                 _usdc.transfer(allFunders[i], funderAmount[allFunders[i]]);
@@ -291,8 +294,9 @@ contract ViaPrize {
             _submissionTree.addUsdcVotes(_submissionHash, amount);
             funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
             totalVotes = totalVotes.add(amount);
+            // rename this to somehting not related to funder ( contestant balance)
             _submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee))/100);
-            SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
+            SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(_submissionHash, true);
             }
@@ -340,7 +344,9 @@ contract ViaPrize {
         return submission;
     }
 
-    function DepositLogic(address sender, uint256 donation) private {
+    //Todo What the funk is deposit logic
+
+    function _depositLogic(address sender, uint256 donation) private {
         isFunder[sender] = true;
         funderAmount[sender] = funderAmount[sender].add(donation);
         totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
@@ -348,15 +354,17 @@ contract ViaPrize {
         allFunders.push(sender);
     }
 
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bytes memory _signature) public onlyActive
+    // todod we dont need sender here
+
+    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public onlyActive
      noReentrant payable {
         require(_amountUsdc > 0, "F<0");
         // (uint8 v, bytes32 r, bytes32 s) = ECDSA.tryRecover(_ethSignedMessageHash, _signature);
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
-        _usdc.permit(sender, spender, _amountUsdc, _deadline, _signature);
-        _usdc.transferFrom(msg.sender, address(this), _amountUsdc);
-        DepositLogic(sender, _amountUsdc);
-        emit Donation(msg.sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _amountUsdc);
+        _usdc.permit(sender, spender, _amountUsdc, _deadline,v,r,s);
+        _usdc.transferFrom(sender, address(this), _amountUsdc);
+        _depositLogic(sender, _amountUsdc);
+        emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _amountUsdc);
     }
 
     function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive noReentrant payable {
@@ -374,7 +382,7 @@ contract ViaPrize {
         });
 
         uint256 _donation  = swapRouter.exactInput(params);
-        DepositLogic(sender, _donation);
+        _depositLogic(sender, _donation);
         emit Donation(msg.sender, address(_usdcBridged), DonationType.PAYMENT, TokenType.TOKEN, _donation);
     }
 
@@ -394,7 +402,7 @@ contract ViaPrize {
                 amountOutMinimum: _amountOutMinimum
         });
         uint256 _donation = swapRouter.exactInput(params);
-        DepositLogic(sender, _donation);
+        _depositLogic(sender, _donation);
         emit Donation(msg.sender,address(_weth),DonationType.PAYMENT,TokenType.TOKEN, _donation);
 
     }
@@ -407,6 +415,8 @@ contract ViaPrize {
         uint price_in_correct_decimals = uint(latestPrice)/ (10 ** decimals);
         addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
     }
+
+
 
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
