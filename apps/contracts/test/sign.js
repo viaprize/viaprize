@@ -7,7 +7,7 @@ async function getPermitSignature(signer, token, spender, value, deadline) {
     "2",
     signer.getChainId(),
   ]);
-
+  ethers.utils.TypedDataEncoder.encode();
   return ethers.utils.splitSignature(
     await signer._signTypedData(
       {
