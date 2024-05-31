@@ -82,7 +82,7 @@ contract ViaPrize {
 
     uint256 public totalVotes;
 
-    bool public disputePeriod = false;
+    uint256 public disputePeriod;
 
 
     /// @notice error for not enough funds to vote
@@ -208,15 +208,22 @@ contract ViaPrize {
         if(votingTime == 0) revert VotingPeriodNotActive();
         votingTime = 0;
         votingPeriod = false;
-        disputePeriod = true;
+        disputePeriod = block.timestamp + 2 * 1 days;
     }
 
     function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public {
-        require(disputePeriod, "DPNA"); //DPNA - Dispute Period Not Active
+        require(disputePeriod > block.timestamp, "DPNA"); //DPNA - Dispute Period Not Active
         SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
         address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
         require(sender == submission.contestant, "NAS"); //NAS - Not a Submitter
         emit DisputeRaised(_submissionHash, sender);
+    }
+
+    function endDispute() public onlyPlatformAdmin {
+        require(disputePeriod < block.timestamp, "DPA"); // DPA -> Dispute Period is in Active
+        _distributeUnusedVotes();
+        _distributeRewards();
+        isActive = false;
     }
 
     function increaseSubmissionPeriod(uint256 _submissionTime) public onlyPlatformAdmin {
@@ -272,7 +279,7 @@ contract ViaPrize {
     function addSubmission(address contestant, string memory submissionText) public onlyPlatformAdmin returns(bytes32) {
         if (block.timestamp > submissionTime) revert SubmissionPeriodNotActive();
         bytes32 submissionHash = keccak256(abi.encodePacked(contestant, submissionText));
-        _submissionTree.add_submission(contestant, submissionHash, submissionText);
+        _submissionTree.addSubmission(contestant, submissionHash, submissionText);
         emit SubmissionCreated(contestant, submissionHash);
         return submissionHash;
     }
@@ -300,7 +307,7 @@ contract ViaPrize {
             _submissionTree.addUsdcVotes(_submissionHash, amount);
             funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
             totalVotes = totalVotes.add(amount);
-            _submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee))/100);
+            _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
             SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(_submissionHash, true);
@@ -312,8 +319,8 @@ contract ViaPrize {
     function changeVoteLogic(bytes32 _previousSubmissionHash, bytes32 _newSubmissionHash, uint256 _amount, address _sender) private {
         _submissionTree.subUsdcVotes(_previousSubmissionHash, _amount);
         _submissionTree.addUsdcVotes(_newSubmissionHash, _amount);
-        _submissionTree.updateFunderBalance(_previousSubmissionHash, _sender, (funderVotes[_sender][_previousSubmissionHash]*(100-platformFee-proposerFee))/100);
-        _submissionTree.updateFunderBalance(_newSubmissionHash, _sender, (funderVotes[_sender][_newSubmissionHash]*(100-platformFee - proposerFee))/100);
+        _submissionTree.updateFunderVotes(_previousSubmissionHash, _sender, (funderVotes[_sender][_previousSubmissionHash]*(100-platformFee-proposerFee))/100);
+        _submissionTree.updateFunderVotes(_newSubmissionHash, _sender, (funderVotes[_sender][_newSubmissionHash]*(100-platformFee - proposerFee))/100);
         funderVotes[_sender][_previousSubmissionHash] -= _amount;
         funderVotes[_sender][_newSubmissionHash] += _amount;
 
@@ -336,13 +343,15 @@ contract ViaPrize {
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
         if (funderVotes[sender][_previousSubmissionHash] < _amount) revert NotYourVote();
         if(!isFunder[sender]) revert("NF");
+
+        // Sub votes from the previous submission
         _submissionTree.subUsdcVotes(_previousSubmissionHash, _amount);
-        _submissionTree.updateFunderBalance(_previousSubmissionHash, sender, (funderVotes[sender][_previousSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
+        _submissionTree.updateFunderVotes(_previousSubmissionHash, sender, (funderVotes[sender][_previousSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
         funderVotes[sender][_previousSubmissionHash] -= _amount;
 
         // Add votes to the new submission
         _submissionTree.addUsdcVotes(_newSubmissionHash, _amount);
-        _submissionTree.updateFunderBalance(_newSubmissionHash, sender, (funderVotes[sender][_newSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
+        _submissionTree.updateFunderVotes(_newSubmissionHash, sender, (funderVotes[sender][_newSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
         funderVotes[sender][_newSubmissionHash] += _amount;
 
         SubmissionAVLTree.SubmissionInfo memory previousSubmission = _submissionTree.getSubmission(_previousSubmissionHash);
@@ -358,7 +367,7 @@ contract ViaPrize {
 
     function disputeChangeVote( bytes32 _previousSubmissionHash, bytes32 _newSubmissionHash, address[] calldata _funders, uint256[] calldata _amounts) onlyActive onlyPlatformAdmin public {
         require(_funders.length == _amounts.length, "LM"); //LM -> Length Mismatch
-        require(disputePeriod, "DPNA");
+        require(disputePeriod > block.timestamp, "DPNA");  //DPNA -> Dispute Period Not Active
 
         for (uint256 i = 0; i < _funders.length; i++) {
             address funder = _funders[i];
@@ -368,12 +377,12 @@ contract ViaPrize {
 
             // Deduct votes from the previous submission
             _submissionTree.subUsdcVotes(_previousSubmissionHash, amount);
-            _submissionTree.updateFunderBalance(_previousSubmissionHash, funder, (funderVotes[funder][_previousSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
+            _submissionTree.updateFunderVotes(_previousSubmissionHash, funder, (funderVotes[funder][_previousSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
             funderVotes[funder][_previousSubmissionHash] -= amount;
 
             // Add votes to the new submission
             _submissionTree.addUsdcVotes(_newSubmissionHash, amount);
-            _submissionTree.updateFunderBalance(_newSubmissionHash, funder, (funderVotes[funder][_newSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
+            _submissionTree.updateFunderVotes(_newSubmissionHash, funder, (funderVotes[funder][_newSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
             funderVotes[funder][_newSubmissionHash] += amount;
 
         }
