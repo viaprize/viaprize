@@ -82,6 +82,7 @@ contract ViaPrize {
     SubmissionAVLTree private _submissionTree;
 
     uint256 public totalVotes;
+    uint256 public disputePeriod;
 
 
     /// @notice error for not enough funds to vote
@@ -121,7 +122,7 @@ contract ViaPrize {
     event CampaignCreated(address indexed proposer, address indexed contractAddress);
     event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
     event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
-
+    event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
 
     constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
@@ -205,11 +206,23 @@ contract ViaPrize {
     function endVotingPeriod() public onlyPlatformAdmin {
         if(votingTime == 0) revert VotingPeriodNotActive();
         votingTime = 0;
+        votingPeriod = false;
+        disputePeriod = block.timestamp + 2 * 1 days;
+    }
+
+    function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public {
+        require(disputePeriod > block.timestamp, "DPNA"); //DPNA - Dispute Period Not Active
+        SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
+        address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
+        require(sender == submission.contestant, "NAS"); //NAS - Not a Submitter
+        emit DisputeRaised(_submissionHash, sender);
+    }
+
+    function endDispute() public onlyPlatformAdmin {
+        require(disputePeriod < block.timestamp, "DPA"); // DPA -> Dispute Period is in Active
         _distributeUnusedVotes();
         _distributeRewards();
-        votingPeriod = false;
         isActive = false;
-
     }
 
     function increaseSubmissionPeriod(uint256 _submissionTime) public onlyPlatformAdmin {
@@ -295,12 +308,27 @@ contract ViaPrize {
             funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
             totalVotes = totalVotes.add(amount);
             // rename this to somehting not related to funder ( contestant balance)
-            _submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee))/100);
+            _submissionTree.updateFunderBalance(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
             SubmissionAVLTree.SubmissionInfo memory submission = submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(_submissionHash, true);
             }
             emit Voted(_submissionHash, sender, amount);
+        }
+    }
+
+    function _changeVoteLogic(bytes32 _previousSubmissionHash, bytes32 _newSubmissionHash) private {
+
+        SubmissionAVLTree.SubmissionInfo memory previousSubmission = _submissionTree.getSubmission(_previousSubmissionHash);
+
+        if (previousSubmission.usdcVotes <= 0) {
+            _submissionTree.setFundedTrue(_previousSubmissionHash, false);
+        }
+
+        SubmissionAVLTree.SubmissionInfo memory newSubmission = _submissionTree.getSubmission(_newSubmissionHash);
+
+        if (newSubmission.usdcVotes > 0) {
+            _submissionTree.setFundedTrue(_newSubmissionHash, true);
         }
     }
 
@@ -318,19 +346,33 @@ contract ViaPrize {
         funderVotes[sender][_previous_submissionHash] -= amount;
         funderVotes[sender][_new_submissionHash] += amount;
 
-        SubmissionAVLTree.SubmissionInfo memory previousSubmission = _submissionTree.getSubmission(_previous_submissionHash);
+        _changeVoteLogic(_previousSubmissionHash, _newSubmissionHash);
 
-        if (previousSubmission.usdcVotes <= 0) {
-            _submissionTree.setFundedTrue(_previous_submissionHash, false);
-        }
-
-        SubmissionAVLTree.SubmissionInfo memory newSubmission = _submissionTree.getSubmission(_new_submissionHash);
-
-        if (newSubmission.usdcVotes > 0) {
-            _submissionTree.setFundedTrue(_new_submissionHash, true);
-        }
         emit Voted(_new_submissionHash, sender, amount);
         
+    }
+    function disputeChangeVote( bytes32 _previousSubmissionHash, bytes32 _newSubmissionHash, address[] calldata _funders, uint256[] calldata _amounts) onlyActive onlyPlatformAdmin public {
+        require(_funders.length == _amounts.length, "LM"); //LM -> Length Mismatch
+        require(disputePeriod > block.timestamp, "DPNA");  //DPNA -> Dispute Period Not Active
+
+        for (uint256 i = 0; i < _funders.length; i++) {
+            address funder = _funders[i];
+            uint256 amount = _amounts[i];
+
+            require(funderVotes[funder][_previousSubmissionHash] >= amount, "Insufficient votes from funder");
+
+            // Deduct votes from the previous submission
+            _submissionTree.subUsdcVotes(_previousSubmissionHash, amount);
+            _submissionTree.updateFunderVotes(_previousSubmissionHash, funder, (funderVotes[funder][_previousSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
+            funderVotes[funder][_previousSubmissionHash] -= amount;
+
+            // Add votes to the new submission
+            _submissionTree.addUsdcVotes(_newSubmissionHash, amount);
+            _submissionTree.updateFunderVotes(_newSubmissionHash, funder, (funderVotes[funder][_newSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
+            funderVotes[funder][_newSubmissionHash] += amount;
+        }
+
+        _changeVoteLogic(_previousSubmissionHash, _newSubmissionHash);
     }
 
     /// @notice uses functionality of the AVL tree to get all submissions
@@ -421,7 +463,7 @@ contract ViaPrize {
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
-       uint256 totalUsdcRewards = totalRewards;
+       uint256 totalUsdcRewards = totalFunds;
 
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
        for(uint256 i=0; i<allSubmissions.length; i++) {
