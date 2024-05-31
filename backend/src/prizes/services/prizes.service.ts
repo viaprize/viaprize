@@ -87,6 +87,17 @@ export class PrizesService {
     return prize.parcipants;
   }
 
+  async addPariticpant(slug: string, user: User) {
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        slug,
+      },
+      relations: ['participants'],
+    });
+    prize.parcipants.push(user);
+    return await this.prizeRepository.save(prize);
+  }
+
   async findOne(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
       where: {

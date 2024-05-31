@@ -1517,6 +1517,34 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       }),
 
     /**
+     * No description
+     *
+     * @name ParticipateCreate
+     * @request POST:/prizes/{slug}/participate
+     */
+    participateCreate: (slug: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/${slug}/participate`,
+        method: 'POST',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ParticipantsDetail
+     * @request GET:/prizes/{slug}/participants
+     */
+    participantsDetail: (slug: string, params: RequestParams = {}) =>
+      this.request<User[], any>({
+        path: `/prizes/${slug}/participants`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
  * @description The function `createComment` is an asynchronous function that takes a `comment` parameter calls the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
  *
  * @name CommentCreate

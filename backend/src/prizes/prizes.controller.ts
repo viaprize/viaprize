@@ -20,6 +20,7 @@ import { Cache } from 'cache-manager';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
+import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
@@ -315,6 +316,25 @@ export class PrizesController {
     return {
       message: `Submission with id ${id} has been Edited`,
     };
+  }
+
+  @Post('/:slug/participate')
+  @UseGuards(AuthGuard)
+  async participate(
+    @TypedParam('slug') slug: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    const user = await this.userService.findOneByAuthId(req.user.userId);
+    await this.prizeService.addPariticpant(slug, user);
+    return {
+      message: `You have been added to the prize`,
+    };
+  }
+
+  @Get('/:slug/participants')
+  async getParticipants(@TypedParam('slug') slug: string): Promise<User[]> {
+    const res = await this.prizeService.getParcipants(slug);
+    return res;
   }
 
   @Get('/:slug/submission')

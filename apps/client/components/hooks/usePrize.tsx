@@ -8,5 +8,15 @@ export const usePrize = () => {
     return prize.data;
   };
 
-  return { createPrize };
+  const participateInPrize = async (prizeId: string) => {
+    const prize = await (await backendApi()).prizes.participateCreate(prizeId);
+    return prize.data;
+  };
+
+  const getParticipants = async (prizeId: string) => {
+    const participants = await (await backendApi()).prizes.participantsDetail(prizeId);
+    return participants.data;
+  };
+
+  return { createPrize, participateInPrize, getParticipants };
 };
