@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import ExploreCard from '@/components/Prize/ExplorePrize/explorePrize';
 import { FetchPrizesCsv } from '@/components/history/fetch-csv';
 import HistoryCard from '@/components/history/history-card';

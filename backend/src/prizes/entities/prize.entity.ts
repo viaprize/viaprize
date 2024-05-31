@@ -6,6 +6,8 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -74,6 +76,10 @@ export class Prize {
 
   @Column({ default: '' })
   title: string;
+
+  @ManyToMany(() => User, (user) => user.id)
+  @JoinTable()
+  parcipants: User[];
 
   @OneToMany(() => Submission, (submission) => submission.prize)
   submissions: Submission[];

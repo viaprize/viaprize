@@ -4676,6 +4676,14 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "parcipants": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
           "submissions": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -4719,6 +4727,7 @@
           "updated_at",
           "images",
           "title",
+          "parcipants",
           "submissions",
           "slug",
           "user"
@@ -5893,6 +5902,14 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "parcipants": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
           "submissions": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -5940,6 +5957,7 @@
           "updated_at",
           "images",
           "title",
+          "parcipants",
           "submissions",
           "slug",
           "user"

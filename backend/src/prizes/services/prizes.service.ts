@@ -34,6 +34,7 @@ export class PrizesService {
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
   ) {}
+
   async findAll(options?: FindManyOptions<Prize> | undefined) {
     return this.prizeRepository.find(options);
   }
@@ -74,6 +75,17 @@ export class PrizesService {
   }
 
   getSmartContractDetails() {}
+
+  async getParcipants(slug: string) {
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        slug,
+      },
+      relations: ['participants'],
+    });
+
+    return prize.parcipants;
+  }
 
   async findOne(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
