@@ -304,9 +304,13 @@ contract ViaPrize {
 
         if(isFunder[sender]) {
             funderAmount[sender] -= amount;
-            _submissionTree.addUsdcVotes(_submissionHash, amount);
             funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
-            totalVotes = totalVotes.add(amount);
+
+            uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+
+            _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
+            
+            totalVotes = totalVotes.add(amountToSubmission);
             // rename this to somehting not related to funder ( contestant balance)
             _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
             SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
