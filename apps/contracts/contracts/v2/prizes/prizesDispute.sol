@@ -3,12 +3,12 @@ pragma solidity ^0.8.1;
 
 import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
-import "../helperContracts/safemath.sol";
-import "../helperContracts/ierc20_permit.sol";                                         
+import "../../helperContracts/safemath.sol";
+import "../../helperContracts/ierc20_permit.sol";                                         
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
-import "../helperContracts/ierc20_weth.sol";
+import "../../helperContracts/ierc20_weth.sol";
 
 contract ViaPrize {
     /// @notice this will be the total amount of funds raised
@@ -332,7 +332,6 @@ contract ViaPrize {
             
             totalVotes = totalVotes.add(amountToSubmission);
             // rename this to somehting not related to funder ( contestant balance)
-            _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
             SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(_submissionHash, true);
@@ -362,11 +361,9 @@ contract ViaPrize {
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
         if(!isFunder[sender]) revert("NF");
-        _submissionTree.subUsdcVotes(_previous_submissionHash, amount);
-        _submissionTree.addUsdcVotes(_new_submissionHash, amount);
-        // where is proposer fee
-        _submissionTree.updateFunderVotes(_previous_submissionHash, sender, (funderVotes[sender][_previous_submissionHash]*(100-platformFee-proposerFee))/100);
-        _submissionTree.updateFunderVotes(_new_submissionHash, sender, (funderVotes[sender][_new_submissionHash]*(100-platformFee - proposerFee))/100);
+        uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+        _submissionTree.subUsdcVotes(_previous_submissionHash, amountToSubmission);
+        _submissionTree.addUsdcVotes(_new_submissionHash, amountToSubmission);
         funderVotes[sender][_previous_submissionHash] -= amount;
         funderVotes[sender][_new_submissionHash] += amount;
 
@@ -384,15 +381,14 @@ contract ViaPrize {
             uint256 amount = _amounts[i];
 
             require(funderVotes[funder][_previousSubmissionHash] >= amount, "Insufficient votes from funder");
+            uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
 
             // Deduct votes from the previous submission
-            _submissionTree.subUsdcVotes(_previousSubmissionHash, amount);
-            _submissionTree.updateFunderVotes(_previousSubmissionHash, funder, (funderVotes[funder][_previousSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
+            _submissionTree.subUsdcVotes(_previousSubmissionHash, amountToSubmission);
             funderVotes[funder][_previousSubmissionHash] -= amount;
 
             // Add votes to the new submission
-            _submissionTree.addUsdcVotes(_newSubmissionHash, amount);
-            _submissionTree.updateFunderVotes(_newSubmissionHash, funder, (funderVotes[funder][_newSubmissionHash] * (100 - platformFee - proposerFee)) / 100);
+            _submissionTree.addUsdcVotes(_newSubmissionHash, amountToSubmission);
             funderVotes[funder][_newSubmissionHash] += amount;
         }
 
@@ -536,7 +532,6 @@ contract ViaPrize {
             _submissionTree.addUsdcVotes(refundSubmissionHash, amountAdded);
             funderVotes[sender][refundSubmissionHash] = funderVotes[sender][refundSubmissionHash].add(_amount);
             totalVotes = totalVotes.add(_amount);
-            _submissionTree.updateFunderVotes(refundSubmissionHash, sender, (funderVotes[sender][refundSubmissionHash] * (100-platformFee-proposerFee))/100);
             if (submissionCheck.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(refundSubmissionHash, true);
             }

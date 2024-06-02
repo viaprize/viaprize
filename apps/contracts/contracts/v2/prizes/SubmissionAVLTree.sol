@@ -4,9 +4,6 @@ pragma solidity ^0.8.0;
 import "../../helperContracts/owner.sol";
 
 contract SubmissionAVLTree {
-
-   mapping(bytes32 => mapping(address => uint256)) public submissionFunderBalances;
-
     struct SubmissionInfo {
         bytes32 submissionHash;
         string submissionText;
@@ -88,11 +85,6 @@ contract SubmissionAVLTree {
             root = insert(root, newNodeIndex);
         }
     }
-
-    function updateFunderVotes(bytes32 _submissionHash, address funder, uint256 balances) external {
-        submissionFunderBalances[_submissionHash][funder] = balances;
-    }
-
     function insert(uint256 node, uint256 newNode) private returns (uint256) {
         if (node == 0) {
             return newNode;
