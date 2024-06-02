@@ -260,7 +260,7 @@ contract ViaPrize {
                         uint256 reward = allSubmissions[i].usdcVotes;
                         if(reward > 0) {
                             for(uint256 j=0; j<refundRequestedFunders.length; j++) {
-                                uint256 reward_amount = refundRequested[refundRequestedFunders[j]];
+                                uint256 reward_amount = _submissionTree.submissionFunderBalances(refundSubmissionHash,refundRequestedFunders[j]);
                                 reward -= reward_amount;
                                 if(reward_amount > 0) {
                                     _usdc.transfer(refundRequestedFunders[j], reward_amount);
@@ -325,7 +325,6 @@ contract ViaPrize {
                 refundRequestedFunders.push(sender);
                 isRefundRequestedAddress[sender] = true;
             }
-            refundRequested[sender] = refundRequested[sender].add((amount * (100 - platformFee - proposerFee)) / 100);
         }
         if(isFunder[sender]) {
             funderAmount[sender] -= amount;
@@ -333,7 +332,9 @@ contract ViaPrize {
 
             uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
 
+
             _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
+            _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
             
             totalVotes = totalVotes.add(amountToSubmission);
             // rename this to somehting not related to funder ( contestant balance)
@@ -345,7 +346,7 @@ contract ViaPrize {
         }
     }
 
-    function _changeVoteLogic(bytes32 _previousSubmissionHash, bytes32 _newSubmissionHash) private {
+    function _changeSubmissionVoteLogic(bytes32 _previousSubmissionHash, bytes32 _newSubmissionHash) private {
 
         SubmissionAVLTree.SubmissionInfo memory previousSubmission = _submissionTree.getSubmission(_previousSubmissionHash);
 
@@ -363,26 +364,36 @@ contract ViaPrize {
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
     function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint8 v, bytes32 s, bytes32 r, uint256 amount, bytes32 _ethSignedMessageHash) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
+        if(_previous_submissionHash == _new_submissionHash) revert("SME"); //SME -> Same Submission
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
         if(!isFunder[sender]) revert("NF");
-        uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
-        if(_submissionHash == refundSubmissionHash) {
-            if(!isRefundRequestedAddress[sender]) {
-                refundRequestedFunders.push(sender);
-                isRefundRequestedAddress[sender] = true;
-            }
-            refundRequested[sender] = refundRequested[sender].add((amount * (100 - platformFee - proposerFee)) / 100);
-        }
-        _submissionTree.subUsdcVotes(_previous_submissionHash, amountToSubmission);
-        _submissionTree.addUsdcVotes(_new_submissionHash, amountToSubmission);
-        funderVotes[sender][_previous_submissionHash] -= amount;
-        funderVotes[sender][_new_submissionHash] += amount;
-
-        _changeVoteLogic(_previous_submissionHash, _new_submissionHash);
-
+        _changeVote(sender, _previous_submissionHash, _new_submissionHash, amount);
+        _changeSubmissionVoteLogic(_previous_submissionHash, _new_submissionHash);
         emit Voted(_new_submissionHash, sender, amount);
         
+    }
+
+    function _changeVote(address _sender,bytes32 _previous_submission_hash,bytes32 _new_submission_hash,uint256 amount) private {
+        uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+        if(_new_submission_hash == refundSubmissionHash){
+
+            if(!isRefundRequestedAddress[_sender]){
+                refundRequestedFunders.push(_sender);
+                isRefundRequestedAddress[_sender] = true;
+            }
+        }
+        _submissionTree.subUsdcVotes(_new_submission_hash, amountToSubmission);
+        _submissionTree.addUsdcVotes(_previous_submission_hash, amountToSubmission);
+        funderVotes[_sender][_previous_submission_hash] -= amount;
+        funderVotes[_sender][_new_submission_hash] += amount;
+        _submissionTree.updateFunderVotes(_previous_submission_hash, _sender, (funderVotes[_sender][_previous_submission_hash]*(100-platformFee-proposerFee))/100);
+        _submissionTree.updateFunderVotes(_new_submission_hash, _sender, (funderVotes[_sender][_new_submission_hash]*(100-platformFee - proposerFee))/100);
+        if(_previous_submission_hash == refundSubmissionHash) {
+            if(_submissionTree.submissionFunderBalances(refundSubmissionHash,_sender) == 0) {
+                isRefundRequestedAddress[_sender] = false;
+            }
+        }
     }
     function disputeChangeVote( bytes32  _previousSubmissionHash, bytes32 _newSubmissionHash, address[] calldata _funders, uint256[] calldata _amounts) onlyActive onlyPlatformAdmin public {
         require(_funders.length == _amounts.length, "LM"); //LM -> Length Mismatch
@@ -391,28 +402,10 @@ contract ViaPrize {
         for (uint256 i = 0; i < _funders.length; i++) {
             address funder = _funders[i];
             uint256 amount = _amounts[i];
-
-            require(funderVotes[funder][_previousSubmissionHash] >= amount, "Insufficient votes from funder");
-            uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
-
-            // Deduct votes from the previous submission
-            _submissionTree.subUsdcVotes(_previousSubmissionHash, amountToSubmission);
-            funderVotes[funder][_previousSubmissionHash] -= amount;
-
-            if(_submissionHash == refundSubmissionHash) {
-                if(!isRefundRequestedAddress[sender]) {
-                    refundRequestedFunders.push(sender);
-                    isRefundRequestedAddress[sender] = true;
-                }
-                refundRequested[sender] = refundRequested[sender].add((amount * (100 - platformFee - proposerFee)) / 100);
-            }
-
-            // Add votes to the new submission
-            _submissionTree.addUsdcVotes(_newSubmissionHash, amountToSubmission);
-            funderVotes[funder][_newSubmissionHash] += amount;
+            _changeVote(funder, _previousSubmissionHash, _newSubmissionHash, amount);
         }
 
-        _changeVoteLogic(_previousSubmissionHash, _newSubmissionHash);
+        _changeSubmissionVoteLogic(_previousSubmissionHash, _newSubmissionHash);
     }
 
     /// @notice uses functionality of the AVL tree to get all submissions
@@ -519,8 +512,9 @@ contract ViaPrize {
                     if(transferable_usdc_amount > 0) {
                         uint256 refundTotalVotes = allSubmissions[i].usdcVotes;
                         for(uint256 j=0; j<refundRequestedFunders.length; j++) {
-                            uint256 individual_usdc_percentage = refundRequested[refundRequestedFunders[j]].mul(100).div(refundTotalVotes);
-                            uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_usdc_percentage).div(100));
+                            // uint256 individual_refund_usdc_percentage = refundRequested[refundRequestedFunders[j]].mul(100).div(refundTotalVotes);
+                            uint256 individual_refund_usdc_percentage =   _submissionTree.submissionFunderBalances(refundSubmissionHash,refundRequestedFunders[j]).mul(100).div(refundTotalVotes);
+                            uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(100));
                             _usdc.transfer(refundRequestedFunders[j], individual_transferable_usdc_amount);
                         }
                     }
@@ -546,4 +540,4 @@ contract ViaPrize {
     function changeMinimumSlipageFeePercentage(uint256 _minimumSlipageFeePercentage) public onlyPlatformAdmin {
         minimumSlipageFeePercentage  = _minimumSlipageFeePercentage;
     } 
-}
+} 
