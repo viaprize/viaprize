@@ -307,31 +307,6 @@ contract ViaPrize {
     }
 
     
-//     //add to votes
-//    function fundersRefund(uint256 _amount) public {
-//     require(isFunder[msg.sender], "NF"); // NF -> Not A Funder
-//     if(!votingPeriod) revert VotingPeriodNotActive();
-//     address sender = msg.sender;
-//     //duplicate in this 
-//     refundRequestedFunders.push(sender);
-//     // dont only minus here 
-//     refundRequested[sender] = refundRequested[sender].add((_amount * (100 - platformFee - proposerFee)) / 100);
-
-//     SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(refundSubmissionHash);
-//     if(submissionCheck.submissionHash != refundSubmissionHash) revert SubmissionDoesntExist();
-//     if(isFunder[sender]) {
-//             funderAmount[sender] -= _amount;
-//             uint256 amountAdded = _amount - proposerFee - platformFee;
-//             _submissionTree.addUsdcVotes(refundSubmissionHash, amountAdded);
-//             funderVotes[sender][refundSubmissionHash] = funderVotes[sender][refundSubmissionHash].add(_amount);
-//             // totalVotes is without platfrom and proposer fee
-//             totalVotes = totalVotes.add(amountAdded);
-//             if (submissionCheck.usdcVotes > 0) {
-//                 _submissionTree.setFundedTrue(refundSubmissionHash, true);
-//             }
-//             emit Voted(refundSubmissionHash, sender, _amount);
-//         }
-//    }
 
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
@@ -392,6 +367,13 @@ contract ViaPrize {
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
         if(!isFunder[sender]) revert("NF");
         uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+        if(_submissionHash == refundSubmissionHash) {
+            if(!isRefundRequestedAddress[sender]) {
+                refundRequestedFunders.push(sender);
+                isRefundRequestedAddress[sender] = true;
+            }
+            refundRequested[sender] = refundRequested[sender].add((amount * (100 - platformFee - proposerFee)) / 100);
+        }
         _submissionTree.subUsdcVotes(_previous_submissionHash, amountToSubmission);
         _submissionTree.addUsdcVotes(_new_submissionHash, amountToSubmission);
         funderVotes[sender][_previous_submissionHash] -= amount;
@@ -416,6 +398,14 @@ contract ViaPrize {
             // Deduct votes from the previous submission
             _submissionTree.subUsdcVotes(_previousSubmissionHash, amountToSubmission);
             funderVotes[funder][_previousSubmissionHash] -= amount;
+
+            if(_submissionHash == refundSubmissionHash) {
+                if(!isRefundRequestedAddress[sender]) {
+                    refundRequestedFunders.push(sender);
+                    isRefundRequestedAddress[sender] = true;
+                }
+                refundRequested[sender] = refundRequested[sender].add((amount * (100 - platformFee - proposerFee)) / 100);
+            }
 
             // Add votes to the new submission
             _submissionTree.addUsdcVotes(_newSubmissionHash, amountToSubmission);
@@ -513,7 +503,6 @@ contract ViaPrize {
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
-       uint256 totalUsdcRewards = totalRewards;
 
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
        for(uint256 i=0; i<allSubmissions.length; i++) {
@@ -524,10 +513,9 @@ contract ViaPrize {
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0) {
-                // use submission Hash to check if the submission is refund submission
+                uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
+                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
                 if(allSubmissions[i].submissionHash == refundSubmissionHash) {
-                    uint256 refund_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
-                    uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(refund_usdc_percentage)).div(100);
                     if(transferable_usdc_amount > 0) {
                         uint256 refundTotalVotes = allSubmissions[i].usdcVotes;
                         for(uint256 j=0; j<refundRequestedFunders.length; j++) {
@@ -537,14 +525,12 @@ contract ViaPrize {
                         }
                     }
                 } else {
-                    uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
-                    uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
                     _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
                 }
             }
            
        }
-       return (total_usdc_votes, totalUsdcRewards);
+       return (total_usdc_votes, totalRewards);
    }
 
    function getAllFunders() public view returns(address[] memory) {
