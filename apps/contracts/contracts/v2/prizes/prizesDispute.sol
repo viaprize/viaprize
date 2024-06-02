@@ -27,19 +27,11 @@ contract ViaPrize {
     address public proposer;
     /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
     mapping (address => uint256) public funderAmount;
-    /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
-    mapping (address => uint256) public totalFunderAmount;
     /// @notice array of funders
     address[] public allFunders;
     mapping(address => bool) public isFunder;
     /// @notice Add a new mapping to store each funder's votes on each submission
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
-    /// @notice Add a new mapping to check if a funder has received their refunds
-    mapping(address => bool) public receivedFunds;
-    /// @notice add a new refund mapping for address to bool
-    mapping(address => bool) public addressRefunded;
-    /// @notice to keep track the campaign is Alive or not
-    mapping(address => uint256) public refundRequested;
     address[] public refundRequestedFunders;
     bytes32 public refundSubmissionHash;
     mapping(address => bool) public isRefundRequestedAddress;
@@ -141,7 +133,7 @@ contract ViaPrize {
             isPlatformAdmin[_platformAdmins[i]] = true;
         }
         /// @notice  Initialize the _submissionTree
-        _submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission());
+        _submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission(address(this)));
         proposerFee = _proposerFee;
         platformFee = _platFormFee;
         _usdc = IERC20Permit(_usdcAddress);
@@ -216,7 +208,7 @@ contract ViaPrize {
         if(votingTime == 0) revert VotingPeriodNotActive();
         votingTime = 0;
         votingPeriod = false;
-        disputePeriod = block.timestamp + 2 days;
+        disputePeriod = block.timestamp + 2 minutes;
     }
 
     function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public {
@@ -423,7 +415,6 @@ contract ViaPrize {
     function _depositLogic(address sender, uint256 donation) private {
         isFunder[sender] = true;
         funderAmount[sender] = funderAmount[sender].add(donation);
-        totalFunderAmount[sender] = totalFunderAmount[sender].add(donation);
         totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
         totalFunds = totalFunds.add(donation);
         allFunders.push(sender);
@@ -497,12 +488,13 @@ contract ViaPrize {
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
 
+
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
        for(uint256 i=0; i<allSubmissions.length; i++) {
            total_usdc_votes += allSubmissions[i].usdcVotes;
        }
        uint256 total_unused_usdc_votes = totalRewards.sub(total_usdc_votes);
-    
+
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0) {
@@ -511,11 +503,14 @@ contract ViaPrize {
                 if(allSubmissions[i].submissionHash == refundSubmissionHash) {
                     if(transferable_usdc_amount > 0) {
                         uint256 refundTotalVotes = allSubmissions[i].usdcVotes;
-                        for(uint256 j=0; j<refundRequestedFunders.length; j++) {
-                            // uint256 individual_refund_usdc_percentage = refundRequested[refundRequestedFunders[j]].mul(100).div(refundTotalVotes);
-                            uint256 individual_refund_usdc_percentage =   _submissionTree.submissionFunderBalances(refundSubmissionHash,refundRequestedFunders[j]).mul(100).div(refundTotalVotes);
-                            uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(100));
-                            _usdc.transfer(refundRequestedFunders[j], individual_transferable_usdc_amount);
+                        for(uint256 j=0; j<allFunders.length; j++) {
+                            uint256 individual_unused_votes = (funderAmount[allFunders[j]] - funderVotes[allFunders[j]][refundSubmissionHash]).mul(100-platformFee-proposerFee).div(100);
+                            if(individual_unused_votes > 0){
+                                 uint256 individual_refund_usdc_percentage =   individual_unused_votes.mul(100).div(refundTotalVotes);
+                                 uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(100));
+                                _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
+                            }
+                           
                         }
                     }
                 } else {
