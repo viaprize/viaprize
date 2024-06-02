@@ -49,8 +49,8 @@ contract ViaPrize {
 
     using SafeMath for uint256;
 
-    uint proposerFee;
-    uint platformFee;
+    uint public proposerFee;
+    uint public platformFee;
 
     bool public votingPeriod = false;
     bool public submissionPeriod = false;
@@ -81,6 +81,8 @@ contract ViaPrize {
 
     /// @notice this will be the address of the platform
     address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
+
+
 
     /// @notice / @notice _submissionTree contract
     SubmissionAVLTree private _submissionTree;
@@ -322,6 +324,7 @@ contract ViaPrize {
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
+
         if(isFunder[sender]) {
             funderAmount[sender] -= amount;
             funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
@@ -484,17 +487,18 @@ contract ViaPrize {
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
-       uint256 totalUsdcRewards = totalFunds;
+       uint256 totalUsdcRewards = totalRewards;
 
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
        for(uint256 i=0; i<allSubmissions.length; i++) {
            total_usdc_votes += allSubmissions[i].usdcVotes;
        }
-       uint256 total_unused_usdc_votes = totalUsdcRewards.sub(total_usdc_votes);
+       uint256 total_unused_usdc_votes = totalRewards.sub(total_usdc_votes);
     
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0) {
+                // use submission Hash to check if the submission is refund submission
                 if(allSubmissions[i].contestant == platformAdmins[0]) {
                     uint256 refund_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
                     uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(refund_usdc_percentage)).div(100);
@@ -507,6 +511,7 @@ contract ViaPrize {
                         }
                     }
                 }
+                // use submission Hash to check if the submission is refund submission
                 if(allSubmissions[i].contestant != platformAdmins[0]) {
                     uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
                     uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
@@ -518,12 +523,17 @@ contract ViaPrize {
        return (total_usdc_votes, totalUsdcRewards);
    }
 
+
+    //add to votes
    function fundersRefund(uint256 _amount) public {
     require(isFunder[msg.sender], "NF"); // NF -> Not A Funder
     if(!votingPeriod) revert VotingPeriodNotActive();
     address sender = msg.sender;
+    //duplicate in this 
     refundRequestedFunders.push(sender);
+    // dont only minus here 
     refundRequested[sender] = refundRequested[sender].add((_amount - platformFee - proposerFee));
+
     SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(refundSubmissionHash);
     if(submissionCheck.submissionHash != refundSubmissionHash) revert SubmissionDoesntExist();
     if(isFunder[sender]) {
@@ -531,7 +541,8 @@ contract ViaPrize {
             uint256 amountAdded = _amount - proposerFee - platformFee;
             _submissionTree.addUsdcVotes(refundSubmissionHash, amountAdded);
             funderVotes[sender][refundSubmissionHash] = funderVotes[sender][refundSubmissionHash].add(_amount);
-            totalVotes = totalVotes.add(_amount);
+            // totalVotes is without platfrom and proposer fee
+            totalVotes = totalVotes.add(amountAdded);
             if (submissionCheck.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(refundSubmissionHash, true);
             }
