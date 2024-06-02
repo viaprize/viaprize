@@ -255,6 +255,7 @@ contract ViaPrize {
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
+                    // check using hash
                     if(allSubmissions[i].contestant == platformAdmins[0]) {
                         uint256 reward = allSubmissions[i].usdcVotes;
                         if(reward > 0) {
