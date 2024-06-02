@@ -3,12 +3,12 @@ pragma solidity ^0.8.1;
 
 import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
-import "../../helperContracts/safemath.sol";
-import "../../helperContracts/ierc20_permit.sol";                                         
+import "../helperContracts/safemath.sol";
+import "../helperContracts/ierc20_permit.sol";                                         
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
-import "../../helperContracts/ierc20_weth.sol";
+import "../helperContracts/ierc20_weth.sol";
 
 contract ViaPrize {
     /// @notice this will be the total amount of funds raised
@@ -27,17 +27,21 @@ contract ViaPrize {
     address public proposer;
     /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
     mapping (address => uint256) public funderAmount;
+    /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
+    mapping (address => uint256) public totalFunderAmount;
     /// @notice array of funders
     address[] public allFunders;
     mapping(address => bool) public isFunder;
     /// @notice Add a new mapping to store each funder's votes on each submission
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
     /// @notice Add a new mapping to check if a funder has received their refunds
-    // remove this variabl
-    mapping(bytes32 => mapping(address => bool)) public refunded;
+    mapping(address => bool) public receivedFunds;
     /// @notice add a new refund mapping for address to bool
     mapping(address => bool) public addressRefunded;
     /// @notice to keep track the campaign is Alive or not
+    mapping(address => uint256) public refundRequested;
+    address[] public refundRequestedFunders;
+    bytes32 public refundSubmissionHash;
 
     bool public isActive = false;
     uint8 public constant  VERSION = 2;
@@ -145,6 +149,8 @@ contract ViaPrize {
         ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
         _weth = IWETH(_wethToken);
+        refundSubmissionHash = keccak256(abi.encodePacked(platformAdmins[0], "This is a refund Submission"));
+        _submissionTree.addSubmission(platformAdmins[0], refundSubmissionHash, "This is a refund Submission");
         
         emit CampaignCreated(proposer, address(this));
     }
@@ -247,9 +253,23 @@ contract ViaPrize {
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
-                    uint256 reward = (allSubmissions[i].usdcVotes);
-                    allSubmissions[i].usdcVotes = 0;
-                    _usdc.transfer(allSubmissions[i].contestant, reward);
+                    if(allSubmissions[i].contestant == platformAdmins[0]) {
+                        uint256 reward = allSubmissions[i].usdcVotes;
+                        if(reward > 0) {
+                            for(uint256 j=0; j<refundRequestedFunders.length; j++) {
+                                uint256 reward_amount = refundRequested[refundRequestedFunders[j]];
+                                reward -= reward_amount;
+                                if(reward_amount > 0) {
+                                    _usdc.transfer(refundRequestedFunders[j], reward_amount);
+                                }
+                        }
+                        }
+                    }
+                    if(allSubmissions[i].contestant != platformAdmins[0]) {
+                        uint256 reward = (allSubmissions[i].usdcVotes);
+                        allSubmissions[i].usdcVotes = 0;
+                        _usdc.transfer(allSubmissions[i].contestant, reward);
+                    }
                 }
                 unchecked { ++i; }
             }
@@ -391,6 +411,7 @@ contract ViaPrize {
     function _depositLogic(address sender, uint256 donation) private {
         isFunder[sender] = true;
         funderAmount[sender] = funderAmount[sender].add(donation);
+        totalFunderAmount[sender] = totalFunderAmount[sender].add(donation);
         totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
         totalFunds = totalFunds.add(donation);
         allFunders.push(sender);
@@ -474,15 +495,52 @@ contract ViaPrize {
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0) {
-                uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
-                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
-                _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
+                if(allSubmissions[i].contestant == platformAdmins[0]) {
+                    uint256 refund_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
+                    uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(refund_usdc_percentage)).div(100);
+                    if(transferable_usdc_amount > 0) {
+                        uint256 refundTotalVotes = allSubmissions[i].usdcVotes;
+                        for(uint256 j=0; j<refundRequestedFunders.length; j++) {
+                            uint256 individual_usdc_percentage = refundRequested[refundRequestedFunders[j]].mul(100).div(refundTotalVotes);
+                            uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_usdc_percentage).div(100));
+                            _usdc.transfer(refundRequestedFunders[j], individual_transferable_usdc_amount);
+                        }
+                    }
+                }
+                if(allSubmissions[i].contestant != platformAdmins[0]) {
+                    uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
+                    uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
+                    _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
+                }
             }
            
        }
        return (total_usdc_votes, totalUsdcRewards);
    }
-    function getAllFunders() public view returns(address[] memory) {
+
+   function fundersRefund(uint256 _amount) public {
+    require(isFunder[msg.sender], "NF"); // NF -> Not A Funder
+    if(!votingPeriod) revert VotingPeriodNotActive();
+    address sender = msg.sender;
+    refundRequestedFunders.push(sender);
+    refundRequested[sender] = refundRequested[sender].add((_amount - platformFee - proposerFee));
+    SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(refundSubmissionHash);
+    if(submissionCheck.submissionHash != refundSubmissionHash) revert SubmissionDoesntExist();
+    if(isFunder[sender]) {
+            funderAmount[sender] -= _amount;
+            uint256 amountAdded = _amount - proposerFee - platformFee;
+            _submissionTree.addUsdcVotes(refundSubmissionHash, amountAdded);
+            funderVotes[sender][refundSubmissionHash] = funderVotes[sender][refundSubmissionHash].add(_amount);
+            totalVotes = totalVotes.add(_amount);
+            _submissionTree.updateFunderVotes(refundSubmissionHash, sender, (funderVotes[sender][refundSubmissionHash] * (100-platformFee-proposerFee))/100);
+            if (submissionCheck.usdcVotes > 0) {
+                _submissionTree.setFundedTrue(refundSubmissionHash, true);
+            }
+            emit Voted(refundSubmissionHash, sender, _amount);
+        }
+   }
+
+   function getAllFunders() public view returns(address[] memory) {
         return allFunders;
    }
 
