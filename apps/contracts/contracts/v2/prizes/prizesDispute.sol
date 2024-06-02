@@ -497,16 +497,15 @@ contract ViaPrize {
 
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
-            if(total_unused_usdc_votes > 0) {
+            if(total_unused_usdc_votes > 0) { 
                 uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
                 uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
                 if(allSubmissions[i].submissionHash == refundSubmissionHash) {
                     if(transferable_usdc_amount > 0) {
-                        uint256 refundTotalVotes = allSubmissions[i].usdcVotes;
                         for(uint256 j=0; j<allFunders.length; j++) {
-                            uint256 individual_unused_votes = (funderAmount[allFunders[j]] - funderVotes[allFunders[j]][refundSubmissionHash]).mul(100-platformFee-proposerFee).div(100);
+                            uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
                             if(individual_unused_votes > 0){
-                                 uint256 individual_refund_usdc_percentage =   individual_unused_votes.mul(100).div(refundTotalVotes);
+                                 uint256 individual_refund_usdc_percentage =   individual_unused_votes.mul(100).div(total_unused_usdc_votes);
                                  uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(100));
                                 _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
                             }
