@@ -42,6 +42,7 @@ contract ViaPrize {
     mapping(address => uint256) public refundRequested;
     address[] public refundRequestedFunders;
     bytes32 public refundSubmissionHash;
+    mapping(address => bool) public isRefundRequestedAddress;
 
     bool public isActive = false;
     uint8 public constant  VERSION = 2;
@@ -255,8 +256,7 @@ contract ViaPrize {
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
-                    // check using hash
-                    if(allSubmissions[i].contestant == platformAdmins[0]) {
+                    if(allSubmissions[i].submissionHash == refundSubmissionHash) {
                         uint256 reward = allSubmissions[i].usdcVotes;
                         if(reward > 0) {
                             for(uint256 j=0; j<refundRequestedFunders.length; j++) {
@@ -267,8 +267,7 @@ contract ViaPrize {
                                 }
                         }
                         }
-                    }
-                    if(allSubmissions[i].contestant != platformAdmins[0]) {
+                    } else {
                         uint256 reward = (allSubmissions[i].usdcVotes);
                         allSubmissions[i].usdcVotes = 0;
                         _usdc.transfer(allSubmissions[i].contestant, reward);
@@ -307,12 +306,33 @@ contract ViaPrize {
         return submissionHash;
     }
 
-    function restartPrize(uint256 _submissionTime) public onlyPlatformAdminOrProposer {
-        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-        if(block.timestamp > submissionTime && allSubmissions.length == 0) revert("STG0");
-        submissionTime = block.timestamp + _submissionTime * 1 minutes;
-        submissionPeriod = true;
-    }
+    
+//     //add to votes
+//    function fundersRefund(uint256 _amount) public {
+//     require(isFunder[msg.sender], "NF"); // NF -> Not A Funder
+//     if(!votingPeriod) revert VotingPeriodNotActive();
+//     address sender = msg.sender;
+//     //duplicate in this 
+//     refundRequestedFunders.push(sender);
+//     // dont only minus here 
+//     refundRequested[sender] = refundRequested[sender].add((_amount * (100 - platformFee - proposerFee)) / 100);
+
+//     SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(refundSubmissionHash);
+//     if(submissionCheck.submissionHash != refundSubmissionHash) revert SubmissionDoesntExist();
+//     if(isFunder[sender]) {
+//             funderAmount[sender] -= _amount;
+//             uint256 amountAdded = _amount - proposerFee - platformFee;
+//             _submissionTree.addUsdcVotes(refundSubmissionHash, amountAdded);
+//             funderVotes[sender][refundSubmissionHash] = funderVotes[sender][refundSubmissionHash].add(_amount);
+//             // totalVotes is without platfrom and proposer fee
+//             totalVotes = totalVotes.add(amountAdded);
+//             if (submissionCheck.usdcVotes > 0) {
+//                 _submissionTree.setFundedTrue(refundSubmissionHash, true);
+//             }
+//             emit Voted(refundSubmissionHash, sender, _amount);
+//         }
+//    }
+
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
     function vote(bytes32 _submissionHash, uint256 amount, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) onlyActive public {
@@ -325,7 +345,13 @@ contract ViaPrize {
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
-
+        if(_submissionHash == refundSubmissionHash) {
+            if(!isRefundRequestedAddress[sender]) {
+                refundRequestedFunders.push(sender);
+                isRefundRequestedAddress[sender] = true;
+            }
+            refundRequested[sender] = refundRequested[sender].add((amount * (100 - platformFee - proposerFee)) / 100);
+        }
         if(isFunder[sender]) {
             funderAmount[sender] -= amount;
             funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
@@ -410,7 +436,6 @@ contract ViaPrize {
         return submission;
     }
 
-    //Todo What the funk is deposit logic
 
     function _depositLogic(address sender, uint256 donation) private {
         isFunder[sender] = true;
@@ -500,7 +525,7 @@ contract ViaPrize {
        for(uint256 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0) {
                 // use submission Hash to check if the submission is refund submission
-                if(allSubmissions[i].contestant == platformAdmins[0]) {
+                if(allSubmissions[i].submissionHash == refundSubmissionHash) {
                     uint256 refund_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
                     uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(refund_usdc_percentage)).div(100);
                     if(transferable_usdc_amount > 0) {
@@ -511,9 +536,7 @@ contract ViaPrize {
                             _usdc.transfer(refundRequestedFunders[j], individual_transferable_usdc_amount);
                         }
                     }
-                }
-                // use submission Hash to check if the submission is refund submission
-                if(allSubmissions[i].contestant != platformAdmins[0]) {
+                } else {
                     uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
                     uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
                     _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
@@ -522,33 +545,6 @@ contract ViaPrize {
            
        }
        return (total_usdc_votes, totalUsdcRewards);
-   }
-
-
-    //add to votes
-   function fundersRefund(uint256 _amount) public {
-    require(isFunder[msg.sender], "NF"); // NF -> Not A Funder
-    if(!votingPeriod) revert VotingPeriodNotActive();
-    address sender = msg.sender;
-    //duplicate in this 
-    refundRequestedFunders.push(sender);
-    // dont only minus here 
-    refundRequested[sender] = refundRequested[sender].add((_amount - platformFee - proposerFee));
-
-    SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(refundSubmissionHash);
-    if(submissionCheck.submissionHash != refundSubmissionHash) revert SubmissionDoesntExist();
-    if(isFunder[sender]) {
-            funderAmount[sender] -= _amount;
-            uint256 amountAdded = _amount - proposerFee - platformFee;
-            _submissionTree.addUsdcVotes(refundSubmissionHash, amountAdded);
-            funderVotes[sender][refundSubmissionHash] = funderVotes[sender][refundSubmissionHash].add(_amount);
-            // totalVotes is without platfrom and proposer fee
-            totalVotes = totalVotes.add(amountAdded);
-            if (submissionCheck.usdcVotes > 0) {
-                _submissionTree.setFundedTrue(refundSubmissionHash, true);
-            }
-            emit Voted(refundSubmissionHash, sender, _amount);
-        }
    }
 
    function getAllFunders() public view returns(address[] memory) {
