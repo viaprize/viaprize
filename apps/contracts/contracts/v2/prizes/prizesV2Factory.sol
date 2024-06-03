@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import "./prizes.sol";
-contract PrizeFactory {
+contract PrizeFactoryV2 {
     // Event declaration
     event NewViaPrizeCreated(uint indexed id, address indexed viaPrizeAddress);
     function createViaPrize(

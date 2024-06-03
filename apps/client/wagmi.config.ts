@@ -16,20 +16,20 @@ export default defineConfig({
         'contracts/PrizeFactory.sol/*.json',
         'contracts/PrizeJudgesFactory.sol/*.json',
         'contracts/Prize.sol/*.json',
-        'contracts/PrizeJudges.sol/*.json',
         'contracts/portal.sol/*.json',
         'contracts/portalFactory.sol/*.json',
+        'contracts/v2/prizes/prizesV2Factory.sol/*.json',
       ],
       deployments: {
-        PrizeFactory: {
-          10: '0xa7622aeFBF142f607A1Ad6a207F9955f0f93709A',
-        },
         PrizeJudgesFactory: {
           10: '0x7f1aF102d6EBaa0F673C3C574c58EB052db93675',
         },
         portalFactory: {
           // 80001: '0xAe37824e718488787D1bbD87E35985ED107a0C7E',
           10: '0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0',
+        },
+        PrizeFactoryV2: {
+          10: '0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45',
         },
       },
     }),

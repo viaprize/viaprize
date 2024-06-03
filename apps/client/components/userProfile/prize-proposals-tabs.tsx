@@ -1,13 +1,25 @@
 import type { PrizeProposals } from '@/lib/api';
 import {
-  prepareWritePrizeFactory,
+  ADMINS,
+  ETH_PRICE,
+  SWAP_ROUTER,
+  USDC,
+  USDC_BRIDGE,
+  USDC_TO_ETH_POOL,
+  USDC_TO_USDCE_POOL,
+  WETH,
+} from '@/lib/constants';
+import {
+  prepareWritePrizeFactoryV2,
   prepareWritePrizeJudgesFactory,
-  writePrizeFactory,
+  writePrizeFactoryV2,
   writePrizeJudgesFactory,
 } from '@/lib/smartContract';
 import type { ProposalStatus } from '@/lib/types';
 import { Button, Text } from '@mantine/core';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import { useQuery } from 'react-query';
@@ -17,8 +29,6 @@ import Shell from '../custom/shell';
 import SkeletonLoad from '../custom/skeleton-load-explore';
 import { usePrize } from '../hooks/usePrize';
 import usePrizeProposal from '../hooks/usePrizeProposal';
-import Link from 'next/link';
-import { IconCircleCheck } from '@tabler/icons-react';
 
 export default function ProposalsTab({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -114,23 +124,24 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                       out = await writePrizeJudgesFactory(requestJudges);
                       console.log(out, 'outJudges');
                     } else {
-                      const requestJudges = await prepareWritePrizeFactory({
+                      const requestJudges = await prepareWritePrizeFactoryV2({
                         functionName: 'createViaPrize',
                         args: [
-                          item.admins as `0x${string}`[],
-                          [
-                            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-                            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-                            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
-                          ] as `0x${string}`[],
+                          BigInt(currentTimestamp.current),
+                          item.admins[0] as `0x${string}`,
+                          ADMINS,
                           BigInt(item.platformFeePercentage),
                           BigInt(item.proposerFeePercentage),
-                          '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-                          BigInt(item.submission_time),
-                          BigInt(currentTimestamp.current),
+                          USDC,
+                          USDC_BRIDGE,
+                          SWAP_ROUTER,
+                          USDC_TO_USDCE_POOL,
+                          USDC_TO_ETH_POOL,
+                          ETH_PRICE,
+                          WETH,
                         ],
                       });
-                      out = await writePrizeFactory(requestJudges);
+                      out = await writePrizeFactoryV2(requestJudges);
                       console.log(out, 'out');
                     }
                     // const request = await prepareWriteViaPrizeFactory({
