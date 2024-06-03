@@ -9,7 +9,7 @@ contract PrizeFactory {
        uint _id , address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken
     ) public returns (address) {
         // Deploy a new ViaPrize contract and store its address
-        Prize newViaPrize = new Prize(_proposer, _platformAdmins, _platFormFee, _proposerFee, _usdcAddress,_usdcBridgedAddress,_swapRouter,_usdcToUsdcePool,_usdcToEthPool,_ethPriceAggregator,_wethToken);
+        PrizeV2 newViaPrize = new PrizeV2(_proposer, _platformAdmins, _platFormFee, _proposerFee, _usdcAddress,_usdcBridgedAddress,_swapRouter,_usdcToUsdcePool,_usdcToEthPool,_ethPriceAggregator,_wethToken);
         // Emit the event with the contractId and the address of the newly created contract
         emit NewViaPrizeCreated(_id, address(newViaPrize));
 

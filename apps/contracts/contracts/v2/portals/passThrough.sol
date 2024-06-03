@@ -10,7 +10,7 @@ import "../../helperContracts/ierc1155.sol";
 // import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
-import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 // import "@uniswap/v3-core/contracts/libraries/FullMath.sol";
 
 contract PassThrough {
@@ -179,7 +179,7 @@ contract PassThrough {
     }
     
     /// @notice function to donate the usdc tokens into the campaign
-    function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, uint256 _signature, bytes32 _ethSignedMessageHash ) public noReentrant  {
+    function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, bytes memory _signature, bytes32 _ethSignedMessageHash ) public noReentrant  {
         require(_amountUsdc > 0, "funds should be greater than 0");
         if (!isActive) revert FundingToContractEnded();
         (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
@@ -193,7 +193,7 @@ contract PassThrough {
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
-        emit Donation(msg.sender,_nft,DonationType.PAYMENT,TokenType.TOKEN,_amount);
+        emit Donation(msg.sender,address(_usdc),DonationType.PAYMENT,TokenType.TOKEN,_amountUsdc);
     }
 
     /// @notice function to donate eth into the campaign
