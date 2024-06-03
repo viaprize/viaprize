@@ -39,6 +39,7 @@ contract PrizeV2 {
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
     address[] public refundRequestedFunders;
     mapping(address => bool) public isRefundRequestedAddress;
+    mapping(address => bool) public isContestant;
 
     bool public isActive = false;
     uint8 public constant  VERSION = 2;
@@ -262,7 +263,7 @@ contract PrizeV2 {
                                 if(reward_amount > 0) {
                                     _usdc.transfer(refundRequestedFunders[j], reward_amount);
                                 }
-                        }
+                            }
                         }
                     } else {
                         uint256 reward = (allSubmissions[i].usdcVotes);
@@ -297,7 +298,9 @@ contract PrizeV2 {
     /// @notice addSubmission should return the submissionHash
     function addSubmission(address contestant, string memory submissionText) public onlyPlatformAdmin returns(bytes32) {
         if (block.timestamp > submissionTime) revert SubmissionPeriodNotActive();
+        if(isContestant[contestant]) revert("CAE"); // CAE -> Contestant already Exists
         bytes32 submissionHash = keccak256(abi.encodePacked(contestant, submissionText));
+        isContestant[contestant] = true;
         _submissionTree.addSubmission(contestant, submissionHash, submissionText);
         emit SubmissionCreated(contestant, submissionHash);
         return submissionHash;
