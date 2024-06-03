@@ -13,7 +13,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) { }
+  ) {}
 
   async migrateWallet(usersWallets: { wallet: string; did: string }[]) {
     // this.userRepository.queryRunner?.startTransaction();

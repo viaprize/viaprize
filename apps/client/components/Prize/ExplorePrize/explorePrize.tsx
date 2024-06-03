@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 'use client';
 
 import { calculateDeadline, htmlToPlainText } from '@/lib/utils';
@@ -23,11 +24,14 @@ interface ExploreCardProps {
   title: string;
   profileName: string;
   description: string;
-  money: string;
+  ethAmount: string;
+  usdAmount: string;
   createdAt: string;
   id: string;
   skills: string[];
   submissionDays: number;
+  startingTimeBlockchain: number;
+  slug: string;
 }
 
 function ExploreCard({
@@ -35,16 +39,23 @@ function ExploreCard({
   profileName,
   title,
   description,
-  money,
+  ethAmount,
+  usdAmount,
   createdAt,
   id,
   skills,
   distributed,
+  startingTimeBlockchain,
   submissionDays,
+  slug,
 }: ExploreCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const deadlineString = calculateDeadline(createdAt, submissionDays);
-
+  const deadlineString = calculateDeadline(
+    new Date(),
+    new Date(startingTimeBlockchain * 1000),
+  );
+  console.log({ slug }, 'slugs');
+  console.log(deadlineString, 'this is the deadline string');
   return (
     <Card
       padding="lg"
@@ -63,18 +74,27 @@ function ExploreCard({
           }
         />
       </Card.Section>
-      <div className="flex items-center my-3 gap-2 text-red-600">
-        <PiTimerFill
-        // color='red'
-        />
-        <Text
-          // c="red"
-          fw="bold"
-        >
-          {deadlineString.remainingTime}
-        </Text>
+      <div className="flex justify-between items-center my-3 gap-2 text-red-600">
+        <div className="flex items-center space-x-2">
+          <PiTimerFill
+          // color='red'
+          />
+          <Text
+            // c="red"
+            fw="bold"
+          >
+            {deadlineString}
+          </Text>
+        </div>
 
-        {distributed ? <Text>Prize Has Ended</Text> : null}
+        {/* {distributed ? <Text>Prize Has Ended</Text> : null} */}
+
+        {deadlineString === 'Time is up!' && distributed === true ? (
+          <Badge color="green">Won</Badge>
+        ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+        deadlineString === 'Time is up!' && distributed === false ? (
+          <Badge color="yellow">Refunded</Badge>
+        ) : null}
       </div>
       <Group mb="xs" mt="md" justify="space-between">
         <Text fw={500}>{title}</Text>
@@ -91,9 +111,21 @@ function ExploreCard({
       {/*  >{htmlToPlainText(description)}</p> */}
       <Flex gap="sm">{skills}</Flex>
       <Text fw="bold" size="xl">
-        {money} {chain.nativeCurrency.symbol}
+        {usdAmount} USD
       </Text>
-      <Text fw="bold">Submission Deadline : {deadlineString.dateString}</Text>
+      <Text size="sm" c="gray">
+        {ethAmount} {chain.nativeCurrency.symbol}
+      </Text>
+      <Text fw="bold" className="flex">
+        Submission Deadline :{' '}
+        {startingTimeBlockchain != 0 ? (
+          new Date(startingTimeBlockchain * 1000).toLocaleDateString()
+        ) : (
+          <Text c="red" fw="bold" className="pl-2">
+            Ended
+          </Text>
+        )}
+      </Text>
 
       <Button
         color="primary"
@@ -101,12 +133,12 @@ function ExploreCard({
         fullWidth
         mt="md"
         radius="md"
-        href={`/prize/${id}`}
+        href={`/prize/${slug}`}
       >
         Details
       </Button>
       <div className="absolute top-2 right-2">
-        <CopyButton value={`https://viaprize.org/prize/${id}`}>
+        <CopyButton value={`https://viaprize.org/prize/${slug}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'blue'}>

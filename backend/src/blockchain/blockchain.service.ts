@@ -4,7 +4,11 @@ import { ethers } from 'ethers';
 import { AllConfigType } from 'src/config/config.type';
 import { PublicClient, createPublicClient, http, parseAbi } from 'viem';
 import { optimism } from 'viem/chains';
-import { Contributions, TransactionApiResponse } from './blockchain';
+import {
+  Contribution,
+  Contributions,
+  TransactionApiResponse,
+} from './blockchain';
 @Injectable()
 export class BlockchainService {
   provider: PublicClient;
@@ -299,6 +303,27 @@ export class BlockchainService {
         stateMutability: 'view',
         type: 'function',
         inputs: [],
+        name: 'get_voting_time',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'get_submission_time',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'total_funds',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
         name: 'distributed',
         outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
       },
@@ -311,19 +336,27 @@ export class BlockchainService {
       } as const;
       calls.push(
         {
-          ...this.multiCallContract,
-          functionName: 'getEthBalance',
-          args: [address as `0x${string}`],
+          ...wagmiContract,
+          functionName: 'total_funds',
         },
         {
           ...wagmiContract,
           functionName: 'distributed',
+        },
+        {
+          ...wagmiContract,
+          functionName: 'get_submission_time',
+        },
+        {
+          ...wagmiContract,
+          functionName: 'get_voting_time',
         },
       );
     });
     const results = await this.provider.multicall({
       contracts: calls,
     });
+    console.log(results, 'results');
     return results;
   }
 
@@ -350,6 +383,13 @@ export class BlockchainService {
         name: 'distributed',
         outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
       },
+      {
+        stateMutability: 'view',
+        type: 'function',
+        inputs: [],
+        name: 'total_funds',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+      },
     ];
     const wagmiContract = {
       address: prizeContractAddress as `0x${string}`,
@@ -374,6 +414,10 @@ export class BlockchainService {
           ...wagmiContract,
           functionName: 'distributed',
         },
+        {
+          ...wagmiContract,
+          functionName: 'total_funds',
+        },
       ],
     });
     return results;
@@ -383,18 +427,29 @@ export class BlockchainService {
     portalContractAddress: string,
   ): Promise<Contributions> {
     console.log(process.env.ETHERSCAN_API_KEY, 'ehterscan');
-    const res = await fetch(
-      `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`,
-    );
+    const fetchUrl = `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`;
+    const res = await fetch(fetchUrl);
+    console.log(fetchUrl, 'url');
     const result = (await res.json()) as TransactionApiResponse;
 
     const contributions: Contributions = {
-      data: result.result.map((transaction) => ({
-        contributor: transaction.from,
-        amount: transaction.value,
-        donationTime: transaction.timeStamp,
-      })),
+      data: result.result
+        .map((transaction) => {
+          if (transaction.isError !== '1') {
+            return {
+              contributor: transaction.from,
+              amount: transaction.value,
+              donationTime: transaction.timeStamp,
+            };
+          } else {
+            return null;
+          }
+        })
+        .filter((transaction) => transaction !== null) as Contribution[],
     };
+
+    console.log(contributions, 'contributions');
+
     return contributions;
   }
 

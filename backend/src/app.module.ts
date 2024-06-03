@@ -70,4 +70,4 @@ import { PriceController } from './price/price.controller';
   providers: [],
   controllers: [PriceController],
 })
-export class AppModule { }
+export class AppModule {}

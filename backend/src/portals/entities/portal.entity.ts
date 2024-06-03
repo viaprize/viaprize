@@ -3,11 +3,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
+import { PortalsComments } from './portals-comments.entity';
 
 /* The Prize class represents a prize in a TypeScript application, with various properties such as
 description, start dates, addresses, and arrays of admins, proficiencies, and priorities. */
@@ -22,6 +25,7 @@ export class Portals {
   @Column('varchar', {
     unique: true,
   })
+  @Index()
   slug: string;
 
   @Column()
@@ -69,10 +73,18 @@ export class Portals {
   @Column({ default: '' })
   title: string;
 
-  @Column('simple-array', { default: [] })
-  updates: string[];
+  @Column({
+    type: 'text',
+    array: true,
+    nullable: true,
+  })
+  updates?: string[];
+
+  @OneToMany(() => PortalsComments, (portalComment) => portalComment.portal)
+  comments?: PortalsComments[];
 
   @ManyToOne(() => User, (user) => user.portals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
   user: User;
+
 }

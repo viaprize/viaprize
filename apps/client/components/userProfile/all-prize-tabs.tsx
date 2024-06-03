@@ -1,4 +1,5 @@
 import { backendApi } from '@/lib/backend';
+import type { ConvertUSD } from '@/lib/types';
 import { Button, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { formatEther } from 'viem';
@@ -10,20 +11,26 @@ import SkeletonLoad from '../custom/skeleton-load-explore';
 export default function PrizeTabs({ params }: { params: { id: string } }) {
   const client = usePublicClient();
   const router = useRouter();
-  const getPrizesOfUserMutation = useQuery(['getPrizesOfUser', undefined], async () => {
-    const prizes = await (await backendApi()).users.usernamePrizesDetail(params.id);
-    const prizesWithBalancePromise = prizes.data.map(async (prize) => {
-      const balance = await client.getBalance({
-        address: prize.contract_address as `0x${string}`,
-      });
-      return {
-        ...prize,
-        balance,
-      };
-    });
-    const prizesWithBalance = await Promise.all(prizesWithBalancePromise);
 
-    return prizesWithBalance;
+  const getPrizesOfUserMutation = useQuery(['getPrizesOfUser'], async () => {
+    const prizes = await (await backendApi()).users.usernamePrizesDetail(params.id);
+
+    return prizes.data;
+  });
+
+  const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const final = await (
+      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
+    ).json();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
+    return Object.keys(final).length === 0
+      ? {
+          ethereum: {
+            usd: 0,
+          },
+        }
+      : final;
   });
 
   if (getPrizesOfUserMutation.isLoading)
@@ -49,17 +56,23 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
       {getPrizesOfUserMutation.data.map((prize) => {
         return (
           <ExploreCard
+            startingTimeBlockchain={prize.submission_time_blockchain}
             distributed={false}
             description={prize.description}
             submissionDays={prize.submissionTime}
             createdAt={prize.created_at}
             imageUrl={prize.images[0]}
-            money={formatEther(BigInt(prize.balance))}
             profileName=""
+            ethAmount={formatEther(BigInt(prize.balance))}
+            usdAmount={(
+              parseFloat(formatEther(BigInt(prize.balance))) *
+              (cryptoToUsd?.ethereum.usd ?? 0)
+            ).toFixed(2)}
             title={prize.title}
             key={prize.id}
             id={prize.id}
             skills={prize.proficiencies}
+            slug={prize.slug}
           />
         );
       })}

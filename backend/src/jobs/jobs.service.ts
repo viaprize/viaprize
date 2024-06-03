@@ -30,7 +30,6 @@ export class JobService {
       'CRON_JOB_API_KEY',
       { infer: true },
     );
-    console.log('api_keyyyy', this.apiKey);
   }
   async registerJob(
     url: string,

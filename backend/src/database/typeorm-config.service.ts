@@ -19,6 +19,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       synchronize: this.configService.get('database.synchronize', {
         infer: true,
       }),
+      poolSize: 20,
       dropSchema: false,
       keepConnectionAlive: true,
       logging:

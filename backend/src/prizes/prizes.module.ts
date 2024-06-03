@@ -6,8 +6,10 @@ import { MailModule } from 'src/mail/mail.module';
 import { UsersModule } from 'src/users/users.module';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
+import { PrizesComments } from './entities/prizes-comments.entity';
 import { Submission } from './entities/submission.entity';
 import { PrizesController } from './prizes.controller';
+import { PrizeCommentService } from './services/prize-comment.service';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 import { PrizesService } from './services/prizes.service';
 import { SubmissionService } from './services/submissions.service';
@@ -16,11 +18,11 @@ import { SubmissionService } from './services/submissions.service';
   controllers: [PrizesController],
   imports: [
     CacheModule.register(),
-    TypeOrmModule.forFeature([PrizeProposals, Prize, Submission]),
+    TypeOrmModule.forFeature([PrizeProposals, Prize, Submission, PrizesComments]),
     UsersModule,
     MailModule,
     BlockchainModule,
   ],
-  providers: [PrizesService, SubmissionService, PrizeProposalsService],
+  providers: [PrizesService, SubmissionService, PrizeProposalsService, PrizeCommentService],
 })
 export class PrizesModule { }

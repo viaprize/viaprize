@@ -108,7 +108,9 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
     });
     toast.dismiss(firstLoadingToast);
     console.log(prize, 'prize');
-    toast.success(`Prize Address ${prizeAddress} `);
+    toast.success(
+      `Prize Address ${prizeAddress.slice(0, 8)}...${prizeAddress.slice(-8)} `,
+    );
     toast.loading('Redirecting Please Wait');
     router.push('/prize/explore');
     toast.success('Redirected to Prize Explore Page');

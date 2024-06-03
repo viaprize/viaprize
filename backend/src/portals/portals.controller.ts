@@ -18,7 +18,6 @@ import {
 import { Cache } from 'cache-manager';
 import { AdminAuthGuard } from 'src/auth/admin-auth.guard';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Contributions } from 'src/blockchain/blockchain';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { JobService } from 'src/jobs/jobs.service';
 import { MailService } from 'src/mail/mail.service';
@@ -29,15 +28,22 @@ import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
 import { InfinityPaginationResultType } from 'src/utils/types/infinity-pagination-result.type';
+import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreatePortalProposalDto } from './dto/create-portal-proposal.dto';
 import {
   TestTrigger,
   UpdatePlatformFeeDto,
 } from './dto/update-platform-fee.dto';
 import { UpdatePortalPropsalDto } from './dto/update-portal-proposal.dto';
+import { ExtraDonationPortalData } from './entities/extra-donation-portal-data.entity';
+import { ExtraPortal } from './entities/extra-portal-data.entity';
 import { PortalProposals } from './entities/portal-proposals.entity';
 import { Portals } from './entities/portal.entity';
+import { PortalsComments } from './entities/portals-comments.entity';
 import { PortalWithBalance } from './entities/types';
+import { ExtraDonationPortalDataService } from './services/extra-donation-portal-data.service';
+import { ExtraPortalDataService } from './services/extra-portal-data.service';
+import { PortalCommentService } from './services/portal-comments.service';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
 
@@ -75,8 +81,11 @@ export class PortalsController {
     private readonly blockchainService: BlockchainService,
     private readonly jobService: JobService,
     private readonly userService: UsersService,
+    private readonly portalCommentService: PortalCommentService,
+    private readonly portalDataService: ExtraPortalDataService,
+    private readonly portalExtraDonationService: ExtraDonationPortalDataService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
+  ) {}
 
   @Get('/clear_cache')
   async clearCache(): Promise<Http200Response> {
@@ -233,9 +242,20 @@ export class PortalsController {
     };
   }
 
-  @Get('/:id')
-  async getPortal(@TypedParam('id') id: string): Promise<PortalWithBalance> {
-    const portal = await this.portalsService.findOne(id);
+  /**
+   * The function `getPortal` is an asynchronous function that takes a `slug` parameter and gets the associated portal
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} slug
+   * @returns {Promise<PortalWithBalance>}
+   */
+  @Get('/:slug')
+  async getPortal(
+    @TypedParam('slug') slug: string,
+  ): Promise<PortalWithBalance> {
+    console.log(slug, 'slug');
+    const portal = await this.portalsService.findOneBySlug(slug);
     const results = await this.blockchainService.getPortalPublicVariables(
       portal.contract_address,
     );
@@ -266,13 +286,114 @@ export class PortalsController {
     };
   }
 
-  @Put('/:id/add-update')
+  /**
+   * The function `createComment` is an asynchronous function that takes a `comment` parameter calls
+   * the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {Promise<Http200Response>}
+   */
+  @Post('/:id/comment')
+  @UseGuards(AuthGuard)
+  async createComment(
+    @TypedParam('id') id: string,
+    @TypedBody() body: CreateCommentDto,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.create(body.comment, req.user.userId, id);
+    return {
+      message: `Prize  with id ${id} has been updated with comment`,
+    };
+  }
+
+  @Get('/comment/:commentId/replies')
+  async getReplies(
+    @TypedParam('commentId') commentId: string,
+  ): Promise<PortalsComments[]> {
+    return await this.portalCommentService.getChildCommentsByParentCommentId(
+      commentId,
+    );
+  }
+
+  @Post('/:id/comment/reply')
+  @UseGuards(AuthGuard)
+  async replyToComment(
+    @TypedParam('id') commentId: string,
+    @TypedBody() body: CreateCommentDto,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.replyToComment(
+      commentId,
+      body.comment,
+      req.user.userId,
+    );
+    return {
+      message: `Prize  with id ${commentId} has been updated with comment`,
+    };
+  }
+
+  @Post('/:id/comment/like')
+  @UseGuards(AuthGuard)
+  async likeComment(
+    @TypedParam('id') id: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.likeComment(id, req.user.userId);
+    return {
+      message: `Prize  with id ${id} has been updated with comment`,
+    };
+  }
+
+  @Post('/:id/comment/dislike')
+  @UseGuards(AuthGuard)
+  async dislikeComment(
+    @TypedParam('id') id: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.dislikeComment(id, req.user.userId);
+    return {
+      message: `Prize  with id ${id} has been updated with comment`,
+    };
+  }
+
+  @Delete('/:commentId/comment/delete')
+  @UseGuards(AuthGuard)
+  async deleteComment(
+    @TypedParam('commentId') commentId: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.portalCommentService.deleteComment(commentId, req.user.userId);
+    return {
+      message: `Prize  with id ${commentId} has been deleted`,
+    };
+  }
+
+  /**
+   * The function `getComments` is an asynchronous function that takes a `comment` parameter calls
+   * the `getComment` method of the `portalCommentService` with the given `id`.
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} slug
+   * @returns {Promise<PortalsComments[]>}
+   */
+  @Get('/:slug/comment')
+  async getComment(
+    @TypedParam('slug') slug: string,
+  ): Promise<PortalsComments[]> {
+    return await this.portalCommentService.getCommentsBySlugId(slug);
+  }
+
+  @Put('/:slug/add-update')
   @UseGuards(AuthGuard)
   async addUpdate(
-    @TypedParam('id') id: string,
+    @TypedParam('slug') slug: string,
     @TypedBody() update: string,
   ): Promise<Portals> {
-    const portal = await this.portalsService.addPortalUpdate(id, update);
+    const portal = await this.portalsService.addPortalUpdate(slug, update);
     await this.cacheManager.reset();
     return portal;
   }
@@ -474,10 +595,13 @@ export class PortalsController {
   ): Promise<PortalProposals> {
     console.log({ createPortalProposal });
     console.log(req.user, 'user');
+    const slug = await this.portalsService.checkAndReturnUniqueSlug(
+      stringToSlug(createPortalProposal.title),
+    );
     const proposals = await this.portalProposalsService.create(
       createPortalProposal,
       req.user.userId,
-      stringToSlug(createPortalProposal.title),
+      slug,
     );
     await this.mailService.proposalSent(
       proposals.user.email,
@@ -701,5 +825,72 @@ export class PortalsController {
     return {
       message: `Job has been registered`,
     };
+  }
+
+  /**
+   * The function `getExtraPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} externalId
+   * @returns {Promise<ExtraPortal>}
+   */
+  @Get('/extra_data/:externalId')
+  async getExtraPortalData(
+    @TypedParam('externalId') externalId: string,
+  ): Promise<ExtraPortal> {
+    const funds = await this.portalDataService.getFundByExternalId(externalId);
+    return funds;
+  }
+
+  /**
+   * The function `getExtraDonationPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} externalId
+   * @returns {Promise<ExtraDonationPortalData[]>}
+   */
+  @Get('/extra_donation_data/:externalId')
+  async getExtraDonationPortalData(
+    @TypedParam('externalId') externalId: string,
+  ): Promise<ExtraDonationPortalData[]> {
+    const funds = await this.portalExtraDonationService.getDonationByExternalId(
+      externalId,
+    );
+    return funds;
+  }
+
+  /**
+   * The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} id
+   * @returns {Promise<Pick<Portals,'slug'>>}
+   */
+  @Get('/slug/:id')
+  async getSlugById(
+    @TypedParam('id') id: string,
+  ): Promise<Pick<Portals, 'slug'>> {
+    const slug = await this.portalsService.getPortalSlugById(id)
+    return {
+      slug,
+    };
+  }
+  /**
+   * The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @returns {Promise<Http200Response>}
+   */
+  @Get('/alkdslkf')
+  async testing(
+  ): Promise<Http200Response> {
+    await this.portalProposalsService.updateFundingGoal()
+    return {
+      message: 'done'
+    }
   }
 }

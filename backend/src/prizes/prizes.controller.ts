@@ -20,29 +20,24 @@ import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
 import { UsersService } from 'src/users/users.service';
+import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
+import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
+import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
+import { PrizesComments } from './entities/prizes-comments.entity';
 import { Submission } from './entities/submission.entity';
+import { PrizeCommentService } from './services/prize-comment.service';
 import { SubmissionService } from './services/submissions.service';
-
-interface PrizeWithBalance extends Prize {
-  distributed: boolean;
-  balance: number;
-}
-interface PrizeWithBlockchainData extends PrizeWithBalance {
-  distributed: boolean;
-  submission_time_blockchain: number;
-  voting_time_blockchain: number;
-}
 
 interface SubmissionWithBlockchainData extends Submission {
   voting_blockchain: number;
@@ -82,13 +77,9 @@ export class PrizesController {
     private readonly blockchainService: BlockchainService,
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
+    private readonly prizeCommentsService: PrizeCommentService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) { }
-
-  @Get('/submission/:id')
-  async getSubmission(@TypedParam('id') id: string): Promise<Submission> {
-    return await this.submissionService.findSubmissionById(id);
-  }
+  ) {}
 
   @Post('')
   @UseGuards(AuthGuard)
@@ -97,6 +88,9 @@ export class PrizesController {
   ): Promise<Prize> {
     const prizeProposal = await this.prizeProposalsService.findOne(
       createPrizeDto.proposal_id,
+    );
+    const slug = await this.prizeService.checkAndReturnUniqueSlug(
+      stringToSlug(prizeProposal.title),
     );
     const prize = await this.prizeService.create({
       submissionTime: prizeProposal.submission_time,
@@ -113,8 +107,8 @@ export class PrizesController {
       startSubmissionDate: prizeProposal.startSubmissionDate,
       startVotingDate: prizeProposal.startVotingDate,
       user: prizeProposal.user,
-      judges: prizeProposal.judges
-
+      slug: slug,
+      judges: prizeProposal.judges,
     });
 
     await this.prizeProposalsService.remove(prizeProposal.id);
@@ -138,7 +132,7 @@ export class PrizesController {
    * @async
    * @param {page=1} this is the page number of the return pending proposals
    * @param {limit=10} this is the limit of the return type of the pending proposals
-   * @returns {Promise<Readonly<{data: PrizeWithBalance[];hasNextPage: boolean;}>>>}
+   * @returns {Promise<Readonly<{data: PrizeWithBlockchainData[];hasNextPage: boolean;}>>>}
    */
   @Get('')
   async getPrizes(
@@ -146,7 +140,9 @@ export class PrizesController {
     page: number = 1,
     @Query('limit')
     limit: number = 10,
-  ): Promise<Readonly<{ data: PrizeWithBalance[]; hasNextPage: boolean }>> {
+  ): Promise<
+    Readonly<{ data: PrizeWithBlockchainData[]; hasNextPage: boolean }>
+  > {
     const key = `prizes-${page}-${limit}`;
     let prizeWithoutBalance: { data: Prize[]; hasNextPage: boolean };
     const cachedprizeWithoutBalance = await this.cacheManager.get(key);
@@ -173,36 +169,44 @@ export class PrizesController {
       prizeWithoutBalance.data.map((prize) => prize.contract_address),
     );
     let start = 0;
-    let end = 2;
+    let end = 4;
     const prizeWithBalanceData = prizeWithoutBalance.data.map((prize) => {
       const portalResults = results.slice(start, end);
-      start += 2;
-      end += 2;
+      start += 4;
+      end += 4;
       return {
         ...prize,
         balance: parseInt((portalResults[0].result as bigint).toString()),
         distributed: portalResults[1].result as boolean,
-      } as PrizeWithBalance;
+        submission_time_blockchain: parseInt(
+          (portalResults[2].result as bigint).toString(),
+        ),
+        voting_time_blockchain: parseInt(
+          (portalResults[3].result as bigint).toString(),
+        ),
+      } as PrizeWithBlockchainData;
     });
     return {
-      data: prizeWithBalanceData as PrizeWithBalance[],
+      data: prizeWithBalanceData as PrizeWithBlockchainData[],
       hasNextPage: prizeWithoutBalance.hasNextPage,
     };
   }
 
-  @Get('/:id')
+  @Get('/:slug')
   async getPrize(
-    @TypedParam('id') id: string,
+    @TypedParam('slug') slug: string,
   ): Promise<PrizeWithBlockchainData> {
-    const prize = await this.prizeService.findOne(id);
+    const prize = await this.prizeService.findAndReturnBySlug(slug);
     const results = await this.blockchainService.getPrizePublicVariables(
       prize.contract_address,
     );
-    console.log(results, 'results');
+    // console.log({ results })
+    // console.log(results, 'results');
+    console.log(results[4], 'resultsssn3');
     return {
       ...prize,
       distributed: results[3].result as boolean,
-      balance: parseInt((results[0].result as bigint).toString()),
+      balance: parseInt((results[4].result as bigint).toString()),
       submission_time_blockchain: parseInt(
         (results[1].result as bigint).toString(),
       ),
@@ -221,11 +225,19 @@ export class PrizesController {
    * @returns {Promise<Http200Response>}
    */
   @Put('/proposals/:id')
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(AuthGuard)
   async updateProposal(
     @TypedParam('id') id: string,
     @TypedBody() updateBody: UpdatePrizeDto,
+    @Request() req,
   ): Promise<Http200Response> {
+    const proposalCreator = (await this.prizeProposalsService.findOne(id)).user
+      .authId;
+
+    if (proposalCreator !== req.user.userId) {
+      throw new Error('You are not authorized to update this proposal');
+    }
+    console.log(updateBody, 'body');
     await this.prizeProposalsService.update(id, updateBody);
     await this.cacheManager.reset();
 
@@ -234,25 +246,38 @@ export class PrizesController {
     };
   }
 
+  @Get('/proposals/:id')
+  async getProposal(@TypedParam('id') id: string): Promise<PrizeProposals> {
+    return await this.prizeProposalsService.findOne(id);
+  }
+
   @Delete('/proposals/deleted/:id')
   @UseGuards(AuthGuard)
-  async deleteProposal(@TypedParam('id') id: string): Promise<Http200Response> {
+  async deleteProposal(
+    @TypedParam('id') id: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    const proposalCreator = (await this.prizeProposalsService.findOne(id)).user
+      .authId;
+    if (proposalCreator !== req.user.id) {
+      throw new Error('You are not authorized to delete this proposal');
+    }
     await this.prizeProposalsService.remove(id);
     return {
       message: `Proposal with id ${id} has been deleted`,
     };
   }
 
-  @Post('/:id/submission')
+  @Post('/:slug/submission')
   @UseGuards(AuthGuard)
   async submit(
-    @TypedParam('id') id: string,
+    @TypedParam('slug') slug: string,
     @TypedBody() body: CreateSubmissionDto,
     @Request() req,
   ): Promise<Http200Response> {
     const user = await this.userService.findOneByAuthId(req.user.userId);
     const submission = await this.submissionService.create(body, user);
-    await this.prizeService.addSubmission(submission, id);
+    await this.prizeService.addSubmission(submission, slug);
 
     await this.mailService.submission(user.email);
 
@@ -260,28 +285,35 @@ export class PrizesController {
       message: `Submission has been sent`,
     };
   }
+  @Get('/:slug/submission/:id')
+  async getSubmission(
+    @TypedParam('id') id: string,
+    @TypedParam('slug') _: string,
+  ): Promise<Submission> {
+    return await this.submissionService.findSubmissionById(id);
+  }
 
-  @Get('/:id/submission')
+  @Get('/:slug/submission')
   async getSubmissions(
     @Query('page')
     page: number = 1,
     @Query('limit')
     limit: number = 10,
-    @TypedParam('id') id: string,
+    @TypedParam('slug') slug: string,
   ): Promise<
     Readonly<{
       data: SubmissionWithBlockchainData[];
       hasNextPage: boolean;
     }>
   > {
-    const prize = await this.prizeService.findOne(id);
+    const prize = await this.prizeService.findAndReturnBySlug(slug);
     const submissions = await infinityPagination(
       await this.submissionService.findAllWithPagination({
         limit,
         page,
         where: {
           prize: {
-            id: id,
+            slug: slug,
           },
         },
       }),
@@ -307,6 +339,43 @@ export class PrizesController {
       data: finalSubmissions,
       hasNextPage: submissions.hasNextPage,
     };
+  }
+
+  /**
+   * The function `createComment` is an asynchronous function that takes a `comment` parameter calls
+   * the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @security bearer
+   * @async
+   * @param {string} id
+   * @returns {Promise<Http200Response>}
+   */
+  @Post('/:id/comment')
+  @UseGuards(AuthGuard)
+  async createComment(
+    @TypedParam('id') id: string,
+    @TypedBody() body: CreateCommentDto,
+    @Request() req,
+  ): Promise<Http200Response> {
+    await this.prizeCommentsService.create(body.comment, req.user.userId, id);
+    return {
+      message: `Prize  with id ${id} has been updated with comment`,
+    };
+  }
+
+  /**
+   * The function `getComments` is an asynchronous function that takes a `comment` parameter calls
+   * the `getComment` method of the `prizeCommentService` with the given `id`.
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} id
+   * @returns {Promise<PrizesComments[]>}
+   */
+  @Get('/:id/comment')
+  async getComment(@TypedParam('id') id: string): Promise<PrizesComments[]> {
+    return await this.prizeCommentsService.getCommentsByPrizeId(id);
   }
 
   /**
@@ -561,6 +630,24 @@ export class PrizesController {
     );
     return {
       message: `Prize proposal with id ${id} has been updated`,
+    };
+  }
+
+  /**
+   * The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+   *
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} id
+   * @returns {Promise<Pick<Prize,'slug'>>}
+   */
+  @Get('/slug/:id')
+  async getSlugById(
+    @TypedParam('id') id: string,
+  ): Promise<Pick<Prize, 'slug'>> {
+    const slug = await this.prizeService.getSlugById(id);
+    return {
+      slug,
     };
   }
 }

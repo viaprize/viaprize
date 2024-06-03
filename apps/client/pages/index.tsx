@@ -116,11 +116,11 @@ export default function Home() {
               align="center"
             >
               <div className="text-center">
-                <h3 className="my-0">$32,460</h3>
+                <h3 className="my-0">$50,000+</h3>
                 <p className="my-0">Total contributions</p>
               </div>
               <div className="text-center">
-                <h3 className="my-0">63</h3>
+                <h3 className="my-0">100+</h3>
                 <p className="my-0">Total campaigns</p>
               </div>
             </Flex>
@@ -202,7 +202,7 @@ export default function Home() {
           />
           <FunctionCard
             Title="Portals"
-            Description="Create GoFundMe style pass-through campaigns or Kickstarter style all-or-nothing campaigns"
+            Description="Create pass-through campaigns or all-or-nothing campaigns"
             know="portal/about"
             explore="portal/explore"
           />

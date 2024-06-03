@@ -1,7 +1,6 @@
 import { User } from 'src/users/entities/user.entity';
+import { DEFAULT_PLATFORM_FEE } from 'src/utils/constants';
 import {
-  BeforeInsert,
-  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
@@ -56,7 +55,7 @@ export class PortalProposals {
   @Column('simple-array')
   tags: string[];
 
-  @Column({ default: 5 })
+  @Column({ default: DEFAULT_PLATFORM_FEE })
   platformFeePercentage: number;
 
   @Column({ default: false })
@@ -83,14 +82,4 @@ export class PortalProposals {
   @ManyToOne(() => User, (user) => user.portals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
   user: User;
-
-  @BeforeUpdate()
-  @BeforeInsert()
-  updateFundingGoalWithPlatformFee() {
-    if (!this.sendImmediately && this.fundingGoal) {
-      console.log("funding platfee insert and update")
-      const fundingGoalNumber = parseFloat(this.fundingGoal)
-      this.fundingGoalWithPlatformFee = (fundingGoalNumber + (fundingGoalNumber * (this.platformFeePercentage / 100))).toString()
-    }
-  }
 }

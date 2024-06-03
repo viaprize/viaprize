@@ -2,11 +2,11 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { UsersService } from 'src/users/users.service';
+import { DEFAULT_PLATFORM_FEE } from 'src/utils/constants';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { Repository } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { CreatePortalProposalDto } from '../dto/create-portal-proposal.dto';
-import { UpdatePortalPropsalDto } from '../dto/update-portal-proposal.dto';
 import { PortalProposals } from '../entities/portal-proposals.entity';
 
 @Injectable()
@@ -25,20 +25,54 @@ export class PortalProposalsService {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_ACCEPTABLE);
     }
-
-    const portalProposal = await this.portalProposalsRepository.save({
+    let portalProposalObject = await this.portalProposalsRepository.create({
       ...createPortalProposalDto,
       user: user,
       slug: slug,
     });
+    console.log({ portalProposalObject });
+
+    portalProposalObject.fundingGoalWithPlatformFee =
+      this.createFundingGoalWithPlatformFee(
+        portalProposalObject.sendImmediately,
+        portalProposalObject.fundingGoal,
+        portalProposalObject.platformFeePercentage,
+      );
+
+    const portalProposal = await this.portalProposalsRepository.save(
+      portalProposalObject,
+    );
     return portalProposal;
   }
 
-  async edit(portalId: string, updatePortalProposal: UpdatePortalPropsalDto) {
-    await this.portalProposalsRepository.update(portalId, updatePortalProposal);
-    return this.findOne(portalId);
+  createFundingGoalWithPlatformFee(
+    sendImmediately: boolean,
+    fundingGoal: string | undefined,
+    platformFeePercentage: number,
+  ) {
+    console.log({ sendImmediately, fundingGoal, platformFeePercentage });
+    let fundingGoalWithPlatformFee = '0';
+    if (!sendImmediately && fundingGoal) {
+      const fundingGoalNumber = parseFloat(fundingGoal);
+      fundingGoalWithPlatformFee = (
+        fundingGoalNumber +
+        fundingGoalNumber *
+          ((platformFeePercentage
+            ? platformFeePercentage
+            : DEFAULT_PLATFORM_FEE) /
+            100)
+      ).toString();
+    }
+    return fundingGoalWithPlatformFee;
   }
-
+  async updateFundingGoal() {
+    await this.portalProposalsRepository.update(
+      '1f71fb49-fee7-4b91-8f3e-9424ba2522d4',
+      {
+        fundingGoal: '1000',
+      },
+    );
+  }
   async setPlatformFee(id: string, platformFeePercentage: number) {
     const portalProposal = await this.portalProposalsRepository.findOneByOrFail(
       {
@@ -52,8 +86,14 @@ export class PortalProposalsService {
         HttpStatus.NOT_FOUND,
       );
     }
+    let fundingGoalWithPlatformFee = this.createFundingGoalWithPlatformFee(
+      portalProposal.sendImmediately,
+      portalProposal.fundingGoal,
+      platformFeePercentage,
+    );
     await this.portalProposalsRepository.update(id, {
       platformFeePercentage: platformFeePercentage,
+      fundingGoalWithPlatformFee: fundingGoalWithPlatformFee,
     });
     portalProposal.platformFeePercentage = platformFeePercentage;
     return portalProposal;
@@ -172,6 +212,16 @@ export class PortalProposalsService {
     id: string,
     updatePortalProposal: QueryDeepPartialEntity<PortalProposals>,
   ) {
+    const portalProposal = await this.findOne(id);
+    const fundingGoalWithPlatformFee = this.createFundingGoalWithPlatformFee(
+      portalProposal.sendImmediately,
+      updatePortalProposal.fundingGoal
+        ? (updatePortalProposal.fundingGoal as string)
+        : portalProposal.fundingGoal,
+      portalProposal.platformFeePercentage,
+    );
+    updatePortalProposal.fundingGoalWithPlatformFee =
+      fundingGoalWithPlatformFee;
     await this.portalProposalsRepository.update(id, updatePortalProposal);
     return this.findOne(id);
   }

@@ -4,12 +4,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { PrizesComments } from './prizes-comments.entity';
 import { Submission } from './submission.entity';
 
 /* The Prize class represents a prize in a TypeScript application, with various properties such as
@@ -49,9 +51,9 @@ export class Prize {
   admins: string[];
 
   @Column({
-    type: "text",
+    type: 'text',
     array: true,
-    nullable: true
+    nullable: true,
   })
   judges?: string[];
 
@@ -75,6 +77,17 @@ export class Prize {
 
   @OneToMany(() => Submission, (submission) => submission.prize)
   submissions: Submission[];
+
+  @OneToMany(() => PrizesComments, (prizeComment) => prizeComment.prize)
+  comments?: PrizesComments[];
+
+  @Column({
+    unique: true,
+    default:null,
+    nullable:true,
+  })
+  @Index()
+  slug: string;
 
   @ManyToOne(() => User, (user) => user.prizeProposals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })

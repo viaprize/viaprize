@@ -1,6 +1,7 @@
-import { SubmissionWithBlockchainData } from '@/lib/api';
+import type { SubmissionWithBlockchainData } from '@/lib/api';
 import { Button, Title } from '@mantine/core';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+import { formatEther } from 'viem';
 import SubmissionsCard from './submissionsCard';
 
 export default function Submissions({
@@ -17,18 +18,18 @@ export default function Submissions({
   const id = usePathname();
 
   return (
-    <div className="w-full flex flex-col gap-3">
-      {allowSubmission && (
+    <div className="w-full flex flex-col gap-3 dont-break-out">
+      {allowSubmission ? (
         <Button
           component="a"
           w="40%"
           className="self-end"
           // target="_blank"
-          href={`${id as string}/editor?contract=${contractAddress}`}
+          href={`${id}/editor?contract=${contractAddress}`}
         >
           Submit your work
         </Button>
-      )}
+      ) : null}
       <Title order={3} style={{ textAlign: 'left' }}>
         Submissions
       </Title>
@@ -37,9 +38,10 @@ export default function Submissions({
           fullname={submission.user.name}
           contractAddress={contractAddress}
           hash={submission.submissionHash}
-          showVote={true}
+          showVote
+          won={`won ${parseFloat(formatEther(BigInt(submission.voting_blockchain)))} eth`}
           wallet={submission.submitterAddress}
-          time={''}
+          time=""
           votes={submission.voting_blockchain}
           submissionId={submission.id}
           key={submission.id}

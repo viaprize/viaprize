@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Paginated, paginate } from 'nestjs-paginate';
+import { generateId } from 'src/utils/generate-id';
 import { Repository } from 'typeorm';
 import { Portals } from '../entities/portal.entity';
 import { PortalPaginateQuery, PortalPaginateResponse } from '../entities/types';
@@ -45,11 +46,53 @@ export class PortalsService {
   async findOne(id: string) {
     const portal = await this.portalRepository.findOneOrFail({
       where: {
-        id,
+        slug: id,
       },
       relations: ['user'],
     });
 
+    return portal;
+  }
+  async findOneBySlug(slug: string) {
+    const portal = await this.portalRepository.findOneOrFail({
+      where: {
+        slug: slug,
+      },
+      relations: ['user'],
+    });
+
+    return portal;
+  }
+
+  async findAndGetBySlugOnly(slug: string) {
+    const portal = await this.portalRepository.findOneOrFail({
+      where: {
+        slug,
+      },
+    });
+    return portal;
+  }
+
+  async checkAndReturnUniqueSlug(slug: string) {
+    const portal = await this.portalRepository.exist({
+      where: {
+        slug: slug,
+      },
+    });
+    if (portal) {
+      const nanoid =await generateId()
+      
+      return `${slug}-${nanoid}`;
+    }
+    return slug;
+  }
+
+  async findAndGetByIdOnly(id: string) {
+    const portal = await this.portalRepository.findOneOrFail({
+      where: {
+        id,
+      },
+    });
     return portal;
   }
   async findAllPendingWithPagination(
@@ -100,14 +143,17 @@ export class PortalsService {
     });
   }
 
-  async addPortalUpdate(portalId: string, update: string) {
+  async addPortalUpdate(portalSlug: string, update: string) {
     const portal = await this.portalRepository.findOneOrFail({
       where: {
-        id: portalId,
+        slug: portalSlug,
       },
     });
-    portal.updates.push(update);
-    return this.portalRepository.save(portal);
+    await this.portalRepository.update(portal.id, {
+      updates: [update, ...(portal.updates ?? [])],
+    });
+    portal.updates = [update, ...(portal.updates ?? [])];
+    return portal;
   }
 
   async create(portalData: Omit<Portals, 'id' | 'createdAt' | 'updatedAt'>) {
@@ -119,5 +165,15 @@ export class PortalsService {
     const res = await this.portalRepository.delete(id);
     console.log(res);
     return res;
+  }
+
+  async getPortalSlugById(id: string) {
+    const portal = await this.portalRepository.findOneOrFail({
+      where: {
+        id,
+      },
+      select: ['slug'],
+    });
+    return portal.slug;
   }
 }

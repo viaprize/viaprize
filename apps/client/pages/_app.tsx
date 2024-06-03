@@ -20,6 +20,7 @@ import { Toaster } from 'sonner';
 import { theme } from 'utils/theme';
 import '../styles/globals.css';
 import '../styles/index.css';
+import Script from 'next/script';
 
 const queryClient = new QueryClient();
 
@@ -71,8 +72,22 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           defer
           src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/hourglass.js"
         />
-        <link rel="shortcut icon" href="/viaprizeBg.png" />
+        <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
+      <head>
+        <Script
+          defer
+          data-domain="viaprize.org"
+          src="https://plausible.io/js/script.js"
+        />
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-HF9F0C1910" />
+        <Script id="google-analytics">
+          {`  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HF9F0C1910');`}
+        </Script>
+      </head>
       <SpeedInsights />
       <PrivyProvider
         appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}

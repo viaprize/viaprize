@@ -3,6 +3,8 @@
 
 
 
+
+
 @font-face {
   font-family: "inter";
   font-weight: 200;
@@ -33,6 +35,17 @@
   max-width: 90vw;
 }
 
+
+.dont-break-out {
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  hyphens: auto;
+}
 
 .ant-btn,
 .tab-active {

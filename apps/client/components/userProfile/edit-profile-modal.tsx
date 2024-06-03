@@ -57,7 +57,7 @@ export default function EditProfileModal({
   };
 
   const handleUploadImages = async () => {
-    if (profileImage.length === 0) return `${IAvatar}`;
+    if (profileImage.length === 0) return IAvatar;
     const newImages = await uploadImages(profileImage);
     return newImages;
   };

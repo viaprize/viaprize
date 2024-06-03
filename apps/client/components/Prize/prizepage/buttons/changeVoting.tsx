@@ -33,7 +33,7 @@ export default function ChangeVoting({
             setnewVotingTime(parseInt(event.toString()));
           }}
           placeholder="Enter in %"
-          description={`This will increase voting time by ${newVotingTime} days from ${votingTime}`}
+          description={`This will increase voting time by ${newVotingTime} days from ${new Date(votingTime * 1000)}`}
         />
 
         <Button
@@ -53,7 +53,9 @@ export default function ChangeVoting({
                 confirmations: 1,
                 hash,
               });
-              toast.success(`Voting Period Started, Transaction Hash ${hash}`);
+              toast.success(
+                `Voting Period Started, Transaction Hash  ${hash.slice(0, 2)}...${hash.slice(-2)}`,
+              );
               console.log({ hash }, 'hash');
               window.location.reload();
             } catch (error) {

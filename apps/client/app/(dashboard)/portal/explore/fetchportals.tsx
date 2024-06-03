@@ -20,7 +20,8 @@ export default async function FetchPortals({
     searchParams.categories = parseCategories(searchParams.categories as string);
   }
 
-  const { search, sort, categories } = campaignSearchParamsSchema.parse(searchParams);
+  const { search, sort, categories, page } =
+    campaignSearchParamsSchema.parse(searchParams);
 
   console.log(searchParams, 'searchParams.categories');
 
@@ -29,8 +30,8 @@ export default async function FetchPortals({
   const portals = (
     await new Api().portals.portalsList(
       {
-        limit: 10,
-        page: 1,
+        limit: 12,
+        page,
         tags: categories,
         search,
         sort,
@@ -55,6 +56,15 @@ export default async function FetchPortals({
     })
   ).json();
 
+  //  const extraData: { ethereum: { usd: number } } = await(
+  //    await fetch(`https://api-prod.pactsmith.com/api/price/bacb6584-7e45-465b-b4af-a3ed24a84233}`, {
+  //      method: 'GET',
+  //      headers: {
+  //        Accept: 'application/json',
+  //      },
+  //    }),
+  //  ).json();
+
   return (
     <>
       {portals.map((portal) => {
@@ -74,9 +84,19 @@ export default async function FetchPortals({
             fundingGoalWithPlatformFee={parseFloat(portal.fundingGoal ?? '0')}
             deadline={portal.deadline}
             tags={portal.tags}
+            isIframe={false}
+            slug={portal.slug}
           />
         );
       })}
+      {portals.length === 0 && (
+        <>
+          <p />
+          <div className="w-full flex justify-center my-4 h-full">
+            <p>No portals found</p>
+          </div>
+        </>
+      )}
     </>
   );
 }

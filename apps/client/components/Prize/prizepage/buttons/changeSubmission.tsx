@@ -33,7 +33,7 @@ export default function ChangeSubmission({
             setnewSubmissionTime(parseInt(event.toString()));
           }}
           placeholder="Enter in %"
-          description={`This will increase submission time by ${newSubmissionTime} days from ${submissionTime}`}
+          description={`This will increase submission time by ${newSubmissionTime} days from ${new Date(submissionTime * 1000)}`}
         />
 
         <Button
@@ -53,7 +53,9 @@ export default function ChangeSubmission({
                 confirmations: 1,
                 hash,
               });
-              toast.success(`Submission Period Started, Transaction Hash ${hash}`);
+              toast.success(
+                `Submission Period Started, Transaction Hash  ${hash.slice(0, 2)}...${hash.slice(-2)}`,
+              );
               console.log({ hash }, 'hash');
               window.location.reload();
             } catch (error) {

@@ -378,12 +378,12 @@
         "x-nestia-method": "GET"
       }
     },
-    "/portals/{id}": {
+    "/portals/{slug}": {
       "get": {
         "tags": [],
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -405,17 +405,363 @@
             "x-nestia-encrypted": false
           }
         },
+        "description": "The function `getPortal` is an asynchronous function that takes a `slug` parameter and gets the associated portal",
         "x-nestia-namespace": "portals.getPortal",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "slug",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
         "x-nestia-method": "GET"
       }
     },
-    "/portals/{id}/add-update": {
-      "put": {
+    "/portals/{id}/comment": {
+      "post": {
         "tags": [],
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `createComment` is an asynchronous function that takes a `comment` parameter calls\nthe `create` method of the `prizeCommentService` with the given `id` and  `userAuthId`",
+        "description": "The function `createComment` is an asynchronous function that takes a `comment` parameter calls\nthe `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "portals.comment.createComment",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/portals/comment/{commentId}/replies": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortalsComments"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.comment.replies.getReplies",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/{id}/comment/reply": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.comment.reply.replyToComment",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/portals/{id}/comment/like": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.comment.like.likeComment",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/portals/{id}/comment/dislike": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.comment.dislike.dislikeComment",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/portals/{commentId}/comment/delete": {
+      "delete": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "portals.comment.delete.deleteComment",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "DELETE"
+      }
+    },
+    "/portals/{slug}/comment": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortalsComments"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `portalCommentService` with the given `id`",
+        "description": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `portalCommentService` with the given `id`.",
+        "x-nestia-namespace": "portals.comment.getComment",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "slug",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/{slug}/add-update": {
+      "put": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -1470,27 +1816,126 @@
         "x-nestia-method": "POST"
       }
     },
-    "/price/usd_to_eth": {
+    "/portals/extra_data/{externalId}": {
       "get": {
         "tags": [],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "externalId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/ExtraPortal"
+                }
               }
             },
             "x-nestia-encrypted": false
           }
         },
-        "x-nestia-namespace": "price.usd_to_eth.usd_to_eth",
-        "x-nestia-jsDocTags": [],
+        "description": "The function `getExtraPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data",
+        "x-nestia-namespace": "portals.extra_data.getExtraPortalData",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "externalId",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
         "x-nestia-method": "GET"
       }
     },
-    "/prizes/submission/{id}": {
+    "/portals/extra_donation_data/{externalId}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "externalId",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExtraDonationPortalData"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "The function `getExtraDonationPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data",
+        "x-nestia-namespace": "portals.extra_donation_data.getExtraDonationPortalData",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "externalId",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/slug/{id}": {
       "get": {
         "tags": [],
         "parameters": [
@@ -1510,14 +1955,99 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Submission"
+                  "$ref": "#/components/schemas/PickPortalsslug"
                 }
               }
             },
             "x-nestia-encrypted": false
           }
         },
-        "x-nestia-namespace": "prizes.submission.getSubmission",
+        "description": "The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals",
+        "x-nestia-namespace": "portals.slug.getSlugById",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/portals/alkdslkf": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals",
+        "x-nestia-namespace": "portals.alkdslkf.testing",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/price/usd_to_eth": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "price.usd_to_eth.usd_to_eth",
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
       }
@@ -1661,12 +2191,12 @@
         "x-nestia-method": "GET"
       }
     },
-    "/prizes/{id}": {
+    "/prizes/{slug}": {
       "get": {
         "tags": [],
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -1774,6 +2304,36 @@
           }
         ],
         "x-nestia-method": "PUT"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrizeProposals"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.proposals.getProposal",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
       }
     },
     "/prizes/proposals/deleted/{id}": {
@@ -1808,12 +2368,12 @@
         "x-nestia-method": "DELETE"
       }
     },
-    "/prizes/{id}/submission": {
+    "/prizes/{slug}/submission": {
       "post": {
         "tags": [],
         "parameters": [
           {
-            "name": "id",
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -1872,7 +2432,7 @@
             "required": true
           },
           {
-            "name": "id",
+            "name": "slug",
             "in": "path",
             "schema": {
               "type": "string"
@@ -1896,6 +2456,191 @@
         },
         "x-nestia-namespace": "prizes.submission.getSubmissions",
         "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/{slug}/submission/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          },
+          {
+            "name": "slug",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Submission"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.submission.getSubmission",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/{id}/comment": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCommentDto.o1"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `createComment` is an asynchronous function that takes a `comment` parameter calls\nthe `create` method of the `prizeCommentService` with the given `id` and  `userAuthId`",
+        "description": "The function `createComment` is an asynchronous function that takes a `comment` parameter calls\nthe `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "prizes.comment.createComment",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "POST"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrizesComments"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `prizeCommentService` with the given `id`",
+        "description": "The function `getComments` is an asynchronous function that takes a `comment` parameter calls\nthe `getComment` method of the `prizeCommentService` with the given `id`.",
+        "x-nestia-namespace": "prizes.comment.getComment",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
         "x-nestia-method": "GET"
       }
     },
@@ -2591,6 +3336,64 @@
         "x-nestia-method": "POST"
       }
     },
+    "/prizes/slug/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PickPrizeslug"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals",
+        "x-nestia-namespace": "prizes.slug.getSlugById",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "id",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
     "/users": {
       "post": {
         "tags": [],
@@ -2971,7 +3774,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Prize"
+                    "$ref": "#/components/schemas/PrizeWithBlockchainData"
                   }
                 }
               }
@@ -3397,13 +4200,21 @@
             "type": "string"
           },
           "updates": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "array",
             "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
+              "x-typia-required": false,
+              "x-typia-optional": true,
               "type": "string"
+            }
+          },
+          "comments": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalsComments"
             }
           },
           "user": {
@@ -3428,8 +4239,84 @@
           "updatedAt",
           "images",
           "title",
-          "updates",
           "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "PortalsComments": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "likes": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "dislikes": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "reply_count": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "parentComment": {
+            "$ref": "#/components/schemas/PortalsComments"
+          },
+          "childComments": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalsComments"
+            }
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "portal": {
+            "$ref": "#/components/schemas/Portals"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "comment",
+          "likes",
+          "dislikes",
+          "created_at",
+          "reply_count",
+          "parentComment",
+          "childComments",
+          "user",
+          "portal"
         ],
         "x-typia-jsDocTags": []
       },
@@ -3517,6 +4404,22 @@
               "$ref": "#/components/schemas/PrizeProposals"
             }
           },
+          "prizeComments": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizesComments"
+            }
+          },
+          "portalComments": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalsComments"
+            }
+          },
           "prizes": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -3557,6 +4460,8 @@
           "walletAddress",
           "submissions",
           "prizeProposals",
+          "prizeComments",
+          "portalComments",
           "prizes",
           "portals",
           "portalProposals"
@@ -3736,6 +4641,19 @@
               "$ref": "#/components/schemas/Submission"
             }
           },
+          "comments": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizesComments"
+            }
+          },
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           }
@@ -3759,7 +4677,37 @@
           "images",
           "title",
           "submissions",
+          "slug",
           "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "PrizesComments": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "prize": {
+            "$ref": "#/components/schemas/Prize"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "comment",
+          "user",
+          "prize"
         ],
         "x-typia-jsDocTags": []
       },
@@ -4220,13 +5168,21 @@
             "type": "string"
           },
           "updates": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "array",
             "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
+              "x-typia-required": false,
+              "x-typia-optional": true,
               "type": "string"
+            }
+          },
+          "comments": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortalsComments"
             }
           },
           "user": {
@@ -4253,7 +5209,6 @@
           "updatedAt",
           "images",
           "title",
-          "updates",
           "user"
         ],
         "x-typia-jsDocTags": []
@@ -4300,6 +5255,21 @@
           "contributor",
           "amount",
           "donationTime"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "CreateCommentDto": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "comment"
         ],
         "x-typia-jsDocTags": []
       },
@@ -4614,6 +5584,89 @@
         ],
         "x-typia-jsDocTags": []
       },
+      "ExtraPortal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "funds": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "externalId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "funds",
+          "externalId"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "ExtraDonationPortalData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "donatedAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "donor": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "usdValue": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "externalId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "donatedAt",
+          "donor",
+          "usdValue",
+          "externalId"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "PickPortalsslug": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "slug"
+        ],
+        "description": "From T, pick a set of properties whose keys are in the union K",
+        "x-typia-jsDocTags": []
+      },
       "CreatePrizeDto": {
         "type": "object",
         "properties": {
@@ -4643,7 +5696,7 @@
             "x-typia-optional": false,
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/PrizeWithBalance"
+              "$ref": "#/components/schemas/PrizeWithBlockchainData"
             }
           },
           "hasNextPage": {
@@ -4658,170 +5711,6 @@
           "hasNextPage"
         ],
         "description": "Make all properties in T readonly",
-        "x-typia-jsDocTags": []
-      },
-      "PrizeWithBalance": {
-        "type": "object",
-        "properties": {
-          "distributed": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "boolean"
-          },
-          "balance": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "id": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "description": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "isAutomatic": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "boolean"
-          },
-          "submissionTime": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "votingTime": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "startVotingDate": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          "startSubmissionDate": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          "proposer_address": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "contract_address": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "admins": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "judges": {
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "array",
-            "items": {
-              "x-typia-required": false,
-              "x-typia-optional": true,
-              "type": "string"
-            }
-          },
-          "proficiencies": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "priorities": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "created_at": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          "images": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "x-typia-required": true,
-              "x-typia-optional": false,
-              "type": "string"
-            }
-          },
-          "title": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "submissions": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Submission"
-            }
-          },
-          "user": {
-            "$ref": "#/components/schemas/User"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "distributed",
-          "balance",
-          "id",
-          "description",
-          "isAutomatic",
-          "submissionTime",
-          "votingTime",
-          "startVotingDate",
-          "startSubmissionDate",
-          "proposer_address",
-          "contract_address",
-          "admins",
-          "proficiencies",
-          "priorities",
-          "created_at",
-          "updated_at",
-          "images",
-          "title",
-          "submissions",
-          "user"
-        ],
         "x-typia-jsDocTags": []
       },
       "PrizeWithBlockchainData": {
@@ -4969,6 +5858,19 @@
               "$ref": "#/components/schemas/Submission"
             }
           },
+          "comments": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizesComments"
+            }
+          },
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
           "user": {
             "$ref": "#/components/schemas/User"
           }
@@ -4996,6 +5898,7 @@
           "images",
           "title",
           "submissions",
+          "slug",
           "user"
         ],
         "x-typia-jsDocTags": []
@@ -5004,13 +5907,13 @@
         "type": "object",
         "properties": {
           "platformFeePercentage": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "proposerFeePercentage": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "voting_time": {
@@ -5130,10 +6033,6 @@
           }
         },
         "nullable": false,
-        "required": [
-          "platformFeePercentage",
-          "proposerFeePercentage"
-        ],
         "x-typia-jsDocTags": []
       },
       "CreateSubmissionDto": {
@@ -5239,6 +6138,21 @@
           "created_at",
           "user",
           "prize"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "CreateCommentDto.o1": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "comment"
         ],
         "x-typia-jsDocTags": []
       },
@@ -5449,6 +6363,22 @@
           "hasNextPage"
         ],
         "description": "Make all properties in T readonly",
+        "x-typia-jsDocTags": []
+      },
+      "PickPrizeslug": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "slug"
+        ],
+        "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
       "CreateUser": {

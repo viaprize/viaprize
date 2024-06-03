@@ -10,9 +10,9 @@ import {
   ActionIcon,
   Button,
   Card,
-  Checkbox,
   NumberInput,
   SimpleGrid,
+  Switch,
   TextInput,
   Title,
 } from '@mantine/core';
@@ -53,10 +53,10 @@ function Prize() {
   };
   const handleUploadImages = async () => {
     const newImages = await uploadImages(files);
-
     setImages(newImages);
     return newImages;
   };
+
   const submit = async () => {
     if (!wallet) {
       throw Error('Wallet is undefined');
@@ -74,7 +74,6 @@ function Prize() {
       submission_time: proposalTime,
       images: newImages ? [newImages] : [],
       judges: showJudges ? judges : [],
-
       title,
     });
     setLoading(false);
@@ -91,6 +90,7 @@ function Prize() {
         success: 'Proposal Submitted',
         error: 'Error Submitting Proposal',
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       /* eslint-disable */
       toast.error(e.message);
@@ -136,22 +136,23 @@ function Prize() {
           setTitle(e.target.value);
         }}
       />
-      <Checkbox
-        my={'xl'}
-        checked={showJudges}
-        onChange={(event) => setShowJudges(event.currentTarget.checked)}
-        label="Give Judges Voting Power"
-      />
+      <div className="flex gap-2 my-3 items-center justify-start">
+        <p>Funders are judges</p>
+        <Switch
+          checked={showJudges}
+          onChange={(event) => setShowJudges(event.currentTarget.checked)}
+        />
+        <p>Custom judges</p>
+      </div>
 
       {showJudges && (
-        <>
+        <div className="lg:grid-cols-2 gap-2 grid-cols-1 grid mb-3">
           {judges.map((item, index) => (
-            <div className="" key={index}>
+            <div className="flex gap-1 justify-center items-center w-full" key={index}>
               <TextInput
                 type="text"
                 placeholder="Enter Judges Address (Must start with 0x)"
-                className=""
-                my={'lg'}
+                className="w-full"
                 value={item}
                 onChange={(e) => {
                   onJudgesChange(index, e.target.value);
@@ -184,17 +185,15 @@ function Prize() {
             </div>
           ))}
           <ActionIcon
-            my={'md'}
             variant="filled"
-            color="blue"
             size="lg"
+            className="self-center"
             onClick={addJudges}
           >
             <IconPlus />
           </ActionIcon>
-        </>
+        </div>
       )}
-
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
 
       <SimpleGrid cols={2} className="my-3">

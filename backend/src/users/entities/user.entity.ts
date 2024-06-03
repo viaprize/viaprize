@@ -1,7 +1,9 @@
 import { PortalProposals } from 'src/portals/entities/portal-proposals.entity';
 import { Portals } from 'src/portals/entities/portal.entity';
+import { PortalsComments } from 'src/portals/entities/portals-comments.entity';
 import { PrizeProposals } from 'src/prizes/entities/prize-proposals.entity';
 import { Prize } from 'src/prizes/entities/prize.entity';
+import { PrizesComments } from 'src/prizes/entities/prizes-comments.entity';
 import { Submission } from 'src/prizes/entities/submission.entity';
 import {
   Column,
@@ -44,16 +46,20 @@ export class User {
   @Column('simple-array', { default: [] })
   priorities: string[];
 
-
   @Column({ nullable: true })
   walletAddress: string;
-
 
   @OneToMany(() => Submission, (submission) => submission.user)
   submissions: Submission[];
 
   @OneToMany(() => PrizeProposals, (prizeProposals) => prizeProposals.user)
   prizeProposals: PrizeProposals[];
+
+  @OneToMany(() => PrizesComments, (prizeComment) => prizeComment.user)
+  prizeComments: PrizesComments[];
+
+  @OneToMany(() => PortalsComments, (portalComment) => portalComment.user)
+  portalComments: PortalsComments[];
 
   @OneToMany(() => Prize, (prize) => prize.user)
   prizes: Prize[];
@@ -63,6 +69,4 @@ export class User {
 
   @OneToMany(() => PortalProposals, (portalProposals) => portalProposals.user)
   portalProposals: PortalProposals[];
-
-
 }

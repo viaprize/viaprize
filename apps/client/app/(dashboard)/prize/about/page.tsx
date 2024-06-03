@@ -30,11 +30,11 @@ export default function About() {
               align="center"
             >
               <div>
-                <h3 className="my-0">$32,460</h3>
+                <h3 className="my-0"> $50,000+ </h3>
                 <p className="my-0">Total contributions</p>
               </div>
               <div>
-                <h3 className="my-0">63</h3>
+                <h3 className="my-0">100+</h3>
                 <p className="my-0">Prize winners</p>
               </div>
               <div>
@@ -97,7 +97,7 @@ export default function About() {
         <section className="flex flex-col items-center my-14">
           <h1 className="text-3xl font-bold">3 Roles in a Prize</h1>
           <Image
-            src="/home/rolesInPrize.png"
+            src="/rolesInPrize.png"
             width={1000}
             height={500}
             alt="How it works"
