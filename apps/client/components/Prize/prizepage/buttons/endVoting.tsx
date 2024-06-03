@@ -12,10 +12,22 @@ export default function EndVoting({ contractAddress }: { contractAddress: string
     account: address,
     address: contractAddress as `0x${string}`,
   });
+  // const { writeAsync, isLoading } = usePrizeEndVotingPeriod({
+  //   ...config,
+  //   onError(error) {
+  //     toast.error(`Failed With Error ${error.name}`);
+  //   },
+  // });
+
   const { writeAsync, isLoading } = usePrizeEndVotingPeriod({
-    ...config,
-    onError(error) {
-      toast.error(`Failed With Error ${error.name}`);
+    account: address,
+    address: contractAddress as `0x${string}`,
+    onSuccess(data) {
+      console.log({ data });
+      toast.success('Rewards Distributed!!!!!', {
+        duration: 7000,
+      });
+      window.location.reload();
     },
   });
   return (
@@ -28,8 +40,6 @@ export default function EndVoting({ contractAddress }: { contractAddress: string
         toast.success('Rewards Distributed!!!!!', {
           duration: 7000,
         });
-        console.log(result);
-        window.location.reload();
       }}
     >
       {' '}

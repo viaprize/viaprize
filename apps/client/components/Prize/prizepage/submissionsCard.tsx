@@ -65,6 +65,7 @@ export default function SubmissionsCard({
     address: address ?? '0x',
     contractAddress,
   });
+  console.log({ funderBalance }, 'funderBalance');
 
   return (
     <Card className="flex flex-col justify-center gap-3 my-2">
@@ -129,7 +130,6 @@ export default function SubmissionsCard({
                   toast.error('Error while voting');
                 } finally {
                   setSendLoading(false);
-                  window.location.reload();
                 }
               }}
               disabled={!value}
