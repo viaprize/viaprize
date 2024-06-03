@@ -38,7 +38,6 @@ contract ViaPrize {
     /// @notice Add a new mapping to store each funder's votes on each submission
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
     address[] public refundRequestedFunders;
-    bytes32 public refundSubmissionHash;
     mapping(address => bool) public isRefundRequestedAddress;
 
     bool public isActive = false;
@@ -151,8 +150,7 @@ contract ViaPrize {
         ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
         _weth = IWETH(_wethToken);
-        refundSubmissionHash = keccak256(abi.encodePacked(platformAdmins[0], "This is a refund Submission"));
-        _submissionTree.addSubmission(platformAdmins[0], REFUND_SUBMISSION, "REFUND");
+        _submissionTree.addSubmission(platformAdmins[0], REFUND_SUBMISSION_HASH, "REFUND");
         
         emit CampaignCreated(proposer, address(this));
     }
@@ -255,11 +253,11 @@ contract ViaPrize {
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
-                    if(allSubmissions[i].submissionHash == refundSubmissionHash) {
+                    if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
                         uint256 reward = allSubmissions[i].usdcVotes;
                         if(reward > 0) {
                             for(uint256 j=0; j<refundRequestedFunders.length; j++) {
-                                uint256 reward_amount = _submissionTree.submissionFunderBalances(refundSubmissionHash,refundRequestedFunders[j]);
+                                uint256 reward_amount = _submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,refundRequestedFunders[j]);
                                 reward -= reward_amount;
                                 if(reward_amount > 0) {
                                     _usdc.transfer(refundRequestedFunders[j], reward_amount);
@@ -319,7 +317,7 @@ contract ViaPrize {
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
 
-        if(_submissionHash == refundSubmissionHash) {
+        if(_submissionHash == REFUND_SUBMISSION_HASH) {
             if(!isRefundRequestedAddress[sender]) {
                 refundRequestedFunders.push(sender);
                 isRefundRequestedAddress[sender] = true;
@@ -375,7 +373,7 @@ contract ViaPrize {
 
     function _changeVote(address _sender,bytes32 _previous_submission_hash,bytes32 _new_submission_hash,uint256 amount) private {
         uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
-        if(_new_submission_hash == refundSubmissionHash){
+        if(_new_submission_hash == REFUND_SUBMISSION_HASH){
 
             if(!isRefundRequestedAddress[_sender]){
                 refundRequestedFunders.push(_sender);
@@ -388,8 +386,8 @@ contract ViaPrize {
         funderVotes[_sender][_new_submission_hash] += amount;
         _submissionTree.updateFunderVotes(_previous_submission_hash, _sender, (funderVotes[_sender][_previous_submission_hash]*(100-platformFee-proposerFee))/100);
         _submissionTree.updateFunderVotes(_new_submission_hash, _sender, (funderVotes[_sender][_new_submission_hash]*(100-platformFee - proposerFee))/100);
-        if(_previous_submission_hash == refundSubmissionHash) {
-            if(_submissionTree.submissionFunderBalances(refundSubmissionHash,_sender) == 0) {
+        if(_previous_submission_hash == REFUND_SUBMISSION_HASH) {
+            if(_submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,_sender) == 0) {
                 isRefundRequestedAddress[_sender] = false;
             }
         }
@@ -494,9 +492,8 @@ contract ViaPrize {
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
-       uint256 PRECISION = 10000;
-
-
+       uint256 _PRECISION = PRECISION;
+       
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
        for(uint256 i=0; i<allSubmissions.length; i++) {
            total_usdc_votes += allSubmissions[i].usdcVotes;
@@ -506,16 +503,16 @@ contract ViaPrize {
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0) { 
-                uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(PRECISION)).div(total_usdc_votes)); 
-                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(PRECISION);
-                if(allSubmissions[i].submissionHash == refundSubmissionHash) {
+                uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(_PRECISION)).div(total_usdc_votes)); 
+                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
+                if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
                     if(transferable_usdc_amount > 0) {
                         for(uint256 j=0; j<allFunders.length; j++) {
                             
                             if(funderAmount[allFunders[j]] > 0){
                                  uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
-                                 uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(PRECISION).div(total_unused_usdc_votes));
-                                 uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(PRECISION));
+                                 uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
+                                 uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
                                 _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
                             }
                            
