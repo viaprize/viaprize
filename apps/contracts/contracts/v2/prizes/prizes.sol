@@ -186,7 +186,7 @@ contract PrizeV2 {
     }
 
     /// @notice start the voting period 
-    function startVotingPeriod(uint256 _votingTime) public  onlyPlatformAdminOrProposer {
+    function startVotingPeriod(uint256 _votingTime) public  onlyPlatformAdminOrProposer onlyActive {
         if(block.timestamp < submissionTime) revert SubmissionPeriodActive();
         /// @notice voting time also in minutes
         votingTime = block.timestamp + _votingTime * 1  minutes;
@@ -208,16 +208,26 @@ contract PrizeV2 {
         if(submissionTime == 0) revert SubmissionPeriodNotActive();
         submissionPeriod = false;
         submissionTime = 0;
+        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+        if(allSubmissions.length == 0 ) {
+            for(uint256 i=0; i<allFunders.length; i++) {
+                uint256 transferable_amount = funderAmount[allFunders[i]];
+                funderAmount[allFunders[i]] = 0;
+                _usdc.transfer(allFunders[i], transferable_amount);
+            }
+            distributed = true;
+            isActive = false;
+        }
     }
 
-    function endVotingPeriod() public onlyPlatformAdmin {
+    function endVotingPeriod() public onlyPlatformAdmin onlyActive {
         if(votingTime == 0) revert VotingPeriodNotActive();
         votingTime = 0;
         votingPeriod = false;
         disputePeriod = block.timestamp + 2 minutes;
     }
 
-    function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public {
+    function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public onlyActive {
         require(disputePeriod > block.timestamp, "DPNA"); //DPNA - Dispute Period Not Active
         SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
         address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
