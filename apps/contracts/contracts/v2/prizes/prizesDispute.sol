@@ -402,7 +402,7 @@ contract ViaPrize {
 
     /// @notice uses functionality of the AVL tree to get all submissions
     function getAllSubmissions() public view returns (SubmissionAVLTree.SubmissionInfo[] memory) {
-        return _submissionTree.inOrderTraversal();
+        return _submissionTree.getAllSubmissions();
     }
 
     /// @notice get submission by submissionHash
@@ -503,8 +503,9 @@ contract ViaPrize {
                 if(allSubmissions[i].submissionHash == refundSubmissionHash) {
                     if(transferable_usdc_amount > 0) {
                         for(uint256 j=0; j<allFunders.length; j++) {
-                            uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
-                            if(individual_unused_votes > 0){
+                            
+                            if(funderAmount[allFunders[j]] > 0){
+                                 uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
                                  uint256 individual_refund_usdc_percentage =   individual_unused_votes.mul(100).div(total_unused_usdc_votes);
                                  uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(100));
                                 _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
