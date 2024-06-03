@@ -1,7 +1,7 @@
 /// @notice  SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "./prizesDispute.sol";
+import "./prizes.sol";
 contract PrizeFactory {
     // Event declaration
     event NewViaPrizeCreated(uint indexed id, address indexed viaPrizeAddress);
