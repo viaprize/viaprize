@@ -540,6 +540,14 @@ contract PrizeV2 {
        return (total_usdc_votes, totalRewards);
    }
 
+   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin {
+        IERC20Permit token = IERC20Permit(_tokenAddress);
+        uint256 balance = token.balanceOf(address(this));
+        if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists
+        require(_amount <= balance, "AEB"); //AEB -> Amount Exceeds Balance
+        token.transfer(_to, _amount); 
+   }
+
    function getAllFunders() public view returns(address[] memory) {
         return allFunders;
    }
