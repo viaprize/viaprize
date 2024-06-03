@@ -83,6 +83,8 @@ contract ViaPrize {
     uint256 public totalVotes;
     uint256 public disputePeriod;
 
+    
+
 
     /// @notice error for not enough funds to vote
     error NotEnoughFunds();
@@ -487,6 +489,7 @@ contract ViaPrize {
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
+       uint256 PRECISION = 10000;
 
 
        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
@@ -494,20 +497,20 @@ contract ViaPrize {
            total_usdc_votes += allSubmissions[i].usdcVotes;
        }
        uint256 total_unused_usdc_votes = totalRewards.sub(total_usdc_votes);
-
+       
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0) { 
-                uint256 individual_usdc_percentage = (allSubmissions[i].usdcVotes.mul(100)).div(total_usdc_votes); 
-                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(100);
+                uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(PRECISION)).div(total_usdc_votes)); 
+                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(PRECISION);
                 if(allSubmissions[i].submissionHash == refundSubmissionHash) {
                     if(transferable_usdc_amount > 0) {
                         for(uint256 j=0; j<allFunders.length; j++) {
                             
                             if(funderAmount[allFunders[j]] > 0){
                                  uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
-                                 uint256 individual_refund_usdc_percentage =   individual_unused_votes.mul(100).div(total_unused_usdc_votes);
-                                 uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(100));
+                                 uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(PRECISION).div(total_unused_usdc_votes));
+                                 uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(PRECISION));
                                 _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
                             }
                            

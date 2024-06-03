@@ -139,12 +139,13 @@ export default function SubmissionsCard({
                   toast.success(`Transaction Hash ${transactionHash}`);
                   setSendLoading(false);
                   close();
+                  window.location.reload();
                 } catch (e) {
                   console.log(e, 'error');
                   toast.error('Error while voting');
+                  window.location.reload();
                 } finally {
                   setSendLoading(false);
-                  window.location.reload();
                 }
               }}
               disabled={!value}
