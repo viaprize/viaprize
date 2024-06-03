@@ -10,7 +10,7 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 import "../../helperContracts/ierc20_weth.sol";
 
-contract ViaPrize {
+contract PrizeV2 {
     uint256 public constant PRECISION = 10000;
 
 
