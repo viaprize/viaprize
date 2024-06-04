@@ -3504,6 +3504,28 @@
         "x-nestia-method": "GET"
       }
     },
+    "/prizes/clear_cache": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.clear_cache.clearCache",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/users": {
       "post": {
         "tags": [],

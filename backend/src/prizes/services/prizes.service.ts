@@ -141,7 +141,10 @@ export class PrizesService {
     return this.prizeRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
-      relations: ['user'],
+      relations: {
+        user: true,
+        participants: true,
+      },
       where: paginationOptions.where,
     });
   }

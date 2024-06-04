@@ -189,6 +189,7 @@ export class PrizesController {
         ),
       } as PrizeWithBlockchainData;
     });
+    console.log(prizeWithBalanceData, 'prizeWithBalanceData');
     return {
       data: prizeWithBalanceData as PrizeWithBlockchainData[],
       hasNextPage: prizeWithoutBalance.hasNextPage,
@@ -692,6 +693,14 @@ export class PrizesController {
     const slug = await this.prizeService.getSlugById(id);
     return {
       slug,
+    };
+  }
+
+  @Get('/clear_cache')
+  async clearCache(): Promise<Http200Response> {
+    await this.cacheManager.reset();
+    return {
+      message: 'Cache Cleared',
     };
   }
 }

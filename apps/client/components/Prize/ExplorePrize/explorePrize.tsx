@@ -33,6 +33,7 @@ interface ExploreCardProps {
   submissionDays: number;
   startingTimeBlockchain: number;
   slug: string;
+  participants: number;
 }
 
 function ExploreCard({
@@ -49,6 +50,7 @@ function ExploreCard({
   startingTimeBlockchain,
   submissionDays,
   slug,
+  participants,
 }: ExploreCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const deadlineString = calculateDeadline(
@@ -75,69 +77,78 @@ function ExploreCard({
           }
         />
       </Card.Section>
-      <div className="flex justify-between items-center my-3 gap-2 text-red-600">
-        <div className="flex items-center space-x-2">
-          <PiTimerFill
-          // color='red'
-          />
-          <Text
-            // c="red"
-            fw="bold"
+      <div className="flex flex-col justify-between">
+        <div>
+          <div className="flex justify-between items-center my-3 gap-2 text-red-600">
+            <div className="flex items-center space-x-2">
+              <PiTimerFill
+              // color='red'
+              />
+              <Text
+                // c="red"
+                fw="bold"
+              >
+                {deadlineString}
+              </Text>
+            </div>
+
+            {/* {distributed ? <Text>Prize Has Ended</Text> : null} */}
+
+            {deadlineString === 'Time is up!' && distributed === true ? (
+              <Badge color="green">Won</Badge>
+            ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+            deadlineString === 'Time is up!' && distributed === false ? (
+              <Badge color="yellow">Refunded</Badge>
+            ) : null}
+          </div>
+          <Group mb="xs" mt="md" justify="space-between">
+            <Text fw={500}>{title}</Text>
+            <Badge color="primary" variant="gradient" p="sm">
+              {profileName}
+            </Badge>
+          </Group>
+          <p
+            className="text-md h-20 overflow-y-auto"
+            // dangerouslySetInnerHTML={{ __html: description }}
           >
-            {deadlineString}
-          </Text>
+            {htmlToPlainText(description)}
+          </p>
         </div>
-
-        {/* {distributed ? <Text>Prize Has Ended</Text> : null} */}
-
-        {deadlineString === 'Time is up!' && distributed === true ? (
-          <Badge color="green">Won</Badge>
-        ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-        deadlineString === 'Time is up!' && distributed === false ? (
-          <Badge color="yellow">Refunded</Badge>
-        ) : null}
-      </div>
-      <Group mb="xs" mt="md" justify="space-between">
-        <Text fw={500}>{title}</Text>
-        <Badge color="primary" variant="gradient" p="sm">
-          {profileName}
-        </Badge>
-      </Group>
-      <p
-        className="text-md h-20 overflow-y-auto"
-        // dangerouslySetInnerHTML={{ __html: description }}
-      >
-        {htmlToPlainText(description)}
-      </p>
-      {/*  >{htmlToPlainText(description)}</p> */}
-      <Flex gap="sm">{skills}</Flex>
-      <Text fw="bold" size="xl">
-        {usdAmount} USD
-      </Text>
-      <Text size="sm" c="gray">
-        {ethAmount} {chain.nativeCurrency.symbol}
-      </Text>
-      <Text fw="bold" className="flex">
-        Submission Deadline :{' '}
-        {startingTimeBlockchain !== 0 ? (
-          new Date(startingTimeBlockchain * 1000).toLocaleDateString()
-        ) : (
-          <Text c="red" fw="bold" className="pl-2">
-            Ended
+        <div>
+          {/*  >{htmlToPlainText(description)}</p> */}
+          <Flex gap="sm">{skills}</Flex>
+          <Text fw="bold" size="xl">
+            {usdAmount} USD
           </Text>
-        )}
-      </Text>
+          <Text size="sm" c="gray">
+            {ethAmount} {chain.nativeCurrency.symbol}
+          </Text>
+          <Text fw="bold" className="flex">
+            Submission Deadline :{' '}
+            {startingTimeBlockchain !== 0 ? (
+              new Date(startingTimeBlockchain * 1000).toLocaleDateString()
+            ) : (
+              <Text c="red" fw="bold" className="pl-2">
+                Ended
+              </Text>
+            )}
+          </Text>
+          <p className="text-sm text-gray-500">
+            {participants} {participants === 1 ? 'Participant' : 'Participants'}
+          </p>
 
-      <Button
-        color="primary"
-        component="a"
-        fullWidth
-        mt="md"
-        radius="md"
-        href={`/prize/${slug}`}
-      >
-        Details
-      </Button>
+          <Button
+            color="primary"
+            component="a"
+            fullWidth
+            mt="md"
+            radius="md"
+            href={`/prize/${slug}`}
+          >
+            Details
+          </Button>
+        </div>
+      </div>
       <div className="absolute top-2 right-2">
         <CopyButton value={`https://viaprize.org/prize/${slug}`}>
           {({ copied, copy }) => (
