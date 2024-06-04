@@ -81,7 +81,9 @@ export class PrizesService {
       where: {
         slug,
       },
-      relations: ['participants'],
+      relations: {
+        participants: true,
+      },
     });
 
     return prize.participants;
@@ -92,8 +94,11 @@ export class PrizesService {
       where: {
         slug,
       },
-      relations: ['participants'],
+      relations: {
+        participants: true,
+      },
     });
+
     prize.participants.push(user);
     return await this.prizeRepository.save(prize);
   }

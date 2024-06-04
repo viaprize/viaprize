@@ -4743,7 +4743,7 @@
             "x-typia-optional": false,
             "type": "string"
           },
-          "parcipants": {
+          "participants": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "array",
@@ -4794,7 +4794,7 @@
           "updated_at",
           "images",
           "title",
-          "parcipants",
+          "participants",
           "submissions",
           "slug",
           "user"
@@ -5969,7 +5969,7 @@
             "x-typia-optional": false,
             "type": "string"
           },
-          "parcipants": {
+          "participants": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "array",
@@ -6024,7 +6024,7 @@
           "updated_at",
           "images",
           "title",
-          "parcipants",
+          "participants",
           "submissions",
           "slug",
           "user"

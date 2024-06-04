@@ -22,7 +22,7 @@ export default function Submissions({
   allowVoting: boolean;
 }) {
   const id = usePathname();
-  const slug = id?.split('/')[1] as string;
+  const slug = id?.split('/')[2] as string;
 
   const { appUser } = useAppUser();
   const { getParticipants, participateInPrize } = usePrize();
