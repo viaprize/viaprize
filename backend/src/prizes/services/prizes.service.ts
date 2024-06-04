@@ -84,7 +84,7 @@ export class PrizesService {
       relations: ['participants'],
     });
 
-    return prize.parcipants;
+    return prize.participants;
   }
 
   async addPariticpant(slug: string, user: User) {
@@ -94,7 +94,7 @@ export class PrizesService {
       },
       relations: ['participants'],
     });
-    prize.parcipants.push(user);
+    prize.participants.push(user);
     return await this.prizeRepository.save(prize);
   }
 
