@@ -20,6 +20,7 @@ export default function Contestants() {
           key={contestant.id}
           avatar={contestant.avatar}
           name={contestant.name}
+          username={contestant.username}
         />
       ))}
     </section>
