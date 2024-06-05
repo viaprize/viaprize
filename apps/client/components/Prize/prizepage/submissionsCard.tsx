@@ -16,12 +16,12 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { IconArrowAutofitUp, IconCircleCheck, IconRefresh } from '@tabler/icons-react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { formatEther, parseEther } from 'viem';
 import { useAccount } from 'wagmi';
 import { extractPlainTextFromEditor } from './utils';
-import Link from 'next/link';
 
 interface SubmissionsCardProps {
   fullname: string;
@@ -67,122 +67,133 @@ export default function SubmissionsCard({
     contractAddress,
   });
 
+  const onProfile = fullname.length === 0;
+
+  console.log(fullname.length,onProfile, 'fullname.length')
+
   return (
     <Card className="flex flex-col justify-center gap-3 my-2">
-      <Modal opened={opened} onClose={close} title="Voting For this submission">
-        <Stack>
-          <NumberInput
-            label={
-              loading
-                ? 'Loading.....'
-                : `Total Votes you can allocate(Max: ${formatEther(
-                    BigInt(parseInt(funderBalance?.toString() ?? '0')),
-                  )} ${chain.nativeCurrency.symbol} )`
-            }
-            placeholder="Enter Value of Votes"
-            mt="md"
-            rightSection={
-              <ActionIcon>
-                <IconRefresh onClick={() => refetch()} />
-              </ActionIcon>
-            }
-            max={parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))}
-            allowDecimal
-            allowNegative={false}
-            defaultValue={0}
-            value={value}
-            onChange={(v) => {
-              console.log('hiiiiiiiiiii');
-
-              setValue(v.toString());
-            }}
-          />
-          {showVote ? (
-            <Button
-              onClick={async () => {
-                try {
-                  await refetch();
-
-                  if (
-                    parseInt(debounced.toString()) >
-                    parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
-                  ) {
-                    toast.error('You cannot vote more than your balance');
-                    return;
-                  }
-                  setSendLoading(true);
-
-                  const { request } = await prepareWritePrize({
-                    address: contractAddress as `0x${string}`,
-                    functionName: 'vote',
-                    args: [hash as `0x${string}`, parseEther(debounced)],
-                  });
-                  const { hash: transactionHash } = await writePrize(request);
-                  console.log({ transactionHash }, 'transactionHash');
-                  toast.success(
-                    <div className="flex items-center ">
-                      <IconCircleCheck />{' '}
-                      <Text fw="md" size="sm" className="ml-2">
-                        {' '}
-                        Voted Successfully
-                      </Text>
-                      <Link
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        href={`https://optimistic.etherscan.io/tx/${transactionHash}`}
-                      >
-                        <Button variant="transparent" className="text-blue-400 underline">
-                          See here
-                        </Button>
-                      </Link>
-                    </div>,
-                  );
-                  setSendLoading(false);
-                  close();
-                } catch (e) {
-                  console.log(e, 'error');
-                  toast.error('Error while voting');
-                } finally {
-                  setSendLoading(false);
-                  window.location.reload();
+      {!onProfile && (
+        <>
+          <Modal opened={opened} onClose={close} title="Voting For this submission">
+            <Stack>
+              <NumberInput
+                label={
+                  loading
+                    ? 'Loading.....'
+                    : `Total Votes you can allocate(Max: ${formatEther(
+                        BigInt(parseInt(funderBalance?.toString() ?? '0')),
+                      )} ${chain.nativeCurrency.symbol} )`
                 }
-              }}
-              disabled={!value}
-              loading={sendLoading}
-            >
-              Vote!
-            </Button>
-          ) : null}
-        </Stack>
-      </Modal>
-      <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-        <div className="flex items-center justify-between w-full">
-          <Group>
-            <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
-            <div>
-              <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
-                {fullname}
-              </Text>
+                placeholder="Enter Value of Votes"
+                mt="md"
+                rightSection={
+                  <ActionIcon>
+                    <IconRefresh onClick={() => refetch()} />
+                  </ActionIcon>
+                }
+                max={parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))}
+                allowDecimal
+                allowNegative={false}
+                defaultValue={0}
+                value={value}
+                onChange={(v) => {
+                  console.log('hiiiiiiiiiii');
+
+                  setValue(v.toString());
+                }}
+              />
+              {showVote ? (
+                <Button
+                  onClick={async () => {
+                    try {
+                      await refetch();
+
+                      if (
+                        parseInt(debounced.toString()) >
+                        parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
+                      ) {
+                        toast.error('You cannot vote more than your balance');
+                        return;
+                      }
+                      setSendLoading(true);
+
+                      const { request } = await prepareWritePrize({
+                        address: contractAddress as `0x${string}`,
+                        functionName: 'vote',
+                        args: [hash as `0x${string}`, parseEther(debounced)],
+                      });
+                      const { hash: transactionHash } = await writePrize(request);
+                      console.log({ transactionHash }, 'transactionHash');
+                      toast.success(
+                        <div className="flex items-center ">
+                          <IconCircleCheck />{' '}
+                          <Text fw="md" size="sm" className="ml-2">
+                            {' '}
+                            Voted Successfully
+                          </Text>
+                          <Link
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={`https://optimistic.etherscan.io/tx/${transactionHash}`}
+                          >
+                            <Button
+                              variant="transparent"
+                              className="text-blue-400 underline"
+                            >
+                              See here
+                            </Button>
+                          </Link>
+                        </div>,
+                      );
+                      setSendLoading(false);
+                      close();
+                    } catch (e) {
+                      console.log(e, 'error');
+                      toast.error('Error while voting');
+                    } finally {
+                      setSendLoading(false);
+                      window.location.reload();
+                    }
+                  }}
+                  disabled={!value}
+                  loading={sendLoading}
+                >
+                  Vote!
+                </Button>
+              ) : null}
+            </Stack>
+          </Modal>
+          <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+            <div className="flex items-center justify-between w-full">
+              <Group>
+                <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
+                <div>
+                  <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+                    {fullname}
+                  </Text>
+                </div>
+              </Group>
+              {won ? <Badge bg="green">{won}</Badge> : null}
             </div>
-          </Group>
-          {won ? <Badge bg="green">{won}</Badge> : null}
-        </div>
-        <div>
-          <Text c="dimmed" fz="sm">
-            {time}
-          </Text>
-          <div className="flex gap-1 sm:justify-end items-center ">
-            <Button color="black" mr="5px" onClick={open} disabled={!allowVoting}>
-              {allowVoting && showVote ? 'Vote' : ''}
-            </Button>
-            {allowVoting && showVote ? (
-              <Badge variant="filled" w="auto" size="lg" color="blue">
-                {formatEther(BigInt(votes.toString()))} {chain.nativeCurrency.symbol}
-              </Badge>
-            ) : null}
+            <div>
+              <Text c="dimmed" fz="sm">
+                {time}
+              </Text>
+              <div className="flex gap-1 sm:justify-end items-center ">
+                <Button color="black" mr="5px" onClick={open} disabled={!allowVoting}>
+                  {allowVoting && showVote ? 'Vote' : ''}
+                </Button>
+                {allowVoting && showVote ? (
+                  <Badge variant="filled" w="auto" size="lg" color="blue">
+                    {formatEther(BigInt(votes.toString()))} {chain.nativeCurrency.symbol}
+                  </Badge>
+                ) : null}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
       <Text lineClamp={4}>
         {extractPlainTextFromEditor(description).slice(0, 350)}....
       </Text>
