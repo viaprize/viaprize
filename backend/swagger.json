@@ -2575,7 +2575,7 @@
         "x-nestia-method": "POST"
       }
     },
-    "/prizes/{slug}/participants": {
+    "/prizes/{slug}/contestants": {
       "get": {
         "tags": [],
         "parameters": [
@@ -2605,7 +2605,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "x-nestia-namespace": "prizes.participants.getParticipants",
+        "x-nestia-namespace": "prizes.contestants.getContestants",
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
       }
@@ -4765,7 +4765,7 @@
             "x-typia-optional": false,
             "type": "string"
           },
-          "participants": {
+          "contestants": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "array",
@@ -4816,7 +4816,7 @@
           "updated_at",
           "images",
           "title",
-          "participants",
+          "contestants",
           "submissions",
           "slug",
           "user"
@@ -5991,7 +5991,7 @@
             "x-typia-optional": false,
             "type": "string"
           },
-          "participants": {
+          "contestants": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "array",
@@ -6046,7 +6046,7 @@
           "updated_at",
           "images",
           "title",
-          "participants",
+          "contestants",
           "submissions",
           "slug",
           "user"

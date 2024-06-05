@@ -153,7 +153,7 @@ export interface Prize {
   updated_at: string;
   images: string[];
   title: string;
-  participants: User[];
+  contestants: User[];
   submissions: Submission[];
   comments?: PrizesComments[];
   slug: string;
@@ -392,7 +392,7 @@ export interface PrizeWithBlockchainData {
   updated_at: string;
   images: string[];
   title: string;
-  participants: User[];
+  contestants: User[];
   submissions: Submission[];
   comments?: PrizesComments[];
   slug: string;
@@ -1236,10 +1236,10 @@ export namespace Prizes {
   }
   /**
    * No description
-   * @name ParticipantsDetail
-   * @request GET:/prizes/{slug}/participants
+   * @name ContestantsDetail
+   * @request GET:/prizes/{slug}/contestants
    */
-  export namespace ParticipantsDetail {
+  export namespace ContestantsDetail {
     export type RequestParams = {
       slug: string;
     };
@@ -2491,12 +2491,12 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
     /**
      * No description
      *
-     * @name ParticipantsDetail
-     * @request GET:/prizes/{slug}/participants
+     * @name ContestantsDetail
+     * @request GET:/prizes/{slug}/contestants
      */
-    participantsDetail: (slug: string, params: RequestParams = {}) =>
+    contestantsDetail: (slug: string, params: RequestParams = {}) =>
       this.request<User[], any>({
-        path: `/prizes/${slug}/participants`,
+        path: `/prizes/${slug}/contestants`,
         method: 'GET',
         format: 'json',
         ...params,
