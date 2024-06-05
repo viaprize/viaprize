@@ -8,15 +8,15 @@ export const usePrize = () => {
     return prize.data;
   };
 
-  const participateInPrize = async (prizeId: string) => {
+  const contestantInPrize = async (prizeId: string) => {
     const prize = await (await backendApi()).prizes.participateCreate(prizeId);
     return prize.data;
   };
 
-  const getParticipants = async (prizeId: string) => {
-    const participants = await (await backendApi()).prizes.participantsDetail(prizeId);
-    return participants.data;
+  const getContestants = async (prizeId: string) => {
+    const contestants = await(await backendApi()).prizes.contestantsDetail(prizeId);
+    return contestants.data;
   };
 
-  return { createPrize, participateInPrize, getParticipants };
+  return { createPrize, contestantInPrize, getContestants };
 };

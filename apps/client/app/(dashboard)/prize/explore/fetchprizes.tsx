@@ -29,7 +29,6 @@ export default async function FetchPrizes() {
   ).json();
 
   console.log(prizes[0], 'prizes');
-  console.log(prizes[0].participants, 'prizes');
 
   const data = await FetchPrizesCsv();
 
@@ -48,7 +47,7 @@ export default async function FetchPrizes() {
               parseFloat(formatEther(BigInt(prize.balance))) * usdToEth.ethereum.usd
             ).toFixed(2)}
             profileName={prize.user.name}
-            contestants={prize.participants?.length || 0}
+            contestants={prize.contestants?.length || 0}
             title={prize.title}
             key={prize.id}
             id={prize.id}

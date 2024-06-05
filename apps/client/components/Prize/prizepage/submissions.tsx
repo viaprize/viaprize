@@ -25,30 +25,28 @@ export default function Submissions({
   const slug = id?.split('/')[2] as string;
 
   const { appUser } = useAppUser();
-  const { getParticipants, participateInPrize } = usePrize();
+  const { getContestants, contestantInPrize } = usePrize();
 
-  const { data: participants, refetch } = useQuery(
-    'participants',
-    () => getParticipants(slug),
+  const { data: contestants, refetch } = useQuery(
+    'contestants',
+    () => getContestants(slug),
     {
       refetchInterval: 5000,
     },
   );
 
-  const { mutateAsync: participate } = useMutation(participateInPrize, {
+  const { mutateAsync: contest } = useMutation(contestantInPrize, {
     onSuccess: async () => {
       await refetch();
     },
   });
 
-  const isParticipant = participants?.some(
-    (participant) => participant.id === appUser?.id,
-  );
+  const isContestants = contestants?.some((contestant) => contestant.id === appUser?.id);
 
   return (
     <div className="w-full flex flex-col gap-3 dont-break-out">
       {allowSubmission &&
-        (isParticipant ? (
+        (isContestants ? (
           <Button
             component="a"
             w="40%"
@@ -65,10 +63,10 @@ export default function Submissions({
             className="self-end"
             // target="_blank"
             onClick={() =>
-              toast.promise(participate(slug), {
-                loading: 'Adding you to the participants list...',
-                success: 'You are now a participant',
-                error: (e) => `Error participating${e.message}`,
+              toast.promise(contest(slug), {
+                loading: 'Contesting..',
+                success: 'You are now a contestant',
+                error: (e) => `Error contesting${e.message}`,
               })
             }
           >

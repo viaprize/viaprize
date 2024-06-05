@@ -5,7 +5,7 @@ import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 import { formatEther } from 'viem';
 import AboutPrize from './aboutprize';
 import PrizeFunderCard from './prizeFunderCard';
-import Participants from './participants';
+import Contestants from './contestants';
 
 export default function PrizePageTabs({
   contractAddress,
@@ -35,7 +35,7 @@ export default function PrizePageTabs({
         <Tabs.Tab value="creators" leftSection={<FaMoneyBillWaveAlt size="1rem" />}>
           Backed By
         </Tabs.Tab>
-        <Tabs.Tab value="participants">Participants</Tabs.Tab>
+        <Tabs.Tab value="contestants">Contestants</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="about">
         <AboutPrize
@@ -62,8 +62,8 @@ export default function PrizePageTabs({
       <Tabs.Panel value="creators">
         <PrizeFunderCard name={name} email={email} avatar={avatar} />
       </Tabs.Panel>
-      <Tabs.Panel value="participants">
-        <Participants />
+      <Tabs.Panel value="contestants">
+        <Contestants />
       </Tabs.Panel>
     </Tabs>
   );

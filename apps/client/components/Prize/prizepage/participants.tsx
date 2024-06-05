@@ -3,23 +3,23 @@ import { usePathname } from 'next/navigation';
 import { useQuery } from 'react-query';
 import PrizeFunderCard from './prizeFunderCard';
 
-export default function Participants() {
+export default function Contestants() {
   const id = usePathname();
   const slug = id?.split('/')[2] as string;
 
-  const { getParticipants } = usePrize();
-  const { data: participants } = useQuery('participants', () => getParticipants(slug), {
+  const { getContestants } = usePrize();
+  const { data: contestants } = useQuery('contestants', () => getContestants(slug), {
     refetchInterval: 5000,
   });
 
   return (
     <section className="flex flex-col gap-2">
-      {participants?.length === 0 && <p>No participants yet</p>}
-      {participants?.map((participant) => (
+      {contestants?.length === 0 && <p>No contestants yet</p>}
+      {contestants?.map((contestant) => (
         <PrizeFunderCard
-          key={participant.id}
-          avatar={participant.avatar}
-          name={participant.name}
+          key={contestant.id}
+          avatar={contestant.avatar}
+          name={contestant.name}
         />
       ))}
     </section>
