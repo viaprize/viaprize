@@ -11,7 +11,6 @@ import { MailModule } from 'src/mail/mail.module';
 import { MailerModule } from 'src/mailer/mailer.module';
 import mailConfig from './config/mail.config';
 import { JobsModule } from './jobs/jobs.module';
-import { PactsModule } from './pacts/pacts.module';
 import { PrizesModule } from './prizes/prizes.module';
 import { UsersModule } from './users/users.module';
 // import { EthersModule } from 'nestjs-ethers';
@@ -57,7 +56,6 @@ import { PriceController } from './price/price.controller';
     //     }) as AgendaModuleConfig,
     //   inject: [ConfigService],
     // }),
-    PactsModule,
     PrizesModule,
     UsersModule,
     MailModule,

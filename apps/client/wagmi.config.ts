@@ -13,12 +13,11 @@ export default defineConfig({
     hardhat({
       project: '../contracts',
       include: [
-        'contracts/PrizeFactory.sol/*.json',
         'contracts/PrizeJudgesFactory.sol/*.json',
-        'contracts/Prize.sol/*.json',
         'contracts/portal.sol/*.json',
         'contracts/portalFactory.sol/*.json',
         'contracts/v2/prizes/prizesV2Factory.sol/*.json',
+        'contracts/v2/prizes/prizes.sol/*.json',
       ],
       deployments: {
         PrizeJudgesFactory: {

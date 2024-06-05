@@ -1,18 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ethers } from 'ethers';
+import { ExtractAbiFunctionNames } from 'abitype';
 import { AllConfigType } from 'src/config/config.type';
-import { PublicClient, createPublicClient, http, parseAbi } from 'viem';
+import { PRIZE_V2_ABI } from 'src/utils/constants';
+import {
+  MulticallReturnType,
+  PublicClient,
+  createPublicClient,
+  http,
+  parseAbi,
+} from 'viem';
 import { optimism } from 'viem/chains';
 import {
   Contribution,
   Contributions,
   TransactionApiResponse,
 } from './blockchain';
+
+function splitArray<T>(arr: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize);
+    chunks.push(chunk);
+  }
+  return chunks;
+}
 @Injectable()
 export class BlockchainService {
   provider: PublicClient;
-  wallet: ethers.Wallet;
   multiCallContract = {
     address: '0xcA11bde05977b3631167028862bE2a173976CA11' as `0x${string}`,
     abi: parseAbi([
@@ -37,31 +52,6 @@ export class BlockchainService {
       address: address as `0x${string}`,
     });
   }
-  // async setEndKickStarterCampaign(contractAddress: string) {
-  //   const contract = new ethers.Contract(
-  //     contractAddress,
-  //     [
-  //       "function endKickStarterCampaign()",
-  //     ],
-  //     this.wallet,
-  //   );
-  //   try {
-  //     const gasEstimate = await contract.endKickStarterCampaign.estimateGas(
-  //       this.wallet.address,
-  //     );
-  //     const gasLimit = parseInt(gasEstimate.toString()) * 2;
-  //     const tx = await contract.endKickStarterCampaign(this.wallet.address, {
-  //       gasLimit: BigInt(gasLimit),
-  //     });
-
-  //     const receipt = await tx.wait();
-
-  //     return receipt;
-  //   } catch (error) {
-
-  //     return new Error(error);
-  //   }
-  // }
   async getSubmissionTime(viaprizeContractAddress: string): Promise<bigint> {
     const abi = [
       {
@@ -517,7 +507,41 @@ export class BlockchainService {
         },
       ],
     });
-
     return results;
+  }
+
+  async getPrizesV2PublicVariables<T extends any>(
+    prizeContractAddresses: string[],
+    variables: ExtractAbiFunctionNames<typeof PRIZE_V2_ABI, 'pure' | 'view'>[],
+  ): Promise<T[][]> {
+    const calls: any = [];
+    prizeContractAddresses.forEach((address) => {
+      const wagmiContract = {
+        address: address as `0x${string}`,
+        abi: PRIZE_V2_ABI,
+      } as const;
+      const contracts = variables.map((variable) => {
+        return {
+          ...wagmiContract,
+          functionName: variable,
+        };
+      });
+      calls.push(...contracts);
+    });
+    const results: MulticallReturnType<any, true> =
+      await this.provider.multicall({
+        contracts: calls,
+      });
+    const final_results_unsliced = results.map((result) => {
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      return result.result;
+    });
+
+    const final = splitArray(final_results_unsliced, variables.length);
+
+    console.log({ final });
+    return final as never as T[][];
   }
 }

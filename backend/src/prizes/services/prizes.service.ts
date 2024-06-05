@@ -4,8 +4,8 @@ import { Paginated, paginate } from 'nestjs-paginate';
 import { User } from 'src/users/entities/user.entity';
 import { generateId } from 'src/utils/generate-id';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import {} from 'typedoc.json';
-import { FindManyOptions, Repository } from 'typeorm';
+import { } from 'typedoc.json';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { Prize } from '../entities/prize.entity';
 import { Submission } from '../entities/submission.entity';
 import { PrizePaginateQuery } from '../entities/types';
@@ -165,6 +165,20 @@ export class PrizesService {
     return await this.prizeRepository.save(prize);
   }
 
+  async findPrizeByContractAddress(contract_address: string) {
+    return await this.prizeRepository.findOneOrFail({
+      where: {
+        contract_address,
+      },
+    });
+  }
+
+  async checkIfPrizeExist(
+    option: FindOptionsWhere<Prize> | FindOptionsWhere<Prize>[],
+  ) {
+    return await this.prizeRepository.exist({ where: option });
+  }
+
   remove(id: number) {
     return `This action removes a #${id} prize`;
   }
@@ -191,6 +205,8 @@ export class PrizesService {
       },
     );
   }
+
+  async getPrize
   async getSlugById(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
       where: {

@@ -240,380 +240,6 @@ export const portalABI = [
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Prize
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const prizeABI = [
-  {
-    stateMutability: 'nonpayable',
-    type: 'constructor',
-    inputs: [
-      { name: '_proposers', internalType: 'address[]', type: 'address[]' },
-      { name: '_platformAdmins', internalType: 'address[]', type: 'address[]' },
-      { name: '_platFormFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_proposerFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_platformAddress', internalType: 'address', type: 'address' },
-      { name: '_submission_time', internalType: 'uint256', type: 'uint256' },
-    ],
-  },
-  { type: 'error', inputs: [], name: 'NotAdmin' },
-  { type: 'error', inputs: [], name: 'NotEnoughFunds' },
-  { type: 'error', inputs: [], name: 'NotYourVote' },
-  { type: 'error', inputs: [], name: 'ReentrancyGuardReentrantCall' },
-  { type: 'error', inputs: [], name: 'RefundAlreadyClaimed' },
-  { type: 'error', inputs: [], name: 'RefundDoesntExist' },
-  { type: 'error', inputs: [], name: 'RewardsAlreadyDistributed' },
-  { type: 'error', inputs: [], name: 'RewardsNotDistributed' },
-  { type: 'error', inputs: [], name: 'SubmissionAlreadyMade' },
-  { type: 'error', inputs: [], name: 'SubmissionDoesntExist' },
-  { type: 'error', inputs: [], name: 'SubmissionPeriodActive' },
-  { type: 'error', inputs: [], name: 'SubmissionPeriodNotActive' },
-  { type: 'error', inputs: [], name: 'VotingPeriodActive' },
-  { type: 'error', inputs: [], name: 'VotingPeriodNotActive' },
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'submitter', internalType: 'address', type: 'address', indexed: true },
-      { name: 'submissionHash', internalType: 'bytes32', type: 'bytes32', indexed: true },
-    ],
-    name: 'SubmissionCreated',
-  },
-  {
-    stateMutability: 'payable',
-    type: 'function',
-    inputs: [],
-    name: 'addFunds',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: 'submitter', internalType: 'address', type: 'address' },
-      { name: 'submissionText', internalType: 'string', type: 'string' },
-    ],
-    name: 'addSubmission',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'allPatrons',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: '_previous_submissionHash', internalType: 'bytes32', type: 'bytes32' },
-      { name: '_new_submissionHash', internalType: 'bytes32', type: 'bytes32' },
-      { name: 'amount', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'change_vote',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'distributed',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'earlyRefund',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'end_submission_period',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [],
-    name: 'end_voting_period',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getAllSubmissions',
-    outputs: [
-      {
-        name: '',
-        internalType: 'struct SubmissionAVLTree.SubmissionInfo[]',
-        type: 'tuple[]',
-        components: [
-          { name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' },
-          { name: 'submissionText', internalType: 'string', type: 'string' },
-          { name: 'votes', internalType: 'uint256', type: 'uint256' },
-          { name: 'submitter', internalType: 'address', type: 'address' },
-          { name: 'funded', internalType: 'bool', type: 'bool' },
-          { name: 'height', internalType: 'int256', type: 'int256' },
-          { name: 'left', internalType: 'uint256', type: 'uint256' },
-          { name: 'right', internalType: 'uint256', type: 'uint256' },
-        ],
-      },
-    ],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getPatrons',
-    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' }],
-    name: 'get_submission_by_hash',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'get_submission_time',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'get_voting_time',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: '_submissionTime', internalType: 'uint256', type: 'uint256' }],
-    name: 'increase_submission_period',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: '_votingTime', internalType: 'uint256', type: 'uint256' }],
-    name: 'increase_voting_period',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'isActive',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'isPatron',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'isPlatformAdmin',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'isProposer',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'patronAmount',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'patronAmountForRefund',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [
-      { name: '', internalType: 'address', type: 'address' },
-      { name: '', internalType: 'bytes32', type: 'bytes32' },
-    ],
-    name: 'patronVotes',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'platformAddress',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'platformAdmins',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'platform_reward',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'proposerAddress',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'proposer_reward',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'proposers',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'refunded',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: '_submission_time', internalType: 'uint256', type: 'uint256' }],
-    name: 'start_submission_period',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: '_voting_time', internalType: 'uint256', type: 'uint256' }],
-    name: 'start_voting_period',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'submission_time',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'totalVotes',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'total_funds',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'total_rewards',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'track_submission_time',
-    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: '_submissionHash', internalType: 'bytes32', type: 'bytes32' },
-      { name: 'amount', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'vote',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'voting_time',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  { stateMutability: 'payable', type: 'receive' },
-] as const;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// PrizeFactory
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const prizeFactoryABI = [
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
-      {
-        name: 'viaPrizeAddress',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-    ],
-    name: 'NewViaPrizeCreated',
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: '_admins', internalType: 'address[]', type: 'address[]' },
-      { name: '_platformAdmins', internalType: 'address[]', type: 'address[]' },
-      { name: '_platFormFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_proposerFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_platformAddress', internalType: 'address', type: 'address' },
-      { name: '_submission_time', internalType: 'uint256', type: 'uint256' },
-      { name: '_contractId', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'createViaPrize',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-] as const;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PrizeFactoryV2
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -728,6 +354,541 @@ export const prizeJudgesFactoryConfig = {
 } as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PrizeV2
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const prizeV2ABI = [
+  {
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+    inputs: [
+      { name: '_proposer', internalType: 'address', type: 'address' },
+      { name: '_platformAdmins', internalType: 'address[]', type: 'address[]' },
+      { name: '_platFormFee', internalType: 'uint256', type: 'uint256' },
+      { name: '_proposerFee', internalType: 'uint256', type: 'uint256' },
+      { name: '_usdcAddress', internalType: 'address', type: 'address' },
+      { name: '_usdcBridgedAddress', internalType: 'address', type: 'address' },
+      { name: '_swapRouter', internalType: 'address', type: 'address' },
+      { name: '_usdcToUsdcePool', internalType: 'address', type: 'address' },
+      { name: '_usdcToEthPool', internalType: 'address', type: 'address' },
+      { name: '_ethPriceAggregator', internalType: 'address', type: 'address' },
+      { name: '_wethToken', internalType: 'address', type: 'address' },
+    ],
+  },
+  { type: 'error', inputs: [], name: 'NotEnoughFunds' },
+  { type: 'error', inputs: [], name: 'NotYourVote' },
+  { type: 'error', inputs: [], name: 'RewardsAlreadyDistributed' },
+  { type: 'error', inputs: [], name: 'SubmissionDoesntExist' },
+  { type: 'error', inputs: [], name: 'SubmissionPeriodActive' },
+  { type: 'error', inputs: [], name: 'SubmissionPeriodNotActive' },
+  { type: 'error', inputs: [], name: 'VotingPeriodActive' },
+  { type: 'error', inputs: [], name: 'VotingPeriodNotActive' },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'proposer', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: 'contractAddress',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'CampaignCreated',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: '_submissionHash',
+        internalType: 'bytes32',
+        type: 'bytes32',
+        indexed: true,
+      },
+      { name: '_contestant', internalType: 'address', type: 'address', indexed: true },
+    ],
+    name: 'DisputeRaised',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'donator', internalType: 'address', type: 'address', indexed: true },
+      { name: 'token_or_nft', internalType: 'address', type: 'address', indexed: true },
+      {
+        name: '_donationType',
+        internalType: 'enum PrizeV2.DonationType',
+        type: 'uint8',
+        indexed: true,
+      },
+      {
+        name: '_tokenType',
+        internalType: 'enum PrizeV2.TokenType',
+        type: 'uint8',
+        indexed: false,
+      },
+      { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
+    ],
+    name: 'Donation',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'contestant', internalType: 'address', type: 'address', indexed: true },
+      { name: 'submissionHash', internalType: 'bytes32', type: 'bytes32', indexed: true },
+    ],
+    name: 'SubmissionCreated',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: 'votedTo', internalType: 'bytes32', type: 'bytes32', indexed: true },
+      { name: 'votedBy', internalType: 'address', type: 'address', indexed: true },
+      { name: 'amountVoted', internalType: 'uint256', type: 'uint256', indexed: false },
+    ],
+    name: 'Voted',
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'PRECISION',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'REFUND_SUBMISSION_HASH',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'VERSION',
+    outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
+  },
+  {
+    stateMutability: 'payable',
+    type: 'function',
+    inputs: [{ name: '_amountUsdc', internalType: 'uint256', type: 'uint256' }],
+    name: 'addBridgedUsdcFunds',
+    outputs: [],
+  },
+  {
+    stateMutability: 'payable',
+    type: 'function',
+    inputs: [{ name: '_amountOutMinimum', internalType: 'uint256', type: 'uint256' }],
+    name: 'addEthFunds',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: 'contestant', internalType: 'address', type: 'address' },
+      { name: 'submissionText', internalType: 'string', type: 'string' },
+    ],
+    name: 'addSubmission',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'payable',
+    type: 'function',
+    inputs: [
+      { name: 'spender', internalType: 'address', type: 'address' },
+      { name: '_amountUsdc', internalType: 'uint256', type: 'uint256' },
+      { name: '_deadline', internalType: 'uint256', type: 'uint256' },
+      { name: 'v', internalType: 'uint8', type: 'uint8' },
+      { name: 's', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'r', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_ethSignedMessageHash', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'addUsdcFunds',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'allFunders',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'bridgedUsdcPool',
+    outputs: [{ name: '', internalType: 'contract IUniswapV3Pool', type: 'address' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_minimumSlipageFeePercentage', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'changeMinimumSlipageFeePercentage',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_previous_submissionHash', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_new_submissionHash', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'v', internalType: 'uint8', type: 'uint8' },
+      { name: 's', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'r', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: '_ethSignedMessageHash', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'changeVote',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_previousSubmissionHash', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_newSubmissionHash', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_funders', internalType: 'address[]', type: 'address[]' },
+      { name: '_amounts', internalType: 'uint256[]', type: 'uint256[]' },
+    ],
+    name: 'disputeChangeVote',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'disputePeriod',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'distributed',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'endDispute',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'endSubmissionPeriod',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'endVotingPeriod',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'ethPriceAggregator',
+    outputs: [
+      { name: '', internalType: 'contract AggregatorV3Interface', type: 'address' },
+    ],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'ethUsdcPool',
+    outputs: [{ name: '', internalType: 'contract IUniswapV3Pool', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'funderAmount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: '', internalType: 'address', type: 'address' },
+      { name: '', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'funderVotes',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getAllFunders',
+    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getAllPlatformAdmins',
+    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getAllSubmissions',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct SubmissionAVLTree.SubmissionInfo[]',
+        type: 'tuple[]',
+        components: [
+          { name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' },
+          { name: 'submissionText', internalType: 'string', type: 'string' },
+          { name: 'usdcVotes', internalType: 'uint256', type: 'uint256' },
+          { name: 'contestant', internalType: 'address', type: 'address' },
+          { name: 'funded', internalType: 'bool', type: 'bool' },
+          { name: 'height', internalType: 'int256', type: 'int256' },
+          { name: 'left', internalType: 'uint256', type: 'uint256' },
+          { name: 'right', internalType: 'uint256', type: 'uint256' },
+        ],
+      },
+    ],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' }],
+    name: 'getSubmissionByHash',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct SubmissionAVLTree.SubmissionInfo',
+        type: 'tuple',
+        components: [
+          { name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' },
+          { name: 'submissionText', internalType: 'string', type: 'string' },
+          { name: 'usdcVotes', internalType: 'uint256', type: 'uint256' },
+          { name: 'contestant', internalType: 'address', type: 'address' },
+          { name: 'funded', internalType: 'bool', type: 'bool' },
+          { name: 'height', internalType: 'int256', type: 'int256' },
+          { name: 'left', internalType: 'uint256', type: 'uint256' },
+          { name: 'right', internalType: 'uint256', type: 'uint256' },
+        ],
+      },
+    ],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getSubmissionTime',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getVotingTime',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: '_submissionTime', internalType: 'uint256', type: 'uint256' }],
+    name: 'increaseSubmissionPeriod',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: '_votingTime', internalType: 'uint256', type: 'uint256' }],
+    name: 'increaseVotingPeriod',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'isActive',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isFunder',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isPlatformAdmin',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isProposer',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isRefundRequestedAddress',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'minimumSlipageFeePercentage',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'platformAddress',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'platformAdmins',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'platformFee',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'proposer',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'proposerFee',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_submissionHash', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'v', internalType: 'uint8', type: 'uint8' },
+      { name: 's', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'r', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_ethSignedMessageHash', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'raiseDispute',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'refundRequestedFunders',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: '_submissionTime', internalType: 'uint256', type: 'uint256' }],
+    name: 'startSubmissionPeriod',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: '_votingTime', internalType: 'uint256', type: 'uint256' }],
+    name: 'startVotingPeriod',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'submissionPeriod',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'swapRouter',
+    outputs: [{ name: '', internalType: 'contract ISwapRouter', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'totalFunds',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'totalRewards',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'totalVotes',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_submissionHash', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: 'v', internalType: 'uint8', type: 'uint8' },
+      { name: 's', internalType: 'bytes32', type: 'bytes32' },
+      { name: 'r', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_ethSignedMessageHash', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'vote',
+    outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'votingPeriod',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  { stateMutability: 'payable', type: 'receive' },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // portalFactory
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -802,60 +963,6 @@ export function prepareWritePortal<
 >(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
   return prepareWriteContract({
     abi: portalABI,
-    ...config,
-  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
-}
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeABI}__.
- */
-export function writePrize<TFunctionName extends string>(
-  config:
-    | Omit<WriteContractPreparedArgs<typeof prizeABI, TFunctionName>, 'abi'>
-    | Omit<WriteContractUnpreparedArgs<typeof prizeABI, TFunctionName>, 'abi'>,
-) {
-  return writeContract({ abi: prizeABI, ...config } as unknown as WriteContractArgs<
-    typeof prizeABI,
-    TFunctionName
-  >);
-}
-
-/**
- * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeABI}__.
- */
-export function prepareWritePrize<
-  TAbi extends readonly unknown[] = typeof prizeABI,
-  TFunctionName extends string = string,
->(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
-  return prepareWriteContract({
-    abi: prizeABI,
-    ...config,
-  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
-}
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeFactoryABI}__.
- */
-export function writePrizeFactory<TFunctionName extends string>(
-  config:
-    | Omit<WriteContractPreparedArgs<typeof prizeFactoryABI, TFunctionName>, 'abi'>
-    | Omit<WriteContractUnpreparedArgs<typeof prizeFactoryABI, TFunctionName>, 'abi'>,
-) {
-  return writeContract({
-    abi: prizeFactoryABI,
-    ...config,
-  } as unknown as WriteContractArgs<typeof prizeFactoryABI, TFunctionName>);
-}
-
-/**
- * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeFactoryABI}__.
- */
-export function prepareWritePrizeFactory<
-  TAbi extends readonly unknown[] = typeof prizeFactoryABI,
-  TFunctionName extends string = string,
->(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
-  return prepareWriteContract({
-    abi: prizeFactoryABI,
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
 }
@@ -970,6 +1077,33 @@ export function prepareWritePrizeJudgesFactory<
   return prepareWriteContract({
     abi: prizeJudgesFactoryABI,
     address: prizeJudgesFactoryAddress[10],
+    ...config,
+  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeV2ABI}__.
+ */
+export function writePrizeV2<TFunctionName extends string>(
+  config:
+    | Omit<WriteContractPreparedArgs<typeof prizeV2ABI, TFunctionName>, 'abi'>
+    | Omit<WriteContractUnpreparedArgs<typeof prizeV2ABI, TFunctionName>, 'abi'>,
+) {
+  return writeContract({ abi: prizeV2ABI, ...config } as unknown as WriteContractArgs<
+    typeof prizeV2ABI,
+    TFunctionName
+  >);
+}
+
+/**
+ * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeV2ABI}__.
+ */
+export function prepareWritePrizeV2<
+  TAbi extends readonly unknown[] = typeof prizeV2ABI,
+  TFunctionName extends string = string,
+>(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
+  return prepareWriteContract({
+    abi: prizeV2ABI,
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
 }
@@ -1591,1097 +1725,6 @@ export function usePreparePortalEndKickStarterCampaign(
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__.
- */
-export function usePrizeRead<
-  TFunctionName extends string,
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi'
-  > = {} as any,
-) {
-  return useContractRead({ abi: prizeABI, ...config } as UseContractReadConfig<
-    typeof prizeABI,
-    TFunctionName,
-    TSelectData
-  >);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"allPatrons"`.
- */
-export function usePrizeAllPatrons<
-  TFunctionName extends 'allPatrons',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'allPatrons',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"distributed"`.
- */
-export function usePrizeDistributed<
-  TFunctionName extends 'distributed',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'distributed',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"getAllSubmissions"`.
- */
-export function usePrizeGetAllSubmissions<
-  TFunctionName extends 'getAllSubmissions',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'getAllSubmissions',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"getPatrons"`.
- */
-export function usePrizeGetPatrons<
-  TFunctionName extends 'getPatrons',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'getPatrons',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"get_submission_by_hash"`.
- */
-export function usePrizeGetSubmissionByHash<
-  TFunctionName extends 'get_submission_by_hash',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'get_submission_by_hash',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"get_submission_time"`.
- */
-export function usePrizeGetSubmissionTime<
-  TFunctionName extends 'get_submission_time',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'get_submission_time',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"get_voting_time"`.
- */
-export function usePrizeGetVotingTime<
-  TFunctionName extends 'get_voting_time',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'get_voting_time',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"isActive"`.
- */
-export function usePrizeIsActive<
-  TFunctionName extends 'isActive',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'isActive',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"isPatron"`.
- */
-export function usePrizeIsPatron<
-  TFunctionName extends 'isPatron',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'isPatron',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"isPlatformAdmin"`.
- */
-export function usePrizeIsPlatformAdmin<
-  TFunctionName extends 'isPlatformAdmin',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'isPlatformAdmin',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"isProposer"`.
- */
-export function usePrizeIsProposer<
-  TFunctionName extends 'isProposer',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'isProposer',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"patronAmount"`.
- */
-export function usePrizePatronAmount<
-  TFunctionName extends 'patronAmount',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'patronAmount',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"patronAmountForRefund"`.
- */
-export function usePrizePatronAmountForRefund<
-  TFunctionName extends 'patronAmountForRefund',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'patronAmountForRefund',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"patronVotes"`.
- */
-export function usePrizePatronVotes<
-  TFunctionName extends 'patronVotes',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'patronVotes',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"platformAddress"`.
- */
-export function usePrizePlatformAddress<
-  TFunctionName extends 'platformAddress',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'platformAddress',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"platformAdmins"`.
- */
-export function usePrizePlatformAdmins<
-  TFunctionName extends 'platformAdmins',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'platformAdmins',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"platform_reward"`.
- */
-export function usePrizePlatformReward<
-  TFunctionName extends 'platform_reward',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'platform_reward',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"proposerAddress"`.
- */
-export function usePrizeProposerAddress<
-  TFunctionName extends 'proposerAddress',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'proposerAddress',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"proposer_reward"`.
- */
-export function usePrizeProposerReward<
-  TFunctionName extends 'proposer_reward',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'proposer_reward',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"proposers"`.
- */
-export function usePrizeProposers<
-  TFunctionName extends 'proposers',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'proposers',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"refunded"`.
- */
-export function usePrizeRefunded<
-  TFunctionName extends 'refunded',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'refunded',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"submission_time"`.
- */
-export function usePrizeSubmissionTime<
-  TFunctionName extends 'submission_time',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'submission_time',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"totalVotes"`.
- */
-export function usePrizeTotalVotes<
-  TFunctionName extends 'totalVotes',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'totalVotes',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"total_funds"`.
- */
-export function usePrizeTotalFunds<
-  TFunctionName extends 'total_funds',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'total_funds',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"total_rewards"`.
- */
-export function usePrizeTotalRewards<
-  TFunctionName extends 'total_rewards',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'total_rewards',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"track_submission_time"`.
- */
-export function usePrizeTrackSubmissionTime<
-  TFunctionName extends 'track_submission_time',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'track_submission_time',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"voting_time"`.
- */
-export function usePrizeVotingTime<
-  TFunctionName extends 'voting_time',
-  TSelectData = ReadContractResult<typeof prizeABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeABI,
-    functionName: 'voting_time',
-    ...config,
-  } as UseContractReadConfig<typeof prizeABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__.
- */
-export function usePrizeWrite<
-  TFunctionName extends string,
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      >
-    : UseContractWriteConfig<typeof prizeABI, TFunctionName, TMode> & {
-        abi?: never;
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, TFunctionName, TMode>({
-    abi: prizeABI,
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"addFunds"`.
- */
-export function usePrizeAddFunds<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'addFunds'>['request']['abi'],
-        'addFunds',
-        TMode
-      > & { functionName?: 'addFunds' }
-    : UseContractWriteConfig<typeof prizeABI, 'addFunds', TMode> & {
-        abi?: never;
-        functionName?: 'addFunds';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'addFunds', TMode>({
-    abi: prizeABI,
-    functionName: 'addFunds',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"addSubmission"`.
- */
-export function usePrizeAddSubmission<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'addSubmission'>['request']['abi'],
-        'addSubmission',
-        TMode
-      > & { functionName?: 'addSubmission' }
-    : UseContractWriteConfig<typeof prizeABI, 'addSubmission', TMode> & {
-        abi?: never;
-        functionName?: 'addSubmission';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'addSubmission', TMode>({
-    abi: prizeABI,
-    functionName: 'addSubmission',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"change_vote"`.
- */
-export function usePrizeChangeVote<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'change_vote'>['request']['abi'],
-        'change_vote',
-        TMode
-      > & { functionName?: 'change_vote' }
-    : UseContractWriteConfig<typeof prizeABI, 'change_vote', TMode> & {
-        abi?: never;
-        functionName?: 'change_vote';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'change_vote', TMode>({
-    abi: prizeABI,
-    functionName: 'change_vote',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"earlyRefund"`.
- */
-export function usePrizeEarlyRefund<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'earlyRefund'>['request']['abi'],
-        'earlyRefund',
-        TMode
-      > & { functionName?: 'earlyRefund' }
-    : UseContractWriteConfig<typeof prizeABI, 'earlyRefund', TMode> & {
-        abi?: never;
-        functionName?: 'earlyRefund';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'earlyRefund', TMode>({
-    abi: prizeABI,
-    functionName: 'earlyRefund',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"end_submission_period"`.
- */
-export function usePrizeEndSubmissionPeriod<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'end_submission_period'
-        >['request']['abi'],
-        'end_submission_period',
-        TMode
-      > & { functionName?: 'end_submission_period' }
-    : UseContractWriteConfig<typeof prizeABI, 'end_submission_period', TMode> & {
-        abi?: never;
-        functionName?: 'end_submission_period';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'end_submission_period', TMode>({
-    abi: prizeABI,
-    functionName: 'end_submission_period',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"end_voting_period"`.
- */
-export function usePrizeEndVotingPeriod<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'end_voting_period'
-        >['request']['abi'],
-        'end_voting_period',
-        TMode
-      > & { functionName?: 'end_voting_period' }
-    : UseContractWriteConfig<typeof prizeABI, 'end_voting_period', TMode> & {
-        abi?: never;
-        functionName?: 'end_voting_period';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'end_voting_period', TMode>({
-    abi: prizeABI,
-    functionName: 'end_voting_period',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"increase_submission_period"`.
- */
-export function usePrizeIncreaseSubmissionPeriod<
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'increase_submission_period'
-        >['request']['abi'],
-        'increase_submission_period',
-        TMode
-      > & { functionName?: 'increase_submission_period' }
-    : UseContractWriteConfig<typeof prizeABI, 'increase_submission_period', TMode> & {
-        abi?: never;
-        functionName?: 'increase_submission_period';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'increase_submission_period', TMode>({
-    abi: prizeABI,
-    functionName: 'increase_submission_period',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"increase_voting_period"`.
- */
-export function usePrizeIncreaseVotingPeriod<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'increase_voting_period'
-        >['request']['abi'],
-        'increase_voting_period',
-        TMode
-      > & { functionName?: 'increase_voting_period' }
-    : UseContractWriteConfig<typeof prizeABI, 'increase_voting_period', TMode> & {
-        abi?: never;
-        functionName?: 'increase_voting_period';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'increase_voting_period', TMode>({
-    abi: prizeABI,
-    functionName: 'increase_voting_period',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"start_submission_period"`.
- */
-export function usePrizeStartSubmissionPeriod<
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'start_submission_period'
-        >['request']['abi'],
-        'start_submission_period',
-        TMode
-      > & { functionName?: 'start_submission_period' }
-    : UseContractWriteConfig<typeof prizeABI, 'start_submission_period', TMode> & {
-        abi?: never;
-        functionName?: 'start_submission_period';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'start_submission_period', TMode>({
-    abi: prizeABI,
-    functionName: 'start_submission_period',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"start_voting_period"`.
- */
-export function usePrizeStartVotingPeriod<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeABI,
-          'start_voting_period'
-        >['request']['abi'],
-        'start_voting_period',
-        TMode
-      > & { functionName?: 'start_voting_period' }
-    : UseContractWriteConfig<typeof prizeABI, 'start_voting_period', TMode> & {
-        abi?: never;
-        functionName?: 'start_voting_period';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'start_voting_period', TMode>({
-    abi: prizeABI,
-    functionName: 'start_voting_period',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"vote"`.
- */
-export function usePrizeVote<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeABI, 'vote'>['request']['abi'],
-        'vote',
-        TMode
-      > & { functionName?: 'vote' }
-    : UseContractWriteConfig<typeof prizeABI, 'vote', TMode> & {
-        abi?: never;
-        functionName?: 'vote';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeABI, 'vote', TMode>({
-    abi: prizeABI,
-    functionName: 'vote',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__.
- */
-export function usePreparePrizeWrite<TFunctionName extends string>(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, TFunctionName>,
-    'abi'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, TFunctionName>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"addFunds"`.
- */
-export function usePreparePrizeAddFunds(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'addFunds'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'addFunds',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'addFunds'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"addSubmission"`.
- */
-export function usePreparePrizeAddSubmission(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'addSubmission'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'addSubmission',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'addSubmission'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"change_vote"`.
- */
-export function usePreparePrizeChangeVote(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'change_vote'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'change_vote',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'change_vote'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"earlyRefund"`.
- */
-export function usePreparePrizeEarlyRefund(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'earlyRefund'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'earlyRefund',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'earlyRefund'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"end_submission_period"`.
- */
-export function usePreparePrizeEndSubmissionPeriod(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'end_submission_period'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'end_submission_period',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'end_submission_period'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"end_voting_period"`.
- */
-export function usePreparePrizeEndVotingPeriod(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'end_voting_period'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'end_voting_period',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'end_voting_period'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"increase_submission_period"`.
- */
-export function usePreparePrizeIncreaseSubmissionPeriod(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'increase_submission_period'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'increase_submission_period',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'increase_submission_period'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"increase_voting_period"`.
- */
-export function usePreparePrizeIncreaseVotingPeriod(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'increase_voting_period'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'increase_voting_period',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'increase_voting_period'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"start_submission_period"`.
- */
-export function usePreparePrizeStartSubmissionPeriod(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'start_submission_period'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'start_submission_period',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'start_submission_period'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"start_voting_period"`.
- */
-export function usePreparePrizeStartVotingPeriod(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'start_voting_period'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'start_voting_period',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'start_voting_period'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeABI}__ and `functionName` set to `"vote"`.
- */
-export function usePreparePrizeVote(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeABI, 'vote'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeABI,
-    functionName: 'vote',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeABI, 'vote'>);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryABI}__.
- */
-export function usePrizeFactoryWrite<
-  TFunctionName extends string,
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeFactoryABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      >
-    : UseContractWriteConfig<typeof prizeFactoryABI, TFunctionName, TMode> & {
-        abi?: never;
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeFactoryABI, TFunctionName, TMode>({
-    abi: prizeFactoryABI,
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryABI}__ and `functionName` set to `"createViaPrize"`.
- */
-export function usePrizeFactoryCreateViaPrize<
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeFactoryABI,
-          'createViaPrize'
-        >['request']['abi'],
-        'createViaPrize',
-        TMode
-      > & { functionName?: 'createViaPrize' }
-    : UseContractWriteConfig<typeof prizeFactoryABI, 'createViaPrize', TMode> & {
-        abi?: never;
-        functionName?: 'createViaPrize';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeFactoryABI, 'createViaPrize', TMode>({
-    abi: prizeFactoryABI,
-    functionName: 'createViaPrize',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryABI}__.
- */
-export function usePreparePrizeFactoryWrite<TFunctionName extends string>(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeFactoryABI, TFunctionName>,
-    'abi'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeFactoryABI,
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeFactoryABI, TFunctionName>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryABI}__ and `functionName` set to `"createViaPrize"`.
- */
-export function usePreparePrizeFactoryCreateViaPrize(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeFactoryABI, 'createViaPrize'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeFactoryABI,
-    functionName: 'createViaPrize',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeFactoryABI, 'createViaPrize'>);
-}
-
-/**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
  * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
@@ -2887,6 +1930,1382 @@ export function usePreparePrizeJudgesFactoryCreateViaPrizeJudges(
     typeof prizeJudgesFactoryABI,
     'createViaPrizeJudges'
   >);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__.
+ */
+export function usePrizeV2Read<
+  TFunctionName extends string,
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi'
+  > = {} as any,
+) {
+  return useContractRead({ abi: prizeV2ABI, ...config } as UseContractReadConfig<
+    typeof prizeV2ABI,
+    TFunctionName,
+    TSelectData
+  >);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"PRECISION"`.
+ */
+export function usePrizeV2Precision<
+  TFunctionName extends 'PRECISION',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'PRECISION',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"REFUND_SUBMISSION_HASH"`.
+ */
+export function usePrizeV2RefundSubmissionHash<
+  TFunctionName extends 'REFUND_SUBMISSION_HASH',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'REFUND_SUBMISSION_HASH',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"VERSION"`.
+ */
+export function usePrizeV2Version<
+  TFunctionName extends 'VERSION',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'VERSION',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"allFunders"`.
+ */
+export function usePrizeV2AllFunders<
+  TFunctionName extends 'allFunders',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'allFunders',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"bridgedUsdcPool"`.
+ */
+export function usePrizeV2BridgedUsdcPool<
+  TFunctionName extends 'bridgedUsdcPool',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'bridgedUsdcPool',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"disputePeriod"`.
+ */
+export function usePrizeV2DisputePeriod<
+  TFunctionName extends 'disputePeriod',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'disputePeriod',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"distributed"`.
+ */
+export function usePrizeV2Distributed<
+  TFunctionName extends 'distributed',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'distributed',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"ethPriceAggregator"`.
+ */
+export function usePrizeV2EthPriceAggregator<
+  TFunctionName extends 'ethPriceAggregator',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'ethPriceAggregator',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"ethUsdcPool"`.
+ */
+export function usePrizeV2EthUsdcPool<
+  TFunctionName extends 'ethUsdcPool',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'ethUsdcPool',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"funderAmount"`.
+ */
+export function usePrizeV2FunderAmount<
+  TFunctionName extends 'funderAmount',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'funderAmount',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"funderVotes"`.
+ */
+export function usePrizeV2FunderVotes<
+  TFunctionName extends 'funderVotes',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'funderVotes',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getAllFunders"`.
+ */
+export function usePrizeV2GetAllFunders<
+  TFunctionName extends 'getAllFunders',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'getAllFunders',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getAllPlatformAdmins"`.
+ */
+export function usePrizeV2GetAllPlatformAdmins<
+  TFunctionName extends 'getAllPlatformAdmins',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'getAllPlatformAdmins',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getAllSubmissions"`.
+ */
+export function usePrizeV2GetAllSubmissions<
+  TFunctionName extends 'getAllSubmissions',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'getAllSubmissions',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getSubmissionByHash"`.
+ */
+export function usePrizeV2GetSubmissionByHash<
+  TFunctionName extends 'getSubmissionByHash',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'getSubmissionByHash',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getSubmissionTime"`.
+ */
+export function usePrizeV2GetSubmissionTime<
+  TFunctionName extends 'getSubmissionTime',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'getSubmissionTime',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getVotingTime"`.
+ */
+export function usePrizeV2GetVotingTime<
+  TFunctionName extends 'getVotingTime',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'getVotingTime',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isActive"`.
+ */
+export function usePrizeV2IsActive<
+  TFunctionName extends 'isActive',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'isActive',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isFunder"`.
+ */
+export function usePrizeV2IsFunder<
+  TFunctionName extends 'isFunder',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'isFunder',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isPlatformAdmin"`.
+ */
+export function usePrizeV2IsPlatformAdmin<
+  TFunctionName extends 'isPlatformAdmin',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'isPlatformAdmin',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isProposer"`.
+ */
+export function usePrizeV2IsProposer<
+  TFunctionName extends 'isProposer',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'isProposer',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isRefundRequestedAddress"`.
+ */
+export function usePrizeV2IsRefundRequestedAddress<
+  TFunctionName extends 'isRefundRequestedAddress',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'isRefundRequestedAddress',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"minimumSlipageFeePercentage"`.
+ */
+export function usePrizeV2MinimumSlipageFeePercentage<
+  TFunctionName extends 'minimumSlipageFeePercentage',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'minimumSlipageFeePercentage',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"platformAddress"`.
+ */
+export function usePrizeV2PlatformAddress<
+  TFunctionName extends 'platformAddress',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'platformAddress',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"platformAdmins"`.
+ */
+export function usePrizeV2PlatformAdmins<
+  TFunctionName extends 'platformAdmins',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'platformAdmins',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"platformFee"`.
+ */
+export function usePrizeV2PlatformFee<
+  TFunctionName extends 'platformFee',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'platformFee',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"proposer"`.
+ */
+export function usePrizeV2Proposer<
+  TFunctionName extends 'proposer',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'proposer',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"proposerFee"`.
+ */
+export function usePrizeV2ProposerFee<
+  TFunctionName extends 'proposerFee',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'proposerFee',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"refundRequestedFunders"`.
+ */
+export function usePrizeV2RefundRequestedFunders<
+  TFunctionName extends 'refundRequestedFunders',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'refundRequestedFunders',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"submissionPeriod"`.
+ */
+export function usePrizeV2SubmissionPeriod<
+  TFunctionName extends 'submissionPeriod',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'submissionPeriod',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"swapRouter"`.
+ */
+export function usePrizeV2SwapRouter<
+  TFunctionName extends 'swapRouter',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'swapRouter',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"totalFunds"`.
+ */
+export function usePrizeV2TotalFunds<
+  TFunctionName extends 'totalFunds',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'totalFunds',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"totalRewards"`.
+ */
+export function usePrizeV2TotalRewards<
+  TFunctionName extends 'totalRewards',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'totalRewards',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"totalVotes"`.
+ */
+export function usePrizeV2TotalVotes<
+  TFunctionName extends 'totalVotes',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'totalVotes',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"votingPeriod"`.
+ */
+export function usePrizeV2VotingPeriod<
+  TFunctionName extends 'votingPeriod',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'votingPeriod',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__.
+ */
+export function usePrizeV2Write<
+  TFunctionName extends string,
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof prizeV2ABI, string>['request']['abi'],
+        TFunctionName,
+        TMode
+      >
+    : UseContractWriteConfig<typeof prizeV2ABI, TFunctionName, TMode> & {
+        abi?: never;
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, TFunctionName, TMode>({
+    abi: prizeV2ABI,
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addBridgedUsdcFunds"`.
+ */
+export function usePrizeV2AddBridgedUsdcFunds<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'addBridgedUsdcFunds'
+        >['request']['abi'],
+        'addBridgedUsdcFunds',
+        TMode
+      > & { functionName?: 'addBridgedUsdcFunds' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'addBridgedUsdcFunds', TMode> & {
+        abi?: never;
+        functionName?: 'addBridgedUsdcFunds';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'addBridgedUsdcFunds', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'addBridgedUsdcFunds',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addEthFunds"`.
+ */
+export function usePrizeV2AddEthFunds<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof prizeV2ABI, 'addEthFunds'>['request']['abi'],
+        'addEthFunds',
+        TMode
+      > & { functionName?: 'addEthFunds' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'addEthFunds', TMode> & {
+        abi?: never;
+        functionName?: 'addEthFunds';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'addEthFunds', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'addEthFunds',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addSubmission"`.
+ */
+export function usePrizeV2AddSubmission<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof prizeV2ABI, 'addSubmission'>['request']['abi'],
+        'addSubmission',
+        TMode
+      > & { functionName?: 'addSubmission' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'addSubmission', TMode> & {
+        abi?: never;
+        functionName?: 'addSubmission';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'addSubmission', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'addSubmission',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addUsdcFunds"`.
+ */
+export function usePrizeV2AddUsdcFunds<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof prizeV2ABI, 'addUsdcFunds'>['request']['abi'],
+        'addUsdcFunds',
+        TMode
+      > & { functionName?: 'addUsdcFunds' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'addUsdcFunds', TMode> & {
+        abi?: never;
+        functionName?: 'addUsdcFunds';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'addUsdcFunds', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'addUsdcFunds',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeMinimumSlipageFeePercentage"`.
+ */
+export function usePrizeV2ChangeMinimumSlipageFeePercentage<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'changeMinimumSlipageFeePercentage'
+        >['request']['abi'],
+        'changeMinimumSlipageFeePercentage',
+        TMode
+      > & { functionName?: 'changeMinimumSlipageFeePercentage' }
+    : UseContractWriteConfig<
+        typeof prizeV2ABI,
+        'changeMinimumSlipageFeePercentage',
+        TMode
+      > & {
+        abi?: never;
+        functionName?: 'changeMinimumSlipageFeePercentage';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'changeMinimumSlipageFeePercentage', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'changeMinimumSlipageFeePercentage',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeVote"`.
+ */
+export function usePrizeV2ChangeVote<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof prizeV2ABI, 'changeVote'>['request']['abi'],
+        'changeVote',
+        TMode
+      > & { functionName?: 'changeVote' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'changeVote', TMode> & {
+        abi?: never;
+        functionName?: 'changeVote';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'changeVote', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'changeVote',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"disputeChangeVote"`.
+ */
+export function usePrizeV2DisputeChangeVote<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'disputeChangeVote'
+        >['request']['abi'],
+        'disputeChangeVote',
+        TMode
+      > & { functionName?: 'disputeChangeVote' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'disputeChangeVote', TMode> & {
+        abi?: never;
+        functionName?: 'disputeChangeVote';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'disputeChangeVote', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'disputeChangeVote',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endDispute"`.
+ */
+export function usePrizeV2EndDispute<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof prizeV2ABI, 'endDispute'>['request']['abi'],
+        'endDispute',
+        TMode
+      > & { functionName?: 'endDispute' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'endDispute', TMode> & {
+        abi?: never;
+        functionName?: 'endDispute';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'endDispute', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'endDispute',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endSubmissionPeriod"`.
+ */
+export function usePrizeV2EndSubmissionPeriod<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'endSubmissionPeriod'
+        >['request']['abi'],
+        'endSubmissionPeriod',
+        TMode
+      > & { functionName?: 'endSubmissionPeriod' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'endSubmissionPeriod', TMode> & {
+        abi?: never;
+        functionName?: 'endSubmissionPeriod';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'endSubmissionPeriod', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'endSubmissionPeriod',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endVotingPeriod"`.
+ */
+export function usePrizeV2EndVotingPeriod<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'endVotingPeriod'
+        >['request']['abi'],
+        'endVotingPeriod',
+        TMode
+      > & { functionName?: 'endVotingPeriod' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'endVotingPeriod', TMode> & {
+        abi?: never;
+        functionName?: 'endVotingPeriod';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'endVotingPeriod', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'endVotingPeriod',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"increaseSubmissionPeriod"`.
+ */
+export function usePrizeV2IncreaseSubmissionPeriod<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'increaseSubmissionPeriod'
+        >['request']['abi'],
+        'increaseSubmissionPeriod',
+        TMode
+      > & { functionName?: 'increaseSubmissionPeriod' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'increaseSubmissionPeriod', TMode> & {
+        abi?: never;
+        functionName?: 'increaseSubmissionPeriod';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'increaseSubmissionPeriod', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'increaseSubmissionPeriod',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"increaseVotingPeriod"`.
+ */
+export function usePrizeV2IncreaseVotingPeriod<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'increaseVotingPeriod'
+        >['request']['abi'],
+        'increaseVotingPeriod',
+        TMode
+      > & { functionName?: 'increaseVotingPeriod' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'increaseVotingPeriod', TMode> & {
+        abi?: never;
+        functionName?: 'increaseVotingPeriod';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'increaseVotingPeriod', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'increaseVotingPeriod',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"raiseDispute"`.
+ */
+export function usePrizeV2RaiseDispute<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof prizeV2ABI, 'raiseDispute'>['request']['abi'],
+        'raiseDispute',
+        TMode
+      > & { functionName?: 'raiseDispute' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'raiseDispute', TMode> & {
+        abi?: never;
+        functionName?: 'raiseDispute';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'raiseDispute', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'raiseDispute',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"startSubmissionPeriod"`.
+ */
+export function usePrizeV2StartSubmissionPeriod<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'startSubmissionPeriod'
+        >['request']['abi'],
+        'startSubmissionPeriod',
+        TMode
+      > & { functionName?: 'startSubmissionPeriod' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'startSubmissionPeriod', TMode> & {
+        abi?: never;
+        functionName?: 'startSubmissionPeriod';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'startSubmissionPeriod', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'startSubmissionPeriod',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"startVotingPeriod"`.
+ */
+export function usePrizeV2StartVotingPeriod<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'startVotingPeriod'
+        >['request']['abi'],
+        'startVotingPeriod',
+        TMode
+      > & { functionName?: 'startVotingPeriod' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'startVotingPeriod', TMode> & {
+        abi?: never;
+        functionName?: 'startVotingPeriod';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'startVotingPeriod', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'startVotingPeriod',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"vote"`.
+ */
+export function usePrizeV2Vote<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof prizeV2ABI, 'vote'>['request']['abi'],
+        'vote',
+        TMode
+      > & { functionName?: 'vote' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'vote', TMode> & {
+        abi?: never;
+        functionName?: 'vote';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'vote', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'vote',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__.
+ */
+export function usePreparePrizeV2Write<TFunctionName extends string>(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, TFunctionName>,
+    'abi'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addBridgedUsdcFunds"`.
+ */
+export function usePreparePrizeV2AddBridgedUsdcFunds(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addBridgedUsdcFunds'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'addBridgedUsdcFunds',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addBridgedUsdcFunds'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addEthFunds"`.
+ */
+export function usePreparePrizeV2AddEthFunds(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addEthFunds'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'addEthFunds',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addEthFunds'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addSubmission"`.
+ */
+export function usePreparePrizeV2AddSubmission(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addSubmission'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'addSubmission',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addSubmission'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addUsdcFunds"`.
+ */
+export function usePreparePrizeV2AddUsdcFunds(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addUsdcFunds'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'addUsdcFunds',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addUsdcFunds'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeMinimumSlipageFeePercentage"`.
+ */
+export function usePreparePrizeV2ChangeMinimumSlipageFeePercentage(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'changeMinimumSlipageFeePercentage'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'changeMinimumSlipageFeePercentage',
+    ...config,
+  } as UsePrepareContractWriteConfig<
+    typeof prizeV2ABI,
+    'changeMinimumSlipageFeePercentage'
+  >);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeVote"`.
+ */
+export function usePreparePrizeV2ChangeVote(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'changeVote'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'changeVote',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'changeVote'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"disputeChangeVote"`.
+ */
+export function usePreparePrizeV2DisputeChangeVote(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'disputeChangeVote'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'disputeChangeVote',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'disputeChangeVote'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endDispute"`.
+ */
+export function usePreparePrizeV2EndDispute(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'endDispute'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'endDispute',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'endDispute'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endSubmissionPeriod"`.
+ */
+export function usePreparePrizeV2EndSubmissionPeriod(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'endSubmissionPeriod'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'endSubmissionPeriod',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'endSubmissionPeriod'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endVotingPeriod"`.
+ */
+export function usePreparePrizeV2EndVotingPeriod(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'endVotingPeriod'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'endVotingPeriod',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'endVotingPeriod'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"increaseSubmissionPeriod"`.
+ */
+export function usePreparePrizeV2IncreaseSubmissionPeriod(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'increaseSubmissionPeriod'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'increaseSubmissionPeriod',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'increaseSubmissionPeriod'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"increaseVotingPeriod"`.
+ */
+export function usePreparePrizeV2IncreaseVotingPeriod(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'increaseVotingPeriod'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'increaseVotingPeriod',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'increaseVotingPeriod'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"raiseDispute"`.
+ */
+export function usePreparePrizeV2RaiseDispute(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'raiseDispute'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'raiseDispute',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'raiseDispute'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"startSubmissionPeriod"`.
+ */
+export function usePreparePrizeV2StartSubmissionPeriod(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'startSubmissionPeriod'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'startSubmissionPeriod',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'startSubmissionPeriod'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"startVotingPeriod"`.
+ */
+export function usePreparePrizeV2StartVotingPeriod(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'startVotingPeriod'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'startVotingPeriod',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'startVotingPeriod'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"vote"`.
+ */
+export function usePreparePrizeV2Vote(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'vote'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'vote',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'vote'>);
 }
 
 /**

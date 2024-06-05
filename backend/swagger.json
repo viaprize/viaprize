@@ -45,144 +45,6 @@
         "x-nestia-method": "POST"
       }
     },
-    "/pacts": {
-      "post": {
-        "tags": [],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePact"
-              }
-            }
-          },
-          "required": true,
-          "x-nestia-encrypted": false
-        },
-        "responses": {
-          "201": {
-            "description": "The created pact object.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Pact"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "x-nestia-namespace": "pacts.create",
-        "x-nestia-jsDocTags": [
-          {
-            "name": "summary",
-            "text": [
-              {
-                "text": "Create Pact by passing pact data",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "param",
-            "text": [
-              {
-                "text": "createUserType",
-                "kind": "parameterName"
-              },
-              {
-                "text": " ",
-                "kind": "space"
-              },
-              {
-                "text": "- The user creation Interface.",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "see",
-            "text": [
-              {
-                "text": "{CreatePact}",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "returns",
-            "text": [
-              {
-                "text": "The created pact object.",
-                "kind": "text"
-              }
-            ]
-          }
-        ],
-        "x-nestia-method": "POST"
-      }
-    },
-    "/pacts/{address}": {
-      "get": {
-        "tags": [],
-        "parameters": [
-          {
-            "name": "address",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "description": "",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns all pacts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Pact.Nullable"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "x-nestia-namespace": "pacts.findOne",
-        "x-nestia-jsDocTags": [
-          {
-            "name": "summary",
-            "text": [
-              {
-                "text": "Get all pacts of application",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "see",
-            "text": [
-              {
-                "text": "{Pact}",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "returns",
-            "text": [
-              {
-                "text": "Returns all pacts",
-                "kind": "text"
-              }
-            ]
-          }
-        ],
-        "x-nestia-method": "GET"
-      }
-    },
     "/portals/clear_cache": {
       "get": {
         "tags": [],
@@ -284,10 +146,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "DESC",
-                "ASC"
-              ]
+              "enum": ["DESC", "ASC"]
             },
             "description": "",
             "required": false
@@ -3504,10 +3363,20 @@
         "x-nestia-method": "GET"
       }
     },
-    "/prizes/clear_cache": {
+    "/prizes/address/{id}": {
       "get": {
         "tags": [],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -3521,7 +3390,7 @@
             "x-nestia-encrypted": false
           }
         },
-        "x-nestia-namespace": "prizes.clear_cache.clearCache",
+        "x-nestia-namespace": "prizes.address.address",
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
       }
@@ -3947,243 +3816,35 @@
         ],
         "x-nestia-method": "GET"
       }
+    },
+    "/wallet/prize/{contract_address}/start_submission": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.prize.start_submission.startSubmission",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
     }
   },
   "components": {
     "schemas": {
-      "CreatePact": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "Name of the pact i.e the title, which is gotten in the pact form",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "johnsmith",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "terms": {
-            "description": "Terms of the pact i.e the Description",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "test",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "address": {
-            "description": "Address of the pact on the blockchain",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "0xe7399b79838acc8caaa567fF84e5EFd0d11BB010",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "maxLength": 44,
-            "x-typia-typeTags": [
-              {
-                "target": "string",
-                "name": "MaxLength<44>",
-                "kind": "maxLength",
-                "value": 44,
-                "validate": "$input.length <= 44",
-                "exclusive": true
-              }
-            ]
-          },
-          "transactionHash": {
-            "description": "Transaction hash of the pact on the blockchain",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "0x2e8937d96e633c82df2f8f5a19aafa132795496cd98d0ca3d3c336a6c79f09e4",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "maxLength": 66,
-            "x-typia-typeTags": [
-              {
-                "target": "string",
-                "name": "MaxLength<66>",
-                "kind": "maxLength",
-                "value": 66,
-                "validate": "$input.length <= 66",
-                "exclusive": true
-              }
-            ]
-          },
-          "blockHash": {
-            "description": "Block hash of the pact on the blockchain",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "0x2e8937d96e633c82df2f8f5a19aafa132795496cd98d0ca3d3c336a6c79f09e4",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "string"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "name",
-          "terms",
-          "address",
-          "transactionHash"
-        ],
-        "description": "Interface of Create Pactt , using this interface it create a new pact in pact.service.ts",
-        "x-typia-jsDocTags": [
-          {
-            "name": "see",
-            "text": [
-              {
-                "text": "",
-                "kind": "text"
-              },
-              {
-                "text": "{@link ",
-                "kind": "link"
-              },
-              {
-                "text": "PactsService ",
-                "kind": "linkText"
-              },
-              {
-                "text": "}",
-                "kind": "link"
-              }
-            ]
-          }
-        ]
-      },
-      "Pact": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "name": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "terms": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "address": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "transactionHash": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "blockHash": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "id",
-          "name",
-          "terms",
-          "address",
-          "transactionHash",
-          "blockHash"
-        ],
-        "x-typia-jsDocTags": []
-      },
-      "Pact.Nullable": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "name": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "terms": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "address": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "transactionHash": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "blockHash": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          }
-        },
-        "nullable": true,
-        "required": [
-          "id",
-          "name",
-          "terms",
-          "address",
-          "transactionHash",
-          "blockHash"
-        ],
-        "x-typia-jsDocTags": []
-      },
       "Http200Response": {
         "type": "object",
         "properties": {
@@ -4194,9 +3855,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "message"
-        ],
+        "required": ["message"],
         "x-typia-jsDocTags": []
       },
       "CreatePortalDto": {
@@ -4214,10 +3873,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "address",
-          "proposal_id"
-        ],
+        "required": ["address", "proposal_id"],
         "x-typia-jsDocTags": []
       },
       "Portals": {
@@ -4844,12 +4500,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "id",
-          "comment",
-          "user",
-          "prize"
-        ],
+        "required": ["id", "comment", "user", "prize"],
         "x-typia-jsDocTags": []
       },
       "PrizeProposals": {
@@ -5167,10 +4818,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5367,9 +5015,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data"
-        ],
+        "required": ["data"],
         "x-typia-jsDocTags": []
       },
       "Contribution": {
@@ -5392,11 +5038,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "contributor",
-          "amount",
-          "donationTime"
-        ],
+        "required": ["contributor", "amount", "donationTime"],
         "x-typia-jsDocTags": []
       },
       "CreateCommentDto": {
@@ -5409,9 +5051,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "comment"
-        ],
+        "required": ["comment"],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o1": {
@@ -5432,10 +5072,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5457,10 +5094,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5582,10 +5216,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5599,9 +5230,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "comment"
-        ],
+        "required": ["comment"],
         "x-typia-jsDocTags": []
       },
       "UpdatePortalPropsalDto": {
@@ -5690,9 +5319,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "platformFeePercentage"
-        ],
+        "required": ["platformFeePercentage"],
         "x-typia-jsDocTags": []
       },
       "UpdatePlatformFeeDto": {
@@ -5705,9 +5332,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "platformFeePercentage"
-        ],
+        "required": ["platformFeePercentage"],
         "x-typia-jsDocTags": []
       },
       "TestTrigger": {
@@ -5720,9 +5345,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "date"
-        ],
+        "required": ["date"],
         "x-typia-jsDocTags": []
       },
       "ExtraPortal": {
@@ -5745,11 +5368,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "id",
-          "funds",
-          "externalId"
-        ],
+        "required": ["id", "funds", "externalId"],
         "x-typia-jsDocTags": []
       },
       "ExtraDonationPortalData": {
@@ -5783,13 +5402,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "id",
-          "donatedAt",
-          "donor",
-          "usdValue",
-          "externalId"
-        ],
+        "required": ["id", "donatedAt", "donor", "usdValue", "externalId"],
         "x-typia-jsDocTags": []
       },
       "PickPortalsslug": {
@@ -5802,9 +5415,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "slug"
-        ],
+        "required": ["slug"],
         "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
@@ -5823,10 +5434,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "address",
-          "proposal_id"
-        ],
+        "required": ["address", "proposal_id"],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o4": {
@@ -5847,10 +5455,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6284,10 +5889,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6355,9 +5957,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "comment"
-        ],
+        "required": ["comment"],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o6": {
@@ -6378,10 +5978,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6403,10 +6000,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6562,10 +6156,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "data",
-          "hasNextPage"
-        ],
+        "required": ["data", "hasNextPage"],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6579,9 +6170,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "slug"
-        ],
+        "required": ["slug"],
         "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
@@ -6612,10 +6201,7 @@
                 "kind": "format",
                 "value": "email",
                 "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
-                "exclusive": [
-                  "format",
-                  "pattern"
-                ]
+                "exclusive": ["format", "pattern"]
               }
             ]
           },
@@ -6730,13 +6316,7 @@
           }
         },
         "nullable": false,
-        "required": [
-          "email",
-          "authId",
-          "name",
-          "username",
-          "bio"
-        ],
+        "required": ["email", "authId", "name", "username", "bio"],
         "description": "Interface of Create User , using this interface it create a new user in",
         "x-typia-jsDocTags": [
           {
@@ -6777,10 +6357,7 @@
                 "kind": "format",
                 "value": "email",
                 "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
-                "exclusive": [
-                  "format",
-                  "pattern"
-                ]
+                "exclusive": ["format", "pattern"]
               }
             ]
           },

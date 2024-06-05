@@ -696,11 +696,18 @@ export class PrizesController {
     };
   }
 
-  @Get('/clear_cache')
-  async clearCache(): Promise<Http200Response> {
-    await this.cacheManager.reset();
+  @Get('/address/:id')
+  async address(@TypedParam('id') id: string): Promise<Http200Response> {
+    const startingPeriod =
+      await this.blockchainService.getPrizesV2PublicVariables(
+        [id],
+        ['submissionPeriod', 'getSubmissionTime', 'votingPeriod'],
+      );
+
+    console.log(startingPeriod);
+
     return {
-      message: 'Cache Cleared',
+      message: `Prize proposal with id ${id} has been updated`,
     };
   }
 }
