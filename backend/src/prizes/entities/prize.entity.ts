@@ -79,7 +79,7 @@ export class Prize {
 
   @ManyToMany(() => User, (user) => user.id)
   @JoinTable()
-  participants: User[];
+  contestants: User[];
 
   @OneToMany(() => Submission, (submission) => submission.prize)
   submissions: Submission[];

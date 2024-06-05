@@ -48,7 +48,7 @@ export default async function FetchPrizes() {
               parseFloat(formatEther(BigInt(prize.balance))) * usdToEth.ethereum.usd
             ).toFixed(2)}
             profileName={prize.user.name}
-            participants={prize.participants?.length || 0}
+            contestants={prize.participants?.length || 0}
             title={prize.title}
             key={prize.id}
             id={prize.id}

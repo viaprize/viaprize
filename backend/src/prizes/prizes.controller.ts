@@ -332,8 +332,8 @@ export class PrizesController {
     };
   }
 
-  @Get('/:slug/participants')
-  async getParticipants(@TypedParam('slug') slug: string): Promise<User[]> {
+  @Get('/:slug/contestants')
+  async getContestants(@TypedParam('slug') slug: string): Promise<User[]> {
     const res = await this.prizeService.getParcipants(slug);
     return res;
   }

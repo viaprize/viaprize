@@ -33,7 +33,7 @@ interface ExploreCardProps {
   submissionDays: number;
   startingTimeBlockchain: number;
   slug: string;
-  participants: number;
+  contestants: number;
 }
 
 function ExploreCard({
@@ -50,7 +50,7 @@ function ExploreCard({
   startingTimeBlockchain,
   submissionDays,
   slug,
-  participants,
+  contestants,
 }: ExploreCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const deadlineString = calculateDeadline(
@@ -133,8 +133,8 @@ function ExploreCard({
               </Text>
             )}
           </Text>
-          <p className="text-sm text-gray-500">
-            {participants} {participants === 1 ? 'Participant' : 'Participants'}
+          <p className="text-md font-bold">
+            {contestants} {contestants === 1 ? 'Contestant' : 'Contestants'}
           </p>
 
           <Button

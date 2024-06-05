@@ -82,11 +82,11 @@ export class PrizesService {
         slug,
       },
       relations: {
-        participants: true,
+        contestants: true,
       },
     });
 
-    return prize.participants;
+    return prize.contestants;
   }
 
   async addPariticpant(slug: string, user: User) {
@@ -95,11 +95,11 @@ export class PrizesService {
         slug,
       },
       relations: {
-        participants: true,
+        contestants: true,
       },
     });
 
-    prize.participants.push(user);
+    prize.contestants.push(user);
     return await this.prizeRepository.save(prize);
   }
 
@@ -143,7 +143,7 @@ export class PrizesService {
       take: paginationOptions.limit,
       relations: {
         user: true,
-        participants: true,
+        contestants: true,
       },
       where: paginationOptions.where,
     });
