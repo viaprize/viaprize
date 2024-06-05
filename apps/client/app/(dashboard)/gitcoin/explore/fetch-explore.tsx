@@ -11,12 +11,10 @@ export default async function FetchGitcoins() {
           key={application.nodeId}
           imageURL={`https://ipfs.io/ipfs/${application.metadata.application.project.bannerImg}`}
           title={application.project.name}
-          by={`${application.createdByAddress.slice(0, 6)}...${application.createdByAddress.slice(-4)}`}
           description={application.metadata.application.project.description}
           raised={application.totalAmountDonatedInUsd}
           contributors={application.uniqueDonorsCount}
-          link={`/gitcoin/${application.nodeId}`}
-        />
+          link={`/gitcoin/${application.nodeId}`} />
       ))}
     </>
   );

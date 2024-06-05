@@ -98,6 +98,8 @@ export interface Application {
 export interface RoundByNodeIdResponse {
   roundByNodeId: {
     id: string;
+    donationsEndTime: string;
+    donationsStartTime: string;
     applications: Application[];
   };
 }

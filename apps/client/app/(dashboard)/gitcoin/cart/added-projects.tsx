@@ -34,7 +34,7 @@ export default function AddedProjects() {
                   </p>
                 </div>
                 <div className="flex items-center justify-center">
-                  <NumberInput placeholder="10" prefix="$" />
+                  <NumberInput placeholder="10" />
                   <Text fw="bold" ml="sm">
                     USD
                   </Text>

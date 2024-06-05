@@ -5,7 +5,6 @@ export interface CartItem {
   id: string;
   imageURL: string;
   title: string;
-  by: string;
   description: string;
   raised: number;
   contributors: number;

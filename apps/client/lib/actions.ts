@@ -8,6 +8,8 @@ const FETCH_ROUND_BY_NODE_ID = gql`
   query MyQuery($nodeId: ID!) {
     roundByNodeId(nodeId: $nodeId) {
       id
+      donationsStartTime
+      donationsEndTime
       applications(filter: { status: { equalTo: APPROVED } }) {
         chainId
         anchorAddress

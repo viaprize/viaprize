@@ -20,7 +20,7 @@ export default function StepperInfo() {
           label="Add to cart"
           description={
             <div>
-              Add all the campaigns you <br /> like to domate in the cart.
+              Add all the campaigns you'd <br /> ike to donate to in the cart.
             </div>
           }
         />
@@ -29,7 +29,8 @@ export default function StepperInfo() {
           label="Allocate Donation Money"
           description={
             <div>
-              Choose how much you want to <br /> donate to each campaign.
+              Choose how much you would like
+              <br /> to donate to each campaign
             </div>
           }
         />
@@ -38,7 +39,7 @@ export default function StepperInfo() {
           label="Credit Card Payment"
           description={
             <div>
-              Pay with your credit card <br /> to donate to the campaigns.
+              Use your credit card <br /> to donate to the campaigns
             </div>
           }
         />
@@ -48,15 +49,15 @@ export default function StepperInfo() {
           label="Matching Funds"
           description={
             <div>
-              To know more about the <br /> matching funds
+              To learn more about <br />the matching funds
               <Link
                 target="_blank"
                 rel="noopener noreferrer"
-                href="https://www.google.com"
+                href="https://www.wtfisqf.com/"
                 className="text-blue-400 underline"
               >
                 {' '}
-                See here
+                see here
               </Link>
             </div>
           }

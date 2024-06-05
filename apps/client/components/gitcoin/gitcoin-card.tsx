@@ -22,7 +22,6 @@ import { toast } from 'sonner';
 export default function GitcoinCard({
   id,
   imageURL,
-  by,
   title,
   description,
   raised,
@@ -37,7 +36,7 @@ export default function GitcoinCard({
 
   const handleAddToCart = () => {
     if (!isItemInCart(id)) {
-      addItem({ id, imageURL, by, title, description, raised, contributors, link });
+      addItem({ id, imageURL, title, description, raised, contributors, link });
       toast.success(`${title} added to cart`);
     }
   };
@@ -79,10 +78,7 @@ export default function GitcoinCard({
             {title}
           </Text>
         )}
-        <Badge color="blue" variant="light" p="sm" my="sm">
-          {by}
-        </Badge>
-
+    
         <div>
           <p className="text-md h-20 overflow-y-auto overflow-x-hidden">
             {renderToPlainText(description).substring(0, 130)}...
