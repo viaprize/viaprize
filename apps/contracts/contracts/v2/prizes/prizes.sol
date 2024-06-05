@@ -13,7 +13,6 @@ import "../../helperContracts/ierc20_weth.sol";
 contract PrizeV2 {
     uint256 public constant PRECISION = 10000;
 
-
     bytes32 public constant REFUND_SUBMISSION_HASH = keccak256(abi.encodePacked("REFUND"));
 
     /// @notice this will be the total amount of funds raised
@@ -80,15 +79,16 @@ contract PrizeV2 {
     /// @notice this will be the address of the platform
     address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
-
-
     /// @notice / @notice _submissionTree contract
     SubmissionAVLTree private _submissionTree;
 
     uint256 public totalVotes;
     uint256 public disputePeriod;
+    uint256 private nonceTracker;
 
-    
+    // bytes32 public  DOMAIN_SEPARATOR = 0x26d9c34bb1a1c312f69c53b2d93b8be20faafba63af2438c6811713c9b1f933f;
+    // bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+
 
 
     /// @notice error for not enough funds to vote
@@ -254,6 +254,16 @@ contract PrizeV2 {
         votingTime = block.timestamp + _votingTime * 1 minutes;
     }
 
+    function FINAL_HASH(uint256 nonce) private view returns (bytes32) {
+        bytes32 structHash = keccak256(
+            abi.encode(nonce)
+        );
+        bytes32 hash = keccak256(
+            abi.encodePacked("\x19\x01", address(this), structHash)
+        );
+        return  hash;
+    }
+
     /// @notice Distribute rewards
     function _distributeRewards() private {
         if(distributed == true) revert RewardsAlreadyDistributed();
@@ -320,9 +330,10 @@ contract PrizeV2 {
 
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 amount, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) onlyActive public {
+    function vote(bytes32 _submissionHash, uint256 amount, uint8 v, bytes32 s, bytes32 r) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
-        address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
+        bytes32 hash = FINAL_HASH(nonceTracker+=1);
+        address sender =  ecrecover(hash, v, r, s);
         if (amount > funderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
@@ -347,7 +358,6 @@ contract PrizeV2 {
             _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
             
             totalVotes = totalVotes.add(amountToSubmission);
-            // rename this to somehting not related to funder ( contestant balance)
             SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(_submissionHash, true);
