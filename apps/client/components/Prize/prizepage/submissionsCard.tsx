@@ -196,7 +196,7 @@ export default function SubmissionsCard({
         <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
           <div className="flex items-center justify-between w-full">
             <div className="flex gap-2">
-              <Link href={`/prize/${prize?.id}`}>
+              <Link href={`/prize/${prize?.slug}`}>
                 <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
                   {prize?.title}
                 </Text>
