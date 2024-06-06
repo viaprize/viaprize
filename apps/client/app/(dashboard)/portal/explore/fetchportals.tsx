@@ -93,7 +93,7 @@ export default async function FetchPortals({
         <>
           <p />
           <div className="w-full flex justify-center my-4 h-full">
-            <p>No portals found</p>
+            <p>No Fundraisers found</p>
           </div>
         </>
       )}

@@ -15,12 +15,12 @@ export default function PortalAboutHero() {
           height={50}
           className="absolute left-[-5px] top-[-30px] w-10 lg:w-[50px]"
         /> */}
-        <h1 className="bold-52 lg:bold-88 mt-2 mb-0">Portals</h1>
+        <h1 className="bold-52 lg:bold-88 mt-2 mb-0">Fundraisers</h1>
         <p className="regular-16 mt-1 text-gray-30 xl:max-w-[520px]">
-          Portals are a type of crowdfunding campaign with two main options
+          Fundraisers are a type of crowdfunding campaign with two main options
         </p>
         <div className="flex flex-col w-full gap-3 sm:flex-row">
-          <Button color="primary">Explore Portals</Button>
+          <Button color="primary">Explore Fundraisers</Button>
           {/* <Button
             rightSection={<Image src="/play.svg" alt="play" width={24} height={24} />}
           >

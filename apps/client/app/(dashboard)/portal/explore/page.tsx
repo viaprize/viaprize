@@ -13,18 +13,18 @@ export default function ExplorePortal({ searchParams }: { searchParams: SearchPa
       <div className="sm:flex justify-between">
         <div>
           <Text size="25px" fw="bolder" mt="md" ml="md">
-            Explore Portal
+            Explore Fundraiser Campaigns
           </Text>
           <Text size="md" fw="initial" mt="xs" ml="md">
-            you can explore portal and work on them
+            you can explore fundraisers and work on them
           </Text>
         </div>
         <Group mt="md" mb="md" className="max-sm:ml-7">
           <Link href="/portal/about">
-            <Button component="a">About Portals</Button>
+            <Button component="a">About Fundraisers</Button>
           </Link>
           <Link href="/portal/create">
-            <Button component="a">Create Portal</Button>
+            <Button component="a">Create Fundraisers</Button>
           </Link>
         </Group>
       </div>

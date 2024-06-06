@@ -35,14 +35,14 @@ export default function AllPortals({ params }: { params: { id: string } }) {
   if (!data || data.data.length === 0)
     return (
       <Shell>
-        <Text>You dont have any Portals</Text>
+        <Text>You dont have any Fundraisers</Text>
         <Button
           onClick={() => {
             router.push('/portal/create');
           }}
           className="mt-4"
         >
-          Create Portal
+          Create Fundraisers
         </Button>
       </Shell>
     );
