@@ -96,7 +96,7 @@ export default function Profile({ params }: { params: { id: string } }) {
           </div>
         </Box>
       </div>
-      {params?.id === userData?.authId && (
+      {params?.id === userData?.username && (
         <>
           <Divider orientation="vertical" className="hidden md:block" />
           <SendCard />

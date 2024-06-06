@@ -36,7 +36,9 @@ export class SubmissionService {
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: paginationOptions.where,
-      relations: ['user'],
+      relations: {
+        user: true,
+      },
     });
   }
 

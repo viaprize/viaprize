@@ -29,6 +29,7 @@ export default function ProfilePrizeSubmission({ params }: { params: { id: strin
           time=""
           wallet={submission.submitterAddress}
           key={submission.id}
+          prize={submission.prize}
         />
       ))}
     </div>

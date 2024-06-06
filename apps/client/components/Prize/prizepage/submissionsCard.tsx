@@ -1,5 +1,6 @@
 /* eslint-disable no-implicit-coercion */
 import { useFunderBalance } from '@/components/hooks/useFunderBalance';
+import type { Prize } from '@/lib/api';
 import { prepareWritePrize, writePrize } from '@/lib/smartContract';
 import { chain } from '@/lib/wagmi';
 import {
@@ -37,6 +38,7 @@ interface SubmissionsCardProps {
   showVote: boolean;
   judges?: string[];
   won?: string;
+  prize?: Prize;
 }
 export default function SubmissionsCard({
   fullname,
@@ -50,6 +52,7 @@ export default function SubmissionsCard({
   showVote = true,
   judges,
   won,
+  prize,
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { address } = useAccount();
@@ -69,11 +72,11 @@ export default function SubmissionsCard({
 
   const onProfile = fullname.length === 0;
 
-  console.log(fullname.length,onProfile, 'fullname.length')
+  console.log(fullname.length, onProfile, 'fullname.length');
 
   return (
     <Card className="flex flex-col justify-center gap-3 my-2">
-      {!onProfile && (
+      {!onProfile ? (
         <>
           <Modal opened={opened} onClose={close} title="Voting For this submission">
             <Stack>
@@ -193,6 +196,24 @@ export default function SubmissionsCard({
             </div>
           </div>
         </>
+      ) : (
+        <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+          <div className="flex items-center justify-between w-full">
+            <div className='flex gap-2'>
+              <Link href={`/prize/${prize?.id}`}>
+                  <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+                    {prize?.title}
+                  </Text>
+              </Link>
+            </div>
+            {won ? <Badge bg="green">{won}</Badge> : null}
+          </div>
+          <div>
+            <Text c="dimmed" fz="sm">
+              {time}
+            </Text>
+          </div>
+        </div>
       )}
       <Text lineClamp={4}>
         {extractPlainTextFromEditor(description).slice(0, 350)}....

@@ -14,13 +14,13 @@ import type { AppContext, AppProps } from 'next/app';
 import NextApp from 'next/app';
 import Head from 'next/head';
 import { Router } from 'next/router';
+import Script from 'next/script';
 import { useEffect, useState, type ReactElement, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { theme } from 'utils/theme';
 import '../styles/globals.css';
 import '../styles/index.css';
-import Script from 'next/script';
 
 const queryClient = new QueryClient();
 
@@ -108,7 +108,13 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           <QueryClientProvider client={queryClient}>
             <MantineProvider theme={theme} defaultColorScheme="auto">
               <NavigationProvider>
-                {getLayout(loading ? <OwnLoader /> : <Component {...pageProps} />)}
+                {getLayout(
+                  loading ? (
+                    <OwnLoader />
+                  ) : (
+                    <Component {...pageProps} suppressHydrationWarning />
+                  ),
+                )}
               </NavigationProvider>
             </MantineProvider>
           </QueryClientProvider>

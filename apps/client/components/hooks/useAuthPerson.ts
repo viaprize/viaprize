@@ -10,6 +10,9 @@ export default function useAuthPerson() {
     getUserByUserName(appUser?.username || ''),
   );
 
-  const isProfileOwner = appUser?.id === userData?.authId;
+  console.log('userData', userData);
+  console.log('appUser', appUser)
+
+  const isProfileOwner = appUser?.authId === userData?.authId;
   return isProfileOwner;
 }
