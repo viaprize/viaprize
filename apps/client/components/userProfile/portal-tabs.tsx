@@ -9,8 +9,6 @@ const authSelect = [
   { label: 'Proposals', value: 'all-proposals' },
 ];
 
-const select = [{ label: 'Portals', value: 'all-portals' }];
-
 export default function PortalTabs({ params }: { params: { id: string } }) {
   const [value, setValue] = useState('all-portals');
   const isProfileOwner = useAuthPerson();
@@ -19,17 +17,19 @@ export default function PortalTabs({ params }: { params: { id: string } }) {
     <div className="w-full">
       <div className="w-full flex justify-between">
         <Title className="text-lg md:text-2xl">Portals</Title>
-        <Select
-          value={value}
-          data={isProfileOwner ? authSelect : select}
-          defaultValue="all-portals"
-          allowDeselect={false}
-          onChange={(val) => {
-            if (val) {
-              setValue(val);
-            }
-          }}
-        />
+        {isProfileOwner ? (
+          <Select
+            value={value}
+            data={authSelect}
+            defaultValue="all-portals"
+            allowDeselect={false}
+            onChange={(val) => {
+              if (val) {
+                setValue(val);
+              }
+            }}
+          />
+        ) : null}
       </div>
       <div className="mt-2">
         {value === 'all-portals' && <AllPortals params={params} />}

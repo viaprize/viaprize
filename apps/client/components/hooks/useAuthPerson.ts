@@ -1,13 +1,15 @@
 import { useQuery } from 'react-query';
 import useAppUser from './useAppUser';
 import { useUser } from './useUser';
+import { useParams } from 'next/navigation';
 
 export default function useAuthPerson() {
   const { appUser } = useAppUser();
   const { getUserByUserName } = useUser();
+  const params = useParams<{id:string}>();
 
-  const { data: userData, refetch: fetchUser } = useQuery('getCurrentByUserName', () =>
-    getUserByUserName(appUser?.username || ''),
+  const { data: userData } = useQuery('getCurrentByUserName', () =>
+    getUserByUserName(params?.id || ''),
   );
 
   console.log('userData', userData);
