@@ -34,6 +34,7 @@ export class PrizesService {
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
   ) {}
+
   async findAll(options?: FindManyOptions<Prize> | undefined) {
     return this.prizeRepository.find(options);
   }
@@ -75,6 +76,33 @@ export class PrizesService {
 
   getSmartContractDetails() {}
 
+  async getParcipants(slug: string) {
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        slug,
+      },
+      relations: {
+        contestants: true,
+      },
+    });
+
+    return prize.contestants;
+  }
+
+  async addPariticpant(slug: string, user: User) {
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        slug,
+      },
+      relations: {
+        contestants: true,
+      },
+    });
+
+    prize.contestants.push(user);
+    return await this.prizeRepository.save(prize);
+  }
+
   async findOne(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
       where: {
@@ -113,7 +141,10 @@ export class PrizesService {
     return this.prizeRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
-      relations: ['user'],
+      relations: {
+        user: true,
+        contestants: true,
+      },
       where: paginationOptions.where,
     });
   }

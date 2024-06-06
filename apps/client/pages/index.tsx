@@ -165,32 +165,6 @@ export default function Home() {
               image="/home/team-working-animation-project.jpg"
             />
           </div>
-          {/* <h2 className="text-black mt-6">Some More Stats</h2>
-          <Flex
-            className="backdrop-blur-md rounded-lg py-6 px-5 mb-4 text-black w-full"
-            style={{
-              background: `rgba(125, 185, 206, 0.15)`,
-            }}
-            justify="space-evenly"
-            align="center"
-          >
-            <div>
-              <h3 className="my-0">$50 million</h3>
-              <p className="my-0">Total Prize Money</p>
-            </div>
-            <div>
-              <h3 className="my-0">100+</h3>
-              <p className="my-0">Total Prizes</p>
-            </div>
-            <div>
-              <h3 className="my-0">500+</h3>
-              <p className="my-0">Total Participants</p>
-            </div>
-            <div>
-              <h3 className="my-0">500+</h3>
-              <p className="my-0">Total Participants</p>
-            </div>
-          </Flex> */}
         </div>
         <section className="my-24 flex items-center flex-col gap-3 w-full">
           <h1 className="text-3xl font-bold">viaPrize&apos;s Core Functions</h1>

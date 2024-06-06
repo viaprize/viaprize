@@ -2543,6 +2543,73 @@
         "x-nestia-method": "PATCH"
       }
     },
+    "/prizes/{slug}/participate": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.participate.participate",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/prizes/{slug}/contestants": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.contestants.getContestants",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/prizes/{id}/comment": {
       "post": {
         "tags": [],
@@ -3434,6 +3501,28 @@
             "name": "returns"
           }
         ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/clear_cache": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.clear_cache.clearCache",
+        "x-nestia-jsDocTags": [],
         "x-nestia-method": "GET"
       }
     },
@@ -4676,6 +4765,14 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "contestants": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
           "submissions": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -4719,6 +4816,7 @@
           "updated_at",
           "images",
           "title",
+          "contestants",
           "submissions",
           "slug",
           "user"
@@ -5893,6 +5991,14 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "contestants": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
           "submissions": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -5940,6 +6046,7 @@
           "updated_at",
           "images",
           "title",
+          "contestants",
           "submissions",
           "slug",
           "user"

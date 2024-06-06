@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-boolean-literal-compare */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -5,23 +6,25 @@
 import useAppUser from '@/components/hooks/useAppUser';
 import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import type { ConvertUSD } from '@/lib/types';
+import { calculateDeadline } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
+  Badge,
   Button,
   Center,
   Group,
   NumberInput,
   Stack,
-  Title,
   Text,
-  Badge,
+  Title,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { IconCircleCheck, IconRefresh } from '@tabler/icons-react';
 import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { parseEther } from 'viem';
@@ -35,8 +38,6 @@ import StartSubmission from './buttons/startSubmission';
 import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import Submissions from './submissions';
-import { calculateDeadline } from '@/lib/utils';
-import Link from 'next/link';
 
 function FundCard({ contractAddress }: { contractAddress: string }) {
   const { address } = useAccount();
@@ -64,7 +65,7 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       onCancel: () => {
         console.log('Cancel');
       },
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
       onConfirm: async () => {
         await loginUser();
       },
@@ -151,7 +152,6 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       <Button
         disabled={!value}
         loading={sendLoading}
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises -- will replace later
         onClick={async () => {
           if (!address) {
             openDeleteModal();
@@ -188,7 +188,6 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
             );
             window.location.reload();
           } catch (e: unknown) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
             toast.error((e as any)?.message);
           } finally {
             setSendLoading(false);
@@ -220,8 +219,7 @@ export default function PrizePageComponent({
           <Badge size="lg" color="green">
             Won
           </Badge>
-        ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-        deadlineString === 'Time is up!' && prize.distributed === false ? (
+        ) : deadlineString === 'Time is up!' && prize.distributed === false ? (
           <Badge size="lg" color="yellow">
             Refunded
           </Badge>
@@ -249,6 +247,7 @@ export default function PrizePageComponent({
       />
       <Center my="xl">
         <PrizePageTabs
+          username={prize.user.username}
           avatar={prize.user.avatar}
           email={prize.user.email}
           name={prize.user.name}
