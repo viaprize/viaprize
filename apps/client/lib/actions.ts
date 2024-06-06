@@ -52,7 +52,6 @@ export const fetchRoundByNodeId = async (
   return data;
 };
 
-
 const FETCH_APPLICATION_BY_NODE_ID = gql`
   query MyQuery($nodeId: ID!) {
     applicationByNodeId(nodeId: $nodeId) {

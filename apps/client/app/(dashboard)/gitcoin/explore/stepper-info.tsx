@@ -14,7 +14,7 @@ export default function StepperInfo() {
         Follow the steps below to donate
       </Text>
 
-      <Stepper className="mx-2 mb-3" active={0}>
+      <Stepper className="mx-2 mb-3"  active={-1} >
         <Stepper.Step
           icon={<IconShoppingCartFilled />}
           label="Add to cart"
@@ -49,7 +49,8 @@ export default function StepperInfo() {
           label="Matching Funds"
           description={
             <div>
-              To learn more about <br />the matching funds
+              To learn more about <br />
+              the matching funds
               <Link
                 target="_blank"
                 rel="noopener noreferrer"

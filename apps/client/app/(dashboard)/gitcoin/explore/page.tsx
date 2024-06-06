@@ -1,56 +1,49 @@
-import Paging from '@/components/custom/paging';
-import {
-  Badge,
-  Button,
-  Divider,
-  Flex,
-  Pill,
-  Stepper,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import { Badge, Button, Card, Divider, Pill, Text, TextInput } from '@mantine/core';
 import {
   IconCalendarMonth,
   IconCircleCheckFilled,
-  IconCreditCardFilled,
-  IconDna,
   IconSearch,
-  IconShoppingCartFilled,
   IconShoppingCart,
 } from '@tabler/icons-react';
-import StepperInfo from './stepper-info';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchGitcoins from './fetch-explore';
+import StepperInfo from './stepper-info';
 
 export default function ExploreGitcoin() {
   return (
     <div>
       <div className="max-w-screen-xl w-screen">
-        <div className="lg:flex items-center justify-between">
-          <div className="lg:flex items-center ">
+        <div className="lg:flex items-center space-y-4 lg:space-y-0 justify-between">
+          <div className="lg:flex items-center space-y-4 lg:space-y-0">
             <Text size="25px" fw="bolder" ml="md">
               Hypercerts Ecosystem Round
             </Text>
-            <Badge
-              leftSection={<IconCircleCheckFilled />}
-              color="teal"
-              size="md"
-              ml="md"
-              p="sm"
-            >
+            <Badge leftSection={<IconCircleCheckFilled />} color="teal" size="lg" ml="md">
               Credit Card Donation Available
             </Badge>
 
-            <Link className="mx-2" href="/gitcoin/cart">
-              <Button leftSection={<IconShoppingCart />} variant="outline">
+            <Link href="/gitcoin/cart">
+              <Button
+                className="ml-4 mt-2 lg:mt-0 "
+                leftSection={<IconShoppingCart />}
+                variant="outline"
+              >
                 View my cart
               </Button>
             </Link>
           </div>
-          <div className="bg-gray-200 p-3 rounded-md font-semibold w-[200px] ml-2 lg:mx-2 ">
+          <Card
+            radius="sm"
+            p="md"
+            mx="md"
+            className="font-bold w-40 lg:w-70 bg-[#666666]  text-white"
+            style={{
+              color: 'white',
+            }}
+          >
             60,000 USDC <br /> Matching Pool
-          </div>
+          </Card>
         </div>
         <div className="sm:flex justify-between items-center my-2">
           <div className="flex items-center space-x-2 ml-4 ">
@@ -60,11 +53,11 @@ export default function ExploreGitcoin() {
             <IconCalendarMonth />
             <div className="lg:flex">
               <Pill size="md" color="gray">
-                2024/04/2315:00 EAT
+                2024/04/23{' | '} 5:00 EAT
               </Pill>{' '}
               -{' '}
               <Pill size="md" color="gray">
-                2024/05/0802:59 EAT
+                2024/05/08 {' | '}2:59 EAT
               </Pill>
             </div>
           </div>
@@ -82,11 +75,11 @@ export default function ExploreGitcoin() {
         </p>
         <StepperInfo />
         <Divider />
-        <TextInput
+        {/* <TextInput
           leftSection={<IconSearch size="1rem" />}
           placeholder="Search"
           className="lg:w-[300px] lg:ml-4 mx-4 my-3"
-        />
+        /> */}
 
         <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
           <Suspense fallback={<div>Loading...</div>}>

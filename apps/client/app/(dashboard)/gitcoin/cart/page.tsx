@@ -8,7 +8,11 @@ export default function CartPage() {
       <h2>Cart</h2>
       <Divider my="md" />
       <h3>Hypercerts Ecosystem Round</h3>
-      <div className="w-full lg:flex space-y-3 lg:gap-4 justify-between">
+      <div className='text-md mb-3'>
+        Your donation to each project must be valued at 3 USD or more to be eligible for
+        matching.
+      </div>
+      <div className="w-full lg:flex space-y-3 mb-4 lg:gap-4 justify-between">
         <AddedProjects />
         <SummaryCard />
       </div>

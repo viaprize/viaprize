@@ -16,7 +16,7 @@ export default function AddedProjects() {
   const { items, removeItem, clearCart } = useCartStore();
 
   return (
-    <Card padding="lg" radius="lg" withBorder className="bg-gray-100 w-full">
+    <Card padding="lg" radius="lg" withBorder className=" w-full">
       {items.length === 0 ? (
         <Text>Your cart is empty.</Text>
       ) : (
@@ -29,12 +29,12 @@ export default function AddedProjects() {
                   <Text fw="bold" size="lg">
                     {item.title}
                   </Text>
-                  <p className="text-md h-20 overflow-y-auto overflow-x-hidden">
+                  <p className="text-md ">
                     {renderToPlainText(item.description).substring(0, 130)}...
                   </p>
                 </div>
                 <div className="flex items-center justify-center">
-                  <NumberInput placeholder="10" />
+                  <NumberInput placeholder="10" min={0} />
                   <Text fw="bold" ml="sm">
                     USD
                   </Text>

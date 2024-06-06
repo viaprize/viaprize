@@ -58,7 +58,6 @@ export interface Project {
   createdByAddress: string;
 }
 
-
 export interface ApplicationMetadata {
   signature: string;
   application: {
@@ -119,5 +118,3 @@ export interface SingleApplication {
 export interface ApplicationByNodeIdResponse {
   applicationByNodeId: SingleApplication;
 }
-
-

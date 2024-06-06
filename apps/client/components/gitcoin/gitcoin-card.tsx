@@ -78,7 +78,7 @@ export default function GitcoinCard({
             {title}
           </Text>
         )}
-    
+
         <div>
           <p className="text-md h-20 overflow-y-auto overflow-x-hidden">
             {renderToPlainText(description).substring(0, 130)}...
