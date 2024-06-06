@@ -3,8 +3,8 @@ pragma solidity ^0.8.0;
 
 import "./SubmissionAVLTree.sol";
 library SubmissionLibrary {
-    function deploySubmission() external returns(address) {
-        SubmissionAVLTree new_SubmissionAVLTree = new SubmissionAVLTree();
+    function deploySubmission(address _owner) external returns(address) {
+        SubmissionAVLTree new_SubmissionAVLTree = new SubmissionAVLTree(_owner);
         return address(new_SubmissionAVLTree);
     }
 }

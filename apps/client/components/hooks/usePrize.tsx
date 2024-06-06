@@ -14,7 +14,7 @@ export const usePrize = () => {
   };
 
   const getContestants = async (prizeId: string) => {
-    const contestants = await(await backendApi()).prizes.contestantsDetail(prizeId);
+    const contestants = await (await backendApi()).prizes.contestantsDetail(prizeId);
     return contestants.data;
   };
 

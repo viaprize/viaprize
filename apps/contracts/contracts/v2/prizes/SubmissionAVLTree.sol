@@ -1,19 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../helperContracts/owner.sol";
+import "../../helperContracts/owner.sol";
 
-contract SubmissionAVLTree {
-
-   mapping(bytes32 => mapping(address => uint256)) public submissionFunderBalances;
-
+contract SubmissionAVLTree is Ownable{
+    mapping(bytes32 => mapping(address => uint256)) public submissionFunderBalances;
     struct SubmissionInfo {
         bytes32 submissionHash;
         string submissionText;
         uint256 usdcVotes;
-        uint256 usdcBridgedVotes;
-        address submitter;
-        // uint256 threshhold;
+        address contestant;
         bool funded;
         int256 height;
         uint256 left;
@@ -22,6 +18,8 @@ contract SubmissionAVLTree {
 
     SubmissionInfo[] public submissions;
     uint256 public root;
+
+    constructor(address initialOwner) Ownable(initialOwner) {}
 
     function height(uint256 node) private view returns (int256) {
         if (node == 0) {
@@ -60,6 +58,10 @@ contract SubmissionAVLTree {
         return pivot;
     }
 
+    function updateFunderVotes(bytes32 _submissionHash, address funder, uint256 balances) onlyOwner external {
+        submissionFunderBalances[_submissionHash][funder] = balances;
+    }
+
     function balance(uint256 node) private returns (uint256) {
         int256 balanceFactorNode = balanceFactor(node);
 
@@ -80,9 +82,9 @@ contract SubmissionAVLTree {
         return node;
     }
 
-    function add_submission(address submitter, bytes32 submissionHash, string memory submissionText) external {
+    function addSubmission(address contestant, bytes32 submissionHash, string memory submissionText) onlyOwner external {
         uint256 newNodeIndex = submissions.length;
-        submissions.push(SubmissionInfo(submissionHash, submissionText, 0, 0, submitter, false, 0, 0, 0));
+        submissions.push(SubmissionInfo(submissionHash, submissionText, 0, contestant, false, 0, 0, 0));
 
         if (newNodeIndex == 0) {
             root = newNodeIndex;
@@ -90,11 +92,6 @@ contract SubmissionAVLTree {
             root = insert(root, newNodeIndex);
         }
     }
-
-    function updateFunderBalance(bytes32 _submissionHash, address funder, uint256 balances) external {
-        submissionFunderBalances[_submissionHash][funder] = balances;
-    }
-
     function insert(uint256 node, uint256 newNode) private returns (uint256) {
         if (node == 0) {
             return newNode;
@@ -126,15 +123,6 @@ contract SubmissionAVLTree {
         return submissions;
     }
 
-    // function getSubmissionUsdcVote(bytes32 submissionHash) public view returns (uint256){
-    //     uint256 node = find(root, submissionHash);
-    //     return submissions[node].usdcVotes;
-    // }
-
-    // function getSubmissionUsdcBridgedVote(bytes32 submissionHash) public view returns (uint256){
-    //     uint256 node = find(root, submissionHash);
-    //     return submissions[node].usdcBridgedVotes;
-    // }
 
     function find(uint256 node, bytes32 submissionHash) private view returns (uint256) {
         if (node == 0) {
@@ -153,44 +141,25 @@ contract SubmissionAVLTree {
     }
 
     //thresholdCrossed is a function that returns true if the number of votes is greater than or equal to the threshold, and takes in a submissionhash
-    function usdcVotesGreaterThanZero(bytes32 submissionHash) external view returns (bool) {
+    function usdcVotesGreaterThanZero(bytes32 submissionHash)  external view returns (bool) {
         uint256 node = find(root, submissionHash);
         return submissions[node].usdcVotes > 0;
     }
 
-    function usdcBridgedVotesGreaterThanZero(bytes32 submissionHash) external view returns (bool) {
-        uint256 node = find(root, submissionHash);
-        return submissions[node].usdcBridgedVotes > 0;
-    }
-
     //setThresholdCrossed also takes in a submissionhash and sets the funded boolean to true
-    function setFundedTrue(bytes32 submissionHash, bool status) external {
+    function setFundedTrue(bytes32 submissionHash, bool status)  onlyOwner external {
         uint256 node = find(root, submissionHash);
         submissions[node].funded = status;
     }
 
-    function addUsdcVotes(bytes32 submissionHash, uint256 _votes) external {
-        uint256 node = find(root, submissionHash);
+    function addUsdcVotes(bytes32 submissionHash, uint256 _votes) onlyOwner external {
+        uint256 node = find(root, submissionHash); 
         unchecked {
         submissions[node].usdcVotes += _votes;
         }
     }
 
-    function addUsdcBridgedVotes(bytes32 submissionHash, uint256 _votes) external {
-        uint256 node = find(root, submissionHash);
-        unchecked {
-        submissions[node].usdcBridgedVotes += _votes;
-        }
-    }
-
-    function subUsdcVotes(bytes32 submissionHash, uint256 votes) external {
-        uint256 node = find(root, submissionHash);
-        unchecked {
-        submissions[node].usdcVotes -= votes;
-        }
-    }
-
-    function subBridgedUsdcVotes(bytes32 submissionHash, uint256 votes) external {
+    function subUsdcVotes(bytes32 submissionHash, uint256 votes) onlyOwner external {
         uint256 node = find(root, submissionHash);
         unchecked {
         submissions[node].usdcVotes -= votes;
@@ -198,7 +167,7 @@ contract SubmissionAVLTree {
     }
 
 
-    function inOrderTraversal() public view returns (SubmissionInfo[] memory) {
+    function inOrderTraversal() public view returns (SubmissionInfo[] memory)  {
         bytes32[] memory submissionHashes = new bytes32[](submissions.length);
         inOrderTraversalHelper(root, submissionHashes, 0);
         SubmissionInfo[] memory submissionInfo = new SubmissionInfo[](submissions.length);

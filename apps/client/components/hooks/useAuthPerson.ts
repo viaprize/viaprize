@@ -11,7 +11,7 @@ export default function useAuthPerson() {
   );
 
   console.log('userData', userData);
-  console.log('appUser', appUser)
+  console.log('appUser', appUser);
 
   const isProfileOwner = appUser?.authId === userData?.authId;
   return isProfileOwner;

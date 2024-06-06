@@ -7,7 +7,6 @@ import { useUser } from '../hooks/useUser';
 import { useQuery } from 'react-query';
 
 export default function AuthWrap({ children }: { children: React.ReactNode }) {
-
   const isProfileOwner = useAuthPerson();
   if (!isProfileOwner) {
     return null;

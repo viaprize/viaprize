@@ -74,6 +74,56 @@ export default function SubmissionsCard({
 
   console.log(fullname.length, onProfile, 'fullname.length');
 
+  const vote = async () => {
+    try {
+      await refetch();
+
+      if (
+        parseInt(debounced.toString()) >
+        parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
+      ) {
+        toast.error('You cannot vote more than your balance');
+        return;
+      }
+      setSendLoading(true);
+
+      const { request } = await prepareWritePrize({
+        address: contractAddress as `0x${string}`,
+        functionName: 'vote',
+        args: [hash as `0x${string}`, parseEther(debounced)],
+      });
+      const { hash: transactionHash } = await writePrize(request);
+      console.log({ transactionHash }, 'transactionHash');
+      toast.success(
+        <div className="flex items-center ">
+          <IconCircleCheck />{' '}
+          <Text fw="md" size="sm" className="ml-2">
+            {' '}
+            Voted Successfully
+          </Text>
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`https://optimistic.etherscan.io/tx/${transactionHash}`}
+          >
+            <Button variant="transparent" className="text-blue-400 underline">
+              See here
+            </Button>
+          </Link>
+        </div>,
+      );
+      setSendLoading(false);
+      close();
+      window.location.reload();
+    } catch (e) {
+      console.log(e, 'error');
+      toast.error('Error while voting');
+      window.location.reload();
+    } finally {
+      setSendLoading(false);
+    }
+  };
+
   return (
     <Card className="flex flex-col justify-center gap-3 my-2">
       {!onProfile ? (
@@ -107,61 +157,7 @@ export default function SubmissionsCard({
                 }}
               />
               {showVote ? (
-                <Button
-                  onClick={async () => {
-                    try {
-                      await refetch();
-
-                      if (
-                        parseInt(debounced.toString()) >
-                        parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
-                      ) {
-                        toast.error('You cannot vote more than your balance');
-                        return;
-                      }
-                      setSendLoading(true);
-
-                      const { request } = await prepareWritePrize({
-                        address: contractAddress as `0x${string}`,
-                        functionName: 'vote',
-                        args: [hash as `0x${string}`, parseEther(debounced)],
-                      });
-                      const { hash: transactionHash } = await writePrize(request);
-                      console.log({ transactionHash }, 'transactionHash');
-                      toast.success(
-                        <div className="flex items-center ">
-                          <IconCircleCheck />{' '}
-                          <Text fw="md" size="sm" className="ml-2">
-                            {' '}
-                            Voted Successfully
-                          </Text>
-                          <Link
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href={`https://optimistic.etherscan.io/tx/${transactionHash}`}
-                          >
-                            <Button
-                              variant="transparent"
-                              className="text-blue-400 underline"
-                            >
-                              See here
-                            </Button>
-                          </Link>
-                        </div>,
-                      );
-                      setSendLoading(false);
-                      close();
-                    } catch (e) {
-                      console.log(e, 'error');
-                      toast.error('Error while voting');
-                    } finally {
-                      setSendLoading(false);
-                      window.location.reload();
-                    }
-                  }}
-                  disabled={!value}
-                  loading={sendLoading}
-                >
+                <Button onClick={vote} disabled={!value} loading={sendLoading}>
                   Vote!
                 </Button>
               ) : null}
@@ -199,11 +195,11 @@ export default function SubmissionsCard({
       ) : (
         <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
           <div className="flex items-center justify-between w-full">
-            <div className='flex gap-2'>
+            <div className="flex gap-2">
               <Link href={`/prize/${prize?.id}`}>
-                  <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
-                    {prize?.title}
-                  </Text>
+                <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+                  {prize?.title}
+                </Text>
               </Link>
             </div>
             {won ? <Badge bg="green">{won}</Badge> : null}
