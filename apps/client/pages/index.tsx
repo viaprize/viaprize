@@ -103,7 +103,7 @@ export default function Home() {
                   className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]"
                   color="primary"
                 >
-                  Explore Portals
+                  Explore Fundraisers
                 </Button>
               </Link>
             </Flex>

@@ -128,8 +128,8 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         <div className="w-full flex justify-center min-w-0">
           <Center className="max-w-screen-xl w-full">{children}</Center>
         </div>
-        <Footer />
       </AppShell.Main>
+      <Footer />
     </AppShell>
   );
 }

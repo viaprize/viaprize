@@ -37,7 +37,7 @@ export default function AllPortals({ params }: { params: { id: string } }) {
   if (!data || data.data.length === 0)
     return (
       <Shell>
-        <Text>No Portals</Text>
+        <Text>No Fundraisers</Text>
         {isProfileOwner ? (
           <Button
             onClick={() => {
@@ -45,7 +45,7 @@ export default function AllPortals({ params }: { params: { id: string } }) {
             }}
             className="mt-4"
           >
-            Create Portal
+            Create Fundraisers
           </Button>
         ) : null}
       </Shell>
