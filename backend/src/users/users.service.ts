@@ -149,7 +149,11 @@ export class UsersService {
       where: {
         username: username,
       },
-      relations: ['submissions'],
+      relations: {
+        submissions: {
+          prize: true,
+        },
+      },
     });
     if (!user)
       throw new HttpException(

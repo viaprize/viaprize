@@ -1,4 +1,5 @@
 import { Avatar, Card, Text } from '@mantine/core';
+import Link from 'next/link';
 
 interface PrizeFunderCardProps {
   name: string;
@@ -6,9 +7,14 @@ interface PrizeFunderCardProps {
   budget?: number;
   walletAddress?: string;
   avatar: string;
+  username: string;
 }
 
-export default function PrizeFunderCard({ name, avatar }: PrizeFunderCardProps) {
+export default function PrizeFunderCard({
+  name,
+  avatar,
+  username,
+}: PrizeFunderCardProps) {
   return (
     <Card
       shadow="xs"
@@ -20,9 +26,11 @@ export default function PrizeFunderCard({ name, avatar }: PrizeFunderCardProps) 
     >
       <Avatar radius="md" alt="creator" className="rounded-sm" src={avatar} />
       <div>
-        <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
-          {name}
-        </Text>
+        <Link href={`/profile/${username}`}>
+          <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+            {name}
+          </Text>
+        </Link>
         {/* <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
             Proposer Email: {email}
           </Text> */}

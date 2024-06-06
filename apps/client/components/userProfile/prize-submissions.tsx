@@ -15,7 +15,7 @@ export default function ProfilePrizeSubmission({ params }: { params: { id: strin
     return <Shell>You dont have any Submissions</Shell>;
 
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
       {data.data.map((submission) => (
         <SubmissionsCard
           allowVoting={false}
@@ -29,6 +29,7 @@ export default function ProfilePrizeSubmission({ params }: { params: { id: strin
           time=""
           wallet={submission.submitterAddress}
           key={submission.id}
+          prize={submission.prize}
         />
       ))}
     </div>

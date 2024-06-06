@@ -46,6 +46,9 @@ export class MailService {
       templateName: 'submission.hbs',
       context: {
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -60,6 +63,9 @@ export class MailService {
         name,
         proposalTitle: title,
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -74,6 +80,9 @@ export class MailService {
         name,
         proposalTitle,
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -86,6 +95,9 @@ export class MailService {
       context: {
         name,
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -108,6 +120,9 @@ export class MailService {
         proposalTitle,
 
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }

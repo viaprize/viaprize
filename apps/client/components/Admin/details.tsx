@@ -31,7 +31,12 @@ export default function ViewDetails({
         <h2>{title}</h2>
         <TextEditor disabled richtext={description} />
       </div>
-      <PrizeFunderCard name={user.name} email={user.email} avatar={user.avatar} />
+      <PrizeFunderCard
+        username={user.username}
+        name={user.name}
+        email={user.email}
+        avatar={user.avatar}
+      />
       <div>
         Admin wallets
         {admins.map((admin, index) => (
