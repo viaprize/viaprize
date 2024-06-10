@@ -244,7 +244,7 @@ export const portalABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export const prizeFactoryV2ABI = [
   {
@@ -284,14 +284,14 @@ export const prizeFactoryV2ABI = [
 ] as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export const prizeFactoryV2Address = {
-  10: '0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45',
+  10: '0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4',
 } as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export const prizeFactoryV2Config = {
   address: prizeFactoryV2Address,
@@ -455,6 +455,28 @@ export const prizeV2ABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [
+      { name: '_nonce', internalType: 'uint256', type: 'uint256' },
+      { name: '_old_submission', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+      { name: '_new_submission', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'CHANGE_VOTE_HASH',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: '_nonce', internalType: 'uint256', type: 'uint256' },
+      { name: '_submission', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'DISPUTE_HASH',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [],
     name: 'PRECISION',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
@@ -472,6 +494,17 @@ export const prizeV2ABI = [
     inputs: [],
     name: 'VERSION',
     outputs: [{ name: '', internalType: 'uint8', type: 'uint8' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [
+      { name: '_nonce', internalType: 'uint256', type: 'uint256' },
+      { name: '_submission', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'VOTE_HASH',
+    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
   },
   {
     stateMutability: 'payable',
@@ -545,7 +578,6 @@ export const prizeV2ABI = [
       { name: 's', internalType: 'bytes32', type: 'bytes32' },
       { name: 'r', internalType: 'bytes32', type: 'bytes32' },
       { name: 'amount', internalType: 'uint256', type: 'uint256' },
-      { name: '_ethSignedMessageHash', internalType: 'bytes32', type: 'bytes32' },
     ],
     name: 'changeVote',
     outputs: [],
@@ -729,6 +761,13 @@ export const prizeV2ABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isContestant',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
     name: 'isFunder',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
@@ -758,6 +797,13 @@ export const prizeV2ABI = [
     type: 'function',
     inputs: [],
     name: 'minimumSlipageFeePercentage',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'nonce',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
@@ -803,7 +849,6 @@ export const prizeV2ABI = [
       { name: 'v', internalType: 'uint8', type: 'uint8' },
       { name: 's', internalType: 'bytes32', type: 'bytes32' },
       { name: 'r', internalType: 'bytes32', type: 'bytes32' },
-      { name: '_ethSignedMessageHash', internalType: 'bytes32', type: 'bytes32' },
     ],
     name: 'raiseDispute',
     outputs: [],
@@ -869,11 +914,10 @@ export const prizeV2ABI = [
     type: 'function',
     inputs: [
       { name: '_submissionHash', internalType: 'bytes32', type: 'bytes32' },
-      { name: 'amount', internalType: 'uint256', type: 'uint256' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
       { name: 'v', internalType: 'uint8', type: 'uint8' },
       { name: 's', internalType: 'bytes32', type: 'bytes32' },
       { name: 'r', internalType: 'bytes32', type: 'bytes32' },
-      { name: '_ethSignedMessageHash', internalType: 'bytes32', type: 'bytes32' },
     ],
     name: 'vote',
     outputs: [],
@@ -884,6 +928,17 @@ export const prizeV2ABI = [
     inputs: [],
     name: 'votingPeriod',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_tokenAddress', internalType: 'address', type: 'address' },
+      { name: '_to', internalType: 'address', type: 'address' },
+      { name: '_amount', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'withdrawTokens',
+    outputs: [],
   },
   { stateMutability: 'payable', type: 'receive' },
 ] as const;
@@ -970,7 +1025,7 @@ export function prepareWritePortal<
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export function writePrizeFactoryV2<
   TFunctionName extends string,
@@ -1007,7 +1062,7 @@ export function writePrizeFactoryV2<
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export function prepareWritePrizeFactoryV2<
   TAbi extends readonly unknown[] = typeof prizeFactoryV2ABI,
@@ -1727,7 +1782,7 @@ export function usePreparePortalEndKickStarterCampaign(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export function usePrizeFactoryV2Write<
   TFunctionName extends string,
@@ -1756,7 +1811,7 @@ export function usePrizeFactoryV2Write<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export function usePrizeFactoryV2CreateViaPrize<
   TMode extends WriteContractMode = undefined,
@@ -1789,7 +1844,7 @@ export function usePrizeFactoryV2CreateViaPrize<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
   config: Omit<
@@ -1807,7 +1862,7 @@ export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x98B1e3ae7Ba79C88877a5dad4F867BEd8D2DaD45)
+ * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export function usePreparePrizeFactoryV2CreateViaPrize(
   config: Omit<
@@ -1952,6 +2007,44 @@ export function usePrizeV2Read<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"CHANGE_VOTE_HASH"`.
+ */
+export function usePrizeV2ChangeVoteHash<
+  TFunctionName extends 'CHANGE_VOTE_HASH',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'CHANGE_VOTE_HASH',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"DISPUTE_HASH"`.
+ */
+export function usePrizeV2DisputeHash<
+  TFunctionName extends 'DISPUTE_HASH',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'DISPUTE_HASH',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"PRECISION"`.
  */
 export function usePrizeV2Precision<
@@ -2004,6 +2097,25 @@ export function usePrizeV2Version<
   return useContractRead({
     abi: prizeV2ABI,
     functionName: 'VERSION',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"VOTE_HASH"`.
+ */
+export function usePrizeV2VoteHash<
+  TFunctionName extends 'VOTE_HASH',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'VOTE_HASH',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
@@ -2294,6 +2406,25 @@ export function usePrizeV2IsActive<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isContestant"`.
+ */
+export function usePrizeV2IsContestant<
+  TFunctionName extends 'isContestant',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'isContestant',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isFunder"`.
  */
 export function usePrizeV2IsFunder<
@@ -2384,6 +2515,25 @@ export function usePrizeV2MinimumSlipageFeePercentage<
   return useContractRead({
     abi: prizeV2ABI,
     functionName: 'minimumSlipageFeePercentage',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"nonce"`.
+ */
+export function usePrizeV2Nonce<
+  TFunctionName extends 'nonce',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'nonce',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
@@ -3035,6 +3185,28 @@ export function usePrizeV2Vote<TMode extends WriteContractMode = undefined>(
 }
 
 /**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"withdrawTokens"`.
+ */
+export function usePrizeV2WithdrawTokens<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<typeof prizeV2ABI, 'withdrawTokens'>['request']['abi'],
+        'withdrawTokens',
+        TMode
+      > & { functionName?: 'withdrawTokens' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'withdrawTokens', TMode> & {
+        abi?: never;
+        functionName?: 'withdrawTokens';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'withdrawTokens', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'withdrawTokens',
+    ...config,
+  } as any);
+}
+
+/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__.
  */
 export function usePreparePrizeV2Write<TFunctionName extends string>(
@@ -3306,6 +3478,22 @@ export function usePreparePrizeV2Vote(
     functionName: 'vote',
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'vote'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"withdrawTokens"`.
+ */
+export function usePreparePrizeV2WithdrawTokens(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'withdrawTokens'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'withdrawTokens',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'withdrawTokens'>);
 }
 
 /**
