@@ -104,7 +104,11 @@ function AdminAcceptedCard({
           WETH,
         ],
       });
-      out = await writePrizeFactoryV2(requestJudges);
+      console.log(requestJudges, 'requestJudges');
+      out = await writePrizeFactoryV2(requestJudges).catch((_) => {
+        toast.error('Transaction Failed');
+        toast.dismiss(firstLoadingToast);
+      });
       console.log(out, 'out');
     }
     const waitForTransactionOut = await waitForTransaction({

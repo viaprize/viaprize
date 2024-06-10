@@ -19,6 +19,7 @@ import { BlockchainModule } from './blockchain/blockchain.module';
 import { IndexerModule } from './indexer/indexer.module';
 import { PortalsModule } from './portals/portals.module';
 import { PriceController } from './price/price.controller';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
   imports: [
@@ -34,28 +35,6 @@ import { PriceController } from './price/price.controller';
       },
     }),
     CacheModule.register(),
-    // TriggerDevModule.registerAsync({
-    //   useFactory: (configService: ConfigService) => {
-    //     console.log(configService.get<string>("TRIGGER_API_KEY"), "hiiiiiiiiiiiiiiiiiiiiiii")
-    //     return ({
-    //       id: 'viaprize-prod',
-    //       apiKey: configService.get<string>("TRIGGER_API_KEY"),
-    //       apiUrl: "https://cloud.trigger.dev",
-
-    //     })
-    //   },
-    //   inject: [ConfigService],
-    // }),
-    // AgendaModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: (config: ConfigService) =>
-    //     ({
-    //       db: {
-    //         address: config.get<string>('SCHEDULE_DATABASE_URL'),
-    //       },
-    //     }) as AgendaModuleConfig,
-    //   inject: [ConfigService],
-    // }),
     PrizesModule,
     UsersModule,
     MailModule,
@@ -64,6 +43,7 @@ import { PriceController } from './price/price.controller';
     BlockchainModule,
     PortalsModule,
     IndexerModule,
+    WalletModule,
   ],
   providers: [],
   controllers: [PriceController],

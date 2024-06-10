@@ -18,11 +18,22 @@ import { SubmissionService } from './services/submissions.service';
   controllers: [PrizesController],
   imports: [
     CacheModule.register(),
-    TypeOrmModule.forFeature([PrizeProposals, Prize, Submission, PrizesComments]),
+    TypeOrmModule.forFeature([
+      PrizeProposals,
+      Prize,
+      Submission,
+      PrizesComments,
+    ]),
     UsersModule,
     MailModule,
     BlockchainModule,
   ],
-  providers: [PrizesService, SubmissionService, PrizeProposalsService, PrizeCommentService],
+  exports: [PrizesService],
+  providers: [
+    PrizesService,
+    SubmissionService,
+    PrizeProposalsService,
+    PrizeCommentService,
+  ],
 })
-export class PrizesModule { }
+export class PrizesModule {}

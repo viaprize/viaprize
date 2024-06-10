@@ -8,13 +8,15 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
-import { AllConfigType } from 'src/config/config.type';
 import { PrizesService } from 'src/prizes/services/prizes.service';
 import { UsersService } from 'src/users/users.service';
 import { BaseError, ContractFunctionRevertedError } from 'viem';
+import { AddUsdcFundsDto } from './dto/add-usdc-funds.dto';
+import { IncreaseSubmissionDto } from './dto/increase-submission.dto';
+import { IncreaseVotingDto } from './dto/increase-voting.dto';
+import { VoteDTO } from './dto/vote.dto';
 import { WalletService } from './wallet.service';
 
 @Controller('wallet')
@@ -23,7 +25,6 @@ export class WalletController {
     private readonly userService: UsersService,
     private readonly blockchainService: BlockchainService,
     private readonly prizeService: PrizesService,
-    private readonly configService: ConfigService<AllConfigType>,
     private readonly walletService: WalletService,
   ) {}
 
@@ -241,7 +242,7 @@ export class WalletController {
   @Post('/prize/:contract_address/increase_submission')
   async increaseSubmission(
     @TypedParam('contract_address') contractAddress: string,
-    @Body() body: { minutes: string },
+    @Body() body: IncreaseSubmissionDto,
     @Request() req,
   ) {
     const user = this.userService.findOneByAuthId(req.user.userId);
@@ -298,7 +299,7 @@ export class WalletController {
   @Post('/prize/:contract_address/increase_voting')
   async increaseVoting(
     @TypedParam('contract_address') contractAddress: string,
-    @Body() body: { minutes: string },
+    @Body() body: IncreaseVotingDto,
     @Request() req,
   ) {
     const user = this.userService.findOneByAuthId(req.user.userId);
@@ -350,13 +351,7 @@ export class WalletController {
   async vote(
     @TypedParam('contract_address') contractAddress: string,
     @Body()
-    body: {
-      submissionHash: string;
-      v: number;
-      s: string;
-      r: string;
-      amount: number;
-    },
+    body: VoteDTO,
     @Request() req,
   ) {
     const user = this.userService.findOneByAuthId(req.user.userId);
@@ -414,14 +409,7 @@ export class WalletController {
   async addUsdc(
     @TypedParam('contract_address') contractAddress: string,
     @Body()
-    body: {
-      amount: number;
-      deadline: number;
-      v: number;
-      s: string;
-      r: string;
-      hash: string;
-    },
+    body: AddUsdcFundsDto,
     @Request() req,
   ) {
     const user = this.userService.findOneByAuthId(req.user.userId);

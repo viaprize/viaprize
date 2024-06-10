@@ -118,14 +118,14 @@ export class WalletService {
     await this.simulateSmartContract(
       PRIZE_V2_ABI,
       functionName,
-      args,
+      args as readonly unknown[],
       contractAddress,
       type,
     );
     const transactionHash = await this.writeSmartContract(
       PRIZE_V2_ABI,
       functionName,
-      args,
+      args as readonly unknown[],
       contractAddress,
       type,
       value,
