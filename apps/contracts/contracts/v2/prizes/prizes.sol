@@ -13,7 +13,6 @@ import "../../helperContracts/ierc20_weth.sol";
 contract PrizeV2 {
     uint256 public constant PRECISION = 10000;
 
-
     bytes32 public constant REFUND_SUBMISSION_HASH = keccak256(abi.encodePacked("REFUND"));
 
     /// @notice this will be the total amount of funds raised
@@ -39,6 +38,7 @@ contract PrizeV2 {
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
     address[] public refundRequestedFunders;
     mapping(address => bool) public isRefundRequestedAddress;
+    mapping(address => bool) public isContestant;
 
     bool public isActive = false;
     uint8 public constant  VERSION = 2;
@@ -79,15 +79,16 @@ contract PrizeV2 {
     /// @notice this will be the address of the platform
     address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
-
-
     /// @notice / @notice _submissionTree contract
     SubmissionAVLTree private _submissionTree;
 
     uint256 public totalVotes;
     uint256 public disputePeriod;
+    uint256 private nonceTracker;
 
-    
+    // bytes32 public  DOMAIN_SEPARATOR = 0x26d9c34bb1a1c312f69c53b2d93b8be20faafba63af2438c6811713c9b1f933f;
+    // bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+
 
 
     /// @notice error for not enough funds to vote
@@ -185,7 +186,7 @@ contract PrizeV2 {
     }
 
     /// @notice start the voting period 
-    function startVotingPeriod(uint256 _votingTime) public  onlyPlatformAdminOrProposer {
+    function startVotingPeriod(uint256 _votingTime) public  onlyPlatformAdminOrProposer onlyActive {
         if(block.timestamp < submissionTime) revert SubmissionPeriodActive();
         /// @notice voting time also in minutes
         votingTime = block.timestamp + _votingTime * 1  minutes;
@@ -207,16 +208,26 @@ contract PrizeV2 {
         if(submissionTime == 0) revert SubmissionPeriodNotActive();
         submissionPeriod = false;
         submissionTime = 0;
+        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+        if(allSubmissions.length == 0 ) {
+            for(uint256 i=0; i<allFunders.length; i++) {
+                uint256 transferable_amount = funderAmount[allFunders[i]];
+                funderAmount[allFunders[i]] = 0;
+                _usdc.transfer(allFunders[i], transferable_amount);
+            }
+            distributed = true;
+            isActive = false;
+        }
     }
 
-    function endVotingPeriod() public onlyPlatformAdmin {
+    function endVotingPeriod() public onlyPlatformAdmin onlyActive {
         if(votingTime == 0) revert VotingPeriodNotActive();
         votingTime = 0;
         votingPeriod = false;
         disputePeriod = block.timestamp + 2 minutes;
     }
 
-    function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public {
+    function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public onlyActive {
         require(disputePeriod > block.timestamp, "DPNA"); //DPNA - Dispute Period Not Active
         SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
         address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
@@ -243,6 +254,16 @@ contract PrizeV2 {
         votingTime = block.timestamp + _votingTime * 1 minutes;
     }
 
+    function FINAL_HASH(uint256 nonce) private view returns (bytes32) {
+        bytes32 structHash = keccak256(
+            abi.encode(nonce)
+        );
+        bytes32 hash = keccak256(
+            abi.encodePacked("\x19\x01", address(this), structHash)
+        );
+        return  hash;
+    }
+
     /// @notice Distribute rewards
     function _distributeRewards() private {
         if(distributed == true) revert RewardsAlreadyDistributed();
@@ -262,7 +283,7 @@ contract PrizeV2 {
                                 if(reward_amount > 0) {
                                     _usdc.transfer(refundRequestedFunders[j], reward_amount);
                                 }
-                        }
+                            }
                         }
                     } else {
                         uint256 reward = (allSubmissions[i].usdcVotes);
@@ -297,7 +318,9 @@ contract PrizeV2 {
     /// @notice addSubmission should return the submissionHash
     function addSubmission(address contestant, string memory submissionText) public onlyPlatformAdmin returns(bytes32) {
         if (block.timestamp > submissionTime) revert SubmissionPeriodNotActive();
+        if(isContestant[contestant]) revert("CAE"); // CAE -> Contestant already Exists
         bytes32 submissionHash = keccak256(abi.encodePacked(contestant, submissionText));
+        isContestant[contestant] = true;
         _submissionTree.addSubmission(contestant, submissionHash, submissionText);
         emit SubmissionCreated(contestant, submissionHash);
         return submissionHash;
@@ -307,9 +330,10 @@ contract PrizeV2 {
 
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 amount, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) onlyActive public {
+    function vote(bytes32 _submissionHash, uint256 amount, uint8 v, bytes32 s, bytes32 r) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
-        address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
+        bytes32 hash = FINAL_HASH(nonceTracker+=1);
+        address sender =  ecrecover(hash, v, r, s);
         if (amount > funderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
@@ -334,7 +358,6 @@ contract PrizeV2 {
             _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
             
             totalVotes = totalVotes.add(amountToSubmission);
-            // rename this to somehting not related to funder ( contestant balance)
             SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(_submissionHash, true);
@@ -525,6 +548,14 @@ contract PrizeV2 {
            
        }
        return (total_usdc_votes, totalRewards);
+   }
+
+   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin {
+        IERC20Permit token = IERC20Permit(_tokenAddress);
+        uint256 balance = token.balanceOf(address(this));
+        if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists
+        require(_amount <= balance, "AEB"); //AEB -> Amount Exceeds Balance
+        token.transfer(_to, _amount); 
    }
 
    function getAllFunders() public view returns(address[] memory) {
