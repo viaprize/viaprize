@@ -146,7 +146,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["DESC", "ASC"]
+              "enum": [
+                "DESC",
+                "ASC"
+              ]
             },
             "description": "",
             "required": false
@@ -3841,6 +3844,225 @@
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "POST"
       }
+    },
+    "/wallet/prize/{contract_address}/end_submission": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.prize.end_submission.endSubmission",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/start_voting": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.prize.start_voting.startVoting",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/end_voting": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.prize.end_voting.endVoting",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/increase_submission": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncreaseSubmissionDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.prize.increase_submission.increaseSubmission",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/increase_voting": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncreaseVotingDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.prize.increase_voting.increaseVoting",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/vote": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoteDTO"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.prize.vote.vote",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/add_usdc_funds": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUsdcFundsDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.prize.add_usdc_funds.addUsdc",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
     }
   },
   "components": {
@@ -3855,7 +4077,9 @@
           }
         },
         "nullable": false,
-        "required": ["message"],
+        "required": [
+          "message"
+        ],
         "x-typia-jsDocTags": []
       },
       "CreatePortalDto": {
@@ -3873,7 +4097,10 @@
           }
         },
         "nullable": false,
-        "required": ["address", "proposal_id"],
+        "required": [
+          "address",
+          "proposal_id"
+        ],
         "x-typia-jsDocTags": []
       },
       "Portals": {
@@ -4500,7 +4727,12 @@
           }
         },
         "nullable": false,
-        "required": ["id", "comment", "user", "prize"],
+        "required": [
+          "id",
+          "comment",
+          "user",
+          "prize"
+        ],
         "x-typia-jsDocTags": []
       },
       "PrizeProposals": {
@@ -4818,7 +5050,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5015,7 +5250,9 @@
           }
         },
         "nullable": false,
-        "required": ["data"],
+        "required": [
+          "data"
+        ],
         "x-typia-jsDocTags": []
       },
       "Contribution": {
@@ -5038,7 +5275,11 @@
           }
         },
         "nullable": false,
-        "required": ["contributor", "amount", "donationTime"],
+        "required": [
+          "contributor",
+          "amount",
+          "donationTime"
+        ],
         "x-typia-jsDocTags": []
       },
       "CreateCommentDto": {
@@ -5051,7 +5292,9 @@
           }
         },
         "nullable": false,
-        "required": ["comment"],
+        "required": [
+          "comment"
+        ],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o1": {
@@ -5072,7 +5315,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5094,7 +5340,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5216,7 +5465,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5230,7 +5482,9 @@
           }
         },
         "nullable": false,
-        "required": ["comment"],
+        "required": [
+          "comment"
+        ],
         "x-typia-jsDocTags": []
       },
       "UpdatePortalPropsalDto": {
@@ -5319,7 +5573,9 @@
           }
         },
         "nullable": false,
-        "required": ["platformFeePercentage"],
+        "required": [
+          "platformFeePercentage"
+        ],
         "x-typia-jsDocTags": []
       },
       "UpdatePlatformFeeDto": {
@@ -5332,7 +5588,9 @@
           }
         },
         "nullable": false,
-        "required": ["platformFeePercentage"],
+        "required": [
+          "platformFeePercentage"
+        ],
         "x-typia-jsDocTags": []
       },
       "TestTrigger": {
@@ -5345,7 +5603,9 @@
           }
         },
         "nullable": false,
-        "required": ["date"],
+        "required": [
+          "date"
+        ],
         "x-typia-jsDocTags": []
       },
       "ExtraPortal": {
@@ -5368,7 +5628,11 @@
           }
         },
         "nullable": false,
-        "required": ["id", "funds", "externalId"],
+        "required": [
+          "id",
+          "funds",
+          "externalId"
+        ],
         "x-typia-jsDocTags": []
       },
       "ExtraDonationPortalData": {
@@ -5402,7 +5666,13 @@
           }
         },
         "nullable": false,
-        "required": ["id", "donatedAt", "donor", "usdValue", "externalId"],
+        "required": [
+          "id",
+          "donatedAt",
+          "donor",
+          "usdValue",
+          "externalId"
+        ],
         "x-typia-jsDocTags": []
       },
       "PickPortalsslug": {
@@ -5415,7 +5685,9 @@
           }
         },
         "nullable": false,
-        "required": ["slug"],
+        "required": [
+          "slug"
+        ],
         "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
@@ -5434,7 +5706,10 @@
           }
         },
         "nullable": false,
-        "required": ["address", "proposal_id"],
+        "required": [
+          "address",
+          "proposal_id"
+        ],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o4": {
@@ -5455,7 +5730,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5889,7 +6167,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5957,7 +6238,9 @@
           }
         },
         "nullable": false,
-        "required": ["comment"],
+        "required": [
+          "comment"
+        ],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o6": {
@@ -5978,7 +6261,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6000,7 +6286,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6156,7 +6445,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6170,7 +6462,9 @@
           }
         },
         "nullable": false,
-        "required": ["slug"],
+        "required": [
+          "slug"
+        ],
         "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
@@ -6201,7 +6495,10 @@
                 "kind": "format",
                 "value": "email",
                 "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
-                "exclusive": ["format", "pattern"]
+                "exclusive": [
+                  "format",
+                  "pattern"
+                ]
               }
             ]
           },
@@ -6316,7 +6613,13 @@
           }
         },
         "nullable": false,
-        "required": ["email", "authId", "name", "username", "bio"],
+        "required": [
+          "email",
+          "authId",
+          "name",
+          "username",
+          "bio"
+        ],
         "description": "Interface of Create User , using this interface it create a new user in",
         "x-typia-jsDocTags": [
           {
@@ -6357,7 +6660,10 @@
                 "kind": "format",
                 "value": "email",
                 "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
-                "exclusive": ["format", "pattern"]
+                "exclusive": [
+                  "format",
+                  "pattern"
+                ]
               }
             ]
           },
@@ -6472,6 +6778,120 @@
           }
         },
         "nullable": false,
+        "x-typia-jsDocTags": []
+      },
+      "IncreaseSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "minutes"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IncreaseVotingDto": {
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "minutes"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "VoteDTO": {
+        "type": "object",
+        "properties": {
+          "submissionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "v": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "s": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "r": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "amount": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "submissionHash",
+          "v",
+          "s",
+          "r",
+          "amount"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "AddUsdcFundsDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "deadline": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "v": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "s": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "r": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "hash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "amount",
+          "deadline",
+          "v",
+          "s",
+          "r",
+          "hash"
+        ],
         "x-typia-jsDocTags": []
       }
     },
