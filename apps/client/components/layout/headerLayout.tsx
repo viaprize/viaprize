@@ -8,10 +8,8 @@ import {
   Divider,
   Flex,
   Menu,
-  Pill,
   Stack,
   Text,
-  ThemeIcon,
   Tooltip,
   rem,
 } from '@mantine/core';
@@ -21,7 +19,6 @@ import {
   IconCheck,
   IconChevronDown,
   IconCopy,
-  IconInfoCircle,
   IconInfoCircleFilled,
   IconSearch,
 } from '@tabler/icons-react';
