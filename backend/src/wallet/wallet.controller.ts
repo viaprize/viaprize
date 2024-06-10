@@ -19,6 +19,14 @@ import { IncreaseVotingDto } from './dto/increase-voting.dto';
 import { VoteDTO } from './dto/vote.dto';
 import { WalletService } from './wallet.service';
 
+type WalletResponse = {
+  hash: string;
+};
+/**
+ * This is the wallet controller class.
+ * it handles the gasless transactions
+ * @tag {wallet}
+ */
 @Controller('wallet')
 export class WalletController {
   constructor(
@@ -33,7 +41,7 @@ export class WalletController {
   async startSubmission(
     @TypedParam('contract_address') contractAddress: string,
     @Request() req,
-  ) {
+  ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -56,13 +64,18 @@ export class WalletController {
       });
 
     try {
-      await this.walletService.simulateAndWriteSmartContractPrizeV2(
-        'startSubmissionPeriod',
-        [BigInt(prize.submissionTime)],
-        contractAddress,
-        'gasless',
-        '0',
-      );
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'startSubmissionPeriod',
+          [BigInt(prize.submissionTime)],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+
+      return {
+        hash,
+      };
     } catch (err) {
       if (err instanceof BaseError) {
         const revertError = err.walk(
@@ -88,7 +101,7 @@ export class WalletController {
   async endSubmission(
     @TypedParam('contract_address') contractAddress: string,
     @Request() req,
-  ) {
+  ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -105,13 +118,17 @@ export class WalletController {
       );
     }
     try {
-      await this.walletService.simulateAndWriteSmartContractPrizeV2(
-        'endSubmissionPeriod',
-        [],
-        contractAddress,
-        'gasless',
-        '0',
-      );
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'endSubmissionPeriod',
+          [],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return {
+        hash,
+      };
     } catch (err) {
       if (err instanceof BaseError) {
         const revertError = err.walk(
@@ -137,7 +154,7 @@ export class WalletController {
   async startVoting(
     @TypedParam('contract_address') contractAddress: string,
     @Request() req,
-  ) {
+  ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -147,6 +164,7 @@ export class WalletController {
       .catch(() => {
         throw new HttpException('Prize does not exist', HttpStatus.BAD_REQUEST);
       });
+
     const [[votingPeriod]] =
       (await this.blockchainService.getPrizesV2PublicVariables(
         [contractAddress],
@@ -160,13 +178,17 @@ export class WalletController {
     }
 
     try {
-      await this.walletService.simulateAndWriteSmartContractPrizeV2(
-        'startVotingPeriod',
-        [BigInt(prize.votingTime)],
-        contractAddress,
-        'gasless',
-        '0',
-      );
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'startVotingPeriod',
+          [BigInt(prize.votingTime)],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return {
+        hash,
+      };
     } catch (err) {
       if (err instanceof BaseError) {
         const revertError = err.walk(
@@ -193,7 +215,7 @@ export class WalletController {
   async endVoting(
     @TypedParam('contract_address') contractAddress: string,
     @Request() req,
-  ) {
+  ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -210,13 +232,15 @@ export class WalletController {
       );
     }
     try {
-      await this.walletService.simulateAndWriteSmartContractPrizeV2(
-        'endVotingPeriod',
-        [],
-        contractAddress,
-        'gasless',
-        '0',
-      );
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'endVotingPeriod',
+          [],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
         const revertError = err.walk(
@@ -244,7 +268,7 @@ export class WalletController {
     @TypedParam('contract_address') contractAddress: string,
     @Body() body: IncreaseSubmissionDto,
     @Request() req,
-  ) {
+  ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -267,13 +291,18 @@ export class WalletController {
       );
     }
     try {
-      await this.walletService.simulateAndWriteSmartContractPrizeV2(
-        'increaseSubmissionPeriod',
-        [BigInt(body.minutes)],
-        contractAddress,
-        'gasless',
-        '0',
-      );
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'increaseSubmissionPeriod',
+          [BigInt(body.minutes)],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+
+      return {
+        hash,
+      };
     } catch (err) {
       if (err instanceof BaseError) {
         const revertError = err.walk(
@@ -301,7 +330,7 @@ export class WalletController {
     @TypedParam('contract_address') contractAddress: string,
     @Body() body: IncreaseVotingDto,
     @Request() req,
-  ) {
+  ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -318,13 +347,15 @@ export class WalletController {
       );
     }
     try {
-      await this.walletService.simulateAndWriteSmartContractPrizeV2(
-        'increaseVotingPeriod',
-        [BigInt(body.minutes)],
-        contractAddress,
-        'gasless',
-        '0',
-      );
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'increaseVotingPeriod',
+          [BigInt(body.minutes)],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
         const revertError = err.walk(
@@ -353,7 +384,7 @@ export class WalletController {
     @Body()
     body: VoteDTO,
     @Request() req,
-  ) {
+  ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
@@ -370,19 +401,21 @@ export class WalletController {
       );
     }
     try {
-      await this.walletService.simulateAndWriteSmartContractPrizeV2(
-        'vote',
-        [
-          body.submissionHash as `0x${string}`,
-          BigInt(body.amount),
-          BigInt(body.v),
-          body.s as `0x${string}`,
-          body.r as `0x${string}`,
-        ],
-        contractAddress,
-        'gasless',
-        '0',
-      );
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'vote',
+          [
+            body.submissionHash as `0x${string}`,
+            BigInt(body.amount),
+            BigInt(body.v),
+            body.s as `0x${string}`,
+            body.r as `0x${string}`,
+          ],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
         const revertError = err.walk(
@@ -411,27 +444,30 @@ export class WalletController {
     @Body()
     body: AddUsdcFundsDto,
     @Request() req,
-  ) {
+  ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
     try {
-      await this.walletService.simulateAndWriteSmartContractPrizeV2(
-        'addUsdcFunds',
-        [
-          contractAddress as `0x${string}`,
-          BigInt(body.amount),
-          BigInt(body.deadline),
-          body.v,
-          body.s as `0x${string}`,
-          body.r as `0x${string}`,
-          body.hash as `0x${string}`,
-        ],
-        contractAddress,
-        'gasless',
-        '0',
-      );
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'addUsdcFunds',
+          [
+            contractAddress as `0x${string}`,
+            BigInt(body.amount),
+            BigInt(body.deadline),
+            body.v,
+            body.s as `0x${string}`,
+            body.r as `0x${string}`,
+            body.hash as `0x${string}`,
+          ],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      console.log({ hash });
+      return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
         const revertError = err.walk(
