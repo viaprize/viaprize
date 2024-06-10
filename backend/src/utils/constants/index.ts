@@ -810,6 +810,25 @@ export const PRIZE_V2_ABI = [
         type: 'address',
       },
     ],
+    name: 'isContestant',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
     name: 'isFunder',
     outputs: [
       {
@@ -1132,11 +1151,6 @@ export const PRIZE_V2_ABI = [
         name: 'r',
         type: 'bytes32',
       },
-      {
-        internalType: 'bytes32',
-        name: '_ethSignedMessageHash',
-        type: 'bytes32',
-      },
     ],
     name: 'vote',
     outputs: [],
@@ -1154,6 +1168,29 @@ export const PRIZE_V2_ABI = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_tokenAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'withdrawTokens',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
