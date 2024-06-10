@@ -54,17 +54,6 @@ interface SubmissionWithBlockchainData extends Submission {
  * @class PrizeProposalsPaginationResult
  * @typedef {PrizeProposalsPaginationResult}
  * @implements {InfinityPaginationResultType<PrizeProposals>}
-//  */
-// class PrizeProposalsPaginationResult
-//   implements InfinityPaginationResultType<PrizeProposals>
-// {
-//   data: PrizeProposals[];
-//   hasNextPage: boolean;
-//   results: PrizeProposals[];
-//   total: number;
-//   page: number;
-//   limit: number;
-// }
 
 /**
  * This is the prizes controller class.
@@ -168,27 +157,21 @@ export class PrizesController {
         300000,
       );
     }
-    const results = await this.blockchainService.getPrizesPublicVariables(
+    const results = (await this.blockchainService.getPrizesV2PublicVariables(
       prizeWithoutBalance.data.map((prize) => prize.contract_address),
+      ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
+    )) as [[bigint, boolean, bigint, bigint]];
+    const prizeWithBalanceData = prizeWithoutBalance.data.map(
+      (prize, index) => {
+        return {
+          ...prize,
+          balance: parseInt(results[index][0].toString()),
+          distributed: results[index][1],
+          submission_time_blockchain: parseInt(results[index][2].toString()),
+          voting_time_blockchain: parseInt(results[index][3].toString()),
+        } as PrizeWithBlockchainData;
+      },
     );
-    let start = 0;
-    let end = 4;
-    const prizeWithBalanceData = prizeWithoutBalance.data.map((prize) => {
-      const portalResults = results.slice(start, end);
-      start += 4;
-      end += 4;
-      return {
-        ...prize,
-        balance: parseInt((portalResults[0].result as bigint).toString()),
-        distributed: portalResults[1].result as boolean,
-        submission_time_blockchain: parseInt(
-          (portalResults[2].result as bigint).toString(),
-        ),
-        voting_time_blockchain: parseInt(
-          (portalResults[3].result as bigint).toString(),
-        ),
-      } as PrizeWithBlockchainData;
-    });
     console.log(prizeWithBalanceData, 'prizeWithBalanceData');
     return {
       data: prizeWithBalanceData as PrizeWithBlockchainData[],
@@ -201,22 +184,19 @@ export class PrizesController {
     @TypedParam('slug') slug: string,
   ): Promise<PrizeWithBlockchainData> {
     const prize = await this.prizeService.findAndReturnBySlug(slug);
-    const results = await this.blockchainService.getPrizePublicVariables(
-      prize.contract_address,
-    );
-    // console.log({ results })
-    // console.log(results, 'results');
-    console.log(results[4], 'resultsssn3');
+    const [totalFunds, distributed, submissionTime, votingTime] = (
+      await this.blockchainService.getPrizesV2PublicVariables(
+        [prize.contract_address],
+        ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
+      )
+    )[0] as [bigint, boolean, bigint, bigint];
+
     return {
       ...prize,
-      distributed: results[3].result as boolean,
-      balance: parseInt((results[4].result as bigint).toString()),
-      submission_time_blockchain: parseInt(
-        (results[1].result as bigint).toString(),
-      ),
-      voting_time_blockchain: parseInt(
-        (results[2].result as bigint).toString(),
-      ),
+      distributed: distributed,
+      balance: parseInt(totalFunds.toString()),
+      submission_time_blockchain: parseInt(submissionTime.toString()),
+      voting_time_blockchain: parseInt(votingTime.toString()),
     };
   }
 
@@ -295,13 +275,15 @@ export class PrizesController {
     @TypedParam('slug') _: string,
   ): Promise<FetchSubmissionDto> {
     const sub = await this.submissionService.findSubmissionById(id);
-    const results = await this.blockchainService.getPrizePublicVariables(
-      sub.prize.contract_address,
-    );
+    const [[submissionTime]] =
+      (await this.blockchainService.getPrizesV2PublicVariables(
+        [sub.prize.contract_address],
+        ['getSubmissionTime'],
+      )) as [[bigint]];
 
     return {
       ...sub,
-      submissionDeadline: parseInt((results[1].result as bigint).toString()),
+      submissionDeadline: parseInt(submissionTime.toString()),
     };
   }
 
