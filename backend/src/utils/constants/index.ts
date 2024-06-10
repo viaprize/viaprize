@@ -232,6 +232,64 @@ export const PRIZE_V2_ABI = [
     type: 'event',
   },
   {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_nonce',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_old_submission',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_new_submission',
+        type: 'bytes32',
+      },
+    ],
+    name: 'CHANGE_VOTE_HASH',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_nonce',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_submission',
+        type: 'bytes32',
+      },
+    ],
+    name: 'DISPUTE_HASH',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'PRECISION',
     outputs: [
@@ -265,6 +323,35 @@ export const PRIZE_V2_ABI = [
         internalType: 'uint8',
         name: '',
         type: 'uint8',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_nonce',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_submission',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'VOTE_HASH',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
       },
     ],
     stateMutability: 'view',
@@ -439,11 +526,6 @@ export const PRIZE_V2_ABI = [
         internalType: 'uint256',
         name: 'amount',
         type: 'uint256',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_ethSignedMessageHash',
-        type: 'bytes32',
       },
     ],
     name: 'changeVote',
@@ -912,6 +994,19 @@ export const PRIZE_V2_ABI = [
   },
   {
     inputs: [],
+    name: 'nonce',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'platformAddress',
     outputs: [
       {
@@ -1001,11 +1096,6 @@ export const PRIZE_V2_ABI = [
       {
         internalType: 'bytes32',
         name: 'r',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_ethSignedMessageHash',
         type: 'bytes32',
       },
     ],
@@ -1133,7 +1223,7 @@ export const PRIZE_V2_ABI = [
       },
       {
         internalType: 'uint256',
-        name: 'amount',
+        name: '_amount',
         type: 'uint256',
       },
       {
