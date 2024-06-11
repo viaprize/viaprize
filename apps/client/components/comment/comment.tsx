@@ -134,57 +134,56 @@ export default function Comment({ portalComment }: { portalComment: PortalsComme
             </Text>
           </Group>
           <Text size="sm">
-            {formatDistanceToNow(
-              new Date(portalComment.created_at),
-              {
-                addSuffix: true,
-              },
-            )}
+            {formatDistanceToNow(new Date(portalComment.created_at), {
+              addSuffix: true,
+            })}
           </Text>
         </Group>
 
         <Text size="sm" m="sm">
           {portalComment.comment}
         </Text>
-        <Flex gap="md" justify="flex-start" align="center" direction="row">
-          <ActionIcon
-            color={likedByMe ? 'blue' : 'gray'}
-            variant="transparent"
-            size="lg"
-            onClick={handleLike}
-          >
-            <IconThumbUp /> <Text size="sm">{likeCount}</Text>
-          </ActionIcon>
-          <ActionIcon
-            color={dislikedByMe ? 'blue' : 'gray'}
-            variant="transparent"
-            size="lg"
-            onClick={handleDislike}
-          >
-            <IconThumbDown /> <Text size="sm">{dislikeCount}</Text>
-          </ActionIcon>
-          <ActionIcon
-            variant="transparent"
-            color="blue"
-            size="md"
-            onClick={() => {
-              setIsReplying(true);
-            }}
-          >
-            <IconArrowBackUp />
-          </ActionIcon>
-
-          {appUser?.authId === portalComment.user.authId ? (
+        {appUser ? (
+          <Flex gap="md" justify="flex-start" align="center" direction="row">
+            <ActionIcon
+              color={likedByMe ? 'blue' : 'gray'}
+              variant="transparent"
+              size="lg"
+              onClick={handleLike}
+            >
+              <IconThumbUp /> <Text size="sm">{likeCount}</Text>
+            </ActionIcon>
+            <ActionIcon
+              color={dislikedByMe ? 'blue' : 'gray'}
+              variant="transparent"
+              size="lg"
+              onClick={handleDislike}
+            >
+              <IconThumbDown /> <Text size="sm">{dislikeCount}</Text>
+            </ActionIcon>
             <ActionIcon
               variant="transparent"
+              color="blue"
               size="md"
-              color="red"
-              onClick={openDeleteModal}
+              onClick={() => {
+                setIsReplying(true);
+              }}
             >
-              <IconTrash />
+              <IconArrowBackUp />
             </ActionIcon>
-          ) : null}
-        </Flex>
+
+            {appUser.authId === portalComment.user.authId ? (
+              <ActionIcon
+                variant="transparent"
+                size="md"
+                color="red"
+                onClick={openDeleteModal}
+              >
+                <IconTrash />
+              </ActionIcon>
+            ) : null}
+          </Flex>
+        ) : null}
       </Paper>
 
       {isReplying ? (
