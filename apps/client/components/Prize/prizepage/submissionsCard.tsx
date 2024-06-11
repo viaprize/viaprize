@@ -1,7 +1,5 @@
 /* eslint-disable no-implicit-coercion */
-import { useFunderBalance } from '@/components/hooks/useFunderBalance';
 import type { Prize } from '@/lib/api';
-import { prepareWritePrize, writePrize } from '@/lib/smartContract';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -60,16 +58,6 @@ export default function SubmissionsCard({
   const [value, setValue] = useState('0');
   const [debounced] = useDebouncedValue(value, 500);
 
-  const {
-    data: funderBalance,
-    refetch,
-    loading,
-  } = useFunderBalance({
-    hasJudges: !!judges && judges.length > 0,
-    address: address ?? '0x',
-    contractAddress,
-  });
-
   const onProfile = fullname.length === 0;
 
   console.log(fullname.length, onProfile, 'fullname.length');
@@ -78,13 +66,6 @@ export default function SubmissionsCard({
     try {
       await refetch();
 
-      if (
-        parseInt(debounced.toString()) >
-        parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))
-      ) {
-        toast.error('You cannot vote more than your balance');
-        return;
-      }
       setSendLoading(true);
 
       const { request } = await prepareWritePrize({
@@ -131,13 +112,6 @@ export default function SubmissionsCard({
           <Modal opened={opened} onClose={close} title="Voting For this submission">
             <Stack>
               <NumberInput
-                label={
-                  loading
-                    ? 'Loading.....'
-                    : `Total Votes you can allocate(Max: ${formatEther(
-                        BigInt(parseInt(funderBalance?.toString() ?? '0')),
-                      )} ${chain.nativeCurrency.symbol} )`
-                }
                 placeholder="Enter Value of Votes"
                 mt="md"
                 rightSection={
@@ -145,7 +119,6 @@ export default function SubmissionsCard({
                     <IconRefresh onClick={() => refetch()} />
                   </ActionIcon>
                 }
-                max={parseInt(formatEther(BigInt(funderBalance?.toString() ?? '10')))}
                 allowDecimal
                 allowNegative={false}
                 defaultValue={0}

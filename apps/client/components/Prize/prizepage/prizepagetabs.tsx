@@ -2,7 +2,6 @@ import { Tabs, Text } from '@mantine/core';
 import { BsInfoLg } from 'react-icons/bs';
 import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 
-import { formatEther } from 'viem';
 import AboutPrize from './aboutprize';
 import Contestants from './contestants';
 import PrizeFunderCard from './prizeFunderCard';
@@ -42,7 +41,7 @@ export default function PrizePageTabs({
       <Tabs.Panel value="about">
         <AboutPrize
           description={description}
-          amount={formatEther(BigInt(totalFunds)).toString()}
+          amount={totalFunds.toString()}
           contractAddress={contractAddress}
         />
         <div className="flex justify-between">

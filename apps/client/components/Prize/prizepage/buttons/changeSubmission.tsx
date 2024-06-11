@@ -1,12 +1,10 @@
-import { prepareWritePrize, writePrize } from '@/lib/smartContract';
+import { backendApi } from '@/lib/backend';
 import { Button, Modal, NumberInput, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCircleCheck } from '@tabler/icons-react';
-import { waitForTransaction } from '@wagmi/core';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useAccount } from 'wagmi';
 
 export default function ChangeSubmission({
   contractAddress,
@@ -15,9 +13,6 @@ export default function ChangeSubmission({
   contractAddress: string;
   submissionTime: number;
 }) {
-  console.log({ submissionTime }, 'submission time ');
-  const { address } = useAccount();
-
   const [opened, { open, close }] = useDisclosure(false);
 
   const [newSubmissionTime, setnewSubmissionTime] = useState(0);
@@ -35,7 +30,7 @@ export default function ChangeSubmission({
             setnewSubmissionTime(parseInt(event.toString()));
           }}
           placeholder="Enter in %"
-          description={`This will increase submission time by ${newSubmissionTime} days from ${new Date(submissionTime * 1000)}`}
+          description={`This will increase submission time by ${newSubmissionTime} minutes from ${new Date()}`}
         />
 
         <Button
@@ -44,17 +39,13 @@ export default function ChangeSubmission({
               setLoading(true);
               toast.loading('Loading.....');
 
-              const request = await prepareWritePrize({
-                address: contractAddress as `0x${string}`,
-                functionName: 'increase_submission_period',
-                args: [BigInt(parseInt(newSubmissionTime.toString()))],
-              });
-              const { hash } = await writePrize(request);
-
-              const waitTransaction = await waitForTransaction({
-                confirmations: 1,
-                hash,
-              });
+              const { hash } = await (
+                await backendApi()
+              ).wallet
+                .prizeIncreaseSubmissionCreate(contractAddress, {
+                  minutes: newSubmissionTime,
+                })
+                .then((res) => res.data);
               toast.success(
                 <div className="flex items-center ">
                   <IconCircleCheck />{' '}
