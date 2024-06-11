@@ -36,6 +36,9 @@ export class WalletController {
     private readonly walletService: WalletService,
   ) {}
 
+  /**
+   * @security bearer
+   **/
   @UseGuards(AuthGuard)
   @Post('/prize/:contract_address/start_submission')
   async startSubmission(
@@ -77,6 +80,7 @@ export class WalletController {
         hash,
       };
     } catch (err) {
+      console.log({ err }, 'err');
       if (err instanceof BaseError) {
         const revertError = err.walk(
           (err) => err instanceof ContractFunctionRevertedError,
@@ -96,6 +100,10 @@ export class WalletController {
       }
     }
   }
+
+  /**
+   * @security bearer
+   **/
   @UseGuards(AuthGuard)
   @Post('/prize/:contract_address/end_submission')
   async endSubmission(
@@ -149,6 +157,10 @@ export class WalletController {
       }
     }
   }
+
+  /**
+   * @security bearer
+   **/
   @UseGuards(AuthGuard)
   @Post('/prize/:contract_address/start_voting')
   async startVoting(
@@ -210,6 +222,9 @@ export class WalletController {
     }
   }
 
+  /**
+   * @security bearer
+   **/
   @UseGuards(AuthGuard)
   @Post('/prize/:contract_address/end_voting')
   async endVoting(
@@ -262,6 +277,9 @@ export class WalletController {
     }
   }
 
+  /**
+   * @security bearer
+   **/
   @UseGuards(AuthGuard)
   @Post('/prize/:contract_address/increase_submission')
   async increaseSubmission(
@@ -324,6 +342,9 @@ export class WalletController {
     }
   }
 
+  /**
+   * @security bearer
+   **/
   @UseGuards(AuthGuard)
   @Post('/prize/:contract_address/increase_voting')
   async increaseVoting(
@@ -377,6 +398,9 @@ export class WalletController {
     }
   }
 
+  /**
+   * @security bearer
+   **/
   @UseGuards(AuthGuard)
   @Post('/prize/:contract_address/vote')
   async vote(
@@ -418,6 +442,7 @@ export class WalletController {
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
+        console.log({ err }, 'errrwe');
         const revertError = err.walk(
           (err) => err instanceof ContractFunctionRevertedError,
         );
@@ -437,6 +462,9 @@ export class WalletController {
     }
   }
 
+  /**
+   * @security bearer
+   **/
   @UseGuards(AuthGuard)
   @Post('/prize/:contract_address/add_usdc_funds')
   async addUsdc(
@@ -469,14 +497,21 @@ export class WalletController {
       console.log({ hash });
       return { hash };
     } catch (err) {
+      console.log({ err });
       if (err instanceof BaseError) {
         const revertError = err.walk(
           (err) => err instanceof ContractFunctionRevertedError,
         );
         if (revertError instanceof ContractFunctionRevertedError) {
+          console.log({ err });
           const errorName = revertError.data?.errorName ?? '';
           throw new HttpException(
             'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        } else {
+          throw new HttpException(
+            'Error: ' + err.message,
             HttpStatus.BAD_REQUEST,
           );
         }

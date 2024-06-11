@@ -3837,11 +3837,33 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "x-nestia-namespace": "wallet.prize.start_submission.startSubmission",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       }
     },
@@ -3862,11 +3884,33 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "x-nestia-namespace": "wallet.prize.end_submission.endSubmission",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       }
     },
@@ -3887,11 +3931,33 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "x-nestia-namespace": "wallet.prize.start_voting.startVoting",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       }
     },
@@ -3912,11 +3978,33 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "x-nestia-namespace": "wallet.prize.end_voting.endVoting",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       }
     },
@@ -3948,11 +4036,33 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "x-nestia-namespace": "wallet.prize.increase_submission.increaseSubmission",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       }
     },
@@ -3984,11 +4094,33 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "x-nestia-namespace": "wallet.prize.increase_voting.increaseVoting",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       }
     },
@@ -4020,11 +4152,33 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "x-nestia-namespace": "wallet.prize.vote.vote",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       }
     },
@@ -4056,11 +4210,33 @@
         "responses": {
           "201": {
             "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
             "x-nestia-encrypted": false
           }
         },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
         "x-nestia-namespace": "wallet.prize.add_usdc_funds.addUsdc",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       }
     }
@@ -6778,6 +6954,21 @@
           }
         },
         "nullable": false,
+        "x-typia-jsDocTags": []
+      },
+      "WalletResponse": {
+        "type": "object",
+        "properties": {
+          "hash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "hash"
+        ],
         "x-typia-jsDocTags": []
       },
       "IncreaseSubmissionDto": {

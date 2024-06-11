@@ -7,9 +7,9 @@
 import { env } from '@env';
 import { getAccessToken } from '@privy-io/react-auth';
 import { createClient } from '@supabase/supabase-js';
+import { clsx, type ClassValue } from 'clsx';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
-import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 /* eslint-disable  -- needed */
@@ -226,4 +226,59 @@ export const storeFiles = async (files: File[]) => {
   }
   console.log(data.path, 'image path');
   return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaigns/${data.path}`;
+};
+
+export const usdcSignType = ({
+  owner,
+  spender,
+  value,
+  nonce,
+  deadline,
+}: {
+  owner: string;
+  spender: string;
+  value: BigInt;
+  nonce: BigInt;
+  deadline: BigInt;
+}) => {
+  return {
+    message: {
+      owner,
+      spender,
+      value,
+      nonce,
+      deadline,
+    },
+    types: {
+      Permit: [
+        {
+          name: 'owner',
+          type: 'address',
+        },
+        {
+          name: 'spender',
+          type: 'address',
+        },
+        {
+          name: 'value',
+          type: 'uint256',
+        },
+        {
+          name: 'nonce',
+          type: 'uint256',
+        },
+        {
+          name: 'deadline',
+          type: 'uint256',
+        },
+      ],
+    },
+    primaryType: 'Permit',
+    domain: {
+      chainId: 10,
+      verifyingContract: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
+      name: 'USD Coin',
+      version: '2',
+    },
+  };
 };

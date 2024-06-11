@@ -57,6 +57,7 @@ export class WalletService {
     type: WalletType,
   ) {
     const walletAddress = await this.getAddress(type);
+    console.log({ walletAddress });
     const result = await this.provider.simulateContract({
       address: contractAddress as `0x${string}`,
       abi: abi,
@@ -82,7 +83,6 @@ export class WalletService {
     type: WalletType,
     value: string,
   ) {
-    const walletAddress = await this.getAddress(type);
     const contractCallData = encodeFunctionData({
       abi: abi,
       functionName: functionName,
@@ -93,8 +93,9 @@ export class WalletService {
       data: contractCallData,
       value,
     };
+    console.log({ transaction });
     const transactionHash = await this.sendTransaction(transaction, type);
-
+    console.log({ transactionHash });
     return transactionHash;
   }
 
@@ -130,6 +131,7 @@ export class WalletService {
       type,
       value,
     );
+    console.log({ transactionHash });
     return transactionHash;
   }
 
@@ -160,7 +162,10 @@ export class WalletService {
       })
     )
       .json()
-      .then((res) => res.transactionHash as string);
+      .then((res) => {
+        console.log({ res });
+        return res.hash as string;
+      });
     return transactionHash;
   }
 }

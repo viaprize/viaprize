@@ -1,3 +1,5 @@
+import { ContractFunctionReturnType } from 'viem';
+
 export const DEFAULT_PLATFORM_FEE = 5;
 
 interface ABIObject {
@@ -1288,3 +1290,8 @@ export const PRIZE_V2_ABI = [
     type: 'receive',
   },
 ] as const;
+export type SubmissionsTypePrizeV2 = ContractFunctionReturnType<
+  typeof PRIZE_V2_ABI,
+  'view',
+  'getAllSubmissions'
+>;

@@ -2,6 +2,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Inject,
   Patch,
   Post,
@@ -22,9 +23,11 @@ import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
 import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
+import { WalletService } from 'src/wallet/wallet.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
@@ -70,6 +73,7 @@ export class PrizesController {
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
     private readonly prizeCommentsService: PrizeCommentService,
+    private readonly walletService: WalletService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -260,7 +264,31 @@ export class PrizesController {
     @Request() req,
   ): Promise<Http200Response> {
     const user = await this.userService.findOneByAuthId(req.user.userId);
-    const submission = await this.submissionService.create(body, user);
+    const prize = await this.prizeService.findAndReturnBySlug(slug);
+
+    const hash = await this.walletService
+      .simulateAndWriteSmartContractPrizeV2(
+        'addSubmission',
+        [user.walletAddress as `0x${string}`, body.submissionHash],
+        prize.contract_address,
+        'gasless',
+        '0',
+      )
+      .catch((e) => {
+        console.log(e);
+        throw new HttpException(e.message, 400);
+      });
+    console.log(hash, 'hash');
+    console.log(prize.contract_address, 'contract_address');
+    const submissionHash =
+      await this.blockchainService.getSubmissionHashFromTransactionPrizeV2(
+        hash,
+      );
+    console.log(submissionHash, 'submissionHash');
+    const submission = await this.submissionService.create(
+      { ...body, submissionHash: submissionHash as string },
+      user,
+    );
     await this.prizeService.addSubmission(submission, slug);
 
     await this.mailService.submission(user.email);
@@ -349,21 +377,32 @@ export class PrizesController {
         page,
       },
     );
-    const finalSubmissions = await Promise.all(
-      submissions.data.map(async (value) => {
-        const votes = await this.blockchainService.getSubmissionVotes(
-          prize.contract_address,
-          value.submissionHash,
+    const [[submissionsFromBlockchain]] =
+      (await this.blockchainService.getPrizesV2PublicVariables(
+        [prize.contract_address],
+        ['getAllSubmissions'],
+      )) as [[SubmissionsTypePrizeV2]];
+    const finalSubmissions = submissionsFromBlockchain.map(
+      (blockchainSubmission) => {
+        const backendSubmission = submissions.data.find(
+          (submission) =>
+            blockchainSubmission.submissionHash === submission.submissionHash,
         );
-        return {
-          ...value,
-          voting_blockchain: parseInt(votes.toString()),
-        } as SubmissionWithBlockchainData;
-      }),
+        if (backendSubmission) {
+          return {
+            ...backendSubmission,
+            voting_blockchain: parseInt(
+              blockchainSubmission.usdcVotes.toString(),
+            ),
+          } as SubmissionWithBlockchainData;
+        }
+      },
     );
 
+    const removeUndefinedFinalSubmission = finalSubmissions.filter((e) => e);
+
     return {
-      data: finalSubmissions,
+      data: removeUndefinedFinalSubmission as SubmissionWithBlockchainData[],
       hasNextPage: submissions.hasNextPage,
     };
   }

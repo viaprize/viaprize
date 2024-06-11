@@ -11,44 +11,6 @@
 
 import { env } from '@env';
 
-/** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
-export interface CreatePact {
-  /** Name of the pact i.e the title, which is gotten in the pact form */
-  name: string;
-  /** Terms of the pact i.e the Description */
-  terms: string;
-  /**
-   * Address of the pact on the blockchain
-   * @maxLength 44
-   */
-  address: string;
-  /**
-   * Transaction hash of the pact on the blockchain
-   * @maxLength 66
-   */
-  transactionHash: string;
-  /** Block hash of the pact on the blockchain */
-  blockHash?: string;
-}
-
-export interface Pact {
-  id: number;
-  name: string;
-  terms: string;
-  address: string;
-  transactionHash: string;
-  blockHash: string;
-}
-
-export type PactNullable = {
-  id: number;
-  name: string;
-  terms: string;
-  address: string;
-  transactionHash: string;
-  blockHash: string;
-} | null;
-
 export interface Http200Response {
   message: string;
 }
@@ -589,6 +551,35 @@ export interface UpdateUser {
   walletAddress?: string;
 }
 
+export interface WalletResponse {
+  hash: string;
+}
+
+export interface IncreaseSubmissionDto {
+  minutes: number;
+}
+
+export interface IncreaseVotingDto {
+  minutes: number;
+}
+
+export interface VoteDTO {
+  submissionHash: string;
+  v: number;
+  s: string;
+  r: string;
+  amount: number;
+}
+
+export interface AddUsdcFundsDto {
+  amount: number;
+  deadline: number;
+  v: number;
+  s: string;
+  r: string;
+  hash: string;
+}
+
 export namespace Indexer {
   /**
    * No description
@@ -601,35 +592,6 @@ export namespace Indexer {
     export type RequestBody = never;
     export type RequestHeaders = {};
     export type ResponseBody = string;
-  }
-}
-
-export namespace Pacts {
-  /**
-   * No description
-   * @name PactsCreate
-   * @request POST:/pacts
-   */
-  export namespace PactsCreate {
-    export type RequestParams = {};
-    export type RequestQuery = {};
-    export type RequestBody = CreatePact;
-    export type RequestHeaders = {};
-    export type ResponseBody = Pact;
-  }
-  /**
-   * No description
-   * @name PactsDetail
-   * @request GET:/pacts/{address}
-   */
-  export namespace PactsDetail {
-    export type RequestParams = {
-      address: string;
-    };
-    export type RequestQuery = {};
-    export type RequestBody = never;
-    export type RequestHeaders = {};
-    export type ResponseBody = PactNullable;
   }
 }
 
@@ -1415,11 +1377,13 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
   }
   /**
    * No description
-   * @name ClearCacheList
-   * @request GET:/prizes/clear_cache
+   * @name AddressDetail
+   * @request GET:/prizes/address/{id}
    */
-  export namespace ClearCacheList {
-    export type RequestParams = {};
+  export namespace AddressDetail {
+    export type RequestParams = {
+      id: string;
+    };
     export type RequestQuery = {};
     export type RequestBody = never;
     export type RequestHeaders = {};
@@ -1544,6 +1508,129 @@ export namespace Users {
     export type RequestBody = never;
     export type RequestHeaders = {};
     export type ResponseBody = PrizeWithBlockchainData[];
+  }
+}
+
+export namespace Wallet {
+  /**
+   * No description
+   * @name PrizeStartSubmissionCreate
+   * @request POST:/wallet/prize/{contract_address}/start_submission
+   * @secure
+   */
+  export namespace PrizeStartSubmissionCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+  /**
+   * No description
+   * @name PrizeEndSubmissionCreate
+   * @request POST:/wallet/prize/{contract_address}/end_submission
+   * @secure
+   */
+  export namespace PrizeEndSubmissionCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+  /**
+   * No description
+   * @name PrizeStartVotingCreate
+   * @request POST:/wallet/prize/{contract_address}/start_voting
+   * @secure
+   */
+  export namespace PrizeStartVotingCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+  /**
+   * No description
+   * @name PrizeEndVotingCreate
+   * @request POST:/wallet/prize/{contract_address}/end_voting
+   * @secure
+   */
+  export namespace PrizeEndVotingCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+  /**
+   * No description
+   * @name PrizeIncreaseSubmissionCreate
+   * @request POST:/wallet/prize/{contract_address}/increase_submission
+   * @secure
+   */
+  export namespace PrizeIncreaseSubmissionCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = IncreaseSubmissionDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+  /**
+   * No description
+   * @name PrizeIncreaseVotingCreate
+   * @request POST:/wallet/prize/{contract_address}/increase_voting
+   * @secure
+   */
+  export namespace PrizeIncreaseVotingCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = IncreaseVotingDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+  /**
+   * No description
+   * @name PrizeVoteCreate
+   * @request POST:/wallet/prize/{contract_address}/vote
+   * @secure
+   */
+  export namespace PrizeVoteCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = VoteDTO;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+  /**
+   * No description
+   * @name PrizeAddUsdcFundsCreate
+   * @request POST:/wallet/prize/{contract_address}/add_usdc_funds
+   * @secure
+   */
+  export namespace PrizeAddUsdcFundsCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = AddUsdcFundsDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
   }
 }
 
@@ -1795,37 +1882,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<string, any>({
         path: `/indexer/portal`,
         method: 'POST',
-        format: 'json',
-        ...params,
-      }),
-  };
-  pacts = {
-    /**
-     * No description
-     *
-     * @name PactsCreate
-     * @request POST:/pacts
-     */
-    pactsCreate: (data: CreatePact, params: RequestParams = {}) =>
-      this.request<Pact, any>({
-        path: `/pacts`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name PactsDetail
-     * @request GET:/pacts/{address}
-     */
-    pactsDetail: (address: string, params: RequestParams = {}) =>
-      this.request<PactNullable, any>({
-        path: `/pacts/${address}`,
-        method: 'GET',
         format: 'json',
         ...params,
       }),
@@ -2756,12 +2812,12 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
     /**
      * No description
      *
-     * @name ClearCacheList
-     * @request GET:/prizes/clear_cache
+     * @name AddressDetail
+     * @request GET:/prizes/address/{id}
      */
-    clearCacheList: (params: RequestParams = {}) =>
+    addressDetail: (id: string, params: RequestParams = {}) =>
       this.request<Http200Response, any>({
-        path: `/prizes/clear_cache`,
+        path: `/prizes/address/${id}`,
         method: 'GET',
         format: 'json',
         ...params,
@@ -2886,6 +2942,159 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       this.request<PrizeWithBlockchainData[], any>({
         path: `/users/username/${username}/prizes`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  };
+  wallet = {
+    /**
+     * No description
+     *
+     * @name PrizeStartSubmissionCreate
+     * @request POST:/wallet/prize/{contract_address}/start_submission
+     * @secure
+     */
+    prizeStartSubmissionCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/start_submission`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeEndSubmissionCreate
+     * @request POST:/wallet/prize/{contract_address}/end_submission
+     * @secure
+     */
+    prizeEndSubmissionCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/end_submission`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeStartVotingCreate
+     * @request POST:/wallet/prize/{contract_address}/start_voting
+     * @secure
+     */
+    prizeStartVotingCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/start_voting`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeEndVotingCreate
+     * @request POST:/wallet/prize/{contract_address}/end_voting
+     * @secure
+     */
+    prizeEndVotingCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/end_voting`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeIncreaseSubmissionCreate
+     * @request POST:/wallet/prize/{contract_address}/increase_submission
+     * @secure
+     */
+    prizeIncreaseSubmissionCreate: (
+      contractAddress: string,
+      data: IncreaseSubmissionDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/increase_submission`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeIncreaseVotingCreate
+     * @request POST:/wallet/prize/{contract_address}/increase_voting
+     * @secure
+     */
+    prizeIncreaseVotingCreate: (
+      contractAddress: string,
+      data: IncreaseVotingDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/increase_voting`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeVoteCreate
+     * @request POST:/wallet/prize/{contract_address}/vote
+     * @secure
+     */
+    prizeVoteCreate: (
+      contractAddress: string,
+      data: VoteDTO,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/vote`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeAddUsdcFundsCreate
+     * @request POST:/wallet/prize/{contract_address}/add_usdc_funds
+     * @secure
+     */
+    prizeAddUsdcFundsCreate: (
+      contractAddress: string,
+      data: AddUsdcFundsDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/add_usdc_funds`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

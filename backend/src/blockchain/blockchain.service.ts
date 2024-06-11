@@ -52,25 +52,6 @@ export class BlockchainService {
       address: address as `0x${string}`,
     });
   }
-  async getSubmissionTime(viaprizeContractAddress: string): Promise<bigint> {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_submission_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-    ] as const;
-    const data = await this.provider.readContract({
-      abi,
-      address: viaprizeContractAddress as `0x${string}`,
-      functionName: 'get_submission_time',
-    });
-
-    return data;
-  }
-
   async getVotingTime(viaprizeContractAddress: string): Promise<bigint> {
     const abi = [
       {
@@ -187,30 +168,6 @@ export class BlockchainService {
       functionName: 'totalFunds',
     });
 
-    return data;
-  }
-
-  async getSubmissionVotes(
-    viaprizeContractAddress: string,
-    hash: string,
-  ): Promise<bigint> {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [
-          { name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' },
-        ],
-        name: 'get_submission_by_hash',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-    ] as const;
-    const data = await this.provider.readContract({
-      address: viaprizeContractAddress as `0x${string}`,
-      abi,
-      args: [hash as `0x${string}`],
-      functionName: 'get_submission_by_hash',
-    });
     return data;
   }
 
@@ -417,5 +374,14 @@ export class BlockchainService {
 
     console.log({ final });
     return final as never as T[][];
+  }
+
+  async getSubmissionHashFromTransactionPrizeV2(hash: string) {
+    const reciept = await this.provider.waitForTransactionReceipt({
+      hash: hash as `0x${string}`,
+      confirmations: 1,
+    });
+    console.log({ reciept });
+    return reciept.logs[1].topics[2];
   }
 }

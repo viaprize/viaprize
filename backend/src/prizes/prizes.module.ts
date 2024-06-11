@@ -1,9 +1,10 @@
 import { CacheModule } from '@nestjs/cache-manager';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlockchainModule } from 'src/blockchain/blockchain.module';
 import { MailModule } from 'src/mail/mail.module';
 import { UsersModule } from 'src/users/users.module';
+import { WalletModule } from 'src/wallet/wallet.module';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
 import { PrizesComments } from './entities/prizes-comments.entity';
@@ -27,6 +28,7 @@ import { SubmissionService } from './services/submissions.service';
     UsersModule,
     MailModule,
     BlockchainModule,
+    forwardRef(() => WalletModule),
   ],
   exports: [PrizesService],
   providers: [
