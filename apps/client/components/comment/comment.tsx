@@ -17,6 +17,7 @@ import useAppUser from '../hooks/useAppUser';
 import { usePortal } from '../hooks/usePortal';
 import CommentForm from './comment-form';
 import FetchChildComment from './fetch-child-comments';
+import { formatDistanceToNow } from 'date-fns';
 
 export default function Comment({ portalComment }: { portalComment: PortalsComments }) {
   const [areChildrenHidden, setAreChildrenHidden] = useState(true);
@@ -133,7 +134,12 @@ export default function Comment({ portalComment }: { portalComment: PortalsComme
             </Text>
           </Group>
           <Text size="sm">
-            created at {new Date(portalComment.created_at).toLocaleTimeString()}
+            {formatDistanceToNow(
+              new Date(portalComment.created_at),
+              {
+                addSuffix: true,
+              },
+            )}
           </Text>
         </Group>
 
