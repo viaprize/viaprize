@@ -1,11 +1,12 @@
+'use client'
+
 import useAppUser from '@/components/hooks/useAppUser';
-import AppShellLayout from '@/components/layout/appshell';
+import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 import { Button, Card, Flex } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import type { ReactElement } from 'react';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { BiSolidRightArrowCircle } from 'react-icons/bi';
 import { FaTelegramPlane } from 'react-icons/fa';
@@ -79,16 +80,9 @@ export default function Home() {
         {/* Hero Section */}
         <section className="md:flex justify-betweem items-center min-h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
-            {/* <h2 className="font-normal text-lg text-black uppercase my-0">
-              Crowdfund the future
-            </h2> */}
             <h1 className="font-bold text-4xl sm:text-5xl my-6">
               The home for all your crowdfunding needs
             </h1>
-            {/* <p className="text-lg text-gray-600 my-4">
-              Simple and sleek design with users in mind. viaPrize is a platform that
-              allows
-            </p> */}
             <Flex gap="md">
               <Link href="/prize/explore">
                 <Button
@@ -124,7 +118,11 @@ export default function Home() {
                 <p className="my-0">Total campaigns</p>
               </div>
             </Flex>
+            <div className="">
+              <SubscriptionForm />
+            </div>
           </div>
+
           <div className="md:w-1/2">
             <div
               className="absolute right-[-30%] top-[-40%] w-[80vw] h-[80vw] rounded-full"
@@ -232,6 +230,7 @@ export default function Home() {
             {/* <h1 className="w-96 text-3xl text-center font-bold text-black">
               Tons of love who are building and working with viaPrize
             </h1> */}
+
             <Button
               rightSection={<FaTelegramPlane size={20} />}
               color="primary"
@@ -377,6 +376,4 @@ function NextJsImage({
   );
 }
 
-Home.getLayout = function getLayout(page: ReactElement) {
-  return <AppShellLayout>{page}</AppShellLayout>;
-};
+
