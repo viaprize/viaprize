@@ -4,10 +4,10 @@ import { env } from '@env';
 
 export async function subscribeToNewsletter({
   email,
-  opt,
+  // opt,
 }: {
   email: string;
-  opt: boolean;
+  // opt: boolean;
 }) {
   const response = await fetch(env.NEXT_PUBLIC_BREVO_NEWSLETTER_URL, {
     method: 'POST',
@@ -16,7 +16,7 @@ export async function subscribeToNewsletter({
     },
     body: new URLSearchParams({
       EMAIL: email,
-      OPT_IN: opt ? '1' : '0',
+      // OPT_IN: opt ? '1' : '0',
     }).toString(),
   }).catch((error) => {
     console.error(error);

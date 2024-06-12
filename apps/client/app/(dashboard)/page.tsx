@@ -118,9 +118,6 @@ export default function Home() {
                 <p className="my-0">Total campaigns</p>
               </div>
             </Flex>
-            <div className="">
-              <SubscriptionForm />
-            </div>
           </div>
 
           <div className="md:w-1/2">
@@ -143,6 +140,10 @@ export default function Home() {
             />
           </div>
         </section>
+
+        <div className="flex justify-center w-full">
+          <SubscriptionForm />
+        </div>
         {/* How it works */}
         <div className="flex flex-col items-center my-4">
           <h1>Why viaPrize?</h1>
