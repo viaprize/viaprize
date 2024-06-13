@@ -4,17 +4,14 @@ import { Button } from '@mantine/core';
 import { useMutation } from 'react-query';
 import { toast } from 'sonner';
 
-export default function EndSubmission({ contractAddress }: { contractAddress: string }) {
+export default function EndDispute({ contractAddress }: { contractAddress: string }) {
   const { mutateAsync, isLoading } = useMutation(
     async () => {
-      return await (await backendApi()).wallet.prizeEndSubmissionCreate(contractAddress);
+      return await (await backendApi()).wallet.prizeEndDisputeCreate(contractAddress);
     },
     {
       onSuccess: async (data) => {
-        toast.success(
-          <TransactionToast title="Submission Ending" hash={data.data.hash} />,
-        );
-        window.location.reload();
+        toast.success(<TransactionToast title="Dispute Ending" hash={data.data.hash} />);
       },
     },
   );
@@ -29,7 +26,7 @@ export default function EndSubmission({ contractAddress }: { contractAddress: st
       }}
     >
       {' '}
-      End Submission
+      End Dispute
     </Button>
   );
 }

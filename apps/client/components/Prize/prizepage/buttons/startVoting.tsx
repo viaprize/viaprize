@@ -1,6 +1,8 @@
+import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
 import { Button } from '@mantine/core';
 import { useMutation } from 'react-query';
+import { toast } from 'sonner';
 
 export default function StartVoting({
   contractAddress,
@@ -15,6 +17,9 @@ export default function StartVoting({
     {
       onSuccess: async (data) => {
         console.log(data);
+        toast.success(
+          <TransactionToast hash={data.data.hash} title="Voting Period Started" />,
+        );
         window.location.reload();
       },
     },
