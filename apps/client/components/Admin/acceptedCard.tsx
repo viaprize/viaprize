@@ -1,12 +1,24 @@
-import { User } from '@/lib/api';
+import type { User } from '@/lib/api';
 import {
-  prepareWritePrizeFactory,
+  ADMINS,
+  ETH_PRICE,
+  SWAP_ROUTER,
+  USDC,
+  USDC_BRIDGE,
+  USDC_TO_ETH_POOL,
+  USDC_TO_USDCE_POOL,
+  WETH,
+} from '@/lib/constants';
+import {
+  prepareWritePrizeFactoryV2,
   prepareWritePrizeJudgesFactory,
-  writePrizeFactory,
+  writePrizeFactoryV2,
   writePrizeJudgesFactory,
 } from '@/lib/smartContract';
 import { Badge, Button, Card, Group, Image, Modal, Text } from '@mantine/core';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
+import Link from 'next/link';
 import router from 'next/router';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -25,11 +37,11 @@ interface AdminCardProps {
   proposerFeePercentage: number;
   platfromFeePercentage: number;
   isAccepted?: boolean;
-  submission_time: number;
+  submissionTime: number;
   judges?: string[];
 }
 
-const AdminAcceptedCard: React.FC<AdminCardProps> = ({
+function AdminAcceptedCard({
   id,
   images,
   admins,
@@ -38,11 +50,11 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
   title,
   user,
   voting,
-  submission_time,
+  submissionTime,
   judges,
   platfromFeePercentage,
   proposerFeePercentage,
-}) => {
+}: AdminCardProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const currentTimestamp = useRef(Date.now());
 
@@ -50,7 +62,6 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
 
   const deployPrize = async () => {
     const firstLoadingToast = toast.loading('Transaction Waiting To Be approved', {
-      delete: false,
       dismissible: false,
     });
     let out;
@@ -68,7 +79,7 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
           BigInt(platfromFeePercentage),
           BigInt(proposerFeePercentage),
           '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-          BigInt(submission_time),
+          BigInt(submissionTime),
           BigInt(currentTimestamp.current),
         ],
       });
@@ -76,23 +87,28 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
       console.log(out, 'outJudges');
     } else {
       console.log({ admins });
-      const requestJudges = await prepareWritePrizeFactory({
+      const requestJudges = await prepareWritePrizeFactoryV2({
         functionName: 'createViaPrize',
         args: [
-          admins as `0x${string}`[],
-          [
-            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
-          ] as `0x${string}`[],
+          BigInt(currentTimestamp.current),
+          admins[0] as `0x${string}`,
+          ADMINS,
           BigInt(platfromFeePercentage),
           BigInt(proposerFeePercentage),
-          '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-          BigInt(submission_time),
-          BigInt(currentTimestamp.current),
+          USDC,
+          USDC_BRIDGE,
+          SWAP_ROUTER,
+          USDC_TO_USDCE_POOL,
+          USDC_TO_ETH_POOL,
+          ETH_PRICE,
+          WETH,
         ],
       });
-      out = await writePrizeFactory(requestJudges);
+      console.log(requestJudges, 'requestJudges');
+      out = await writePrizeFactoryV2(requestJudges).catch((_) => {
+        toast.error('Transaction Failed');
+        toast.dismiss(firstLoadingToast);
+      });
       console.log(out, 'out');
     }
     const waitForTransactionOut = await waitForTransaction({
@@ -109,10 +125,25 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
     toast.dismiss(firstLoadingToast);
     console.log(prize, 'prize');
     toast.success(
-      `Prize Address ${prizeAddress.slice(0, 8)}...${prizeAddress.slice(-8)} `,
+      <div className="flex items-center ">
+        <IconCircleCheck />{' '}
+        <Text fw="md" size="sm" className="ml-2">
+          {' '}
+          Prize Address
+        </Text>
+        <Link
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`https://optimistic.etherscan.io/address/${prizeAddress}`}
+        >
+          <Button variant="transparent" className="text-blue-400 underline">
+            See here
+          </Button>
+        </Link>
+      </div>,
     );
     toast.loading('Redirecting Please Wait');
-    router.push('/prize/explore');
+    await router.push('/prize/explore');
     toast.success('Redirected to Prize Explore Page');
   };
   return (
@@ -168,6 +199,6 @@ const AdminAcceptedCard: React.FC<AdminCardProps> = ({
       </Modal>
     </>
   );
-};
+}
 
 export default AdminAcceptedCard;

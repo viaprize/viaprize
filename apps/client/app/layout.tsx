@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
   },
+  metadataBase: new URL('https://viaprize.org/'),
 };
 
 export default function RootLayout({

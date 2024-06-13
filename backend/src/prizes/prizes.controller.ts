@@ -2,7 +2,9 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Inject,
+  Patch,
   Post,
   Put,
   Query,
@@ -19,10 +21,13 @@ import { Cache } from 'cache-manager';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
+import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
 import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
+import { WalletService } from 'src/wallet/wallet.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
@@ -31,6 +36,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
+import { FetchSubmissionDto } from './dto/submission.dto';
 import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
@@ -51,17 +57,6 @@ interface SubmissionWithBlockchainData extends Submission {
  * @class PrizeProposalsPaginationResult
  * @typedef {PrizeProposalsPaginationResult}
  * @implements {InfinityPaginationResultType<PrizeProposals>}
-//  */
-// class PrizeProposalsPaginationResult
-//   implements InfinityPaginationResultType<PrizeProposals>
-// {
-//   data: PrizeProposals[];
-//   hasNextPage: boolean;
-//   results: PrizeProposals[];
-//   total: number;
-//   page: number;
-//   limit: number;
-// }
 
 /**
  * This is the prizes controller class.
@@ -78,6 +73,7 @@ export class PrizesController {
     private readonly submissionService: SubmissionService,
     private readonly userService: UsersService,
     private readonly prizeCommentsService: PrizeCommentService,
+    private readonly walletService: WalletService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -165,27 +161,22 @@ export class PrizesController {
         300000,
       );
     }
-    const results = await this.blockchainService.getPrizesPublicVariables(
+    const results = (await this.blockchainService.getPrizesV2PublicVariables(
       prizeWithoutBalance.data.map((prize) => prize.contract_address),
+      ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
+    )) as [[bigint, boolean, bigint, bigint]];
+    const prizeWithBalanceData = prizeWithoutBalance.data.map(
+      (prize, index) => {
+        return {
+          ...prize,
+          balance: parseInt(results[index][0].toString()),
+          distributed: results[index][1],
+          submission_time_blockchain: parseInt(results[index][2].toString()),
+          voting_time_blockchain: parseInt(results[index][3].toString()),
+        } as PrizeWithBlockchainData;
+      },
     );
-    let start = 0;
-    let end = 4;
-    const prizeWithBalanceData = prizeWithoutBalance.data.map((prize) => {
-      const portalResults = results.slice(start, end);
-      start += 4;
-      end += 4;
-      return {
-        ...prize,
-        balance: parseInt((portalResults[0].result as bigint).toString()),
-        distributed: portalResults[1].result as boolean,
-        submission_time_blockchain: parseInt(
-          (portalResults[2].result as bigint).toString(),
-        ),
-        voting_time_blockchain: parseInt(
-          (portalResults[3].result as bigint).toString(),
-        ),
-      } as PrizeWithBlockchainData;
-    });
+    console.log(prizeWithBalanceData, 'prizeWithBalanceData');
     return {
       data: prizeWithBalanceData as PrizeWithBlockchainData[],
       hasNextPage: prizeWithoutBalance.hasNextPage,
@@ -197,22 +188,19 @@ export class PrizesController {
     @TypedParam('slug') slug: string,
   ): Promise<PrizeWithBlockchainData> {
     const prize = await this.prizeService.findAndReturnBySlug(slug);
-    const results = await this.blockchainService.getPrizePublicVariables(
-      prize.contract_address,
-    );
-    // console.log({ results })
-    // console.log(results, 'results');
-    console.log(results[4], 'resultsssn3');
+    const [totalFunds, distributed, submissionTime, votingTime] = (
+      await this.blockchainService.getPrizesV2PublicVariables(
+        [prize.contract_address],
+        ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
+      )
+    )[0] as [bigint, boolean, bigint, bigint];
+
     return {
       ...prize,
-      distributed: results[3].result as boolean,
-      balance: parseInt((results[4].result as bigint).toString()),
-      submission_time_blockchain: parseInt(
-        (results[1].result as bigint).toString(),
-      ),
-      voting_time_blockchain: parseInt(
-        (results[2].result as bigint).toString(),
-      ),
+      distributed: distributed,
+      balance: parseInt(totalFunds.toString()),
+      submission_time_blockchain: parseInt(submissionTime.toString()),
+      voting_time_blockchain: parseInt(votingTime.toString()),
     };
   }
 
@@ -276,7 +264,31 @@ export class PrizesController {
     @Request() req,
   ): Promise<Http200Response> {
     const user = await this.userService.findOneByAuthId(req.user.userId);
-    const submission = await this.submissionService.create(body, user);
+    const prize = await this.prizeService.findAndReturnBySlug(slug);
+
+    const hash = await this.walletService
+      .simulateAndWriteSmartContractPrizeV2(
+        'addSubmission',
+        [user.walletAddress as `0x${string}`, body.submissionHash],
+        prize.contract_address,
+        'gasless',
+        '0',
+      )
+      .catch((e) => {
+        console.log(e);
+        throw new HttpException(e.message, 400);
+      });
+    console.log(hash, 'hash');
+    console.log(prize.contract_address, 'contract_address');
+    const submissionHash =
+      await this.blockchainService.getSubmissionHashFromTransactionPrizeV2(
+        hash,
+      );
+    console.log(submissionHash, 'submissionHash');
+    const submission = await this.submissionService.create(
+      { ...body, submissionHash: submissionHash as string },
+      user,
+    );
     await this.prizeService.addSubmission(submission, slug);
 
     await this.mailService.submission(user.email);
@@ -289,8 +301,51 @@ export class PrizesController {
   async getSubmission(
     @TypedParam('id') id: string,
     @TypedParam('slug') _: string,
-  ): Promise<Submission> {
-    return await this.submissionService.findSubmissionById(id);
+  ): Promise<FetchSubmissionDto> {
+    const sub = await this.submissionService.findSubmissionById(id);
+    const [[submissionTime]] =
+      (await this.blockchainService.getPrizesV2PublicVariables(
+        [sub.prize.contract_address],
+        ['getSubmissionTime'],
+      )) as [[bigint]];
+
+    return {
+      ...sub,
+      submissionDeadline: parseInt(submissionTime.toString()),
+    };
+  }
+
+  @Patch('/submission/:id')
+  @UseGuards(AuthGuard)
+  async EditSubmission(
+    @TypedParam('id') id: string,
+    @TypedBody() content: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    const authId = req.user.userId as string;
+    await this.submissionService.submissionEdit(authId, id, content);
+    return {
+      message: `Submission with id ${id} has been Edited`,
+    };
+  }
+
+  @Post('/:slug/participate')
+  @UseGuards(AuthGuard)
+  async participate(
+    @TypedParam('slug') slug: string,
+    @Request() req,
+  ): Promise<Http200Response> {
+    const user = await this.userService.findOneByAuthId(req.user.userId);
+    await this.prizeService.addPariticpant(slug, user);
+    return {
+      message: `You have been added to the prize`,
+    };
+  }
+
+  @Get('/:slug/contestants')
+  async getContestants(@TypedParam('slug') slug: string): Promise<User[]> {
+    const res = await this.prizeService.getParcipants(slug);
+    return res;
   }
 
   @Get('/:slug/submission')
@@ -322,21 +377,32 @@ export class PrizesController {
         page,
       },
     );
-    const finalSubmissions = await Promise.all(
-      submissions.data.map(async (value) => {
-        const votes = await this.blockchainService.getSubmissionVotes(
-          prize.contract_address,
-          value.submissionHash,
+    const [[submissionsFromBlockchain]] =
+      (await this.blockchainService.getPrizesV2PublicVariables(
+        [prize.contract_address],
+        ['getAllSubmissions'],
+      )) as [[SubmissionsTypePrizeV2]];
+    const finalSubmissions = submissionsFromBlockchain.map(
+      (blockchainSubmission) => {
+        const backendSubmission = submissions.data.find(
+          (submission) =>
+            blockchainSubmission.submissionHash === submission.submissionHash,
         );
-        return {
-          ...value,
-          voting_blockchain: parseInt(votes.toString()),
-        } as SubmissionWithBlockchainData;
-      }),
+        if (backendSubmission) {
+          return {
+            ...backendSubmission,
+            voting_blockchain: parseInt(
+              blockchainSubmission.usdcVotes.toString(),
+            ),
+          } as SubmissionWithBlockchainData;
+        }
+      },
     );
 
+    const removeUndefinedFinalSubmission = finalSubmissions.filter((e) => e);
+
     return {
-      data: finalSubmissions,
+      data: removeUndefinedFinalSubmission as SubmissionWithBlockchainData[],
       hasNextPage: submissions.hasNextPage,
     };
   }
@@ -648,6 +714,21 @@ export class PrizesController {
     const slug = await this.prizeService.getSlugById(id);
     return {
       slug,
+    };
+  }
+
+  @Get('/address/:id')
+  async address(@TypedParam('id') id: string): Promise<Http200Response> {
+    const startingPeriod =
+      await this.blockchainService.getPrizesV2PublicVariables(
+        [id],
+        ['submissionPeriod', 'getSubmissionTime', 'votingPeriod'],
+      );
+
+    console.log(startingPeriod);
+
+    return {
+      message: `Prize proposal with id ${id} has been updated`,
     };
   }
 }

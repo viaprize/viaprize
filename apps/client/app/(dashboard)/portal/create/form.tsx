@@ -351,7 +351,7 @@ export default function PortalForm() {
           (portalType === 'all-or-nothing' && (!fundingGoal || !deadline))
         }
       >
-        Create Portal
+        Create Fundraisers
       </Button>
     </div>
   );

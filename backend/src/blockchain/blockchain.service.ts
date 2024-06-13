@@ -1,18 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ethers } from 'ethers';
+import { ExtractAbiFunctionNames } from 'abitype';
 import { AllConfigType } from 'src/config/config.type';
-import { PublicClient, createPublicClient, http, parseAbi } from 'viem';
+import { PRIZE_V2_ABI } from 'src/utils/constants';
+import {
+  MulticallReturnType,
+  PublicClient,
+  createPublicClient,
+  http,
+  parseAbi,
+} from 'viem';
 import { optimism } from 'viem/chains';
 import {
   Contribution,
   Contributions,
   TransactionApiResponse,
 } from './blockchain';
+
+function splitArray<T>(arr: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize);
+    chunks.push(chunk);
+  }
+  return chunks;
+}
 @Injectable()
 export class BlockchainService {
   provider: PublicClient;
-  wallet: ethers.Wallet;
   multiCallContract = {
     address: '0xcA11bde05977b3631167028862bE2a173976CA11' as `0x${string}`,
     abi: parseAbi([
@@ -37,50 +52,6 @@ export class BlockchainService {
       address: address as `0x${string}`,
     });
   }
-  // async setEndKickStarterCampaign(contractAddress: string) {
-  //   const contract = new ethers.Contract(
-  //     contractAddress,
-  //     [
-  //       "function endKickStarterCampaign()",
-  //     ],
-  //     this.wallet,
-  //   );
-  //   try {
-  //     const gasEstimate = await contract.endKickStarterCampaign.estimateGas(
-  //       this.wallet.address,
-  //     );
-  //     const gasLimit = parseInt(gasEstimate.toString()) * 2;
-  //     const tx = await contract.endKickStarterCampaign(this.wallet.address, {
-  //       gasLimit: BigInt(gasLimit),
-  //     });
-
-  //     const receipt = await tx.wait();
-
-  //     return receipt;
-  //   } catch (error) {
-
-  //     return new Error(error);
-  //   }
-  // }
-  async getSubmissionTime(viaprizeContractAddress: string): Promise<bigint> {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_submission_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-    ] as const;
-    const data = await this.provider.readContract({
-      abi,
-      address: viaprizeContractAddress as `0x${string}`,
-      functionName: 'get_submission_time',
-    });
-
-    return data;
-  }
-
   async getVotingTime(viaprizeContractAddress: string): Promise<bigint> {
     const abi = [
       {
@@ -200,30 +171,6 @@ export class BlockchainService {
     return data;
   }
 
-  async getSubmissionVotes(
-    viaprizeContractAddress: string,
-    hash: string,
-  ): Promise<bigint> {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [
-          { name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' },
-        ],
-        name: 'get_submission_by_hash',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-    ] as const;
-    const data = await this.provider.readContract({
-      address: viaprizeContractAddress as `0x${string}`,
-      abi,
-      args: [hash as `0x${string}`],
-      functionName: 'get_submission_by_hash',
-    });
-    return data;
-  }
-
   async getPortalsPublicVariables(portalContractAddress: string[]) {
     const abi = [
       {
@@ -294,132 +241,6 @@ export class BlockchainService {
       contracts: calls,
     });
 
-    return results;
-  }
-
-  async getPrizesPublicVariables(prizeAddresses: string[]) {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_voting_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_submission_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'total_funds',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'distributed',
-        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-      },
-    ];
-    const calls: any = [];
-    prizeAddresses.forEach((address) => {
-      const wagmiContract = {
-        address: address as `0x${string}`,
-        abi: abi,
-      } as const;
-      calls.push(
-        {
-          ...wagmiContract,
-          functionName: 'total_funds',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'distributed',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'get_submission_time',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'get_voting_time',
-        },
-      );
-    });
-    const results = await this.provider.multicall({
-      contracts: calls,
-    });
-    console.log(results, 'results');
-    return results;
-  }
-
-  async getPrizePublicVariables(prizeContractAddress: string) {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_voting_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_submission_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'distributed',
-        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'total_funds',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-    ];
-    const wagmiContract = {
-      address: prizeContractAddress as `0x${string}`,
-      abi: abi,
-    } as const;
-    const results = await this.provider.multicall({
-      contracts: [
-        {
-          ...this.multiCallContract,
-          functionName: 'getEthBalance',
-          args: [prizeContractAddress as `0x${string}`],
-        },
-        {
-          ...wagmiContract,
-          functionName: 'get_submission_time',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'get_voting_time',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'distributed',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'total_funds',
-        },
-      ],
-    });
     return results;
   }
 
@@ -517,7 +338,50 @@ export class BlockchainService {
         },
       ],
     });
-
     return results;
+  }
+
+  async getPrizesV2PublicVariables<T extends any>(
+    prizeContractAddresses: string[],
+    variables: ExtractAbiFunctionNames<typeof PRIZE_V2_ABI, 'pure' | 'view'>[],
+  ): Promise<T[][]> {
+    const calls: any = [];
+    prizeContractAddresses.forEach((address) => {
+      const wagmiContract = {
+        address: address as `0x${string}`,
+        abi: PRIZE_V2_ABI,
+      } as const;
+      const contracts = variables.map((variable) => {
+        return {
+          ...wagmiContract,
+          functionName: variable,
+        };
+      });
+      calls.push(...contracts);
+    });
+    const results: MulticallReturnType<any, true> =
+      await this.provider.multicall({
+        contracts: calls,
+      });
+    const final_results_unsliced = results.map((result) => {
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      return result.result;
+    });
+
+    const final = splitArray(final_results_unsliced, variables.length);
+
+    console.log({ final });
+    return final as never as T[][];
+  }
+
+  async getSubmissionHashFromTransactionPrizeV2(hash: string) {
+    const reciept = await this.provider.waitForTransactionReceipt({
+      hash: hash as `0x${string}`,
+      confirmations: 1,
+    });
+    console.log({ reciept });
+    return reciept.logs[1].topics[2];
   }
 }

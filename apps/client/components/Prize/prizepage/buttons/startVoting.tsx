@@ -1,31 +1,31 @@
-import { usePrizeStartVotingPeriod } from '@/lib/smartContract';
+import { backendApi } from '@/lib/backend';
 import { Button } from '@mantine/core';
-import { useAccount } from 'wagmi';
+import { useMutation } from 'react-query';
 
 export default function StartVoting({
   contractAddress,
-  votingTime,
 }: {
   contractAddress: string;
   votingTime: number;
 }) {
-  const { address } = useAccount();
-  const { writeAsync, isLoading } = usePrizeStartVotingPeriod({
-    account: address,
-    address: contractAddress as `0x${string}`,
-    args: [BigInt(votingTime)],
-    onSuccess(data) {
-      console.log({ data });
-      window.location.reload();
+  const { mutateAsync, isLoading } = useMutation(
+    async () => {
+      return await (await backendApi()).wallet.prizeStartVotingCreate(contractAddress);
     },
-  });
+    {
+      onSuccess: async (data) => {
+        console.log(data);
+        window.location.reload();
+      },
+    },
+  );
   return (
     <Button
       my="md"
       fullWidth
       loading={isLoading}
       onClick={async () => {
-        const result = await writeAsync?.();
+        const result = await mutateAsync?.();
         console.log(result);
       }}
     >

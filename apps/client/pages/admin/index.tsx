@@ -92,7 +92,7 @@ function AccpetedProposals({
               voting={proposal.voting_time}
               platfromFeePercentage={proposal.platformFeePercentage}
               proposerFeePercentage={proposal.proposerFeePercentage}
-              submission_time={proposal.submission_time}
+              submissionTime={proposal.submission_time}
               judges={proposal.judges}
             />
           ))}

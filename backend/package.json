@@ -50,6 +50,7 @@
     "@trigger.dev/nestjs": "^2.3.9",
     "@trigger.dev/sdk": "^2.3.9",
     "@types/multer-s3": "3.0.0",
+    "abitype": "^1.0.2",
     "agenda": "^5.0.0",
     "agenda-nest": "^3.0.0-next",
     "bcryptjs": "2.4.3",

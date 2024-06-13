@@ -22,7 +22,7 @@ export class UsersController {
     private readonly mailService: MailService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly blockchainService: BlockchainService,
-  ) { }
+  ) {}
 
   /**
    * Creates a new user and sends welcome email.
@@ -125,25 +125,21 @@ export class UsersController {
    * @returns {Promise<PrizeWithBlockchainData[]>} The prize object.
    */
   @Get('username/:username/prizes')
-  async getPrizes(@TypedParam('username') username: string): Promise<PrizeWithBlockchainData[]> {
+  async getPrizes(
+    @TypedParam('username') username: string,
+  ): Promise<PrizeWithBlockchainData[]> {
     const prizes = await this.usersService.findUserPrizesByUsername(username);
-    const results = await this.blockchainService.getPrizesPublicVariables(
+    const results = (await this.blockchainService.getPrizesV2PublicVariables(
       prizes.map((prize) => prize.contract_address),
-    );
-
-    let start = 0;
-    let end = 4;
-
-    const prizeWithBalanceData = prizes.map((prize) => {
-      const portalResults = results.slice(start, end);
-      start += 4;
-      end += 4;
+      ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
+    )) as [[bigint, boolean, bigint, bigint]];
+    const prizeWithBalanceData = prizes.map((prize, index) => {
       return {
         ...prize,
-        balance: parseInt((portalResults[0].result as bigint).toString()),
-        distributed: portalResults[1].result as boolean,
-        submission_time_blockchain: parseInt((portalResults[2].result as bigint).toString()),
-        voting_time_blockchain: parseInt((portalResults[3].result as bigint).toString()),
+        balance: parseInt(results[index][0].toString()),
+        distributed: results[index][1],
+        submission_time_blockchain: parseInt(results[index][2].toString()),
+        voting_time_blockchain: parseInt(results[index][3].toString()),
       } as PrizeWithBlockchainData;
     });
 

@@ -84,7 +84,7 @@ contract PrizeV2 {
 
     uint256 public totalVotes;
     uint256 public disputePeriod;
-    uint256 private nonceTracker;
+    uint256 public nonce;
 
     // bytes32 public  DOMAIN_SEPARATOR = 0x26d9c34bb1a1c312f69c53b2d93b8be20faafba63af2438c6811713c9b1f933f;
     // bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
@@ -178,6 +178,36 @@ contract PrizeV2 {
         _;
     }
 
+     function VOTE_HASH(uint256 _nonce,bytes32 _submission, uint256 _amount) public view returns (bytes32) {
+        address _contractAddress = address(this);
+        bytes32 _messageHash = keccak256(
+            abi.encodePacked("VOTE FOR " ,_submission , " WITH AMOUNT ", _amount, " AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
+        );
+        return  keccak256(
+            abi.encodePacked("\x19Ethereum Signed Message:\n32", _messageHash)
+        );
+    }
+
+    function CHANGE_VOTE_HASH(uint256 _nonce,bytes32 _old_submission, uint256 _amount,bytes32 _new_submission) public view returns (bytes32){
+        address _contractAddress = address(this);
+        bytes32 _messageHash = keccak256(
+            abi.encodePacked("CHANGE VOTE FROM ",_old_submission, " TO ", _new_submission, " WITH AMOUNT ", _amount, " AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
+        );
+        return  keccak256(
+            abi.encodePacked("\x19Ethereum Signed Message:\n32", _messageHash)
+        );
+    }
+
+    function DISPUTE_HASH(uint256 _nonce,bytes32 _submission) public view returns (bytes32) {
+        address _contractAddress = address(this);
+        bytes32 _messageHash = keccak256(
+            abi.encodePacked("DISPUTE FOR ",_submission," AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
+        );
+        return  keccak256(
+            abi.encodePacked("\x19Ethereum Signed Message:\n32", _messageHash)
+        );
+    }
+
     /// @notice create a function to start the submission period
     function startSubmissionPeriod(uint256 _submissionTime) public  onlyPlatformAdminOrProposer {
         /// @notice submission time will be in minutes
@@ -227,10 +257,12 @@ contract PrizeV2 {
         disputePeriod = block.timestamp + 2 minutes;
     }
 
-    function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public onlyActive {
+    function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r) public onlyActive {
         require(disputePeriod > block.timestamp, "DPNA"); //DPNA - Dispute Period Not Active
+        bytes32 signedMessageHash = DISPUTE_HASH(nonce+=1, _submissionHash);
         SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
-        address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
+
+        address sender =  ecrecover(signedMessageHash, v, r, s);
         require(sender == submission.contestant, "NAS"); //NAS - Not a Submitter
         emit DisputeRaised(_submissionHash, sender);
     }
@@ -254,15 +286,10 @@ contract PrizeV2 {
         votingTime = block.timestamp + _votingTime * 1 minutes;
     }
 
-    function FINAL_HASH(uint256 nonce) private view returns (bytes32) {
-        bytes32 structHash = keccak256(
-            abi.encode(nonce)
-        );
-        bytes32 hash = keccak256(
-            abi.encodePacked("\x19\x01", address(this), structHash)
-        );
-        return  hash;
-    }
+   
+
+    
+
 
     /// @notice Distribute rewards
     function _distributeRewards() private {
@@ -330,11 +357,11 @@ contract PrizeV2 {
 
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 amount, uint8 v, bytes32 s, bytes32 r) onlyActive public {
+    function vote(bytes32 _submissionHash, uint256 _amount, uint8 v, bytes32 s, bytes32 r) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
-        bytes32 hash = FINAL_HASH(nonceTracker+=1);
+        bytes32 hash = VOTE_HASH(nonce+=1, _submissionHash, _amount);
         address sender =  ecrecover(hash, v, r, s);
-        if (amount > funderAmount[sender]) revert NotEnoughFunds();
+        if (_amount > funderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
         /// @notice submission should return a struct with the submissionHash, the contestant, the submissionText, the threshhold, the votes, and the funded status 
@@ -348,10 +375,10 @@ contract PrizeV2 {
             }
         }
         if(isFunder[sender]) {
-            funderAmount[sender] -= amount;
-            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
+            funderAmount[sender] -= _amount;
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
 
-            uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+            uint256 amountToSubmission = (_amount * (100 - platformFee - proposerFee)) / 100;
 
 
             _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
@@ -362,7 +389,7 @@ contract PrizeV2 {
             if (submission.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(_submissionHash, true);
             }
-            emit Voted(_submissionHash, sender, amount);
+            emit Voted(_submissionHash, sender, _amount);
         }
     }
 
@@ -382,10 +409,11 @@ contract PrizeV2 {
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
-    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint8 v, bytes32 s, bytes32 r, uint256 amount, bytes32 _ethSignedMessageHash) onlyActive public {
+    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint8 v, bytes32 s, bytes32 r, uint256 amount) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
         if(_previous_submissionHash == _new_submissionHash) revert("SME"); //SME -> Same Submission
-        address sender = ecrecover(_ethSignedMessageHash, v, r, s);
+        bytes32 signedMessageHash = CHANGE_VOTE_HASH(nonce+=1, _previous_submissionHash, amount, _new_submissionHash);
+        address sender = ecrecover(signedMessageHash, v, r, s);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
         if(!isFunder[sender]) revert("NF");
         _changeVote(sender, _previous_submissionHash, _new_submissionHash, amount);
@@ -418,6 +446,7 @@ contract PrizeV2 {
     function disputeChangeVote( bytes32  _previousSubmissionHash, bytes32 _newSubmissionHash, address[] calldata _funders, uint256[] calldata _amounts) onlyActive onlyPlatformAdmin public {
         require(_funders.length == _amounts.length, "LM"); //LM -> Length Mismatch
         require(disputePeriod > block.timestamp, "DPNA");  //DPNA -> Dispute Period Not Active
+
 
         for (uint256 i = 0; i < _funders.length; i++) {
             address funder = _funders[i];

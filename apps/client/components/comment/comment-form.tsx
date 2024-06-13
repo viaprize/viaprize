@@ -7,6 +7,7 @@ import { useMutation } from 'react-query';
 import { toast } from 'sonner';
 import useAppUser from '../hooks/useAppUser';
 import { usePortal } from '../hooks/usePortal';
+import revalidate from 'utils/revalidate';
 
 interface CommentFormProps {
   portalId?: string;
@@ -69,7 +70,11 @@ export default function CommentForm({ portalId, commentId, isReply }: CommentFor
       setLoading(false);
       setMessage('');
     });
-    setLoading(false);
+    await revalidate({ tag: 'portalComments' });
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
     // setComments([...comments, newComment]);
     // setMessage('');
   }
@@ -98,10 +103,6 @@ export default function CommentForm({ portalId, commentId, isReply }: CommentFor
           Post
         </Button>
       </Group>
-
-      {/* Note:The comment list commponent used here is just for testing purpose */}
-      {/* <CommentList comments={comments} /> */}
-      {/* Note:The comment list commponent used here is just for testing purpose */}
     </form>
   );
 }
