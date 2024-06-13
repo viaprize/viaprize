@@ -297,7 +297,7 @@ contract PrizeV2 {
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         uint256 usdcPlatformReward;
         uint256 usdcProposerReward;
-        if(allSubmissions.length > 0) {
+        if(allSubmissions.length > 0 && totalVotes > 0 ) {
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
@@ -554,24 +554,31 @@ contract PrizeV2 {
        
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
-            if(total_unused_usdc_votes > 0) { 
-                uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(_PRECISION)).div(total_usdc_votes)); 
-                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
-                if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
-                    if(transferable_usdc_amount > 0) {
-                        for(uint256 j=0; j<allFunders.length; j++) {
+            if(total_unused_usdc_votes > 0) {
+                if(allSubmissions[i].usdcVotes > 0) {
+                    uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(_PRECISION)).div(total_usdc_votes));
+                    uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
+                    if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
+                        if(transferable_usdc_amount > 0) {
+                            for(uint256 j=0; j<allFunders.length; j++) {
+                                
+                                if(funderAmount[allFunders[j]] > 0){
+                                    uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
+                                    uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
+                                    uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
+                                    if(individual_transferable_usdc_amount > 0) {
+                                        _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
+                                    }
+                                }
                             
-                            if(funderAmount[allFunders[j]] > 0){
-                                 uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
-                                 uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
-                                 uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
-                                _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
                             }
-                           
                         }
+                    } else {
+                        if(transferable_usdc_amount > 0) {
+                            _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
+                        }
+                        
                     }
-                } else {
-                    _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
                 }
             }
            
