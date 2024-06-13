@@ -125,6 +125,8 @@ export class WalletController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    console.log({ submissionPeriod }, 'submission periods');
     try {
       const hash =
         await this.walletService.simulateAndWriteSmartContractPrizeV2(
@@ -397,6 +399,63 @@ export class WalletController {
       }
     }
   }
+  /**
+   * @security bearer
+   **/
+  @UseGuards(AuthGuard)
+  @Post('/prize/:contract_address/end_dispute')
+  async endDispute(
+    @TypedParam('contract_address') contractAddress: string,
+    @Request() req,
+  ): Promise<WalletResponse | undefined> {
+    const user = this.userService.findOneByAuthId(req.user.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    const [[disputePeriod]] =
+      (await this.blockchainService.getPrizesV2PublicVariables(
+        [contractAddress],
+        ['disputePeriod'],
+      )) as [[bigint]];
+    if (disputePeriod == BigInt(0)) {
+      console.log({ disputePeriod });
+      throw new HttpException(
+        'Dispute period has not started',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'endDispute',
+          [],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return { hash };
+    } catch (err) {
+      if (err instanceof BaseError) {
+        console.log({ err });
+        const revertError = err.walk(
+          (err) => err instanceof ContractFunctionRevertedError,
+        );
+        if (revertError instanceof ContractFunctionRevertedError) {
+          const errorName = revertError.data?.errorName ?? '';
+          throw new HttpException(
+            'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          'Error: ' + err.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+  }
 
   /**
    * @security bearer
@@ -425,6 +484,7 @@ export class WalletController {
       );
     }
     try {
+      console.log({ body }, 'body');
       const hash =
         await this.walletService.simulateAndWriteSmartContractPrizeV2(
           'vote',
@@ -438,6 +498,7 @@ export class WalletController {
           contractAddress,
           'gasless',
           '0',
+          false,
         );
       return { hash };
     } catch (err) {
