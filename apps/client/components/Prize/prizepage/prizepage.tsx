@@ -7,7 +7,7 @@ import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/li
 import { calculateDeadline, usdcSignType } from '@/lib/utils';
 
 import { backendApi } from '@/lib/backend';
-import { USDC_TO_USDCE_POOL } from '@/lib/constants';
+import { USDC } from '@/lib/constants';
 import {
   Badge,
   Button,
@@ -24,193 +24,23 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { hashTypedData, hexToSignature, parseAbi } from 'viem';
+import { hashTypedData, hexToSignature } from 'viem';
 import { useWalletClient } from 'wagmi';
-import { usePermit } from 'wagmi-permit';
 import ChangeSubmission from './buttons/changeSubmission';
 import ChangeVoting from './buttons/changeVoting';
+import EndDispute from './buttons/endDispute';
 import EndSubmission from './buttons/endSubmission';
 import EndVoting from './buttons/endVoting';
 import StartSubmission from './buttons/startSubmission';
 import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
+import RefundCard from './refundCard';
 import Submissions from './submissions';
-
-// function FundCard({ contractAddress }: { contractAddress: string }) {
-//   const { address } = useAccount();
-//   const [value, setValue] = useState('');
-//   const [debounced] = useDebouncedValue(value, 500);
-//   const { loginUser } = useAppUser();
-
-//   const { data: balance, isLoading, refetch } = useBalance({ address });
-
-//   // const { config } = usePrepareSendTransaction({
-//   //   to: contractAddress,
-//   //   value: debounced ? parseEther(debounced) : undefined,
-//   // });
-
-//   const openDeleteModal = () => {
-//     modals.openConfirmModal({
-//       title: 'Please Login to Donate',
-//       centered: true,
-//       children: (
-//         <p>
-//           Please Login to donate to the prize, orelse you wont be able to get the refund
-//         </p>
-//       ),
-//       labels: { confirm: 'Login', cancel: 'Cancel' },
-//       onCancel: () => {
-//         console.log('Cancel');
-//       },
-//       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-//       onConfirm: async () => {
-//         await loginUser();
-//       },
-//     });
-//   };
-
-//   const [sendLoading, setSendLoading] = useState(false);
-
-//   const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
-//     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-//     const final = await (
-//       await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
-//     ).json();
-//     return Object.keys(final).length === 0
-//       ? {
-//           [chain.name.toLowerCase()]: {
-//             usd: 0,
-//           },
-//         }
-//       : final;
-//   });
-
-//   const ethOfDonateValue = useMemo(() => {
-//     if (!cryptoToUsd) {
-//       console.error('cryptoToUsd is undefined');
-//       return 0;
-//     }
-//     const cryptoToUsdValue = cryptoToUsd.ethereum.usd;
-//     const useToEth = parseFloat(value) / cryptoToUsdValue;
-//     return isNaN(useToEth) ? 0 : useToEth;
-//   }, [value]);
-
-//   // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
-//   //   ...config,
-//   //   async onSuccess(data) {
-//   //     toast.success(`Transaction Sent with Hash ${data?.hash}`, {
-//   //       duration: 6000,
-//   //     });
-//   //     await refetch();
-//   //   },
-//   // });
-
-//   return (
-//     <Stack my="md">
-//       <NumberInput
-//         description={
-//           isLoading
-//             ? 'Loading.....'
-//             : `Wallet Balance: ${
-//                 balance
-//                   ? `$${(
-//                       parseFloat(balance.formatted.toString()) *
-//                       (cryptoToUsd?.ethereum.usd ?? 0)
-//                     ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${
-//                       balance.symbol
-//                     })`
-//                   : `Login To See Balance`
-//               }`
-//         }
-//         placeholder="Enter Value  in $ To Donate"
-//         mt="md"
-//         label={`You will donate ${value} USD (${ethOfDonateValue.toFixed(4) ?? 0} ${
-//           chain.nativeCurrency.symbol
-//         })`}
-//         rightSection={
-//           <ActionIcon>
-//             <IconRefresh onClick={() => refetch({})} />
-//           </ActionIcon>
-//         }
-//         max={parseInt(balance?.formatted ?? '0')}
-//         allowDecimal
-//         defaultValue={0}
-//         allowNegative={false}
-//         value={value}
-//         onChange={(v) => {
-//           if (!v) {
-//             // console.log({ v }, 'inner v');
-//             setValue('0');
-//           }
-//           setValue(v.toString());
-//         }}
-//       />
-
-//       <Button
-//         disabled={!value}
-//         loading={sendLoading}
-//         // eslint-disable-next-line @typescript-eslint/no-misused-promises -- will replace later
-//         onClick={async () => {
-//           if (!address) {
-//             openDeleteModal();
-//           }
-//           await refetch();
-//           setSendLoading(true);
-//           try {
-//             const config = await prepareSendTransaction({
-//               to: contractAddress,
-//               value: debounced ? parseEther(ethOfDonateValue.toString()) : undefined,
-//               data: '0x',
-//             });
-//             const { hash } = await sendTransaction(config);
-//             toast.success(
-//               <div className="flex items-center ">
-//                 <IconCircleCheck />{' '}
-//                 <Text fw="md" size="sm" className="ml-2">
-//                   {' '}
-//                   Transaction Successfull
-//                 </Text>
-//                 <Link
-//                   target="_blank"
-//                   rel="noopener noreferrer"
-//                   href={`https://optimistic.etherscan.io/tx/${hash}`}
-//                 >
-//                   <Button variant="transparent" className="text-blue-400 underline">
-//                     See here
-//                   </Button>
-//                 </Link>
-//               </div>,
-//               {
-//                 duration: 6000,
-//               },
-//             );
-//             window.location.reload();
-//           } catch (e: unknown) {
-//             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
-//             toast.error((e as any)?.message);
-//           } finally {
-//             setSendLoading(false);
-//           }
-//         }}
-//       >
-//         Donate
-//       </Button>
-//     </Stack>
-//   );
-// }
 
 function FundUsdcCard({ contractAddress }: { contractAddress: string }) {
   const [sendLoading, setSendLoading] = useState(false);
   const { data: walletClient } = useWalletClient();
   const [value, setValue] = useState('');
-  const { signPermit, signature } = usePermit({
-    contractAddress: '0x0b2c639c533813f4aa9d7837caf62653d097ff85' as `0x${string}`,
-    chainId: 10,
-    spenderAddress: contractAddress as `0x${string}`,
-    deadline: BigInt(Math.floor(Date.now() / 1000) + 100_000),
-    walletClient,
-    ownerAddress: walletClient?.account.address,
-  });
 
   return (
     <Stack my="md">
@@ -252,19 +82,40 @@ function FundUsdcCard({ contractAddress }: { contractAddress: string }) {
             if (!walletClient?.account.address) {
               throw new Error('Please login to donate');
             }
+            const walletAddress = walletClient?.account.address;
             const amount = BigInt(parseFloat(value) * 1000000);
             const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000);
-            const nonce = readContract({
-              abi: parseAbi([
-                'function nonces(address owner) external view returns (uint256)',
-              ]) as const,
-              address: USDC_TO_USDCE_POOL,
+            const nonce = await readContract({
+              abi: [
+                {
+                  constant: true,
+                  inputs: [
+                    {
+                      name: 'owner',
+                      type: 'address',
+                    },
+                  ],
+                  name: 'nonces',
+                  outputs: [
+                    {
+                      name: '',
+                      type: 'uint256',
+                    },
+                  ],
+                  payable: false,
+                  stateMutability: 'view',
+                  type: 'function',
+                },
+              ] as const,
+              address: USDC,
+              functionName: 'nonces',
+              args: [walletAddress],
             });
             const signData = {
               owner: walletClient?.account.address,
               spender: contractAddress,
               value: amount,
-              nonce: BigInt(7),
+              nonce: BigInt(nonce),
               deadline: deadline,
             };
 
@@ -309,7 +160,6 @@ function FundUsdcCard({ contractAddress }: { contractAddress: string }) {
                 duration: 6000,
               },
             );
-            window.location.reload();
           } catch (e: unknown) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
             toast.error((e as any)?.message);
@@ -340,6 +190,7 @@ export default function PrizePageComponent({
     new Date(),
     new Date(prize.submission_time_blockchain * 1000),
   );
+
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
@@ -354,15 +205,6 @@ export default function PrizePageComponent({
             Refunded
           </Badge>
         ) : null}
-
-        {/* <Group justify="right" gap="0" wrap="nowrap">
-          <Button color="black" mx="5px">
-            Upvote
-          </Button>
-          <ActionIcon variant="filled" size="lg" color="blue">
-            <Text>0</Text>
-          </ActionIcon>
-        </Group> */}
       </Group>
       <Image
         className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-fit max-w-full  rounded-md"
@@ -428,9 +270,6 @@ export default function PrizePageComponent({
           submissionTime={prize.submission_time_blockchain}
         />
       ) : null}
-      {/* {appUser?.isAdmin && !prize.distributed ? (
-        <EarlyRefund contractAddress={prize.contract_address} />
-      ) : null} */}
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
         <EndVoting contractAddress={prize.contract_address} />
       ) : null}
@@ -446,6 +285,15 @@ export default function PrizePageComponent({
         allowSubmission={prize.submission_time_blockchain > 0}
         submissions={submissions}
         contractAddress={prize.contract_address}
+      />
+
+      <EndDispute contractAddress={prize.contract_address} />
+
+      <RefundCard
+        allowVoting={prize.voting_time_blockchain > 0}
+        contractAddress={prize.contract_address}
+        showVote
+        votes={0}
       />
       {/* <CommentSection /> */}
     </div>
