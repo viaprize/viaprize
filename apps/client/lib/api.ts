@@ -1604,6 +1604,21 @@ export namespace Wallet {
   }
   /**
    * No description
+   * @name PrizeEndDisputeCreate
+   * @request POST:/wallet/prize/{contract_address}/end_dispute
+   * @secure
+   */
+  export namespace PrizeEndDisputeCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+  /**
+   * No description
    * @name PrizeVoteCreate
    * @request POST:/wallet/prize/{contract_address}/vote
    * @secure
@@ -3051,6 +3066,22 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeEndDisputeCreate
+     * @request POST:/wallet/prize/{contract_address}/end_dispute
+     * @secure
+     */
+    prizeEndDisputeCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/end_dispute`,
+        method: 'POST',
+        secure: true,
         format: 'json',
         ...params,
       }),

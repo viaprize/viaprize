@@ -179,7 +179,6 @@ contract PrizeV2 {
     }
 
      function VOTE_HASH(uint256 _nonce,bytes32 _submission, uint256 _amount) public view returns (bytes32) {
-        address _contractAddress = address(this);
         bytes32 _messageHash = keccak256(
             abi.encodePacked("VOTE FOR " ,_submission , " WITH AMOUNT ", _amount, " AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
         );

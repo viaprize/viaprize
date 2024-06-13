@@ -11,6 +11,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
+import { encodePacked, keccak256 } from 'viem';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
@@ -227,7 +228,8 @@ export const storeFiles = async (files: File[]) => {
   console.log(data.path, 'image path');
   return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaigns/${data.path}`;
 };
-
+export const parseUsdc = (value: bigint) => parseFloat(value.toString()) / 10 ** 6;
+export const formatUsdc = (value: number) => BigInt(value * 10 ** 6);
 export const usdcSignType = ({
   owner,
   spender,
@@ -282,3 +284,28 @@ export const usdcSignType = ({
     },
   };
 };
+
+export function voteMessageHash(
+  submission: string,
+  amount: number,
+  nonce: number,
+  contractAddress: string,
+): string {
+  const encodedMessage = encodePacked(
+    ['string', 'bytes32', 'string', 'uint256', 'string', 'uint256', 'string', 'address'],
+    [
+      'VOTE FOR ',
+      submission as `0x${string}`,
+      ' WITH AMOUNT ',
+      BigInt(amount),
+      ' AND NONCE ',
+      BigInt(nonce),
+      ' WITH PRIZE CONTRACT ',
+      contractAddress as `0x${string}`,
+    ],
+  );
+  const messageHash = keccak256(encodedMessage);
+  return messageHash;
+}
+
+export const refundHash = () => keccak256(encodePacked(['string'], ['REFUND']));
