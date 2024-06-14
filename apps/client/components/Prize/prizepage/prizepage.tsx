@@ -297,6 +297,7 @@ export default function PrizePageComponent({
             <StartSubmission
               contractAddress={prize.contract_address}
               submissionTime={prize.submissionTime}
+              slug={prize.slug}
             />
           )
         : null}
@@ -307,6 +308,7 @@ export default function PrizePageComponent({
             <StartVoting
               contractAddress={prize.contract_address}
               votingTime={prize.votingTime}
+              slug={prize.slug}
             />
           )
         : null}
@@ -324,12 +326,13 @@ export default function PrizePageComponent({
         />
       ) : null}
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
-        <EndVoting contractAddress={prize.contract_address} />
+        <EndVoting contractAddress={prize.contract_address} slug={prize.slug} />
       ) : null}
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
         <ChangeVotingTime
           contractAddress={prize.contract_address}
           votingTime={prize.voting_time_blockchain}
+          slug={prize.slug}
         />
       ) : null}
 
@@ -344,6 +347,7 @@ export default function PrizePageComponent({
         <ChangeVotingTime
           contractAddress={prize.contract_address}
           votingTime={prize.voting_time_blockchain}
+          slug={prize.slug}
         />
       ) : null}
 

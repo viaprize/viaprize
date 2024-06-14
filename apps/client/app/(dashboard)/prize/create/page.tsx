@@ -19,7 +19,6 @@ import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 
 function Prize() {
-  const [address, setAddress] = useState(['']);
   const [judges, setJudges] = useState<string[]>([]);
   const [showJudges, setShowJudges] = useState(false);
   const [title, setTitle] = useState('');
@@ -77,9 +76,8 @@ function Prize() {
       priorities: [],
       proficiencies: [],
       submission_time: proposalTime,
-      startSubmissionDate: startSubmisionDate.toUTCString(),
-      startVotingDate: startVotingDate.toUTCString(),
-
+      startSubmissionDate: startSubmisionDate.toISOString(),
+      startVotingDate: startVotingDate.toISOString(),
       images: newImages ? [newImages] : [],
       judges: showJudges ? judges : [],
       title,
@@ -96,7 +94,10 @@ function Prize() {
       toast.promise(submit(), {
         loading: 'Submitting Proposal...',
         success: 'Proposal Submitted',
-        error: 'Error Submitting Proposal',
+        error: (err) => {
+          console.log(err);
+          return `Failed to submit proposal ${err}`;
+        },
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -145,7 +146,7 @@ function Prize() {
       <SimpleGrid cols={2} className="my-3">
         <div className="">
           <DateTimePicker
-            label="Pick date and time of starting voting time"
+            label="Pick date and time of starting submission time"
             placeholder="Make sure its above the submission time and date"
             date={startSubmisionDate ?? new Date()}
             onChange={(da) => {
@@ -153,10 +154,10 @@ function Prize() {
             }}
           />
           <NumberInput
-            placeholder="Proposal Time (in days)"
+            placeholder="Submission Time (in minutes)"
             label={
               proposalTime && startSubmisionDate
-                ? `Submission will end at ${addMinutes(startVotingDate ?? new Date(), proposalTime)}`
+                ? `Submission will end at ${addMinutes(startSubmisionDate ?? new Date(), proposalTime)}`
                 : `This is the number of minutes you want the voting to last `
             }
             value={proposalTime}
@@ -169,7 +170,7 @@ function Prize() {
         <div className="">
           <DateTimePicker
             label="Pick date and time of starting voting time"
-            placeholder="Make sure its above the submission time and date"
+            placeholder="Make sure its above the voting time and date"
             date={startVotingDate ?? new Date()}
             onChange={(da) => {
               setStartVotingDate(da);
@@ -177,7 +178,7 @@ function Prize() {
           />
 
           <NumberInput
-            placeholder="voting Time (in minutes)"
+            placeholder="Voting Time (in minutes)"
             label={
               votingTime && startVotingDate
                 ? `Voting will end at  ${addMinutes(startVotingDate, votingTime)}`

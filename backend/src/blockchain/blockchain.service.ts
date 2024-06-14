@@ -7,6 +7,7 @@ import {
   MulticallReturnType,
   PublicClient,
   createPublicClient,
+  encodeFunctionData,
   http,
   parseAbi,
 } from 'viem';
@@ -383,5 +384,20 @@ export class BlockchainService {
     });
     console.log({ reciept });
     return reciept.logs[1].topics[2];
+  }
+
+  async getPrizeV2FunctionEncoded(
+    functionName: ExtractAbiFunctionNames<
+      typeof PRIZE_V2_ABI,
+      'pure' | 'view' | 'nonpayable' | 'payable'
+    >,
+    args: any[],
+  ) {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: functionName,
+      args: args as any,
+    });
+    return data;
   }
 }
