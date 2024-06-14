@@ -6,22 +6,12 @@ import useAppUser from '@/components/hooks/useAppUser';
 import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import { calculateDeadline, usdcSignType } from '@/lib/utils';
 
+import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
 import { USDC } from '@/lib/constants';
-import {
-  Badge,
-  Button,
-  Center,
-  Group,
-  NumberInput,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
-import { IconCircleCheck } from '@tabler/icons-react';
+import { Badge, Button, Center, Group, NumberInput, Stack, Title } from '@mantine/core';
 import { readContract } from '@wagmi/core';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { hashTypedData, hexToSignature } from 'viem';
@@ -37,11 +27,148 @@ import PrizePageTabs from './prizepagetabs';
 import RefundCard from './refundCard';
 import Submissions from './submissions';
 
-function FundUsdcCard({ contractAddress }: { contractAddress: string }) {
+function FundUsdcCard({
+  contractAddress,
+  prizeId,
+  title,
+  imageUrl,
+  successUrl,
+  cancelUrl,
+}: {
+  contractAddress: string;
+  prizeId: string;
+  title: string;
+  imageUrl: string;
+  successUrl: string;
+  cancelUrl: string;
+}) {
   const [sendLoading, setSendLoading] = useState(false);
   const { data: walletClient } = useWalletClient();
   const [value, setValue] = useState('');
+  const getUsdcSignatureData = async () => {
+    const walletAddress = walletClient?.account.address;
+    if (!walletAddress) {
+      throw new Error('Please login to donate');
+    }
+    const amount = BigInt(parseFloat(value) * 1000000);
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000);
+    const nonce = await readContract({
+      abi: [
+        {
+          constant: true,
+          inputs: [
+            {
+              name: 'owner',
+              type: 'address',
+            },
+          ],
+          name: 'nonces',
+          outputs: [
+            {
+              name: '',
+              type: 'uint256',
+            },
+          ],
+          payable: false,
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ] as const,
+      address: USDC,
+      functionName: 'nonces',
+      args: [walletAddress],
+    });
 
+    const signData = {
+      owner: walletClient?.account.address,
+      spender: contractAddress,
+      value: amount,
+      nonce: BigInt(nonce),
+      deadline: deadline,
+    };
+    return signData;
+  };
+  const donateUsingUsdc = async () => {
+    try {
+      setSendLoading(true);
+      if (!walletClient) {
+        throw new Error('Please login to donate');
+      }
+      const signData = await getUsdcSignatureData();
+
+      const hash = hashTypedData(usdcSignType(signData) as any);
+
+      const signature = await walletClient.signTypedData(usdcSignType(signData) as any);
+      const rsv = hexToSignature(signature);
+
+      const trxHash = await (
+        await backendApi()
+      ).wallet
+        .prizeAddUsdcFundsCreate(contractAddress, {
+          amount: parseInt(signData.value.toString()),
+          deadline: parseInt(signData.deadline.toString()),
+          r: rsv.r,
+          hash: hash,
+          s: rsv.s,
+          v: parseInt(rsv.v.toString()),
+        })
+        .then((res) => res.data.hash);
+
+      toast.success(<TransactionToast hash={trxHash} title="Transaction Successfull" />, {
+        duration: 6000,
+      });
+    } catch (e: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
+      toast.error((e as any)?.message);
+    } finally {
+      setSendLoading(false);
+    }
+  };
+
+  const donateUsingFiat = async () => {
+    try {
+      setSendLoading(true);
+      const signedData = await getUsdcSignatureData();
+      if (!walletClient) {
+        throw new Error('Please login to donate');
+      }
+      const hash = hashTypedData(usdcSignType(signedData) as any);
+      const signature = await walletClient.signTypedData(usdcSignType(signedData) as any);
+      const { r, s, v } = hexToSignature(signature);
+      const checkoutUrl = await fetch(
+        'https://49yjt1y4yg.execute-api.us-west-1.amazonaws.com/checkout',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            checkoutMetadata: {
+              contractAddress,
+              backendId: prizeId,
+              deadline: signedData.deadline,
+              amount: signedData.value,
+              ethSignedMessage: hash,
+              v: v,
+              r: r,
+              s: s,
+            },
+            title,
+            imageUrl,
+            successUrl,
+            cancelUrl,
+          }),
+        },
+      )
+        .then((res) => res.json())
+        .then((data) => data.checkoutUrl);
+    } catch (e: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
+      toast.error((e as any)?.message);
+    } finally {
+      setSendLoading(false);
+    }
+  };
   return (
     <Stack my="md">
       <NumberInput
@@ -63,112 +190,21 @@ function FundUsdcCard({ contractAddress }: { contractAddress: string }) {
       <Button
         disabled={!value}
         loading={sendLoading}
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises -- will replace later
         onClick={async () => {
-          // if (!address) {
-          //   openDeleteModal();
-          // }
-          // await refetch();
-          // setSendLoading(true);
-          // try {
-          //   const config = await prepareSendTransaction({
-          //     to: contractAddress,
-          //     value: debounced ? parseEther(ethOfDonateValue.toString()) : undefined,
-          //     data: '0x',
-          //   });
-          //   const { hash } = await sendTransaction(config);
-          try {
-            setSendLoading(true);
-            if (!walletClient?.account.address) {
-              throw new Error('Please login to donate');
-            }
-            const walletAddress = walletClient?.account.address;
-            const amount = BigInt(parseFloat(value) * 1000000);
-            const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000);
-            const nonce = await readContract({
-              abi: [
-                {
-                  constant: true,
-                  inputs: [
-                    {
-                      name: 'owner',
-                      type: 'address',
-                    },
-                  ],
-                  name: 'nonces',
-                  outputs: [
-                    {
-                      name: '',
-                      type: 'uint256',
-                    },
-                  ],
-                  payable: false,
-                  stateMutability: 'view',
-                  type: 'function',
-                },
-              ] as const,
-              address: USDC,
-              functionName: 'nonces',
-              args: [walletAddress],
-            });
-            const signData = {
-              owner: walletClient?.account.address,
-              spender: contractAddress,
-              value: amount,
-              nonce: BigInt(nonce),
-              deadline: deadline,
-            };
-
-            const hash = hashTypedData(usdcSignType(signData) as any);
-
-            const signature = await walletClient.signTypedData(
-              usdcSignType(signData) as any,
-            );
-            const rsv = hexToSignature(signature);
-
-            const trxHash = await (
-              await backendApi()
-            ).wallet
-              .prizeAddUsdcFundsCreate(contractAddress, {
-                amount: parseInt(amount.toString()),
-                deadline: parseInt(deadline.toString()),
-                r: rsv.r,
-                hash: hash,
-                s: rsv.s,
-                v: parseInt(rsv.v.toString()),
-              })
-              .then((res) => res.data.hash);
-
-            toast.success(
-              <div className="flex items-center ">
-                <IconCircleCheck />{' '}
-                <Text fw="md" size="sm" className="ml-2">
-                  {' '}
-                  Transaction Successfull
-                </Text>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://optimistic.etherscan.io/tx/${trxHash}`}
-                >
-                  <Button variant="transparent" className="text-blue-400 underline">
-                    See here
-                  </Button>
-                </Link>
-              </div>,
-              {
-                duration: 6000,
-              },
-            );
-          } catch (e: unknown) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
-            toast.error((e as any)?.message);
-          } finally {
-            setSendLoading(false);
-          }
+          await donateUsingUsdc();
         }}
       >
         Donate
+      </Button>
+
+      <Button
+        disabled={!value}
+        loading={sendLoading}
+        onClick={async () => {
+          await donateUsingUsdc();
+        }}
+      >
+        Donate With Card
       </Button>
     </Stack>
   );
@@ -238,7 +274,14 @@ export default function PrizePageComponent({
           username=""
         />
       </Center>
-      <FundUsdcCard contractAddress={prize.contract_address} />
+      <FundUsdcCard
+        contractAddress={prize.contract_address}
+        prizeId={prize.id}
+        title={prize.title}
+        cancelUrl={'https://example.com'}
+        imageUrl={prize.images[0] || ''}
+        successUrl={window.location.href}
+      />
       {appUser
         ? (appUser.username === prize.user.username || appUser.isAdmin) &&
           prize.submission_time_blockchain === 0 && (
