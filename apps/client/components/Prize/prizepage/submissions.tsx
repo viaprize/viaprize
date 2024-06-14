@@ -3,11 +3,11 @@
 import useAppUser from '@/components/hooks/useAppUser';
 import { usePrize } from '@/components/hooks/usePrize';
 import type { SubmissionWithBlockchainData } from '@/lib/api';
+import { parseUsdc } from '@/lib/utils';
 import { Button, Title } from '@mantine/core';
 import { usePathname } from 'next/navigation';
 import { useMutation, useQuery } from 'react-query';
 import { toast } from 'sonner';
-import { formatEther } from 'viem';
 import SubmissionsCard from './submissionsCard';
 
 export default function Submissions({
@@ -82,7 +82,7 @@ export default function Submissions({
           contractAddress={contractAddress}
           hash={submission.submissionHash}
           showVote
-          won={`won ${parseFloat(formatEther(BigInt(submission.voting_blockchain)))} eth`}
+          won={`won ${parseUsdc(BigInt(submission.voting_blockchain))} USDC`}
           wallet={submission.submitterAddress}
           time=""
           votes={submission.voting_blockchain}
