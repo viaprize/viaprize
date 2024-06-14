@@ -67,7 +67,6 @@ export default async function FetchPrize({ params }: { params: { slug: string } 
       },
     )
   ).data.data;
-  console.log(submissions, 'sub');
 
   return <PrizePageComponent prize={prize} submissions={submissions} />;
 }
