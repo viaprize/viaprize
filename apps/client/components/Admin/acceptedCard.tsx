@@ -9,12 +9,7 @@ import {
   USDC_TO_USDCE_POOL,
   WETH,
 } from '@/lib/constants';
-import {
-  prepareWritePrizeFactoryV2,
-  prepareWritePrizeJudgesFactory,
-  writePrizeFactoryV2,
-  writePrizeJudgesFactory,
-} from '@/lib/smartContract';
+import { prepareWritePrizeFactoryV2, writePrizeFactoryV2 } from '@/lib/smartContract';
 import { Badge, Button, Card, Group, Image, Modal, Text } from '@mantine/core';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
@@ -66,24 +61,25 @@ function AdminAcceptedCard({
     });
     let out;
     if (judges && judges.length > 0) {
-      const requestJudges = await prepareWritePrizeJudgesFactory({
-        functionName: 'createViaPrizeJudges',
-        args: [
-          admins as `0x${string}`[],
-          [
-            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
-          ] as `0x${string}`[],
-          judges as `0x${string}`[],
-          BigInt(platfromFeePercentage),
-          BigInt(proposerFeePercentage),
-          '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-          BigInt(submissionTime),
-          BigInt(currentTimestamp.current),
-        ],
-      });
-      out = await writePrizeJudgesFactory(requestJudges);
+      // const requestJudges = await prepareWritePrizeJudgesFactory({
+      //   functionName: 'createViaPrizeJudges',
+      //   args: [
+      //     admins as `0x${string}`[],
+      //     [
+      //       '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
+      //       '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
+      //       '0x598B7Cd048e97E1796784d92D06910F359dA5913',
+      //     ] as `0x${string}`[],
+      //     judges as `0x${string}`[],
+      //     BigInt(platfromFeePercentage),
+      //     BigInt(proposerFeePercentage),
+      //     '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
+      //     BigInt(submissionTime),
+      //     BigInt(currentTimestamp.current),
+      //   ],
+      // });
+      // out = await writePrizeJudgesFactory(requestJudges);
+      toast.error("Judges aren't supported yet");
       console.log(out, 'outJudges');
     } else {
       console.log({ admins });
@@ -111,6 +107,7 @@ function AdminAcceptedCard({
       });
       console.log(out, 'out');
     }
+    if (!out) return toast.error('Transaction Failed');
     const waitForTransactionOut = await waitForTransaction({
       hash: out.hash,
       confirmations: 1,

@@ -13,16 +13,15 @@ export default defineConfig({
     hardhat({
       project: '../contracts',
       include: [
-        'contracts/PrizeJudgesFactory.sol/*.json',
         'contracts/portal.sol/*.json',
         'contracts/portalFactory.sol/*.json',
         'contracts/v2/prizes/prizesV2Factory.sol/*.json',
         'contracts/v2/prizes/prizes.sol/*.json',
       ],
       deployments: {
-        PrizeJudgesFactory: {
-          10: '0x7f1aF102d6EBaa0F673C3C574c58EB052db93675',
-        },
+        // PrizeJudgesFactory: {
+        //   10: '0x7f1aF102d6EBaa0F673C3C574c58EB052db93675',
+        // },
         portalFactory: {
           // 80001: '0xAe37824e718488787D1bbD87E35985ED107a0C7E',
           10: '0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0',

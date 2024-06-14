@@ -1,6 +1,7 @@
 import {
   PrepareWriteContractConfig,
   WriteContractArgs,
+  WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
   prepareWriteContract,
@@ -16,7 +17,7 @@ import {
   useContractWrite,
   usePrepareContractWrite,
 } from 'wagmi';
-import { PrepareWriteContractResult, WriteContractMode } from 'wagmi/actions';
+import { PrepareWriteContractResult, ReadContractResult } from 'wagmi/actions';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Portal
@@ -291,61 +292,6 @@ export const prizeFactoryV2Address = {
 export const prizeFactoryV2Config = {
   address: prizeFactoryV2Address,
   abi: prizeFactoryV2ABI,
-} as const;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// PrizeJudgesFactory
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
- */
-export const prizeJudgesFactoryABI = [
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
-      {
-        name: 'viaPrizeAddress',
-        internalType: 'address',
-        type: 'address',
-        indexed: true,
-      },
-    ],
-    name: 'NewViaPrizeCreated',
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: '_admins', internalType: 'address[]', type: 'address[]' },
-      { name: '_platformAdmins', internalType: 'address[]', type: 'address[]' },
-      { name: '_judges', internalType: 'address[]', type: 'address[]' },
-      { name: '_platFormFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_proposerFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_platformAddress', internalType: 'address', type: 'address' },
-      { name: '_submission_time', internalType: 'uint256', type: 'uint256' },
-      { name: '_contractId', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'createViaPrizeJudges',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-] as const;
-
-/**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
- */
-export const prizeJudgesFactoryAddress = {
-  10: '0x7f1aF102d6EBaa0F673C3C574c58EB052db93675',
-} as const;
-
-/**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
- */
-export const prizeJudgesFactoryConfig = {
-  address: prizeJudgesFactoryAddress,
-  abi: prizeJudgesFactoryABI,
 } as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1070,63 +1016,6 @@ export function prepareWritePrizeFactoryV2<
   return prepareWriteContract({
     abi: prizeFactoryV2ABI,
     address: prizeFactoryV2Address[10],
-    ...config,
-  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
-}
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeJudgesFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
- */
-export function writePrizeJudgesFactory<
-  TFunctionName extends string,
-  TMode extends WriteContractMode,
-  TChainId extends number = keyof typeof prizeJudgesFactoryAddress,
->(
-  config:
-    | (Omit<
-        WriteContractPreparedArgs<typeof prizeJudgesFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared'
-          ? TChainId
-          : keyof typeof prizeJudgesFactoryAddress;
-      })
-    | (Omit<
-        WriteContractUnpreparedArgs<typeof prizeJudgesFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared'
-          ? TChainId
-          : keyof typeof prizeJudgesFactoryAddress;
-      }),
-) {
-  return writeContract({
-    abi: prizeJudgesFactoryABI,
-    address: prizeJudgesFactoryAddress[10],
-    ...config,
-  } as unknown as WriteContractArgs<typeof prizeJudgesFactoryABI, TFunctionName>);
-}
-
-/**
- * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeJudgesFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
- */
-export function prepareWritePrizeJudgesFactory<
-  TAbi extends readonly unknown[] = typeof prizeJudgesFactoryABI,
-  TFunctionName extends string = string,
->(
-  config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi' | 'address'> & {
-    chainId?: keyof typeof prizeJudgesFactoryAddress;
-  },
-) {
-  return prepareWriteContract({
-    abi: prizeJudgesFactoryABI,
-    address: prizeJudgesFactoryAddress[10],
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
 }
@@ -1871,115 +1760,6 @@ export function usePreparePrizeFactoryV2CreateViaPrize(
     functionName: 'createViaPrize',
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeFactoryV2ABI, 'createViaPrize'>);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeJudgesFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
- */
-export function usePrizeJudgesFactoryWrite<
-  TFunctionName extends string,
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof prizeJudgesFactoryAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesFactoryABI,
-          string
-        >['request']['abi'],
-        TFunctionName,
-        TMode
-      > & { address?: Address; chainId?: TChainId }
-    : UseContractWriteConfig<typeof prizeJudgesFactoryABI, TFunctionName, TMode> & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeJudgesFactoryABI, TFunctionName, TMode>({
-    abi: prizeJudgesFactoryABI,
-    address: prizeJudgesFactoryAddress[10],
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeJudgesFactoryABI}__ and `functionName` set to `"createViaPrizeJudges"`.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
- */
-export function usePrizeJudgesFactoryCreateViaPrizeJudges<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof prizeJudgesFactoryAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeJudgesFactoryABI,
-          'createViaPrizeJudges'
-        >['request']['abi'],
-        'createViaPrizeJudges',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'createViaPrizeJudges' }
-    : UseContractWriteConfig<
-        typeof prizeJudgesFactoryABI,
-        'createViaPrizeJudges',
-        TMode
-      > & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-        functionName?: 'createViaPrizeJudges';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeJudgesFactoryABI, 'createViaPrizeJudges', TMode>({
-    abi: prizeJudgesFactoryABI,
-    address: prizeJudgesFactoryAddress[10],
-    functionName: 'createViaPrizeJudges',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeJudgesFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
- */
-export function usePreparePrizeJudgesFactoryWrite<TFunctionName extends string>(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeJudgesFactoryABI, TFunctionName>,
-    'abi' | 'address'
-  > & { chainId?: keyof typeof prizeJudgesFactoryAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeJudgesFactoryABI,
-    address: prizeJudgesFactoryAddress[10],
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeJudgesFactoryABI, TFunctionName>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeJudgesFactoryABI}__ and `functionName` set to `"createViaPrizeJudges"`.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x7f1aF102d6EBaa0F673C3C574c58EB052db93675)
- */
-export function usePreparePrizeJudgesFactoryCreateViaPrizeJudges(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeJudgesFactoryABI, 'createViaPrizeJudges'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof prizeJudgesFactoryAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeJudgesFactoryABI,
-    address: prizeJudgesFactoryAddress[10],
-    functionName: 'createViaPrizeJudges',
-    ...config,
-  } as UsePrepareContractWriteConfig<
-    typeof prizeJudgesFactoryABI,
-    'createViaPrizeJudges'
-  >);
 }
 
 /**

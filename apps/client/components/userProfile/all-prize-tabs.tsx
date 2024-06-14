@@ -2,7 +2,6 @@ import { backendApi } from '@/lib/backend';
 import type { ConvertUSD } from '@/lib/types';
 import { Button, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { formatEther } from 'viem';
 import { usePublicClient, useQuery } from 'wagmi';
 import ExploreCard from '../Prize/ExplorePrize/explorePrize';
 import Shell from '../custom/shell';
@@ -68,11 +67,7 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
             createdAt={prize.created_at}
             imageUrl={prize.images[0]}
             profileName=""
-            ethAmount={formatEther(BigInt(prize.balance))}
-            usdAmount={(
-              parseFloat(formatEther(BigInt(prize.balance))) *
-              (cryptoToUsd?.ethereum.usd ?? 0)
-            ).toFixed(2)}
+            usdAmount={(prize.balance / 1_000_000).toFixed(2)}
             title={prize.title}
             key={prize.id}
             id={prize.id}
