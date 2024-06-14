@@ -2,15 +2,19 @@ import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
 import { Button, Modal, NumberInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import revalidate from 'utils/revalidate';
 
-export default function ChangeVoting({
+export default function ChangeVotingTime({
   contractAddress,
   votingTime,
+  slug,
 }: {
   contractAddress: string;
   votingTime: number;
+  slug: string;
 }) {
   console.log({ votingTime }, 'voting time ');
 
@@ -18,6 +22,7 @@ export default function ChangeVoting({
 
   const [newVotingTime, setnewVotingTime] = useState(0);
 
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   return (
@@ -51,10 +56,11 @@ export default function ChangeVoting({
                 <TransactionToast title=" Voting Period Changed" hash={hash} />,
               );
               console.log({ hash }, 'hash');
-              window.location.reload();
             } catch (error) {
               toast.error(`Failed With Error ${error}`);
             } finally {
+              await revalidate({ tag: slug });
+              router.refresh();
               setLoading(false);
             }
           }}

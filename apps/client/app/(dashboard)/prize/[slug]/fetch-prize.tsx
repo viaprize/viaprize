@@ -47,15 +47,25 @@ export default async function FetchPrize({ params }: { params: { slug: string } 
     await new Api().prizes.prizesDetail(params.slug, {
       next: {
         revalidate: 0,
+        tags: [params.slug],
       },
     })
   ).data;
 
   const submissions = (
-    await new Api().prizes.submissionDetail(params.slug, {
-      limit: 5,
-      page: 1,
-    })
+    await new Api().prizes.submissionDetail(
+      params.slug,
+      {
+        limit: 5,
+        page: 1,
+      },
+      {
+        next: {
+          revalidate: 0,
+          tags: [params.slug],
+        },
+      },
+    )
   ).data.data;
   console.log(submissions, 'sub');
 

@@ -2,19 +2,25 @@ import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
 import { Button, Modal, NumberInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import revalidate from 'utils/revalidate';
 
 export default function ChangeSubmission({
   contractAddress,
   submissionTime,
+  slug,
 }: {
   contractAddress: string;
   submissionTime: number;
+  slug: string;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
   const [newSubmissionTime, setnewSubmissionTime] = useState(0);
+
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +55,8 @@ export default function ChangeSubmission({
                 <TransactionToast title=" Submission Period Changed" hash={hash} />,
               );
               console.log({ hash }, 'hash');
-              window.location.reload();
+              await revalidate({ tag: slug });
+              router.refresh();
             } catch (error) {
               toast.error(`Failed With Error ${error}`);
             } finally {
@@ -67,28 +74,6 @@ export default function ChangeSubmission({
         fullWidth
         loading={loading}
         onClick={async () => {
-          //   setIsLoading(true);
-          //   try {
-          //     const request = await prepareWritePrize({
-          //       address: contractAddress as `0x${string}`,
-          //       account: address,
-          //       functionName: 'start_submission_period',
-          //       args: [BigInt(submissionTime)],
-          //     });
-          //     const { hash } = await writePrize(request);
-
-          //     const waitTransaction = await waitForTransaction({
-          //       confirmations: 1,
-          //       hash,
-          //     });
-          //     toast.success(`Submission Period Started, Transaction Hash ${hash}`);
-          //     console.log({ hash }, 'hash');
-          //   } catch (error) {
-          //     toast.error(`Failed With Error`);
-          //   } finally {
-          //     setIsLoading(false);
-          //     window.location.reload();
-          //   }\
           open();
         }}
       >

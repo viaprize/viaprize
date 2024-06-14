@@ -15,10 +15,11 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import revalidate from 'utils/revalidate';
 import { hashTypedData, hexToSignature } from 'viem';
 import { useWalletClient } from 'wagmi';
 import ChangeSubmission from './buttons/changeSubmission';
-import ChangeVoting from './buttons/changeVoting';
+import ChangeVotingTime from './buttons/changeVotingTime';
 import EndDispute from './buttons/endDispute';
 import EndSubmission from './buttons/endSubmission';
 import EndVoting from './buttons/endVoting';
@@ -35,6 +36,7 @@ function FundUsdcCard({
   imageUrl,
   successUrl,
   cancelUrl,
+  slug,
 }: {
   contractAddress: string;
   prizeId: string;
@@ -42,6 +44,7 @@ function FundUsdcCard({
   imageUrl: string;
   successUrl: string;
   cancelUrl: string;
+  slug: string;
 }) {
   const [sendLoading, setSendLoading] = useState(false);
   const { data: walletClient } = useWalletClient();
@@ -89,6 +92,7 @@ function FundUsdcCard({
       nonce: BigInt(nonce),
       deadline: deadline,
     };
+
     return signData;
   };
   const donateUsingUsdc = async () => {
@@ -120,6 +124,7 @@ function FundUsdcCard({
       toast.success(<TransactionToast hash={trxHash} title="Transaction Successfull" />, {
         duration: 6000,
       });
+      await revalidate({ tag: slug });
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
@@ -167,7 +172,7 @@ function FundUsdcCard({
         .then((data) => data.checkoutUrl);
 
       console.log({ checkoutUrl });
-
+      await revalidate({ tag: slug });
       router.replace(checkoutUrl);
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
@@ -217,10 +222,6 @@ function FundUsdcCard({
   );
 }
 
-// const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
-//   ...config,
-//   async onSuccess(data) {
-//     toast.success(`
 export default function PrizePageComponent({
   prize,
   submissions,
@@ -285,9 +286,10 @@ export default function PrizePageComponent({
         contractAddress={prize.contract_address}
         prizeId={prize.id}
         title={prize.title}
-        cancelUrl={'https://example.com'}
+        cancelUrl={window.location.href}
         imageUrl={prize.images[0] || ''}
         successUrl={window.location.href}
+        slug={prize.slug}
       />
       {appUser
         ? (appUser.username === prize.user.username || appUser.isAdmin) &&
@@ -311,20 +313,21 @@ export default function PrizePageComponent({
       {appUser?.isAdmin &&
       !(deadlineString === 'Time is up!') &&
       prize.submission_time_blockchain > 0 ? (
-        <EndSubmission contractAddress={prize.contract_address} />
+        <EndSubmission contractAddress={prize.contract_address} slug={prize.slug} />
       ) : null}
 
       {appUser?.isAdmin && prize.submission_time_blockchain ? (
         <ChangeSubmission
           contractAddress={prize.contract_address}
           submissionTime={prize.submission_time_blockchain}
+          slug={prize.slug}
         />
       ) : null}
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
         <EndVoting contractAddress={prize.contract_address} />
       ) : null}
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
-        <ChangeVoting
+        <ChangeVotingTime
           contractAddress={prize.contract_address}
           votingTime={prize.voting_time_blockchain}
         />
@@ -337,14 +340,22 @@ export default function PrizePageComponent({
         contractAddress={prize.contract_address}
       />
 
-      <EndDispute contractAddress={prize.contract_address} />
+      {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
+        <ChangeVotingTime
+          contractAddress={prize.contract_address}
+          votingTime={prize.voting_time_blockchain}
+        />
+      ) : null}
 
-      <RefundCard
-        allowVoting={prize.voting_time_blockchain > 0}
-        contractAddress={prize.contract_address}
-        showVote
-        votes={0}
-      />
+      {appUser?.isAdmin ? <EndDispute contractAddress={prize.contract_address} /> : null}
+
+      {prize.voting_time_blockchain > 0 ? (
+        <RefundCard
+          allowVoting={prize.voting_time_blockchain > 0}
+          contractAddress={prize.contract_address}
+          showVote
+        />
+      ) : null}
       {/* <CommentSection /> */}
     </div>
   );

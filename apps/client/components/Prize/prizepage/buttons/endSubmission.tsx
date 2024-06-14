@@ -1,10 +1,18 @@
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
 import { Button } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 import { useMutation } from 'react-query';
 import { toast } from 'sonner';
-
-export default function EndSubmission({ contractAddress }: { contractAddress: string }) {
+import revalidate from 'utils/revalidate';
+export default function EndSubmission({
+  contractAddress,
+  slug,
+}: {
+  contractAddress: string;
+  slug: string;
+}) {
+  const router = useRouter();
   const { mutateAsync, isLoading } = useMutation(
     async () => {
       return await (await backendApi()).wallet.prizeEndSubmissionCreate(contractAddress);
@@ -14,7 +22,9 @@ export default function EndSubmission({ contractAddress }: { contractAddress: st
         toast.success(
           <TransactionToast title="Submission Ending" hash={data.data.hash} />,
         );
-        window.location.reload();
+
+        await revalidate({ tag: slug });
+        router.refresh();
       },
     },
   );

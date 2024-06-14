@@ -4,7 +4,13 @@ import { Button } from '@mantine/core';
 import { useMutation } from 'react-query';
 import { toast } from 'sonner';
 
-export default function EndDispute({ contractAddress }: { contractAddress: string }) {
+export default function EndDispute({
+  contractAddress,
+  slug,
+}: {
+  contractAddress: string;
+  slug: string;
+}) {
   const { mutateAsync, isLoading } = useMutation(
     async () => {
       return await (await backendApi()).wallet.prizeEndDisputeCreate(contractAddress);

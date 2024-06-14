@@ -3,7 +3,6 @@
 'use client';
 
 import { calculateDeadline, htmlToPlainText } from '@/lib/utils';
-import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
   Badge,
@@ -57,8 +56,7 @@ function ExploreCard({
     new Date(),
     new Date(startingTimeBlockchain * 1000),
   );
-  console.log({ slug }, 'slugs');
-  console.log(deadlineString, 'this is the deadline string');
+
   return (
     <Card
       padding="lg"
@@ -92,8 +90,6 @@ function ExploreCard({
               </Text>
             </div>
 
-            {/* {distributed ? <Text>Prize Has Ended</Text> : null} */}
-
             {deadlineString === 'Time is up!' && distributed === true ? (
               <Badge color="green">Won</Badge>
             ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
@@ -119,9 +115,6 @@ function ExploreCard({
           <Flex gap="sm">{skills}</Flex>
           <Text fw="bold" size="xl">
             {usdAmount} USD
-          </Text>
-          <Text size="sm" c="gray">
-            {ethAmount} {chain.nativeCurrency.symbol}
           </Text>
           <Text fw="bold" className="flex">
             Submission Deadline :{' '}

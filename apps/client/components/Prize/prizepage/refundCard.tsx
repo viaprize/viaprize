@@ -1,6 +1,7 @@
 /* eslint-disable no-implicit-coercion */
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
+import { VOTE_ABI } from '@/lib/constants';
 import { formatUsdc, parseUsdc, refundHash, voteMessageHash } from '@/lib/utils';
 import {
   ActionIcon,
@@ -22,109 +23,12 @@ import { toast } from 'sonner';
 import { hashMessage, hexToSignature } from 'viem';
 import { useContractRead, useWalletClient } from 'wagmi';
 
-const VOTE_ABI = [
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'isFunder',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'funderAmount',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'nonce',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_nonce',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_submission',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256',
-      },
-    ],
-    name: 'VOTE_HASH',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'REFUND_SUBMISSION_HASH',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
 interface RefundCardProps {
-  votes: number;
   contractAddress: string;
   allowVoting: boolean;
   showVote: boolean;
 }
 export default function RefundCard({
-  votes,
   contractAddress,
   allowVoting,
   showVote,
@@ -140,6 +44,13 @@ export default function RefundCard({
     address: contractAddress as `0x${string}`,
     functionName: 'funderAmount',
     args: [walletClient?.account.address as `0x${string}`],
+  });
+
+  const { data: refundSubmission, refetch: refetchRefundSubmission } = useContractRead({
+    abi: VOTE_ABI,
+    address: contractAddress as `0x${string}`,
+    functionName: 'getSubmissionByHash',
+    args: [refundHash() as `0x${string}`],
   });
 
   const vote = async () => {
@@ -185,14 +96,6 @@ export default function RefundCard({
         functionName: 'nonce',
       });
 
-      // const voteHash = await readContract({
-      //   abi: VOTE_ABI,
-      //   address: contractAddress as `0x${string}`,
-      //   functionName: 'VOTE_HASH',
-      //   args: [nonce, hash as `0x${string}`, finalVote],
-      // });
-
-      // console.log({ finalVote });
       const hash = refundHash();
       const voteHash = voteMessageHash(
         hash,
@@ -227,6 +130,8 @@ export default function RefundCard({
         })
         .then((res) => res.data.hash);
 
+      await refetch();
+      await refetchRefundSubmission();
       setSendLoading(false);
       toast.success(<TransactionToast hash={tx} title="Voted Successfully" />);
 
@@ -288,11 +193,12 @@ export default function RefundCard({
           <div>
             <div className="flex gap-1 sm:justify-end items-center ">
               <Button color="black" mr="5px" onClick={open} disabled={!allowVoting}>
-                'Vote'
+                Vote
               </Button>
               {allowVoting && showVote ? (
                 <Badge variant="filled" w="auto" size="lg" color="blue">
-                  {parseUsdc(BigInt(votes))} USD
+                  {parseUsdc(refundSubmission ? refundSubmission.usdcVotes : BigInt(0))}{' '}
+                  USD
                 </Badge>
               ) : null}
             </div>

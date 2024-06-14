@@ -2,6 +2,7 @@
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import type { Prize } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
+import { VOTE_ABI } from '@/lib/constants';
 import { formatUsdc, parseUsdc, voteMessageHash } from '@/lib/utils';
 import {
   ActionIcon,
@@ -25,88 +26,6 @@ import { hashMessage, hexToSignature } from 'viem';
 import { useContractRead, useWalletClient } from 'wagmi';
 import { extractPlainTextFromEditor } from './utils';
 
-const VOTE_ABI = [
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'isFunder',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'funderAmount',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'nonce',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_nonce',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_submission',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256',
-      },
-    ],
-    name: 'VOTE_HASH',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
 interface SubmissionsCardProps {
   fullname: string;
   wallet: string;
@@ -196,14 +115,6 @@ export default function SubmissionsCard({
         address: contractAddress as `0x${string}`,
         functionName: 'nonce',
       });
-      // const voteHash = await readContract({
-      //   abi: VOTE_ABI,
-      //   address: contractAddress as `0x${string}`,
-      //   functionName: 'VOTE_HASH',
-      //   args: [nonce, hash as `0x${string}`, finalVote],
-      // });
-
-      // console.log({ finalVote });
 
       const voteHash = voteMessageHash(
         hash,
@@ -240,7 +151,7 @@ export default function SubmissionsCard({
 
       setSendLoading(false);
       toast.success(<TransactionToast hash={tx} title="Voted Successfully" />);
-
+      await refetch();
       close();
     } catch (e) {
       console.log(e, 'error');
@@ -281,7 +192,7 @@ export default function SubmissionsCard({
                 }}
               />
               {showVote ? (
-                <Button onClick={vote} disabled={!value} loading={loading}>
+                <Button onClick={vote} disabled={!value || !!loading} loading={loading}>
                   Vote!
                 </Button>
               ) : null}
