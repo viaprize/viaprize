@@ -17,6 +17,7 @@ export default function EndDispute({
     },
     {
       onSuccess: async (data) => {
+        window.location.reload();
         toast.success(<TransactionToast title="Dispute Ending" hash={data.data.hash} />);
       },
     },

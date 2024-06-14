@@ -32,6 +32,7 @@ export default function StartSubmission({
           toast.success(
             <TransactionToast hash={hash.hash} title=" Submission Period Started" />,
           );
+          window.location.reload();
           console.log({ hash }, 'hash');
         } catch (error) {
           toast.error(`Failed With Error` + (error as Error).message);

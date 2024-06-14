@@ -42,7 +42,6 @@ export default function ChangeVotingTime({
         <Button
           onClick={async () => {
             try {
-              toast.loading('Loading.....');
               setLoading(true);
 
               const { hash } = await (
@@ -61,6 +60,7 @@ export default function ChangeVotingTime({
             } finally {
               await revalidate({ tag: slug });
               router.refresh();
+              window.location.reload();
               setLoading(false);
             }
           }}

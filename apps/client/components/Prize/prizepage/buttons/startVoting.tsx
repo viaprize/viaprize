@@ -23,10 +23,12 @@ export default function StartVoting({
       onSuccess: async (data) => {
         await revalidate({ tag: slug });
         router.refresh();
+
         console.log(data);
         toast.success(
           <TransactionToast hash={data.data.hash} title="Voting Period Started" />,
         );
+        window.location.reload();
       },
     },
   );

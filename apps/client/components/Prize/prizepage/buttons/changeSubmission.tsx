@@ -57,6 +57,7 @@ export default function ChangeSubmission({
               console.log({ hash }, 'hash');
               await revalidate({ tag: slug });
               router.refresh();
+              window.location.reload();
             } catch (error) {
               toast.error(`Failed With Error ${error}`);
             } finally {

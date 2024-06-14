@@ -25,6 +25,7 @@ export default function EndSubmission({
 
         await revalidate({ tag: slug });
         router.refresh();
+        window.location.reload();
       },
     },
   );

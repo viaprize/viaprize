@@ -24,7 +24,6 @@ interface ExploreCardProps {
   title: string;
   profileName: string;
   description: string;
-  ethAmount: string;
   usdAmount: string;
   createdAt: string;
   id: string;
@@ -40,14 +39,12 @@ function ExploreCard({
   profileName,
   title,
   description,
-  ethAmount,
   usdAmount,
   createdAt,
   id,
   skills,
   distributed,
   startingTimeBlockchain,
-  submissionDays,
   slug,
   contestants,
 }: ExploreCardProps) {
@@ -93,7 +90,10 @@ function ExploreCard({
             {deadlineString === 'Time is up!' && distributed === true ? (
               <Badge color="green">Won</Badge>
             ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-            deadlineString === 'Time is up!' && distributed === false ? (
+            deadlineString === 'Time is up!' &&
+              distributed === false &&
+              parseInt(usdAmount) > 0 &&
+              startingTimeBlockchain ? (
               <Badge color="yellow">Refunded</Badge>
             ) : null}
           </div>

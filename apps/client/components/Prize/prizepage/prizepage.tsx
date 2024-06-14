@@ -343,14 +343,6 @@ export default function PrizePageComponent({
         contractAddress={prize.contract_address}
       />
 
-      {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
-        <ChangeVotingTime
-          contractAddress={prize.contract_address}
-          votingTime={prize.voting_time_blockchain}
-          slug={prize.slug}
-        />
-      ) : null}
-
       {appUser?.isAdmin ? <EndDispute contractAddress={prize.contract_address} /> : null}
 
       {prize.voting_time_blockchain > 0 ? (

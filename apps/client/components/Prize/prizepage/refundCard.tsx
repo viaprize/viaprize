@@ -54,6 +54,7 @@ export default function RefundCard({
   });
 
   const vote = async () => {
+    setSendLoading(true);
     const address = walletClient?.account.address;
     if (!address) {
       toast.error('Connect Wallet');
@@ -192,7 +193,13 @@ export default function RefundCard({
           </div>
           <div>
             <div className="flex gap-1 sm:justify-end items-center ">
-              <Button color="black" mr="5px" onClick={open} disabled={!allowVoting}>
+              <Button
+                color="black"
+                mr="5px"
+                onClick={open}
+                disabled={!allowVoting}
+                loading={loading}
+              >
                 Vote
               </Button>
               {allowVoting && showVote ? (

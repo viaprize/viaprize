@@ -3,7 +3,6 @@ import ExploreCard from '@/components/Prize/ExplorePrize/explorePrize';
 import { FetchPrizesCsv } from '@/components/history/fetch-csv';
 import HistoryCard from '@/components/history/history-card';
 import { Api } from '@/lib/api';
-import { formatEther } from 'viem';
 
 export default async function FetchPrizes() {
   const prizes = (
@@ -42,10 +41,7 @@ export default async function FetchPrizes() {
             imageUrl={prize.images[0]}
             createdAt={prize.created_at}
             submissionDays={prize.submissionTime}
-            ethAmount={formatEther(BigInt(prize.balance))}
-            usdAmount={(
-              parseFloat(formatEther(BigInt(prize.balance))) * usdToEth.ethereum.usd
-            ).toFixed(2)}
+            usdAmount={(prize.balance / 1000000).toFixed(2)}
             profileName={prize.user.name}
             contestants={prize.contestants?.length || 0}
             title={prize.title}

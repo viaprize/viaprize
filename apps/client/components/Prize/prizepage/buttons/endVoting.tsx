@@ -24,6 +24,7 @@ export default function EndVoting({
         await revalidate({ tag: slug });
         router.refresh();
         toast.success(<TransactionToast title="Voting Ending" hash={data.data.hash} />);
+        window.location.reload();
       },
     },
   );
