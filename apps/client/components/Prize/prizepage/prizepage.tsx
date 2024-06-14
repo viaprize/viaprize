@@ -125,6 +125,8 @@ function FundUsdcCard({
         duration: 6000,
       });
       await revalidate({ tag: slug });
+      router.refresh();
+      window.location.reload();
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
@@ -144,7 +146,7 @@ function FundUsdcCard({
       const signature = await walletClient.signTypedData(usdcSignType(signedData) as any);
       const { r, s, v } = hexToSignature(signature);
       const checkoutUrl = await fetch(
-        'https://49yjt1y4yg.execute-api.us-west-1.amazonaws.com/checkout',
+        'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout',
         {
           method: 'POST',
           headers: {
@@ -173,6 +175,7 @@ function FundUsdcCard({
 
       console.log({ checkoutUrl });
       await revalidate({ tag: slug });
+      router.refresh();
       router.replace(checkoutUrl);
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
