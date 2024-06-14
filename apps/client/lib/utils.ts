@@ -309,3 +309,13 @@ export function voteMessageHash(
 }
 
 export const refundHash = () => keccak256(encodePacked(['string'], ['REFUND']));
+
+export const addDaysToDate = (date: Date, days: number) => {
+  const newDate = date.setDate(date.getDate() + days);
+  return new Date(newDate);
+};
+
+export const addMinutesToDate = (date: Date, minutes: number) => {
+  const newDate = date.setMinutes(date.getMinutes() + minutes);
+  return new Date(newDate);
+};

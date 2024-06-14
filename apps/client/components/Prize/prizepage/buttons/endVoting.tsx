@@ -36,7 +36,6 @@ export default function EndVoting({
         const result = await mutateAsync?.();
       }}
     >
-      {' '}
       End Voting
     </Button>
   );

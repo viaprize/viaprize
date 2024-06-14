@@ -31,9 +31,6 @@ export default function PrizeFunderCard({
             {name}
           </Text>
         </Link>
-        {/* <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
-            Proposer Email: {email}
-          </Text> */}
       </div>
     </Card>
   );
