@@ -12,6 +12,7 @@ import { USDC } from '@/lib/constants';
 import { Badge, Button, Center, Group, NumberInput, Stack, Title } from '@mantine/core';
 import { readContract } from '@wagmi/core';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { hashTypedData, hexToSignature } from 'viem';
@@ -45,6 +46,8 @@ function FundUsdcCard({
   const [sendLoading, setSendLoading] = useState(false);
   const { data: walletClient } = useWalletClient();
   const [value, setValue] = useState('');
+  const router = useRouter();
+
   const getUsdcSignatureData = async () => {
     const walletAddress = walletClient?.account.address;
     if (!walletAddress) {
@@ -146,10 +149,10 @@ function FundUsdcCard({
             checkoutMetadata: {
               contractAddress,
               backendId: prizeId,
-              deadline: signedData.deadline,
-              amount: signedData.value,
+              deadline: parseInt(signedData.deadline.toString()),
+              amount: parseInt(signedData.value.toString()),
               ethSignedMessage: hash,
-              v: v,
+              v: parseInt(v.toString()),
               r: r,
               s: s,
             },
@@ -162,6 +165,10 @@ function FundUsdcCard({
       )
         .then((res) => res.json())
         .then((data) => data.checkoutUrl);
+
+      console.log({ checkoutUrl });
+
+      router.replace(checkoutUrl);
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
@@ -201,7 +208,7 @@ function FundUsdcCard({
         disabled={!value}
         loading={sendLoading}
         onClick={async () => {
-          await donateUsingUsdc();
+          await donateUsingFiat();
         }}
       >
         Donate With Card
