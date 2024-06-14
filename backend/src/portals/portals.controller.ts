@@ -24,6 +24,7 @@ import { MailService } from 'src/mail/mail.service';
 import { CreatePortalDto } from 'src/portals/dto/create-portal.dto';
 import { RejectProposalDto } from 'src/prizes/dto/reject-proposal.dto';
 import { UsersService } from 'src/users/users.service';
+import { addMinutes, extractMinutes, formatDateToUTC } from 'src/utils/date';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
@@ -46,30 +47,6 @@ import { ExtraPortalDataService } from './services/extra-portal-data.service';
 import { PortalCommentService } from './services/portal-comments.service';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
-
-function addMinutes(date: Date, minutes: number): Date {
-  date.setMinutes(date.getMinutes() + minutes);
-
-  return date;
-}
-
-function formatDateToUTC(date) {
-  const pad = (num) => num.toString().padStart(2, '0');
-
-  const year = date.getUTCFullYear();
-  const month = pad(date.getUTCMonth() + 1); // getUTCMonth() returns 0-11
-  const day = pad(date.getUTCDate());
-  const hours = pad(date.getUTCHours());
-  const minutes = pad(date.getUTCMinutes());
-  const seconds = pad(date.getUTCSeconds());
-
-  return `${year}${month}${day}${hours}${minutes}${seconds}`;
-}
-
-function extractMinutes(isoString: string) {
-  const minutesMatch = isoString.match(/:(\d{2})/);
-  return minutesMatch ? parseInt(minutesMatch[1]) : null;
-}
 
 // Example usage:
 @Controller('portals')
@@ -873,24 +850,9 @@ export class PortalsController {
   async getSlugById(
     @TypedParam('id') id: string,
   ): Promise<Pick<Portals, 'slug'>> {
-    const slug = await this.portalsService.getPortalSlugById(id)
+    const slug = await this.portalsService.getPortalSlugById(id);
     return {
       slug,
     };
-  }
-  /**
-   * The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
-   *
-   * @date 9/25/2023 - 5:35:35 AM
-   * @async
-   * @returns {Promise<Http200Response>}
-   */
-  @Get('/alkdslkf')
-  async testing(
-  ): Promise<Http200Response> {
-    await this.portalProposalsService.updateFundingGoal()
-    return {
-      message: 'done'
-    }
   }
 }

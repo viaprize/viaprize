@@ -13,6 +13,7 @@ import {
 } from 'viem';
 import { optimism } from 'viem/chains';
 
+import { JobSchedule, JobService } from 'src/jobs/jobs.service';
 import { PRIZE_V2_ABI } from '../utils/constants';
 
 export type WalletType = 'gasless' | 'reserve';
@@ -21,7 +22,10 @@ export class WalletService {
   apiKey: string;
   walletApiUrl: string;
   provider: PublicClient;
-  constructor(private readonly configService: ConfigService<AllConfigType>) {
+  constructor(
+    private readonly configService: ConfigService<AllConfigType>,
+    private readonly jobsService: JobService,
+  ) {
     this.apiKey = this.configService.getOrThrow<AllConfigType>(
       'GASLESS_API_KEY',
       { infer: true },
@@ -145,7 +149,31 @@ export class WalletService {
       .then((res) => res.json())
       .then((res) => res.address as string);
   }
-
+  async scheduleTransaction(
+    transaction: {
+      to: string;
+      data: string;
+      value: string;
+    },
+    type: WalletType,
+    schedule: JobSchedule,
+    title,
+  ) {
+    await this.jobsService.registerJob(
+      `${this.walletApiUrl}/${type}`,
+      title,
+      {
+        ...schedule,
+      },
+      {
+        'Content-Type': 'application/json',
+        'x-api-key': this.apiKey,
+      },
+      {
+        ...transaction,
+      },
+    );
+  }
   async sendTransaction(
     transaction: {
       to: string;
