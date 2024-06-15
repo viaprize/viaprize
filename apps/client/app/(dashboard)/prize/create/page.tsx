@@ -158,7 +158,7 @@ function Prize() {
             label={
               proposalTime && startSubmisionDate
                 ? `Submission will end at ${addMinutes(startSubmisionDate ?? new Date(), proposalTime)}`
-                : `This is the number of minutes you want the voting to last `
+                : `This is the number of minutes you want the submission to last `
             }
             value={proposalTime}
             onChange={(e) => {
