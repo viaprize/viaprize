@@ -8,7 +8,7 @@ export default async function FetchPrizes() {
   const prizes = (
     await new Api().prizes.prizesList(
       {
-        limit: 10,
+        limit: 20,
         page: 1,
       },
       {
