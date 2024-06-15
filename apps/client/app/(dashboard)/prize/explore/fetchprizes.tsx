@@ -40,7 +40,7 @@ export default async function FetchPrizes() {
             description={prize.description}
             imageUrl={prize.images[0]}
             createdAt={prize.created_at}
-            submissionDays={prize.submissionTime}
+            submissionMinutes={prize.submissionTime}
             usdAmount={(prize.balance / 1000000).toFixed(2)}
             profileName={prize.user.name}
             contestants={prize.contestants?.length || 0}
@@ -50,6 +50,8 @@ export default async function FetchPrizes() {
             skills={prize.proficiencies}
             startingTimeBlockchain={prize.submission_time_blockchain}
             slug={prize.slug}
+            startSubmissionDate={new Date(prize.startSubmissionDate)}
+            startVotingDate={new Date(prize.startVotingDate)}
           />
         );
       })}

@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
+import { addMinutes } from 'date-fns';
 import { PiTimerFill } from 'react-icons/pi';
 
 interface ExploreCardProps {
@@ -28,10 +29,12 @@ interface ExploreCardProps {
   createdAt: string;
   id: string;
   skills: string[];
-  submissionDays: number;
+  submissionMinutes: number;
   startingTimeBlockchain: number;
   slug: string;
   contestants: number;
+  startSubmissionDate: Date;
+  startVotingDate: Date;
 }
 
 function ExploreCard({
@@ -46,12 +49,14 @@ function ExploreCard({
   distributed,
   startingTimeBlockchain,
   slug,
+  submissionMinutes,
+  startSubmissionDate,
   contestants,
 }: ExploreCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const deadlineString = calculateDeadline(
     new Date(),
-    new Date(startingTimeBlockchain * 1000),
+    addMinutes(startSubmissionDate, submissionMinutes),
   );
 
   return (
@@ -118,8 +123,8 @@ function ExploreCard({
           </Text>
           <Text fw="bold" className="flex">
             Submission Deadline :{' '}
-            {startingTimeBlockchain !== 0 ? (
-              new Date(startingTimeBlockchain * 1000).toLocaleDateString()
+            {new Date() < addMinutes(startSubmissionDate, submissionMinutes) ? (
+              addMinutes(startSubmissionDate, submissionMinutes).toLocaleDateString()
             ) : (
               <Text c="red" fw="bold" className="pl-2">
                 Ended

@@ -63,7 +63,7 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
             startingTimeBlockchain={prize.submission_time_blockchain}
             distributed={false}
             description={prize.description}
-            submissionDays={prize.submissionTime}
+            submissionMinutes={prize.submissionTime}
             createdAt={prize.created_at}
             imageUrl={prize.images[0]}
             profileName=""
@@ -73,6 +73,8 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
             id={prize.id}
             skills={prize.proficiencies}
             slug={prize.slug}
+            startSubmissionDate={new Date(prize.startSubmissionDate)}
+            startVotingDate={new Date(prize.startVotingDate)}
           />
         );
       })}

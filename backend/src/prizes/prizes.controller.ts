@@ -26,6 +26,7 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
 import { addMinutes, extractMinutes, formatDateToUTC } from 'src/utils/date';
+import { sleep } from 'src/utils/sleep';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
 import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
@@ -158,14 +159,19 @@ export class PrizesController {
       prize.submissionTime,
     );
     const endVotingDate = addMinutes(prize.startVotingDate, prize.votingTime);
-
+    console.log(
+      prize.startSubmissionDate,
+      'startSubmissionDate',
+      prize.startSubmissionDate.getUTCMinutes(),
+      'startSubmissionDate',
+    );
     await this.walletService.scheduleTransaction(
       startSubmissionTransactionData,
       'gasless',
       {
         expiresAt: parseInt(
           formatDateToUTC(
-            new Date(addMinutes(prize.startSubmissionDate, 1).toISOString()),
+            new Date(addMinutes(prize.startSubmissionDate, 5).toISOString()),
           ),
         ),
         hours: [prize.startSubmissionDate.getUTCHours()],
@@ -177,13 +183,15 @@ export class PrizesController {
       prize.slug,
     );
 
+    await sleep(1000);
+
     await this.walletService.scheduleTransaction(
       startVotingTransactionData,
       'gasless',
       {
         expiresAt: parseInt(
           formatDateToUTC(
-            new Date(addMinutes(prize.startVotingDate, 1).toISOString()),
+            new Date(addMinutes(prize.startVotingDate, 5).toISOString()),
           ),
         ),
         hours: [prize.startVotingDate.getUTCHours()],
@@ -194,6 +202,7 @@ export class PrizesController {
       },
       `${prize.slug} Voting`,
     );
+    await sleep(1000);
 
     await this.walletService.scheduleTransaction(
       endSubmissionTransactionData,
@@ -201,7 +210,7 @@ export class PrizesController {
       {
         expiresAt: parseInt(
           formatDateToUTC(
-            new Date(addMinutes(endSubmissionDate, 1).toISOString()),
+            new Date(addMinutes(endSubmissionDate, 5).toISOString()),
           ),
         ),
         hours: [endSubmissionDate.getUTCHours()],
@@ -212,13 +221,14 @@ export class PrizesController {
       },
       `${prize.slug} Submission End`,
     );
+    await sleep(1000);
 
     await this.walletService.scheduleTransaction(
       endVotingTransactionData,
       'gasless',
       {
         expiresAt: parseInt(
-          formatDateToUTC(new Date(addMinutes(endVotingDate, 1).toISOString())),
+          formatDateToUTC(new Date(addMinutes(endVotingDate, 5).toISOString())),
         ),
         hours: [endVotingDate.getUTCHours()],
         minutes: [extractMinutes(endVotingDate.toISOString()) ?? 0],
@@ -229,7 +239,7 @@ export class PrizesController {
       `${prize.slug} Voting End`,
     );
 
-    await await this.prizeProposalsService.remove(prizeProposal.id);
+    await this.prizeProposalsService.remove(prizeProposal.id);
     await this.mailService.prizeDeployed(
       prizeProposal.user.email,
       prizeProposal.user.name,
