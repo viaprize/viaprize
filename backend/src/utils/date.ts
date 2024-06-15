@@ -31,3 +31,7 @@ export function extractMinutes(isoString: string) {
   const minutesMatch = isoString.match(/:(\d{2})/);
   return minutesMatch ? parseInt(minutesMatch[1]) : null;
 }
+
+export function getSecondsFromDates(startDate: Date, endDate: Date) {
+  return Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+}

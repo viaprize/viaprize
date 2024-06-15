@@ -1,3 +1,5 @@
+import { TypedBody, TypedParam } from '@nestia/core';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -12,20 +14,14 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
-import { PrizeProposalsService } from './services/prizes-proposals.service';
-import { PrizesService } from './services/prizes.service';
-
-import { TypedBody, TypedParam } from '@nestia/core';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { addMinutes, differenceInSeconds } from 'date-fns';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
-import { addMinutes, extractMinutes, formatDateToUTC } from 'src/utils/date';
 import { sleep } from 'src/utils/sleep';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
@@ -36,6 +32,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
@@ -46,8 +43,9 @@ import { Prize } from './entities/prize.entity';
 import { PrizesComments } from './entities/prizes-comments.entity';
 import { Submission } from './entities/submission.entity';
 import { PrizeCommentService } from './services/prize-comment.service';
+import { PrizeProposalsService } from './services/prizes-proposals.service';
+import { PrizesService } from './services/prizes.service';
 import { SubmissionService } from './services/submissions.service';
-
 interface SubmissionWithBlockchainData extends Submission {
   voting_blockchain: number;
 }
@@ -165,21 +163,14 @@ export class PrizesController {
       prize.startSubmissionDate.getUTCMinutes(),
       'startSubmissionDate',
     );
+    const today = new Date();
     await this.walletService.scheduleTransaction(
       startSubmissionTransactionData,
       'gasless',
-      {
-        expiresAt: parseInt(
-          formatDateToUTC(
-            new Date(addMinutes(prize.startSubmissionDate, 5).toISOString()),
-          ),
-        ),
-        hours: [prize.startSubmissionDate.getUTCHours()],
-        minutes: [extractMinutes(prize.startSubmissionDate.toISOString()) ?? 0],
-        mdays: [prize.startSubmissionDate.getUTCDate()],
-        months: [prize.startSubmissionDate.getUTCMonth() + 1],
-        wdays: [prize.startSubmissionDate.getUTCDay()],
-      },
+      differenceInSeconds(
+        new Date(prize.startSubmissionDate.toISOString()),
+        today,
+      ),
       prize.slug,
     );
 
@@ -188,18 +179,7 @@ export class PrizesController {
     await this.walletService.scheduleTransaction(
       startVotingTransactionData,
       'gasless',
-      {
-        expiresAt: parseInt(
-          formatDateToUTC(
-            new Date(addMinutes(prize.startVotingDate, 5).toISOString()),
-          ),
-        ),
-        hours: [prize.startVotingDate.getUTCHours()],
-        minutes: [extractMinutes(prize.startVotingDate.toISOString()) ?? 0],
-        mdays: [prize.startVotingDate.getUTCDate()],
-        months: [prize.startVotingDate.getUTCMonth() + 1],
-        wdays: [prize.startVotingDate.getUTCDay()],
-      },
+      differenceInSeconds(new Date(prize.startVotingDate.toISOString()), today),
       `${prize.slug} Voting`,
     );
     await sleep(1000);
@@ -207,18 +187,7 @@ export class PrizesController {
     await this.walletService.scheduleTransaction(
       endSubmissionTransactionData,
       'gasless',
-      {
-        expiresAt: parseInt(
-          formatDateToUTC(
-            new Date(addMinutes(endSubmissionDate, 5).toISOString()),
-          ),
-        ),
-        hours: [endSubmissionDate.getUTCHours()],
-        minutes: [extractMinutes(endSubmissionDate.toISOString()) ?? 0],
-        mdays: [endSubmissionDate.getUTCDate()],
-        months: [endSubmissionDate.getUTCMonth() + 1],
-        wdays: [endSubmissionDate.getUTCDay()],
-      },
+      differenceInSeconds(new Date(endSubmissionDate.toISOString()), today),
       `${prize.slug} Submission End`,
     );
     await sleep(1000);
@@ -226,16 +195,7 @@ export class PrizesController {
     await this.walletService.scheduleTransaction(
       endVotingTransactionData,
       'gasless',
-      {
-        expiresAt: parseInt(
-          formatDateToUTC(new Date(addMinutes(endVotingDate, 5).toISOString())),
-        ),
-        hours: [endVotingDate.getUTCHours()],
-        minutes: [extractMinutes(endVotingDate.toISOString()) ?? 0],
-        mdays: [endVotingDate.getUTCDate()],
-        months: [endVotingDate.getUTCMonth() + 1],
-        wdays: [endVotingDate.getUTCDay()],
-      },
+      differenceInSeconds(new Date(endVotingDate.toISOString()), today),
       `${prize.slug} Voting End`,
     );
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Client } from '@upstash/qstash';
 import { AllConfigType } from 'src/config/config.type';
 // import { BlockchainService } from "src/blockchain/blockchain.service";
 
@@ -30,6 +31,24 @@ export class JobService {
       'CRON_JOB_API_KEY',
       { infer: true },
     );
+  }
+
+  async registerJobV2(
+    url: string,
+    body: any,
+    headers: { [key: string]: string },
+    delayInSeconds: number,
+  ) {
+    const client = new Client({ token: this.apiKey });
+    const res = await client.publishJSON({
+      url: url,
+      body,
+      headers,
+      retries: 3,
+      delay: delayInSeconds,
+    });
+    console.log(res);
+    return res;
   }
   async registerJob(
     url: string,

@@ -13,7 +13,7 @@ import {
 } from 'viem';
 import { optimism } from 'viem/chains';
 
-import { JobSchedule, JobService } from 'src/jobs/jobs.service';
+import { JobService } from 'src/jobs/jobs.service';
 import { PRIZE_V2_ABI } from '../utils/constants';
 
 export type WalletType = 'gasless' | 'reserve';
@@ -156,22 +156,18 @@ export class WalletService {
       value: string;
     },
     type: WalletType,
-    schedule: JobSchedule,
+    scheduleInSeconds: number,
     title,
   ) {
-    await this.jobsService.registerJob(
+    console.log({ scheduleInSeconds });
+    return await this.jobsService.registerJobV2(
       `${this.walletApiUrl}/${type}`,
-      title,
-      {
-        ...schedule,
-      },
+      transaction,
       {
         'Content-Type': 'application/json',
         'x-api-key': this.apiKey,
       },
-      {
-        ...transaction,
-      },
+      scheduleInSeconds,
     );
   }
   async sendTransaction(
