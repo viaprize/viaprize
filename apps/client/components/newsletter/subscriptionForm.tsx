@@ -3,23 +3,29 @@
 import { Button, Input } from '@mantine/core';
 import { useState } from 'react';
 import { subscribeToNewsletter } from 'utils/actions';
+import { toast } from 'sonner';
 
 export default function SubscriptionForm() {
   const [email, setEmail] = useState('');
   // const [optIn, setOptIn] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await subscribeToNewsletter({ email }); //, opt: optIn
-    setLoading(false);
-    setEmail('');
+    try {
+      await subscribeToNewsletter({ email }); //, opt: optIn
+      toast.success('Subscribed successfully!');
+      setEmail('');
+    } catch (error) {
+      toast.error('Failed to subscribe. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className=" rounded-xl p-2 shadow-lg w-1/3 bg-gradient-to-r from-cyan-500 to-blue-500">
+    <div className="rounded-xl p-2 shadow-lg w-1/3 bg-gradient-to-r from-cyan-500 to-blue-500">
       <div className="font-bold ml-2">Subscribe to our Newsletter!</div>
 
       <form onSubmit={handleSubmit}>
