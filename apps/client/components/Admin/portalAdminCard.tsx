@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { User } from '@/lib/api';
 import { prepareWritePortalFactory, writePortalFactory } from '@/lib/smartContract';
 import {
@@ -20,6 +21,8 @@ import { parseEther } from 'viem';
 import { useMutation } from 'wagmi';
 import { usePortal } from '../hooks/usePortal';
 import usePortalProposal from '../hooks/usePortalProposal';
+import { IconCircleCheck } from '@tabler/icons-react';
+import Link from 'next/link';
 
 interface AdminCardProps {
   images: string[];
@@ -68,7 +71,6 @@ function PortalAdminCard({
   const portalDeploy = async () => {
     try {
       const firstLoadingToast = toast.loading('Transaction Waiting To Be approved', {
-        delete: false,
         dismissible: false,
       });
       const finalFundingGoal = parseEther((fundingGoal ?? '0').toString());
@@ -94,7 +96,6 @@ function PortalAdminCard({
         'Waiting for transaction Confirmation...DO NOT CLOSE WINDOW',
         {
           dismissible: false,
-          delete: false,
         },
       );
       const waitForTransactionOut = await waitForTransaction({
@@ -108,7 +109,22 @@ function PortalAdminCard({
       });
 
       toast.success(
-        `portal Address ${portalAddress.slice(0, 8)}...${portalAddress.slice(-8)} `,
+        <div className="flex items-center ">
+          <IconCircleCheck />{' '}
+          <Text fw="md" size="sm" className="ml-2">
+            {' '}
+            Portal Address
+          </Text>
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`https://optimistic.etherscan.io/address/${portalAddress}`}
+          >
+            <Button variant="transparent" className="text-blue-400 underline">
+              See here
+            </Button>
+          </Link>
+        </div>,
       );
       window.location.reload();
     } catch (e: any) {

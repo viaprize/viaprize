@@ -14,8 +14,8 @@ jobs:
       - name: Setup SSH
         uses: appleboy/ssh-action@master
         with:
-          host: ec2-3-6-248-245.ap-south-1.compute.amazonaws.com
-          username: ubuntu
+          host: ${{ secrets.PROD_BACKEND_SERVER_HOST }}
+          username: ${{ secrets.PROD_BACKEND_SERVER_USERNAME }}
           key: ${{ secrets.PROD_BACKEND_SSH_PRIVATE_KEY }}
           script: |
             cd ~/viaprize/backend
@@ -29,8 +29,8 @@ jobs:
       - name: Copy Env
         uses: appleboy/ssh-action@master
         with:
-          host: ec2-3-6-248-245.ap-south-1.compute.amazonaws.com
-          username: ubuntu
+          host: ${{ secrets.PROD_BACKEND_SERVER_HOST }}
+          username: ${{ secrets.PROD_BACKEND_SERVER_USERNAME }}
           key: ${{ secrets.PROD_BACKEND_SSH_PRIVATE_KEY }}
           script: |
             cd ~/viaprize/backend
@@ -41,8 +41,8 @@ jobs:
       - name: Install apps
         uses: appleboy/ssh-action@master
         with:
-          host: ec2-3-6-248-245.ap-south-1.compute.amazonaws.com
-          username: ubuntu
+          host: ${{ secrets.PROD_BACKEND_SERVER_HOST }}
+          username: ${{ secrets.PROD_BACKEND_SERVER_USERNAME }}
           key: ${{ secrets.PROD_BACKEND_SSH_PRIVATE_KEY }}
           script: |
             cd ~/viaprize/backend

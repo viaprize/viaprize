@@ -6,27 +6,19 @@ import ShouldLogin from '@/components/custom/should-login';
 import useAppUser from '@/components/hooks/useAppUser';
 import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
-import {
-  ActionIcon,
-  Button,
-  Card,
-  NumberInput,
-  SimpleGrid,
-  Switch,
-  TextInput,
-  Title,
-} from '@mantine/core';
+import { addDaysToDate } from '@/lib/utils';
+import { Button, Card, NumberInput, SimpleGrid, TextInput, Title } from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { IconPlus } from '@tabler/icons-react';
+import { addMinutes } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
 
 function Prize() {
-  const [address, setAddress] = useState(['']);
   const [judges, setJudges] = useState<string[]>([]);
   const [showJudges, setShowJudges] = useState(false);
   const [title, setTitle] = useState('');
@@ -42,6 +34,12 @@ function Prize() {
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const [startVotingDate, setStartVotingDate] = useState<Date | null>(
+    addDaysToDate(new Date(), 1),
+  );
+
+  const [startSubmisionDate, setStartSubmissionDate] = useState<Date | null>(new Date());
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
@@ -61,6 +59,12 @@ function Prize() {
     if (!wallet) {
       throw Error('Wallet is undefined');
     }
+    if (!startSubmisionDate) {
+      throw Error('Start Submission Date should be given');
+    }
+    if (!startVotingDate) {
+      throw Error('Start voting date');
+    }
     const newImages = await handleUploadImages();
     // const finalAddress = address.filter((x) => x);
     await addProposalsMutation({
@@ -72,6 +76,8 @@ function Prize() {
       priorities: [],
       proficiencies: [],
       submission_time: proposalTime,
+      startSubmissionDate: startSubmisionDate.toISOString(),
+      startVotingDate: startVotingDate.toISOString(),
       images: newImages ? [newImages] : [],
       judges: showJudges ? judges : [],
       title,
@@ -88,7 +94,10 @@ function Prize() {
       toast.promise(submit(), {
         loading: 'Submitting Proposal...',
         success: 'Proposal Submitted',
-        error: 'Error Submitting Proposal',
+        error: (err) => {
+          console.log(err);
+          return `Failed to submit proposal ${err}`;
+        },
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
@@ -98,10 +107,6 @@ function Prize() {
       setLoading(false);
     }
   };
-
-  // const useTemplateForDescription = () => {
-  //   setRichtext(PrizeCreationTemplate);
-  // };
 
   const addJudges = () => {
     setJudges((prev: string[]) => {
@@ -136,95 +141,56 @@ function Prize() {
           setTitle(e.target.value);
         }}
       />
-      <div className="flex gap-2 my-3 items-center justify-start">
-        <p>Funders are judges</p>
-        <Switch
-          checked={showJudges}
-          onChange={(event) => setShowJudges(event.currentTarget.checked)}
-        />
-        <p>Custom judges</p>
-      </div>
-
-      {showJudges && (
-        <div className="lg:grid-cols-2 gap-2 grid-cols-1 grid mb-3">
-          {judges.map((item, index) => (
-            <div className="flex gap-1 justify-center items-center w-full" key={index}>
-              <TextInput
-                type="text"
-                placeholder="Enter Judges Address (Must start with 0x)"
-                className="w-full"
-                value={item}
-                onChange={(e) => {
-                  onJudgesChange(index, e.target.value);
-                }}
-              />
-              {judges.length > 1 && (
-                <Button
-                  color="red"
-                  className="my-2"
-                  onClick={() => {
-                    removeJudges(index);
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </Button>
-              )}
-            </div>
-          ))}
-          <ActionIcon
-            variant="filled"
-            size="lg"
-            className="self-center"
-            onClick={addJudges}
-          >
-            <IconPlus />
-          </ActionIcon>
-        </div>
-      )}
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
 
       <SimpleGrid cols={2} className="my-3">
         <div className="">
+          <DateTimePicker
+            label="Pick date and time of starting submission time"
+            placeholder="Make sure its above the submission time and date"
+            date={startSubmisionDate ?? new Date()}
+            onChange={(da) => {
+              setStartSubmissionDate(da);
+            }}
+          />
           <NumberInput
-            placeholder="Proposal Time (in days)"
-            label="How many days you want submissions to be allowed for?"
+            placeholder="Submission Time (in minutes)"
+            label={
+              proposalTime && startSubmisionDate
+                ? `Submission will end at ${addMinutes(startSubmisionDate ?? new Date(), proposalTime)}`
+                : `This is the number of minutes you want the submission to last `
+            }
             value={proposalTime}
             onChange={(e) => {
               setProposalTime(parseInt(e.toString()));
             }}
             allowNegative={false}
           />
-          {/* <Checkbox
-            checked={isAutomatic}
-            onChange={(e) => {
-              setIsAutomatic(e.currentTarget.checked);
-            }}
-            className="my-2 cursor-pointer"
-            label="Automatically start campaign when it is accepted by the admin"
-          /> */}
         </div>
-        <NumberInput
-          placeholder="voting Time (in days)"
-          label="This is the number of days you want the voting to last "
-          allowNegative={false}
-          value={votingTime}
-          onChange={(e) => {
-            setVotingTime(parseInt(e.toString()));
-          }}
-        />
+        <div className="">
+          <DateTimePicker
+            label="Pick date and time of starting voting time"
+            placeholder="Make sure its above the voting time and date"
+            date={startVotingDate ?? new Date()}
+            onChange={(da) => {
+              setStartVotingDate(da);
+            }}
+          />
+
+          <NumberInput
+            placeholder="Voting Time (in minutes)"
+            label={
+              votingTime && startVotingDate
+                ? `Voting will end at  ${addMinutes(startVotingDate, votingTime)}`
+                : `This is the number of minutes you want the voting to last `
+            }
+            allowNegative={false}
+            value={votingTime}
+            onChange={(e) => {
+              setVotingTime(parseInt(e.toString()));
+            }}
+          />
+        </div>
       </SimpleGrid>
       <Button
         className="mt-3 "
@@ -238,9 +204,4 @@ function Prize() {
     </Card>
   );
 }
-
-// Prize.getLayout = function getLayout(page: ReactElement) {
-//   return <AppShellLayout>{page}</AppShellLayout>;
-// };
-
 export default Prize;

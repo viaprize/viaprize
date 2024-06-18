@@ -43,7 +43,7 @@ interface CSVData {
 
 export async function FetchPrizesCsv() {
   const csvUrl =
-    'https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/old_viaprize_data/oldprizefinal107.csv?t=2024-04-08T08%3A26%3A20.784Z';
+    'https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/old_viaprize_data/oldprizefinal108.csv?t=2024-06-06T06%3A46%3A52.074Z';
   const data: CSVData[] = [];
 
   const response = await fetch(csvUrl);

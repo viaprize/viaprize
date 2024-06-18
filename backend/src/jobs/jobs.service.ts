@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Client } from '@upstash/qstash';
 import { AllConfigType } from 'src/config/config.type';
 // import { BlockchainService } from "src/blockchain/blockchain.service";
 
 // Date / time(in job’s time zone) after which the job expires, i.e.after which it is not scheduled anymore(format: YYYYMMDDhhmmss, 0 = does not expire)
-interface JobSchedule {
+export interface JobSchedule {
   // Schedule time zone
   expiresAt: number; // Date/time after which the job expires, 0 = does not expire
   hours: number[]; // Hours in which to execute the job (0-23; [-1] = every hour)
@@ -30,6 +31,24 @@ export class JobService {
       'CRON_JOB_API_KEY',
       { infer: true },
     );
+  }
+
+  async registerJobV2(
+    url: string,
+    body: any,
+    headers: { [key: string]: string },
+    delayInSeconds: number,
+  ) {
+    const client = new Client({ token: this.apiKey });
+    const res = await client.publishJSON({
+      url: url,
+      body,
+      headers,
+      retries: 3,
+      delay: delayInSeconds,
+    });
+    console.log(res);
+    return res;
   }
   async registerJob(
     url: string,

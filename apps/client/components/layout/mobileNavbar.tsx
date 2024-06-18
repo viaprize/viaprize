@@ -16,13 +16,13 @@ const navbnarItems = [
       'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
   },
   {
-    label: 'Portals',
+    label: 'Fundraisers',
     hrefabout: '/portal/about',
     hrefexplore: '/portal/explore',
-    explore: 'Explore Portals',
-    about: 'About Portals',
+    explore: 'Explore Fundraisers',
+    about: 'About Fundraisers',
     hrefcreate: '/portal/create',
-    createbutton: 'Create Portal',
+    createbutton: 'Create Fundraisers',
     description:
       'em ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
   },

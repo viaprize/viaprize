@@ -11,44 +11,6 @@
 
 import { env } from '@env';
 
-/** Interface of Create Pactt , using this interface it create a new pact in pact.service.ts */
-export interface CreatePact {
-  /** Name of the pact i.e the title, which is gotten in the pact form */
-  name: string;
-  /** Terms of the pact i.e the Description */
-  terms: string;
-  /**
-   * Address of the pact on the blockchain
-   * @maxLength 44
-   */
-  address: string;
-  /**
-   * Transaction hash of the pact on the blockchain
-   * @maxLength 66
-   */
-  transactionHash: string;
-  /** Block hash of the pact on the blockchain */
-  blockHash?: string;
-}
-
-export interface Pact {
-  id: number;
-  name: string;
-  terms: string;
-  address: string;
-  transactionHash: string;
-  blockHash: string;
-}
-
-export type PactNullable = {
-  id: number;
-  name: string;
-  terms: string;
-  address: string;
-  transactionHash: string;
-  blockHash: string;
-} | null;
-
 export interface Http200Response {
   message: string;
 }
@@ -153,6 +115,7 @@ export interface Prize {
   updated_at: string;
   images: string[];
   title: string;
+  contestants: User[];
   submissions: Submission[];
   comments?: PrizesComments[];
   slug: string;
@@ -369,6 +332,7 @@ export interface PrizeWithBlockchainData {
   distributed: boolean;
   submission_time_blockchain: number;
   voting_time_blockchain: number;
+  dispute_period_time_blockchain: number;
   balance: number;
   id: string;
   description: string;
@@ -391,6 +355,7 @@ export interface PrizeWithBlockchainData {
   updated_at: string;
   images: string[];
   title: string;
+  contestants: User[];
   submissions: Submission[];
   comments?: PrizesComments[];
   slug: string;
@@ -442,6 +407,18 @@ export interface CreateSubmissionDto {
   submissionDescription: string;
   submissionHash: string;
   submitterAddress: string;
+}
+
+export interface FetchSubmissionDto {
+  submissionDeadline: number;
+  id: string;
+  submissionDescription: string;
+  submissionHash: string;
+  submitterAddress: string;
+  /** @format date-time */
+  created_at: string;
+  user: User;
+  prize: Prize;
 }
 
 /** Make all properties in T readonly */
@@ -573,6 +550,1171 @@ export interface UpdateUser {
   proficiencies?: string[];
   priorities?: string[];
   walletAddress?: string;
+}
+
+export interface WalletResponse {
+  hash: string;
+}
+
+export interface ChangeSubmissionDto {
+  minutes: number;
+}
+
+export interface ChangeVotingDto {
+  minutes: number;
+}
+
+export interface VoteDTO {
+  submissionHash: string;
+  v: number;
+  s: string;
+  r: string;
+  amount: number;
+}
+
+export interface AddUsdcFundsDto {
+  amount: number;
+  deadline: number;
+  v: number;
+  s: string;
+  r: string;
+  hash: string;
+}
+
+export namespace Indexer {
+  /**
+   * No description
+   * @name PortalCreate
+   * @request POST:/indexer/portal
+   */
+  export namespace PortalCreate {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = string;
+  }
+}
+
+export namespace Portals {
+  /**
+   * No description
+   * @name ClearCacheList
+   * @request GET:/portals/clear_cache
+   */
+  export namespace ClearCacheList {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name PortalsCreate
+   * @request POST:/portals
+   */
+  export namespace PortalsCreate {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = CreatePortalDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Portals;
+  }
+
+  /**
+   * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the GET request to `/portals` endpoint. Here's a breakdown of what it does: Gets page
+   * @name PortalsList
+   * @summary Get all Portals
+   * @request GET:/portals
+   */
+  export namespace PortalsList {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      page: number;
+      limit: number;
+      tags?: string[];
+      search?: string;
+      sort?: 'DESC' | 'ASC';
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ReadonlyType;
+  }
+
+  /**
+   * @description The function `getPortal` is an asynchronous function that takes a `slug` parameter and gets the associated portal
+   * @name PortalsDetail
+   * @request GET:/portals/{slug}
+   */
+  export namespace PortalsDetail {
+    export type RequestParams = {
+      slug: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PortalWithBalance;
+  }
+
+  /**
+ * @description The function `createComment` is an asynchronous function that takes a `comment` parameter calls the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
+ * @name CommentCreate
+ * @summary The function `createComment` is an asynchronous function that takes a `comment` parameter calls
+the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId`
+ * @request POST:/portals/{id}/comment
+ * @secure
+*/
+  export namespace CommentCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = CreateCommentDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name CommentRepliesDetail
+   * @request GET:/portals/comment/{commentId}/replies
+   */
+  export namespace CommentRepliesDetail {
+    export type RequestParams = {
+      commentId: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PortalsComments[];
+  }
+
+  /**
+   * No description
+   * @name CommentReplyCreate
+   * @request POST:/portals/{id}/comment/reply
+   */
+  export namespace CommentReplyCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = CreateCommentDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name CommentLikeCreate
+   * @request POST:/portals/{id}/comment/like
+   */
+  export namespace CommentLikeCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name CommentDislikeCreate
+   * @request POST:/portals/{id}/comment/dislike
+   */
+  export namespace CommentDislikeCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name CommentDeleteDelete
+   * @request DELETE:/portals/{commentId}/comment/delete
+   */
+  export namespace CommentDeleteDelete {
+    export type RequestParams = {
+      commentId: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+ * @description The function `getComments` is an asynchronous function that takes a `comment` parameter calls the `getComment` method of the `portalCommentService` with the given `id`.
+ * @name CommentDetail
+ * @summary The function `getComments` is an asynchronous function that takes a `comment` parameter calls
+the `getComment` method of the `portalCommentService` with the given `id`
+ * @request GET:/portals/{slug}/comment
+*/
+  export namespace CommentDetail {
+    export type RequestParams = {
+      slug: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PortalsComments[];
+  }
+
+  /**
+   * No description
+   * @name AddUpdateUpdate
+   * @request PUT:/portals/{slug}/add-update
+   */
+  export namespace AddUpdateUpdate {
+    export type RequestParams = {
+      slug: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = string;
+    export type RequestHeaders = {};
+    export type ResponseBody = Portals;
+  }
+
+  /**
+   * No description
+   * @name ProposalDeleteDelete
+   * @request DELETE:/portals/proposal/delete/{id}
+   */
+  export namespace ProposalDeleteDelete {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = boolean;
+  }
+
+  /**
+   * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the GET request to `/user/{username}` endpoint. Here's a breakdown of what it does: Gets page
+   * @name UserDetail
+   * @summary Get all Portal of a single user
+   * @request GET:/portals/user/{username}
+   * @secure
+   */
+  export namespace UserDetail {
+    export type RequestParams = {
+      username: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PortalWithBalance[];
+  }
+
+  /**
+   * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the GET request to `/proposals` endpoint. Here's a breakdown of what it does: Gets page
+   * @name ProposalsList
+   * @summary Get all Pending proposals
+   * @request GET:/portals/proposals
+   * @secure
+   */
+  export namespace ProposalsList {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      page: number;
+      limit: number;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ReadonlyTypeO1;
+  }
+
+  /**
+   * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the POST request to `/proposals` endpoint. Here's a breakdown of what it does:
+   * @name ProposalsCreate
+   * @summary Create a new proposal using user auth token to know which user is calling this function and sends email to user
+   * @request POST:/portals/proposals
+   * @secure
+   */
+  export namespace ProposalsCreate {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = CreatePortalProposalDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = PortalProposals;
+  }
+
+  /**
+   * No description
+   * @name ProposalsDetail
+   * @request GET:/portals/proposals/{id}
+   */
+  export namespace ProposalsDetail {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PortalProposals;
+  }
+
+  /**
+   * @description it updates the proposal
+   * @name ProposalsPartialUpdate
+   * @request PATCH:/portals/proposals/{id}
+   * @secure
+   */
+  export namespace ProposalsPartialUpdate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = UpdatePortalPropsalDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+ * @description The code snippet you provided is a method in the `PortalsController` class. It is a route handler for the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does: Gets page
+ * @name ProposalsAcceptList
+ * @summary Retrieve a list of accepted Portal proposals
+description: Retrieve a list of accepted Portal proposals. The list supports pagination.
+parameters
+ * @request GET:/portals/proposals/accept
+ * @secure
+*/
+  export namespace ProposalsAcceptList {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      page: number;
+      limit: number;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ReadonlyTypeO2;
+  }
+
+  /**
+   * @description Get all proposals  of user  by username
+   * @name ProposalsUserDetail
+   * @summary Get all proposals of users by username,
+   * @request GET:/portals/proposals/user/{username}
+   */
+  export namespace ProposalsUserDetail {
+    export type RequestParams = {
+      username: string;
+    };
+    export type RequestQuery = {
+      page: number;
+      limit: number;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ReadonlyTypeO3;
+  }
+
+  /**
+   * @description Admin Reject proposal
+   * @name ProposalsRejectCreate
+   * @summary Reject Proposal,
+   * @request POST:/portals/proposals/reject/{id}
+   * @secure
+   */
+  export namespace ProposalsRejectCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = RejectProposalDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+ * @description The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls the `approve` method of the `portalProposalsService` with the given `id`. and it approves the proposal and sends an email of approval
+ * @name ProposalsAcceptCreate
+ * @summary The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls
+the `approve` method of the `portalProposalsService` with the given `id`
+ * @request POST:/portals/proposals/accept/{id}
+ * @secure
+*/
+  export namespace ProposalsAcceptCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+ * @description The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
+ * @name ProposalsPlatformFeeCreate
+ * @summary The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
+the ``setPlatformFee method of the `portalProposalsService` with the given `id`
+ * @request POST:/portals/proposals/platformFee/{id}
+ * @secure
+*/
+  export namespace ProposalsPlatformFeeCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = UpdatePlatformFeeDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+ * @description The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
+ * @name TriggerCreate
+ * @summary The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
+the ``setPlatformFee method of the `portalProposalsService` with the given `id`
+ * @request POST:/portals/trigger/{contractAddress}
+*/
+  export namespace TriggerCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = TestTrigger;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * @description The function `getExtraPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data
+   * @name ExtraDataDetail
+   * @request GET:/portals/extra_data/{externalId}
+   */
+  export namespace ExtraDataDetail {
+    export type RequestParams = {
+      externalId: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ExtraPortal;
+  }
+
+  /**
+   * @description The function `getExtraDonationPortalData` is an asynchronous function that takes an `external id` parameter returns offchain data
+   * @name ExtraDonationDataDetail
+   * @request GET:/portals/extra_donation_data/{externalId}
+   */
+  export namespace ExtraDonationDataDetail {
+    export type RequestParams = {
+      externalId: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ExtraDonationPortalData[];
+  }
+
+  /**
+   * @description The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+   * @name SlugDetail
+   * @request GET:/portals/slug/{id}
+   */
+  export namespace SlugDetail {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PickPortalsslug;
+  }
+}
+
+export namespace Price {
+  /**
+   * No description
+   * @name UsdToEthList
+   * @request GET:/price/usd_to_eth
+   */
+  export namespace UsdToEthList {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = any;
+  }
+}
+
+export namespace Prizes {
+  /**
+   * No description
+   * @name PrizesCreate
+   * @request POST:/prizes
+   */
+  export namespace PrizesCreate {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = CreatePrizeDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Prize;
+  }
+
+  /**
+   * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the GET request to `/prizes` endpoint. Here's a breakdown of what it does: Gets page
+   * @name PrizesList
+   * @summary Get all Prizes
+   * @request GET:/prizes
+   */
+  export namespace PrizesList {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      page: number;
+      limit: number;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ReadonlyTypeO4;
+  }
+
+  /**
+   * No description
+   * @name PrizesDetail
+   * @request GET:/prizes/{slug}
+   */
+  export namespace PrizesDetail {
+    export type RequestParams = {
+      slug: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PrizeWithBlockchainData;
+  }
+
+  /**
+   * @description it updates the proposal
+   * @name ProposalsUpdate
+   * @request PUT:/prizes/proposals/{id}
+   * @secure
+   */
+  export namespace ProposalsUpdate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = UpdatePrizeDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name ProposalsDetail
+   * @request GET:/prizes/proposals/{id}
+   */
+  export namespace ProposalsDetail {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PrizeProposals;
+  }
+
+  /**
+   * No description
+   * @name ProposalsDeletedDelete
+   * @request DELETE:/prizes/proposals/deleted/{id}
+   */
+  export namespace ProposalsDeletedDelete {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name SubmissionCreate
+   * @request POST:/prizes/{slug}/submission
+   */
+  export namespace SubmissionCreate {
+    export type RequestParams = {
+      slug: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = CreateSubmissionDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name SubmissionDetail
+   * @request GET:/prizes/{slug}/submission
+   */
+  export namespace SubmissionDetail {
+    export type RequestParams = {
+      slug: string;
+    };
+    export type RequestQuery = {
+      page: number;
+      limit: number;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ReadonlyTypeO5;
+  }
+
+  /**
+   * No description
+   * @name SubmissionDetail2
+   * @request GET:/prizes/{slug}/submission/{id}
+   * @originalName submissionDetail
+   * @duplicate
+   */
+  export namespace SubmissionDetail2 {
+    export type RequestParams = {
+      id: string;
+      slug: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = FetchSubmissionDto;
+  }
+
+  /**
+   * No description
+   * @name SubmissionPartialUpdate
+   * @request PATCH:/prizes/submission/{id}
+   */
+  export namespace SubmissionPartialUpdate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = string;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name ParticipateCreate
+   * @request POST:/prizes/{slug}/participate
+   */
+  export namespace ParticipateCreate {
+    export type RequestParams = {
+      slug: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * No description
+   * @name ContestantsDetail
+   * @request GET:/prizes/{slug}/contestants
+   */
+  export namespace ContestantsDetail {
+    export type RequestParams = {
+      slug: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = User[];
+  }
+
+  /**
+ * @description The function `createComment` is an asynchronous function that takes a `comment` parameter calls the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId` . and it updatees the prize
+ * @name CommentCreate
+ * @summary The function `createComment` is an asynchronous function that takes a `comment` parameter calls
+the `create` method of the `prizeCommentService` with the given `id` and  `userAuthId`
+ * @request POST:/prizes/{id}/comment
+ * @secure
+*/
+  export namespace CommentCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = CreateCommentDtoO1;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+ * @description The function `getComments` is an asynchronous function that takes a `comment` parameter calls the `getComment` method of the `prizeCommentService` with the given `id`.
+ * @name CommentDetail
+ * @summary The function `getComments` is an asynchronous function that takes a `comment` parameter calls
+the `getComment` method of the `prizeCommentService` with the given `id`
+ * @request GET:/prizes/{id}/comment
+*/
+  export namespace CommentDetail {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PrizesComments[];
+  }
+
+  /**
+   * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the GET request to `/proposals` endpoint. Here's a breakdown of what it does: Gets page
+   * @name ProposalsList
+   * @summary Get all Pending proposals
+   * @request GET:/prizes/proposals
+   * @secure
+   */
+  export namespace ProposalsList {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      page: number;
+      limit: number;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ReadonlyTypeO6;
+  }
+
+  /**
+   * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the POST request to `/proposals` endpoint. Here's a breakdown of what it does:
+   * @name ProposalsCreate
+   * @summary Create a new proposal using user auth token to know which user is calling this function and sends email to user
+   * @request POST:/prizes/proposals
+   * @secure
+   */
+  export namespace ProposalsCreate {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = CreatePrizeProposalDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = PrizeProposals;
+  }
+
+  /**
+ * @description The code snippet you provided is a method in the `PrizesController` class. It is a route handler for the GET request to `/proposals/accept` endpoint. Here's a breakdown of what it does: Gets page
+ * @name ProposalsAcceptList
+ * @summary Retrieve a list of accepted prize proposals
+description: Retrieve a list of accepted prize proposals. The list supports pagination.
+parameters
+ * @request GET:/prizes/proposals/accept
+ * @secure
+*/
+  export namespace ProposalsAcceptList {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      page: number;
+      limit: number;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ReadonlyTypeO7;
+  }
+
+  /**
+   * @description Get all proposals  of user  by username
+   * @name ProposalsUserDetail
+   * @summary Get all proposals of users by username,
+   * @request GET:/prizes/proposals/user/{username}
+   */
+  export namespace ProposalsUserDetail {
+    export type RequestParams = {
+      username: string;
+    };
+    export type RequestQuery = {
+      page: number;
+      limit: number;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ReadonlyTypeO8;
+  }
+
+  /**
+   * @description Admin Reject proposal
+   * @name ProposalsRejectCreate
+   * @summary Reject Proposal,
+   * @request POST:/prizes/proposals/reject/{id}
+   * @secure
+   */
+  export namespace ProposalsRejectCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = RejectProposalDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+ * @description The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls the `approve` method of the `prizeProposalsService` with the given `id`. and it approves the proposal and sends an email of approval
+ * @name ProposalsAcceptCreate
+ * @summary The function `approveProposal` is an asynchronous function that takes an `id` parameter and calls
+the `approve` method of the `prizeProposalsService` with the given `id`
+ * @request POST:/prizes/proposals/accept/{id}
+ * @secure
+*/
+  export namespace ProposalsAcceptCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+ * @description The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls the ``setPlatformFee method of the `portalProposalsService` with the given `id`. and it updatees the proposal
+ * @name ProposalsPlatformFeeCreate
+ * @summary The function `setPlatformFee` is an asynchronous function that takes an `id` parameter and body with platformFee and calls
+the ``setPlatformFee method of the `portalProposalsService` with the given `id`
+ * @request POST:/prizes/proposals/platformFee/{id}
+ * @secure
+*/
+  export namespace ProposalsPlatformFeeCreate {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = UpdatePlatformFeeDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * @description The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
+   * @name SlugDetail
+   * @request GET:/prizes/slug/{id}
+   */
+  export namespace SlugDetail {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PickPrizeslug;
+  }
+
+  /**
+   * No description
+   * @name AddressDetail
+   * @request GET:/prizes/address/{id}
+   */
+  export namespace AddressDetail {
+    export type RequestParams = {
+      id: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+}
+
+export namespace Users {
+  /**
+   * @description Creates a new user and sends welcome email.
+   * @name UsersCreate
+   * @summary Creates a new user and sends welcome email
+   * @request POST:/users
+   */
+  export namespace UsersCreate {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = CreateUser;
+    export type RequestHeaders = {};
+    export type ResponseBody = User;
+  }
+
+  /**
+   * No description
+   * @name UpdateCreate
+   * @request POST:/users/update/{username}
+   */
+  export namespace UpdateCreate {
+    export type RequestParams = {
+      username: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = UpdateUser;
+    export type RequestHeaders = {};
+    export type ResponseBody = User;
+  }
+
+  /**
+   * No description
+   * @name ClearCacheList
+   * @request GET:/users/clear_cache
+   */
+  export namespace ClearCacheList {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * @description Get a user by ID.
+   * @name UsersDetail
+   * @summary Get a user by ID
+   * @request GET:/users/{authId}
+   */
+  export namespace UsersDetail {
+    export type RequestParams = {
+      authId: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = User;
+  }
+
+  /**
+   * @description Get a user by username.
+   * @name UsernameDetail
+   * @summary Get a user by username
+   * @request GET:/users/username/{username}
+   */
+  export namespace UsernameDetail {
+    export type RequestParams = {
+      username: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = User;
+  }
+
+  /**
+   * @description Endpoint for checking if a user with the specified username exists.
+   * @name ExistsDetail
+   * @summary Endpoint for checking if a user with the specified username exists
+   * @request GET:/users/exists/{username}
+   */
+  export namespace ExistsDetail {
+    export type RequestParams = {
+      /** The username to check. */
+      username: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = boolean;
+  }
+
+  /**
+   * @description Endpoint for getting submission of a specified username.
+   * @name UsernameSubmissionsDetail
+   * @summary Endpoint for getting submission of a specified username
+   * @request GET:/users/username/{username}/submissions
+   */
+  export namespace UsernameSubmissionsDetail {
+    export type RequestParams = {
+      /** The username to check. */
+      username: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = Submission[];
+  }
+
+  /**
+   * @description Endpoint for getting prizes of a specified username.
+   * @name UsernamePrizesDetail
+   * @summary Endpoint for getting prizes of a specified username
+   * @request GET:/users/username/{username}/prizes
+   */
+  export namespace UsernamePrizesDetail {
+    export type RequestParams = {
+      /** The username to check. */
+      username: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = PrizeWithBlockchainData[];
+  }
+}
+
+export namespace Wallet {
+  /**
+   * No description
+   * @name PrizeStartSubmissionCreate
+   * @request POST:/wallet/prize/{contract_address}/start_submission
+   * @secure
+   */
+  export namespace PrizeStartSubmissionCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeEndSubmissionCreate
+   * @request POST:/wallet/prize/{contract_address}/end_submission
+   * @secure
+   */
+  export namespace PrizeEndSubmissionCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeStartVotingCreate
+   * @request POST:/wallet/prize/{contract_address}/start_voting
+   * @secure
+   */
+  export namespace PrizeStartVotingCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeEndVotingCreate
+   * @request POST:/wallet/prize/{contract_address}/end_voting
+   * @secure
+   */
+  export namespace PrizeEndVotingCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeChangeSubmissionCreate
+   * @request POST:/wallet/prize/{contract_address}/change_submission
+   * @secure
+   */
+  export namespace PrizeChangeSubmissionCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = ChangeSubmissionDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeChangeVotingCreate
+   * @request POST:/wallet/prize/{contract_address}/change_voting
+   * @secure
+   */
+  export namespace PrizeChangeVotingCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = ChangeVotingDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeEndDisputeCreate
+   * @request POST:/wallet/prize/{contract_address}/end_dispute
+   * @secure
+   */
+  export namespace PrizeEndDisputeCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeEndDisputeEarlyCreate
+   * @request POST:/wallet/prize/{contract_address}/end_dispute_early
+   * @secure
+   */
+  export namespace PrizeEndDisputeEarlyCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeVoteCreate
+   * @request POST:/wallet/prize/{contract_address}/vote
+   * @secure
+   */
+  export namespace PrizeVoteCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = VoteDTO;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeAddUsdcFundsCreate
+   * @request POST:/wallet/prize/{contract_address}/add_usdc_funds
+   * @secure
+   */
+  export namespace PrizeAddUsdcFundsCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = AddUsdcFundsDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -775,7 +1917,7 @@ export class HttpClient<SecurityDataType = unknown> {
           typeof body === 'undefined' || body === null ? null : payloadFormatter(body),
       },
     ).then(async (response) => {
-      const r = response as HttpResponse<T, E>;
+      const r = response.clone() as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
 
@@ -823,37 +1965,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<string, any>({
         path: `/indexer/portal`,
         method: 'POST',
-        format: 'json',
-        ...params,
-      }),
-  };
-  pacts = {
-    /**
-     * No description
-     *
-     * @name PactsCreate
-     * @request POST:/pacts
-     */
-    pactsCreate: (data: CreatePact, params: RequestParams = {}) =>
-      this.request<Pact, any>({
-        path: `/pacts`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name PactsDetail
-     * @request GET:/pacts/{address}
-     */
-    pactsDetail: (address: string, params: RequestParams = {}) =>
-      this.request<PactNullable, any>({
-        path: `/pacts/${address}`,
-        method: 'GET',
         format: 'json',
         ...params,
       }),
@@ -1509,8 +2620,52 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      * @duplicate
      */
     submissionDetail2: (id: string, slug: string, params: RequestParams = {}) =>
-      this.request<Submission, any>({
+      this.request<FetchSubmissionDto, any>({
         path: `/prizes/${slug}/submission/${id}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name SubmissionPartialUpdate
+     * @request PATCH:/prizes/submission/{id}
+     */
+    submissionPartialUpdate: (id: string, data: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/submission/${id}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ParticipateCreate
+     * @request POST:/prizes/{slug}/participate
+     */
+    participateCreate: (slug: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/${slug}/participate`,
+        method: 'POST',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ContestantsDetail
+     * @request GET:/prizes/{slug}/contestants
+     */
+    contestantsDetail: (slug: string, params: RequestParams = {}) =>
+      this.request<User[], any>({
+        path: `/prizes/${slug}/contestants`,
         method: 'GET',
         format: 'json',
         ...params,
@@ -1722,6 +2877,20 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         format: 'json',
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @name AddressDetail
+     * @request GET:/prizes/address/{id}
+     */
+    addressDetail: (id: string, params: RequestParams = {}) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/address/${id}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
   };
   users = {
     /**
@@ -1842,6 +3011,191 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       this.request<PrizeWithBlockchainData[], any>({
         path: `/users/username/${username}/prizes`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  };
+  wallet = {
+    /**
+     * No description
+     *
+     * @name PrizeStartSubmissionCreate
+     * @request POST:/wallet/prize/{contract_address}/start_submission
+     * @secure
+     */
+    prizeStartSubmissionCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/start_submission`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeEndSubmissionCreate
+     * @request POST:/wallet/prize/{contract_address}/end_submission
+     * @secure
+     */
+    prizeEndSubmissionCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/end_submission`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeStartVotingCreate
+     * @request POST:/wallet/prize/{contract_address}/start_voting
+     * @secure
+     */
+    prizeStartVotingCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/start_voting`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeEndVotingCreate
+     * @request POST:/wallet/prize/{contract_address}/end_voting
+     * @secure
+     */
+    prizeEndVotingCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/end_voting`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeChangeSubmissionCreate
+     * @request POST:/wallet/prize/{contract_address}/change_submission
+     * @secure
+     */
+    prizeChangeSubmissionCreate: (
+      contractAddress: string,
+      data: ChangeSubmissionDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/change_submission`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeChangeVotingCreate
+     * @request POST:/wallet/prize/{contract_address}/change_voting
+     * @secure
+     */
+    prizeChangeVotingCreate: (
+      contractAddress: string,
+      data: ChangeVotingDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/change_voting`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeEndDisputeCreate
+     * @request POST:/wallet/prize/{contract_address}/end_dispute
+     * @secure
+     */
+    prizeEndDisputeCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/end_dispute`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeEndDisputeEarlyCreate
+     * @request POST:/wallet/prize/{contract_address}/end_dispute_early
+     * @secure
+     */
+    prizeEndDisputeEarlyCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/end_dispute_early`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeVoteCreate
+     * @request POST:/wallet/prize/{contract_address}/vote
+     * @secure
+     */
+    prizeVoteCreate: (
+      contractAddress: string,
+      data: VoteDTO,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/vote`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeAddUsdcFundsCreate
+     * @request POST:/wallet/prize/{contract_address}/add_usdc_funds
+     * @secure
+     */
+    prizeAddUsdcFundsCreate: (
+      contractAddress: string,
+      data: AddUsdcFundsDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/add_usdc_funds`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

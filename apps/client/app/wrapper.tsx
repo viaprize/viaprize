@@ -19,7 +19,7 @@ import { theme } from 'utils/theme';
 import '../styles/globals.css';
 import '../styles/index.css';
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export default function WrapperLayout({
   // Layouts must accept a children prop.

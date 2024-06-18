@@ -1,24 +1,26 @@
-import { prepareWritePrize, writePrize } from '@/lib/smartContract';
+import { TransactionToast } from '@/components/custom/transaction-toast';
+import { backendApi } from '@/lib/backend';
 import { Button, Modal, NumberInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { waitForTransaction } from '@wagmi/core';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useAccount } from 'wagmi';
+import revalidate from 'utils/revalidate';
 
 export default function ChangeSubmission({
   contractAddress,
   submissionTime,
+  slug,
 }: {
   contractAddress: string;
   submissionTime: number;
+  slug: string;
 }) {
-  console.log({ submissionTime }, 'submission time ');
-  const { address } = useAccount();
-
   const [opened, { open, close }] = useDisclosure(false);
 
   const [newSubmissionTime, setnewSubmissionTime] = useState(0);
+
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
@@ -33,7 +35,7 @@ export default function ChangeSubmission({
             setnewSubmissionTime(parseInt(event.toString()));
           }}
           placeholder="Enter in %"
-          description={`This will increase submission time by ${newSubmissionTime} days from ${new Date(submissionTime * 1000)}`}
+          description={`This will increase submission time by ${newSubmissionTime} minutes from ${new Date()}`}
         />
 
         <Button
@@ -42,21 +44,19 @@ export default function ChangeSubmission({
               setLoading(true);
               toast.loading('Loading.....');
 
-              const request = await prepareWritePrize({
-                address: contractAddress as `0x${string}`,
-                functionName: 'increase_submission_period',
-                args: [BigInt(parseInt(newSubmissionTime.toString()))],
-              });
-              const { hash } = await writePrize(request);
-
-              const waitTransaction = await waitForTransaction({
-                confirmations: 1,
-                hash,
-              });
+              const { hash } = await (
+                await backendApi()
+              ).wallet
+                .prizeChangeSubmissionCreate(contractAddress, {
+                  minutes: newSubmissionTime,
+                })
+                .then((res) => res.data);
               toast.success(
-                `Submission Period Started, Transaction Hash  ${hash.slice(0, 2)}...${hash.slice(-2)}`,
+                <TransactionToast title=" Submission Period Changed" hash={hash} />,
               );
               console.log({ hash }, 'hash');
+              await revalidate({ tag: slug });
+              router.refresh();
               window.location.reload();
             } catch (error) {
               toast.error(`Failed With Error ${error}`);
@@ -75,33 +75,11 @@ export default function ChangeSubmission({
         fullWidth
         loading={loading}
         onClick={async () => {
-          //   setIsLoading(true);
-          //   try {
-          //     const request = await prepareWritePrize({
-          //       address: contractAddress as `0x${string}`,
-          //       account: address,
-          //       functionName: 'start_submission_period',
-          //       args: [BigInt(submissionTime)],
-          //     });
-          //     const { hash } = await writePrize(request);
-
-          //     const waitTransaction = await waitForTransaction({
-          //       confirmations: 1,
-          //       hash,
-          //     });
-          //     toast.success(`Submission Period Started, Transaction Hash ${hash}`);
-          //     console.log({ hash }, 'hash');
-          //   } catch (error) {
-          //     toast.error(`Failed With Error`);
-          //   } finally {
-          //     setIsLoading(false);
-          //     window.location.reload();
-          //   }\
           open();
         }}
       >
         {' '}
-        Increase Submission Time
+        Change Submission Time
       </Button>
     </>
   );

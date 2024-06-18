@@ -1,20 +1,22 @@
-import { prepareWritePrize, writePrize } from '@/lib/smartContract';
+import { TransactionToast } from '@/components/custom/transaction-toast';
+import { backendApi } from '@/lib/backend';
 import { Button } from '@mantine/core';
-import { waitForTransaction } from '@wagmi/core';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useAccount } from 'wagmi';
+import revalidate from 'utils/revalidate';
 
 export default function StartSubmission({
   contractAddress,
   submissionTime,
+  slug,
 }: {
   contractAddress: string;
   submissionTime: number;
+  slug: string;
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  console.log({ submissionTime }, 'submission time ');
-  const { address } = useAccount();
+  const router = useRouter();
 
   return (
     <Button
@@ -24,27 +26,20 @@ export default function StartSubmission({
       onClick={async () => {
         setIsLoading(true);
         try {
-          const request = await prepareWritePrize({
-            address: contractAddress as `0x${string}`,
-            account: address,
-            functionName: 'start_submission_period',
-            args: [BigInt(submissionTime)],
-          });
-          const { hash } = await writePrize(request);
-
-          const waitTransaction = await waitForTransaction({
-            confirmations: 1,
-            hash,
-          });
+          const hash = (
+            await (await backendApi()).wallet.prizeStartSubmissionCreate(contractAddress)
+          ).data;
           toast.success(
-            `Submission Period Started, Transaction Hash  ${hash.slice(0, 2)}...${hash.slice(-2)}`,
+            <TransactionToast hash={hash.hash} title=" Submission Period Started" />,
           );
+          window.location.reload();
           console.log({ hash }, 'hash');
         } catch (error) {
-          toast.error(`Failed With Error`);
+          toast.error(`Failed With Error` + (error as Error).message);
         } finally {
+          await revalidate({ tag: slug });
+          router.refresh();
           setIsLoading(false);
-          window.location.reload();
         }
       }}
     >

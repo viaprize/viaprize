@@ -8,7 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { PortalsComments } from './portals-comments.entity';
 
@@ -86,4 +86,5 @@ export class Portals {
   @ManyToOne(() => User, (user) => user.portals)
   @JoinColumn({ name: 'user', referencedColumnName: 'authId' })
   user: User;
+
 }

@@ -1,10 +1,8 @@
 'use client';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
-import { ConvertUSD } from '@/lib/types';
-import { chain } from '@/lib/wagmi';
+import { parseUsdc } from '@/lib/utils';
 import { ActionIcon, Badge, CopyButton, Divider, Flex, Text, Title } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { useQuery } from 'wagmi';
 
 export default function AboutPrize({
   amount,
@@ -15,18 +13,6 @@ export default function AboutPrize({
   description: string;
   contractAddress: string;
 }) {
-  const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
-    const final = await (
-      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
-    ).json();
-    return Object.keys(final).length === 0
-      ? {
-          ethereum: {
-            usd: 0,
-          },
-        }
-      : final;
-  });
   return (
     <div className="w-full mt-4 min-w-0">
       <Flex direction={'column'} gap={'sm'} justify={'center'}>
@@ -34,12 +20,7 @@ export default function AboutPrize({
           Total Amount Raised
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
-          {cryptoToUsd ? (
-            <>${(parseFloat(amount) * cryptoToUsd.ethereum.usd).toFixed(2)} USD</>
-          ) : null}
-        </Text>
-        <Text c="blue" className="lg:text-3xl md:text-2xl text-sm">
-          ({parseFloat(amount).toPrecision(4)} {chain.nativeCurrency.symbol} )
+          {parseUsdc(BigInt(amount))} USD
         </Text>
       </Flex>
       <div className="py-4">

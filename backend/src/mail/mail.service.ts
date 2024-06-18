@@ -6,6 +6,9 @@ import { MailerService } from 'src/mailer/mailer.service';
 @Injectable()
 export class MailService {
   telegramLink: string;
+  linkedinLink: string;
+  twitterLink: string;
+  facebookLink: string;
   constructor(
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService<AllConfigType>,
@@ -16,6 +19,25 @@ export class MailService {
         infer: true,
       },
     );
+    this.linkedinLink = this.configService.getOrThrow<AllConfigType>(
+      'LINKEDIN_LINK',
+      {
+        infer: true,
+      },
+    );
+    this.twitterLink = this.configService.getOrThrow<AllConfigType>(
+      'TWITTER_LINK',
+      {
+        infer: true,
+      },
+    );
+    this.facebookLink = this.configService.getOrThrow<AllConfigType>(
+      'FACEBOOK_LINK',
+      {
+        infer: true,
+      },
+    );
+    console.log(this.facebookLink, 'face book link');
   }
   async submission(email: string) {
     await this.mailerService.sendMail({
@@ -25,6 +47,9 @@ export class MailService {
       templateName: 'submission.hbs',
       context: {
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -39,6 +64,9 @@ export class MailService {
         name,
         proposalTitle: title,
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -53,6 +81,9 @@ export class MailService {
         name,
         proposalTitle,
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -65,6 +96,9 @@ export class MailService {
       context: {
         name,
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -85,8 +119,10 @@ export class MailService {
       context: {
         name,
         proposalTitle,
-
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -100,6 +136,9 @@ export class MailService {
         name,
         comment,
         telegramLink: this.telegramLink,
+        facebookLink: this.facebookLink,
+        linkedinLink: this.linkedinLink,
+        twitterLink: this.twitterLink,
       },
     });
   }
@@ -110,8 +149,10 @@ export class MailService {
       context: {
         name,
         proposalTitle,
-
         telegramLink: this.telegramLink,
+        facebookLink: this.facebookLink,
+        linkedinLink: this.linkedinLink,
+        twitterLink: this.twitterLink,
       },
       templateName: 'proposalSent.hbs',
     });
