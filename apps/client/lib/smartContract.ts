@@ -283,7 +283,7 @@ export const prizeFactoryV2ABI = [
  * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
  */
 export const prizeFactoryV2Address = {
-  10: '0x93c6c16e409ea8b84Ae5292d055bcE2A793D6C41',
+  10: '0xd861aFdb5265EB580Db3D7a3126559E4c47B6B8b',
 } as const;
 
 /**
