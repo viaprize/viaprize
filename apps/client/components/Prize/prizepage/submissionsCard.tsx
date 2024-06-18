@@ -70,6 +70,7 @@ export default function SubmissionsCard({
     functionName: 'funderAmount',
     args: [walletClient?.account.address as `0x${string}`],
   });
+  console.log({ funderBalance }, 'funderBalance');
 
   console.log(fullname.length, onProfile, 'fullname.length');
 
@@ -163,6 +164,7 @@ export default function SubmissionsCard({
 
   return (
     <Card className="flex flex-col justify-center gap-3 my-2">
+
       {!onProfile ? (
         <>
           <Modal opened={opened} onClose={close} title="Voting For this submission">
