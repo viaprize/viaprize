@@ -332,6 +332,7 @@ export interface PrizeWithBlockchainData {
   distributed: boolean;
   submission_time_blockchain: number;
   voting_time_blockchain: number;
+  dispute_period_time_blockchain: number;
   balance: number;
   id: string;
   description: string;
@@ -1658,6 +1659,22 @@ export namespace Wallet {
    * @secure
    */
   export namespace PrizeEndDisputeCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeEndDisputeEarlyCreate
+   * @request POST:/wallet/prize/{contract_address}/end_dispute_early
+   * @secure
+   */
+  export namespace PrizeEndDisputeEarlyCreate {
     export type RequestParams = {
       contractAddress: string;
     };
@@ -3117,6 +3134,22 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
     prizeEndDisputeCreate: (contractAddress: string, params: RequestParams = {}) =>
       this.request<WalletResponse, any>({
         path: `/wallet/prize/${contractAddress}/end_dispute`,
+        method: 'POST',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeEndDisputeEarlyCreate
+     * @request POST:/wallet/prize/{contract_address}/end_dispute_early
+     * @secure
+     */
+    prizeEndDisputeEarlyCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/end_dispute_early`,
         method: 'POST',
         secure: true,
         format: 'json',

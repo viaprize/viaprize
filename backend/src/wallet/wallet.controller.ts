@@ -461,6 +461,64 @@ export class WalletController {
    * @security bearer
    **/
   @UseGuards(AuthGuard)
+  @Post('/prize/:contract_address/end_dispute_early')
+  async endEarlyDisputePeriod(
+    @TypedParam('contract_address') contractAddress: string,
+    @Request() req,
+  ): Promise<WalletResponse | undefined> {
+    const user = this.userService.findOneByAuthId(req.user.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    const [[disputePeriod]] =
+      (await this.blockchainService.getPrizesV2PublicVariables(
+        [contractAddress],
+        ['disputePeriod'],
+      )) as [[bigint]];
+    if (disputePeriod == BigInt(0)) {
+      console.log({ disputePeriod });
+      throw new HttpException(
+        'Dispute period has not started',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'endDisputePeriodEarly',
+          [],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return { hash };
+    } catch (err) {
+      if (err instanceof BaseError) {
+        console.log({ err });
+        const revertError = err.walk(
+          (err) => err instanceof ContractFunctionRevertedError,
+        );
+        if (revertError instanceof ContractFunctionRevertedError) {
+          const errorName = revertError.data?.errorName ?? '';
+          throw new HttpException(
+            'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          'Error: ' + err.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+  }
+
+  /**
+   * @security bearer
+   **/
+  @UseGuards(AuthGuard)
   @Post('/prize/:contract_address/vote')
   async vote(
     @TypedParam('contract_address') contractAddress: string,

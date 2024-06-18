@@ -280,12 +280,19 @@ export class PrizesController {
     @TypedParam('slug') slug: string,
   ): Promise<PrizeWithBlockchainData> {
     const prize = await this.prizeService.findAndReturnBySlug(slug);
-    const [totalFunds, distributed, submissionTime, votingTime] = (
-      await this.blockchainService.getPrizesV2PublicVariables(
-        [prize.contract_address],
-        ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
-      )
-    )[0] as [bigint, boolean, bigint, bigint];
+    const [totalFunds, distributed, submissionTime, votingTime, disputePeriod] =
+      (
+        await this.blockchainService.getPrizesV2PublicVariables(
+          [prize.contract_address],
+          [
+            'totalFunds',
+            'distributed',
+            'getSubmissionTime',
+            'getVotingTime',
+            'disputePeriod',
+          ],
+        )
+      )[0] as [bigint, boolean, bigint, bigint, bigint];
 
     return {
       ...prize,
@@ -293,6 +300,7 @@ export class PrizesController {
       balance: parseInt(totalFunds.toString()),
       submission_time_blockchain: parseInt(submissionTime.toString()),
       voting_time_blockchain: parseInt(votingTime.toString()),
+      dispute_period_time_blockchain: parseInt(disputePeriod.toString()),
     };
   }
 
