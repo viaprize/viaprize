@@ -3969,7 +3969,7 @@
         "x-nestia-method": "POST"
       }
     },
-    "/wallet/prize/{contract_address}/increase_submission": {
+    "/wallet/prize/{contract_address}/change_submission": {
       "post": {
         "tags": [],
         "parameters": [
@@ -3987,7 +3987,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/IncreaseSubmissionDto"
+                "$ref": "#/components/schemas/ChangeSubmissionDto"
               }
             }
           },
@@ -4012,7 +4012,7 @@
             "bearer": []
           }
         ],
-        "x-nestia-namespace": "wallet.prize.increase_submission.increaseSubmission",
+        "x-nestia-namespace": "wallet.prize.change_submission.changeSubmission",
         "x-nestia-jsDocTags": [
           {
             "name": "security",
@@ -4027,7 +4027,7 @@
         "x-nestia-method": "POST"
       }
     },
-    "/wallet/prize/{contract_address}/increase_voting": {
+    "/wallet/prize/{contract_address}/change_voting": {
       "post": {
         "tags": [],
         "parameters": [
@@ -4045,7 +4045,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/IncreaseVotingDto"
+                "$ref": "#/components/schemas/ChangeVotingDto"
               }
             }
           },
@@ -4070,7 +4070,7 @@
             "bearer": []
           }
         ],
-        "x-nestia-namespace": "wallet.prize.increase_voting.increaseVoting",
+        "x-nestia-namespace": "wallet.prize.change_voting.changeVoting",
         "x-nestia-jsDocTags": [
           {
             "name": "security",
@@ -6979,7 +6979,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "IncreaseSubmissionDto": {
+      "ChangeSubmissionDto": {
         "type": "object",
         "properties": {
           "minutes": {
@@ -6994,7 +6994,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "IncreaseVotingDto": {
+      "ChangeVotingDto": {
         "type": "object",
         "properties": {
           "minutes": {
