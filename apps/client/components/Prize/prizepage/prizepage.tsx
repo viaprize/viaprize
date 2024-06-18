@@ -21,6 +21,7 @@ import { useWalletClient } from 'wagmi';
 import ChangeSubmission from './buttons/changeSubmission';
 import ChangeVotingTime from './buttons/changeVotingTime';
 import EndDispute from './buttons/endDispute';
+import EndDisputeEarly from './buttons/endDisputeEarly';
 import EndSubmission from './buttons/endSubmission';
 import EndVoting from './buttons/endVoting';
 import StartSubmission from './buttons/startSubmission';
@@ -346,7 +347,12 @@ export default function PrizePageComponent({
         contractAddress={prize.contract_address}
       />
 
-      {appUser?.isAdmin ? <EndDispute contractAddress={prize.contract_address} /> : null}
+      {appUser?.isAdmin && prize.dispute_period_time_blockchain > 0 ? (
+        <>
+          <EndDispute contractAddress={prize.contract_address} />
+          <EndDisputeEarly contractAddress={prize.contract_address} />
+        </>
+      ) : null}
 
       {prize.voting_time_blockchain > 0 ? (
         <RefundCard
