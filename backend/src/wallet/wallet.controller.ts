@@ -14,8 +14,8 @@ import { PrizesService } from 'src/prizes/services/prizes.service';
 import { UsersService } from 'src/users/users.service';
 import { BaseError, ContractFunctionRevertedError } from 'viem';
 import { AddUsdcFundsDto } from './dto/add-usdc-funds.dto';
-import { IncreaseSubmissionDto } from './dto/increase-submission.dto';
-import { IncreaseVotingDto } from './dto/increase-voting.dto';
+import { ChangeSubmissionDto } from './dto/change-submission.dto';
+import { ChangeVotingDto } from './dto/change-voting.dto';
 import { VoteDTO } from './dto/vote.dto';
 import { WalletService } from './wallet.service';
 
@@ -283,10 +283,10 @@ export class WalletController {
    * @security bearer
    **/
   @UseGuards(AuthGuard)
-  @Post('/prize/:contract_address/increase_submission')
-  async increaseSubmission(
+  @Post('/prize/:contract_address/change_submission')
+  async changeSubmission(
     @TypedParam('contract_address') contractAddress: string,
-    @Body() body: IncreaseSubmissionDto,
+    @Body() body: ChangeSubmissionDto,
     @Request() req,
   ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
@@ -313,7 +313,7 @@ export class WalletController {
     try {
       const hash =
         await this.walletService.simulateAndWriteSmartContractPrizeV2(
-          'increaseSubmissionPeriod',
+          'changeSubmissionPeriod',
           [BigInt(body.minutes)],
           contractAddress,
           'gasless',
@@ -348,10 +348,10 @@ export class WalletController {
    * @security bearer
    **/
   @UseGuards(AuthGuard)
-  @Post('/prize/:contract_address/increase_voting')
-  async increaseVoting(
+  @Post('/prize/:contract_address/change_voting')
+  async changeVoting(
     @TypedParam('contract_address') contractAddress: string,
-    @Body() body: IncreaseVotingDto,
+    @Body() body: ChangeVotingDto,
     @Request() req,
   ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
@@ -372,7 +372,7 @@ export class WalletController {
     try {
       const hash =
         await this.walletService.simulateAndWriteSmartContractPrizeV2(
-          'increaseVotingPeriod',
+          'changeVotingPeriod',
           [BigInt(body.minutes)],
           contractAddress,
           'gasless',
