@@ -47,7 +47,7 @@ export default function ChangeVotingTime({
               const { hash } = await (
                 await backendApi()
               ).wallet
-                .prizeIncreaseVotingCreate(contractAddress, {
+                .prizeChangeVotingCreate(contractAddress, {
                   minutes: newVotingTime,
                 })
                 .then((res) => res.data);
@@ -79,7 +79,7 @@ export default function ChangeVotingTime({
         }}
       >
         {' '}
-        Increase Voting Time
+        Change Voting Time
       </Button>
     </>
   );

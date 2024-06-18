@@ -47,7 +47,7 @@ export default function ChangeSubmission({
               const { hash } = await (
                 await backendApi()
               ).wallet
-                .prizeIncreaseSubmissionCreate(contractAddress, {
+                .prizeChangeSubmissionCreate(contractAddress, {
                   minutes: newSubmissionTime,
                 })
                 .then((res) => res.data);
@@ -79,7 +79,7 @@ export default function ChangeSubmission({
         }}
       >
         {' '}
-        Increase Submission Time
+        Change Submission Time
       </Button>
     </>
   );
