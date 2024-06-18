@@ -70,7 +70,6 @@ export default function SubmissionsCard({
     functionName: 'funderAmount',
     args: [walletClient?.account.address as `0x${string}`],
   });
-  console.log({ funderBalance }, 'funderBalance');
 
   console.log(fullname.length, onProfile, 'fullname.length');
 
