@@ -1,7 +1,6 @@
 import { env } from '@env';
 import { SSTConfig } from 'sst';
 import { NextjsSite } from 'sst/constructs';
-import { SsrDomainProps } from 'sst/constructs/SsrSite';
 export default {
   config(_input) {
     return {
@@ -10,19 +9,19 @@ export default {
     };
   },
   stacks(app) {
-    const domain: SsrDomainProps | undefined =
-      app.stage == 'prod'
-        ? {
-            domainName: 'viaprize.org',
-            domainAlias: 'www.viaprize.org',
-          }
-        : undefined;
+    // const domain: SsrDomainProps | undefined =
+    //   app.stage == 'prod'
+    //     ? {
+    //         domainName: 'viaprize.org',
+    //         domainAlias: 'www.viaprize.org',
+    //       }
+    // : undefined;
     app.stack(function Site({ stack }) {
       const site = new NextjsSite(stack, 'site', {
         environment: {
           ...env,
         },
-        customDomain: domain,
+        // customDomain: domain,
       });
 
       stack.addOutputs({
