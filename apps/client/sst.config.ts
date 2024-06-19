@@ -15,6 +15,10 @@ export default {
         environment: {
           ...env,
         },
+        customDomain: {
+          domainName: 'viaprize.org',
+          domainAlias: 'www.viaprize.org',
+        },
       });
 
       stack.addOutputs({
