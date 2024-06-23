@@ -148,7 +148,7 @@ function Prize() {
           <DateTimePicker
             label="Pick date and time of starting submission time"
             placeholder="Make sure its above the submission time and date"
-            date={startSubmisionDate ?? new Date()}
+            value={startSubmisionDate ?? new Date()}
             onChange={(da) => {
               setStartSubmissionDate(da);
             }}
@@ -171,7 +171,7 @@ function Prize() {
           <DateTimePicker
             label="Pick date and time of starting voting time"
             placeholder="Make sure its above the voting time and date"
-            date={startVotingDate ?? new Date()}
+            value={startVotingDate ?? new Date()}
             onChange={(da) => {
               setStartVotingDate(da);
             }}
