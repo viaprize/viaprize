@@ -99,7 +99,7 @@ export class WalletService {
     };
     console.log({ transaction });
     const transactionHash = await this.sendTransaction(transaction, type);
-    console.log({ transactionHash });
+    console.log(transactionHash);
     return transactionHash;
   }
 
@@ -166,6 +166,7 @@ export class WalletService {
       {
         'Content-Type': 'application/json',
         'x-api-key': this.apiKey,
+        'x-chain-id': '8453',
       },
       scheduleInSeconds,
     );
@@ -184,6 +185,7 @@ export class WalletService {
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': this.apiKey,
+          'x-chain-id': '8453',
         },
         method: 'POST',
       })
