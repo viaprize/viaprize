@@ -12,6 +12,7 @@ import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 import { encodePacked, keccak256 } from 'viem';
+import { USDC } from './constants';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
@@ -277,8 +278,8 @@ export const usdcSignType = ({
     },
     primaryType: 'Permit',
     domain: {
-      chainId: 10,
-      verifyingContract: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
+      chainId: 8453,
+      verifyingContract: USDC,
       name: 'USD Coin',
       version: '2',
     },

@@ -163,6 +163,7 @@ function FundUsdcCard({
               v: parseInt(v.toString()),
               r: r,
               s: s,
+              chainId: 8453,
             },
             title,
             imageUrl,
