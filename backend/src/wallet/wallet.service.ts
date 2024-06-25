@@ -11,9 +11,9 @@ import {
   encodeFunctionData,
   http,
 } from 'viem';
-import { optimism } from 'viem/chains';
 
 import { JobService } from 'src/jobs/jobs.service';
+import { base } from 'viem/chains';
 import { PRIZE_V2_ABI } from '../utils/constants';
 
 export type WalletType = 'gasless' | 'reserve';
@@ -37,7 +37,7 @@ export class WalletService {
       },
     );
     this.provider = createPublicClient({
-      chain: optimism,
+      chain: base,
       transport: http(
         this.configService.getOrThrow<AllConfigType>('RPC_URL', {
           infer: true,

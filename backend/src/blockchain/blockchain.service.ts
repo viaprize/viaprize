@@ -11,7 +11,7 @@ import {
   http,
   parseAbi,
 } from 'viem';
-import { optimism } from 'viem/chains';
+import { base } from 'viem/chains';
 import {
   Contribution,
   Contributions,
@@ -41,7 +41,7 @@ export class BlockchainService {
     });
     // const privateKey = this.configService.getOrThrow<AllConfigType>('PRIVATE_KEY', { infer: true });
     this.provider = createPublicClient({
-      chain: optimism,
+      chain: base,
       transport: http(key),
     });
     // this.wallet = new ethers.Wallet(privateKey, this.provider);
