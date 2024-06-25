@@ -255,7 +255,7 @@ contract PrizeV2Judges {
     function increaseSubmissionPeriod(uint256 _submissionTime) public onlyPlatformAdmin {
         if(votingPeriod) revert VotingPeriodActive();
         if(!submissionPeriod) revert SubmissionPeriodNotActive();
-        submissionTime = block.timestamp + _submissionTime * 1 minutes;
+        submissionTime = block.timestamp + _submissionTime * 1 minutes; 
     }
 
     function increaseVotingPeriod(uint256 _votingTime) public onlyPlatformAdmin {
@@ -291,7 +291,7 @@ contract PrizeV2Judges {
                             uint256 individualReward = reward / all_funders;
                             for(uint256 j=0; j<all_funders; j++) {
                                 reward -= individualReward;
-                                if(reward_amount > 0) {
+                                if(individualReward > 0) {
                                     _usdc.transfer(allFunders[j], individualReward);
                                 }
                             }
@@ -346,7 +346,7 @@ contract PrizeV2Judges {
         bytes32 hash = FINAL_HASH(nonceTracker+=1);
         address sender =  ecrecover(hash, v, r, s);
         if(!isJudge[sender]) revert("NJ"); // NJ -> Not a Judge
-        if (amount > judgeFunds[sender]) revert NotEnoughFunds();
+        if (amount > judgeAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
         /// @notice submission should return a struct with the submissionHash, the contestant, the submissionText, the threshhold, the votes, and the funded status 
@@ -578,7 +578,7 @@ contract PrizeV2Judges {
         uint256 judge_funds = totalJudgesVotes / judges.length;
         totalJudgesVotes = 0;
         for(uint i=0; i<judges.length; i++) {
-            judgeFunds[judges[i]] += judge_funds;
+            judgeAmount[judges[i]] += judge_funds;
         }
     }
 
