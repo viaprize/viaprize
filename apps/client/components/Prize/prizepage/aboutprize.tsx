@@ -53,7 +53,7 @@ export default function AboutPrize({
               </CopyButton>
             </Flex>
           </div>
-          <Badge
+          {/* <Badge
             color="red"
             variant="light"
             radius="md"
@@ -61,7 +61,7 @@ export default function AboutPrize({
             className="sm:my-0 my-4"
           >
             Donation only on OP Mainnet !
-          </Badge>
+          </Badge> */}
           <Divider my="sm" />
         </div>
         <TextEditor disabled richtext={description} />

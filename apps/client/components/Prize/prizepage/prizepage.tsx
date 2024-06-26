@@ -9,7 +9,7 @@ import { calculateDeadline, usdcSignType } from '@/lib/utils';
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
 import { USDC } from '@/lib/constants';
-import { Badge, Button, Center, Group, NumberInput, Stack, Title } from '@mantine/core';
+import { Badge, Button, Center, Group, NumberInput, Stack, Title,Text } from '@mantine/core';
 import { readContract } from '@wagmi/core';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -188,11 +188,14 @@ function FundUsdcCard({
   };
   return (
     <Stack my="md">
+      <Text fw='sm'>
+        Your donation must be valued atleast $1.00.
+      </Text>
       <NumberInput
         placeholder="Enter Value  in $ To Donate"
         mt="md"
         allowDecimal
-        defaultValue={0}
+        defaultValue={1}
         allowNegative={false}
         value={value}
         onChange={(v) => {
