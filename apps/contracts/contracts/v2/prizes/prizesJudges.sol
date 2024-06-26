@@ -288,8 +288,8 @@ contract PrizeV2Judges {
                         uint256 reward = allSubmissions[i].usdcVotes;
                         if(reward > 0) {
                             uint256 all_funders = allFunders.length;
-                            uint256 individualReward = reward / all_funders;
                             for(uint256 j=0; j<all_funders; j++) {
+                                uint256 individualReward = reward / all_funders;
                                 reward -= individualReward;
                                 if(individualReward > 0) {
                                     _usdc.transfer(allFunders[j], individualReward);
@@ -403,7 +403,6 @@ contract PrizeV2Judges {
         _changeVote(sender, _previous_submissionHash, _new_submissionHash, amount);
         _changeSubmissionVoteLogic(_previous_submissionHash, _new_submissionHash);
         emit Voted(_new_submissionHash, sender, amount);
-        
     }
 
     function _changeVote(address _sender,bytes32 _previous_submission_hash,bytes32 _new_submission_hash,uint256 amount) private {
@@ -427,14 +426,14 @@ contract PrizeV2Judges {
             }
         }
     }
-    function disputeChangeVote( bytes32  _previousSubmissionHash, bytes32 _newSubmissionHash, address[] calldata _funders, uint256[] calldata _amounts) onlyActive onlyPlatformAdmin public {
-        require(_funders.length == _amounts.length, "LM"); //LM -> Length Mismatch
+    function disputeChangeVote( bytes32  _previousSubmissionHash, bytes32 _newSubmissionHash, address[] calldata _judges, uint256[] calldata _amounts) onlyActive onlyPlatformAdmin public {
+        require(_judges.length == _amounts.length, "LM"); //LM -> Length Mismatch
         require(disputePeriod > block.timestamp, "DPNA");  //DPNA -> Dispute Period Not Active
 
-        for (uint256 i = 0; i < _funders.length; i++) {
-            address funder = _funders[i];
+        for (uint256 i = 0; i < _judges.length; i++) {
+            address judge = _judges[i];
             uint256 amount = _amounts[i];
-            _changeVote(funder, _previousSubmissionHash, _newSubmissionHash, amount);
+            _changeVote(judge, _previousSubmissionHash, _newSubmissionHash, amount);
         }
 
         _changeSubmissionVoteLogic(_previousSubmissionHash, _newSubmissionHash);
@@ -464,7 +463,6 @@ contract PrizeV2Judges {
         assignUsdcJudgeVotes();
     }
 
-    // todod we dont need sender here
 
     function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public onlyActive
      noReentrant payable {
@@ -526,9 +524,7 @@ contract PrizeV2Judges {
         addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
     }
 
-
-
-   /// @notice this fn sends the unused votes to the contestant based on their previous votes.
+/// @notice this fn sends the unused votes to the contestant based on their previous votes.
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
        uint256 _PRECISION = PRECISION;
@@ -541,30 +537,38 @@ contract PrizeV2Judges {
        
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
-            if(total_unused_usdc_votes > 0) { 
-                uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(_PRECISION)).div(total_usdc_votes)); 
-                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
-                if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
-                    if(transferable_usdc_amount > 0) {
-                        for(uint256 j=0; j<allFunders.length; j++) {
+            if(total_unused_usdc_votes > 0) {
+                if(allSubmissions[i].usdcVotes > 0) {
+                    uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(_PRECISION)).div(total_usdc_votes));
+                    uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
+                    if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
+                        if(transferable_usdc_amount > 0) {
+                            for(uint256 j=0; j<allFunders.length; j++) {
+                                
+                                if(funderAmount[allFunders[j]] > 0){
+                                    uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
+                                    uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
+                                    uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
+                                    if(individual_transferable_usdc_amount > 0) {
+                                        _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
+                                    }
+                                }
                             
-                            if(funderAmount[allFunders[j]] > 0){
-                                 uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
-                                 uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
-                                 uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
-                                _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
                             }
-                           
                         }
+                    } else {
+                        if(transferable_usdc_amount > 0) {
+                            _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
+                        }
+                        
                     }
-                } else {
-                    _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
                 }
             }
            
        }
        return (total_usdc_votes, totalRewards);
    }
+
 
    function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin {
         IERC20Permit token = IERC20Permit(_tokenAddress);
