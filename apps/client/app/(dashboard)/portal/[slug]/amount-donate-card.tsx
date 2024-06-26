@@ -324,9 +324,9 @@ export default function AmountDonateCard({
                 )}
               </CopyButton>
             </Flex>
-            <Badge color="red" variant="light" radius="md" my="sm" size="lg">
+            {/* <Badge color="red" variant="light" radius="md" my="sm" size="lg">
               Donation only on OP Mainnet !
-            </Badge>
+            </Badge> */}
             <Divider my="sm" />
           </>
         )}
