@@ -1,23 +1,62 @@
 import {
-  PrepareWriteContractConfig,
+  writeContract,
   WriteContractArgs,
-  WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
   prepareWriteContract,
-  writeContract,
+  PrepareWriteContractConfig,
+  WriteContractMode,
 } from 'wagmi/actions';
 
 import {
-  Address,
-  UseContractReadConfig,
+  useContractWrite,
   UseContractWriteConfig,
+  usePrepareContractWrite,
   UsePrepareContractWriteConfig,
   useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
+  UseContractReadConfig,
+  Address,
 } from 'wagmi';
-import { PrepareWriteContractResult, ReadContractResult } from 'wagmi/actions';
+import {
+  WriteContractMode,
+  PrepareWriteContractResult,
+  ReadContractResult,
+} from 'wagmi/actions';
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PassThroughV2Factory
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const passThroughV2FactoryABI = [
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: '_id', internalType: 'uint256', type: 'uint256', indexed: true },
+      { name: 'portalAddress', internalType: 'address', type: 'address', indexed: true },
+    ],
+    name: 'NewPortalCreated',
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_id', internalType: 'uint256', type: 'uint256' },
+      { name: '_owner', internalType: 'address', type: 'address' },
+      { name: '_admins', internalType: 'address[]', type: 'address[]' },
+      { name: '_platformFee', internalType: 'uint256', type: 'uint256' },
+      { name: '_tokenUsdc', internalType: 'address', type: 'address' },
+      { name: '_bridgedTokenUsdc', internalType: 'address', type: 'address' },
+      { name: '_wethToken', internalType: 'address', type: 'address' },
+      { name: '_swapRouter', internalType: 'address', type: 'address' },
+      { name: '_usdcToUsdcePool', internalType: 'address', type: 'address' },
+      { name: '_usdcToEthPool', internalType: 'address', type: 'address' },
+      { name: '_ethPriceAggregator', internalType: 'address', type: 'address' },
+    ],
+    name: 'createPortal',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Portal
@@ -895,9 +934,6 @@ export const prizeV2ABI = [
 // portalFactory
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
 export const portalFactoryABI = [
   {
     type: 'event',
@@ -924,24 +960,42 @@ export const portalFactoryABI = [
   },
 ] as const;
 
-/**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export const portalFactoryAddress = {
-  10: '0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0',
-} as const;
-
-/**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export const portalFactoryConfig = {
-  address: portalFactoryAddress,
-  abi: portalFactoryABI,
-} as const;
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Core
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link passThroughV2FactoryABI}__.
+ */
+export function writePassThroughV2Factory<TFunctionName extends string>(
+  config:
+    | Omit<
+        WriteContractPreparedArgs<typeof passThroughV2FactoryABI, TFunctionName>,
+        'abi'
+      >
+    | Omit<
+        WriteContractUnpreparedArgs<typeof passThroughV2FactoryABI, TFunctionName>,
+        'abi'
+      >,
+) {
+  return writeContract({
+    abi: passThroughV2FactoryABI,
+    ...config,
+  } as unknown as WriteContractArgs<typeof passThroughV2FactoryABI, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link passThroughV2FactoryABI}__.
+ */
+export function prepareWritePassThroughV2Factory<
+  TAbi extends readonly unknown[] = typeof passThroughV2FactoryABI,
+  TFunctionName extends string = string,
+>(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
+  return prepareWriteContract({
+    abi: passThroughV2FactoryABI,
+    ...config,
+  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
+}
 
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link portalABI}__.
@@ -1056,53 +1110,27 @@ export function prepareWritePrizeV2<
 
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link portalFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
-export function writePortalFactory<
-  TFunctionName extends string,
-  TMode extends WriteContractMode,
-  TChainId extends number = keyof typeof portalFactoryAddress,
->(
+export function writePortalFactory<TFunctionName extends string>(
   config:
-    | (Omit<
-        WriteContractPreparedArgs<typeof portalFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
-      })
-    | (Omit<
-        WriteContractUnpreparedArgs<typeof portalFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
-      }),
+    | Omit<WriteContractPreparedArgs<typeof portalFactoryABI, TFunctionName>, 'abi'>
+    | Omit<WriteContractUnpreparedArgs<typeof portalFactoryABI, TFunctionName>, 'abi'>,
 ) {
   return writeContract({
     abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
     ...config,
   } as unknown as WriteContractArgs<typeof portalFactoryABI, TFunctionName>);
 }
 
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link portalFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function prepareWritePortalFactory<
   TAbi extends readonly unknown[] = typeof portalFactoryABI,
   TFunctionName extends string = string,
->(
-  config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi' | 'address'> & {
-    chainId?: keyof typeof portalFactoryAddress;
-  },
-) {
+>(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
   return prepareWriteContract({
     abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
 }
@@ -1110,6 +1138,90 @@ export function prepareWritePortalFactory<
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // React
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link passThroughV2FactoryABI}__.
+ */
+export function usePassThroughV2FactoryWrite<
+  TFunctionName extends string,
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof passThroughV2FactoryABI,
+          string
+        >['request']['abi'],
+        TFunctionName,
+        TMode
+      >
+    : UseContractWriteConfig<typeof passThroughV2FactoryABI, TFunctionName, TMode> & {
+        abi?: never;
+      } = {} as any,
+) {
+  return useContractWrite<typeof passThroughV2FactoryABI, TFunctionName, TMode>({
+    abi: passThroughV2FactoryABI,
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link passThroughV2FactoryABI}__ and `functionName` set to `"createPortal"`.
+ */
+export function usePassThroughV2FactoryCreatePortal<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof passThroughV2FactoryABI,
+          'createPortal'
+        >['request']['abi'],
+        'createPortal',
+        TMode
+      > & { functionName?: 'createPortal' }
+    : UseContractWriteConfig<typeof passThroughV2FactoryABI, 'createPortal', TMode> & {
+        abi?: never;
+        functionName?: 'createPortal';
+      } = {} as any,
+) {
+  return useContractWrite<typeof passThroughV2FactoryABI, 'createPortal', TMode>({
+    abi: passThroughV2FactoryABI,
+    functionName: 'createPortal',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link passThroughV2FactoryABI}__.
+ */
+export function usePreparePassThroughV2FactoryWrite<TFunctionName extends string>(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof passThroughV2FactoryABI, TFunctionName>,
+    'abi'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: passThroughV2FactoryABI,
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof passThroughV2FactoryABI, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link passThroughV2FactoryABI}__ and `functionName` set to `"createPortal"`.
+ */
+export function usePreparePassThroughV2FactoryCreatePortal(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof passThroughV2FactoryABI, 'createPortal'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: passThroughV2FactoryABI,
+    functionName: 'createPortal',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof passThroughV2FactoryABI, 'createPortal'>);
+}
 
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__.
@@ -3321,42 +3433,31 @@ export function usePreparePrizeV2WithdrawTokens(
 
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function usePortalFactoryWrite<
   TFunctionName extends string,
   TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof portalFactoryAddress,
 >(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
         PrepareWriteContractResult<typeof portalFactoryABI, string>['request']['abi'],
         TFunctionName,
         TMode
-      > & { address?: Address; chainId?: TChainId }
+      >
     : UseContractWriteConfig<typeof portalFactoryABI, TFunctionName, TMode> & {
         abi?: never;
-        address?: never;
-        chainId?: TChainId;
       } = {} as any,
 ) {
   return useContractWrite<typeof portalFactoryABI, TFunctionName, TMode>({
     abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
     ...config,
   } as any);
 }
 
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
-export function usePortalFactoryCreatePortal<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof portalFactoryAddress,
->(
+export function usePortalFactoryCreatePortal<TMode extends WriteContractMode = undefined>(
   config: TMode extends 'prepared'
     ? UseContractWriteConfig<
         PrepareWriteContractResult<
@@ -3365,17 +3466,14 @@ export function usePortalFactoryCreatePortal<
         >['request']['abi'],
         'createPortal',
         TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'createPortal' }
+      > & { functionName?: 'createPortal' }
     : UseContractWriteConfig<typeof portalFactoryABI, 'createPortal', TMode> & {
         abi?: never;
-        address?: never;
-        chainId?: TChainId;
         functionName?: 'createPortal';
       } = {} as any,
 ) {
   return useContractWrite<typeof portalFactoryABI, 'createPortal', TMode>({
     abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
     functionName: 'createPortal',
     ...config,
   } as any);
@@ -3383,36 +3481,30 @@ export function usePortalFactoryCreatePortal<
 
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function usePreparePortalFactoryWrite<TFunctionName extends string>(
   config: Omit<
     UsePrepareContractWriteConfig<typeof portalFactoryABI, TFunctionName>,
-    'abi' | 'address'
-  > & { chainId?: keyof typeof portalFactoryAddress } = {} as any,
+    'abi'
+  > = {} as any,
 ) {
   return usePrepareContractWrite({
     abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
     ...config,
   } as UsePrepareContractWriteConfig<typeof portalFactoryABI, TFunctionName>);
 }
 
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
  */
 export function usePreparePortalFactoryCreatePortal(
   config: Omit<
     UsePrepareContractWriteConfig<typeof portalFactoryABI, 'createPortal'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof portalFactoryAddress } = {} as any,
+    'abi' | 'functionName'
+  > = {} as any,
 ) {
   return usePrepareContractWrite({
     abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
     functionName: 'createPortal',
     ...config,
   } as UsePrepareContractWriteConfig<typeof portalFactoryABI, 'createPortal'>);
