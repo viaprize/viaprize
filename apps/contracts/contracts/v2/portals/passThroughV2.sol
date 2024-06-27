@@ -14,7 +14,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 // proposer 0x8b5E4bA136D3a483aC9988C20CBF0018cC687E6f
 // platform
-contract PassThrough {
+contract PassThroughV2 {
     /// @notice this is the address of proposer who deploys a contract
     address public proposer;
     /// @notice this will be a mapping of the address of a proposer to a boolean value of true or false
