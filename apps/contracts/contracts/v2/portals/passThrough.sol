@@ -7,12 +7,13 @@ import "../../helperContracts/ierc20_permit.sol";
 import "../../helperContracts/ierc20_weth.sol";
 import "../../helperContracts/ierc721.sol";
 import "../../helperContracts/ierc1155.sol";
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 // import "@uniswap/v3-core/contracts/libraries/FullMath.sol";
 
+// proposer 0x8b5E4bA136D3a483aC9988C20CBF0018cC687E6f
+// platform
 contract PassThrough {
     /// @notice this is the address of proposer who deploys a contract
     address public proposer;
@@ -106,6 +107,7 @@ contract PassThrough {
     /// @param _usdcToUsdcePool 0x2aB22ac86b25BD448A4D9dC041Bd2384655299c4 for optimism
     /// @param  _usdcToEthPool 0x1fb3cf6e48f1e7b10213e7b6d87d4c073c7fdb7b for optimism
     /// @param _ethPriceAggregator 0x13e3Ee699D1909E989722E753853AE30b17e08c5 for optimism
+    
     constructor(
         address _proposer,
         address[] memory _platformAdmins,
@@ -154,16 +156,6 @@ contract PassThrough {
         require(isProposer[msg.sender] == true || isplatformAdmin[msg.sender] == true, "You are not a proposer or platformAdmin.");
         _;
     }
-
-    function recoverSigner(
-        bytes32 _ethSignedMessageHash,
-        bytes memory _signature
-    ) public pure returns (address) {
-        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
-
-        return ecrecover(_ethSignedMessageHash, v, r, s);
-    }
-
     function splitSignature(bytes memory sig)
         public
         pure
@@ -179,21 +171,20 @@ contract PassThrough {
     }
     
     /// @notice function to donate the usdc tokens into the campaign
-    function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, bytes memory _signature, bytes32 _ethSignedMessageHash ) public noReentrant  {
+    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public noReentrant  {
         require(_amountUsdc > 0, "funds should be greater than 0");
         if (!isActive) revert FundingToContractEnded();
-        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
-        _usdc.permit(_sender, address(this), _amountUsdc, _deadline, v, r, s);
-        address sender = recoverSigner(_ethSignedMessageHash, _signature);
-        TransferHelper.safeTransferFrom(USDC, sender, address(this), _amountUsdc);
+        address funder = ecrecover(_ethSignedMessageHash, v, r, s);
+        _usdc.permit(funder, spender, _amountUsdc, _deadline, v, r, s);
+        _usdc.transferFrom(funder, spender, _amountUsdc);
         uint256 _donation = _amountUsdc;
-        funders.push(msg.sender);
-        isFunder[msg.sender] = true;
+        funders.push(funder);
+        isFunder[funder] = true;
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
-        emit Donation(msg.sender,address(_usdc),DonationType.PAYMENT,TokenType.TOKEN,_amountUsdc);
+        emit Donation(funder,address(_usdc),DonationType.PAYMENT,TokenType.TOKEN,_amountUsdc);
     }
 
     /// @notice function to donate eth into the campaign
