@@ -14,7 +14,6 @@ export default defineConfig({
       project: '../contracts',
       include: [
         'contracts/portal.sol/*.json',
-        'contracts/portalFactory.sol/*.json',
         'contracts/v2/fundRaisers/passThroughV2Factory.sol/*.json',
         'contracts/v2/prizes/prizesV2Factory.sol/*.json',
         'contracts/v2/prizes/prizes.sol/*.json',

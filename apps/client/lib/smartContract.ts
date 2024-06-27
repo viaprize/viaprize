@@ -1,27 +1,23 @@
 import {
-  writeContract,
+  PrepareWriteContractConfig,
   WriteContractArgs,
+  WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
   prepareWriteContract,
-  PrepareWriteContractConfig,
-  WriteContractMode,
+  writeContract,
 } from 'wagmi/actions';
 
 import {
-  useContractWrite,
+  Address,
+  UseContractReadConfig,
   UseContractWriteConfig,
-  usePrepareContractWrite,
   UsePrepareContractWriteConfig,
   useContractRead,
-  UseContractReadConfig,
-  Address,
+  useContractWrite,
+  usePrepareContractWrite,
 } from 'wagmi';
-import {
-  WriteContractMode,
-  PrepareWriteContractResult,
-  ReadContractResult,
-} from 'wagmi/actions';
+import { PrepareWriteContractResult, ReadContractResult } from 'wagmi/actions';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PassThroughV2Factory
@@ -931,36 +927,6 @@ export const prizeV2ABI = [
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// portalFactory
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const portalFactoryABI = [
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'portalAddress', internalType: 'address', type: 'address', indexed: true },
-    ],
-    name: 'NewPortalCreated',
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: '_owners', internalType: 'address[]', type: 'address[]' },
-      { name: '_admins', internalType: 'address[]', type: 'address[]' },
-      { name: '_goal', internalType: 'uint256', type: 'uint256' },
-      { name: '_deadline', internalType: 'uint256', type: 'uint256' },
-      { name: '_allowDonationAboveGoalAmount', internalType: 'bool', type: 'bool' },
-      { name: '_platformFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_allowImmediately', internalType: 'bool', type: 'bool' },
-    ],
-    name: 'createPortal',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-] as const;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Core
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1104,33 +1070,6 @@ export function prepareWritePrizeV2<
 >(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
   return prepareWriteContract({
     abi: prizeV2ABI,
-    ...config,
-  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
-}
-
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link portalFactoryABI}__.
- */
-export function writePortalFactory<TFunctionName extends string>(
-  config:
-    | Omit<WriteContractPreparedArgs<typeof portalFactoryABI, TFunctionName>, 'abi'>
-    | Omit<WriteContractUnpreparedArgs<typeof portalFactoryABI, TFunctionName>, 'abi'>,
-) {
-  return writeContract({
-    abi: portalFactoryABI,
-    ...config,
-  } as unknown as WriteContractArgs<typeof portalFactoryABI, TFunctionName>);
-}
-
-/**
- * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link portalFactoryABI}__.
- */
-export function prepareWritePortalFactory<
-  TAbi extends readonly unknown[] = typeof portalFactoryABI,
-  TFunctionName extends string = string,
->(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
-  return prepareWriteContract({
-    abi: portalFactoryABI,
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
 }
@@ -3429,83 +3368,4 @@ export function usePreparePrizeV2WithdrawTokens(
     functionName: 'withdrawTokens',
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'withdrawTokens'>);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
- */
-export function usePortalFactoryWrite<
-  TFunctionName extends string,
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof portalFactoryABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      >
-    : UseContractWriteConfig<typeof portalFactoryABI, TFunctionName, TMode> & {
-        abi?: never;
-      } = {} as any,
-) {
-  return useContractWrite<typeof portalFactoryABI, TFunctionName, TMode>({
-    abi: portalFactoryABI,
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
- */
-export function usePortalFactoryCreatePortal<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof portalFactoryABI,
-          'createPortal'
-        >['request']['abi'],
-        'createPortal',
-        TMode
-      > & { functionName?: 'createPortal' }
-    : UseContractWriteConfig<typeof portalFactoryABI, 'createPortal', TMode> & {
-        abi?: never;
-        functionName?: 'createPortal';
-      } = {} as any,
-) {
-  return useContractWrite<typeof portalFactoryABI, 'createPortal', TMode>({
-    abi: portalFactoryABI,
-    functionName: 'createPortal',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
- */
-export function usePreparePortalFactoryWrite<TFunctionName extends string>(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof portalFactoryABI, TFunctionName>,
-    'abi'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: portalFactoryABI,
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof portalFactoryABI, TFunctionName>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
- */
-export function usePreparePortalFactoryCreatePortal(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof portalFactoryABI, 'createPortal'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: portalFactoryABI,
-    functionName: 'createPortal',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof portalFactoryABI, 'createPortal'>);
 }
