@@ -1,5 +1,6 @@
 import CommentSection from '@/components/comment/comment-section';
 import { Api } from '@/lib/api';
+import { formatUsdc } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { formatEther } from 'viem';
@@ -56,19 +57,22 @@ export default async function CreatePortal({ params }: { params: { slug: string 
           img={portal.images[0]}
         />
         <AmountDonateCard
-          amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
+          amountRaised={formatUsdc(portal.totalFunds ?? 0).toString()}
           recipientAddress={portal.contract_address}
           totalContributors={formatEther(BigInt(portal.totalFunds ?? 0))}
           contractAddress={portal.contract_address}
           fundingGoalWithPlatformFee={parseFloat(
             portal.fundingGoalWithPlatformFee ?? '0',
           )}
+          slug={portal.slug}
           id={portal.id}
           typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
           deadline={portal.deadline}
           isActive={portal.isActive ?? false}
           treasurers={portal.treasurers}
           sendImmediately={portal.sendImmediately}
+          image={portal.images[0]}
+          title={portal.title}
         />
       </div>
       <PortalTabs

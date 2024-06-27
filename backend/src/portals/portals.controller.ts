@@ -233,33 +233,37 @@ export class PortalsController {
   ): Promise<PortalWithBalance> {
     console.log(slug, 'slug');
     const portal = await this.portalsService.findOneBySlug(slug);
-    const results = await this.blockchainService.getPortalPublicVariables(
-      portal.contract_address,
-    );
-    const contributors = await this.blockchainService.getPortalContributors(
-      portal.contract_address,
-    );
+    const results: [bigint, bigint, bigint, boolean] =
+      await this.blockchainService.getPassThroughPublicVariables(
+        [portal.contract_address],
+        ['totalFunds', 'totalFunds', 'totalRewards', 'isActive'],
+      )[0];
+    // const contributors = await this.blockchainService.getPortalContributors(
+    //   portal.contract_address,
+    // );
 
-    const ContributorsWithUser = contributors.data.map(async (contributor) => {
-      return {
-        ...contributor,
-        contributor: await this.userService.findUserByWallett(
-          contributor.contributor,
-        ),
-      };
-    });
+    // const ContributorsWithUser = contributors.data.map(async (contributor) => {
+    //   return {
+    //     ...contributor,
+    //     contributor: await this.userService.findUserByWallett(
+    //       contributor.contributor,
+    //     ),
+    //   };
+    // });
 
-    const resultsWithContributors = {
-      data: await Promise.all(ContributorsWithUser),
-    };
+    // const resultsWithContributors = {
+    //   data: await Promise.all(ContributorsWithUser),
+    // };
 
     return {
       ...portal,
-      balance: parseInt((results[0].result as bigint).toString()),
-      totalFunds: parseInt((results[1].result as bigint).toString()),
-      totalRewards: parseInt((results[2].result as bigint).toString()),
-      isActive: results[3].result as boolean,
-      contributors: resultsWithContributors,
+      balance: parseInt((results[0] as bigint).toString()),
+      totalFunds: parseInt((results[1] as bigint).toString()),
+      totalRewards: parseInt((results[2] as bigint).toString()),
+      isActive: results[3] as boolean,
+      contributors: {
+        data: [],
+      },
     };
   }
 

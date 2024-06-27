@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 'use client';
+import { TransactionToast } from '@/components/custom/transaction-toast';
 import useAppUser from '@/components/hooks/useAppUser';
 import { backendApi } from '@/lib/backend';
+import { USDC } from '@/lib/constants';
 import { prepareWritePortal, writePortal } from '@/lib/smartContract';
 import type { ConvertUSD } from '@/lib/types';
-import { formatDate } from '@/lib/utils';
+import { formatDate, usdcSignType } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -27,16 +29,17 @@ import {
   IconChevronRight,
   IconCircleCheck,
   IconCopy,
-  IconRefresh,
 } from '@tabler/icons-react';
-import type { FetchBalanceResult } from '@wagmi/core';
-import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
+import { readContract } from '@wagmi/core';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { toast } from 'sonner';
-import { parseEther } from 'viem';
-import { useBalance } from 'wagmi';
+import revalidate from 'utils/revalidate';
+import { hexToSignature } from 'viem';
+import { hashTypedData } from 'viem/utils';
+import { useBalance, useWalletClient } from 'wagmi';
 
 interface AmountDonateCardProps {
   amountRaised: string;
@@ -50,63 +53,175 @@ interface AmountDonateCardProps {
   isActive: boolean;
   sendImmediately: boolean;
   id: string;
+  image: string;
+  slug: string;
+  title: string;
 }
 
-function DonateButton({
-  value,
-  refetch,
-  sendLoading,
-  setSendLoading,
+function FundUsdcCard({
   contractAddress,
-  cryptoToUsd,
-  balance,
-  setValue,
-  isLoading,
-  ethOfDonateValue,
-  debounced,
+  prizeId,
+  title,
+  imageUrl,
+  successUrl,
+  cancelUrl,
+  slug,
 }: {
-  isLoading: boolean;
-  balance: FetchBalanceResult | undefined;
-  value: string;
-  ethOfDonateValue: number;
-  sendLoading: boolean;
-  setSendLoading: React.Dispatch<React.SetStateAction<boolean>>;
   contractAddress: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-  cryptoToUsd: ConvertUSD | undefined;
-  refetch: any;
-  debounced: string;
+  prizeId: string;
+  title: string;
+  imageUrl: string;
+  successUrl: string;
+  cancelUrl: string;
+  slug: string;
 }) {
+  const [sendLoading, setSendLoading] = useState(false);
+  const { data: walletClient } = useWalletClient();
+  const [value, setValue] = useState('');
+  const router = useRouter();
+
+  const getUsdcSignatureData = async () => {
+    const walletAddress = walletClient?.account.address;
+    if (!walletAddress) {
+      throw new Error('Please login to donate');
+    }
+    const amount = BigInt(parseFloat(value) * 1000000);
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000);
+    const nonce = await readContract({
+      abi: [
+        {
+          constant: true,
+          inputs: [
+            {
+              name: 'owner',
+              type: 'address',
+            },
+          ],
+          name: 'nonces',
+          outputs: [
+            {
+              name: '',
+              type: 'uint256',
+            },
+          ],
+          payable: false,
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ] as const,
+      address: USDC,
+      functionName: 'nonces',
+      args: [walletAddress],
+    });
+
+    const signData = {
+      owner: walletClient?.account.address,
+      spender: contractAddress,
+      value: amount,
+      nonce: BigInt(nonce),
+      deadline: deadline,
+    };
+
+    return signData;
+  };
+  const donateUsingUsdc = async () => {
+    try {
+      setSendLoading(true);
+      if (!walletClient) {
+        throw new Error('Please login to donate');
+      }
+      const signData = await getUsdcSignatureData();
+
+      const hash = hashTypedData(usdcSignType(signData) as any);
+
+      const signature = await walletClient.signTypedData(usdcSignType(signData) as any);
+      const rsv = hexToSignature(signature);
+
+      const trxHash = await (
+        await backendApi()
+      ).wallet
+        .prizeAddUsdcFundsCreate(contractAddress, {
+          amount: parseInt(signData.value.toString()),
+          deadline: parseInt(signData.deadline.toString()),
+          r: rsv.r,
+          hash: hash,
+          s: rsv.s,
+          v: parseInt(rsv.v.toString()),
+        })
+        .then((res) => res.data.hash);
+
+      toast.success(<TransactionToast hash={trxHash} title="Transaction Successfull" />, {
+        duration: 6000,
+      });
+      await revalidate({ tag: slug });
+      router.refresh();
+      window.location.reload();
+    } catch (e: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
+      toast.error((e as any)?.message);
+    } finally {
+      setSendLoading(false);
+    }
+  };
+
+  const donateUsingFiat = async () => {
+    try {
+      setSendLoading(true);
+      const signedData = await getUsdcSignatureData();
+      if (!walletClient) {
+        throw new Error('Please login to donate');
+      }
+      const hash = hashTypedData(usdcSignType(signedData) as any);
+      const signature = await walletClient.signTypedData(usdcSignType(signedData) as any);
+      const { r, s, v } = hexToSignature(signature);
+      const checkoutUrl = await fetch(
+        'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            checkoutMetadata: {
+              contractAddress,
+              backendId: prizeId,
+              deadline: parseInt(signedData.deadline.toString()),
+              amount: parseInt(signedData.value.toString()),
+              ethSignedMessage: hash,
+              v: parseInt(v.toString()),
+              r: r,
+              s: s,
+              chainId: 8453,
+            },
+            title,
+            imageUrl,
+            successUrl,
+            cancelUrl,
+          }),
+        },
+      )
+        .then((res) => res.json())
+        .then((data) => data.checkoutUrl);
+
+      console.log({ checkoutUrl });
+      await revalidate({ tag: slug });
+      router.refresh();
+      router.replace(checkoutUrl);
+    } catch (e: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
+      toast.error((e as any)?.message);
+    } finally {
+      setSendLoading(false);
+    }
+  };
   return (
-    <>
+    <Stack my="md">
+      <Text fw="sm">Your donation must be valued atleast $1.00.</Text>
       <NumberInput
-        description={
-          isLoading
-            ? 'Loading.....'
-            : `Wallet Balance: ${
-                balance
-                  ? `$${(
-                      parseFloat(balance.formatted.toString()) *
-                      (cryptoToUsd?.ethereum.usd ?? 0)
-                    ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${
-                      balance.symbol
-                    })`
-                  : `Login To See Balance`
-              }`
-        }
         placeholder="Enter Value  in $ To Donate"
         mt="md"
-        label={`You will donate ${value} USD (${ethOfDonateValue.toFixed(4) ?? 0} ${
-          chain.nativeCurrency.symbol
-        })`}
-        rightSection={
-          <ActionIcon>
-            <IconRefresh onClick={() => refetch({})} />
-          </ActionIcon>
-        }
-        max={parseInt(balance?.formatted ?? '0')}
         allowDecimal
-        defaultValue={0}
+        defaultValue={1}
         allowNegative={false}
         value={value}
         onChange={(v) => {
@@ -122,52 +237,140 @@ function DonateButton({
         disabled={!value}
         loading={sendLoading}
         onClick={async () => {
-          await refetch();
-
-          setSendLoading(true);
-
-          try {
-            const config = await prepareSendTransaction({
-              to: contractAddress,
-              value: debounced ? parseEther(ethOfDonateValue.toString()) : undefined,
-              data: '0x',
-            });
-            const { hash } = await sendTransaction(config);
-            toast.success(
-              <div className="flex items-center ">
-                <IconCircleCheck />{' '}
-                <Text fw="md" size="sm" className="ml-2">
-                  {' '}
-                  Transaction successfull
-                </Text>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://optimistic.etherscan.io/tx/${hash}`}
-                >
-                  <Button variant="transparent" className="text-blue-400 underline">
-                    See here
-                  </Button>
-                </Link>
-              </div>,
-              {
-                duration: 6000,
-              },
-            );
-
-            window.location.reload();
-          } catch (e: unknown) {
-            toast.error((e as any)?.message);
-          } finally {
-            setSendLoading(false);
-          }
+          await donateUsingUsdc();
         }}
       >
         Donate
       </Button>
-    </>
+
+      <Button
+        disabled={!value}
+        loading={sendLoading}
+        onClick={async () => {
+          await donateUsingFiat();
+        }}
+      >
+        Donate With Card
+      </Button>
+    </Stack>
   );
 }
+// function DonateButton({
+//   value,
+//   refetch,
+//   sendLoading,
+//   setSendLoading,
+//   contractAddress,
+//   cryptoToUsd,
+//   balance,
+//   setValue,
+//   isLoading,
+//   ethOfDonateValue,
+//   debounced,
+// }: {
+//   isLoading: boolean;
+//   balance: FetchBalanceResult | undefined;
+//   value: string;
+//   ethOfDonateValue: number;
+//   sendLoading: boolean;
+//   setSendLoading: React.Dispatch<React.SetStateAction<boolean>>;
+//   contractAddress: string;
+//   setValue: React.Dispatch<React.SetStateAction<string>>;
+//   cryptoToUsd: ConvertUSD | undefined;
+//   refetch: any;
+//   debounced: string;
+// }) {
+//   return (
+//     <>
+//       <NumberInput
+//         description={
+//           isLoading
+//             ? 'Loading.....'
+//             : `Wallet Balance: ${
+//                 balance
+//                   ? `$${(
+//                       parseFloat(balance.formatted.toString()) *
+//                       (cryptoToUsd?.ethereum.usd ?? 0)
+//                     ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${
+//                       balance.symbol
+//                     })`
+//                   : `Login To See Balance`
+//               }`
+//         }
+//         placeholder="Enter Value  in $ To Donate"
+//         mt="md"
+//         label={`You will donate ${value} USD (${ethOfDonateValue.toFixed(4) ?? 0} ${
+//           chain.nativeCurrency.symbol
+//         })`}
+//         rightSection={
+//           <ActionIcon>
+//             <IconRefresh onClick={() => refetch({})} />
+//           </ActionIcon>
+//         }
+//         max={parseInt(balance?.formatted ?? '0')}
+//         allowDecimal
+//         defaultValue={0}
+//         allowNegative={false}
+//         value={value}
+//         onChange={(v) => {
+//           if (!v) {
+//             // console.log({ v }, 'inner v');
+//             setValue('0');
+//           }
+//           setValue(v.toString());
+//         }}
+//       />
+
+//       <Button
+//         disabled={!value}
+//         loading={sendLoading}
+//         onClick={async () => {
+//           await refetch();
+
+//           setSendLoading(true);
+
+//           try {
+//             const config = await prepareSendTransaction({
+//               to: contractAddress,
+//               value: debounced ? parseEther(ethOfDonateValue.toString()) : undefined,
+//               data: '0x',
+//             });
+//             const { hash } = await sendTransaction(config);
+//             toast.success(
+//               <div className="flex items-center ">
+//                 <IconCircleCheck />{' '}
+//                 <Text fw="md" size="sm" className="ml-2">
+//                   {' '}
+//                   Transaction successfull
+//                 </Text>
+//                 <Link
+//                   target="_blank"
+//                   rel="noopener noreferrer"
+//                   href={`https://optimistic.etherscan.io/tx/${hash}`}
+//                 >
+//                   <Button variant="transparent" className="text-blue-400 underline">
+//                     See here
+//                   </Button>
+//                 </Link>
+//               </div>,
+//               {
+//                 duration: 6000,
+//               },
+//             );
+
+//             window.location.reload();
+//           } catch (e: unknown) {
+//             toast.error((e as any)?.message);
+//           } finally {
+//             setSendLoading(false);
+//           }
+//         }}
+//       >
+//         Donate
+//       </Button>
+//     </>
+//   );
+// }
 export default function AmountDonateCard({
   recipientAddress,
   amountRaised,
@@ -180,6 +383,9 @@ export default function AmountDonateCard({
   sendImmediately,
   isActive,
   id,
+  slug,
+  image,
+  title,
 }: AmountDonateCardProps) {
   const [value, setValue] = useState('');
   const [debounced] = useDebouncedValue(value, 500);
@@ -259,11 +465,7 @@ export default function AmountDonateCard({
             </>
           ) : (
             <>
-              {cryptoToUsd ? (
-                <>
-                  ${(parseFloat(amountRaised) * cryptoToUsd.ethereum.usd).toFixed(2)} USD
-                </>
-              ) : null}
+              <>${parseFloat(amountRaised).toFixed(2)} USD</>
             </>
           )}
         </Text>
@@ -439,18 +641,14 @@ export default function AmountDonateCard({
             />
           </>
         ) : (
-          <DonateButton
-            balance={balance}
-            value={value}
-            ethOfDonateValue={ethOfDonateValue}
-            sendLoading={sendLoading}
-            setSendLoading={setSendLoading}
+          <FundUsdcCard
+            cancelUrl={window.location.href}
             contractAddress={contractAddress}
-            cryptoToUsd={cryptoToUsd}
-            refetch={refetch}
-            debounced={debounced}
-            isLoading={isLoading}
-            setValue={setValue}
+            imageUrl={image}
+            prizeId={id}
+            slug={slug}
+            successUrl={window.location.href}
+            title={title}
           />
         )}
         {wallet?.address && treasurers.includes(wallet?.address) && sendImmediately ? (
@@ -474,7 +672,7 @@ export default function AmountDonateCard({
                     <Link
                       target="_blank"
                       rel="noopener noreferrer"
-                      href={`https://optimistic.etherscan.io/tx/${hash}`}
+                      href={`https://basescan.org/tx/${hash}`}
                     >
                       <Button variant="transparent" className="text-blue-400 underline">
                         See here

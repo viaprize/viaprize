@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ExtractAbiFunctionNames } from 'abitype';
 import { AllConfigType } from 'src/config/config.type';
-import { PRIZE_V2_ABI } from 'src/utils/constants';
+import { PASS_THROUGH_ABI, PRIZE_V2_ABI } from 'src/utils/constants';
 import {
   MulticallReturnType,
   PublicClient,
@@ -340,6 +340,44 @@ export class BlockchainService {
       ],
     });
     return results;
+  }
+
+  async getPassThroughPublicVariables<T extends any>(
+    passThroughtContractAddresses: string[],
+    variables: ExtractAbiFunctionNames<
+      typeof PASS_THROUGH_ABI,
+      'pure' | 'view'
+    >[],
+  ): Promise<T[][]> {
+    const calls: any = [];
+    passThroughtContractAddresses.forEach((address) => {
+      const wagmiContract = {
+        address: address as `0x${string}`,
+        abi: PASS_THROUGH_ABI,
+      } as const;
+      const contracts = variables.map((variable) => {
+        return {
+          ...wagmiContract,
+          functionName: variable,
+        };
+      });
+      calls.push(...contracts);
+    });
+    const results: MulticallReturnType<any, true> =
+      await this.provider.multicall({
+        contracts: calls,
+      });
+    const final_results_unsliced = results.map((result) => {
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      return result.result;
+    });
+
+    const final = splitArray(final_results_unsliced, variables.length);
+
+    console.log({ final });
+    return final as never as T[][];
   }
 
   async getPrizesV2PublicVariables<T extends any>(
