@@ -1,9 +1,24 @@
 import SkeletonLoad from '@/components/custom/skeleton-load-explore';
 import type { PortalProposals } from '@/lib/api';
-import { prepareWritePortalFactory, writePortalFactory } from '@/lib/smartContract';
+import {
+  ADMINS,
+  ETH_PRICE,
+  SWAP_ROUTER,
+  USDC,
+  USDC_BRIDGE,
+  USDC_TO_ETH_POOL,
+  USDC_TO_USDCE_POOL,
+  WETH,
+} from '@/lib/constants';
+import {
+  prepareWritePassThroughV2Factory,
+  writePassThroughV2Factory,
+} from '@/lib/smartContract';
 import type { ProposalStatus } from '@/lib/types';
 import { Button, Text, Title } from '@mantine/core';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useMutation } from 'react-query';
 import { toast } from 'sonner';
@@ -13,8 +28,6 @@ import ProposalExploreCard from '../Prize/ExplorePrize/proposalExploreCard';
 import Shell from '../custom/shell';
 import { usePortal } from '../hooks/usePortal';
 import usePortalProposal from '../hooks/usePortalProposal';
-import { IconCircleCheck } from '@tabler/icons-react';
-import Link from 'next/link';
 
 const getProposalStatus = (item: PortalProposals): ProposalStatus => {
   if (item.isApproved) {
@@ -92,25 +105,24 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                       const finalFundingGoal = parseEther(
                         (item.fundingGoal ?? '0').toString(),
                       );
-                      const request = await prepareWritePortalFactory({
+                      const request = await prepareWritePassThroughV2Factory({
                         functionName: 'createPortal',
                         args: [
-                          item.treasurers as `0x${string}`[],
-                          [
-                            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-                            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-                            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
-                          ] as `0x${string}`[],
-                          finalFundingGoal,
-                          BigInt(
-                            Math.floor(new Date(item.deadline).getTime() / 1000) ?? 0,
-                          ),
-                          item.allowDonationAboveThreshold,
+                          BigInt(new Date().getTime()),
+                          item.treasurers[0] as `0x${string}`,
+                          ADMINS,
                           BigInt(item.platformFeePercentage),
-                          item.sendImmediately,
+                          USDC,
+                          USDC_BRIDGE,
+                          WETH,
+                          SWAP_ROUTER,
+                          USDC_TO_USDCE_POOL,
+                          USDC_TO_ETH_POOL,
+                          ETH_PRICE,
                         ],
+                        address: '0xdCcF514720AABBfFF6bed7a7Db4b498677EfD3D3',
                       });
-                      const transaction = await writePortalFactory(request);
+                      const transaction = await writePassThroughV2Factory(request);
                       // const out = await writeViaPrizeFactory(request);
                       toast.dismiss(firstLoadingToast);
                       const secondToast = toast.loading(
