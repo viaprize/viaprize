@@ -13,7 +13,6 @@ import "../../helperContracts/ierc20_weth.sol";
 contract PrizeV2 {
     uint256 public constant PRECISION = 10000;
 
-
     bytes32 public constant REFUND_SUBMISSION_HASH = keccak256(abi.encodePacked("REFUND"));
 
     /// @notice this will be the total amount of funds raised
@@ -39,6 +38,7 @@ contract PrizeV2 {
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
     address[] public refundRequestedFunders;
     mapping(address => bool) public isRefundRequestedAddress;
+    mapping(address => bool) public isContestant;
 
     bool public isActive = false;
     uint8 public constant  VERSION = 2;
@@ -79,15 +79,16 @@ contract PrizeV2 {
     /// @notice this will be the address of the platform
     address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
-
-
     /// @notice / @notice _submissionTree contract
     SubmissionAVLTree private _submissionTree;
 
     uint256 public totalVotes;
     uint256 public disputePeriod;
+    uint256 public nonce;
 
-    
+    // bytes32 public  DOMAIN_SEPARATOR = 0x26d9c34bb1a1c312f69c53b2d93b8be20faafba63af2438c6811713c9b1f933f;
+    // bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+
 
 
     /// @notice error for not enough funds to vote
@@ -177,6 +178,36 @@ contract PrizeV2 {
         _;
     }
 
+     function VOTE_HASH(uint256 _nonce,bytes32 _submission, uint256 _amount) public view returns (bytes32) {
+        address _contractAddress = address(this);
+        bytes32 _messageHash = keccak256(
+            abi.encodePacked("VOTE FOR " ,_submission , " WITH AMOUNT ", _amount, " AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
+        );
+        return  keccak256(
+            abi.encodePacked("\x19Ethereum Signed Message:\n32", _messageHash)
+        );
+    }
+
+    function CHANGE_VOTE_HASH(uint256 _nonce,bytes32 _old_submission, uint256 _amount,bytes32 _new_submission) public view returns (bytes32){
+        address _contractAddress = address(this);
+        bytes32 _messageHash = keccak256(
+            abi.encodePacked("CHANGE VOTE FROM ",_old_submission, " TO ", _new_submission, " WITH AMOUNT ", _amount, " AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
+        );
+        return  keccak256(
+            abi.encodePacked("\x19Ethereum Signed Message:\n32", _messageHash)
+        );
+    }
+
+    function DISPUTE_HASH(uint256 _nonce,bytes32 _submission) public view returns (bytes32) {
+        address _contractAddress = address(this);
+        bytes32 _messageHash = keccak256(
+            abi.encodePacked("DISPUTE FOR ",_submission," AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
+        );
+        return  keccak256(
+            abi.encodePacked("\x19Ethereum Signed Message:\n32", _messageHash)
+        );
+    }
+
     /// @notice create a function to start the submission period
     function startSubmissionPeriod(uint256 _submissionTime) public  onlyPlatformAdminOrProposer {
         /// @notice submission time will be in minutes
@@ -185,7 +216,7 @@ contract PrizeV2 {
     }
 
     /// @notice start the voting period 
-    function startVotingPeriod(uint256 _votingTime) public  onlyPlatformAdminOrProposer {
+    function startVotingPeriod(uint256 _votingTime) public  onlyPlatformAdminOrProposer onlyActive {
         if(block.timestamp < submissionTime) revert SubmissionPeriodActive();
         /// @notice voting time also in minutes
         votingTime = block.timestamp + _votingTime * 1  minutes;
@@ -207,19 +238,31 @@ contract PrizeV2 {
         if(submissionTime == 0) revert SubmissionPeriodNotActive();
         submissionPeriod = false;
         submissionTime = 0;
+        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+        if(allSubmissions.length == 0 ) {
+            for(uint256 i=0; i<allFunders.length; i++) {
+                uint256 transferable_amount = funderAmount[allFunders[i]];
+                funderAmount[allFunders[i]] = 0;
+                _usdc.transfer(allFunders[i], transferable_amount);
+            }
+            distributed = true;
+            isActive = false;
+        }
     }
 
-    function endVotingPeriod() public onlyPlatformAdmin {
+    function endVotingPeriod() public onlyPlatformAdmin onlyActive {
         if(votingTime == 0) revert VotingPeriodNotActive();
         votingTime = 0;
         votingPeriod = false;
         disputePeriod = block.timestamp + 2 minutes;
     }
 
-    function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public {
+    function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r) public onlyActive {
         require(disputePeriod > block.timestamp, "DPNA"); //DPNA - Dispute Period Not Active
+        bytes32 signedMessageHash = DISPUTE_HASH(nonce+=1, _submissionHash);
         SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
-        address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
+
+        address sender =  ecrecover(signedMessageHash, v, r, s);
         require(sender == submission.contestant, "NAS"); //NAS - Not a Submitter
         emit DisputeRaised(_submissionHash, sender);
     }
@@ -243,13 +286,18 @@ contract PrizeV2 {
         votingTime = block.timestamp + _votingTime * 1 minutes;
     }
 
+   
+
+    
+
+
     /// @notice Distribute rewards
     function _distributeRewards() private {
         if(distributed == true) revert RewardsAlreadyDistributed();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         uint256 usdcPlatformReward;
         uint256 usdcProposerReward;
-        if(allSubmissions.length > 0) {
+        if(allSubmissions.length > 0 && totalVotes > 0 ) {
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
@@ -262,7 +310,7 @@ contract PrizeV2 {
                                 if(reward_amount > 0) {
                                     _usdc.transfer(refundRequestedFunders[j], reward_amount);
                                 }
-                        }
+                            }
                         }
                     } else {
                         uint256 reward = (allSubmissions[i].usdcVotes);
@@ -297,7 +345,9 @@ contract PrizeV2 {
     /// @notice addSubmission should return the submissionHash
     function addSubmission(address contestant, string memory submissionText) public onlyPlatformAdmin returns(bytes32) {
         if (block.timestamp > submissionTime) revert SubmissionPeriodNotActive();
+        if(isContestant[contestant]) revert("CAE"); // CAE -> Contestant already Exists
         bytes32 submissionHash = keccak256(abi.encodePacked(contestant, submissionText));
+        isContestant[contestant] = true;
         _submissionTree.addSubmission(contestant, submissionHash, submissionText);
         emit SubmissionCreated(contestant, submissionHash);
         return submissionHash;
@@ -307,10 +357,11 @@ contract PrizeV2 {
 
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 amount, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) onlyActive public {
+    function vote(bytes32 _submissionHash, uint256 _amount, uint8 v, bytes32 s, bytes32 r) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
-        address sender =  ecrecover(_ethSignedMessageHash, v, r, s);
-        if (amount > funderAmount[sender]) revert NotEnoughFunds();
+        bytes32 hash = VOTE_HASH(nonce+=1, _submissionHash, _amount);
+        address sender =  ecrecover(hash, v, r, s);
+        if (_amount > funderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
         /// @notice submission should return a struct with the submissionHash, the contestant, the submissionText, the threshhold, the votes, and the funded status 
@@ -324,22 +375,21 @@ contract PrizeV2 {
             }
         }
         if(isFunder[sender]) {
-            funderAmount[sender] -= amount;
-            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amount);
+            funderAmount[sender] -= _amount;
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
 
-            uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+            uint256 amountToSubmission = (_amount * (100 - platformFee - proposerFee)) / 100;
 
 
             _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
             _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
             
             totalVotes = totalVotes.add(amountToSubmission);
-            // rename this to somehting not related to funder ( contestant balance)
             SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
             if (submission.usdcVotes > 0) {
                 _submissionTree.setFundedTrue(_submissionHash, true);
             }
-            emit Voted(_submissionHash, sender, amount);
+            emit Voted(_submissionHash, sender, _amount);
         }
     }
 
@@ -359,10 +409,11 @@ contract PrizeV2 {
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
-    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint8 v, bytes32 s, bytes32 r, uint256 amount, bytes32 _ethSignedMessageHash) onlyActive public {
+    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint8 v, bytes32 s, bytes32 r, uint256 amount) onlyActive public {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
         if(_previous_submissionHash == _new_submissionHash) revert("SME"); //SME -> Same Submission
-        address sender = ecrecover(_ethSignedMessageHash, v, r, s);
+        bytes32 signedMessageHash = CHANGE_VOTE_HASH(nonce+=1, _previous_submissionHash, amount, _new_submissionHash);
+        address sender = ecrecover(signedMessageHash, v, r, s);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
         if(!isFunder[sender]) revert("NF");
         _changeVote(sender, _previous_submissionHash, _new_submissionHash, amount);
@@ -395,6 +446,7 @@ contract PrizeV2 {
     function disputeChangeVote( bytes32  _previousSubmissionHash, bytes32 _newSubmissionHash, address[] calldata _funders, uint256[] calldata _amounts) onlyActive onlyPlatformAdmin public {
         require(_funders.length == _amounts.length, "LM"); //LM -> Length Mismatch
         require(disputePeriod > block.timestamp, "DPNA");  //DPNA -> Dispute Period Not Active
+
 
         for (uint256 i = 0; i < _funders.length; i++) {
             address funder = _funders[i];
@@ -502,29 +554,44 @@ contract PrizeV2 {
        
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
-            if(total_unused_usdc_votes > 0) { 
-                uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(_PRECISION)).div(total_usdc_votes)); 
-                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
-                if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
-                    if(transferable_usdc_amount > 0) {
-                        for(uint256 j=0; j<allFunders.length; j++) {
+            if(total_unused_usdc_votes > 0) {
+                if(allSubmissions[i].usdcVotes > 0) {
+                    uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(_PRECISION)).div(total_usdc_votes));
+                    uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
+                    if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
+                        if(transferable_usdc_amount > 0) {
+                            for(uint256 j=0; j<allFunders.length; j++) {
+                                
+                                if(funderAmount[allFunders[j]] > 0){
+                                    uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
+                                    uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
+                                    uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
+                                    if(individual_transferable_usdc_amount > 0) {
+                                        _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
+                                    }
+                                }
                             
-                            if(funderAmount[allFunders[j]] > 0){
-                                 uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
-                                 uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
-                                 uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
-                                _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
                             }
-                           
                         }
+                    } else {
+                        if(transferable_usdc_amount > 0) {
+                            _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
+                        }
+                        
                     }
-                } else {
-                    _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
                 }
             }
            
        }
        return (total_usdc_votes, totalRewards);
+   }
+
+   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin {
+        IERC20Permit token = IERC20Permit(_tokenAddress);
+        uint256 balance = token.balanceOf(address(this));
+        if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists
+        require(_amount <= balance, "AEB"); //AEB -> Amount Exceeds Balance
+        token.transfer(_to, _amount); 
    }
 
    function getAllFunders() public view returns(address[] memory) {

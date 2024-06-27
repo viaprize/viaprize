@@ -7,9 +7,7 @@ import { PrizeSubmissionTemplate } from '@/components/Prize/prizepage/defaultcon
 import useAppUser from '@/components/hooks/useAppUser';
 import AppShellLayout from '@/components/layout/appshell';
 import { backendApi } from '@/lib/backend';
-import { prepareWritePrize, writePrize } from '@/lib/smartContract';
 import { useWallets } from '@privy-io/react-auth';
-import { waitForTransaction } from '@wagmi/core';
 import { useRouter } from 'next/router';
 import { toast } from 'sonner';
 
@@ -27,28 +25,12 @@ function EditorsPage() {
     }
 
     const address = wallets[0].address as `0x${string}`;
-    // await writeAsync?.();
-    const request = await prepareWritePrize({
-      account: address,
-      address: router.query.contract as `0x${string}`,
-      args: [address ? address : '0x', `${appUser?.id}${router.query.slug as string}`],
-      functionName: 'addSubmission',
-    });
-    const { hash } = await writePrize(request);
-    const waitForTransactionOut = await waitForTransaction({
-      hash: hash,
-      confirmations: 1,
-    });
-    console.log(waitForTransactionOut.logs[0].topics[2]);
-    const submissionHash = waitForTransactionOut.logs[0].topics[2];
-    if (!submissionHash) {
-      throw Error('Hash is undefined');
-    }
+
     const res = await (
       await backendApi()
     ).prizes.submissionCreate(router.query.slug as string, {
       submissionDescription: JSON.stringify(content),
-      submissionHash: submissionHash as string,
+      submissionHash: '',
       submitterAddress: address,
     });
     console.log({ res }, 'ressss');

@@ -7,14 +7,13 @@ import "../../helperContracts/ierc20_permit.sol";
 import "../../helperContracts/ierc20_weth.sol";
 import "../../helperContracts/ierc721.sol";
 import "../../helperContracts/ierc1155.sol";
+// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 // import "@uniswap/v3-core/contracts/libraries/FullMath.sol";
 
-// proposer 0x8b5E4bA136D3a483aC9988C20CBF0018cC687E6f
-// platform
-contract PassThroughV2 {
+contract PassThrough {
     /// @notice this is the address of proposer who deploys a contract
     address public proposer;
     /// @notice this will be a mapping of the address of a proposer to a boolean value of true or false
@@ -107,7 +106,6 @@ contract PassThroughV2 {
     /// @param _usdcToUsdcePool 0x2aB22ac86b25BD448A4D9dC041Bd2384655299c4 for optimism
     /// @param  _usdcToEthPool 0x1fb3cf6e48f1e7b10213e7b6d87d4c073c7fdb7b for optimism
     /// @param _ethPriceAggregator 0x13e3Ee699D1909E989722E753853AE30b17e08c5 for optimism
-    
     constructor(
         address _proposer,
         address[] memory _platformAdmins,
@@ -156,6 +154,16 @@ contract PassThroughV2 {
         require(isProposer[msg.sender] == true || isplatformAdmin[msg.sender] == true, "You are not a proposer or platformAdmin.");
         _;
     }
+
+    function recoverSigner(
+        bytes32 _ethSignedMessageHash,
+        bytes memory _signature
+    ) public pure returns (address) {
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+
+        return ecrecover(_ethSignedMessageHash, v, r, s);
+    }
+
     function splitSignature(bytes memory sig)
         public
         pure
@@ -169,22 +177,27 @@ contract PassThroughV2 {
             v := byte(0, mload(add(sig, 96)))
         }
     }
-    
-    /// @notice function to donate the usdc tokens into the campaign
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public noReentrant  {
-        require(_amountUsdc > 0, "funds should be greater than 0");
-        if (!isActive) revert FundingToContractEnded();
-        address funder = ecrecover(_ethSignedMessageHash, v, r, s);
-        _usdc.permit(funder, spender, _amountUsdc, _deadline, v, r, s);
-        _usdc.transferFrom(funder, spender, _amountUsdc);
-        uint256 _donation = _amountUsdc;
-        funders.push(funder);
-        isFunder[funder] = true;
+
+    function _depositAndTransferLogic(address sender, uint256 _donation) private {
+        funders.push(sender);
+        isFunder[sender] = true;
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
-        emit Donation(funder,address(_usdc),DonationType.PAYMENT,TokenType.TOKEN,_amountUsdc);
+        emit Donation(sender,address(_usdc),DonationType.PAYMENT,TokenType.TOKEN,_donation);
+    }
+    
+    /// @notice function to donate the usdc tokens into the campaign
+    function addUSDCFunds(address _sender, uint256 _amountUsdc, uint256 _deadline, bytes memory _signature, bytes32 _ethSignedMessageHash ) public noReentrant  {
+        require(_amountUsdc > 0, "funds should be greater than 0");
+        if (!isActive) revert FundingToContractEnded();
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+        _usdc.permit(_sender, address(this), _amountUsdc, _deadline, v, r, s);
+        address sender = recoverSigner(_ethSignedMessageHash, _signature);
+        TransferHelper.safeTransferFrom(USDC, sender, address(this), _amountUsdc);
+        uint256 _donation = _amountUsdc;
+        _depositAndTransferLogic(sender, _donation);
     }
 
     /// @notice function to donate eth into the campaign
@@ -192,6 +205,7 @@ contract PassThroughV2 {
         if (msg.value == 0) revert NotEnoughFunds();
         if (!isActive) revert FundingToContractEnded();
         uint256 eth_donation =  msg.value;
+        address sender = msg.sender;
         _weth.deposit{value:msg.value}();
         _weth.approve(address(swapRouter), eth_donation);
         ISwapRouter.ExactInputParams memory params =
@@ -203,14 +217,7 @@ contract PassThroughV2 {
                 amountOutMinimum: _amountOutMinimum
         });
         uint256 _donation = swapRouter.exactInput(params);
-        funders.push(msg.sender);
-        isFunder[msg.sender] = true;
-        totalFunds = totalFunds.add(_donation);
-        totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
-        _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
-        emit Donation(msg.sender,WETH,DonationType.PAYMENT,TokenType.TOKEN, _donation);
-
+        _depositAndTransferLogic(sender, _donation);
     }
 
     function giftNfts(address _nft , uint256 _tokenId, uint256 _amount) public noReentrant {
@@ -235,12 +242,12 @@ contract PassThroughV2 {
 
     }
 
-
     function  addTokenFunds(address _token , uint256 _amount , uint256 _minimumOutput,bytes memory paths) public noReentrant {
         require(_amount > 0, "funds should be greater than 0");
         if (!isActive) revert FundingToContractEnded();
         IERC20 token = IERC20(_token);
         require(token.allowance(msg.sender, address(this)) >= _amount, "Not enough Amount approved"); 
+        address sender = msg.sender;
         TransferHelper.safeTransferFrom(_token, msg.sender, address(this), _amount);
         TransferHelper.safeApprove(_token, address(swapRouter), _amount);
         ISwapRouter.ExactInputParams memory params =
@@ -252,14 +259,7 @@ contract PassThroughV2 {
                 amountOutMinimum: _minimumOutput
         });
         uint256 _donation  = swapRouter.exactInput(params);
-
-        funders.push(msg.sender);
-        isFunder[msg.sender] = true;
-        totalFunds = totalFunds.add(_donation);
-        totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
-        _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
-        emit Donation(msg.sender, _token, DonationType.PAYMENT, TokenType.TOKEN, _donation);        
+        _depositAndTransferLogic(sender, _donation);     
     }
 
 
@@ -269,6 +269,7 @@ contract PassThroughV2 {
         require(_amountUsdc > 0, "funds should be greater than 0");
         require(_usdcBridged.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved"); 
         if (!isActive) revert FundingToContractEnded();
+        address sender = msg.sender;
         TransferHelper.safeTransferFrom(USDC_E, msg.sender, address(this), _amountUsdc);
         TransferHelper.safeApprove(USDC_E, address(swapRouter), _amountUsdc);
         // IUniswapV3Pool pool = IUniswapV3Pool(0x2aB22ac86b25BD448A4D9dC041Bd2384655299c4);
@@ -282,13 +283,7 @@ contract PassThroughV2 {
         });
         // Executes the swap.
         uint256 _donation  = swapRouter.exactInput(params);
-        funders.push(msg.sender);
-        isFunder[msg.sender] = true;
-        totalFunds = totalFunds.add(_donation);
-        totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
-        _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
-        emit Donation(msg.sender, USDC_E, DonationType.PAYMENT, TokenType.TOKEN, _donation);
+        _depositAndTransferLogic(sender, _donation);
     }
 
     /// @notice external function to receive eth funds

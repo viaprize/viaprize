@@ -13,6 +13,8 @@ import ProposalExploreCard from '../Prize/ExplorePrize/proposalExploreCard';
 import Shell from '../custom/shell';
 import { usePortal } from '../hooks/usePortal';
 import usePortalProposal from '../hooks/usePortalProposal';
+import { IconCircleCheck } from '@tabler/icons-react';
+import Link from 'next/link';
 
 const getProposalStatus = (item: PortalProposals): ProposalStatus => {
   if (item.isApproved) {
@@ -84,7 +86,6 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                       const firstLoadingToast = toast.loading(
                         'Transaction Waiting To Be approved',
                         {
-                          delete: false,
                           dismissible: false,
                         },
                       );
@@ -116,7 +117,6 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                         'Waiting for transaction Confirmation...',
                         {
                           dismissible: false,
-                          delete: false,
                         },
                       );
                       const waitForTransactionOut = await waitForTransaction({
@@ -132,7 +132,25 @@ export default function PortalProposalsTabs({ params }: { params: { id: string }
                       });
                       toast.dismiss(secondToast);
                       toast.success(
-                        `portal Address ${portalAddress.slice(0, 4)}...${portalAddress.slice(-4)} `,
+                        <div className="flex items-center ">
+                          <IconCircleCheck />{' '}
+                          <Text fw="md" size="sm" className="ml-2">
+                            {' '}
+                            Portal Address
+                          </Text>
+                          <Link
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={`https://optimistic.etherscan.io/address/${portalAddress}`}
+                          >
+                            <Button
+                              variant="transparent"
+                              className="text-blue-400 underline"
+                            >
+                              See here
+                            </Button>
+                          </Link>
+                        </div>,
                       );
                       toast.loading('Redirecting Please Wait');
                       router.push('/portal/explore');

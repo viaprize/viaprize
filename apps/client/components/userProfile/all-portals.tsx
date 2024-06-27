@@ -6,19 +6,21 @@ import { useQuery } from 'react-query';
 import { formatEther } from 'viem';
 import Shell from '../custom/shell';
 import SkeletonLoad from '../custom/skeleton-load-explore';
+import useAuthPerson from '../hooks/useAuthPerson';
 import PortalCard from '../portals/portal-card';
 
 export default function AllPortals({ params }: { params: { id: string } }) {
   const { isLoading, data } = useQuery(['getPortalsOfUser', undefined], async () => {
     return (await backendApi()).portals.userDetail(params.id);
   });
+  const isProfileOwner = useAuthPerson();
 
   const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const final = await (
       await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
     ).json();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-argument
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return Object.keys(final).length === 0
       ? {
           ethereum: {
@@ -35,15 +37,17 @@ export default function AllPortals({ params }: { params: { id: string } }) {
   if (!data || data.data.length === 0)
     return (
       <Shell>
-        <Text>You dont have any Portals</Text>
-        <Button
-          onClick={() => {
-            router.push('/portal/create');
-          }}
-          className="mt-4"
-        >
-          Create Portal
-        </Button>
+        <Text>No Fundraisers</Text>
+        {isProfileOwner ? (
+          <Button
+            onClick={() => {
+              router.push('/portal/create');
+            }}
+            className="mt-4"
+          >
+            Create Fundraisers
+          </Button>
+        ) : null}
       </Shell>
     );
   return (

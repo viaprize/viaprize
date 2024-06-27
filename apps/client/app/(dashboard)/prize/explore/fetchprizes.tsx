@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import ExploreCard from '@/components/Prize/ExplorePrize/explorePrize';
 import { FetchPrizesCsv } from '@/components/history/fetch-csv';
 import HistoryCard from '@/components/history/history-card';
@@ -27,6 +28,8 @@ export default async function FetchPrizes() {
     })
   ).json();
 
+  console.log(prizes[0], 'prizes');
+
   const data = await FetchPrizesCsv();
 
   return (
@@ -44,6 +47,7 @@ export default async function FetchPrizes() {
               parseFloat(formatEther(BigInt(prize.balance))) * usdToEth.ethereum.usd
             ).toFixed(2)}
             profileName={prize.user.name}
+            contestants={prize.contestants?.length || 0}
             title={prize.title}
             key={prize.id}
             id={prize.id}

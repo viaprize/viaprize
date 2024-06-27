@@ -1,6 +1,5 @@
 'use client';
 
-import useAppUser from '@/components/hooks/useAppUser';
 import {
   Avatar,
   Badge,
@@ -13,19 +12,28 @@ import {
   Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+// import { useParams } from 'next/navigation';
 import { useQuery } from 'react-query';
 import { useUser } from '../hooks/useUser';
+import AuthWrap from './auth-wrapper';
 import SendCard from './donation-card';
 import EditProfileModal from './edit-profile-modal';
 
-export default function Profile() {
+export default function Profile({ params }: { params: { id: string } }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const { appUser } = useAppUser();
   const { getUserByUserName } = useUser();
+  // const params = useParams<{ id: string }>();
 
-  const { data: userData, refetch: fetchUser } = useQuery('getUserByUserName', () =>
-    getUserByUserName(appUser?.username || ''),
+  const { data: userData, refetch: fetchUser } = useQuery(
+    'getUserByUserName',
+    () => getUserByUserName(params?.id || ''),
+    {
+      onError: (error) => {
+        console.error(error);
+      },
+    },
   );
+  console.log(userData, 'user data');
 
   return (
     <Card
@@ -39,21 +47,23 @@ export default function Profile() {
             {userData?.name}
           </Text>
           <Group justify="space-between">
-            <Text className="lg my-0">@{appUser?.username}</Text>
-            <Button size="xs" onClick={open}>
-              Edit Profile
-            </Button>
-            <Modal opened={opened} onClose={close} title="Edit Profile">
-              <EditProfileModal
-                IBio={userData?.bio || ''}
-                IName={userData?.name || ''}
-                IProficiencies={userData?.proficiencies || []}
-                IPriorities={userData?.priorities || []}
-                IAvatar={userData?.avatar || ''}
-                fetchUser={fetchUser}
-                closeModal={close}
-              />
-            </Modal>
+            <Text className="lg my-0">@{params?.id}</Text>
+            <AuthWrap>
+              <Button size="xs" onClick={open}>
+                Edit Profile
+              </Button>
+              <Modal opened={opened} onClose={close} title="Edit Profile">
+                <EditProfileModal
+                  IBio={userData?.bio || ''}
+                  IName={userData?.name || ''}
+                  IProficiencies={userData?.proficiencies || []}
+                  IPriorities={userData?.priorities || []}
+                  IAvatar={userData?.avatar || ''}
+                  fetchUser={fetchUser}
+                  closeModal={close}
+                />
+              </Modal>
+            </AuthWrap>
           </Group>
         </div>
 
@@ -86,7 +96,7 @@ export default function Profile() {
           </div>
         </Box>
       </div>
-      {appUser?.authId === userData?.authId && (
+      {params?.id === userData?.username && (
         <>
           <Divider orientation="vertical" className="hidden md:block" />
           <SendCard />

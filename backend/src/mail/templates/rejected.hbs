@@ -1,75 +1,62 @@
 <html>
 
-<head>
-  <title>Viaprize : Proposal Rejected</title>
+  <head>
+    <title>Viaprize : Proposal Rejected</title>
 
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f4f4f4;
-    }
-    
-    .container {
-      margin: auto;
-      padding: 20px;
-      max-width: 600px;  
-      background-color: #fff;
-    }
-    
-    h1 {
-      color: #333;
-    }
-    
-    p {
-      font-size: 16px;
-      line-height: 1.6;
-    }
+    <style>
+      body { font-family: Arial, Helvetica, sans-serif; margin: 0; padding: 0;
+      background-color: #f4f4f4; } .container { margin: auto; padding: 20px;
+      max-width: 600px; background-color: #fff; } h1 { color: #333; } p {
+      font-size: 16px; line-height: 1.6; } .footer { text-align: left; }
+    </style>
 
-    .footer {
-      text-align: left; 
-    }
-  </style>
+  </head>
 
-</head>
+  <body>
 
-<body>
+    <div class='container'>
 
-  <div class='container'>
+      <h1>Proposal Rejected</h1>
 
-    <h1>Proposal Rejected</h1>  
+      <p>
+        Dear
+        {{name}},
+      </p>
 
-    <p>
-      Dear {{name}},
-    </p>
+      <p>
+        Unfortunately, your proposal has been rejected by the admin team for the
+        following reason:
+      </p>
 
-    <p>
-      Unfortunately, your proposal has been rejected by the admin team for the following reason:
-    </p>
+      <p>
+        {{comment}}
+      </p>
 
-    <p>
-      {{comment}}
-    </p>
+      <p>
+        Please feel free to revise and resubmit your proposal for
+        reconsideration.
+      </p>
 
-    <p>
-      Please feel free to revise and resubmit your proposal for reconsideration. 
-    </p>
-    
-    <p>
+      <p>
         If you have any questions or need further assistance, please feel free
         to contact us. We look forward to seeing your proposal come to life.
         Plus join our community on Telegram
         {{telegramLink}}
-    </p>
-    
-    <div class='footer'>
-      <p>Regards,</p>
-      <p>The Admin Team</p>
+      </p>
+
+      <div class='footer'>
+        <p>Regards,</p>
+        <p>The Admin Team</p>
+        <div>
+          Social Media:
+          <a href='{{twitterLink}}'>Twitter</a>
+          <a href='{{facebookLink}}'>Facebook</a>
+          <a href='{{linkedinLink}}'>Linkedin</a>
+        </div>
+      </div>
+
     </div>
 
-  </div>
-
-</body>
+  </body>
 
 </html>

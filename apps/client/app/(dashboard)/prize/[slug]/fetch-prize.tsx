@@ -36,13 +36,12 @@ export async function generateMetadata({
 }
 
 export default async function FetchPrize({ params }: { params: { slug: string } }) {
-
- if (params.slug.includes('-')) {
-   const slug = (await new Api().prizes.slugDetail(params.slug)).data;
-   if (slug) {
-     return redirect(`/prize/${slug.slug}`);
-   }
- }
+  if (params.slug.includes('-')) {
+    const slug = (await new Api().prizes.slugDetail(params.slug)).data;
+    if (slug) {
+      return redirect(`/prize/${slug.slug}`);
+    }
+  }
 
   const prize = (
     await new Api().prizes.prizesDetail(params.slug, {

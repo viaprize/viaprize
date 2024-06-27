@@ -4,8 +4,8 @@ import { Paginated, paginate } from 'nestjs-paginate';
 import { User } from 'src/users/entities/user.entity';
 import { generateId } from 'src/utils/generate-id';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
-import { } from 'typedoc.json';
-import { FindManyOptions, Repository } from 'typeorm';
+import {} from 'typedoc.json';
+import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { Prize } from '../entities/prize.entity';
 import { Submission } from '../entities/submission.entity';
 import { PrizePaginateQuery } from '../entities/types';
@@ -34,6 +34,7 @@ export class PrizesService {
     @InjectRepository(Prize)
     private prizeRepository: Repository<Prize>,
   ) {}
+
   async findAll(options?: FindManyOptions<Prize> | undefined) {
     return this.prizeRepository.find(options);
   }
@@ -75,6 +76,33 @@ export class PrizesService {
 
   getSmartContractDetails() {}
 
+  async getParcipants(slug: string) {
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        slug,
+      },
+      relations: {
+        contestants: true,
+      },
+    });
+
+    return prize.contestants;
+  }
+
+  async addPariticpant(slug: string, user: User) {
+    const prize = await this.prizeRepository.findOneOrFail({
+      where: {
+        slug,
+      },
+      relations: {
+        contestants: true,
+      },
+    });
+
+    prize.contestants.push(user);
+    return await this.prizeRepository.save(prize);
+  }
+
   async findOne(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
       where: {
@@ -113,7 +141,10 @@ export class PrizesService {
     return this.prizeRepository.find({
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
-      relations: ['user'],
+      relations: {
+        user: true,
+        contestants: true,
+      },
       where: paginationOptions.where,
     });
   }
@@ -132,6 +163,20 @@ export class PrizesService {
     });
     prize.submissions.push(submission);
     return await this.prizeRepository.save(prize);
+  }
+
+  async findPrizeByContractAddress(contract_address: string) {
+    return await this.prizeRepository.findOneOrFail({
+      where: {
+        contract_address,
+      },
+    });
+  }
+
+  async checkIfPrizeExist(
+    option: FindOptionsWhere<Prize> | FindOptionsWhere<Prize>[],
+  ) {
+    return await this.prizeRepository.exist({ where: option });
   }
 
   remove(id: number) {
@@ -160,6 +205,7 @@ export class PrizesService {
       },
     );
   }
+
   async getSlugById(id: string) {
     const prize = await this.prizeRepository.findOneOrFail({
       where: {
