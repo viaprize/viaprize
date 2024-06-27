@@ -749,38 +749,20 @@ export default function AmountDonateCard({
             variant="outline"
             onClick={async () => {
               try {
-                const config = await prepareWritePortal({
-                  functionName: 'endKickStarterCampaign',
-                  address: contractAddress as `0x${string}`,
-                });
-
-                const { hash } = await writePortal(config);
+                const hash = await (
+                  await backendApi()
+                ).wallet.fundRaisersEndCampaignCreate(contractAddress);
                 toast.success(
-                  <div className="flex items-center ">
-                    <IconCircleCheck />{' '}
-                    <Text fw="md" size="sm" className="ml-2">
-                      {' '}
-                      Campaign ended successfully
-                    </Text>
-                    <Link
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={`https://optimistic.etherscan.io/tx/${hash}`}
-                    >
-                      <Button variant="transparent" className="text-blue-400 underline">
-                        See here
-                      </Button>
-                    </Link>
-                  </div>,
-                  {
-                    duration: 6000,
-                  },
+                  <TransactionToast
+                    hash={hash.data.hash}
+                    title="Campaign ended successfully"
+                  />,
                 );
+                window.location.reload();
               } catch (e: unknown) {
                 toast.error((e as any)?.message);
               } finally {
                 setSendLoading(false);
-                window.location.reload();
               }
             }}
           >

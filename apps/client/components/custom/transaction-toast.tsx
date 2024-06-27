@@ -12,7 +12,7 @@ export function TransactionToast({ title, hash }: { title: string; hash: string 
       <Link
         target="_blank"
         rel="noopener noreferrer"
-        href={`https://optimistic.etherscan.io/tx/${hash}`}
+        href={`https://basescan.org/tx/${hash}`}
       >
         <Button variant="transparent" className="text-blue-400 underline">
           See here

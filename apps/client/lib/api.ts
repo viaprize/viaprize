@@ -1715,6 +1715,22 @@ export namespace Wallet {
     export type RequestHeaders = {};
     export type ResponseBody = WalletResponse;
   }
+
+  /**
+   * No description
+   * @name FundRaisersEndCampaignCreate
+   * @request POST:/wallet/fund_raisers/{contract_address}/end_campaign
+   * @secure
+   */
+  export namespace FundRaisersEndCampaignCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -3196,6 +3212,22 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FundRaisersEndCampaignCreate
+     * @request POST:/wallet/fund_raisers/{contract_address}/end_campaign
+     * @secure
+     */
+    fundRaisersEndCampaignCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/fund_raisers/${contractAddress}/end_campaign`,
+        method: 'POST',
+        secure: true,
         format: 'json',
         ...params,
       }),
