@@ -400,8 +400,6 @@ export default function AmountDonateCard({
     address: wallet?.address as `0x${string}`,
   });
 
-  console.log({ balance }, 'balance');
-
   const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
     const final = await (
       await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
@@ -437,6 +435,8 @@ export default function AmountDonateCard({
 
   const [sendLoading, setSendLoading] = useState(false);
 
+  console.log(amountRaised, 'this is the amount raised');
+
   return (
     <Card
       p="md"
@@ -469,13 +469,7 @@ export default function AmountDonateCard({
             </>
           )}
         </Text>
-        <Text c="blue" className="lg:text-3xl md:text-2xl text-sm">
-          {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? null : (
-            <>
-              {parseFloat(amountRaised).toPrecision(4)} {chain.nativeCurrency.symbol}
-            </>
-          )}
-        </Text>
+        <Text c="blue" className="lg:text-3xl md:text-2xl text-sm"></Text>
         <Text fw="bold" size="xl">
           {isActive ? 'Accepting Donation' : 'Not Accepting Donations'}
         </Text>
@@ -656,38 +650,20 @@ export default function AmountDonateCard({
             variant="outline"
             onClick={async () => {
               try {
-                const config = await prepareWritePortal({
-                  functionName: 'endCampaign',
-                  address: contractAddress as `0x${string}`,
-                });
-
-                const { hash } = await writePortal(config);
+                const hash = await (
+                  await backendApi()
+                ).wallet.fundRaisersEndCampaignCreate(contractAddress);
                 toast.success(
-                  <div className="flex items-center ">
-                    <IconCircleCheck />{' '}
-                    <Text fw="md" size="sm" className="ml-2">
-                      {' '}
-                      Campaign ended successfully
-                    </Text>
-                    <Link
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={`https://basescan.org/tx/${hash}`}
-                    >
-                      <Button variant="transparent" className="text-blue-400 underline">
-                        See here
-                      </Button>
-                    </Link>
-                  </div>,
-                  {
-                    duration: 6000,
-                  },
+                  <TransactionToast
+                    hash={hash.data.hash}
+                    title="Campaign ended successfully"
+                  />,
                 );
+                window.location.reload();
               } catch (e: unknown) {
                 toast.error((e as any)?.message);
               } finally {
                 setSendLoading(false);
-                window.location.reload();
               }
             }}
           >

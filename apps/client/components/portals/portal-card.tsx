@@ -143,11 +143,7 @@ export default function PortalCard({
             USD
           </>
         ) : (
-          <>
-            {(parseFloat(amountRaised) * ethToUsd).toFixed(2)} USD (
-            {parseFloat(amountRaised).toFixed(3)}
-            {chain.nativeCurrency.symbol} )
-          </>
+          <>{parseFloat(amountRaised)} USD</>
         )}
       </Text>
       <div className="flex flex-wrap gap-2">

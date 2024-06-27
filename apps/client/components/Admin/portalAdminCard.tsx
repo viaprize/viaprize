@@ -116,7 +116,7 @@ function PortalAdminCard({
         hash: transaction.hash,
         confirmations: 1,
       });
-      const portalAddress = `0x${waitForTransactionOut.logs[0].topics[1]?.slice(-40)}`;
+      const portalAddress = `0x${waitForTransactionOut.logs[0].topics[2]?.slice(-40)}`;
       const portal = await createPortal({
         address: portalAddress,
         proposal_id: id,
