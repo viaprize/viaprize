@@ -14,8 +14,8 @@ import { PrizesService } from 'src/prizes/services/prizes.service';
 import { UsersService } from 'src/users/users.service';
 import { BaseError, ContractFunctionRevertedError } from 'viem';
 import { AddUsdcFundsDto } from './dto/add-usdc-funds.dto';
-import { IncreaseSubmissionDto } from './dto/increase-submission.dto';
-import { IncreaseVotingDto } from './dto/increase-voting.dto';
+import { ChangeSubmissionDto } from './dto/change-submission.dto';
+import { ChangeVotingDto } from './dto/change-voting.dto';
 import { VoteDTO } from './dto/vote.dto';
 import { WalletService } from './wallet.service';
 
@@ -125,6 +125,8 @@ export class WalletController {
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    console.log({ submissionPeriod }, 'submission periods');
     try {
       const hash =
         await this.walletService.simulateAndWriteSmartContractPrizeV2(
@@ -281,10 +283,10 @@ export class WalletController {
    * @security bearer
    **/
   @UseGuards(AuthGuard)
-  @Post('/prize/:contract_address/increase_submission')
-  async increaseSubmission(
+  @Post('/prize/:contract_address/change_submission')
+  async changeSubmission(
     @TypedParam('contract_address') contractAddress: string,
-    @Body() body: IncreaseSubmissionDto,
+    @Body() body: ChangeSubmissionDto,
     @Request() req,
   ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
@@ -311,7 +313,7 @@ export class WalletController {
     try {
       const hash =
         await this.walletService.simulateAndWriteSmartContractPrizeV2(
-          'increaseSubmissionPeriod',
+          'changeSubmissionPeriod',
           [BigInt(body.minutes)],
           contractAddress,
           'gasless',
@@ -346,10 +348,10 @@ export class WalletController {
    * @security bearer
    **/
   @UseGuards(AuthGuard)
-  @Post('/prize/:contract_address/increase_voting')
-  async increaseVoting(
+  @Post('/prize/:contract_address/change_voting')
+  async changeVoting(
     @TypedParam('contract_address') contractAddress: string,
-    @Body() body: IncreaseVotingDto,
+    @Body() body: ChangeVotingDto,
     @Request() req,
   ): Promise<WalletResponse | undefined> {
     const user = this.userService.findOneByAuthId(req.user.userId);
@@ -370,7 +372,7 @@ export class WalletController {
     try {
       const hash =
         await this.walletService.simulateAndWriteSmartContractPrizeV2(
-          'increaseVotingPeriod',
+          'changeVotingPeriod',
           [BigInt(body.minutes)],
           contractAddress,
           'gasless',
@@ -379,6 +381,121 @@ export class WalletController {
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
+        const revertError = err.walk(
+          (err) => err instanceof ContractFunctionRevertedError,
+        );
+        if (revertError instanceof ContractFunctionRevertedError) {
+          const errorName = revertError.data?.errorName ?? '';
+          throw new HttpException(
+            'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          'Error: ' + err.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+  }
+  /**
+   * @security bearer
+   **/
+  @UseGuards(AuthGuard)
+  @Post('/prize/:contract_address/end_dispute')
+  async endDispute(
+    @TypedParam('contract_address') contractAddress: string,
+    @Request() req,
+  ): Promise<WalletResponse | undefined> {
+    const user = this.userService.findOneByAuthId(req.user.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    const [[disputePeriod]] =
+      (await this.blockchainService.getPrizesV2PublicVariables(
+        [contractAddress],
+        ['disputePeriod'],
+      )) as [[bigint]];
+    if (disputePeriod == BigInt(0)) {
+      console.log({ disputePeriod });
+      throw new HttpException(
+        'Dispute period has not started',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'endDispute',
+          [],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return { hash };
+    } catch (err) {
+      if (err instanceof BaseError) {
+        console.log({ err });
+        const revertError = err.walk(
+          (err) => err instanceof ContractFunctionRevertedError,
+        );
+        if (revertError instanceof ContractFunctionRevertedError) {
+          const errorName = revertError.data?.errorName ?? '';
+          throw new HttpException(
+            'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          'Error: ' + err.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+  }
+
+  /**
+   * @security bearer
+   **/
+  @UseGuards(AuthGuard)
+  @Post('/prize/:contract_address/end_dispute_early')
+  async endEarlyDisputePeriod(
+    @TypedParam('contract_address') contractAddress: string,
+    @Request() req,
+  ): Promise<WalletResponse | undefined> {
+    const user = this.userService.findOneByAuthId(req.user.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    const [[disputePeriod]] =
+      (await this.blockchainService.getPrizesV2PublicVariables(
+        [contractAddress],
+        ['disputePeriod'],
+      )) as [[bigint]];
+    if (disputePeriod == BigInt(0)) {
+      console.log({ disputePeriod });
+      throw new HttpException(
+        'Dispute period has not started',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+          'endDisputePeriodEarly',
+          [],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return { hash };
+    } catch (err) {
+      if (err instanceof BaseError) {
+        console.log({ err });
         const revertError = err.walk(
           (err) => err instanceof ContractFunctionRevertedError,
         );
@@ -425,6 +542,7 @@ export class WalletController {
       );
     }
     try {
+      console.log({ body }, 'body');
       const hash =
         await this.walletService.simulateAndWriteSmartContractPrizeV2(
           'vote',
@@ -438,6 +556,7 @@ export class WalletController {
           contractAddress,
           'gasless',
           '0',
+          false,
         );
       return { hash };
     } catch (err) {

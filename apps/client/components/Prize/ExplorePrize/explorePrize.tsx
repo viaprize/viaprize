@@ -3,7 +3,6 @@
 'use client';
 
 import { calculateDeadline, htmlToPlainText } from '@/lib/utils';
-import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
   Badge,
@@ -17,6 +16,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
+import { addMinutes } from 'date-fns';
 import { PiTimerFill } from 'react-icons/pi';
 
 interface ExploreCardProps {
@@ -25,15 +25,16 @@ interface ExploreCardProps {
   title: string;
   profileName: string;
   description: string;
-  ethAmount: string;
   usdAmount: string;
   createdAt: string;
   id: string;
   skills: string[];
-  submissionDays: number;
+  submissionMinutes: number;
   startingTimeBlockchain: number;
   slug: string;
   contestants: number;
+  startSubmissionDate: Date;
+  startVotingDate: Date;
 }
 
 function ExploreCard({
@@ -41,24 +42,23 @@ function ExploreCard({
   profileName,
   title,
   description,
-  ethAmount,
   usdAmount,
   createdAt,
   id,
   skills,
   distributed,
   startingTimeBlockchain,
-  submissionDays,
   slug,
+  submissionMinutes,
+  startSubmissionDate,
   contestants,
 }: ExploreCardProps) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const deadlineString = calculateDeadline(
     new Date(),
-    new Date(startingTimeBlockchain * 1000),
+    addMinutes(startSubmissionDate, submissionMinutes),
   );
-  console.log({ slug }, 'slugs');
-  console.log(deadlineString, 'this is the deadline string');
+
   return (
     <Card
       padding="lg"
@@ -92,12 +92,13 @@ function ExploreCard({
               </Text>
             </div>
 
-            {/* {distributed ? <Text>Prize Has Ended</Text> : null} */}
-
             {deadlineString === 'Time is up!' && distributed === true ? (
               <Badge color="green">Won</Badge>
             ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-            deadlineString === 'Time is up!' && distributed === false ? (
+            deadlineString === 'Time is up!' &&
+              distributed === false &&
+              parseInt(usdAmount) > 0 &&
+              startingTimeBlockchain ? (
               <Badge color="yellow">Refunded</Badge>
             ) : null}
           </div>
@@ -120,13 +121,10 @@ function ExploreCard({
           <Text fw="bold" size="xl">
             {usdAmount} USD
           </Text>
-          <Text size="sm" c="gray">
-            {ethAmount} {chain.nativeCurrency.symbol}
-          </Text>
           <Text fw="bold" className="flex">
             Submission Deadline :{' '}
-            {startingTimeBlockchain !== 0 ? (
-              new Date(startingTimeBlockchain * 1000).toLocaleDateString()
+            {new Date() < addMinutes(startSubmissionDate, submissionMinutes) ? (
+              addMinutes(startSubmissionDate, submissionMinutes).toLocaleDateString()
             ) : (
               <Text c="red" fw="bold" className="pl-2">
                 Ended

@@ -7,10 +7,11 @@ import {
   MulticallReturnType,
   PublicClient,
   createPublicClient,
+  encodeFunctionData,
   http,
   parseAbi,
 } from 'viem';
-import { optimism } from 'viem/chains';
+import { base } from 'viem/chains';
 import {
   Contribution,
   Contributions,
@@ -40,7 +41,7 @@ export class BlockchainService {
     });
     // const privateKey = this.configService.getOrThrow<AllConfigType>('PRIVATE_KEY', { infer: true });
     this.provider = createPublicClient({
-      chain: optimism,
+      chain: base,
       transport: http(key),
     });
     // this.wallet = new ethers.Wallet(privateKey, this.provider);
@@ -383,5 +384,20 @@ export class BlockchainService {
     });
     console.log({ reciept });
     return reciept.logs[1].topics[2];
+  }
+
+  async getPrizeV2FunctionEncoded(
+    functionName: ExtractAbiFunctionNames<
+      typeof PRIZE_V2_ABI,
+      'pure' | 'view' | 'nonpayable' | 'payable'
+    >,
+    args: any[],
+  ) {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: functionName,
+      args: args as any,
+    });
+    return data;
   }
 }

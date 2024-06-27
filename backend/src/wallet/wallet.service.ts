@@ -11,8 +11,9 @@ import {
   encodeFunctionData,
   http,
 } from 'viem';
-import { optimism } from 'viem/chains';
 
+import { JobService } from 'src/jobs/jobs.service';
+import { base } from 'viem/chains';
 import { PRIZE_V2_ABI } from '../utils/constants';
 
 export type WalletType = 'gasless' | 'reserve';
@@ -21,7 +22,10 @@ export class WalletService {
   apiKey: string;
   walletApiUrl: string;
   provider: PublicClient;
-  constructor(private readonly configService: ConfigService<AllConfigType>) {
+  constructor(
+    private readonly configService: ConfigService<AllConfigType>,
+    private readonly jobsService: JobService,
+  ) {
     this.apiKey = this.configService.getOrThrow<AllConfigType>(
       'GASLESS_API_KEY',
       { infer: true },
@@ -33,7 +37,7 @@ export class WalletService {
       },
     );
     this.provider = createPublicClient({
-      chain: optimism,
+      chain: base,
       transport: http(
         this.configService.getOrThrow<AllConfigType>('RPC_URL', {
           infer: true,
@@ -95,7 +99,7 @@ export class WalletService {
     };
     console.log({ transaction });
     const transactionHash = await this.sendTransaction(transaction, type);
-    console.log({ transactionHash });
+    console.log(transactionHash);
     return transactionHash;
   }
 
@@ -115,14 +119,17 @@ export class WalletService {
     contractAddress: string,
     type: WalletType,
     value: string,
+    simulate = true,
   ) {
-    await this.simulateSmartContract(
-      PRIZE_V2_ABI,
-      functionName,
-      args as readonly unknown[],
-      contractAddress,
-      type,
-    );
+    if (simulate) {
+      await this.simulateSmartContract(
+        PRIZE_V2_ABI,
+        functionName,
+        args as readonly unknown[],
+        contractAddress,
+        type,
+      );
+    }
     const transactionHash = await this.writeSmartContract(
       PRIZE_V2_ABI,
       functionName,
@@ -142,7 +149,28 @@ export class WalletService {
       .then((res) => res.json())
       .then((res) => res.address as string);
   }
-
+  async scheduleTransaction(
+    transaction: {
+      to: string;
+      data: string;
+      value: string;
+    },
+    type: WalletType,
+    scheduleInSeconds: number,
+    title,
+  ) {
+    console.log({ scheduleInSeconds });
+    return await this.jobsService.registerJobV2(
+      `${this.walletApiUrl}/${type}`,
+      transaction,
+      {
+        'Content-Type': 'application/json',
+        'x-api-key': this.apiKey,
+        'x-chain-id': '8453',
+      },
+      scheduleInSeconds,
+    );
+  }
   async sendTransaction(
     transaction: {
       to: string;
@@ -157,6 +185,7 @@ export class WalletService {
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': this.apiKey,
+          'x-chain-id': '8453',
         },
         method: 'POST',
       })

@@ -1855,45 +1855,6 @@
         "x-nestia-method": "GET"
       }
     },
-    "/portals/alkdslkf": {
-      "get": {
-        "tags": [],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Http200Response"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "description": "The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals",
-        "x-nestia-namespace": "portals.alkdslkf.testing",
-        "x-nestia-jsDocTags": [
-          {
-            "name": "date",
-            "text": [
-              {
-                "text": "9/25/2023 - 5:35:35 AM",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "async"
-          },
-          {
-            "name": "returns"
-          }
-        ],
-        "x-nestia-method": "GET"
-      }
-    },
     "/price/usd_to_eth": {
       "get": {
         "tags": [],
@@ -4008,7 +3969,7 @@
         "x-nestia-method": "POST"
       }
     },
-    "/wallet/prize/{contract_address}/increase_submission": {
+    "/wallet/prize/{contract_address}/change_submission": {
       "post": {
         "tags": [],
         "parameters": [
@@ -4026,7 +3987,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/IncreaseSubmissionDto"
+                "$ref": "#/components/schemas/ChangeSubmissionDto"
               }
             }
           },
@@ -4051,7 +4012,7 @@
             "bearer": []
           }
         ],
-        "x-nestia-namespace": "wallet.prize.increase_submission.increaseSubmission",
+        "x-nestia-namespace": "wallet.prize.change_submission.changeSubmission",
         "x-nestia-jsDocTags": [
           {
             "name": "security",
@@ -4066,7 +4027,7 @@
         "x-nestia-method": "POST"
       }
     },
-    "/wallet/prize/{contract_address}/increase_voting": {
+    "/wallet/prize/{contract_address}/change_voting": {
       "post": {
         "tags": [],
         "parameters": [
@@ -4084,7 +4045,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/IncreaseVotingDto"
+                "$ref": "#/components/schemas/ChangeVotingDto"
               }
             }
           },
@@ -4109,7 +4070,101 @@
             "bearer": []
           }
         ],
-        "x-nestia-namespace": "wallet.prize.increase_voting.increaseVoting",
+        "x-nestia-namespace": "wallet.prize.change_voting.changeVoting",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/end_dispute": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.end_dispute.endDispute",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/end_dispute_early": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.end_dispute_early.endEarlyDisputePeriod",
         "x-nestia-jsDocTags": [
           {
             "name": "security",
@@ -5931,6 +5986,11 @@
             "x-typia-optional": false,
             "type": "number"
           },
+          "dispute_period_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
           "balance": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -6088,6 +6148,7 @@
           "distributed",
           "submission_time_blockchain",
           "voting_time_blockchain",
+          "dispute_period_time_blockchain",
           "balance",
           "id",
           "description",
@@ -6971,7 +7032,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "IncreaseSubmissionDto": {
+      "ChangeSubmissionDto": {
         "type": "object",
         "properties": {
           "minutes": {
@@ -6986,7 +7047,7 @@
         ],
         "x-typia-jsDocTags": []
       },
-      "IncreaseVotingDto": {
+      "ChangeVotingDto": {
         "type": "object",
         "properties": {
           "minutes": {

@@ -500,6 +500,19 @@ export const PRIZE_V2_ABI = [
   {
     inputs: [
       {
+        internalType: 'uint256',
+        name: '_submissionTime',
+        type: 'uint256',
+      },
+    ],
+    name: 'changeSubmissionPeriod',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'bytes32',
         name: '_previous_submissionHash',
         type: 'bytes32',
@@ -531,6 +544,19 @@ export const PRIZE_V2_ABI = [
       },
     ],
     name: 'changeVote',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_votingTime',
+        type: 'uint256',
+      },
+    ],
+    name: 'changeVotingPeriod',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -592,6 +618,13 @@ export const PRIZE_V2_ABI = [
   {
     inputs: [],
     name: 'endDispute',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'endDisputePeriodEarly',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -845,32 +878,6 @@ export const PRIZE_V2_ABI = [
       },
     ],
     stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_submissionTime',
-        type: 'uint256',
-      },
-    ],
-    name: 'increaseSubmissionPeriod',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_votingTime',
-        type: 'uint256',
-      },
-    ],
-    name: 'increaseVotingPeriod',
-    outputs: [],
-    stateMutability: 'nonpayable',
     type: 'function',
   },
   {

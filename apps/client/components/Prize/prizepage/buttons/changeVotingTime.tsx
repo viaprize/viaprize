@@ -1,17 +1,20 @@
+import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
-import { Button, Modal, NumberInput, Text } from '@mantine/core';
+import { Button, Modal, NumberInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCircleCheck } from '@tabler/icons-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import revalidate from 'utils/revalidate';
 
-export default function ChangeVoting({
+export default function ChangeVotingTime({
   contractAddress,
   votingTime,
+  slug,
 }: {
   contractAddress: string;
   votingTime: number;
+  slug: string;
 }) {
   console.log({ votingTime }, 'voting time ');
 
@@ -19,6 +22,7 @@ export default function ChangeVoting({
 
   const [newVotingTime, setnewVotingTime] = useState(0);
 
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   return (
@@ -38,39 +42,25 @@ export default function ChangeVoting({
         <Button
           onClick={async () => {
             try {
-              toast.loading('Loading.....');
               setLoading(true);
 
               const { hash } = await (
                 await backendApi()
               ).wallet
-                .prizeIncreaseVotingCreate(contractAddress, {
+                .prizeChangeVotingCreate(contractAddress, {
                   minutes: newVotingTime,
                 })
                 .then((res) => res.data);
               toast.success(
-                <div className="flex items-center ">
-                  <IconCircleCheck />{' '}
-                  <Text fw="md" size="sm" className="ml-2">
-                    {' '}
-                    Voting Period Changed
-                  </Text>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://optimistic.etherscan.io/tx/${hash}`}
-                  >
-                    <Button variant="transparent" className="text-blue-400 underline">
-                      See here
-                    </Button>
-                  </Link>
-                </div>,
+                <TransactionToast title=" Voting Period Changed" hash={hash} />,
               );
               console.log({ hash }, 'hash');
-              window.location.reload();
             } catch (error) {
               toast.error(`Failed With Error ${error}`);
             } finally {
+              await revalidate({ tag: slug });
+              router.refresh();
+              window.location.reload();
               setLoading(false);
             }
           }}
@@ -89,7 +79,7 @@ export default function ChangeVoting({
         }}
       >
         {' '}
-        Increase Voting Time
+        Change Voting Time
       </Button>
     </>
   );

@@ -179,7 +179,6 @@ contract PrizeV2 {
     }
 
      function VOTE_HASH(uint256 _nonce,bytes32 _submission, uint256 _amount) public view returns (bytes32) {
-        address _contractAddress = address(this);
         bytes32 _messageHash = keccak256(
             abi.encodePacked("VOTE FOR " ,_submission , " WITH AMOUNT ", _amount, " AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
         );
@@ -189,7 +188,6 @@ contract PrizeV2 {
     }
 
     function CHANGE_VOTE_HASH(uint256 _nonce,bytes32 _old_submission, uint256 _amount,bytes32 _new_submission) public view returns (bytes32){
-        address _contractAddress = address(this);
         bytes32 _messageHash = keccak256(
             abi.encodePacked("CHANGE VOTE FROM ",_old_submission, " TO ", _new_submission, " WITH AMOUNT ", _amount, " AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
         );
@@ -199,7 +197,6 @@ contract PrizeV2 {
     }
 
     function DISPUTE_HASH(uint256 _nonce,bytes32 _submission) public view returns (bytes32) {
-        address _contractAddress = address(this);
         bytes32 _messageHash = keccak256(
             abi.encodePacked("DISPUTE FOR ",_submission," AND NONCE ", _nonce," WITH PRIZE CONTRACT ", address(this))
         );
@@ -254,7 +251,7 @@ contract PrizeV2 {
         if(votingTime == 0) revert VotingPeriodNotActive();
         votingTime = 0;
         votingPeriod = false;
-        disputePeriod = block.timestamp + 2 minutes;
+        disputePeriod = block.timestamp + 2 days;
     }
 
     function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r) public onlyActive {
@@ -274,13 +271,13 @@ contract PrizeV2 {
         isActive = false;
     }
 
-    function increaseSubmissionPeriod(uint256 _submissionTime) public onlyPlatformAdmin {
+    function changeSubmissionPeriod(uint256 _submissionTime) public onlyPlatformAdmin {
         if(votingPeriod) revert VotingPeriodActive();
         if(!submissionPeriod) revert SubmissionPeriodNotActive();
         submissionTime = block.timestamp + _submissionTime * 1 minutes;
     }
 
-    function increaseVotingPeriod(uint256 _votingTime) public onlyPlatformAdmin {
+    function changeVotingPeriod(uint256 _votingTime) public onlyPlatformAdmin {
         if(!votingPeriod) revert VotingPeriodNotActive();
         if(distributed == true) revert RewardsAlreadyDistributed();
         votingTime = block.timestamp + _votingTime * 1 minutes;
@@ -600,6 +597,11 @@ contract PrizeV2 {
 
    function getAllPlatformAdmins() public view returns(address[] memory) {
         return platformAdmins;
+   }
+
+   function endDisputePeriodEarly() public onlyPlatformAdmin {
+        disputePeriod = block.timestamp - 1 seconds;
+        endDispute();
    }
 
     /// @notice function to change slippage tolerance of other token donations

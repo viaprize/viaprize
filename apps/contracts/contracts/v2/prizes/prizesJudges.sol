@@ -1,168 +1,169 @@
-//SPDX-License-Identifier:MIT
-pragma solidity ^0.8.1;
+// //SPDX-License-Identifier:MIT
+// pragma solidity ^0.8.1;
 
-import "./SubmissionLibrary.sol";
-import "./SubmissionAVLTree.sol";
-import "../../helperContracts/safemath.sol";
-import "../../helperContracts/ierc20_permit.sol";                                         
-import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "../../helperContracts/ierc20_weth.sol";
+// import "./SubmissionLibrary.sol";
+// import "./SubmissionAVLTree.sol";
+// import "../../helperContracts/safemath.sol";
+// import "../../helperContracts/ierc20_permit.sol";                                         
+// import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+// import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+// import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+// import "../../helperContracts/ierc20_weth.sol";
 
-contract PrizeV2Judges {
-    uint256 public constant PRECISION = 10000;
+// contract PrizeV2Judges {
+//     uint256 public constant PRECISION = 10000;
 
-    bytes32 public constant REFUND_SUBMISSION_HASH = keccak256(abi.encodePacked("REFUND"));
+//     bytes32 public constant REFUND_SUBMISSION_HASH = keccak256(abi.encodePacked("REFUND"));
 
-    /// @notice this will be the total amount of funds raised
-    uint256 public totalFunds; 
-    /// @notice this will be the total amount of rewards available
-    uint256 public totalRewards; 
-    /// @notice bool to check if rewards have been distributed with end_voting_period
-    bool public distributed;
-    /// @notice this will be the time that the voting period ends
-    uint256 votingTime; 
-    /// @notice this will be the time that the submission period ends
-    uint256 submissionTime;
-    /// @notice  this will be a mapping of the addresses of the proposers to a boolean value of true or false
-    mapping (address => bool) public isProposer;
-    /// @notice  person who proposed the prize;
-    address public proposer;
-    /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
-    mapping (address => uint256) public funderAmount;
-    /// @notice array of funders
-    address[] public allFunders;
-    mapping(address => bool) public isFunder;
-    /// @notice Add a new mapping to store each funder's votes on each submission
-    mapping(address => mapping(bytes32 => uint256)) public funderVotes;
-    address[] public refundRequestedJudges;
-    mapping(address => bool) public isRefundRequestedAddress;
-    mapping(address => bool) public isContestant;
+//     /// @notice this will be the total amount of funds raised
+//     uint256 public totalFunds; 
+//     /// @notice this will be the total amount of rewards available
+//     uint256 public totalRewards; 
+//     /// @notice bool to check if rewards have been distributed with end_voting_period
+//     bool public distributed;
+//     /// @notice this will be the time that the voting period ends
+//     uint256 votingTime; 
+//     /// @notice this will be the time that the submission period ends
+//     uint256 submissionTime;
+//     /// @notice  this will be a mapping of the addresses of the proposers to a boolean value of true or false
+//     mapping (address => bool) public isProposer;
+//     /// @notice  person who proposed the prize;
+//     address public proposer;
+//     /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
+//     mapping (address => uint256) public funderAmount;
+//     /// @notice array of funders
+//     address[] public allFunders;
+//     mapping(address => bool) public isFunder;
+//     /// @notice Add a new mapping to store each funder's votes on each submission
+//     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
+//     address[] public refundRequestedJudges;
+//     mapping(address => bool) public isRefundRequestedAddress;
+//     mapping(address => bool) public isContestant;
 
-    bool public isActive = false;
-    uint8 public constant  VERSION = 2;
-    bool private _locked;
+//     bool public isActive = false;
+//     uint8 public constant  VERSION = 2;
+//     bool private _locked;
 
-    using SafeMath for uint256;
+//     using SafeMath for uint256;
 
-    uint public proposerFee;
-    uint public platformFee;
+//     uint public proposerFee;
+//     uint public platformFee;
 
-    bool public votingPeriod = false;
-    bool public submissionPeriod = false;
+//     bool public votingPeriod = false;
+//     bool public submissionPeriod = false;
         
-    address[] public platformAdmins;
-    mapping(address => bool) public isPlatformAdmin;
+//     address[] public platformAdmins;
+//     mapping(address => bool) public isPlatformAdmin;
 
-    address[] public judges;
-    mapping(address => bool) public isJudge;
-    mapping (address => uint256) public judgeAmount;
-    mapping(address => mapping(bytes32 => uint256)) public judgeVotes;
-    uint public totalJudgesVotes;
+//     address[] public judges;
+//     mapping(address => bool) public isJudge;
+//     mapping (address => uint256) public judgeAmount;
+//     mapping(address => mapping(bytes32 => uint256)) public judgeVotes;
+//     uint public totalJudgesVotes;
 
-    IERC20Permit private immutable _usdc;
-    IERC20Permit private immutable _usdcBridged;
+//     IERC20Permit private immutable _usdc;
+//     IERC20Permit private immutable _usdcBridged;
     
-    /// @notice minimum slippage fee percentage for minimum output in swap
-    uint public minimumSlipageFeePercentage = 2; 
+//     /// @notice minimum slippage fee percentage for minimum output in swap
+//     uint public minimumSlipageFeePercentage = 2; 
 
-    /// @notice initializing the interface for weth
-    IWETH private _weth;
+//     /// @notice initializing the interface for weth
+//     IWETH private _weth;
 
-    /// @notice initializing swaprouter interface
-    ISwapRouter public immutable swapRouter;
+//     /// @notice initializing swaprouter interface
+//     ISwapRouter public immutable swapRouter;
 
-    /// @notice initializing brdiged usdc and usdc pool 
-    IUniswapV3Pool public immutable bridgedUsdcPool;
+//     /// @notice initializing brdiged usdc and usdc pool 
+//     IUniswapV3Pool public immutable bridgedUsdcPool;
 
-    /// @notice initalizing eth and usdc pool
-    IUniswapV3Pool public immutable ethUsdcPool;
+//     /// @notice initalizing eth and usdc pool
+//     IUniswapV3Pool public immutable ethUsdcPool;
 
-    /// @notice initializing chainlink or oracle price aggregator
-    AggregatorV3Interface public immutable ethPriceAggregator;
+//     /// @notice initializing chainlink or oracle price aggregator
+//     AggregatorV3Interface public immutable ethPriceAggregator;
 
-    /// @notice this will be the address of the platform
-    address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
+//     /// @notice this will be the address of the platform
+//     address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
-    /// @notice / @notice _submissionTree contract
-    SubmissionAVLTree private _submissionTree;
+//     /// @notice / @notice _submissionTree contract
+//     SubmissionAVLTree private _submissionTree;
 
-    uint256 public totalVotes;
-    uint256 public disputePeriod;
-    uint256 private nonceTracker;
+//     uint256 public totalVotes;
+//     uint256 public disputePeriod;
+//     uint256 private nonceTracker;
 
-    // bytes32 public  DOMAIN_SEPARATOR = 0x26d9c34bb1a1c312f69c53b2d93b8be20faafba63af2438c6811713c9b1f933f;
-    // bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+//     // bytes32 public  DOMAIN_SEPARATOR = 0x26d9c34bb1a1c312f69c53b2d93b8be20faafba63af2438c6811713c9b1f933f;
+//     // bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
 
 
-    /// @notice error for not enough funds to vote
-    error NotEnoughFunds();
+//     /// @notice error for not enough funds to vote
+//     error NotEnoughFunds();
 
-    /// @notice error for trying to change someone elses vote
-    error NotYourVote();
+//     /// @notice error for trying to change someone elses vote
+//     error NotYourVote();
 
-    /// @notice if distribution has already happened
-    error RewardsAlreadyDistributed();
+//     /// @notice if distribution has already happened
+//     error RewardsAlreadyDistributed();
 
-    /// @notice error for trying to vote on a submission that has not been made
-    error SubmissionDoesntExist();
+//     /// @notice error for trying to vote on a submission that has not been made
+//     error SubmissionDoesntExist();
 
-    /// @notice error for when the submission period is not active
-    error SubmissionPeriodActive();
+//     /// @notice error for when the submission period is not active
+//     error SubmissionPeriodActive();
 
-    /// @notice error for when the submission period is not active
-    error SubmissionPeriodNotActive();
+//     /// @notice error for when the submission period is not active
+//     error SubmissionPeriodNotActive();
 
-    /// @notice error for when the voting period is not active
-    error VotingPeriodNotActive();
+//     /// @notice error for when the voting period is not active
+//     error VotingPeriodNotActive();
 
-    /// @notice error for trying to claim a refund when the voting period is still active
-    error VotingPeriodActive();
+//     /// @notice error for trying to claim a refund when the voting period is still active
+//     error VotingPeriodActive();
 
-    enum DonationType {
-        GIFT,
-        PAYMENT
-    }
-    enum TokenType {
-        NFT,
-        TOKEN
-    }
+//     enum DonationType {
+//         GIFT,
+//         PAYMENT
+//     }
+//     enum TokenType {
+//         NFT,
+//         TOKEN
+//     }
 
-    event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
-    event CampaignCreated(address indexed proposer, address indexed contractAddress);
-    event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
-    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
-    event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
+//     event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
+//     event CampaignCreated(address indexed proposer, address indexed contractAddress);
+//     event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
+//     event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
+//     event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
 
-    constructor(address _proposer, address[] memory _platformAdmins,  address[] memory _judges, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
-        /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
+//     constructor(address _proposer, address[] memory _platformAdmins,  address[] memory _judges, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
+//         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
 
-        proposer = _proposer;
-        isProposer[proposer] = true;
-        for (uint i = 0; i < _platformAdmins.length; i++) {
-            platformAdmins.push(_platformAdmins[i]);
-            isPlatformAdmin[_platformAdmins[i]] = true;
-        }
-        for(uint i=0; i<_judges.length; i++) {
-            judges.push(_judges[i]);
-            isJudge[_judges[i]] = true;
-        }
-        /// @notice  Initialize the _submissionTree
-        _submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission(address(this)));
-        proposerFee = _proposerFee;
-        platformFee = _platFormFee;
-        _usdc = IERC20Permit(_usdcAddress);
-        _usdcBridged = IERC20Permit(_usdcBridgedAddress);
-        isActive = true;
-        swapRouter = ISwapRouter(_swapRouter);
-        bridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
-        ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
-        ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
-        _weth = IWETH(_wethToken);
-        _submissionTree.addSubmission(platformAdmins[0], REFUND_SUBMISSION_HASH, "REFUND");
+//         proposer = _proposer;
+//         isProposer[proposer] = true;
+//         for (uint i = 0; i < _platformAdmins.length; i++) {
+//             platformAdmins.push(_platformAdmins[i]);
+//             isPlatformAdmin[_platformAdmins[i]] = true;
+//         }
+//         for(uint i=0; i<_judges.length; i++) {
+//             judges.push(_judges[i]);
+//             isJudge[_judges[i]] = true;
+//         }
+//         /// @notice  Initialize the _submissionTree
+//         _submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission(address(this)));
+//         proposerFee = _proposerFee;
+//         platformFee = _platFormFee;
+//         _usdc = IERC20Permit(_usdcAddress);
+//         _usdcBridged = IERC20Permit(_usdcBridgedAddress);
+//         isActive = true;
+//         swapRouter = ISwapRouter(_swapRouter);
+//         bridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
+//         ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
+//         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
+//         _weth = IWETH(_wethToken);
+//         _submissionTree.addSubmission(platformAdmins[0], REFUND_SUBMISSION_HASH, "REFUND");
         
+
         emit CampaignCreated(proposer, address(this));
     }
 
@@ -528,13 +529,15 @@ contract PrizeV2Judges {
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
        uint256 total_usdc_votes = 0;
        uint256 _PRECISION = PRECISION;
+
        
-       SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-       for(uint256 i=0; i<allSubmissions.length; i++) {
-           total_usdc_votes += allSubmissions[i].usdcVotes;
-       }
-       uint256 total_unused_usdc_votes = totalRewards.sub(total_usdc_votes);
+//        SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
+//        for(uint256 i=0; i<allSubmissions.length; i++) {
+//            total_usdc_votes += allSubmissions[i].usdcVotes;
+//        }
+//        uint256 total_unused_usdc_votes = totalRewards.sub(total_usdc_votes);
        
+
 
        for(uint256 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0) {
@@ -603,3 +606,4 @@ contract PrizeV2Judges {
         minimumSlipageFeePercentage  = _minimumSlipageFeePercentage;
     } 
 } 
+

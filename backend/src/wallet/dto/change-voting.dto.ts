@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber } from 'class-validator';
 
-export class IncreaseVotingDto {
+export class ChangeVotingDto {
   @ApiProperty({
     type: Number,
-    description: 'The number of minutes to increase the voting by',
+    description:
+      'The number of minutes to Change the voting by minutes from current time',
     example: 3,
   })
   @IsNumber()

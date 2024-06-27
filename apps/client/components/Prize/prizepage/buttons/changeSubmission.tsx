@@ -1,21 +1,26 @@
+import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
-import { Button, Modal, NumberInput, Text } from '@mantine/core';
+import { Button, Modal, NumberInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCircleCheck } from '@tabler/icons-react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import revalidate from 'utils/revalidate';
 
 export default function ChangeSubmission({
   contractAddress,
   submissionTime,
+  slug,
 }: {
   contractAddress: string;
   submissionTime: number;
+  slug: string;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
 
   const [newSubmissionTime, setnewSubmissionTime] = useState(0);
+
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
@@ -42,29 +47,16 @@ export default function ChangeSubmission({
               const { hash } = await (
                 await backendApi()
               ).wallet
-                .prizeIncreaseSubmissionCreate(contractAddress, {
+                .prizeChangeSubmissionCreate(contractAddress, {
                   minutes: newSubmissionTime,
                 })
                 .then((res) => res.data);
               toast.success(
-                <div className="flex items-center ">
-                  <IconCircleCheck />{' '}
-                  <Text fw="md" size="sm" className="ml-2">
-                    {' '}
-                    Submission Period Started
-                  </Text>
-                  <Link
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={`https://optimistic.etherscan.io/tx/${hash}`}
-                  >
-                    <Button variant="transparent" className="text-blue-400 underline">
-                      See here
-                    </Button>
-                  </Link>
-                </div>,
+                <TransactionToast title=" Submission Period Changed" hash={hash} />,
               );
               console.log({ hash }, 'hash');
+              await revalidate({ tag: slug });
+              router.refresh();
               window.location.reload();
             } catch (error) {
               toast.error(`Failed With Error ${error}`);
@@ -83,33 +75,11 @@ export default function ChangeSubmission({
         fullWidth
         loading={loading}
         onClick={async () => {
-          //   setIsLoading(true);
-          //   try {
-          //     const request = await prepareWritePrize({
-          //       address: contractAddress as `0x${string}`,
-          //       account: address,
-          //       functionName: 'start_submission_period',
-          //       args: [BigInt(submissionTime)],
-          //     });
-          //     const { hash } = await writePrize(request);
-
-          //     const waitTransaction = await waitForTransaction({
-          //       confirmations: 1,
-          //       hash,
-          //     });
-          //     toast.success(`Submission Period Started, Transaction Hash ${hash}`);
-          //     console.log({ hash }, 'hash');
-          //   } catch (error) {
-          //     toast.error(`Failed With Error`);
-          //   } finally {
-          //     setIsLoading(false);
-          //     window.location.reload();
-          //   }\
           open();
         }}
       >
         {' '}
-        Increase Submission Time
+        Change Submission Time
       </Button>
     </>
   );

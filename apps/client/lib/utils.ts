@@ -11,6 +11,8 @@ import { clsx, type ClassValue } from 'clsx';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
+import { encodePacked, keccak256 } from 'viem';
+import { USDC } from './constants';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
@@ -227,7 +229,8 @@ export const storeFiles = async (files: File[]) => {
   console.log(data.path, 'image path');
   return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaigns/${data.path}`;
 };
-
+export const parseUsdc = (value: bigint) => parseFloat(value.toString()) / 10 ** 6;
+export const formatUsdc = (value: number) => BigInt(value * 10 ** 6);
 export const usdcSignType = ({
   owner,
   spender,
@@ -275,10 +278,45 @@ export const usdcSignType = ({
     },
     primaryType: 'Permit',
     domain: {
-      chainId: 10,
-      verifyingContract: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
+      chainId: 8453,
+      verifyingContract: USDC,
       name: 'USD Coin',
       version: '2',
     },
   };
+};
+
+export function voteMessageHash(
+  submission: string,
+  amount: number,
+  nonce: number,
+  contractAddress: string,
+): string {
+  const encodedMessage = encodePacked(
+    ['string', 'bytes32', 'string', 'uint256', 'string', 'uint256', 'string', 'address'],
+    [
+      'VOTE FOR ',
+      submission as `0x${string}`,
+      ' WITH AMOUNT ',
+      BigInt(amount),
+      ' AND NONCE ',
+      BigInt(nonce),
+      ' WITH PRIZE CONTRACT ',
+      contractAddress as `0x${string}`,
+    ],
+  );
+  const messageHash = keccak256(encodedMessage);
+  return messageHash;
+}
+
+export const refundHash = () => keccak256(encodePacked(['string'], ['REFUND']));
+
+export const addDaysToDate = (date: Date, days: number) => {
+  const newDate = date.setDate(date.getDate() + days);
+  return new Date(newDate);
+};
+
+export const addMinutesToDate = (date: Date, minutes: number) => {
+  const newDate = date.setMinutes(date.getMinutes() + minutes);
+  return new Date(newDate);
 };

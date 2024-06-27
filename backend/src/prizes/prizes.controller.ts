@@ -1,4 +1,7 @@
+import { TypedBody, TypedParam } from '@nestia/core';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -11,19 +14,15 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
-import { PrizeProposalsService } from './services/prizes-proposals.service';
-import { PrizesService } from './services/prizes.service';
-
-import { TypedBody, TypedParam } from '@nestia/core';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { addMinutes, differenceInSeconds } from 'date-fns';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
+import { sleep } from 'src/utils/sleep';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
 import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
@@ -33,6 +32,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
@@ -43,8 +43,9 @@ import { Prize } from './entities/prize.entity';
 import { PrizesComments } from './entities/prizes-comments.entity';
 import { Submission } from './entities/submission.entity';
 import { PrizeCommentService } from './services/prize-comment.service';
+import { PrizeProposalsService } from './services/prizes-proposals.service';
+import { PrizesService } from './services/prizes.service';
 import { SubmissionService } from './services/submissions.service';
-
 interface SubmissionWithBlockchainData extends Submission {
   voting_blockchain: number;
 }
@@ -106,6 +107,97 @@ export class PrizesController {
       slug: slug,
       judges: prizeProposal.judges,
     });
+
+    const startSubmissionData =
+      await this.blockchainService.getPrizeV2FunctionEncoded(
+        'startSubmissionPeriod',
+        [prize.submissionTime],
+      );
+
+    const startVotingData =
+      await this.blockchainService.getPrizeV2FunctionEncoded(
+        'startVotingPeriod',
+        [prize.votingTime],
+      );
+
+    const endVotingData =
+      await this.blockchainService.getPrizeV2FunctionEncoded(
+        'endVotingPeriod',
+        [],
+      );
+    const endSubmissionData =
+      await this.blockchainService.getPrizeV2FunctionEncoded(
+        'endSubmissionPeriod',
+        [],
+      );
+    const startSubmissionTransactionData = {
+      to: prize.contract_address,
+      data: startSubmissionData,
+      value: '0',
+    };
+    const endSubmissionTransactionData = {
+      to: prize.contract_address,
+      data: endSubmissionData,
+      value: '0',
+    };
+    const endVotingTransactionData = {
+      to: prize.contract_address,
+      data: endVotingData,
+      value: '0',
+    };
+
+    const startVotingTransactionData = {
+      to: prize.contract_address,
+      data: startVotingData,
+      value: '0',
+    };
+
+    const endSubmissionDate = addMinutes(
+      prize.startSubmissionDate,
+      prize.submissionTime,
+    );
+    const endVotingDate = addMinutes(prize.startVotingDate, prize.votingTime);
+    console.log(
+      prize.startSubmissionDate,
+      'startSubmissionDate',
+      prize.startSubmissionDate.getUTCMinutes(),
+      'startSubmissionDate',
+    );
+    const today = new Date();
+    await this.walletService.scheduleTransaction(
+      startSubmissionTransactionData,
+      'gasless',
+      differenceInSeconds(
+        new Date(prize.startSubmissionDate.toISOString()),
+        today,
+      ),
+      prize.slug,
+    );
+
+    await sleep(1000);
+
+    await this.walletService.scheduleTransaction(
+      startVotingTransactionData,
+      'gasless',
+      differenceInSeconds(new Date(prize.startVotingDate.toISOString()), today),
+      `${prize.slug} Voting`,
+    );
+    await sleep(1000);
+
+    await this.walletService.scheduleTransaction(
+      endSubmissionTransactionData,
+      'gasless',
+      differenceInSeconds(new Date(endSubmissionDate.toISOString()), today),
+      `${prize.slug} Submission End`,
+    );
+    await sleep(1000);
+
+    await this.walletService.scheduleTransaction(
+      endVotingTransactionData,
+      'gasless',
+      differenceInSeconds(new Date(endVotingDate.toISOString()), today),
+      `${prize.slug} Voting End`,
+    );
 
     await this.prizeProposalsService.remove(prizeProposal.id);
     await this.mailService.prizeDeployed(
@@ -188,12 +280,19 @@ export class PrizesController {
     @TypedParam('slug') slug: string,
   ): Promise<PrizeWithBlockchainData> {
     const prize = await this.prizeService.findAndReturnBySlug(slug);
-    const [totalFunds, distributed, submissionTime, votingTime] = (
-      await this.blockchainService.getPrizesV2PublicVariables(
-        [prize.contract_address],
-        ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
-      )
-    )[0] as [bigint, boolean, bigint, bigint];
+    const [totalFunds, distributed, submissionTime, votingTime, disputePeriod] =
+      (
+        await this.blockchainService.getPrizesV2PublicVariables(
+          [prize.contract_address],
+          [
+            'totalFunds',
+            'distributed',
+            'getSubmissionTime',
+            'getVotingTime',
+            'disputePeriod',
+          ],
+        )
+      )[0] as [bigint, boolean, bigint, bigint, bigint];
 
     return {
       ...prize,
@@ -201,6 +300,7 @@ export class PrizesController {
       balance: parseInt(totalFunds.toString()),
       submission_time_blockchain: parseInt(submissionTime.toString()),
       voting_time_blockchain: parseInt(votingTime.toString()),
+      dispute_period_time_blockchain: parseInt(disputePeriod.toString()),
     };
   }
 
@@ -564,9 +664,10 @@ export class PrizesController {
   @Post('/proposals')
   @UseGuards(AuthGuard)
   async create(
-    @TypedBody() createPrizeProposalDto: CreatePrizeProposalDto,
+    @Body() createPrizeProposalDto: CreatePrizeProposalDto,
     @Request() req,
   ): Promise<PrizeProposals> {
+    console.log('hsldjflsjflsdjlk');
     console.log({ createPrizeProposalDto });
     console.log(req.user, 'user');
     const proposals = await this.prizeProposalsService.create(

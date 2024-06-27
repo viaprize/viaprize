@@ -15,11 +15,11 @@ import { useDidUpdate, useDisclosure } from '@mantine/hooks';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
-import { optimism } from '@wagmi/chains';
 import { switchNetwork } from '@wagmi/core';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, type ReactNode } from 'react';
+import { base } from 'viem/chains';
 import { useNetwork } from 'wagmi';
 import useAppUser from '../hooks/useAppUser';
 import useIsMounted from '../hooks/useIsMounted';
@@ -40,15 +40,16 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   const { ready } = usePrivy();
   const { appUser, logoutUser } = useAppUser();
   useEffect(() => {
-    if (currentChain && currentChain?.id !== optimism.id && ready && appUser) {
+    if (currentChain && currentChain?.id !== base.id && ready && appUser) {
       openChainModal();
     }
   }, [currentChain, isMounted, ready, appUser]);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-  const switchToOptimism = async () => {
+  const switchToBase = async () => {
+    console.log('hsjlflsjflsdklfjsdlkfjlsdj');
     await switchNetwork({
-      chainId: optimism.id,
+      chainId: base.id,
     }).then(() => {
       closeChainModal();
     });
@@ -87,7 +88,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         closeOnClickOutside={false}
         title="Wrong Network"
       >
-        <Button onClick={() => switchToOptimism()}> Switch To Optimism</Button>
+        <Button onClick={() => switchToBase()}> Switch To Base</Button>
       </Modal>
       <AppShell.Header
         p="md"

@@ -1,21 +1,22 @@
+import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
-import { Button, Text } from '@mantine/core';
-import { IconCircleCheck } from '@tabler/icons-react';
-import Link from 'next/link';
+import { Button } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { useAccount } from 'wagmi';
+import revalidate from 'utils/revalidate';
 
 export default function StartSubmission({
   contractAddress,
   submissionTime,
+  slug,
 }: {
   contractAddress: string;
   submissionTime: number;
+  slug: string;
 }) {
   const [isLoading, setIsLoading] = useState(false);
-  console.log({ submissionTime }, 'submission time ');
-  const { address } = useAccount();
+  const router = useRouter();
 
   return (
     <Button
@@ -25,33 +26,20 @@ export default function StartSubmission({
       onClick={async () => {
         setIsLoading(true);
         try {
-          const hash = await (
+          const hash = (
             await (await backendApi()).wallet.prizeStartSubmissionCreate(contractAddress)
           ).data;
           toast.success(
-            <div className="flex items-center ">
-              <IconCircleCheck />{' '}
-              <Text fw="md" size="sm" className="ml-2">
-                {' '}
-                Submission Period Started
-              </Text>
-              <Link
-                target="_blank"
-                rel="noopener noreferrer"
-                href={`https://optimistic.etherscan.io/tx/${hash}`}
-              >
-                <Button variant="transparent" className="text-blue-400 underline">
-                  See here
-                </Button>
-              </Link>
-            </div>,
+            <TransactionToast hash={hash.hash} title=" Submission Period Started" />,
           );
+          window.location.reload();
           console.log({ hash }, 'hash');
         } catch (error) {
           toast.error(`Failed With Error` + (error as Error).message);
         } finally {
+          await revalidate({ tag: slug });
+          router.refresh();
           setIsLoading(false);
-          window.location.reload();
         }
       }}
     >

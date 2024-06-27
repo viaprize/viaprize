@@ -1,6 +1,9 @@
 /* eslint-disable no-implicit-coercion */
+import { TransactionToast } from '@/components/custom/transaction-toast';
 import type { Prize } from '@/lib/api';
-import { chain } from '@/lib/wagmi';
+import { backendApi } from '@/lib/backend';
+import { VOTE_ABI } from '@/lib/constants';
+import { formatUsdc, parseUsdc, voteMessageHash } from '@/lib/utils';
 import {
   ActionIcon,
   Avatar,
@@ -14,12 +17,13 @@ import {
   Text,
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
-import { IconArrowAutofitUp, IconCircleCheck, IconRefresh } from '@tabler/icons-react';
+import { IconArrowAutofitUp, IconRefresh } from '@tabler/icons-react';
+import { readContract } from '@wagmi/core';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { formatEther, parseEther } from 'viem';
-import { useAccount } from 'wagmi';
+import { hashMessage, hexToSignature } from 'viem';
+import { useContractRead, useWalletClient } from 'wagmi';
 import { extractPlainTextFromEditor } from './utils';
 
 interface SubmissionsCardProps {
@@ -53,53 +57,107 @@ export default function SubmissionsCard({
   prize,
 }: SubmissionsCardProps) {
   const [opened, { open, close }] = useDisclosure(false);
-  const { address } = useAccount();
-  const [sendLoading, setSendLoading] = useState(false);
+  const { data: walletClient } = useWalletClient();
+  const [loading, setSendLoading] = useState(false);
   const [value, setValue] = useState('0');
   const [debounced] = useDebouncedValue(value, 500);
 
   const onProfile = fullname.length === 0;
 
+  const { data: funderAmount, refetch } = useContractRead({
+    abi: VOTE_ABI,
+    address: contractAddress as `0x${string}`,
+    functionName: 'funderAmount',
+    args: [walletClient?.account.address as `0x${string}`],
+  });
+
   console.log(fullname.length, onProfile, 'fullname.length');
 
   const vote = async () => {
+    const address = walletClient?.account.address;
+    if (!address) {
+      toast.error('Connect Wallet');
+      return;
+    }
+    if (!funderAmount) {
+      toast.error('Loading funder amount');
+      return;
+    }
+
+    const finalVote = formatUsdc(parseFloat(debounced.toString()));
     try {
-      await refetch();
-
-      setSendLoading(true);
-
-      const { request } = await prepareWritePrize({
+      const isFunder = await readContract({
+        abi: VOTE_ABI,
         address: contractAddress as `0x${string}`,
-        functionName: 'vote',
-        args: [hash as `0x${string}`, parseEther(debounced)],
+        functionName: 'isFunder',
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        args: [address as `0x${string}`],
       });
-      const { hash: transactionHash } = await writePrize(request);
-      console.log({ transactionHash }, 'transactionHash');
-      toast.success(
-        <div className="flex items-center ">
-          <IconCircleCheck />{' '}
-          <Text fw="md" size="sm" className="ml-2">
-            {' '}
-            Voted Successfully
-          </Text>
-          <Link
-            target="_blank"
-            rel="noopener noreferrer"
-            href={`https://optimistic.etherscan.io/tx/${transactionHash}`}
-          >
-            <Button variant="transparent" className="text-blue-400 underline">
-              See here
-            </Button>
-          </Link>
-        </div>,
+
+      if (!isFunder) {
+        toast.error('You are not a funder');
+        return;
+      }
+
+      if (finalVote <= 0) {
+        toast.error('You cannot vote 0 or less');
+        return;
+      }
+      console.log({ finalVote, funderAmount });
+      if (parseInt(finalVote.toString()) > parseInt(funderAmount.toString())) {
+        toast.error(
+          `You cannot vote more than your balance which is ${parseUsdc(funderAmount)}`,
+        );
+        return;
+      }
+
+      const nonce = await readContract({
+        abi: VOTE_ABI,
+        address: contractAddress as `0x${string}`,
+        functionName: 'nonce',
+      });
+
+      const voteHash = voteMessageHash(
+        hash,
+        parseInt(finalVote.toString()),
+        parseInt(nonce.toString()) + 1,
+        contractAddress,
       );
+      const signature = await walletClient.signMessage({
+        message: {
+          raw: voteHash as `0x${string}`,
+        },
+      });
+
+      // eslint-disable-next-line @typescript-eslint/await-thenable
+      const finalHash = await hashMessage({
+        raw: voteHash as `0x${string}`,
+      });
+      console.log({ finalHash });
+
+      console.log({ signature });
+
+      const { r, s, v } = hexToSignature(signature);
+      console.log({ finalVote });
+      const tx = await (
+        await backendApi()
+      ).wallet
+        .prizeVoteCreate(contractAddress, {
+          submissionHash: hash,
+          v: parseInt(v.toString()),
+          s,
+          r,
+          amount: parseInt(finalVote.toString()),
+        })
+        .then((res) => res.data.hash);
+
       setSendLoading(false);
+      toast.success(<TransactionToast hash={tx} title="Voted Successfully" />);
+      await refetch();
       close();
-      window.location.reload();
     } catch (e) {
       console.log(e, 'error');
       toast.error('Error while voting');
-      window.location.reload();
     } finally {
       setSendLoading(false);
     }
@@ -107,11 +165,17 @@ export default function SubmissionsCard({
 
   return (
     <Card className="flex flex-col justify-center gap-3 my-2">
+
       {!onProfile ? (
         <>
           <Modal opened={opened} onClose={close} title="Voting For this submission">
             <Stack>
               <NumberInput
+                label={
+                  loading
+                    ? 'Loading.....'
+                    : `Total Votes you can allocate(Max: ${parseUsdc(funderAmount ?? BigInt(0))} )`
+                }
                 placeholder="Enter Value of Votes"
                 mt="md"
                 rightSection={
@@ -119,6 +183,7 @@ export default function SubmissionsCard({
                     <IconRefresh onClick={() => refetch()} />
                   </ActionIcon>
                 }
+                max={funderAmount ? parseInt(funderAmount.toString()) : 0}
                 allowDecimal
                 allowNegative={false}
                 defaultValue={0}
@@ -130,7 +195,7 @@ export default function SubmissionsCard({
                 }}
               />
               {showVote ? (
-                <Button onClick={vote} disabled={!value} loading={sendLoading}>
+                <Button onClick={vote} disabled={!value || !!loading} loading={loading}>
                   Vote!
                 </Button>
               ) : null}
@@ -158,7 +223,7 @@ export default function SubmissionsCard({
                 </Button>
                 {allowVoting && showVote ? (
                   <Badge variant="filled" w="auto" size="lg" color="blue">
-                    {formatEther(BigInt(votes.toString()))} {chain.nativeCurrency.symbol}
+                    {parseUsdc(BigInt(votes))} USD
                   </Badge>
                 ) : null}
               </div>

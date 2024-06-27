@@ -15,6 +15,7 @@ import { UsersService } from './users.service';
  * The Users controller is responsible for handling requests from the client related to user data.
  * This includes creating a new user, getting a user by ID, and getting a user by username.
  */
+
 @Controller('users')
 export class UsersController {
   constructor(
@@ -74,6 +75,8 @@ export class UsersController {
       return cacheUser;
     }
     const user = await this.usersService.findOneByAuthId(authId);
+
+    console.log({ user });
     await this.cacheManager.set(authId, user);
     return user;
   }
