@@ -31,9 +31,12 @@ contract PrizeV2 {
     address public proposer;
     /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
     mapping (address => uint256) public funderAmount;
+    mapping(address => uint256) public fiatFunderAmount;
     /// @notice array of funders
     address[] public allFunders;
+    address[] public fiatFunders;
     mapping(address => bool) public isFunder;
+    mapping(address => bool) public isFiatFunder;
     /// @notice Add a new mapping to store each funder's votes on each submission
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
     address[] public refundRequestedFunders;
@@ -350,7 +353,20 @@ contract PrizeV2 {
         return submissionHash;
     }
 
-    
+    function _voteLogic(uint256 _amount, bytes32 _submissionHash, address sender) onlyActive private {
+        uint256 amountToSubmission = (_amount * (100 - platformFee - proposerFee)) / 100;
+
+
+            _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
+            _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
+            
+            totalVotes = totalVotes.add(amountToSubmission);
+            SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
+            if (submission.usdcVotes > 0) {
+                _submissionTree.setFundedTrue(_submissionHash, true);
+            }
+            emit Voted(_submissionHash, sender, _amount);
+    }
 
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
@@ -358,7 +374,7 @@ contract PrizeV2 {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
         bytes32 hash = VOTE_HASH(nonce+=1, _submissionHash, _amount);
         address sender =  ecrecover(hash, v, r, s);
-        if (_amount > funderAmount[sender]) revert NotEnoughFunds();
+        if (_amount > funderAmount[sender] || _amount > fiatFunderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
         /// @notice submission should return a struct with the submissionHash, the contestant, the submissionText, the threshhold, the votes, and the funded status 
@@ -374,19 +390,12 @@ contract PrizeV2 {
         if(isFunder[sender]) {
             funderAmount[sender] -= _amount;
             funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-
-            uint256 amountToSubmission = (_amount * (100 - platformFee - proposerFee)) / 100;
-
-
-            _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
-            _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
-            
-            totalVotes = totalVotes.add(amountToSubmission);
-            SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
-            if (submission.usdcVotes > 0) {
-                _submissionTree.setFundedTrue(_submissionHash, true);
-            }
-            emit Voted(_submissionHash, sender, _amount);
+            _voteLogic(_amount, _submissionHash, sender);
+        }
+        if(isFiatFunder[sender]) {
+            fiatFunderAmount[sender] -= _amount;
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+            _voteLogic(_amount, _submissionHash, sender);
         }
     }
 
@@ -474,16 +483,25 @@ contract PrizeV2 {
         allFunders.push(sender);
     }
 
-    // todod we dont need sender here
-
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public onlyActive
-     noReentrant payable {
-        require(_amountUsdc > 0, "F<0");
+    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _paymentType) public onlyActive noReentrant payable {
+        require(_amountUsdc > 0, "F<0"); // F<0 -> funds should be greater than zero.
         // (uint8 v, bytes32 r, bytes32 s) = ECDSA.tryRecover(_ethSignedMessageHash, _signature);
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
+        if(_paymentType == true && isFunder[sender] == true) revert("ACF"); // ACF -> Already Crypto Funder
+        if(_paymentType == false && isFiatFunder[sender] == true) revert("AFF"); // AFF -> Already Fiat Funder
         _usdc.permit(sender, spender, _amountUsdc, _deadline,v,r,s);
+        if(_paymentType == true) {
+            if(isFiatFunder[sender] == true) {
+                fiatFunders.push(sender);
+                isFiatFunder[sender] = true;
+            }
+            fiatFunderAmount[sender] = fiatFunderAmount[sender].add(_amountUsdc);
+            totalRewards = totalRewards.add((_amountUsdc.mul(100 - (platformFee + proposerFee))).div(100));
+            totalFunds = totalFunds.add(_amountUsdc);
+        } else {
+            _depositLogic(sender, _amountUsdc);
+        }
         _usdc.transferFrom(sender, address(this), _amountUsdc);
-        _depositLogic(sender, _amountUsdc);
         emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _amountUsdc);
     }
 
@@ -568,6 +586,16 @@ contract PrizeV2 {
                                     }
                                 }
                             
+                            }
+                            for(uint256 j=0; j<fiatFunders.length; j++) {
+                                if(fiatFunderAmount[fiatFunders[j]] > 0) {
+                                    uint256 individual_unused_votes = fiatFunderAmount[fiatFunders[j]].mul(100 - platformFee - proposerFee).div(100);
+                                    uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
+                                    uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
+                                    if(individual_transferable_usdc_amount > 0) {
+                                        _usdc.transfer(platformAddress, individual_transferable_usdc_amount);
+                                    }
+                                }
                             }
                         }
                     } else {
