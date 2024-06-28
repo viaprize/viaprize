@@ -436,9 +436,6 @@ export default function AmountDonateCard({
 
   const [sendLoading, setSendLoading] = useState(false);
 
-  console.log(amountRaised, 'this is the amount raised');
-
-  const router = useRouter();
   const params = useParams();
 
   useEffect(() => {
