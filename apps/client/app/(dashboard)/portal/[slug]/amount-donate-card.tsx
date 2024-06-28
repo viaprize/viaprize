@@ -32,7 +32,7 @@ import {
 } from '@tabler/icons-react';
 import { readContract } from '@wagmi/core';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { toast } from 'sonner';
@@ -153,6 +153,7 @@ function FundUsdcCard({
       toast.success(<TransactionToast hash={trxHash} title="Transaction Successfull" />, {
         duration: 6000,
       });
+
       await revalidate({ tag: slug });
       router.refresh();
       window.location.reload();
@@ -437,6 +438,26 @@ export default function AmountDonateCard({
 
   console.log(amountRaised, 'this is the amount raised');
 
+  const router = useRouter();
+  const params = useParams();
+
+  useEffect(() => {
+    if (window.location.hash.includes('success')) {
+      fetch('https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash').then(
+        (res) => {
+          res.json().then((data) => {
+            toast.success(
+              <TransactionToast hash={data.hash} title="Transaction Successfull" />,
+              {
+                duration: 6000,
+              },
+            );
+          });
+        },
+      );
+    }
+  }, [params]);
+
   return (
     <Card
       p="md"
@@ -641,7 +662,7 @@ export default function AmountDonateCard({
             imageUrl={image}
             prizeId={id}
             slug={slug}
-            successUrl={window.location.href}
+            successUrl={`${window.location.href}#success`}
             title={title}
           />
         )}
