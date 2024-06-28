@@ -90,6 +90,7 @@ export default function SubmissionsCard({
         abi: VOTE_ABI,
         address: contractAddress as `0x${string}`,
         functionName: 'isFunder',
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         args: [address as `0x${string}`],
       });
 
@@ -128,6 +129,7 @@ export default function SubmissionsCard({
         },
       });
 
+      // eslint-disable-next-line @typescript-eslint/await-thenable
       const finalHash = await hashMessage({
         raw: voteHash as `0x${string}`,
       });
