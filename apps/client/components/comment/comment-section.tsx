@@ -7,7 +7,7 @@ export default async function CommentSection({ portalId }: { portalId: string })
   const portalComments = (
     await new Api().portals.commentDetail(portalId, {
       next: {
-       tags: ['portalComments'],
+        tags: ['portalComments'],
       },
     })
   ).data;

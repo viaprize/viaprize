@@ -32,9 +32,45 @@ interface AdminCardProps {
   proposerFeePercentage: number;
   platfromFeePercentage: number;
   isAccepted?: boolean;
-  submissionTime: number;
+  startVotingDate: string;
+  startSubmissionDate: string;
   judges?: string[];
 }
+
+// Utility function to format dates
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toString();
+};
+
+// Utility function to calculate remaining time
+const calculateRemainingTime = (startDateString: string, durationMinutes: number) => {
+  const startDate = new Date(startDateString);
+  const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+  const now = new Date();
+
+  const elapsedTime = now.getTime() - startDate.getTime();
+  const remainingTime = endDate.getTime() - now.getTime();
+
+  let remainingDays = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+  let remainingHours = Math.floor(
+    (remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+  );
+  let remainingMinutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (elapsedTime < 0) {
+    remainingDays = Math.floor(durationMinutes / (60 * 24));
+    remainingHours = Math.floor((durationMinutes % (60 * 24)) / 60);
+    remainingMinutes = durationMinutes % 60;
+  }
+
+  return {
+    endDate: endDate.toString(),
+    remainingDays,
+    remainingHours,
+    remainingMinutes,
+  };
+};
 
 function AdminAcceptedCard({
   id,
@@ -45,7 +81,8 @@ function AdminAcceptedCard({
   title,
   user,
   voting,
-  submissionTime,
+  startSubmissionDate,
+  startVotingDate,
   judges,
   platfromFeePercentage,
   proposerFeePercentage,
@@ -143,6 +180,9 @@ function AdminAcceptedCard({
     await router.push('/prize/explore');
     toast.success('Redirected to Prize Explore Page');
   };
+
+  const submissionTime = calculateRemainingTime(startSubmissionDate, submission);
+
   return (
     <>
       <Card shadow="sm" padding="lg" radius="md" withBorder my="md">
@@ -164,7 +204,9 @@ function AdminAcceptedCard({
         </p>
         <Group justify="space-evenly" mt="md" mb="xs">
           <Text fw={500} color="red">
-            Submission Days is {submission} Days
+            Time from submission start to deadline: {submissionTime.remainingDays} days{' '}
+            {submissionTime.remainingHours} hours {submissionTime.remainingMinutes}{' '}
+            minutes
           </Text>
           <Button
             onClick={() => {
@@ -192,6 +234,8 @@ function AdminAcceptedCard({
           title={title}
           submission={submission}
           voting={voting}
+          startVotingDate={startVotingDate}
+          startSubmissionDate={startSubmissionDate}
         />
       </Modal>
     </>

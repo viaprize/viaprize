@@ -198,6 +198,7 @@ function FundUsdcCard({
   return (
     <Stack my="md">
       <Text fw="sm">Your donation must be valued atleast $1.00.</Text>
+      <Text fw="sm">Your donation must be valued atleast $1.00.</Text>
       <NumberInput
         placeholder="Enter Value  in $ To Donate"
         mt="md"
