@@ -138,7 +138,7 @@ function DonateButton({
                 <IconCircleCheck />{' '}
                 <Text fw="md" size="sm" className="ml-2">
                   {' '}
-                  Transaction successfull
+                  Transaction successful
                 </Text>
                 <Link
                   target="_blank"

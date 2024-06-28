@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { useMutation } from 'react-query';
 import usePrizeProposal from '../hooks/usePrizeProposal';
 import ViewDetails from './details';
+
 interface AdminCardProps {
   images: string[];
   user: User;
@@ -26,7 +27,44 @@ interface AdminCardProps {
   id: string;
   proposerFeePercentage: number;
   platfromFeePercentage: number;
+  startVotingDate: string;
+  startSubmissionDate: string;
 }
+
+// Utility function to format dates
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toString();
+};
+
+// Utility function to calculate remaining time
+const calculateRemainingTime = (startDateString: string, durationMinutes: number) => {
+  const startDate = new Date(startDateString);
+  const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+  const now = new Date();
+
+  const elapsedTime = now.getTime() - startDate.getTime();
+  const remainingTime = endDate.getTime() - startDate.getTime();
+
+  let remainingDays = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+  let remainingHours = Math.floor(
+    (remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+  );
+  let remainingMinutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (elapsedTime < 0) {
+    remainingDays = Math.floor(durationMinutes / (60 * 24));
+    remainingHours = Math.floor((durationMinutes % (60 * 24)) / 60);
+    remainingMinutes = durationMinutes % 60;
+  }
+
+  return {
+    endDate: endDate.toString(),
+    remainingDays,
+    remainingHours,
+    remainingMinutes,
+  };
+};
 
 const AdminCard: React.FC<AdminCardProps> = ({
   id,
@@ -39,6 +77,8 @@ const AdminCard: React.FC<AdminCardProps> = ({
   voting,
   proposerFeePercentage,
   platfromFeePercentage,
+  startVotingDate,
+  startSubmissionDate,
 }) => {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -52,7 +92,10 @@ const AdminCard: React.FC<AdminCardProps> = ({
   const [newProposerFeePercentage, setnewProposerFeePercentage] =
     useState(proposerFeePercentage);
   const updateProposalMutation = useMutation(updateProposal);
-  console.log({ images }, 'in admin card');
+
+  const submissionTime = calculateRemainingTime(startSubmissionDate, submission);
+  const votingTime = calculateRemainingTime(startVotingDate, voting);
+
   return (
     <>
       <Modal opened={opened} onClose={close} title="Update Fee Percentage" centered>
@@ -87,7 +130,6 @@ const AdminCard: React.FC<AdminCardProps> = ({
           }}
           loading={updateProposalMutation.isLoading}
         >
-          {' '}
           Confirm
         </Button>
       </Modal>
@@ -110,7 +152,9 @@ const AdminCard: React.FC<AdminCardProps> = ({
         </p>
         <Group justify="space-evenly" mt="md" mb="xs">
           <Text fw={500} color="red">
-            Submission Days is {submission} Days
+            Time from submission start to deadline.: {submissionTime.remainingDays} days{' '}
+            {submissionTime.remainingHours} hours {submissionTime.remainingMinutes}{' '}
+            minutes
           </Text>
           <Button
             onClick={() => {
@@ -136,6 +180,8 @@ const AdminCard: React.FC<AdminCardProps> = ({
             title={title}
             submission={submission}
             voting={voting}
+            startVotingDate={startVotingDate}
+            startSubmissionDate={startSubmissionDate}
           />
         </Modal>
         <Group>
