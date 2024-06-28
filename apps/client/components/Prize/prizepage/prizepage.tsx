@@ -9,11 +9,20 @@ import { calculateDeadline, usdcSignType } from '@/lib/utils';
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
 import { USDC } from '@/lib/constants';
-import { Badge, Button, Center, Group, NumberInput, Stack, Title,Text } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Center,
+  Group,
+  NumberInput,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { readContract } from '@wagmi/core';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import revalidate from 'utils/revalidate';
 import { hashTypedData, hexToSignature } from 'viem';
@@ -188,9 +197,7 @@ function FundUsdcCard({
   };
   return (
     <Stack my="md">
-      <Text fw='sm'>
-        Your donation must be valued atleast $1.00.
-      </Text>
+      <Text fw="sm">Your donation must be valued atleast $1.00.</Text>
       <NumberInput
         placeholder="Enter Value  in $ To Donate"
         mt="md"
@@ -242,6 +249,23 @@ export default function PrizePageComponent({
     new Date(),
     new Date(prize.submission_time_blockchain * 1000),
   );
+  const params = useParams();
+  useEffect(() => {
+    if (window.location.hash.includes('success')) {
+      fetch('https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash').then(
+        (res) => {
+          res.json().then((data) => {
+            toast.success(
+              <TransactionToast hash={data.hash} title="Transaction Successfull" />,
+              {
+                duration: 6000,
+              },
+            );
+          });
+        },
+      );
+    }
+  }, [params]);
 
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
@@ -296,7 +320,7 @@ export default function PrizePageComponent({
         title={prize.title}
         cancelUrl={window.location.href}
         imageUrl={prize.images[0] || ''}
-        successUrl={window.location.href}
+        successUrl={`${window.location.href}#success`}
         slug={prize.slug}
       />
       {appUser
