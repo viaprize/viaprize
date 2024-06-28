@@ -6,7 +6,7 @@ import { useParams } from 'next/navigation';
 export default function useAuthPerson() {
   const { appUser } = useAppUser();
   const { getUserByUserName } = useUser();
-  const params = useParams<{id:string}>();
+  const params = useParams<{ id: string }>();
 
   const { data: userData } = useQuery('getCurrentByUserName', () =>
     getUserByUserName(params?.id || ''),

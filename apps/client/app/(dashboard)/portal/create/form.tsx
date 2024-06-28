@@ -12,14 +12,11 @@ import {
   Button,
   Checkbox,
   CloseButton,
-  Group,
   MultiSelect,
   NumberInput,
-  Radio,
   Text,
   TextInput,
   Title,
-  Tooltip,
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
@@ -255,7 +252,7 @@ export default function PortalForm() {
         value={categories}
         onChange={setCategories}
       />
-      <Radio.Group
+      {/* <Radio.Group
         name="favoriteFramework"
         label="Select your portal type"
         withAsterisk
@@ -277,7 +274,7 @@ export default function PortalForm() {
             <Radio value="pass-through" label="Pass-through" />
           </Tooltip>
         </Group>
-      </Radio.Group>
+      </Radio.Group> */}
       <div className="my-2">
         {portalType === 'all-or-nothing' && crytoToUsd ? (
           <div>

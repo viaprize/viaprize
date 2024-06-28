@@ -2,7 +2,6 @@ import CommentSection from '@/components/comment/comment-section';
 import { Api } from '@/lib/api';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { formatEther } from 'viem';
 import AmountDonateCard from './amount-donate-card';
 import ImageTitleHeroCard from './image-title-hero-card';
 import PortalTabs from './portal-tabs';
@@ -42,11 +41,13 @@ export default async function CreatePortal({ params }: { params: { slug: string 
     await new Api().portals.portalsDetail(params.slug, {
       cache: 'no-store',
       next: {
-        revalidate: false,
+        revalidate: 0,
+        tags: [params.slug],
       },
     })
   ).data;
 
+  console.log({ portal }, 'pokjhkkjrtal');
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
       <div className="w-full lg:flex gap-4 justify-between">
@@ -56,19 +57,22 @@ export default async function CreatePortal({ params }: { params: { slug: string 
           img={portal.images[0]}
         />
         <AmountDonateCard
-          amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
+          amountRaised={((portal.totalFunds ?? 0) / 1_000_000).toString()}
           recipientAddress={portal.contract_address}
-          totalContributors={formatEther(BigInt(portal.totalFunds ?? 0))}
+          totalContributors={BigInt(portal.totalFunds ?? 0).toString()}
           contractAddress={portal.contract_address}
           fundingGoalWithPlatformFee={parseFloat(
             portal.fundingGoalWithPlatformFee ?? '0',
           )}
+          slug={portal.slug}
           id={portal.id}
           typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
           deadline={portal.deadline}
           isActive={portal.isActive ?? false}
           treasurers={portal.treasurers}
           sendImmediately={portal.sendImmediately}
+          image={portal.images[0]}
+          title={portal.title}
         />
       </div>
       <PortalTabs

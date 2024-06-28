@@ -14,7 +14,7 @@ import {
 
 import { JobService } from 'src/jobs/jobs.service';
 import { base } from 'viem/chains';
-import { PRIZE_V2_ABI } from '../utils/constants';
+import { PASS_THROUGH_ABI, PRIZE_V2_ABI } from '../utils/constants';
 
 export type WalletType = 'gasless' | 'reserve';
 @Injectable()
@@ -100,6 +100,45 @@ export class WalletService {
     console.log({ transaction });
     const transactionHash = await this.sendTransaction(transaction, type);
     console.log(transactionHash);
+    return transactionHash;
+  }
+
+  async simulateAndWriteSmartContractPassThroughV2<
+    const abi extends typeof PASS_THROUGH_ABI | readonly unknown[],
+    functionName extends ContractFunctionName<abi, 'nonpayable' | 'payable'>,
+    args extends ContractFunctionArgs<
+      abi,
+      'nonpayable' | 'payable',
+      functionName
+    > = ContractFunctionArgs<abi, 'nonpayable' | 'payable', functionName>,
+  >(
+    functionName: ContractFunctionName<abi, 'payable' | 'nonpayable'>,
+    args:
+      | ContractFunctionArgs<abi, 'payable' | 'nonpayable', functionName>
+      | [`0x${string}`, bigint, bigint, `0x${string}`, `0x${string}`],
+    contractAddress: string,
+    type: WalletType,
+    value: string,
+    simulate = true,
+  ) {
+    if (simulate) {
+      await this.simulateSmartContract(
+        PASS_THROUGH_ABI,
+        functionName,
+        args as readonly unknown[],
+        contractAddress,
+        type,
+      );
+    }
+    const transactionHash = await this.writeSmartContract(
+      PASS_THROUGH_ABI,
+      functionName,
+      args as readonly unknown[],
+      contractAddress,
+      type,
+      value,
+    );
+    console.log({ transactionHash });
     return transactionHash;
   }
 

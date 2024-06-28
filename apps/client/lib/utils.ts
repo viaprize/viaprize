@@ -157,8 +157,6 @@ export const formatDate = (date: string): string => {
   return format.format(new Date(date));
 };
 
-export const ADMINS = [];
-
 export function slugify(str: string) {
   return str
     .toLowerCase()

@@ -77,7 +77,6 @@ function AccpetedProposals({
     portalsProposals: PortalProposals[] | undefined;
   };
 }) {
-  
   return (
     <>
       {isSuccess ? (
@@ -98,7 +97,6 @@ function AccpetedProposals({
               startSubmissionDate={proposal.startSubmissionDate}
               startVotingDate={proposal.startVotingDate}
               judges={proposal.judges}
-              
             />
           ))}
           {data.portalsProposals?.map((portalProposal: PortalProposals) => (

@@ -165,7 +165,6 @@ export default function SubmissionsCard({
 
   return (
     <Card className="flex flex-col justify-center gap-3 my-2">
-
       {!onProfile ? (
         <>
           <Modal opened={opened} onClose={close} title="Voting For this submission">

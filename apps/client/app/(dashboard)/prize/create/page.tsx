@@ -7,7 +7,18 @@ import useAppUser from '@/components/hooks/useAppUser';
 import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { addDaysToDate } from '@/lib/utils';
-import { Badge, Button, Card, Modal, NumberInput, SimpleGrid, TextInput, Title,Text, Loader } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Card,
+  Modal,
+  NumberInput,
+  SimpleGrid,
+  TextInput,
+  Title,
+  Text,
+  Loader,
+} from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
@@ -36,7 +47,7 @@ function Prize() {
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-const [modalOpened, setModalOpened] = useState(false);
+  const [modalOpened, setModalOpened] = useState(false);
 
   const [startVotingDate, setStartVotingDate] = useState<Date | null>(
     addDaysToDate(new Date(), 1),
@@ -86,14 +97,12 @@ const [modalOpened, setModalOpened] = useState(false);
       title,
     });
     setLoading(false);
-    
-   
+
     setModalOpened(true);
-     setTimeout(() => {
-       setModalOpened(false);
-       router.push(`/profile/${appUser?.username}`);
-     }, 6000);
-    
+    setTimeout(() => {
+      setModalOpened(false);
+      router.push(`/profile/${appUser?.username}`);
+    }, 6000);
   };
 
   const handleSubmit = () => {
@@ -226,7 +235,6 @@ const [modalOpened, setModalOpened] = useState(false);
         opened={modalOpened}
         onClose={() => setModalOpened(false)}
         withCloseButton={false}
-       
         centered
         size="md"
       >
@@ -246,8 +254,8 @@ const [modalOpened, setModalOpened] = useState(false);
           approved shortly.
         </Text>
 
-        <Text className='w-full flex justify-center'>
-          Redirecting to your profile <Loader color="blue" size='sm' className='ml-2'/>
+        <Text className="w-full flex justify-center">
+          Redirecting to your profile <Loader color="blue" size="sm" className="ml-2" />
         </Text>
 
         {/* <Link href={`/profile/${appUser?.username}`}>
