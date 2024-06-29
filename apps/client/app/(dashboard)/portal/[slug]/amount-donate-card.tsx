@@ -81,6 +81,9 @@ function FundUsdcCard({
   const router = useRouter();
 
   const getUsdcSignatureData = async () => {
+    if (parseFloat(value) < 1) {
+      throw new Error('Donation must be at least 1$');
+    }
     const walletAddress = walletClient?.account.address;
     if (!walletAddress) {
       throw new Error('Please login to donate');
@@ -150,7 +153,7 @@ function FundUsdcCard({
         })
         .then((res) => res.data.hash);
 
-      toast.success(<TransactionToast hash={trxHash} title="Transaction Successfull" />, {
+      toast.success(<TransactionToast hash={trxHash} title="Transaction Successful" />, {
         duration: 6000,
       });
 
@@ -217,7 +220,7 @@ function FundUsdcCard({
   };
   return (
     <Stack my="md">
-      <Text fw="sm">Your donation must be valued atleast $1.00.</Text>
+      <Text fw="sm">Your donation needs to be atleast $1</Text>
       <NumberInput
         placeholder="Enter Value  in $ To Donate"
         mt="md"
@@ -444,7 +447,7 @@ export default function AmountDonateCard({
         (res) => {
           res.json().then((data) => {
             toast.success(
-              <TransactionToast hash={data.hash} title="Transaction Successfull" />,
+              <TransactionToast hash={data.hash} title="Transaction Successful" />,
               {
                 duration: 6000,
               },

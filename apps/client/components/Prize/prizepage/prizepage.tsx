@@ -62,6 +62,9 @@ function FundUsdcCard({
   const router = useRouter();
 
   const getUsdcSignatureData = async () => {
+    if (parseFloat(value) <= 0) {
+      throw new Error('Donation must be at least 1$');
+    }
     const walletAddress = walletClient?.account.address;
     if (!walletAddress) {
       throw new Error('Please login to donate');
@@ -197,8 +200,8 @@ function FundUsdcCard({
   };
   return (
     <Stack my="md">
-      <Text fw="sm">Your donation must be valued atleast $1.00.</Text>
-      <Text fw="sm">Your donation must be valued atleast $1.00.</Text>
+      <Text fw="sm">Your donation needs to be at least $1.</Text>
+
       <NumberInput
         placeholder="Enter Value  in $ To Donate"
         mt="md"
@@ -257,7 +260,7 @@ export default function PrizePageComponent({
         (res) => {
           res.json().then((data) => {
             toast.success(
-              <TransactionToast hash={data.hash} title="Transaction Successfull" />,
+              <TransactionToast hash={data.hash} title="Transaction Successful" />,
               {
                 duration: 6000,
               },
