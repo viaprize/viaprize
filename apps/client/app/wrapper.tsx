@@ -51,7 +51,7 @@ export default function WrapperLayout({
           <QueryClientProvider client={queryClient}>
             <MantineProvider theme={theme} defaultColorScheme="auto">
               <ModalsProvider>
-                <Toaster />
+                <Toaster richColors />
                 <NavigationProvider>{children}</NavigationProvider>
               </ModalsProvider>
             </MantineProvider>
