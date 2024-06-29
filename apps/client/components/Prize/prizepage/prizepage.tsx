@@ -134,7 +134,7 @@ function FundUsdcCard({
         })
         .then((res) => res.data.hash);
 
-      toast.success(<TransactionToast hash={trxHash} title="Transaction Successfull" />, {
+      toast.success(<TransactionToast hash={trxHash} title="Transaction Successful" />, {
         duration: 6000,
       });
       await revalidate({ tag: slug });
