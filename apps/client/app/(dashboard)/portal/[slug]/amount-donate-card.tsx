@@ -217,9 +217,9 @@ function FundUsdcCard({
   };
   return (
     <Stack my="md">
-      <Text fw="sm">Your donation must be valued atleast $1.00.</Text>
+      <Text fw="sm">Your donation must be valued atleast $1.00</Text>
       <NumberInput
-        placeholder="Enter Value  in $ To Donate"
+        placeholder="Enter Value in $ To Donate"
         mt="md"
         allowDecimal
         defaultValue={1}
@@ -447,9 +447,10 @@ export default function AmountDonateCard({
         (res) => {
           res.json().then((data) => {
             toast.success(
-              <TransactionToast hash={data.hash} title="Transaction Successfull" />,
+              <TransactionToast hash={data.hash} title="Transaction Successful" />,
               {
-                duration: 6000,
+                 
+              closeButton: true,
               },
             );
           });
@@ -815,6 +816,7 @@ export default function AmountDonateCard({
           </Button>
         ) : null}
       </Stack>
+     
     </Card>
   );
 }

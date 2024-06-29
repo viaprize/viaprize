@@ -103,7 +103,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           },
         }}
       >
-        <Toaster />
+        <Toaster richColors />
         <PrivyWagmiConnector wagmiChainsConfig={configureChainsConfig}>
           <QueryClientProvider client={queryClient}>
             <MantineProvider theme={theme} defaultColorScheme="auto">
