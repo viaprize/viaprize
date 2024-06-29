@@ -220,7 +220,7 @@ function FundUsdcCard({
   };
   return (
     <Stack my="md">
-      <Text fw="sm">Your donation needs to be atleast $1</Text>
+      <Text fw="sm">Your donation needs to be at least $1</Text>
       <NumberInput
         placeholder="Enter Value  in $ To Donate"
         mt="md"
