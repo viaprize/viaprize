@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export function TransactionToast({ title, hash }: { title: string; hash: string }) {
   return (
-    <div className="flex items-center ">
+    <div className="flex items-center  ">
       <IconCircleCheck />
       <Text fw="md" size="sm" className="ml-2">
         {title}
