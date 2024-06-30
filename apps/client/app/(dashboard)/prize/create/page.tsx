@@ -132,7 +132,6 @@ function Prize() {
         Create a Prize
       </Title>
       <ImageComponent files={files} setfiles={setFiles} />
-
       <TextInput
         className="my-2"
         placeholder="Waster Management System"
@@ -143,7 +142,6 @@ function Prize() {
         }}
       />
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
-
       <SimpleGrid cols={2} className="my-3">
         <div className="">
           <DateTimePicker
@@ -159,7 +157,7 @@ function Prize() {
             label={
               proposalTime && startSubmisionDate
                 ? `Submission will end at ${addMinutes(startSubmisionDate ?? new Date(), proposalTime)}`
-                : `This is the number of minutes you want the submission to last `
+                : `This is the number of minutes you want the submission to last `a
             }
             value={proposalTime}
             onChange={(e) => {
