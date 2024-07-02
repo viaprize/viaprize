@@ -21,6 +21,7 @@ contract PrizeV2 {
     uint256 public totalRewards; 
     /// @notice bool to check if rewards have been distributed with end_voting_period
     bool public distributed;
+    bool public refunded;
     /// @notice this will be the time that the voting period ends
     uint256 votingTime; 
     /// @notice this will be the time that the submission period ends
@@ -30,12 +31,12 @@ contract PrizeV2 {
     /// @notice  person who proposed the prize;
     address public proposer;
     /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
-    mapping (address => uint256) public funderAmount;
+    mapping (address => uint256) public cryptoFunderAmount;
     mapping(address => uint256) public fiatFunderAmount;
     /// @notice array of funders
-    address[] public allFunders;
+    address[] public cryptoFunders;
     address[] public fiatFunders;
-    mapping(address => bool) public isFunder;
+    mapping(address => bool) public isCryptoFunder;
     mapping(address => bool) public isFiatFunder;
     /// @notice Add a new mapping to store each funder's votes on each submission
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
@@ -135,6 +136,7 @@ contract PrizeV2 {
     event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
     event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
     event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
+    event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
 
     constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
@@ -243,11 +245,18 @@ contract PrizeV2 {
         submissionTime = 0;
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         if(allSubmissions.length == 0 ) {
-            for(uint256 i=0; i<allFunders.length; i++) {
-                uint256 transferable_amount = funderAmount[allFunders[i]];
-                funderAmount[allFunders[i]] = 0;
-                _usdc.transfer(allFunders[i], transferable_amount);
+            for(uint256 i=0; i<cryptoFunders.length; i++) {
+                uint256 transferable_amount = cryptoFunderAmount[cryptoFunders[i]];
+                cryptoFunderAmount[cryptoFunders[i]] = 0;
+                _usdc.transfer(cryptoFunders[i], transferable_amount);
             }
+            for(uint256 i=0; i<fiatFunders.length; i++) {
+                uint256 transferable_amount = fiatFunderAmount[fiatFunders[i]];
+                fiatFunderAmount[fiatFunders[i]] = 0;
+                _usdc.transfer(platformAddress, transferable_amount);
+                emit fiatFunderRefund(fiatFunders[i], transferable_amount, true);
+            }
+            refunded = true;
             distributed = true;
             isActive = false;
         }
@@ -336,10 +345,15 @@ contract PrizeV2 {
         }
         // refund if no submissions 
         // dispute if no total votes
-        if(allSubmissions.length == 0 || allFunders.length == 0 || totalVotes == 0) {
-            for(uint256 i=0; i<allFunders.length; i++) {
-                _usdc.transfer(allFunders[i], funderAmount[allFunders[i]]);
-                funderAmount[allFunders[i]] = 0;
+        if(allSubmissions.length == 0 || cryptoFunders.length == 0 || totalVotes == 0) {
+            for(uint256 i=0; i<cryptoFunders.length; i++) {
+                _usdc.transfer(cryptoFunders[i], cryptoFunderAmount[cryptoFunders[i]]);
+                cryptoFunderAmount[cryptoFunders[i]] = 0;
+            }
+            for(uint256 i=0; i<fiatFunders.length; i++) {
+                _usdc.transfer(platformAddress, fiatFunderAmount[fiatFunders[i]]);
+                emit fiatFunderRefund(fiatFunders[i], fiatFunderAmount[fiatFunders[i]], true);
+                fiatFunderAmount[fiatFunders[i]] = 0;
             }
             distributed = true;
         }
@@ -390,21 +404,11 @@ contract PrizeV2 {
                 isRefundRequestedAddress[sender] = true;
             }
         }
-        // if(isFunder[sender]) {
-        //     funderAmount[sender] -= _amount;
-        //     funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-        //     _voteLogic(_amount, _submissionHash, sender);
-        // }
-        // if(isFiatFunder[sender]) {
-        //     fiatFunderAmount[sender] -= _amount;
-        //     funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-        //     _voteLogic(_amount, _submissionHash, sender);
-        // }
-        if(isFiatFunder[sender] || isFunder[sender]) {
+        if(isFiatFunder[sender] || isCryptoFunder[sender]) {
             uint256 amountToVote;
-            if(funderAmount[sender] > 0) {
-                amountToVote = (funderAmount[sender].mul(_amount)).div(100);
-                funderAmount[sender] = funderAmount[sender].sub(amountToVote);
+            if(cryptoFunderAmount[sender] > 0) {
+                amountToVote = (cryptoFunderAmount[sender].mul(_amount)).div(100);
+                cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(amountToVote);
                 funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amountToVote);
                 _voteLogic(amountToVote, _submissionHash, sender);
                 amountToVote = 0;
@@ -441,11 +445,10 @@ contract PrizeV2 {
         bytes32 signedMessageHash = CHANGE_VOTE_HASH(nonce+=1, _previous_submissionHash, amount, _new_submissionHash);
         address sender = ecrecover(signedMessageHash, v, r, s);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
-        if(!isFunder[sender]) revert("NF");
+        if(!isCryptoFunder[sender] || !isFiatFunder[sender]) revert("NF");
         _changeVote(sender, _previous_submissionHash, _new_submissionHash, amount);
         _changeSubmissionVoteLogic(_previous_submissionHash, _new_submissionHash);
         emit Voted(_new_submissionHash, sender, amount);
-        
     }
 
     function _changeVote(address _sender,bytes32 _previous_submission_hash,bytes32 _new_submission_hash,uint256 amount) private {
@@ -496,20 +499,20 @@ contract PrizeV2 {
 
 
     function _depositLogic(address sender, uint256 donation) private {
-        isFunder[sender] = true;
-        funderAmount[sender] = funderAmount[sender].add(donation);
-        totalFunderAmount[sender] = totalFunderAmount[sender].add(donation);
+        isCryptoFunder[sender] = true;
+        cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(donation);
+        cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(donation);
         totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
-        individualCryptoPercentage[sender] = (funderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
+        individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
         totalFunds = totalFunds.add(donation);
-        allFunders.push(sender);
+        cryptoFunders.push(sender);
     }
 
     function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public onlyActive noReentrant payable {
         require(_amountUsdc > 0, "F<0"); // F<0 -> funds should be greater than zero.
         // (uint8 v, bytes32 r, bytes32 s) = ECDSA.tryRecover(_ethSignedMessageHash, _signature);
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
-        // if(_paymentType == true && isFunder[sender] == true) revert("ACF"); // ACF -> Already Crypto Funder
+        // if(_paymentType == true && isCryptoFunder[sender] == true) revert("ACF"); // ACF -> Already Crypto Funder
         // if(_paymentType == false && isFiatFunder[sender] == true) revert("AFF"); // AFF -> Already Fiat Funder
         _usdc.permit(sender, spender, _amountUsdc, _deadline,v,r,s);
         if(_fiatPayment == true) {
@@ -599,14 +602,14 @@ contract PrizeV2 {
                     uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
                     if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
                         if(transferable_usdc_amount > 0) {
-                            for(uint256 j=0; j<allFunders.length; j++) {
+                            for(uint256 j=0; j<cryptoFunders.length; j++) {
                                 
-                                if(funderAmount[allFunders[j]] > 0){
-                                    uint256 individual_unused_votes = funderAmount[allFunders[j]].mul(100 - platformFee - proposerFee).div(100);
+                                if(cryptoFunderAmount[cryptoFunders[j]] > 0){
+                                    uint256 individual_unused_votes = cryptoFunderAmount[cryptoFunders[j]].mul(100 - platformFee - proposerFee).div(100);
                                     uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
                                     uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
                                     if(individual_transferable_usdc_amount > 0) {
-                                        _usdc.transfer(allFunders[j], individual_transferable_usdc_amount);
+                                        _usdc.transfer(cryptoFunders[j], individual_transferable_usdc_amount);
                                     }
                                 }
                             
@@ -643,8 +646,12 @@ contract PrizeV2 {
         token.transfer(_to, _amount); 
    }
 
-   function getAllFunders() public view returns(address[] memory) {
-        return allFunders;
+   function getAllcryptoFunders() public view returns(address[] memory) {
+        return cryptoFunders;
+   }
+
+   function getAllFiatFunders() public view returns(address[] memory) {
+    return fiatFunders;
    }
 
    function getAllPlatformAdmins() public view returns(address[] memory) {
