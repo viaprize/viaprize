@@ -142,17 +142,16 @@ function Prize() {
         }}
       />
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
-      <SimpleGrid cols={2} className="my-3">
-        <div className="">
-          <DateTimePicker
-            label="Pick date and time of starting submission time"
-            placeholder="Make sure its above the submission time and date"
-            value={startSubmisionDate ?? new Date()}
-            onChange={(da) => {
-              setStartSubmissionDate(da);
-            }}
-          />
-          {/* <NumberInput
+      <SimpleGrid cols={{ base: 1, sm: 1, lg: 3 }}  className="my-3">
+        <DateTimePicker
+          label="Submissions open"
+          placeholder="Make sure its above the submission time and date"
+          value={startSubmisionDate ?? new Date()}
+          onChange={(da) => {
+            setStartSubmissionDate(da);
+          }}
+        />
+        {/* <NumberInput
             placeholder="Submission Time (in minutes)"
             label={
               proposalTime && startSubmisionDate
@@ -165,36 +164,33 @@ function Prize() {
             }}
             allowNegative={false}
           /> */}
-          <DateTimePicker
-            label="Pick End of Juding time and start of voting time"
-            placeholder="Make sure its above the voting time and date"
-            minDate={addDaysToDate(new Date(), 4)}
-            value={votingDateTime ?? addDaysToDate(new Date(), 6)}
-            onChange={(da) => {
-              setVotingDateTime(da);
-              if (da && startVotingDate) {
-                setProposalTime((da.getTime() - startVotingDate.getTime()) / 1000 / 60);
-              }
-            }}
-          />
-        </div>
-        <div className="">
-          <DateTimePicker
-            label="Pick date and time of starting juding time and end of submission time"
-            placeholder="Make sure its above the voting time and date"
-            minDate={addDaysToDate(new Date(), 3)}
-            value={startVotingDate ?? addDaysToDate(new Date(), 3)}
-            onChange={(da) => {
-              setStartVotingDate(da);
-              if (da && startSubmisionDate) {
-                setProposalTime(
-                  (da.getTime() - startSubmisionDate.getTime()) / 1000 / 60,
-                );
-              }
-            }}
-          />
+        <DateTimePicker
+          label="Submissions end and judging begins"
+          placeholder="Make sure its above the voting time and date"
+          minDate={addDaysToDate(new Date(), 3)}
+          value={startVotingDate ?? addDaysToDate(new Date(), 3)}
+          onChange={(da) => {
+            setStartVotingDate(da);
+            if (da && startSubmisionDate) {
+              setProposalTime((da.getTime() - startSubmisionDate.getTime()) / 1000 / 60);
+            }
+          }}
+        />
 
-          {/* <NumberInput
+        <DateTimePicker
+          label="End judging"
+          placeholder="Make sure its above the voting time and date"
+          minDate={addDaysToDate(new Date(), 4)}
+          value={votingDateTime ?? addDaysToDate(new Date(), 6)}
+          onChange={(da) => {
+            setVotingDateTime(da);
+            if (da && startVotingDate) {
+              setProposalTime((da.getTime() - startVotingDate.getTime()) / 1000 / 60);
+            }
+          }}
+        />
+
+        {/* <NumberInput
             placeholder="Voting Time (in minutes)"
             label={
               votingTime && startVotingDate
@@ -207,7 +203,6 @@ function Prize() {
               setVotingTime(parseInt(e.toString()));
             }}
           /> */}
-        </div>
       </SimpleGrid>
       <Button
         className="mt-3 "
