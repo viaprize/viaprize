@@ -54,7 +54,8 @@ contract AllOrNothingV2 {
     bool internal locked;
     /// @notice mapping to verify the funder donated usdc or usdc.e 
     mapping(address => bool) public isUsdcContributer;
-
+    /// @notice boolean variable to keep track refunded or not
+    bool public refunded;
 
     uint public minimumSlipageFeePercentage = 2; 
     /// @notice initializing the erc20 interface for usdc token
@@ -115,8 +116,13 @@ contract AllOrNothingV2 {
     /// @notice constructor where we pass all the required parameters before deploying the contract
     /// @param _proposer who creates this campaign
     /// @param _platformAdmins array of address of platform admins
-    /// @param _token contract address of usdc token
-    /// @param _bridgedToken contract address of usdc.e token
+    /// @param _tokenUsdc contract address of usdc token
+    /// @param _bridgedTokenUsdc contract address of usdc.e token
+    /// @param _wethToken contract address of wraped eth
+    /// @param _swapRouter address for swaping the tokens
+    /// @param _usdcToUsdcePool pool address to swap from usdc.e to usdc
+    /// @param _usdcToEthPool pool address to swap from eth to usdc
+    /// @param _ethPriceAggregator address to fetch the realtime eth price
     /// @param _goal is used to set the goalAmount for the campaign
     /// @param _deadline, deadline of the campaign
     /// @param _allowDonationAboveGoalAmount bool to decide to allow donations above the goalAmount
@@ -124,8 +130,6 @@ contract AllOrNothingV2 {
     constructor(
         address _proposer,
         address[] memory _platformAdmins,
-        address _token,
-        address _bridgedToken,
         address _tokenUsdc,
         address _bridgedTokenUsdc,
         address _wethToken,
@@ -149,8 +153,6 @@ contract AllOrNothingV2 {
         }
 
         receipent = _proposer;
-        _usdc = IERC20Permit(_token);
-        _usdcBridged = IERC20Permit(_bridgedToken);
         platformFee = _platformFee;
         goalAmount = _goal;
         deadline = _deadline;
@@ -230,13 +232,9 @@ contract AllOrNothingV2 {
                 for(uint i=0; i<funders.length; i++) {
                     uint transferableAmount = funderAmount[funders[i]];
                     funderAmount[funders[i]] = 0;
-                    if(isUsdcContributer[funders[i]]){
-                        _usdc.transfer(funders[i], transferableAmount);
-                    }
-                    if(!isUsdcContributer[funders[i]]) {
-                        _usdcBridged.transfer(funders[i], transferableAmount);
-                    }
-            }
+                    _usdc.transfer(funders[i], transferableAmount);
+                }
+                refunded = true;
                 isActive = false;
             }
         }
@@ -269,13 +267,9 @@ contract AllOrNothingV2 {
                 for(uint i=0; i<funders.length; i++) {
                     uint transferableAmount = funderAmount[funders[i]];
                     funderAmount[funders[i]] = 0;
-                    if(isUsdcContributer[funders[i]]){
-                        _usdc.transfer(funders[i], transferableAmount);
-                    }
-                    if(!isUsdcContributer[funders[i]]) {
-                        _usdcBridged.transfer(funders[i], transferableAmount);
-                    }
+                    _usdc.transfer(funders[i], transferableAmount);
                 }
+                refunded = true;
                 isActive = false;
             }
             emit Values(
@@ -388,15 +382,10 @@ contract AllOrNothingV2 {
             for(uint256 i=0; i<funders.length; i++) {
                 uint256 transferableAmount = funderAmount[funders[i]];
                 funderAmount[funders[i]] = 0;
-                if(isUsdcContributer[funders[i]]){
-                    _usdc.transfer(funders[i], transferableAmount);
-                }
-                if(!isUsdcContributer[funders[i]]) {
-                    _usdcBridged.transfer(funders[i], transferableAmount);
-                }
+                _usdc.transfer(funders[i], transferableAmount);
             }
-            isActive = false;
         }
+        refunded = true;
         isActive = false;
     }
 
@@ -422,13 +411,9 @@ contract AllOrNothingV2 {
                 for(uint i=0; i<funders.length; i++) {
                     uint transferableAmount = funderAmount[funders[i]];
                     funderAmount[funders[i]] = 0;
-                    if(isUsdcContributer[funders[i]]){
-                        _usdc.transfer(funders[i], transferableAmount);
-                    }
-                    if(!isUsdcContributer[funders[i]]) {
-                        _usdcBridged.transfer(funders[i], transferableAmount);
-                    }
+                    _usdc.transfer(funders[i], transferableAmount);
                 }
+                refunded = true;
                 isActive = false;
             }
         }
@@ -446,13 +431,9 @@ contract AllOrNothingV2 {
                 for(uint i=0; i<funders.length; i++) {
                     uint transferableAmount = funderAmount[funders[i]];
                     funderAmount[funders[i]] = 0;
-                    if(isUsdcContributer[funders[i]]){
-                        _usdc.transfer(funders[i], transferableAmount);
-                    }
-                    if(!isUsdcContributer[funders[i]]) {
-                        _usdcBridged.transfer(funders[i], transferableAmount);
-                    }
+                    _usdc.transfer(funders[i], transferableAmount);
                 }
+                refunded = true;
                 isActive = false; 
             }
         }
@@ -486,7 +467,6 @@ contract AllOrNothingV2 {
         nft.safeTransferFrom(msg.sender,receipent,_tokenId);
         emit Donation(msg.sender,_nft,DonationType.GIFT,TokenType.NFT,1);
     }
-
 
     function giftTokens(address _token, uint256 _amount) public noReentrant {
         if (!isActive) revert FundingToContractEnded();
