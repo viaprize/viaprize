@@ -212,175 +212,7 @@ contract AllOrNothingV2 {
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
     }
 
-    /// @notice function to donate the usdc tokens into the campaign
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
-        require(_amountUsdc > 0, "funds should be greater than 0");
-        if (!isActive) revert FundingToContractEnded();
-        address funder = ecrecover(_ethSignedMessageHash, v, r, s);
-        _usdc.permit(funder, spender, _amountUsdc, _deadline, v, r, s);
-        _usdc.transferFrom(funder, spender, _amountUsdc);
-        if(!isActive) revert FundingToContractEnded();
-        uint256 _donation = _amountUsdc;
-        // funders.push(msg.sender);
-        // isFunder[msg.sender] = true;
-        // isUsdcContributer[msg.sender] = true;
-        // funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
-        // totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
-        // totalUsdcFunds = totalUsdcFunds.add(_donation);
-        // totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        // totalFunds = totalFunds.add(_donation);
-        _depositLogic(funder, _donation);
-
-        bool goalAmountAvailable = goalAmount > 0;
-        bool deadlineAvailable = deadline > 0;
-        bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
-        bool metGoal = totalRewards >= goalAmount;
-
-        if(allowDonationAboveGoalAmount) {
-            if (metDeadline && metGoal) {
-                // uint256 totalusdcrewards = totalUsdcRewards;
-                // uint256 adminusdcrewards = totalUsdcFunds.sub(totalUsdcRewards);
-                // uint256 totalbridgedusdcrewards = totalBridgedUsdcRewards;
-                // uint256 adminbridgedusdcrewards = totalBridgedUsdcFunds.sub(totalBridgedUsdcRewards);
-                // totalUsdcRewards = 0;
-                // totalUsdcFunds = 0;
-                // totalBridgedUsdcRewards = 0;
-                // totalBridgedUsdcFunds = 0;
-                // _usdc.transfer(receipent, totalusdcrewards);
-                // _usdc.transfer(platformAddress, adminusdcrewards);
-                // _usdcBridged.transfer(receiverAddress, totalbridgedusdcrewards);
-                // _usdcBridged.transfer(platformAddress, adminbridgedusdcrewards);
-                uint256 _totalProposerRewards = totalRewards;
-                uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
-                totalRewards = 0;
-                totalFunds = 0;
-                _usdc.transfer(receipent, _totalProposerRewards);
-                _usdc.transfer(platformAddress, _totalPlatformRewards);
-                isActive = false;
-            }
-            if(metDeadline && !metGoal) {
-                for(uint i=0; i<funders.length; i++) {
-                    uint transferableAmount = funderAmount[funders[i]];
-                    funderAmount[funders[i]] = 0;
-                    if(isUsdcContributer[funders[i]]){
-                        _usdc.transfer(funders[i], transferableAmount);
-                    }
-                    if(!isUsdcContributer[funders[i]]) {
-                        _usdcBridged.transfer(funders[i], transferableAmount);
-                    }
-            }
-                isActive = false;
-            }
-        }
-
-        if(!allowDonationAboveGoalAmount) {
-            if(metGoal) {
-                uint256 excessUsdcAmount;
-                if(msg.value > goalAmount) {
-                    excessUsdcAmount = totalRewards.sub(goalAmount);
-                    totalRewards = totalRewards.sub(excessUsdcAmount);
-                    // uint256 usdcMoneyToPlatform = (totalUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
-                    // _usdc.transfer(platformAddress, usdcMoneyToPlatform);
-                    // _usdc.transfer(receiverAddress, totalUsdcRewards);
-                    // _usdc.transfer(msg.sender, excessUsdcAmount);
-                    // totalUsdcRewards = 0;
-                    // usdcMoneyToPlatform = 0;
-                    // uint256 bridgedUsdcMoneyToPlatform = (totalBridgedUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
-                    // _usdcBridged.transfer(platformAddress, bridgedUsdcMoneyToPlatform);
-                    // _usdcBridged.transfer(receiverAddress, totalBridgedUsdcRewards);
-                    // totalBridgedUsdcRewards = 0;
-                    // bridgedUsdcMoneyToPlatform = 0;
-                    uint256 _totalProposerRewards = totalRewards;
-                    uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
-                    totalRewards = 0;
-                    totalFunds = 0;
-                    _usdc.transfer(receipent, _totalProposerRewards);
-                    _usdc.transfer(platformAddress, _totalPlatformRewards);
-                    isActive = false;
-                }
-                if(msg.value == goalAmount){
-                    // uint256 usdcMoneyToPlatform = (totalUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
-                    // _usdc.transfer(platformAddress, usdcMoneyToPlatform);
-                    // _usdc.transfer(receiverAddress, totalUsdcRewards);
-                    // totalUsdcRewards = 0;
-                    // usdcMoneyToPlatform = 0;
-                    // uint256 bridgedUsdcMoneyToPlatform = (totalBridgedUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
-                    // _usdcBridged.transfer(platformAddress, bridgedUsdcMoneyToPlatform);
-                    // _usdcBridged.transfer(receiverAddress, totalBridgedUsdcRewards);
-                    // totalBridgedUsdcRewards = 0;
-                    // bridgedUsdcMoneyToPlatform = 0;
-                    uint256 _totalProposerRewards = totalRewards;
-                    uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
-                    totalRewards = 0;
-                    totalFunds = 0;
-                    _usdc.transfer(receipent, _totalProposerRewards);
-                    _usdc.transfer(platformAddress, _totalPlatformRewards);
-                    isActive = false;
-                }
-                isActive = false;
-            }
-            if(metDeadline && !metGoal) {
-                for(uint i=0; i<funders.length; i++) {
-                    uint transferableAmount = funderAmount[funders[i]];
-                    funderAmount[funders[i]] = 0;
-                    if(isUsdcContributer[funders[i]]){
-                        _usdc.transfer(funders[i], transferableAmount);
-                    }
-                    if(!isUsdcContributer[funders[i]]) {
-                        _usdcBridged.transfer(funders[i], transferableAmount);
-                    }
-                }
-                isActive = false;
-            }
-        }
-        emit Values(
-            receipent, 
-            metGoal, 
-            allowDonationAboveGoalAmount, 
-            deadline, 
-            goalAmount, 
-            deadlineAvailable, 
-            goalAmountAvailable
-        );
-        return (
-            address(this).balance,
-            goalAmount,
-            totalRewards,
-            totalRewards >= goalAmount,
-            deadlineAvailable,
-            goalAmountAvailable
-        );
-    }
-
-    /// function to donate bridged tokens into campaign and swap to the usdc then sends to the campaign
-    function addBridgedUsdcFunds(uint256 _amountUsdc) public noReentrant payable returns(uint256, uint256, uint256, bool, bool, bool) {
-        if(!isActive) revert FundingToContractEnded();
-        require(_amountUsdc > 0, "funds should be greater than 0");
-        require(_usdcBridged.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved"); 
-        address sender = msg.sender;
-        TransferHelper.safeTransferFrom(USDC_E, msg.sender, address(this), _amountUsdc);
-        TransferHelper.safeApprove(USDC_E, address(swapRouter), _amountUsdc);
-        // IUniswapV3Pool pool = IUniswapV3Pool(0x2aB22ac86b25BD448A4D9dC041Bd2384655299c4);
-        ISwapRouter.ExactInputParams memory params =
-            ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(USDC_E, bridgedUsdcPool.fee(), USDC),
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: _amountUsdc,
-                amountOutMinimum: _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100)
-        });
-        // Executes the swap.
-        uint256 _donation  = swapRouter.exactInput(params);
-        _depositLogic(sender, _donation);
-        // funders.push(msg.sender);
-        // isFunder[msg.sender] = true;
-        // isUsdcContributer[msg.sender] = false;
-        // funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
-        // totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
-        // totalBridgedUsdcFunds = totalBridgedUsdcFunds.add(_donation);
-        // totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        // totalFunds = totalFunds.add(_donation);
-
+    function _transferLogic() private returns(uint256 _contractBalance, uint256 _goalAmount, uint256 _totalRewards, bool _metGoal, bool _deadlineAvailable, bool _goalAmountAvailable) {
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
         bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
@@ -426,10 +258,10 @@ contract AllOrNothingV2 {
 
         if(!allowDonationAboveGoalAmount) {
             if(metGoal) {
-                uint256 excessUsdcAmount;
+                uint256 excessAmount;
                 if(msg.value > goalAmount) {
-                    excessUsdcAmount = totalRewards.sub(goalAmount);
-                    totalRewards = totalRewards.sub(excessUsdcAmount);
+                    excessAmount = totalRewards.sub(goalAmount);
+                    totalRewards = totalRewards.sub(excessAmount);
                     // uint256 usdcMoneyToPlatform = (totalUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
                     // _usdc.transfer(platformAddress, usdcMoneyToPlatform);
                     // _usdc.transfer(receiverAddress, totalUsdcRewards);
@@ -482,24 +314,78 @@ contract AllOrNothingV2 {
                 }
                 isActive = false;
             }
+            emit Values(
+                receipent, 
+                metGoal, 
+                allowDonationAboveGoalAmount, 
+                deadline, 
+                goalAmount, 
+                deadlineAvailable, 
+                goalAmountAvailable
+            );
+            return (
+                address(this).balance,
+                goalAmount,
+                totalRewards,
+                metGoal,
+                deadlineAvailable,
+                goalAmountAvailable
+            );
         }
-        emit Values(
-            receipent, 
-            metGoal, 
-            allowDonationAboveGoalAmount, 
-            deadline, 
-            goalAmount, 
-            deadlineAvailable, 
-            goalAmountAvailable
-        );
-        return (
-            address(this).balance,
-            goalAmount,
-            totalRewards,
-            totalRewards >= goalAmount,
-            deadlineAvailable,
-            goalAmountAvailable
-        );
+    } 
+
+    /// @notice function to donate the usdc tokens into the campaign
+    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public noReentrant payable {
+        require(_amountUsdc > 0, "funds should be greater than 0");
+        if (!isActive) revert FundingToContractEnded();
+        address funder = ecrecover(_ethSignedMessageHash, v, r, s);
+        _usdc.permit(funder, spender, _amountUsdc, _deadline, v, r, s);
+        _usdc.transferFrom(funder, spender, _amountUsdc);
+        if(!isActive) revert FundingToContractEnded();
+        uint256 _donation = _amountUsdc;
+        // funders.push(msg.sender);
+        // isFunder[msg.sender] = true;
+        // isUsdcContributer[msg.sender] = true;
+        // funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
+        // totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
+        // totalUsdcFunds = totalUsdcFunds.add(_donation);
+        // totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
+        // totalFunds = totalFunds.add(_donation);
+        _depositLogic(funder, _donation);
+
+        _transferLogic();
+    }
+
+    /// function to donate bridged tokens into campaign and swap to the usdc then sends to the campaign
+    function addBridgedUsdcFunds(uint256 _amountUsdc) public noReentrant payable {
+        if(!isActive) revert FundingToContractEnded();
+        require(_amountUsdc > 0, "funds should be greater than 0");
+        require(_usdcBridged.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved"); 
+        address sender = msg.sender;
+        TransferHelper.safeTransferFrom(USDC_E, msg.sender, address(this), _amountUsdc);
+        TransferHelper.safeApprove(USDC_E, address(swapRouter), _amountUsdc);
+        // IUniswapV3Pool pool = IUniswapV3Pool(0x2aB22ac86b25BD448A4D9dC041Bd2384655299c4);
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: abi.encodePacked(USDC_E, bridgedUsdcPool.fee(), USDC),
+                recipient: address(this),
+                deadline: block.timestamp,
+                amountIn: _amountUsdc,
+                amountOutMinimum: _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100)
+        });
+        // Executes the swap.
+        uint256 _donation  = swapRouter.exactInput(params);
+        _depositLogic(sender, _donation);
+        // funders.push(msg.sender);
+        // isFunder[msg.sender] = true;
+        // isUsdcContributer[msg.sender] = false;
+        // funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
+        // totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
+        // totalBridgedUsdcFunds = totalBridgedUsdcFunds.add(_donation);
+        // totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
+        // totalFunds = totalFunds.add(_donation);
+        _transferLogic();
+
     }
 
     /// @notice function to end campaign early and refund to funders and can be called by only proposer or admin
@@ -639,6 +525,5 @@ contract AllOrNothingV2 {
         if (!isActive) revert FundingToContractEnded();
         TransferHelper.safeTransferFrom(_token, msg.sender, receipent, _amount);
         emit Donation(msg.sender, _token, DonationType.GIFT, TokenType.TOKEN,_amount);
-
     }
 }
