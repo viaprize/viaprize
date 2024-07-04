@@ -37,17 +37,10 @@ contract AllOrNothingV2 {
     mapping(address => bool) public isFunder;
     /// @notice this will be a mapping of the addresses of the funders to the amount they have contributed
     mapping(address => uint256) public funderAmount;
-    /// @notice this will be the total usdcFunds donated to the campaign
-    uint256 public totalUsdcFunds;
-    /// @notice this will be the total usdcRewards which goes to the recipient after deduction the platform fee from total usdc Funds.
-    uint256 public totalUsdcRewards;
-    /// @notice this will be the total bridged usdcFunds donated to the campaign
-    uint256 public totalBridgedUsdcFunds;
-    /// @notice this will be the total bridged usdcRewards which goes to the recipient after deducting the platform fee from total bridged usdcFunds
-    uint256 public totalBridgedUsdcRewards;
-    /// @notice this will be totalRewards(usdc + usdcBrdiged)
+
+    /// @notice this will be totalRewards after deducting platform cut
     uint256 public totalRewards;
-    /// @notice this will be totalFunds(usdc + usdcBrdiged)
+    /// @notice this will be totalFunds including platform cut
     uint256 public totalFunds;
     /// @notice bool to check does proposer need to allow donations above the goalAmount or not
     bool public allowDonationAboveGoalAmount;
@@ -111,8 +104,6 @@ contract AllOrNothingV2 {
     event Sender(address indexed _sender, uint256 indexed _amount);
     event Values(
         address receiverAddress,
-        uint256 totalFunds,
-        uint256 totalRewards,
         bool goalMet,
         bool allowDonationsAboveGoalAmount,
         uint256 deadline,
@@ -344,8 +335,6 @@ contract AllOrNothingV2 {
         }
         emit Values(
             receipent, 
-            totalUsdcFunds, 
-            totalUsdcRewards, 
             metGoal, 
             allowDonationAboveGoalAmount, 
             deadline, 
@@ -356,8 +345,8 @@ contract AllOrNothingV2 {
         return (
             address(this).balance,
             goalAmount,
-            totalUsdcRewards,
-            totalUsdcRewards >= goalAmount,
+            totalRewards,
+            totalRewards >= goalAmount,
             deadlineAvailable,
             goalAmountAvailable
         );
@@ -496,8 +485,6 @@ contract AllOrNothingV2 {
         }
         emit Values(
             receipent, 
-            totalUsdcFunds, 
-            totalUsdcRewards, 
             metGoal, 
             allowDonationAboveGoalAmount, 
             deadline, 
@@ -508,8 +495,8 @@ contract AllOrNothingV2 {
         return (
             address(this).balance,
             goalAmount,
-            totalUsdcRewards,
-            totalUsdcRewards >= goalAmount,
+            totalRewards,
+            totalRewards >= goalAmount,
             deadlineAvailable,
             goalAmountAvailable
         );
