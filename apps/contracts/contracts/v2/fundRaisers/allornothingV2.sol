@@ -205,14 +205,12 @@ contract AllOrNothingV2 {
         }
     }
 
-    function _depositLogic(address sender, uint256 _donation) private {
+    function _depositAndtransferLogic(address sender, uint256 _donation) private returns(uint256 _contractBalance, uint256 _goalAmount, uint256 _totalRewards, bool _metGoal, bool _deadlineAvailable, bool _goalAmountAvailable) {
         funders.push(sender);
         isFunder[sender] = true;
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-    }
 
-    function _transferLogic() private returns(uint256 _contractBalance, uint256 _goalAmount, uint256 _totalRewards, bool _metGoal, bool _deadlineAvailable, bool _goalAmountAvailable) {
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
         bool metDeadline = deadlineAvailable && deadline <= block.timestamp;
@@ -309,9 +307,7 @@ contract AllOrNothingV2 {
         _usdc.transferFrom(funder, spender, _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
-        _depositLogic(funder, _donation);
-
-        _transferLogic();
+        _depositAndtransferLogic(funder, _donation);
     }
 
     /// function to donate bridged tokens into campaign and swap to the usdc then sends to the campaign
@@ -333,9 +329,56 @@ contract AllOrNothingV2 {
         });
         // Executes the swap.
         uint256 _donation  = swapRouter.exactInput(params);
-        _depositLogic(sender, _donation);
-        _transferLogic();
+        _depositAndtransferLogic(sender, _donation);
+    }
 
+    /// @notice external function to receive eth funds
+    receive() external payable {
+        uint ethValue = msg.value;
+        uint decimals = ethPriceAggregator.decimals() - uint256(_usdc.decimals());
+        (, int256 latestPrice , , ,)  = ethPriceAggregator.latestRoundData();
+        uint price_in_correct_decimals = uint(latestPrice)/ (10 ** decimals);
+        addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
+    }
+
+        /// @notice function to donate eth into the campaign
+    function addEthFunds(uint256 _amountOutMinimum) public noReentrant payable  {
+        if (msg.value == 0) revert("Not enough Funds");
+        if (!isActive) revert FundingToContractEnded();
+        uint256 eth_donation =  msg.value;
+        address sender = msg.sender;
+        _weth.deposit{value:msg.value}();
+        _weth.approve(address(swapRouter), eth_donation);
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: abi.encodePacked(WETH, ethUsdcPool.fee(), USDC),
+                recipient: address(this),
+                deadline: block.timestamp,
+                amountIn: eth_donation,
+                amountOutMinimum: _amountOutMinimum
+        });
+        uint256 _donation = swapRouter.exactInput(params);
+        _depositAndtransferLogic(sender, _donation);
+    }
+
+    function  addTokenFunds(address _token , uint256 _amount , uint256 _minimumOutput,bytes memory paths) public noReentrant {
+        require(_amount > 0, "funds should be greater than 0");
+        if (!isActive) revert FundingToContractEnded();
+        IERC20 token = IERC20(_token);
+        require(token.allowance(msg.sender, address(this)) >= _amount, "Not enough Amount approved"); 
+        address sender = msg.sender;
+        TransferHelper.safeTransferFrom(_token, msg.sender, address(this), _amount);
+        TransferHelper.safeApprove(_token, address(swapRouter), _amount);
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: paths,
+                recipient: address(this),
+                deadline: block.timestamp,
+                amountIn: _amount,
+                amountOutMinimum: _minimumOutput
+        });
+        uint256 _donation  = swapRouter.exactInput(params);
+        _depositAndtransferLogic(sender, _donation);
     }
 
     /// @notice function to end campaign early and refund to funders and can be called by only proposer or admin
