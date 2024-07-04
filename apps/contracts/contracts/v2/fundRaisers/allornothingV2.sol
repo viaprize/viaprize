@@ -220,19 +220,6 @@ contract AllOrNothingV2 {
 
         if(allowDonationAboveGoalAmount) {
             if (metDeadline && metGoal) {
-                // uint256 totalusdcrewards = totalUsdcRewards;
-                // uint256 adminusdcrewards = totalUsdcFunds.sub(totalUsdcRewards);
-                // uint256 totalbridgedusdcrewards = totalBridgedUsdcRewards;
-                // uint256 adminbridgedusdcrewards = totalBridgedUsdcFunds.sub(totalBridgedUsdcRewards);
-                // totalUsdcRewards = 0;
-                // totalUsdcFunds = 0;
-                // totalBridgedUsdcRewards = 0;
-                // totalBridgedUsdcFunds = 0;
-                // _usdc.transfer(receiverAddress, totalusdcrewards);
-                // _usdc.transfer(platformAddress, adminusdcrewards);
-                // _usdcBridged.transfer(receiverAddress, totalbridgedusdcrewards);
-                // _usdcBridged.transfer(platformAddress, adminbridgedusdcrewards);
-                // isActive = false;
                 uint256 _totalProposerRewards = totalRewards;
                 uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                 totalRewards = 0;
@@ -262,17 +249,6 @@ contract AllOrNothingV2 {
                 if(msg.value > goalAmount) {
                     excessAmount = totalRewards.sub(goalAmount);
                     totalRewards = totalRewards.sub(excessAmount);
-                    // uint256 usdcMoneyToPlatform = (totalUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
-                    // _usdc.transfer(platformAddress, usdcMoneyToPlatform);
-                    // _usdc.transfer(receiverAddress, totalUsdcRewards);
-                    // _usdc.transfer(msg.sender, excessUsdcAmount);
-                    // totalUsdcRewards = 0;
-                    // usdcMoneyToPlatform = 0;
-                    // uint256 bridgedUsdcMoneyToPlatform = (totalBridgedUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
-                    // _usdcBridged.transfer(platformAddress, bridgedUsdcMoneyToPlatform);
-                    // _usdcBridged.transfer(receiverAddress, totalBridgedUsdcRewards);
-                    // totalBridgedUsdcRewards = 0;
-                    // bridgedUsdcMoneyToPlatform = 0;
                     uint256 _totalProposerRewards = totalRewards;
                     uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                     totalRewards = 0;
@@ -282,16 +258,6 @@ contract AllOrNothingV2 {
                     isActive = false;
                 }
                 if(msg.value == goalAmount){
-                    // uint256 usdcMoneyToPlatform = (totalUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
-                    // _usdc.transfer(platformAddress, usdcMoneyToPlatform);
-                    // _usdc.transfer(receiverAddress, totalUsdcRewards);
-                    // totalUsdcRewards = 0;
-                    // usdcMoneyToPlatform = 0;
-                    // uint256 bridgedUsdcMoneyToPlatform = (totalBridgedUsdcRewards.mul(platformFee)).div(uint256(100).sub(platformFee));
-                    // _usdcBridged.transfer(platformAddress, bridgedUsdcMoneyToPlatform);
-                    // _usdcBridged.transfer(receiverAddress, totalBridgedUsdcRewards);
-                    // totalBridgedUsdcRewards = 0;
-                    // bridgedUsdcMoneyToPlatform = 0;
                     uint256 _totalProposerRewards = totalRewards;
                     uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                     totalRewards = 0;
@@ -343,14 +309,6 @@ contract AllOrNothingV2 {
         _usdc.transferFrom(funder, spender, _amountUsdc);
         if(!isActive) revert FundingToContractEnded();
         uint256 _donation = _amountUsdc;
-        // funders.push(msg.sender);
-        // isFunder[msg.sender] = true;
-        // isUsdcContributer[msg.sender] = true;
-        // funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
-        // totalUsdcRewards = totalUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
-        // totalUsdcFunds = totalUsdcFunds.add(_donation);
-        // totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        // totalFunds = totalFunds.add(_donation);
         _depositLogic(funder, _donation);
 
         _transferLogic();
@@ -376,14 +334,6 @@ contract AllOrNothingV2 {
         // Executes the swap.
         uint256 _donation  = swapRouter.exactInput(params);
         _depositLogic(sender, _donation);
-        // funders.push(msg.sender);
-        // isFunder[msg.sender] = true;
-        // isUsdcContributer[msg.sender] = false;
-        // funderAmount[msg.sender] = funderAmount[msg.sender].add(_donation);
-        // totalBridgedUsdcRewards = totalBridgedUsdcRewards.add((_donation.mul(100 - platformFee)).div(100));
-        // totalBridgedUsdcFunds = totalBridgedUsdcFunds.add(_donation);
-        // totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        // totalFunds = totalFunds.add(_donation);
         _transferLogic();
 
     }
@@ -417,19 +367,6 @@ contract AllOrNothingV2 {
 
         if(allowDonationAboveGoalAmount) {
             if ((metDeadline && metGoal) || (!metDeadline && metGoal)) {
-                // uint256 totalusdcrewards = totalUsdcRewards;
-                // uint256 adminusdcrewards = totalUsdcFunds.sub(totalUsdcRewards);
-                // uint256 totalbridgedusdcrewards = totalBridgedUsdcRewards;
-                // uint256 adminbridgedusdcrewards = totalBridgedUsdcFunds.sub(totalBridgedUsdcRewards);
-                // totalUsdcRewards = 0;
-                // totalUsdcFunds = 0;
-                // totalBridgedUsdcRewards = 0;
-                // totalBridgedUsdcFunds = 0;
-                // _usdc.transfer(receiverAddress, totalusdcrewards);
-                // _usdc.transfer(platformAddress, adminusdcrewards);
-                // _usdcBridged.transfer(receiverAddress, totalbridgedusdcrewards);
-                // _usdcBridged.transfer(platformAddress, adminbridgedusdcrewards);
-                // isActive = false;
                 uint256 _totalProposerRewards = totalRewards;
                 uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                 totalRewards = 0;
@@ -454,19 +391,6 @@ contract AllOrNothingV2 {
         }
         if(!allowDonationAboveGoalAmount) {
             if(metGoal) {
-                // uint256 totalusdcrewards = totalUsdcRewards;
-                // uint256 adminusdcrewards = totalUsdcFunds.sub(totalUsdcRewards);
-                // uint256 totalbridgedusdcrewards = totalBridgedUsdcRewards;
-                // uint256 adminbridgedusdcrewards = totalBridgedUsdcFunds.sub(totalBridgedUsdcRewards);
-                // totalUsdcRewards = 0;
-                // totalUsdcFunds = 0;
-                // totalBridgedUsdcRewards = 0;
-                // totalBridgedUsdcFunds = 0;
-                // _usdc.transfer(receiverAddress, totalusdcrewards);
-                // _usdc.transfer(platformAddress, adminusdcrewards);
-                // _usdcBridged.transfer(receiverAddress, totalbridgedusdcrewards);
-                // _usdcBridged.transfer(platformAddress, adminbridgedusdcrewards);
-                // isActive = false;
                 uint256 _totalProposerRewards = totalRewards;
                 uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                 totalRewards = 0;
