@@ -32,11 +32,18 @@ contract AllOrNothingV2 {
     /// @notice this will the percentage from totalFunds which goes to the platform address as Fee
     uint256 public platformFee;
     /// @notice this will be an array of address who funding to this campaign
-    address[] public funders; 
+    address[] public cryptoFunders; 
+    address[] public fiatFunders;
     /// @notice this will be a mapping of the addresses of a funder to a boolean value of true or false
-    mapping(address => bool) public isFunder;
+    mapping(address => bool) public isCryptoFunder;
+    mapping(address => bool) public isFiatFunder;
     /// @notice this will be a mapping of the addresses of the funders to the amount they have contributed
-    mapping(address => uint256) public funderAmount;
+    mapping(address => uint256) public cryptoFunderAmount;
+    mapping(address => uint256) public fiatFunderAmount;
+
+    mapping(address => uint256) public individualCryptoPercentage;
+    mapping(address => uint256) public individualFiatPercentage;
+    mapping(address => uint256) public totalFunderAmount;
 
     /// @notice this will be totalRewards after deducting platform cut
     uint256 public totalRewards;
@@ -50,7 +57,7 @@ contract AllOrNothingV2 {
     uint256 public totalPlatformAdmins;
     /// @notice bool to check status of campaign
     bool public isActive;
-    /// @notice To-Do
+    /// @notice boolean used for re-entrancy
     bool internal locked;
     /// @notice mapping to verify the funder donated usdc or usdc.e 
     mapping(address => bool) public isUsdcContributer;
@@ -83,6 +90,8 @@ contract AllOrNothingV2 {
     address public USDC_E;
     /// @notice this is an Eth address which will be assigned while deploying the contract.
     address public WETH;
+
+    uint8 public constant  VERSION = 2;
 
     /// @notice error indicating the funding to the contract has ended
     error FundingToContractEnded();
@@ -207,11 +216,14 @@ contract AllOrNothingV2 {
         }
     }
 
-    function _depositAndtransferLogic(address sender, uint256 _donation) private returns(uint256 _contractBalance, uint256 _goalAmount, uint256 _totalRewards, bool _metGoal, bool _deadlineAvailable, bool _goalAmountAvailable) {
-        funders.push(sender);
-        isFunder[sender] = true;
+    function _depositAndTransferLogic(address sender, uint256 _donation) private returns(uint256 _contractBalance, uint256 _goalAmount, uint256 _totalRewards, bool _metGoal, bool _deadlineAvailable, bool _goalAmountAvailable) {
+        cryptoFunders.push(sender);
+        isCryptoFunder[sender] = true;
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
+        cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(_donation);
+        totalFunderAmount[sender] = totalFunderAmount[sender].add(_donation);
+        individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
 
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
@@ -229,10 +241,10 @@ contract AllOrNothingV2 {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<funders.length; i++) {
-                    uint transferableAmount = funderAmount[funders[i]];
-                    funderAmount[funders[i]] = 0;
-                    _usdc.transfer(funders[i], transferableAmount);
+                for(uint i=0; i<cryptoFunders.length; i++) {
+                    uint transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
+                    cryptoFunderAmount[cryptoFunders[i]] = 0;
+                    _usdc.transfer(cryptoFunders[i], transferableAmount);
                 }
                 refunded = true;
                 isActive = false;
@@ -264,10 +276,10 @@ contract AllOrNothingV2 {
                 }
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<funders.length; i++) {
-                    uint transferableAmount = funderAmount[funders[i]];
-                    funderAmount[funders[i]] = 0;
-                    _usdc.transfer(funders[i], transferableAmount);
+                for(uint i=0; i<cryptoFunders.length; i++) {
+                    uint transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
+                    cryptoFunderAmount[cryptoFunders[i]] = 0;
+                    _usdc.transfer(cryptoFunders[i], transferableAmount);
                 }
                 refunded = true;
                 isActive = false;
@@ -293,15 +305,27 @@ contract AllOrNothingV2 {
     } 
 
     /// @notice function to donate the usdc tokens into the campaign
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public noReentrant payable {
+    function addUsdcFunds(uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public noReentrant payable {
         require(_amountUsdc > 0, "funds should be greater than 0");
         if (!isActive) revert FundingToContractEnded();
-        address funder = ecrecover(_ethSignedMessageHash, v, r, s);
-        _usdc.permit(funder, spender, _amountUsdc, _deadline, v, r, s);
-        _usdc.transferFrom(funder, spender, _amountUsdc);
-        if(!isActive) revert FundingToContractEnded();
-        uint256 _donation = _amountUsdc;
-        _depositAndtransferLogic(funder, _donation);
+        address sender = ecrecover(_ethSignedMessageHash, v, r, s);
+        _usdc.permit(sender, address(this), _amountUsdc, _deadline, v, r, s);
+        if(_fiatPayment == true) {
+            if(!isFiatFunder[sender]) {
+                fiatFunders.push(sender);
+                isFiatFunder[sender] = true;
+            }
+            fiatFunderAmount[sender] = fiatFunderAmount[sender].add(_amountUsdc);
+            totalFunderAmount[sender] = totalFunderAmount[sender].add(_amountUsdc);
+            totalRewards = totalRewards.add((_amountUsdc.mul(100 - (platformFee))).div(100));
+            totalFunds = totalFunds.add(_amountUsdc);
+            individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
+        } else {
+            _depositAndTransferLogic(sender, _amountUsdc);
+        }
+        _usdc.transferFrom(sender, address(this), _amountUsdc);
+        emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _amountUsdc);
+
     }
 
     /// function to donate bridged tokens into campaign and swap to the usdc then sends to the campaign
@@ -323,7 +347,7 @@ contract AllOrNothingV2 {
         });
         // Executes the swap.
         uint256 _donation  = swapRouter.exactInput(params);
-        _depositAndtransferLogic(sender, _donation);
+        _depositAndTransferLogic(sender, _donation);
     }
 
     /// @notice external function to receive eth funds
@@ -352,7 +376,7 @@ contract AllOrNothingV2 {
                 amountOutMinimum: _amountOutMinimum
         });
         uint256 _donation = swapRouter.exactInput(params);
-        _depositAndtransferLogic(sender, _donation);
+        _depositAndTransferLogic(sender, _donation);
     }
 
     function  addTokenFunds(address _token , uint256 _amount , uint256 _minimumOutput,bytes memory paths) public noReentrant {
@@ -372,17 +396,17 @@ contract AllOrNothingV2 {
                 amountOutMinimum: _minimumOutput
         });
         uint256 _donation  = swapRouter.exactInput(params);
-        _depositAndtransferLogic(sender, _donation);
+        _depositAndTransferLogic(sender, _donation);
     }
 
     /// @notice function to end campaign early and refund to funders and can be called by only proposer or admin
     function endEarlyandRefund() public noReentrant onlyProposerOrAdmin {
         if(!isActive) revert("campaign is not active");
-        if(funders.length > 0) {
-            for(uint256 i=0; i<funders.length; i++) {
-                uint256 transferableAmount = funderAmount[funders[i]];
-                funderAmount[funders[i]] = 0;
-                _usdc.transfer(funders[i], transferableAmount);
+        if(cryptoFunders.length > 0) {
+            for(uint256 i=0; i<cryptoFunders.length; i++) {
+                uint256 transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
+                cryptoFunderAmount[cryptoFunders[i]] = 0;
+                _usdc.transfer(cryptoFunders[i], transferableAmount);
             }
         }
         refunded = true;
@@ -408,10 +432,10 @@ contract AllOrNothingV2 {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<funders.length; i++) {
-                    uint transferableAmount = funderAmount[funders[i]];
-                    funderAmount[funders[i]] = 0;
-                    _usdc.transfer(funders[i], transferableAmount);
+                for(uint i=0; i<cryptoFunders.length; i++) {
+                    uint transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
+                    cryptoFunderAmount[cryptoFunders[i]] = 0;
+                    _usdc.transfer(cryptoFunders[i], transferableAmount);
                 }
                 refunded = true;
                 isActive = false;
@@ -428,13 +452,13 @@ contract AllOrNothingV2 {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<funders.length; i++) {
-                    uint transferableAmount = funderAmount[funders[i]];
-                    funderAmount[funders[i]] = 0;
-                    _usdc.transfer(funders[i], transferableAmount);
+                for(uint i=0; i<cryptoFunders.length; i++) {
+                    uint transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
+                    cryptoFunderAmount[cryptoFunders[i]] = 0;
+                    _usdc.transfer(cryptoFunders[i], transferableAmount);
                 }
                 refunded = true;
-                isActive = false; 
+                isActive = false;
             }
         }
     }
