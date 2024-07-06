@@ -12,7 +12,6 @@ import '@mantine/tiptap/styles.css';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import Script from 'next/script';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { theme } from 'utils/theme';
@@ -34,14 +33,14 @@ export default function WrapperLayout({
       <PrivyProvider
         appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
         config={{
-          loginMethods: ['email', 'wallet'],
+          loginMethods: ['email', 'wallet', 'google'],
           additionalChains: [],
 
           defaultChain: configureChainsConfig.chains[0],
           appearance: {
             theme: 'dark',
             accentColor: '#676FFF',
-            showWalletLoginFirst: true,
+            logo: 'https://www.viaprize.org/_next/image?url=%2FviaprizeBg.png&w=64&q=75',
 
             // logo: 'https://your-logo-url',
           },

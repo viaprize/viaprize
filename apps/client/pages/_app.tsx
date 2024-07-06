@@ -98,7 +98,6 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
           appearance: {
             theme: 'dark',
             accentColor: '#676FFF',
-            showWalletLoginFirst: true,
             logo: 'https://www.viaprize.org/_next/image?url=%2FviaprizeBg.png&w=64&q=75',
           },
         }}
