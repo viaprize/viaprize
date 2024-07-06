@@ -298,10 +298,6 @@ contract PrizeV2 {
         votingTime = block.timestamp + _votingTime * 1 minutes;
     }
 
-   
-
-    
-
 
     /// @notice Distribute rewards
     function _distributeRewards() private {
@@ -351,9 +347,10 @@ contract PrizeV2 {
                 cryptoFunderAmount[cryptoFunders[i]] = 0;
             }
             for(uint256 i=0; i<fiatFunders.length; i++) {
-                _usdc.transfer(platformAddress, fiatFunderAmount[fiatFunders[i]]);
-                emit fiatFunderRefund(fiatFunders[i], fiatFunderAmount[fiatFunders[i]], true);
+                uint256 transferable_amount = fiatFunderAmount[fiatFunders[i]];
                 fiatFunderAmount[fiatFunders[i]] = 0;
+                _usdc.transfer(platformAddress, transferable_amount);
+                emit fiatFunderRefund(fiatFunders[i], transferable_amount, true);
             }
             distributed = true;
         }
@@ -405,20 +402,32 @@ contract PrizeV2 {
             }
         }
         if(isFiatFunder[sender] || isCryptoFunder[sender]) {
-            uint256 amountToVote;
-            if(cryptoFunderAmount[sender] > 0) {
-                amountToVote = (cryptoFunderAmount[sender].mul(_amount)).div(100);
-                cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(amountToVote);
-                funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amountToVote);
-                _voteLogic(amountToVote, _submissionHash, sender);
-                amountToVote = 0;
-            }
-            if(fiatFunderAmount[sender] > 0) {
-                amountToVote = (fiatFunderAmount[sender].mul(_amount)).div(100);
-                fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(amountToVote);
-                funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(amountToVote);
-                _voteLogic(amountToVote, _submissionHash, sender);
-                amountToVote = 0;
+            if(totalFunderAmount[sender] > 0) {
+                if(cryptoFunderAmount[sender] > 0 && fiatFunderAmount[sender] > 0){
+                    uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
+                    uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
+                    if(!(_amount == cryptoAmountToVote + fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
+                    cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
+                    fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
+                    totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote + fiatAmountToVote);
+                    funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+                    cryptoAmountToVote = 0;
+                    fiatAmountToVote = 0;
+                } else if(cryptoFunderAmount[sender] > 0) {
+                    uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
+                    if(!(_amount == cryptoAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
+                    cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
+                    totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote);
+                    funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+                    cryptoAmountToVote = 0;
+                } else if(fiatFunderAmount[sender] > 0) {
+                    uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
+                    if(!(_amount == fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
+                    fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
+                    totalFunderAmount[sender] = totalFunderAmount[sender].sub(fiatAmountToVote);
+                    funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+                    fiatAmountToVote = 0;
+                }
             }
         }
     }
@@ -516,7 +525,7 @@ contract PrizeV2 {
         // if(_paymentType == false && isFiatFunder[sender] == true) revert("AFF"); // AFF -> Already Fiat Funder
         _usdc.permit(sender, spender, _amountUsdc, _deadline,v,r,s);
         if(_fiatPayment == true) {
-            if(isFiatFunder[sender] == true) {
+            if(!isFiatFunder[sender]) {
                 fiatFunders.push(sender);
                 isFiatFunder[sender] = true;
             }
