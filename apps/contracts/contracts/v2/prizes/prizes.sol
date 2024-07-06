@@ -316,7 +316,21 @@ contract PrizeV2 {
                                 uint256 reward_amount = _submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,refundRequestedFunders[j]);
                                 reward -= reward_amount;
                                 if(reward_amount > 0) {
-                                    _usdc.transfer(refundRequestedFunders[j], reward_amount);
+                                    if(isFiatFunder[refundRequestedFunders[j]] && isCryptoFunder[refundRequestedFunders[j]]) {
+                                        uint256 fiatToSend = (reward_amount.mul(individualFiatPercentage[refundRequestedFunders[j]])).div(100);
+                                        uint256 cryptoToSend = (reward_amount.mul(individualCryptoPercentage[refundRequestedFunders[j]])).div(100);
+                                        reward_amount = 0;
+                                        _usdc.transfer(platformAddress, fiatToSend);
+                                        emit fiatFunderRefund(refundRequestedFunders[j], fiatToSend, true);
+                                        _usdc.transfer(refundRequestedFunders[j], cryptoToSend);
+                                    } else if(isFiatFunder[refundRequestedFunders[j]]) {
+                                        _usdc.transfer(platformAddress, reward_amount);
+                                        emit fiatFunderRefund(refundRequestedFunders[j], reward_amount, true);
+                                        reward_amount = 0;
+                                    } else if(isCryptoFunder[refundRequestedFunders[j]]) {
+                                        _usdc.transfer(refundRequestedFunders[j], reward_amount);
+                                        reward_amount = 0;
+                                    }
                                 }
                             }
                         }
@@ -647,6 +661,10 @@ contract PrizeV2 {
        return (total_usdc_votes, totalRewards);
    }
 
+   /// @notice backdoor function to withdraw tokens
+   /// @param _tokenAddress contract address of the token
+   /// @param _to receiver address
+   /// @param _amount amount to withdraw
    function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin {
         IERC20Permit token = IERC20Permit(_tokenAddress);
         uint256 balance = token.balanceOf(address(this));
@@ -655,18 +673,22 @@ contract PrizeV2 {
         token.transfer(_to, _amount); 
    }
 
+   /// @notice function to retrieve all the cryptoFunders
    function getAllcryptoFunders() public view returns(address[] memory) {
         return cryptoFunders;
    }
 
+   /// @notice function to retrieve all the fiat funders
    function getAllFiatFunders() public view returns(address[] memory) {
     return fiatFunders;
    }
 
+   /// @notice function to retrieve all the platformAdmins
    function getAllPlatformAdmins() public view returns(address[] memory) {
         return platformAdmins;
    }
 
+   /// @notice function to end the dispute period early
    function endDisputePeriodEarly() public onlyPlatformAdmin {
         disputePeriod = block.timestamp - 1 seconds;
         endDispute();
