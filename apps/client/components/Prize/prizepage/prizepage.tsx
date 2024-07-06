@@ -280,7 +280,7 @@ export default function PrizePageComponent({
             Won
           </Badge>
         ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-        deadlineString === 'Time is up!' && prize.distributed === false ? (
+        prize.refunded ? (
           <Badge size="lg" color="yellow">
             Refunded
           </Badge>

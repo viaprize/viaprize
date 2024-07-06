@@ -333,6 +333,7 @@ export interface PrizeWithBlockchainData {
   submission_time_blockchain: number;
   voting_time_blockchain: number;
   dispute_period_time_blockchain: number;
+  refunded: boolean;
   balance: number;
   id: string;
   description: string;
@@ -1842,9 +1843,9 @@ export class HttpClient<SecurityDataType = unknown> {
         : input,
     [ContentType.Text]: (input: any) =>
       input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((formData, key) => {
-        const property = input[key];
+    [ContentType.FormData]: (input: FormData) =>
+      (Array.from(input.keys()) || []).reduce((formData, key) => {
+        const property = input.get(key);
         formData.append(
           key,
           property instanceof Blob

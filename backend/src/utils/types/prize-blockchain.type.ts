@@ -8,4 +8,5 @@ export interface PrizeWithBlockchainData extends PrizeWithBalance {
   submission_time_blockchain: number;
   voting_time_blockchain: number;
   dispute_period_time_blockchain: number;
+  refunded: boolean;
 }
