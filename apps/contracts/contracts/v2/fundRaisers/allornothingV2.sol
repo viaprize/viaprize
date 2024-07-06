@@ -121,6 +121,7 @@ contract AllOrNothingV2 {
         bool deadlineAvailable,
         bool goalAmountAvailable
     );
+    event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
 
     /// @notice constructor where we pass all the required parameters before deploying the contract
     /// @param _proposer who creates this campaign
@@ -222,8 +223,8 @@ contract AllOrNothingV2 {
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(_donation);
-        totalFunderAmount[sender] = totalFunderAmount[sender].add(_donation);
-        individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
+        // totalFunderAmount[sender] = totalFunderAmount[sender].add(_donation);
+        // individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
 
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
@@ -241,12 +242,23 @@ contract AllOrNothingV2 {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<cryptoFunders.length; i++) {
-                    uint transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
-                    cryptoFunderAmount[cryptoFunders[i]] = 0;
-                    _usdc.transfer(cryptoFunders[i], transferableAmount);
+                if(cryptoFunders.length > 0) {
+                    for(uint256 i=0; i<cryptoFunders.length; i++) {
+                        uint256 transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
+                        cryptoFunderAmount[cryptoFunders[i]] = 0;
+                        _usdc.transfer(cryptoFunders[i], transferableAmount);
+                    }
+                    refunded = true;
                 }
-                refunded = true;
+                if(fiatFunders.length > 0) {
+                    for(uint i=0; i<fiatFunders.length; i++) {
+                        uint transferableAmount = fiatFunderAmount[fiatFunders[i]];
+                        fiatFunderAmount[fiatFunders[i]] = 0;
+                        _usdc.transfer(platformAddress, transferableAmount);
+                        emit fiatFunderRefund(fiatFunders[i], transferableAmount, true);
+                    }
+                    refunded = true;
+                }
                 isActive = false;
             }
         }
@@ -276,12 +288,23 @@ contract AllOrNothingV2 {
                 }
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<cryptoFunders.length; i++) {
-                    uint transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
-                    cryptoFunderAmount[cryptoFunders[i]] = 0;
-                    _usdc.transfer(cryptoFunders[i], transferableAmount);
+                if(cryptoFunders.length > 0) {
+                    for(uint256 i=0; i<cryptoFunders.length; i++) {
+                        uint256 transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
+                        cryptoFunderAmount[cryptoFunders[i]] = 0;
+                        _usdc.transfer(cryptoFunders[i], transferableAmount);
+                    }
+                    refunded = true;
                 }
-                refunded = true;
+                if(fiatFunders.length > 0) {
+                    for(uint i=0; i<fiatFunders.length; i++) {
+                        uint transferableAmount = fiatFunderAmount[fiatFunders[i]];
+                        fiatFunderAmount[fiatFunders[i]] = 0;
+                        _usdc.transfer(platformAddress, transferableAmount);
+                        emit fiatFunderRefund(fiatFunders[i], transferableAmount, true);
+                    }
+                    refunded = true;
+                }
                 isActive = false;
             }
             emit Values(
@@ -316,10 +339,10 @@ contract AllOrNothingV2 {
                 isFiatFunder[sender] = true;
             }
             fiatFunderAmount[sender] = fiatFunderAmount[sender].add(_amountUsdc);
-            totalFunderAmount[sender] = totalFunderAmount[sender].add(_amountUsdc);
+            // totalFunderAmount[sender] = totalFunderAmount[sender].add(_amountUsdc);
             totalRewards = totalRewards.add((_amountUsdc.mul(100 - (platformFee))).div(100));
             totalFunds = totalFunds.add(_amountUsdc);
-            individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
+            // individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
         } else {
             _depositAndTransferLogic(sender, _amountUsdc);
         }
@@ -336,7 +359,6 @@ contract AllOrNothingV2 {
         address sender = msg.sender;
         TransferHelper.safeTransferFrom(USDC_E, msg.sender, address(this), _amountUsdc);
         TransferHelper.safeApprove(USDC_E, address(swapRouter), _amountUsdc);
-        // IUniswapV3Pool pool = IUniswapV3Pool(0x2aB22ac86b25BD448A4D9dC041Bd2384655299c4);
         ISwapRouter.ExactInputParams memory params =
             ISwapRouter.ExactInputParams({
                 path: abi.encodePacked(USDC_E, bridgedUsdcPool.fee(), USDC),
@@ -408,8 +430,17 @@ contract AllOrNothingV2 {
                 cryptoFunderAmount[cryptoFunders[i]] = 0;
                 _usdc.transfer(cryptoFunders[i], transferableAmount);
             }
+            refunded = true;
         }
-        refunded = true;
+        if(fiatFunders.length > 0) {
+            for(uint i=0; i<fiatFunders.length; i++) {
+                uint transferableAmount = fiatFunderAmount[fiatFunders[i]];
+                fiatFunderAmount[fiatFunders[i]] = 0;
+                _usdc.transfer(platformAddress, transferableAmount);
+                emit fiatFunderRefund(fiatFunders[i], transferableAmount, true);
+            }
+            refunded = true;
+        }
         isActive = false;
     }
 
@@ -432,12 +463,24 @@ contract AllOrNothingV2 {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<cryptoFunders.length; i++) {
-                    uint transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
-                    cryptoFunderAmount[cryptoFunders[i]] = 0;
-                    _usdc.transfer(cryptoFunders[i], transferableAmount);
+                if(cryptoFunders.length > 0) {
+                    for(uint256 i=0; i<cryptoFunders.length; i++) {
+                        uint256 transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
+                        cryptoFunderAmount[cryptoFunders[i]] = 0;
+                        _usdc.transfer(cryptoFunders[i], transferableAmount);
+                    }
+                    refunded = true;
                 }
-                refunded = true;
+                if(fiatFunders.length > 0) {
+                    for(uint i=0; i<fiatFunders.length; i++) {
+                        uint transferableAmount = fiatFunderAmount[fiatFunders[i]];
+                        fiatFunderAmount[fiatFunders[i]] = 0;
+                        _usdc.transfer(platformAddress, transferableAmount);
+                        emit fiatFunderRefund(fiatFunders[i], transferableAmount, true);
+                    }
+                    refunded = true;
+                }
+
                 isActive = false;
             }
         }
@@ -452,12 +495,23 @@ contract AllOrNothingV2 {
                 isActive = false;
             }
             if(metDeadline && !metGoal) {
-                for(uint i=0; i<cryptoFunders.length; i++) {
-                    uint transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
-                    cryptoFunderAmount[cryptoFunders[i]] = 0;
-                    _usdc.transfer(cryptoFunders[i], transferableAmount);
+                if(cryptoFunders.length > 0) {
+                    for(uint256 i=0; i<cryptoFunders.length; i++) {
+                        uint256 transferableAmount = cryptoFunderAmount[cryptoFunders[i]];
+                        cryptoFunderAmount[cryptoFunders[i]] = 0;
+                        _usdc.transfer(cryptoFunders[i], transferableAmount);
+                    }
+                    refunded = true;
                 }
-                refunded = true;
+                if(fiatFunders.length > 0) {
+                    for(uint i=0; i<fiatFunders.length; i++) {
+                        uint transferableAmount = fiatFunderAmount[fiatFunders[i]];
+                        fiatFunderAmount[fiatFunders[i]] = 0;
+                        _usdc.transfer(platformAddress, transferableAmount);
+                        emit fiatFunderRefund(fiatFunders[i], transferableAmount, true);
+                    }
+                    refunded = true;
+                }
                 isActive = false;
             }
         }
