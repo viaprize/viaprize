@@ -1,13 +1,22 @@
 import type { Metadata } from 'next';
-import WrapperLayout from './wrapper';
 import Script from 'next/script';
+import WrapperLayout from './wrapper';
 
 export const metadata: Metadata = {
   title: 'viaPrize',
-  description:
-    'viaPrize is a platform for creating and funding prizes for the Ethereum community.',
+  description: 'Trustworthy crowdfunding and prizes',
   twitter: {
     card: 'summary_large_image',
+    title: 'viaPrize',
+    description: 'Trustworthy crowdfunding and prizes',
+    images: [
+      {
+        url: 'https://viaprize.org/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'viaPrize',
+      },
+    ],
   },
   metadataBase: new URL('https://viaprize.org/'),
 };
