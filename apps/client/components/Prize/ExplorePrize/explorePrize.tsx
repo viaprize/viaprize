@@ -53,10 +53,10 @@ function ExploreCard({
   startSubmissionDate,
   contestants,
 }: ExploreCardProps) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const submissionEndDate = new Date(startingTimeBlockchain * 1000);
   const deadlineString = calculateDeadline(
     new Date(),
-    addMinutes(startSubmissionDate, submissionMinutes),
+    submissionEndDate,
   );
 
   return (
@@ -123,8 +123,8 @@ function ExploreCard({
           </Text>
           <Text fw="bold" className="flex">
             Submission Deadline :{' '}
-            {new Date() < addMinutes(startSubmissionDate, submissionMinutes) ? (
-              addMinutes(startSubmissionDate, submissionMinutes).toLocaleDateString()
+            {new Date() < submissionEndDate ? (
+              submissionEndDate.toLocaleDateString()
             ) : (
               <Text c="red" fw="bold" className="pl-2">
                 Ended
