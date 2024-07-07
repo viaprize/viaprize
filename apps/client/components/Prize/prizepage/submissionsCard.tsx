@@ -27,6 +27,7 @@ import { useContractRead, useWalletClient } from 'wagmi';
 import { extractPlainTextFromEditor } from './utils';
 
 interface SubmissionsCardProps {
+  username: string;
   fullname: string;
   wallet: string;
   time: string;
@@ -43,6 +44,7 @@ interface SubmissionsCardProps {
   prize?: Prize;
 }
 export default function SubmissionsCard({
+  username,
   fullname,
   votes,
   time,
@@ -202,14 +204,15 @@ export default function SubmissionsCard({
           </Modal>
           <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
             <div className="flex items-center justify-between w-full">
-              <Group>
-                <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
-                <div>
-                  <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+              <Link href={`/profile/${username}`} className="hover:underline">
+                <Group>
+                  <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
+
+                  <Text variant="p" fw="bold" my="0px" className="leading-[15px] ">
                     {fullname}
                   </Text>
-                </div>
-              </Group>
+                </Group>
+              </Link>
               {won ? <Badge bg="green">{won}</Badge> : null}
             </div>
             <div>
