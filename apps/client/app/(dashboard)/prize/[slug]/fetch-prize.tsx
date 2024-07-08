@@ -42,7 +42,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: prize.title,
       description: prize.description.slice(0, 300),
-      images: [prize.images[0]],
+      images: prize.images,
     },
   };
 }
