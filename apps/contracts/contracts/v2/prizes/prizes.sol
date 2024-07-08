@@ -522,23 +522,32 @@ contract PrizeV2 {
 
 
     function _depositLogic(address sender, uint256 donation) private {
-        isCryptoFunder[sender] = true;
+        // isCryptoFunder[sender] = true;
+        // cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(donation);
+        // // cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(donation);
+        // totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
+        // totalFunderAmount[sender] = totalFunderAmount[sender].add(donation);
+        // individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
+        // totalFunds = totalFunds.add(donation);
+        // cryptoFunders.push(sender);
+        if(!isCryptoFunder[sender]) {
+            isCryptoFunder[sender] = true;
+            cryptoFunders.push(sender);
+        }
         cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(donation);
-        cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(donation);
-        totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
+        totalFunderAmount[sender] = totalFunderAmount[sender].add(donation);
         individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
+        individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
         totalFunds = totalFunds.add(donation);
-        cryptoFunders.push(sender);
+        totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
     }
 
     function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public onlyActive noReentrant payable {
         require(_amountUsdc > 0, "F<0"); // F<0 -> funds should be greater than zero.
         // (uint8 v, bytes32 r, bytes32 s) = ECDSA.tryRecover(_ethSignedMessageHash, _signature);
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
-        // if(_paymentType == true && isCryptoFunder[sender] == true) revert("ACF"); // ACF -> Already Crypto Funder
-        // if(_paymentType == false && isFiatFunder[sender] == true) revert("AFF"); // AFF -> Already Fiat Funder
         _usdc.permit(sender, spender, _amountUsdc, _deadline,v,r,s);
-        if(_fiatPayment == true) {
+        if(_fiatPayment) {
             if(!isFiatFunder[sender]) {
                 fiatFunders.push(sender);
                 isFiatFunder[sender] = true;
@@ -547,10 +556,15 @@ contract PrizeV2 {
             totalFunderAmount[sender] = totalFunderAmount[sender].add(_amountUsdc);
             totalRewards = totalRewards.add((_amountUsdc.mul(100 - (platformFee + proposerFee))).div(100));
             individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
+            individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
             totalFunds = totalFunds.add(_amountUsdc);
-        } else {
+        } 
+        if(!_fiatPayment) {
             _depositLogic(sender, _amountUsdc);
         }
+        // else {
+        //     _depositLogic(sender, _amountUsdc);
+        // }
         _usdc.transferFrom(sender, address(this), _amountUsdc);
         emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _amountUsdc);
     }
