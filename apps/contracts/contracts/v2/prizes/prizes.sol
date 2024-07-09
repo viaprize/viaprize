@@ -244,7 +244,7 @@ contract PrizeV2 {
         submissionPeriod = false;
         submissionTime = 0;
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-        if(allSubmissions.length == 0 ) {
+        if(allSubmissions.length == 1 ) {
             for(uint256 i=0; i<cryptoFunders.length; i++) {
                 uint256 transferable_amount = cryptoFunderAmount[cryptoFunders[i]];
                 cryptoFunderAmount[cryptoFunders[i]] = 0;
@@ -355,7 +355,7 @@ contract PrizeV2 {
         }
         // refund if no submissions 
         // dispute if no total votes
-        if(allSubmissions.length == 0 || cryptoFunders.length == 0 || totalVotes == 0) {
+        if(totalVotes == 0) {
             for(uint256 i=0; i<cryptoFunders.length; i++) {
                 _usdc.transfer(cryptoFunders[i], cryptoFunderAmount[cryptoFunders[i]]);
                 cryptoFunderAmount[cryptoFunders[i]] = 0;
@@ -402,6 +402,7 @@ contract PrizeV2 {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
         bytes32 hash = VOTE_HASH(nonce+=1, _submissionHash, _amount);
         address sender =  ecrecover(hash, v, r, s);
+        if(!isFiatFunder[sender] || !isCryptoFunder[sender]) revert("NAF"); // NAF -> Not a Funder
         if (_amount > totalFunderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
@@ -442,6 +443,7 @@ contract PrizeV2 {
                     funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
                     fiatAmountToVote = 0;
                 }
+                _voteLogic(_amount, _submissionHash, sender);
             }
         }
     }
