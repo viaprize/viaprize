@@ -46,8 +46,7 @@ export default function HistoryCard({
       <Card.Section>
         <Image
           alt="Image"
-          height={190}
-          fit="fill"
+          height={160}
           src={
             imageUrl ||
             'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
