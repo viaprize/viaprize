@@ -93,11 +93,6 @@ contract PrizeV2 {
     uint256 public disputePeriod;
     uint256 public nonce;
 
-    // bytes32 public  DOMAIN_SEPARATOR = 0x26d9c34bb1a1c312f69c53b2d93b8be20faafba63af2438c6811713c9b1f933f;
-    // bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
-
-
-
     /// @notice error for not enough funds to vote
     error NotEnoughFunds();
 
@@ -298,7 +293,6 @@ contract PrizeV2 {
         votingTime = block.timestamp + _votingTime * 1 minutes;
     }
 
-
     /// @notice Distribute rewards
     function _distributeRewards() private {
         if(distributed == true) revert RewardsAlreadyDistributed();
@@ -346,16 +340,15 @@ contract PrizeV2 {
             if(totalFunds > 0) {
                 usdcPlatformReward = (totalFunds * platformFee) / 100;
                 usdcProposerReward = (totalFunds * proposerFee) / 100;
-                uint256 send_usdc_platform_reward = usdcPlatformReward;
-                uint256 send_usdc_proposer_reward = usdcProposerReward;
-                _usdc.transfer(platformAddress, send_usdc_platform_reward);
-                _usdc.transfer(proposer, send_usdc_proposer_reward);
+                totalFunds = totalFunds.sub(usdcPlatformReward.add(usdcProposerReward));
+                _usdc.transfer(platformAddress, usdcPlatformReward);
+                _usdc.transfer(proposer, usdcProposerReward);
             }
             distributed = true;
         }
         // refund if no submissions 
         // dispute if no total votes
-        if(totalVotes == 0) {
+        if(allSubmissions.length == 0 || cryptoFunders.length == 0 || totalVotes == 0) {
             for(uint256 i=0; i<cryptoFunders.length; i++) {
                 _usdc.transfer(cryptoFunders[i], cryptoFunderAmount[cryptoFunders[i]]);
                 cryptoFunderAmount[cryptoFunders[i]] = 0;
@@ -383,17 +376,15 @@ contract PrizeV2 {
 
     function _voteLogic(uint256 _amount, bytes32 _submissionHash, address sender) onlyActive private {
         uint256 amountToSubmission = (_amount * (100 - platformFee - proposerFee)) / 100;
-
-
-            _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
-            _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
-            
-            totalVotes = totalVotes.add(amountToSubmission);
-            SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
-            if (submission.usdcVotes > 0) {
-                _submissionTree.setFundedTrue(_submissionHash, true);
-            }
-            emit Voted(_submissionHash, sender, _amount);
+        _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
+        _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
+        
+        totalVotes = totalVotes.add(amountToSubmission);
+        SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
+        if (submission.usdcVotes > 0) {
+            _submissionTree.setFundedTrue(_submissionHash, true);
+        }
+        emit Voted(_submissionHash, sender, _amount);
     }
 
     /// @notice create a function to allow funders to vote for a submission
@@ -409,42 +400,39 @@ contract PrizeV2 {
         /// @notice submission should return a struct with the submissionHash, the contestant, the submissionText, the threshhold, the votes, and the funded status 
         //  -- check if the submission hash is in the tree
         if (submissionCheck.submissionHash != _submissionHash) revert SubmissionDoesntExist();
-
         if(_submissionHash == REFUND_SUBMISSION_HASH) {
             if(!isRefundRequestedAddress[sender]) {
                 refundRequestedFunders.push(sender);
                 isRefundRequestedAddress[sender] = true;
             }
         }
-        if(isFiatFunder[sender] || isCryptoFunder[sender]) {
-            if(totalFunderAmount[sender] > 0) {
-                if(cryptoFunderAmount[sender] > 0 && fiatFunderAmount[sender] > 0){
-                    uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
-                    uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
-                    if(!(_amount == cryptoAmountToVote + fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
-                    cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
-                    fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
-                    totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote + fiatAmountToVote);
-                    funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-                    cryptoAmountToVote = 0;
-                    fiatAmountToVote = 0;
-                } else if(cryptoFunderAmount[sender] > 0) {
-                    uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
-                    if(!(_amount == cryptoAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
-                    cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
-                    totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote);
-                    funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-                    cryptoAmountToVote = 0;
-                } else if(fiatFunderAmount[sender] > 0) {
-                    uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
-                    if(!(_amount == fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
-                    fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
-                    totalFunderAmount[sender] = totalFunderAmount[sender].sub(fiatAmountToVote);
-                    funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-                    fiatAmountToVote = 0;
-                }
-                _voteLogic(_amount, _submissionHash, sender);
+        if((isFiatFunder[sender] || isCryptoFunder[sender]) && totalFunderAmount[sender] > 0) {
+            if(cryptoFunderAmount[sender] > 0 && fiatFunderAmount[sender] > 0){
+                uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
+                uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
+                if(!(_amount == cryptoAmountToVote + fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
+                cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
+                fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
+                totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote + fiatAmountToVote);
+                funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+                cryptoAmountToVote = 0;
+                fiatAmountToVote = 0;
+            } else if(cryptoFunderAmount[sender] > 0) {
+                uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
+                if(!(_amount == cryptoAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
+                cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
+                totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote);
+                funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+                cryptoAmountToVote = 0;
+            } else if(fiatFunderAmount[sender] > 0) {
+                uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
+                if(!(_amount == fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
+                fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
+                totalFunderAmount[sender] = totalFunderAmount[sender].sub(fiatAmountToVote);
+                funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+                fiatAmountToVote = 0;
             }
+            _voteLogic(_amount, _submissionHash, sender);
         }
     }
 
@@ -479,35 +467,29 @@ contract PrizeV2 {
     function _changeVote(address _sender,bytes32 _previous_submission_hash,bytes32 _new_submission_hash,uint256 amount) private {
         uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
         if(_new_submission_hash == REFUND_SUBMISSION_HASH){
-
             if(!isRefundRequestedAddress[_sender]){
                 refundRequestedFunders.push(_sender);
                 isRefundRequestedAddress[_sender] = true;
             }
         }
-        _submissionTree.subUsdcVotes(_new_submission_hash, amountToSubmission);
-        _submissionTree.addUsdcVotes(_previous_submission_hash, amountToSubmission);
+        _submissionTree.subUsdcVotes(_previous_submission_hash, amountToSubmission);
+        _submissionTree.addUsdcVotes(_new_submission_hash, amountToSubmission);
         funderVotes[_sender][_previous_submission_hash] -= amount;
         funderVotes[_sender][_new_submission_hash] += amount;
         _submissionTree.updateFunderVotes(_previous_submission_hash, _sender, (funderVotes[_sender][_previous_submission_hash]*(100-platformFee-proposerFee))/100);
         _submissionTree.updateFunderVotes(_new_submission_hash, _sender, (funderVotes[_sender][_new_submission_hash]*(100-platformFee - proposerFee))/100);
-        if(_previous_submission_hash == REFUND_SUBMISSION_HASH) {
-            if(_submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,_sender) == 0) {
+        if(_previous_submission_hash == REFUND_SUBMISSION_HASH && _submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,_sender) == 0) {
                 isRefundRequestedAddress[_sender] = false;
-            }
         }
     }
     function disputeChangeVote( bytes32  _previousSubmissionHash, bytes32 _newSubmissionHash, address[] calldata _funders, uint256[] calldata _amounts) onlyActive onlyPlatformAdmin public {
         require(_funders.length == _amounts.length, "LM"); //LM -> Length Mismatch
         require(disputePeriod > block.timestamp, "DPNA");  //DPNA -> Dispute Period Not Active
-
-
         for (uint256 i = 0; i < _funders.length; i++) {
             address funder = _funders[i];
             uint256 amount = _amounts[i];
             _changeVote(funder, _previousSubmissionHash, _newSubmissionHash, amount);
         }
-
         _changeSubmissionVoteLogic(_previousSubmissionHash, _newSubmissionHash);
     }
 
@@ -524,14 +506,6 @@ contract PrizeV2 {
 
 
     function _depositLogic(address sender, uint256 donation) private {
-        // isCryptoFunder[sender] = true;
-        // cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(donation);
-        // // cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(donation);
-        // totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
-        // totalFunderAmount[sender] = totalFunderAmount[sender].add(donation);
-        // individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
-        // totalFunds = totalFunds.add(donation);
-        // cryptoFunders.push(sender);
         if(!isCryptoFunder[sender]) {
             isCryptoFunder[sender] = true;
             cryptoFunders.push(sender);
@@ -561,12 +535,12 @@ contract PrizeV2 {
             individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
             totalFunds = totalFunds.add(_amountUsdc);
         } 
-        if(!_fiatPayment) {
-            _depositLogic(sender, _amountUsdc);
-        }
-        // else {
+        // if(!_fiatPayment) {
         //     _depositLogic(sender, _amountUsdc);
         // }
+        else {
+            _depositLogic(sender, _amountUsdc);
+        }
         _usdc.transferFrom(sender, address(this), _amountUsdc);
         emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _amountUsdc);
     }
@@ -620,7 +594,32 @@ contract PrizeV2 {
         addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
     }
 
-
+    function _unusedRefundSubmissionLogic(uint256 transferable_usdc_amount, uint256 total_unused_usdc_votes) private {
+        uint256 _PRECISION = PRECISION;
+        if(transferable_usdc_amount > 0) {
+            for(uint256 j=0; j<cryptoFunders.length; j++) {
+                if(cryptoFunderAmount[cryptoFunders[j]] > 0){
+                    uint256 individual_unused_votes = cryptoFunderAmount[cryptoFunders[j]].mul(100 - platformFee - proposerFee).div(100);
+                    uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
+                    uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
+                    if(individual_transferable_usdc_amount > 0) {
+                        _usdc.transfer(cryptoFunders[j], individual_transferable_usdc_amount);
+                    }
+                }
+            
+            }
+            for(uint256 j=0; j<fiatFunders.length; j++) {
+                if(fiatFunderAmount[fiatFunders[j]] > 0) {
+                    uint256 individual_unused_votes = fiatFunderAmount[fiatFunders[j]].mul(100 - platformFee - proposerFee).div(100);
+                    uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
+                    uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
+                    if(individual_transferable_usdc_amount > 0) {
+                        _usdc.transfer(platformAddress, individual_transferable_usdc_amount);
+                    }
+                }
+            }
+        }
+    }
 
    /// @notice this fn sends the unused votes to the contestant based on their previous votes.
     function _distributeUnusedVotes() private returns(uint256,uint256)  {
@@ -632,47 +631,18 @@ contract PrizeV2 {
            total_usdc_votes += allSubmissions[i].usdcVotes;
        }
        uint256 total_unused_usdc_votes = totalRewards.sub(total_usdc_votes);
-       
-
        for(uint256 i=0; i<allSubmissions.length; i++) {
-            if(total_unused_usdc_votes > 0) {
-                if(allSubmissions[i].usdcVotes > 0) {
-                    uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(_PRECISION)).div(total_usdc_votes));
-                    uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
-                    if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
-                        if(transferable_usdc_amount > 0) {
-                            for(uint256 j=0; j<cryptoFunders.length; j++) {
-                                
-                                if(cryptoFunderAmount[cryptoFunders[j]] > 0){
-                                    uint256 individual_unused_votes = cryptoFunderAmount[cryptoFunders[j]].mul(100 - platformFee - proposerFee).div(100);
-                                    uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
-                                    uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
-                                    if(individual_transferable_usdc_amount > 0) {
-                                        _usdc.transfer(cryptoFunders[j], individual_transferable_usdc_amount);
-                                    }
-                                }
-                            
-                            }
-                            for(uint256 j=0; j<fiatFunders.length; j++) {
-                                if(fiatFunderAmount[fiatFunders[j]] > 0) {
-                                    uint256 individual_unused_votes = fiatFunderAmount[fiatFunders[j]].mul(100 - platformFee - proposerFee).div(100);
-                                    uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
-                                    uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
-                                    if(individual_transferable_usdc_amount > 0) {
-                                        _usdc.transfer(platformAddress, individual_transferable_usdc_amount);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        if(transferable_usdc_amount > 0) {
-                            _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
-                        }
-                        
+            if(total_unused_usdc_votes > 0 && allSubmissions[i].usdcVotes > 0) {
+                uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(_PRECISION)).div(total_usdc_votes));
+                uint256 transferable_usdc_amount = (total_unused_usdc_votes.mul(individual_usdc_percentage)).div(_PRECISION);
+                if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
+                    _unusedRefundSubmissionLogic(transferable_usdc_amount, total_unused_usdc_votes);
+                } else {
+                    if(transferable_usdc_amount > 0) {
+                        _usdc.transfer(allSubmissions[i].contestant, transferable_usdc_amount);
                     }
                 }
-            }
-           
+            } 
        }
        return (total_usdc_votes, totalRewards);
    }
