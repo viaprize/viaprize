@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import useAppUser from '@/components/hooks/useAppUser';
 import SubscriptionForm from '@/components/newsletter/subscriptionForm';
@@ -65,7 +65,7 @@ export default function Home() {
         .catch((error: FetchError) => {
           console.log({ error }, 'errror');
           if (error.status === 404) {
-            router.push('/onboarding').catch(console.error);
+            router.push('/onboarding');
           }
         })
         .then(console.log);
@@ -376,5 +376,3 @@ function NextJsImage({
     </div>
   );
 }
-
-
