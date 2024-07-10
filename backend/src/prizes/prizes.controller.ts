@@ -255,8 +255,15 @@ export class PrizesController {
     }
     const results = (await this.blockchainService.getPrizesV2PublicVariables(
       prizeWithoutBalance.data.map((prize) => prize.contract_address),
-      ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
-    )) as [[bigint, boolean, bigint, bigint]];
+      [
+        'totalFunds',
+        'distributed',
+        'getSubmissionTime',
+        'getVotingTime',
+        'isActive',
+        'totalVotes',
+      ],
+    )) as [[bigint, boolean, bigint, bigint, boolean, bigint, boolean]];
     const prizeWithBalanceData = prizeWithoutBalance.data.map(
       (prize, index) => {
         return {
@@ -265,6 +272,10 @@ export class PrizesController {
           distributed: results[index][1],
           submission_time_blockchain: parseInt(results[index][2].toString()),
           voting_time_blockchain: parseInt(results[index][3].toString()),
+          refunded:
+            results[index][4] &&
+            parseInt(results[index][5].toString()) === 0 &&
+            results[index][1],
         } as PrizeWithBlockchainData;
       },
     );
@@ -280,19 +291,28 @@ export class PrizesController {
     @TypedParam('slug') slug: string,
   ): Promise<PrizeWithBlockchainData> {
     const prize = await this.prizeService.findAndReturnBySlug(slug);
-    const [totalFunds, distributed, submissionTime, votingTime, disputePeriod] =
-      (
-        await this.blockchainService.getPrizesV2PublicVariables(
-          [prize.contract_address],
-          [
-            'totalFunds',
-            'distributed',
-            'getSubmissionTime',
-            'getVotingTime',
-            'disputePeriod',
-          ],
-        )
-      )[0] as [bigint, boolean, bigint, bigint, bigint];
+    const [
+      totalFunds,
+      distributed,
+      submissionTime,
+      votingTime,
+      disputePeriod,
+      totalVotes,
+      isActive,
+    ] = (
+      await this.blockchainService.getPrizesV2PublicVariables(
+        [prize.contract_address],
+        [
+          'totalFunds',
+          'distributed',
+          'getSubmissionTime',
+          'getVotingTime',
+          'disputePeriod',
+          'totalVotes',
+          'isActive',
+        ],
+      )
+    )[0] as [bigint, boolean, bigint, bigint, bigint, bigint, boolean];
 
     return {
       ...prize,
@@ -301,6 +321,8 @@ export class PrizesController {
       submission_time_blockchain: parseInt(submissionTime.toString()),
       voting_time_blockchain: parseInt(votingTime.toString()),
       dispute_period_time_blockchain: parseInt(disputePeriod.toString()),
+      refunded:
+        isActive && parseInt(totalVotes.toString()) === 0 && distributed,
     };
   }
 

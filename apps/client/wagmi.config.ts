@@ -14,7 +14,7 @@ export default defineConfig({
       project: '../contracts',
       include: [
         'contracts/portal.sol/*.json',
-        'contracts/portalFactory.sol/*.json',
+        'contracts/v2/fundRaisers/passThroughV2Factory.sol/*.json',
         'contracts/v2/prizes/prizesV2Factory.sol/*.json',
         'contracts/v2/prizes/prizes.sol/*.json',
       ],
@@ -22,12 +22,12 @@ export default defineConfig({
         // PrizeJudgesFactory: {
         //   10: '0x7f1aF102d6EBaa0F673C3C574c58EB052db93675',
         // },
-        portalFactory: {
+        passThroughV2Factory: {
           // 80001: '0xAe37824e718488787D1bbD87E35985ED107a0C7E',
-          10: '0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0',
+          8453: '0xdCcF514720AABBfFF6bed7a7Db4b498677EfD3D3',
         },
         PrizeFactoryV2: {
-          10: '0xd861aFdb5265EB580Db3D7a3126559E4c47B6B8b',
+          8453: '0xc58a61454497523b832665326a8C9Ce84a6b1746',
         },
       },
     }),

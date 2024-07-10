@@ -6,11 +6,22 @@ import useAppUser from '@/components/hooks/useAppUser';
 import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { addDaysToDate } from '@/lib/utils';
-import { Button, Card, SimpleGrid, TextInput, Title } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Card,
+  Loader,
+  Modal,
+  SimpleGrid,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { IconAlertTriangleFilled } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -35,6 +46,7 @@ function Prize() {
   const { wallet } = usePrivyWagmi();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [modalOpened, setModalOpened] = useState(false);
 
   const [startVotingDate, setStartVotingDate] = useState<Date | null>(
     addDaysToDate(new Date(), 3),
@@ -84,7 +96,12 @@ function Prize() {
       title,
     });
     setLoading(false);
-    router.push(`/profile/${appUser?.username}`);
+
+    setModalOpened(true);
+    setTimeout(() => {
+      setModalOpened(false);
+      router.push(`/profile/${appUser?.username}`);
+    }, 6000);
   };
 
   const handleSubmit = () => {
@@ -128,6 +145,17 @@ function Prize() {
 
   return (
     <Card shadow="md" withBorder className="w-full p-8 m-6">
+      <Badge
+        color="yellow"
+        variant="light"
+        radius="sm"
+        mb="sm"
+        p="sm"
+        leftSection={<IconAlertTriangleFilled />}
+      >
+        Voting begin automatically when submission ends
+      </Badge>
+
       <Title order={1} className="my-2">
         Create a Prize
       </Title>
@@ -142,7 +170,7 @@ function Prize() {
         }}
       />
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
-      <SimpleGrid cols={{ base: 1, sm: 1, lg: 3 }}  className="my-3">
+      <SimpleGrid cols={{ base: 1, sm: 1, lg: 3 }} className="my-3">
         <DateTimePicker
           label="Submissions open"
           placeholder="Make sure its above the submission time and date"
@@ -213,6 +241,42 @@ function Prize() {
       >
         Request for Approval
       </Button>
+      <Modal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        withCloseButton={false}
+        centered
+        size="md"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="#40d940"
+          className="icon icon-tabler icons-tabler-filled icon-tabler-circle-check w-full flex justify-center h-16"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-1.293 5.953a1 1 0 0 0 -1.32 -.083l-.094 .083l-3.293 3.292l-1.293 -1.292l-.094 -.083a1 1 0 0 0 -1.403 1.403l.083 .094l2 2l.094 .083a1 1 0 0 0 1.226 0l.094 -.083l4 -4l.083 -.094a1 1 0 0 0 -.083 -1.32z" />
+        </svg>
+        <Text className="my-3" fw="bold">
+          Proposal submitted successfully! Admins will review and let you know if it is
+          approved shortly.
+        </Text>
+
+        <Text className="w-full flex justify-center">
+          Redirecting to your profile <Loader color="blue" size="sm" className="ml-2" />
+        </Text>
+
+        {/* <Link href={`/profile/${appUser?.username}`}>
+        <Button
+          className="w-full flex justify-center"
+          
+        >
+          Go to Profile
+        </Button>
+</Link> */}
+      </Modal>
     </Card>
   );
 }

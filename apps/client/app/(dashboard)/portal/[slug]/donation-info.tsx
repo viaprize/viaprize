@@ -1,6 +1,7 @@
 import getCryptoToUsd from '@/components/hooks/server-actions/CryptotoUsd';
 import type { Contributions } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
+import { EXTRA_FUNDRAISERS_IDS } from '@/lib/constants';
 import { Table } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { formatEther } from 'viem';
@@ -50,15 +51,19 @@ export default function DonationInfo({
 
   console.log(contributors, 'contributors');
 
-  const { data: extraData } = useQuery(['get-extra-data-donation'], async () => {
-    if ('bacb6584-7e45-465b-b4af-a3ed24a84233' === id) {
-      return (await backendApi(false)).portals.extraDonationDataDetail(id);
-    }
-  });
-
+  const { data: extraData, isSuccess } = useQuery(
+    ['get-extra-data-donation'],
+    async () => {
+      if (EXTRA_FUNDRAISERS_IDS.includes(id)) {
+        console.log('sjkljfld');
+        return (await backendApi(false)).portals.extraDonationDataDetail(id);
+      }
+    },
+  );
+  console.log({ extraData });
   return (
     <div className="lg:flex  gap-4 px-3 sm:px-6 md:px-14 lg:px-20 justify-between mt-5 w-full max-w-[90vw]">
-      {contributors?.data && contributors.data.length > 0 ? (
+      {(contributors?.data && contributors.data.length > 0) || isSuccess ? (
         <div className="overflow-x-auto w-full">
           <Table
             highlightOnHover
@@ -71,12 +76,11 @@ export default function DonationInfo({
                 <Table.Th>Donated at</Table.Th>
                 <Table.Th>Donor</Table.Th>
                 {/* <Table.Th>Network</Table.Th> */}
-                <Table.Th>Amount in Eth</Table.Th>
-                <Table.Th>USD Value</Table.Th>
+                <Table.Th>USD</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {contributors.data.map((donation) => {
+              {contributors?.data.map((donation) => {
                 console.log(formatEther(BigInt(donation.amount)), 'dontai');
                 return (
                   <Table.Tr key={donation.donationTime}>
@@ -85,11 +89,7 @@ export default function DonationInfo({
                     </Table.Td>
                     <Table.Td>{donation.contributor}</Table.Td>
                     {/* <Table.Td>{donation.network}</Table.Td> */}
-                    <Table.Td>{formatEther(BigInt(donation.amount))}</Table.Td>
-                    <Table.Td>
-                      {(ethToUsd?.ethereum.usd ?? 2500) *
-                        parseFloat(formatEther(BigInt(donation.amount)))}
-                    </Table.Td>
+                    <Table.Td>{parseFloat(donation.amount) / 1_000_000}</Table.Td>
                   </Table.Tr>
                 );
               })}
@@ -102,7 +102,6 @@ export default function DonationInfo({
                       <Table.Td>{new Date(donation.donatedAt).toDateString()}</Table.Td>
                       <Table.Td>{donation.donor}</Table.Td>
                       {/* <Table.Td>{donation.network}</Table.Td> */}
-                      <Table.Td>Paid in USD</Table.Td>
                       <Table.Td>{donation.usdValue}</Table.Td>
                     </Table.Tr>
                   );

@@ -333,6 +333,7 @@ export interface PrizeWithBlockchainData {
   submission_time_blockchain: number;
   voting_time_blockchain: number;
   dispute_period_time_blockchain: number;
+  refunded: boolean;
   balance: number;
   id: string;
   description: string;
@@ -1715,6 +1716,22 @@ export namespace Wallet {
     export type RequestHeaders = {};
     export type ResponseBody = WalletResponse;
   }
+
+  /**
+   * No description
+   * @name FundRaisersEndCampaignCreate
+   * @request POST:/wallet/fund_raisers/{contract_address}/end_campaign
+   * @secure
+   */
+  export namespace FundRaisersEndCampaignCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -1826,9 +1843,9 @@ export class HttpClient<SecurityDataType = unknown> {
         : input,
     [ContentType.Text]: (input: any) =>
       input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((formData, key) => {
-        const property = input[key];
+    [ContentType.FormData]: (input: FormData) =>
+      (Array.from(input.keys()) || []).reduce((formData, key) => {
+        const property = input.get(key);
         formData.append(
           key,
           property instanceof Blob
@@ -3196,6 +3213,22 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         body: data,
         secure: true,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FundRaisersEndCampaignCreate
+     * @request POST:/wallet/fund_raisers/{contract_address}/end_campaign
+     * @secure
+     */
+    fundRaisersEndCampaignCreate: (contractAddress: string, params: RequestParams = {}) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/fund_raisers/${contractAddress}/end_campaign`,
+        method: 'POST',
+        secure: true,
         format: 'json',
         ...params,
       }),

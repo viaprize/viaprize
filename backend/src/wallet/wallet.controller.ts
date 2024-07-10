@@ -642,4 +642,49 @@ export class WalletController {
       }
     }
   }
+  /**
+   * @security bearer
+   **/
+  @UseGuards(AuthGuard)
+  @Post('/fund_raisers/:contract_address/end_campaign')
+  async endCampaign(
+    @TypedParam('contract_address') contractAddress: string,
+    @Request() req,
+  ): Promise<WalletResponse | undefined> {
+    const user = this.userService.findOneByAuthId(req.user.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractPassThroughV2(
+          'endCampaign',
+          [],
+          contractAddress,
+          'gasless',
+          '0',
+        );
+      return { hash };
+    } catch (err) {
+      if (err instanceof BaseError) {
+        console.log({ err });
+        const revertError = err.walk(
+          (err) => err instanceof ContractFunctionRevertedError,
+        );
+        if (revertError instanceof ContractFunctionRevertedError) {
+          console.log({ err });
+          const errorName = revertError.data?.errorName ?? '';
+          throw new HttpException(
+            'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          'Error: ' + err.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+  }
 }

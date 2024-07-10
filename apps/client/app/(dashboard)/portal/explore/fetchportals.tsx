@@ -1,7 +1,6 @@
 import { Api } from '@/lib/api';
 import { campaignSearchParamsSchema } from '@/lib/params';
 import type { SearchParams } from '@/lib/types';
-import { formatEther } from 'viem';
 import PortalCard from '../../../../components/portals/portal-card';
 
 const parseCategories = (value: string | undefined): string[] | undefined => {
@@ -56,24 +55,14 @@ export default async function FetchPortals({
     })
   ).json();
 
-  //  const extraData: { ethereum: { usd: number } } = await(
-  //    await fetch(`https://api-prod.pactsmith.com/api/price/bacb6584-7e45-465b-b4af-a3ed24a84233}`, {
-  //      method: 'GET',
-  //      headers: {
-  //        Accept: 'application/json',
-  //      },
-  //    }),
-  //  ).json();
-
   return (
     <>
       {portals.map((portal) => {
         return (
           <PortalCard
-            ethToUsd={final.ethereum.usd}
             description={portal.description}
             imageUrl={portal.images[0]}
-            amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
+            amountRaised={((portal.totalFunds ?? 0) / 1_000_000).toString()}
             authorName={portal.user.name}
             totalContributors="0"
             isActive={portal.isActive ?? false}

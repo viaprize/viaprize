@@ -20,6 +20,41 @@ import {
 import { PrepareWriteContractResult, ReadContractResult } from 'wagmi/actions';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PassThroughV2Factory
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const passThroughV2FactoryABI = [
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: '_id', internalType: 'uint256', type: 'uint256', indexed: true },
+      { name: 'portalAddress', internalType: 'address', type: 'address', indexed: true },
+    ],
+    name: 'NewPortalCreated',
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [
+      { name: '_id', internalType: 'uint256', type: 'uint256' },
+      { name: '_owner', internalType: 'address', type: 'address' },
+      { name: '_admins', internalType: 'address[]', type: 'address[]' },
+      { name: '_platformFee', internalType: 'uint256', type: 'uint256' },
+      { name: '_tokenUsdc', internalType: 'address', type: 'address' },
+      { name: '_bridgedTokenUsdc', internalType: 'address', type: 'address' },
+      { name: '_wethToken', internalType: 'address', type: 'address' },
+      { name: '_swapRouter', internalType: 'address', type: 'address' },
+      { name: '_usdcToUsdcePool', internalType: 'address', type: 'address' },
+      { name: '_usdcToEthPool', internalType: 'address', type: 'address' },
+      { name: '_ethPriceAggregator', internalType: 'address', type: 'address' },
+    ],
+    name: 'createPortal',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+] as const;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Portal
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -240,7 +275,7 @@ export const portalABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
  */
 export const prizeFactoryV2ABI = [
   {
@@ -280,14 +315,14 @@ export const prizeFactoryV2ABI = [
 ] as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
  */
 export const prizeFactoryV2Address = {
-  10: '0xd861aFdb5265EB580Db3D7a3126559E4c47B6B8b',
+  8453: '0xc58a61454497523b832665326a8C9Ce84a6b1746',
 } as const;
 
 /**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
  */
 export const prizeFactoryV2Config = {
   address: prizeFactoryV2Address,
@@ -512,6 +547,13 @@ export const prizeV2ABI = [
   {
     stateMutability: 'nonpayable',
     type: 'function',
+    inputs: [{ name: '_submissionTime', internalType: 'uint256', type: 'uint256' }],
+    name: 'changeSubmissionPeriod',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
     inputs: [
       { name: '_previous_submissionHash', internalType: 'bytes32', type: 'bytes32' },
       { name: '_new_submissionHash', internalType: 'bytes32', type: 'bytes32' },
@@ -521,6 +563,13 @@ export const prizeV2ABI = [
       { name: 'amount', internalType: 'uint256', type: 'uint256' },
     ],
     name: 'changeVote',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [{ name: '_votingTime', internalType: 'uint256', type: 'uint256' }],
+    name: 'changeVotingPeriod',
     outputs: [],
   },
   {
@@ -554,6 +603,13 @@ export const prizeV2ABI = [
     type: 'function',
     inputs: [],
     name: 'endDispute',
+    outputs: [],
+  },
+  {
+    stateMutability: 'nonpayable',
+    type: 'function',
+    inputs: [],
+    name: 'endDisputePeriodEarly',
     outputs: [],
   },
   {
@@ -676,20 +732,6 @@ export const prizeV2ABI = [
     inputs: [],
     name: 'getVotingTime',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: '_submissionTime', internalType: 'uint256', type: 'uint256' }],
-    name: 'increaseSubmissionPeriod',
-    outputs: [],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [{ name: '_votingTime', internalType: 'uint256', type: 'uint256' }],
-    name: 'increaseVotingPeriod',
-    outputs: [],
   },
   {
     stateMutability: 'view',
@@ -885,56 +927,41 @@ export const prizeV2ABI = [
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// portalFactory
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export const portalFactoryABI = [
-  {
-    type: 'event',
-    anonymous: false,
-    inputs: [
-      { name: 'portalAddress', internalType: 'address', type: 'address', indexed: true },
-    ],
-    name: 'NewPortalCreated',
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: '_owners', internalType: 'address[]', type: 'address[]' },
-      { name: '_admins', internalType: 'address[]', type: 'address[]' },
-      { name: '_goal', internalType: 'uint256', type: 'uint256' },
-      { name: '_deadline', internalType: 'uint256', type: 'uint256' },
-      { name: '_allowDonationAboveGoalAmount', internalType: 'bool', type: 'bool' },
-      { name: '_platformFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_allowImmediately', internalType: 'bool', type: 'bool' },
-    ],
-    name: 'createPortal',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-] as const;
-
-/**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export const portalFactoryAddress = {
-  10: '0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0',
-} as const;
-
-/**
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export const portalFactoryConfig = {
-  address: portalFactoryAddress,
-  abi: portalFactoryABI,
-} as const;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Core
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Wraps __{@link writeContract}__ with `abi` set to __{@link passThroughV2FactoryABI}__.
+ */
+export function writePassThroughV2Factory<TFunctionName extends string>(
+  config:
+    | Omit<
+        WriteContractPreparedArgs<typeof passThroughV2FactoryABI, TFunctionName>,
+        'abi'
+      >
+    | Omit<
+        WriteContractUnpreparedArgs<typeof passThroughV2FactoryABI, TFunctionName>,
+        'abi'
+      >,
+) {
+  return writeContract({
+    abi: passThroughV2FactoryABI,
+    ...config,
+  } as unknown as WriteContractArgs<typeof passThroughV2FactoryABI, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link passThroughV2FactoryABI}__.
+ */
+export function prepareWritePassThroughV2Factory<
+  TAbi extends readonly unknown[] = typeof passThroughV2FactoryABI,
+  TFunctionName extends string = string,
+>(config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi'>) {
+  return prepareWriteContract({
+    abi: passThroughV2FactoryABI,
+    ...config,
+  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
+}
 
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link portalABI}__.
@@ -966,7 +993,7 @@ export function prepareWritePortal<
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
  */
 export function writePrizeFactoryV2<
   TFunctionName extends string,
@@ -995,7 +1022,7 @@ export function writePrizeFactoryV2<
 ) {
   return writeContract({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[10],
+    address: prizeFactoryV2Address[8453],
     ...config,
   } as unknown as WriteContractArgs<typeof prizeFactoryV2ABI, TFunctionName>);
 }
@@ -1003,7 +1030,7 @@ export function writePrizeFactoryV2<
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
  */
 export function prepareWritePrizeFactoryV2<
   TAbi extends readonly unknown[] = typeof prizeFactoryV2ABI,
@@ -1015,7 +1042,7 @@ export function prepareWritePrizeFactoryV2<
 ) {
   return prepareWriteContract({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[10],
+    address: prizeFactoryV2Address[8453],
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
 }
@@ -1047,62 +1074,93 @@ export function prepareWritePrizeV2<
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
 }
 
-/**
- * Wraps __{@link writeContract}__ with `abi` set to __{@link portalFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export function writePortalFactory<
-  TFunctionName extends string,
-  TMode extends WriteContractMode,
-  TChainId extends number = keyof typeof portalFactoryAddress,
->(
-  config:
-    | (Omit<
-        WriteContractPreparedArgs<typeof portalFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
-      })
-    | (Omit<
-        WriteContractUnpreparedArgs<typeof portalFactoryABI, TFunctionName>,
-        'abi' | 'address'
-      > & {
-        mode: TMode;
-        chainId?: TMode extends 'prepared' ? TChainId : keyof typeof portalFactoryAddress;
-      }),
-) {
-  return writeContract({
-    abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
-    ...config,
-  } as unknown as WriteContractArgs<typeof portalFactoryABI, TFunctionName>);
-}
-
-/**
- * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link portalFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export function prepareWritePortalFactory<
-  TAbi extends readonly unknown[] = typeof portalFactoryABI,
-  TFunctionName extends string = string,
->(
-  config: Omit<PrepareWriteContractConfig<TAbi, TFunctionName>, 'abi' | 'address'> & {
-    chainId?: keyof typeof portalFactoryAddress;
-  },
-) {
-  return prepareWriteContract({
-    abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
-    ...config,
-  } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
-}
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // React
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link passThroughV2FactoryABI}__.
+ */
+export function usePassThroughV2FactoryWrite<
+  TFunctionName extends string,
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof passThroughV2FactoryABI,
+          string
+        >['request']['abi'],
+        TFunctionName,
+        TMode
+      >
+    : UseContractWriteConfig<typeof passThroughV2FactoryABI, TFunctionName, TMode> & {
+        abi?: never;
+      } = {} as any,
+) {
+  return useContractWrite<typeof passThroughV2FactoryABI, TFunctionName, TMode>({
+    abi: passThroughV2FactoryABI,
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link passThroughV2FactoryABI}__ and `functionName` set to `"createPortal"`.
+ */
+export function usePassThroughV2FactoryCreatePortal<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof passThroughV2FactoryABI,
+          'createPortal'
+        >['request']['abi'],
+        'createPortal',
+        TMode
+      > & { functionName?: 'createPortal' }
+    : UseContractWriteConfig<typeof passThroughV2FactoryABI, 'createPortal', TMode> & {
+        abi?: never;
+        functionName?: 'createPortal';
+      } = {} as any,
+) {
+  return useContractWrite<typeof passThroughV2FactoryABI, 'createPortal', TMode>({
+    abi: passThroughV2FactoryABI,
+    functionName: 'createPortal',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link passThroughV2FactoryABI}__.
+ */
+export function usePreparePassThroughV2FactoryWrite<TFunctionName extends string>(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof passThroughV2FactoryABI, TFunctionName>,
+    'abi'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: passThroughV2FactoryABI,
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof passThroughV2FactoryABI, TFunctionName>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link passThroughV2FactoryABI}__ and `functionName` set to `"createPortal"`.
+ */
+export function usePreparePassThroughV2FactoryCreatePortal(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof passThroughV2FactoryABI, 'createPortal'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: passThroughV2FactoryABI,
+    functionName: 'createPortal',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof passThroughV2FactoryABI, 'createPortal'>);
+}
 
 /**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link portalABI}__.
@@ -1666,7 +1724,7 @@ export function usePreparePortalEndKickStarterCampaign(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
  */
 export function usePrizeFactoryV2Write<
   TFunctionName extends string,
@@ -1687,7 +1745,7 @@ export function usePrizeFactoryV2Write<
 ) {
   return useContractWrite<typeof prizeFactoryV2ABI, TFunctionName, TMode>({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[10],
+    address: prizeFactoryV2Address[8453],
     ...config,
   } as any);
 }
@@ -1695,7 +1753,7 @@ export function usePrizeFactoryV2Write<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
  */
 export function usePrizeFactoryV2CreateViaPrize<
   TMode extends WriteContractMode = undefined,
@@ -1719,7 +1777,7 @@ export function usePrizeFactoryV2CreateViaPrize<
 ) {
   return useContractWrite<typeof prizeFactoryV2ABI, 'createViaPrize', TMode>({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[10],
+    address: prizeFactoryV2Address[8453],
     functionName: 'createViaPrize',
     ...config,
   } as any);
@@ -1728,7 +1786,7 @@ export function usePrizeFactoryV2CreateViaPrize<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
  */
 export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
   config: Omit<
@@ -1738,7 +1796,7 @@ export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
 ) {
   return usePrepareContractWrite({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[10],
+    address: prizeFactoryV2Address[8453],
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeFactoryV2ABI, TFunctionName>);
 }
@@ -1746,7 +1804,7 @@ export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0x804dbe3582df3ba70e4f8f59156ecEa38B7A7BF4)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
  */
 export function usePreparePrizeFactoryV2CreateViaPrize(
   config: Omit<
@@ -1756,7 +1814,7 @@ export function usePreparePrizeFactoryV2CreateViaPrize(
 ) {
   return usePrepareContractWrite({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[10],
+    address: prizeFactoryV2Address[8453],
     functionName: 'createViaPrize',
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeFactoryV2ABI, 'createViaPrize'>);
@@ -2689,6 +2747,33 @@ export function usePrizeV2ChangeMinimumSlipageFeePercentage<
 }
 
 /**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeSubmissionPeriod"`.
+ */
+export function usePrizeV2ChangeSubmissionPeriod<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'changeSubmissionPeriod'
+        >['request']['abi'],
+        'changeSubmissionPeriod',
+        TMode
+      > & { functionName?: 'changeSubmissionPeriod' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'changeSubmissionPeriod', TMode> & {
+        abi?: never;
+        functionName?: 'changeSubmissionPeriod';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'changeSubmissionPeriod', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'changeSubmissionPeriod',
+    ...config,
+  } as any);
+}
+
+/**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeVote"`.
  */
 export function usePrizeV2ChangeVote<TMode extends WriteContractMode = undefined>(
@@ -2706,6 +2791,31 @@ export function usePrizeV2ChangeVote<TMode extends WriteContractMode = undefined
   return useContractWrite<typeof prizeV2ABI, 'changeVote', TMode>({
     abi: prizeV2ABI,
     functionName: 'changeVote',
+    ...config,
+  } as any);
+}
+
+/**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeVotingPeriod"`.
+ */
+export function usePrizeV2ChangeVotingPeriod<TMode extends WriteContractMode = undefined>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'changeVotingPeriod'
+        >['request']['abi'],
+        'changeVotingPeriod',
+        TMode
+      > & { functionName?: 'changeVotingPeriod' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'changeVotingPeriod', TMode> & {
+        abi?: never;
+        functionName?: 'changeVotingPeriod';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'changeVotingPeriod', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'changeVotingPeriod',
     ...config,
   } as any);
 }
@@ -2758,6 +2868,33 @@ export function usePrizeV2EndDispute<TMode extends WriteContractMode = undefined
 }
 
 /**
+ * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endDisputePeriodEarly"`.
+ */
+export function usePrizeV2EndDisputePeriodEarly<
+  TMode extends WriteContractMode = undefined,
+>(
+  config: TMode extends 'prepared'
+    ? UseContractWriteConfig<
+        PrepareWriteContractResult<
+          typeof prizeV2ABI,
+          'endDisputePeriodEarly'
+        >['request']['abi'],
+        'endDisputePeriodEarly',
+        TMode
+      > & { functionName?: 'endDisputePeriodEarly' }
+    : UseContractWriteConfig<typeof prizeV2ABI, 'endDisputePeriodEarly', TMode> & {
+        abi?: never;
+        functionName?: 'endDisputePeriodEarly';
+      } = {} as any,
+) {
+  return useContractWrite<typeof prizeV2ABI, 'endDisputePeriodEarly', TMode>({
+    abi: prizeV2ABI,
+    functionName: 'endDisputePeriodEarly',
+    ...config,
+  } as any);
+}
+
+/**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endSubmissionPeriod"`.
  */
 export function usePrizeV2EndSubmissionPeriod<
@@ -2805,60 +2942,6 @@ export function usePrizeV2EndVotingPeriod<TMode extends WriteContractMode = unde
   return useContractWrite<typeof prizeV2ABI, 'endVotingPeriod', TMode>({
     abi: prizeV2ABI,
     functionName: 'endVotingPeriod',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"increaseSubmissionPeriod"`.
- */
-export function usePrizeV2IncreaseSubmissionPeriod<
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeV2ABI,
-          'increaseSubmissionPeriod'
-        >['request']['abi'],
-        'increaseSubmissionPeriod',
-        TMode
-      > & { functionName?: 'increaseSubmissionPeriod' }
-    : UseContractWriteConfig<typeof prizeV2ABI, 'increaseSubmissionPeriod', TMode> & {
-        abi?: never;
-        functionName?: 'increaseSubmissionPeriod';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeV2ABI, 'increaseSubmissionPeriod', TMode>({
-    abi: prizeV2ABI,
-    functionName: 'increaseSubmissionPeriod',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"increaseVotingPeriod"`.
- */
-export function usePrizeV2IncreaseVotingPeriod<
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeV2ABI,
-          'increaseVotingPeriod'
-        >['request']['abi'],
-        'increaseVotingPeriod',
-        TMode
-      > & { functionName?: 'increaseVotingPeriod' }
-    : UseContractWriteConfig<typeof prizeV2ABI, 'increaseVotingPeriod', TMode> & {
-        abi?: never;
-        functionName?: 'increaseVotingPeriod';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeV2ABI, 'increaseVotingPeriod', TMode>({
-    abi: prizeV2ABI,
-    functionName: 'increaseVotingPeriod',
     ...config,
   } as any);
 }
@@ -3080,6 +3163,22 @@ export function usePreparePrizeV2ChangeMinimumSlipageFeePercentage(
 }
 
 /**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeSubmissionPeriod"`.
+ */
+export function usePreparePrizeV2ChangeSubmissionPeriod(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'changeSubmissionPeriod'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'changeSubmissionPeriod',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'changeSubmissionPeriod'>);
+}
+
+/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeVote"`.
  */
 export function usePreparePrizeV2ChangeVote(
@@ -3093,6 +3192,22 @@ export function usePreparePrizeV2ChangeVote(
     functionName: 'changeVote',
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'changeVote'>);
+}
+
+/**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeVotingPeriod"`.
+ */
+export function usePreparePrizeV2ChangeVotingPeriod(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'changeVotingPeriod'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'changeVotingPeriod',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'changeVotingPeriod'>);
 }
 
 /**
@@ -3128,6 +3243,22 @@ export function usePreparePrizeV2EndDispute(
 }
 
 /**
+ * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endDisputePeriodEarly"`.
+ */
+export function usePreparePrizeV2EndDisputePeriodEarly(
+  config: Omit<
+    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'endDisputePeriodEarly'>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return usePrepareContractWrite({
+    abi: prizeV2ABI,
+    functionName: 'endDisputePeriodEarly',
+    ...config,
+  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'endDisputePeriodEarly'>);
+}
+
+/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"endSubmissionPeriod"`.
  */
 export function usePreparePrizeV2EndSubmissionPeriod(
@@ -3157,38 +3288,6 @@ export function usePreparePrizeV2EndVotingPeriod(
     functionName: 'endVotingPeriod',
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'endVotingPeriod'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"increaseSubmissionPeriod"`.
- */
-export function usePreparePrizeV2IncreaseSubmissionPeriod(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'increaseSubmissionPeriod'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeV2ABI,
-    functionName: 'increaseSubmissionPeriod',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'increaseSubmissionPeriod'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"increaseVotingPeriod"`.
- */
-export function usePreparePrizeV2IncreaseVotingPeriod(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'increaseVotingPeriod'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeV2ABI,
-    functionName: 'increaseVotingPeriod',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'increaseVotingPeriod'>);
 }
 
 /**
@@ -3269,103 +3368,4 @@ export function usePreparePrizeV2WithdrawTokens(
     functionName: 'withdrawTokens',
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'withdrawTokens'>);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export function usePortalFactoryWrite<
-  TFunctionName extends string,
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof portalFactoryAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof portalFactoryABI, string>['request']['abi'],
-        TFunctionName,
-        TMode
-      > & { address?: Address; chainId?: TChainId }
-    : UseContractWriteConfig<typeof portalFactoryABI, TFunctionName, TMode> & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-      } = {} as any,
-) {
-  return useContractWrite<typeof portalFactoryABI, TFunctionName, TMode>({
-    abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export function usePortalFactoryCreatePortal<
-  TMode extends WriteContractMode = undefined,
-  TChainId extends number = keyof typeof portalFactoryAddress,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof portalFactoryABI,
-          'createPortal'
-        >['request']['abi'],
-        'createPortal',
-        TMode
-      > & { address?: Address; chainId?: TChainId; functionName?: 'createPortal' }
-    : UseContractWriteConfig<typeof portalFactoryABI, 'createPortal', TMode> & {
-        abi?: never;
-        address?: never;
-        chainId?: TChainId;
-        functionName?: 'createPortal';
-      } = {} as any,
-) {
-  return useContractWrite<typeof portalFactoryABI, 'createPortal', TMode>({
-    abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
-    functionName: 'createPortal',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export function usePreparePortalFactoryWrite<TFunctionName extends string>(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof portalFactoryABI, TFunctionName>,
-    'abi' | 'address'
-  > & { chainId?: keyof typeof portalFactoryAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof portalFactoryABI, TFunctionName>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link portalFactoryABI}__ and `functionName` set to `"createPortal"`.
- *
- * [__View Contract on Op Mainnet Optimism Explorer__](https://explorer.optimism.io/address/0xA75b783F132Dea807e9197Ebd200c884Aa1D7fa0)
- */
-export function usePreparePortalFactoryCreatePortal(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof portalFactoryABI, 'createPortal'>,
-    'abi' | 'address' | 'functionName'
-  > & { chainId?: keyof typeof portalFactoryAddress } = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: portalFactoryABI,
-    address: portalFactoryAddress[10],
-    functionName: 'createPortal',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof portalFactoryABI, 'createPortal'>);
 }

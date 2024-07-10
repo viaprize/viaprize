@@ -196,7 +196,7 @@ export default function SendCard() {
           </Flex>
 
           <iframe
-            src={`https://buy.onramper.com?apiKey=pk_prod_01HKCG8FGCY3QA5EAZAJYRG6GH&mode=buy&onlyCryptos=eth_optimism&wallets=eth_optimism:${wallet?.address}&onlyCryptoNetworks=optimism`}
+            src={`https://buy.onramper.com?apiKey=pk_prod_01HKCG8FGCY3QA5EAZAJYRG6GH&mode=buy&onlyCryptos=eth_optimism&wallets=eth_optimism:${wallet?.address}&onlyCryptoNetworks=base`}
             title="Onramper Widget"
             height="630px"
             width="420px"

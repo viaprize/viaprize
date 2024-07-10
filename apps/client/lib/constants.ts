@@ -7,13 +7,15 @@ export const campaignsTags = [
   'Education',
 ];
 
-export const USDC = '0x0b2c639c533813f4aa9d7837caf62653d097ff85';
-export const USDC_BRIDGE = '0x7F5c764cBc14f9669B88837ca1490cCa17c31607';
-export const SWAP_ROUTER = '0xE592427A0AEce92De3Edee1F18E0157C05861564';
-export const USDC_TO_USDCE_POOL = '0x2ab22ac86b25bd448a4d9dc041bd2384655299c4';
-export const USDC_TO_ETH_POOL = '0x85149247691df622eaf1a8bd0cafd40bc45154a9';
-export const ETH_PRICE = '0x13e3Ee699D1909E989722E753853AE30b17e08c5';
-export const WETH = '0x4200000000000000000000000000000000000006';
+export const USDC = '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' as `0x${string}`;
+export const USDC_BRIDGE = '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA' as `0x${string}`;
+export const SWAP_ROUTER = '0x2626664c2603336E57B271c5C0b26F421741e481' as `0x${string}`;
+export const USDC_TO_USDCE_POOL =
+  '0x06959273E9A65433De71F5A452D529544E07dDD0' as `0x${string}`;
+export const USDC_TO_ETH_POOL =
+  '0xd0b53D9277642d899DF5C87A3966A349A798F224' as `0x${string}`;
+export const ETH_PRICE = '0x71041dddad3595F9CEd3DcCFBe3D1F4b0a16Bb70' as `0x${string}`;
+export const WETH = '0x4200000000000000000000000000000000000006' as `0x${string}`;
 
 export const ADMINS = [
   '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
@@ -164,3 +166,9 @@ export const VOTE_ABI = [
     type: 'function',
   },
 ] as const;
+
+export const EXTRA_FUNDRAISERS_IDS = [
+  'bacb6584-7e45-465b-b4af-a3ed24a84233',
+  'a4dac4dc-e5e7-4840-84a9-f00587eac3ec',
+  '97a24692-9762-4384-8bf5-837cd3aaaa3b',
+];

@@ -192,27 +192,22 @@ export class PortalsController {
         21600000,
       );
     }
-    const results = await this.blockchainService.getPortalsPublicVariables(
+    const results = (await this.blockchainService.getPassThroughPublicVariables(
       portalWithoutBalance.data.map((portal) => portal.contract_address),
-    );
-    console.log({ results });
-    let start = 0;
-    let end = 4;
-    const portalWithBalanceData: PortalWithBalance[] =
-      portalWithoutBalance.data.map((portal) => {
-        const portalResults = results.slice(start, end);
-        start += 4;
-        end += 4;
+      ['totalFunds', 'totalFunds', 'totalRewards', 'isActive'],
+    )) as [[bigint, bigint, bigint, boolean]];
+
+    const portalWithBalanceData = portalWithoutBalance.data.map(
+      (portal, index) => {
         return {
           ...portal,
-          balance: parseInt((portalResults[0].result as bigint).toString()),
-          totalFunds: parseInt((portalResults[1].result as bigint).toString()),
-          totalRewards: parseInt(
-            (portalResults[2].result as bigint).toString(),
-          ),
-          isActive: portalResults[3].result as boolean,
+          balance: parseInt((results[index][0] as bigint).toString()),
+          totalFunds: parseInt((results[index][1] as bigint).toString()),
+          totalRewards: parseInt((results[index][2] as bigint).toString()),
+          isActive: results[index][3] as boolean,
         } as PortalWithBalance;
-      });
+      },
+    );
     return {
       data: portalWithBalanceData,
       hasNextPage: portalWithoutBalance.hasNextPage,
@@ -233,9 +228,11 @@ export class PortalsController {
   ): Promise<PortalWithBalance> {
     console.log(slug, 'slug');
     const portal = await this.portalsService.findOneBySlug(slug);
-    const results = await this.blockchainService.getPortalPublicVariables(
-      portal.contract_address,
-    );
+    console.log({ portal });
+    const results = (await this.blockchainService.getPassThroughPublicVariables(
+      [portal.contract_address],
+      ['totalFunds', 'totalFunds', 'totalRewards', 'isActive'],
+    )) as [[bigint, bigint, bigint, boolean]];
     const contributors = await this.blockchainService.getPortalContributors(
       portal.contract_address,
     );
@@ -253,12 +250,14 @@ export class PortalsController {
       data: await Promise.all(ContributorsWithUser),
     };
 
+    console.log({ results });
+
     return {
       ...portal,
-      balance: parseInt((results[0].result as bigint).toString()),
-      totalFunds: parseInt((results[1].result as bigint).toString()),
-      totalRewards: parseInt((results[2].result as bigint).toString()),
-      isActive: results[3].result as boolean,
+      balance: parseFloat(results[0][1].toString()),
+      totalFunds: parseFloat(results[0][1].toString()),
+      totalRewards: parseFloat(results[0][2].toString()),
+      isActive: results[0][3] as boolean,
       contributors: resultsWithContributors,
     };
   }

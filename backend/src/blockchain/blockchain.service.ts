@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ExtractAbiFunctionNames } from 'abitype';
 import { AllConfigType } from 'src/config/config.type';
-import { PRIZE_V2_ABI } from 'src/utils/constants';
+import { PASS_THROUGH_ABI, PRIZE_V2_ABI } from 'src/utils/constants';
 import {
   MulticallReturnType,
   PublicClient,
@@ -11,7 +11,7 @@ import {
   http,
   parseAbi,
 } from 'viem';
-import { optimism } from 'viem/chains';
+import { base } from 'viem/chains';
 import {
   Contribution,
   Contributions,
@@ -41,7 +41,7 @@ export class BlockchainService {
     });
     // const privateKey = this.configService.getOrThrow<AllConfigType>('PRIVATE_KEY', { infer: true });
     this.provider = createPublicClient({
-      chain: optimism,
+      chain: base,
       transport: http(key),
     });
     // this.wallet = new ethers.Wallet(privateKey, this.provider);
@@ -248,8 +248,15 @@ export class BlockchainService {
   async getPortalContributors(
     portalContractAddress: string,
   ): Promise<Contributions> {
-    console.log(process.env.ETHERSCAN_API_KEY, 'ehterscan');
-    const fetchUrl = `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`;
+    const etherscanApiKey = this.configService.getOrThrow<AllConfigType>(
+      'ETHERSCAN_API_KEY',
+      {
+        infer: true,
+      },
+    );
+
+    // const fetchUrl = `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`;
+    const fetchUrl = `https://api.basescan.org/api?module=account&action=tokentx&contractaddress=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&address=${portalContractAddress}&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=${etherscanApiKey}`;
     const res = await fetch(fetchUrl);
     console.log(fetchUrl, 'url');
     const result = (await res.json()) as TransactionApiResponse;
@@ -257,7 +264,10 @@ export class BlockchainService {
     const contributions: Contributions = {
       data: result.result
         .map((transaction) => {
-          if (transaction.isError !== '1') {
+          if (
+            transaction.isError !== '1' &&
+            transaction.to == portalContractAddress
+          ) {
             return {
               contributor: transaction.from,
               amount: transaction.value,
@@ -340,6 +350,44 @@ export class BlockchainService {
       ],
     });
     return results;
+  }
+
+  async getPassThroughPublicVariables<T extends any>(
+    passThroughtContractAddresses: string[],
+    variables: ExtractAbiFunctionNames<
+      typeof PASS_THROUGH_ABI,
+      'pure' | 'view'
+    >[],
+  ): Promise<T[][]> {
+    const calls: any = [];
+    passThroughtContractAddresses.forEach((address) => {
+      const wagmiContract = {
+        address: address as `0x${string}`,
+        abi: PASS_THROUGH_ABI,
+      } as const;
+      const contracts = variables.map((variable) => {
+        return {
+          ...wagmiContract,
+          functionName: variable,
+        };
+      });
+      calls.push(...contracts);
+    });
+    const results: MulticallReturnType<any, true> =
+      await this.provider.multicall({
+        contracts: calls,
+      });
+    const final_results_unsliced = results.map((result) => {
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      return result.result;
+    });
+
+    const final = splitArray(final_results_unsliced, variables.length);
+
+    console.log({ final });
+    return final as never as T[][];
   }
 
   async getPrizesV2PublicVariables<T extends any>(
