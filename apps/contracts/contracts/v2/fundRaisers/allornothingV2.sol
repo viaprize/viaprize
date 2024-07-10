@@ -21,8 +21,6 @@ contract AllOrNothingV2 {
     address[] public platformAdmins;
     /// @notice this will be a mapping of the addresses of a platformAdmins to a boolean value of true or false
     mapping(address => bool) public isPlatformAdmin;
-    /// @notice this will be the address to receive campaign funds, it can be similar to proposer address
-    address public receipent;
     /// @notice keeping track of goalAmount and set to 0 initially
     uint256 public goalAmount = 0;
     /// @notice keeping track of deadline and set to 0 initially
@@ -40,10 +38,6 @@ contract AllOrNothingV2 {
     /// @notice this will be a mapping of the addresses of the funders to the amount they have contributed
     mapping(address => uint256) public cryptoFunderAmount;
     mapping(address => uint256) public fiatFunderAmount;
-
-    mapping(address => uint256) public individualCryptoPercentage;
-    mapping(address => uint256) public individualFiatPercentage;
-    mapping(address => uint256) public totalFunderAmount;
 
     /// @notice this will be totalRewards after deducting platform cut
     uint256 public totalRewards;
@@ -161,8 +155,6 @@ contract AllOrNothingV2 {
             platformAdmins.push(_platformAdmins[i]);
             isPlatformAdmin[_platformAdmins[i]] = true;
         }
-
-        receipent = _proposer;
         platformFee = _platformFee;
         goalAmount = _goal;
         deadline = _deadline;
@@ -223,8 +215,6 @@ contract AllOrNothingV2 {
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         cryptoFunderAmount[sender] = cryptoFunderAmount[sender].add(_donation);
-        // totalFunderAmount[sender] = totalFunderAmount[sender].add(_donation);
-        // individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
 
         bool goalAmountAvailable = goalAmount > 0;
         bool deadlineAvailable = deadline > 0;
@@ -237,7 +227,7 @@ contract AllOrNothingV2 {
                 uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                 totalRewards = 0;
                 totalFunds = 0;
-                _usdc.transfer(receipent, _totalProposerRewards);
+                _usdc.transfer(proposer, _totalProposerRewards);
                 _usdc.transfer(platformAddress, _totalPlatformRewards);
                 isActive = false;
             }
@@ -273,7 +263,7 @@ contract AllOrNothingV2 {
                     uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                     totalRewards = 0;
                     totalFunds = 0;
-                    _usdc.transfer(receipent, _totalProposerRewards);
+                    _usdc.transfer(proposer, _totalProposerRewards);
                     _usdc.transfer(platformAddress, _totalPlatformRewards);
                     isActive = false;
                 }
@@ -282,7 +272,7 @@ contract AllOrNothingV2 {
                     uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                     totalRewards = 0;
                     totalFunds = 0;
-                    _usdc.transfer(receipent, _totalProposerRewards);
+                    _usdc.transfer(proposer, _totalProposerRewards);
                     _usdc.transfer(platformAddress, _totalPlatformRewards);
                     isActive = false;
                 }
@@ -308,7 +298,7 @@ contract AllOrNothingV2 {
                 isActive = false;
             }
             emit Values(
-                receipent, 
+                proposer, 
                 metGoal, 
                 allowDonationAboveGoalAmount, 
                 deadline, 
@@ -339,16 +329,13 @@ contract AllOrNothingV2 {
                 isFiatFunder[sender] = true;
             }
             fiatFunderAmount[sender] = fiatFunderAmount[sender].add(_amountUsdc);
-            // totalFunderAmount[sender] = totalFunderAmount[sender].add(_amountUsdc);
             totalRewards = totalRewards.add((_amountUsdc.mul(100 - (platformFee))).div(100));
             totalFunds = totalFunds.add(_amountUsdc);
-            // individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
         } else {
             _depositAndTransferLogic(sender, _amountUsdc);
         }
         _usdc.transferFrom(sender, address(this), _amountUsdc);
         emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _amountUsdc);
-
     }
 
     /// function to donate bridged tokens into campaign and swap to the usdc then sends to the campaign
@@ -381,7 +368,7 @@ contract AllOrNothingV2 {
         addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
     }
 
-        /// @notice function to donate eth into the campaign
+    /// @notice function to donate eth into the campaign
     function addEthFunds(uint256 _amountOutMinimum) public noReentrant payable  {
         if (msg.value == 0) revert("Not enough Funds");
         if (!isActive) revert FundingToContractEnded();
@@ -458,7 +445,7 @@ contract AllOrNothingV2 {
                 uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                 totalRewards = 0;
                 totalFunds = 0;
-                _usdc.transfer(receipent, _totalProposerRewards);
+                _usdc.transfer(proposer, _totalProposerRewards);
                 _usdc.transfer(platformAddress, _totalPlatformRewards);
                 isActive = false;
             }
@@ -490,7 +477,7 @@ contract AllOrNothingV2 {
                 uint256 _totalPlatformRewards = totalFunds.sub(totalRewards);
                 totalRewards = 0;
                 totalFunds = 0;
-                _usdc.transfer(receipent, _totalProposerRewards);
+                _usdc.transfer(proposer, _totalProposerRewards);
                 _usdc.transfer(platformAddress, _totalPlatformRewards);
                 isActive = false;
             }
@@ -535,20 +522,20 @@ contract AllOrNothingV2 {
     function giftNfts(address _nft , uint256 _tokenId, uint256 _amount) public noReentrant {
         if (!isActive) revert FundingToContractEnded();
         IERC1155 nfts = IERC1155(_nft);
-        nfts.safeTransferFrom(msg.sender,receipent, _tokenId, _amount,"");
+        nfts.safeTransferFrom(msg.sender, proposer, _tokenId, _amount,"");
         emit Donation(msg.sender,_nft,DonationType.GIFT,TokenType.NFT,_amount);
     }
 
     function giftNfts(address _nft , uint256 _tokenId) public noReentrant {
         if (!isActive) revert FundingToContractEnded();
         IERC721 nft = IERC721(_nft);
-        nft.safeTransferFrom(msg.sender,receipent,_tokenId);
+        nft.safeTransferFrom(msg.sender, proposer,_tokenId);
         emit Donation(msg.sender,_nft,DonationType.GIFT,TokenType.NFT,1);
     }
 
     function giftTokens(address _token, uint256 _amount) public noReentrant {
         if (!isActive) revert FundingToContractEnded();
-        TransferHelper.safeTransferFrom(_token, msg.sender, receipent, _amount);
+        TransferHelper.safeTransferFrom(_token, msg.sender, proposer, _amount);
         emit Donation(msg.sender, _token, DonationType.GIFT, TokenType.TOKEN,_amount);
     }
 }
