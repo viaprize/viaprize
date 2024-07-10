@@ -71,8 +71,7 @@ export default function DonationInfo({
                 <Table.Th>Donated at</Table.Th>
                 <Table.Th>Donor</Table.Th>
                 {/* <Table.Th>Network</Table.Th> */}
-                <Table.Th>Amount in Eth</Table.Th>
-                <Table.Th>USD Value</Table.Th>
+                <Table.Th>USD</Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
@@ -85,11 +84,7 @@ export default function DonationInfo({
                     </Table.Td>
                     <Table.Td>{donation.contributor}</Table.Td>
                     {/* <Table.Td>{donation.network}</Table.Td> */}
-                    <Table.Td>{formatEther(BigInt(donation.amount))}</Table.Td>
-                    <Table.Td>
-                      {(ethToUsd?.ethereum.usd ?? 2500) *
-                        parseFloat(formatEther(BigInt(donation.amount)))}
-                    </Table.Td>
+                    <Table.Td>{parseFloat(donation.amount) / 1_000_000}</Table.Td>
                   </Table.Tr>
                 );
               })}

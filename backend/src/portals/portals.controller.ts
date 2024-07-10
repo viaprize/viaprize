@@ -233,34 +233,32 @@ export class PortalsController {
       [portal.contract_address],
       ['totalFunds', 'totalFunds', 'totalRewards', 'isActive'],
     )) as [[bigint, bigint, bigint, boolean]];
-    // const contributors = await this.blockchainService.getPortalContributors(
-    //   portal.contract_address,
-    // );
+    const contributors = await this.blockchainService.getPortalContributors(
+      portal.contract_address,
+    );
 
-    // const ContributorsWithUser = contributors.data.map(async (contributor) => {
-    //   return {
-    //     ...contributor,
-    //     contributor: await this.userService.findUserByWallett(
-    //       contributor.contributor,
-    //     ),
-    //   };
-    // });
+    const ContributorsWithUser = contributors.data.map(async (contributor) => {
+      return {
+        ...contributor,
+        contributor: await this.userService.findUserByWallett(
+          contributor.contributor,
+        ),
+      };
+    });
 
-    // const resultsWithContributors = {
-    //   data: await Promise.all(ContributorsWithUser),
-    // };
+    const resultsWithContributors = {
+      data: await Promise.all(ContributorsWithUser),
+    };
 
     console.log({ results });
 
     return {
       ...portal,
-      balance: 2321,
+      balance: parseFloat(results[0][1].toString()),
       totalFunds: parseFloat(results[0][1].toString()),
       totalRewards: parseFloat(results[0][2].toString()),
       isActive: results[0][3] as boolean,
-      contributors: {
-        data: [],
-      },
+      contributors: resultsWithContributors,
     };
   }
 
