@@ -318,6 +318,7 @@ export default function PrizePageComponent({
           username=""
         />
       </Center>
+
       <FundUsdcCard
         contractAddress={prize.contract_address}
         prizeId={prize.id}
