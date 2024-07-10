@@ -86,6 +86,7 @@ export default function SubmissionsCard({
 
     const finalVote = formatUsdc(parseFloat(debounced.toString()));
     try {
+      setSendLoading(true);
       const isFunder = await readContract({
         abi: VOTE_ABI,
         address: contractAddress as `0x${string}`,
@@ -154,6 +155,7 @@ export default function SubmissionsCard({
       setSendLoading(false);
       toast.success(<TransactionToast hash={tx} title="Voted Successfully" />);
       await refetch();
+      window.location.reload();
       close();
     } catch (e) {
       console.log(e, 'error');

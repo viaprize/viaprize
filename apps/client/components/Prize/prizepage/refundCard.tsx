@@ -135,7 +135,7 @@ export default function RefundCard({
       await refetchRefundSubmission();
       setSendLoading(false);
       toast.success(<TransactionToast hash={tx} title="Voted Successfully" />);
-
+      window.location.reload();
       close();
     } catch (e) {
       console.log(e, 'error');
