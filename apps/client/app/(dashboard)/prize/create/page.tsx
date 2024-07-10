@@ -103,30 +103,29 @@ function Prize() {
       judges: showJudges ? judges : [],
       title,
     });
-    // const newImages = await handleUploadImages();
-    // const finalAddress = address.filter((x) => x);
-    // await addProposalsMutation({
-    //   admins: [wallet.address],
-    //   description: richtext,
-    //   isAutomatic,
-    //   voting_time: votingTime,
-    //   proposer_address: wallet.address,
-    //   priorities: [],
-    //   proficiencies: [],
-    //   submission_time: proposalTime,
-    //   startSubmissionDate: startSubmisionDate.toISOString(),
-    //   startVotingDate: startVotingDate.toISOString(),
-    //   images: newImages ? [newImages] : [],
-    //   judges: showJudges ? judges : [],
-    //   title,
-    // });
-    // setLoading(false);
+    const newImages = await handleUploadImages();
+    await addProposalsMutation({
+      admins: [wallet.address],
+      description: richtext,
+      isAutomatic,
+      voting_time: votingTime,
+      proposer_address: wallet.address,
+      priorities: [],
+      proficiencies: [],
+      submission_time: proposalTime,
+      startSubmissionDate: startSubmisionDate.toISOString(),
+      startVotingDate: startVotingDate.toISOString(),
+      images: newImages ? [newImages] : [],
+      judges: showJudges ? judges : [],
+      title,
+    });
+    setLoading(false);
 
-    // setModalOpened(true);
-    // setTimeout(() => {
-    //   setModalOpened(false);
-    //   router.push(`/profile/${appUser?.username}`);
-    // }, 6000);
+    setModalOpened(true);
+    setTimeout(() => {
+      setModalOpened(false);
+      router.push(`/profile/${appUser?.username}`);
+    }, 6000);
   };
 
   const handleSubmit = () => {
