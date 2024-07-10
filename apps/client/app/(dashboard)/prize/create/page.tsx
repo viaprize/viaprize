@@ -6,11 +6,22 @@ import useAppUser from '@/components/hooks/useAppUser';
 import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { addDaysToDate } from '@/lib/utils';
-import { Button, Card, SimpleGrid, TextInput, Title } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Card,
+  Loader,
+  Modal,
+  SimpleGrid,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { IconAlertTriangleFilled } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
