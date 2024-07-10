@@ -22,22 +22,22 @@ import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconAlertTriangleFilled } from '@tabler/icons-react';
+import { addDays, differenceInMinutes } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
-
 function Prize() {
   const [judges, setJudges] = useState<string[]>([]);
   const [showJudges, setShowJudges] = useState(false);
   const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');
   const [isAutomatic, setIsAutomatic] = useState(false);
-  const [votingTime, setVotingTime] = useState(0);
-  const [votingDateTime, setVotingDateTime] = useState<Date | null>(
+
+  const [votingDateTime, setVotingDateTime] = useState<Date>(
     addDaysToDate(new Date(), 6),
   );
-  const [proposalTime, setProposalTime] = useState(0);
+
   const { user } = usePrivy();
   const { appUser } = useAppUser();
   const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -48,11 +48,21 @@ function Prize() {
   const router = useRouter();
   const [modalOpened, setModalOpened] = useState(false);
 
-  const [startVotingDate, setStartVotingDate] = useState<Date | null>(
+  const [startVotingDate, setStartVotingDate] = useState<Date>(
     addDaysToDate(new Date(), 3),
   );
 
-  const [startSubmisionDate, setStartSubmissionDate] = useState<Date | null>(new Date());
+  const [startSubmisionDate, setStartSubmissionDate] = useState<Date>(new Date());
+
+  const [proposalTime, setProposalTime] = useState(
+    differenceInMinutes(startVotingDate, startSubmisionDate),
+  );
+
+  const [votingTime, setVotingTime] = useState(
+    differenceInMinutes(votingDateTime, startVotingDate),
+  );
+
+  console.log({ proposalTime, startSubmisionDate, startVotingDate, votingTime });
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
@@ -78,8 +88,22 @@ function Prize() {
     if (!startVotingDate) {
       throw Error('Start voting date');
     }
+    console.log({
+      admins: [wallet.address],
+      description: richtext,
+      isAutomatic,
+      voting_time: votingTime,
+      proposer_address: wallet.address,
+      priorities: [],
+      proficiencies: [],
+      submission_time: proposalTime,
+      startSubmissionDate: startSubmisionDate.toISOString(),
+      startVotingDate: startVotingDate.toISOString(),
+
+      judges: showJudges ? judges : [],
+      title,
+    });
     const newImages = await handleUploadImages();
-    // const finalAddress = address.filter((x) => x);
     await addProposalsMutation({
       admins: [wallet.address],
       description: richtext,
@@ -174,8 +198,10 @@ function Prize() {
         <DateTimePicker
           label="Submissions open"
           placeholder="Make sure its above the submission time and date"
-          value={startSubmisionDate ?? new Date()}
+          minDate={new Date()}
+          value={startSubmisionDate}
           onChange={(da) => {
+            if (!da) return;
             setStartSubmissionDate(da);
           }}
         />
@@ -195,12 +221,14 @@ function Prize() {
         <DateTimePicker
           label="Submissions end and judging begins"
           placeholder="Make sure its above the voting time and date"
-          minDate={addDaysToDate(new Date(), 3)}
-          value={startVotingDate ?? addDaysToDate(new Date(), 3)}
+          minDate={addDays(new Date(), 3)}
+          value={startVotingDate}
           onChange={(da) => {
+            if (!da) return;
             setStartVotingDate(da);
             if (da && startSubmisionDate) {
-              setProposalTime((da.getTime() - startSubmisionDate.getTime()) / 1000 / 60);
+              setProposalTime(differenceInMinutes(da, startSubmisionDate));
+              console.log(proposalTime, 'proposal time');
             }
           }}
         />
@@ -208,13 +236,20 @@ function Prize() {
         <DateTimePicker
           label="End judging"
           placeholder="Make sure its above the voting time and date"
-          minDate={addDaysToDate(new Date(), 4)}
-          value={votingDateTime ?? addDaysToDate(new Date(), 6)}
+          minDate={addDays(new Date(), 4)}
+          value={votingDateTime}
           onChange={(da) => {
+            if (!da) return;
             setVotingDateTime(da);
+            console.log('sljdflsjdlsdjlfsssssjd');
+            console.log(da.getMinutes(), 'minutes');
             if (da && startVotingDate) {
-              setProposalTime((da.getTime() - startVotingDate.getTime()) / 1000 / 60);
+              setVotingTime(differenceInMinutes(da, startVotingDate));
             }
+          }}
+          onDateChange={(da) => {
+            console.log('sdklflksjkldjl');
+            console.log({ da });
           }}
         />
 
