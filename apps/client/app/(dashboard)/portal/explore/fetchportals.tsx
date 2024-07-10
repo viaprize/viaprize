@@ -1,7 +1,6 @@
 import { Api } from '@/lib/api';
 import { campaignSearchParamsSchema } from '@/lib/params';
 import type { SearchParams } from '@/lib/types';
-import { formatEther } from 'viem';
 import PortalCard from '../../../../components/portals/portal-card';
 
 const parseCategories = (value: string | undefined): string[] | undefined => {
@@ -73,7 +72,7 @@ export default async function FetchPortals({
             ethToUsd={final.ethereum.usd}
             description={portal.description}
             imageUrl={portal.images[0]}
-            amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
+            amountRaised={((portal.totalFunds ?? 0) / 1_000_000).toString()}
             authorName={portal.user.name}
             totalContributors="0"
             isActive={portal.isActive ?? false}

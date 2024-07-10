@@ -1,6 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { User } from '@/lib/api';
-import { prepareWritePortalFactory, writePortalFactory } from '@/lib/smartContract';
+import {
+  ADMINS,
+  ETH_PRICE,
+  SWAP_ROUTER,
+  USDC,
+  USDC_BRIDGE,
+  USDC_TO_ETH_POOL,
+  USDC_TO_USDCE_POOL,
+  WETH,
+} from '@/lib/constants';
+import {
+  prepareWritePassThroughV2Factory,
+  writePassThroughV2Factory,
+} from '@/lib/smartContract';
 import {
   Badge,
   Button,
@@ -13,7 +26,9 @@ import {
   Textarea,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
+import Link from 'next/link';
 import type { SetStateAction } from 'react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -21,9 +36,6 @@ import { parseEther } from 'viem';
 import { useMutation } from 'wagmi';
 import { usePortal } from '../hooks/usePortal';
 import usePortalProposal from '../hooks/usePortalProposal';
-import { IconCircleCheck } from '@tabler/icons-react';
-import Link from 'next/link';
-
 interface AdminCardProps {
   images: string[];
   id: string;
@@ -74,23 +86,25 @@ function PortalAdminCard({
         dismissible: false,
       });
       const finalFundingGoal = parseEther((fundingGoal ?? '0').toString());
-      const request = await prepareWritePortalFactory({
+
+      const request = await prepareWritePassThroughV2Factory({
         functionName: 'createPortal',
         args: [
-          tresurers as `0x${string}`[],
-          [
-            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
-          ] as `0x${string}`[],
-          finalFundingGoal,
-          BigInt(Math.floor(new Date(deadline).getTime() / 1000) ?? 0),
-          allowAboveFundingGoal,
+          BigInt(new Date().getTime()),
+          tresurers[0] as `0x${string}`,
+          ADMINS,
           BigInt(platfromFeePercentage),
-          sendImmediately,
+          USDC,
+          USDC_BRIDGE,
+          WETH,
+          SWAP_ROUTER,
+          USDC_TO_USDCE_POOL,
+          USDC_TO_ETH_POOL,
+          ETH_PRICE,
         ],
+        address: '0xdCcF514720AABBfFF6bed7a7Db4b498677EfD3D3',
       });
-      const transaction = await writePortalFactory(request);
+      const transaction = await writePassThroughV2Factory(request);
       toast.dismiss(firstLoadingToast);
       const secondToast = toast.loading(
         'Waiting for transaction Confirmation...DO NOT CLOSE WINDOW',
@@ -102,7 +116,7 @@ function PortalAdminCard({
         hash: transaction.hash,
         confirmations: 1,
       });
-      const portalAddress = `0x${waitForTransactionOut.logs[0].topics[1]?.slice(-40)}`;
+      const portalAddress = `0x${waitForTransactionOut.logs[0].topics[2]?.slice(-40)}`;
       const portal = await createPortal({
         address: portalAddress,
         proposal_id: id,
@@ -118,7 +132,7 @@ function PortalAdminCard({
           <Link
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://optimistic.etherscan.io/address/${portalAddress}`}
+            href={`https://basescan.org/address/${portalAddress}`}
           >
             <Button variant="transparent" className="text-blue-400 underline">
               See here

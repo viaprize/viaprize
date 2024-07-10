@@ -31,7 +31,7 @@ export default function AboutPrize({
           Contract Address on {chain.name.toUpperCase()} (You can donate to this address
           also): {contractAddress}
         </Title> */}
-        <div className="sm:flex  gap-4 items-start">
+        {/* <div className="sm:flex  gap-4 items-start">
           <div>
             <Text>Project Donation Address </Text>
             <Flex align="center">
@@ -60,10 +60,10 @@ export default function AboutPrize({
             size="lg"
             className="sm:my-0 my-4"
           >
-            Donation only on OP Mainnet !
+            Donations with USDC on Base only!
           </Badge>
           <Divider my="sm" />
-        </div>
+        </div> */}
         <TextEditor disabled richtext={description} />
       </div>
     </div>

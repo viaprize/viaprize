@@ -9,11 +9,20 @@ import { calculateDeadline, usdcSignType } from '@/lib/utils';
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import { backendApi } from '@/lib/backend';
 import { USDC } from '@/lib/constants';
-import { Badge, Button, Center, Group, NumberInput, Stack, Title } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Center,
+  Group,
+  NumberInput,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import { readContract } from '@wagmi/core';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import revalidate from 'utils/revalidate';
 import { hashTypedData, hexToSignature } from 'viem';
@@ -53,6 +62,9 @@ function FundUsdcCard({
   const router = useRouter();
 
   const getUsdcSignatureData = async () => {
+    if (parseFloat(value) <= 0) {
+      throw new Error('Donation must be at least 1$');
+    }
     const walletAddress = walletClient?.account.address;
     if (!walletAddress) {
       throw new Error('Please login to donate');
@@ -122,7 +134,7 @@ function FundUsdcCard({
         })
         .then((res) => res.data.hash);
 
-      toast.success(<TransactionToast hash={trxHash} title="Transaction Successfull" />, {
+      toast.success(<TransactionToast hash={trxHash} title="Transaction Successful" />, {
         duration: 6000,
       });
       await revalidate({ tag: slug });
@@ -163,6 +175,7 @@ function FundUsdcCard({
               v: parseInt(v.toString()),
               r: r,
               s: s,
+              chainId: 8453,
             },
             title,
             imageUrl,
@@ -187,11 +200,13 @@ function FundUsdcCard({
   };
   return (
     <Stack my="md">
+      <Text fw="sm">Your donation needs to be at least $1.</Text>
+
       <NumberInput
         placeholder="Enter Value  in $ To Donate"
         mt="md"
         allowDecimal
-        defaultValue={0}
+        defaultValue={1}
         allowNegative={false}
         value={value}
         onChange={(v) => {
@@ -238,6 +253,23 @@ export default function PrizePageComponent({
     new Date(),
     new Date(prize.submission_time_blockchain * 1000),
   );
+  const params = useParams();
+  useEffect(() => {
+    if (window.location.hash.includes('success')) {
+      fetch('https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash').then(
+        (res) => {
+          res.json().then((data) => {
+            toast.success(
+              <TransactionToast hash={data.hash} title="Transaction Successful" />,
+              {
+                duration: 6000,
+              },
+            );
+          });
+        },
+      );
+    }
+  }, [params]);
 
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
@@ -248,7 +280,7 @@ export default function PrizePageComponent({
             Won
           </Badge>
         ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-        deadlineString === 'Time is up!' && prize.distributed === false ? (
+        prize.refunded ? (
           <Badge size="lg" color="yellow">
             Refunded
           </Badge>
@@ -286,13 +318,14 @@ export default function PrizePageComponent({
           username=""
         />
       </Center>
+
       <FundUsdcCard
         contractAddress={prize.contract_address}
         prizeId={prize.id}
         title={prize.title}
         cancelUrl={window.location.href}
         imageUrl={prize.images[0] || ''}
-        successUrl={window.location.href}
+        successUrl={`${window.location.href}#success`}
         slug={prize.slug}
       />
       {appUser

@@ -2,7 +2,7 @@
 import { env } from '@env';
 import type { Chain } from 'wagmi';
 import { configureChains, createConfig } from 'wagmi';
-import { optimism, optimismGoerli, polygonMumbai } from 'wagmi/chains';
+import { base, optimism, optimismGoerli, polygonMumbai } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 
 const getChain = (chainName: string): Chain => {
@@ -15,6 +15,9 @@ const getChain = (chainName: string): Chain => {
     }
     case 'mumbai': {
       return polygonMumbai;
+    }
+    case 'base': {
+      return base;
     }
     default: {
       throw new Error('Chain Id is not defined in the app');

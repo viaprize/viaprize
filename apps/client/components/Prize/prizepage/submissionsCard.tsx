@@ -86,6 +86,7 @@ export default function SubmissionsCard({
 
     const finalVote = formatUsdc(parseFloat(debounced.toString()));
     try {
+      setSendLoading(true);
       const isFunder = await readContract({
         abi: VOTE_ABI,
         address: contractAddress as `0x${string}`,
@@ -154,6 +155,7 @@ export default function SubmissionsCard({
       setSendLoading(false);
       toast.success(<TransactionToast hash={tx} title="Voted Successfully" />);
       await refetch();
+      window.location.reload();
       close();
     } catch (e) {
       console.log(e, 'error');
@@ -165,7 +167,6 @@ export default function SubmissionsCard({
 
   return (
     <Card className="flex flex-col justify-center gap-3 my-2">
-
       {!onProfile ? (
         <>
           <Modal opened={opened} onClose={close} title="Voting For this submission">

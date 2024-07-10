@@ -34,6 +34,8 @@ function Proposals({
               title={proposal.title}
               user={proposal.user}
               voting={proposal.voting_time}
+              startSubmissionDate={proposal.startSubmissionDate}
+              startVotingDate={proposal.startVotingDate}
               proposerFeePercentage={proposal.proposerFeePercentage}
               platfromFeePercentage={proposal.platformFeePercentage}
             />
@@ -92,7 +94,8 @@ function AccpetedProposals({
               voting={proposal.voting_time}
               platfromFeePercentage={proposal.platformFeePercentage}
               proposerFeePercentage={proposal.proposerFeePercentage}
-              submissionTime={proposal.submission_time}
+              startSubmissionDate={proposal.startSubmissionDate}
+              startVotingDate={proposal.startVotingDate}
               judges={proposal.judges}
             />
           ))}

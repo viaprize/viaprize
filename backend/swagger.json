@@ -4294,6 +4294,53 @@
         ],
         "x-nestia-method": "POST"
       }
+    },
+    "/wallet/fund_raisers/{contract_address}/end_campaign": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.fund_raisers.end_campaign.endCampaign",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
     }
   },
   "components": {
@@ -5991,6 +6038,11 @@
             "x-typia-optional": false,
             "type": "number"
           },
+          "refunded": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
           "balance": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -6149,6 +6201,7 @@
           "submission_time_blockchain",
           "voting_time_blockchain",
           "dispute_period_time_blockchain",
+          "refunded",
           "balance",
           "id",
           "description",

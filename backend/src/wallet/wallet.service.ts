@@ -11,10 +11,10 @@ import {
   encodeFunctionData,
   http,
 } from 'viem';
-import { optimism } from 'viem/chains';
 
 import { JobService } from 'src/jobs/jobs.service';
-import { PRIZE_V2_ABI } from '../utils/constants';
+import { base } from 'viem/chains';
+import { PASS_THROUGH_ABI, PRIZE_V2_ABI } from '../utils/constants';
 
 export type WalletType = 'gasless' | 'reserve';
 @Injectable()
@@ -37,7 +37,7 @@ export class WalletService {
       },
     );
     this.provider = createPublicClient({
-      chain: optimism,
+      chain: base,
       transport: http(
         this.configService.getOrThrow<AllConfigType>('RPC_URL', {
           infer: true,
@@ -99,6 +99,45 @@ export class WalletService {
     };
     console.log({ transaction });
     const transactionHash = await this.sendTransaction(transaction, type);
+    console.log(transactionHash);
+    return transactionHash;
+  }
+
+  async simulateAndWriteSmartContractPassThroughV2<
+    const abi extends typeof PASS_THROUGH_ABI | readonly unknown[],
+    functionName extends ContractFunctionName<abi, 'nonpayable' | 'payable'>,
+    args extends ContractFunctionArgs<
+      abi,
+      'nonpayable' | 'payable',
+      functionName
+    > = ContractFunctionArgs<abi, 'nonpayable' | 'payable', functionName>,
+  >(
+    functionName: ContractFunctionName<abi, 'payable' | 'nonpayable'>,
+    args:
+      | ContractFunctionArgs<abi, 'payable' | 'nonpayable', functionName>
+      | [`0x${string}`, bigint, bigint, `0x${string}`, `0x${string}`],
+    contractAddress: string,
+    type: WalletType,
+    value: string,
+    simulate = true,
+  ) {
+    if (simulate) {
+      await this.simulateSmartContract(
+        PASS_THROUGH_ABI,
+        functionName,
+        args as readonly unknown[],
+        contractAddress,
+        type,
+      );
+    }
+    const transactionHash = await this.writeSmartContract(
+      PASS_THROUGH_ABI,
+      functionName,
+      args as readonly unknown[],
+      contractAddress,
+      type,
+      value,
+    );
     console.log({ transactionHash });
     return transactionHash;
   }
@@ -166,6 +205,7 @@ export class WalletService {
       {
         'Content-Type': 'application/json',
         'x-api-key': this.apiKey,
+        'x-chain-id': '8453',
       },
       scheduleInSeconds,
     );
@@ -184,6 +224,7 @@ export class WalletService {
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': this.apiKey,
+          'x-chain-id': '8453',
         },
         method: 'POST',
       })
