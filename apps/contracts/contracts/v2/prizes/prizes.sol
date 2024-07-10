@@ -346,9 +346,7 @@ contract PrizeV2 {
             }
             distributed = true;
         }
-        // refund if no submissions 
-        // dispute if no total votes
-        if(allSubmissions.length == 0 || cryptoFunders.length == 0 || totalVotes == 0) {
+        if(totalVotes == 0) {
             for(uint256 i=0; i<cryptoFunders.length; i++) {
                 _usdc.transfer(cryptoFunders[i], cryptoFunderAmount[cryptoFunders[i]]);
                 cryptoFunderAmount[cryptoFunders[i]] = 0;
@@ -393,7 +391,7 @@ contract PrizeV2 {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
         bytes32 hash = VOTE_HASH(nonce+=1, _submissionHash, _amount);
         address sender =  ecrecover(hash, v, r, s);
-        if(!isFiatFunder[sender] || !isCryptoFunder[sender]) revert("NAF"); // NAF -> Not a Funder
+        if(isFiatFunder[sender] || isCryptoFunder[sender]) revert("NAF"); // NAF -> Not a Funder
         if (_amount > totalFunderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
@@ -406,34 +404,32 @@ contract PrizeV2 {
                 isRefundRequestedAddress[sender] = true;
             }
         }
-        if((isFiatFunder[sender] || isCryptoFunder[sender]) && totalFunderAmount[sender] > 0) {
-            if(cryptoFunderAmount[sender] > 0 && fiatFunderAmount[sender] > 0){
-                uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
-                uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
-                if(!(_amount == cryptoAmountToVote + fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
-                cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
-                fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
-                totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote + fiatAmountToVote);
-                funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-                cryptoAmountToVote = 0;
-                fiatAmountToVote = 0;
-            } else if(cryptoFunderAmount[sender] > 0) {
-                uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
-                if(!(_amount == cryptoAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
-                cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
-                totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote);
-                funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-                cryptoAmountToVote = 0;
-            } else if(fiatFunderAmount[sender] > 0) {
-                uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
-                if(!(_amount == fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
-                fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
-                totalFunderAmount[sender] = totalFunderAmount[sender].sub(fiatAmountToVote);
-                funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-                fiatAmountToVote = 0;
-            }
-            _voteLogic(_amount, _submissionHash, sender);
+        if(cryptoFunderAmount[sender] > 0 && fiatFunderAmount[sender] > 0){
+            uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
+            uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
+            if(!(_amount == cryptoAmountToVote + fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
+            cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
+            fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
+            totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote + fiatAmountToVote);
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+            cryptoAmountToVote = 0;
+            fiatAmountToVote = 0;
+        } else if(cryptoFunderAmount[sender] > 0) {
+            uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
+            if(!(_amount == cryptoAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
+            cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
+            totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote);
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+            cryptoAmountToVote = 0;
+        } else if(fiatFunderAmount[sender] > 0) {
+            uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
+            if(!(_amount == fiatAmountToVote)) revert("VM,PPEIL"); // VM,PPEIL -> votes mismatch, probably precise error in logic
+            fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
+            totalFunderAmount[sender] = totalFunderAmount[sender].sub(fiatAmountToVote);
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+            fiatAmountToVote = 0;
         }
+        _voteLogic(_amount, _submissionHash, sender);
     }
 
     function _changeSubmissionVoteLogic(bytes32 _previousSubmissionHash, bytes32 _newSubmissionHash) private {
@@ -458,7 +454,7 @@ contract PrizeV2 {
         bytes32 signedMessageHash = CHANGE_VOTE_HASH(nonce+=1, _previous_submissionHash, amount, _new_submissionHash);
         address sender = ecrecover(signedMessageHash, v, r, s);
         if (funderVotes[sender][_previous_submissionHash] < amount) revert NotYourVote();
-        if(!isCryptoFunder[sender] || !isFiatFunder[sender]) revert("NF");
+        if(!isCryptoFunder[sender] || !isFiatFunder[sender]) revert("NF"); // NF -> Not a Funder
         _changeVote(sender, _previous_submissionHash, _new_submissionHash, amount);
         _changeSubmissionVoteLogic(_previous_submissionHash, _new_submissionHash);
         emit Voted(_new_submissionHash, sender, amount);
@@ -504,7 +500,6 @@ contract PrizeV2 {
         return submission;
     }
 
-
     function _depositLogic(address sender, uint256 donation) private {
         if(!isCryptoFunder[sender]) {
             isCryptoFunder[sender] = true;
@@ -520,7 +515,6 @@ contract PrizeV2 {
 
     function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public onlyActive noReentrant payable {
         require(_amountUsdc > 0, "F<0"); // F<0 -> funds should be greater than zero.
-        // (uint8 v, bytes32 r, bytes32 s) = ECDSA.tryRecover(_ethSignedMessageHash, _signature);
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
         _usdc.permit(sender, spender, _amountUsdc, _deadline,v,r,s);
         if(_fiatPayment) {
@@ -534,10 +528,7 @@ contract PrizeV2 {
             individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
             individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
             totalFunds = totalFunds.add(_amountUsdc);
-        } 
-        // if(!_fiatPayment) {
-        //     _depositLogic(sender, _amountUsdc);
-        // }
+        }
         else {
             _depositLogic(sender, _amountUsdc);
         }
