@@ -241,7 +241,7 @@ function FundUsdcCard({
           await donateUsingUsdc();
         }}
       >
-        Donate
+        Donate with Crypto
       </Button>
 
       <Button
