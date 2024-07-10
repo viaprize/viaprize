@@ -55,11 +55,11 @@ function Prize() {
   const [startSubmisionDate, setStartSubmissionDate] = useState<Date>(new Date());
 
   const [proposalTime, setProposalTime] = useState(
-    differenceInMinutes(startVotingDate, startSubmisionDate),
+    parseInt(differenceInMinutes(startVotingDate, startSubmisionDate).toString()),
   );
 
   const [votingTime, setVotingTime] = useState(
-    differenceInMinutes(votingDateTime, startVotingDate),
+    parseInt(differenceInMinutes(votingDateTime, startVotingDate).toString()),
   );
 
   console.log({ proposalTime, startSubmisionDate, startVotingDate, votingTime });
@@ -227,7 +227,9 @@ function Prize() {
             if (!da) return;
             setStartVotingDate(da);
             if (da && startSubmisionDate) {
-              setProposalTime(differenceInMinutes(da, startSubmisionDate));
+              setProposalTime(
+                parseInt(differenceInMinutes(da, startSubmisionDate).toString()),
+              );
               console.log(proposalTime, 'proposal time');
             }
           }}
@@ -244,7 +246,9 @@ function Prize() {
             console.log('sljdflsjdlsdjlfsssssjd');
             console.log(da.getMinutes(), 'minutes');
             if (da && startVotingDate) {
-              setVotingTime(differenceInMinutes(da, startVotingDate));
+              setVotingTime(
+                parseInt(differenceInMinutes(da, startVotingDate).toString()),
+              );
             }
           }}
           onDateChange={(da) => {
