@@ -262,8 +262,22 @@ export class PrizesController {
         'getVotingTime',
         'isActive',
         'totalVotes',
+        'submissionPeriod',
+        'votingPeriod',
       ],
-    )) as [[bigint, boolean, bigint, bigint, boolean, bigint, boolean]];
+    )) as [
+      [
+        bigint,
+        boolean,
+        bigint,
+        bigint,
+        boolean,
+        bigint,
+        boolean,
+        boolean,
+        boolean,
+      ],
+    ];
     const prizeWithBalanceData = prizeWithoutBalance.data.map(
       (prize, index) => {
         return {
@@ -276,6 +290,9 @@ export class PrizesController {
             results[index][4] &&
             parseInt(results[index][5].toString()) === 0 &&
             results[index][1],
+          voting_period_active_blockchain: results[index][7],
+          is_active_blockchain: results[index][4],
+          submission_perio_active_blockchain: results[index][6],
         } as PrizeWithBlockchainData;
       },
     );
@@ -299,6 +316,8 @@ export class PrizesController {
       disputePeriod,
       totalVotes,
       isActive,
+      submissionPeriod,
+      votingPeriod,
     ] = (
       await this.blockchainService.getPrizesV2PublicVariables(
         [prize.contract_address],
@@ -310,9 +329,21 @@ export class PrizesController {
           'disputePeriod',
           'totalVotes',
           'isActive',
+          'submissionPeriod',
+          'votingPeriod',
         ],
       )
-    )[0] as [bigint, boolean, bigint, bigint, bigint, bigint, boolean];
+    )[0] as [
+      bigint,
+      boolean,
+      bigint,
+      bigint,
+      bigint,
+      bigint,
+      boolean,
+      boolean,
+      boolean,
+    ];
 
     return {
       ...prize,
@@ -323,6 +354,9 @@ export class PrizesController {
       dispute_period_time_blockchain: parseInt(disputePeriod.toString()),
       refunded:
         isActive && parseInt(totalVotes.toString()) === 0 && distributed,
+      voting_period_active_blockchain: votingPeriod,
+      is_active_blockchain: isActive,
+      submission_perio_active_blockchain: submissionPeriod,
     };
   }
 

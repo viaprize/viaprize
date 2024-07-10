@@ -128,6 +128,23 @@ function FundUsdcCard({
     return signData;
   };
   const donateUsingUsdc = async () => {
+    const balance = (
+      await (
+        await fetch(
+          'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
+          {
+            headers: {
+              'x-chain-id': '8453',
+            },
+          },
+        )
+      ).json()
+    ).balance;
+    if (parseFloat(value) * 1_000_000 > balance) {
+      toast.error('Not enough balance to donate');
+      return;
+    }
+
     try {
       setSendLoading(true);
       if (!walletClient) {
