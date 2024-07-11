@@ -129,7 +129,7 @@ contract PrizeV2 {
     event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
     event CampaignCreated(address indexed proposer, address indexed contractAddress);
     event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
-    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType,bool _isFiat,uint256 amount);
+    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
     event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
     event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
 
@@ -391,7 +391,7 @@ contract PrizeV2 {
         if (block.timestamp > votingTime) revert VotingPeriodNotActive();
         bytes32 hash = VOTE_HASH(nonce+=1, _submissionHash, _amount);
         address sender =  ecrecover(hash, v, r, s);
-        if(isFiatFunder[sender] || isCryptoFunder[sender]) revert("NAF"); // NAF -> Not a Funder
+        if(!(isFiatFunder[sender] || isCryptoFunder[sender])) revert("NAF"); // NAF -> Not a Funder
         if (_amount > totalFunderAmount[sender]) revert NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
@@ -533,7 +533,7 @@ contract PrizeV2 {
             _depositLogic(sender, _amountUsdc);
         }
         _usdc.transferFrom(sender, address(this), _amountUsdc);
-        emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN,_fiatPayment, _amountUsdc);
+        emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _amountUsdc);
     }
 
     function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive noReentrant payable {
@@ -552,7 +552,7 @@ contract PrizeV2 {
 
         uint256 _donation  = swapRouter.exactInput(params);
         _depositLogic(sender, _donation);
-        emit Donation(msg.sender, address(_usdcBridged), DonationType.PAYMENT, TokenType.TOKEN,false, _donation);
+        emit Donation(msg.sender, address(_usdcBridged), DonationType.PAYMENT, TokenType.TOKEN, _donation);
     }
 
     /// @notice function to donate eth into the campaign
@@ -572,7 +572,7 @@ contract PrizeV2 {
         });
         uint256 _donation = swapRouter.exactInput(params);
         _depositLogic(sender, _donation);
-        emit Donation(msg.sender,address(_weth),DonationType.PAYMENT,TokenType.TOKEN,false, _donation);
+        emit Donation(msg.sender,address(_weth),DonationType.PAYMENT,TokenType.TOKEN, _donation);
 
     }
 
@@ -642,11 +642,13 @@ contract PrizeV2 {
    /// @param _tokenAddress contract address of the token
    /// @param _to receiver address
    /// @param _amount amount to withdraw
-   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin {
+   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin noReentrant {
         IERC20Permit token = IERC20Permit(_tokenAddress);
         uint256 balance = token.balanceOf(address(this));
         if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists
         require(_amount <= balance, "AEB"); //AEB -> Amount Exceeds Balance
+        totalFunds = totalFunds.sub(_amount);
+        totalRewards = totalRewards.sub(_amount);
         token.transfer(_to, _amount); 
    }
 
