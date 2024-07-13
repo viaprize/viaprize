@@ -78,6 +78,7 @@ export default function Submissions({
       </Title>
       {submissions.map((submission: SubmissionWithBlockchainData) => (
         <SubmissionsCard
+         username={submission.user.username}
           fullname={submission.user.name}
           contractAddress={contractAddress}
           hash={submission.submissionHash}

@@ -163,14 +163,14 @@ export default function Details() {
           data={data}
           my="sm"
         />
-        <Textarea
+        {/* <Textarea
           size="lg"
           radius="xs"
           label="User Bio"
           description="Type in something about yourself"
           value={bio}
           onChange={(e) => setBio(e.currentTarget.value)}
-        />
+        /> */}
         <Button
           onClick={handleLogin}
           loading={loading || uploadUserMutation.isLoading}

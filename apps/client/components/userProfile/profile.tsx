@@ -67,10 +67,10 @@ export default function Profile({ params }: { params: { id: string } }) {
           </Group>
         </div>
 
-        <div>
+        {/* <div>
           <h1 className="mb-0 text-xl font-bold">Bio</h1>
           <p className="my-0">{userData?.bio}</p>
-        </div>
+        </div> */}
 
         <Box mt="md">
           <Text fw={700} mb="sm" mt="md" className="pl-1">

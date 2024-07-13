@@ -146,7 +146,7 @@ function Prize() {
 
   return (
     <Card shadow="md" withBorder className="w-full p-8 m-6">
-      <Badge
+      {/* <Badge
         color="yellow"
         variant="light"
         radius="sm"
@@ -155,7 +155,7 @@ function Prize() {
         leftSection={<IconAlertTriangleFilled />}
       >
         Voting begin automatically when submission ends
-      </Badge>
+      </Badge> */}
 
       <Title order={1} className="my-2">
         Create a Prize
