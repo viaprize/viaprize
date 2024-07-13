@@ -18,6 +18,8 @@ import {
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { addMinutes } from 'date-fns';
 import { PiTimerFill } from 'react-icons/pi';
+import { GiTwoCoins } from 'react-icons/gi';
+import { FaUsers } from 'react-icons/fa';
 
 interface ExploreCardProps {
   distributed: boolean;
@@ -35,6 +37,7 @@ interface ExploreCardProps {
   contestants: number;
   startSubmissionDate: Date;
   startVotingDate: Date;
+  contributers: string[];
 }
 
 function ExploreCard({
@@ -51,13 +54,11 @@ function ExploreCard({
   slug,
   submissionMinutes,
   startSubmissionDate,
+  contributers,
   contestants,
 }: ExploreCardProps) {
   const submissionEndDate = new Date(startingTimeBlockchain * 1000);
-  const deadlineString = calculateDeadline(
-    new Date(),
-    submissionEndDate,
-  );
+  const deadlineString = calculateDeadline(new Date(), submissionEndDate);
 
   return (
     <Card
@@ -77,7 +78,7 @@ function ExploreCard({
           }
         />
       </Card.Section>
-      <div className="flex flex-col justify-between">
+      <div className="flex flex-col justify-between h-full">
         <div>
           <div className="flex justify-between items-center my-3 gap-2 text-red-600">
             <div className="flex items-center space-x-2">
@@ -131,10 +132,27 @@ function ExploreCard({
               </Text>
             )}
           </Text>
-          <p className="text-md font-bold">
-            {contestants} {contestants === 1 ? 'Contestant' : 'Contestants'}
-          </p>
-
+          <div className="flex gap-2 my-2">
+            <Button
+              variant="light"
+              color="yellow"
+              fullWidth
+              className="text-md font-bold pointer-events-none"
+              leftSection={<GiTwoCoins />}
+            >
+              {contributers.length}{' '}
+              {contributers.length === 1 ? 'Contributor' : 'Contributors'}
+            </Button>
+            <Button
+              variant="light"
+              color="green"
+              fullWidth
+              className="text-md font-bold pointer-events-none"
+              leftSection={<FaUsers />}
+            >
+              {contestants} {contestants === 1 ? 'Contestant' : 'Contestants'}
+            </Button>
+          </div>
           <Button
             color="primary"
             component="a"

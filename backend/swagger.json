@@ -6058,6 +6058,16 @@
             "x-typia-optional": false,
             "type": "boolean"
           },
+          "contributors": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
           "balance": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -6220,6 +6230,7 @@
           "voting_period_active_blockchain",
           "is_active_blockchain",
           "submission_perio_active_blockchain",
+          "contributors",
           "balance",
           "id",
           "description",

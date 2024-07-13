@@ -12,4 +12,5 @@ export interface PrizeWithBlockchainData extends PrizeWithBalance {
   voting_period_active_blockchain: boolean;
   is_active_blockchain: boolean;
   submission_perio_active_blockchain: boolean;
+  contributors: string[];
 }

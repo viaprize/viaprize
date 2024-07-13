@@ -264,6 +264,7 @@ export class PrizesController {
         'totalVotes',
         'submissionPeriod',
         'votingPeriod',
+        'getAllFunders',
       ],
     )) as [
       [
@@ -275,11 +276,12 @@ export class PrizesController {
         bigint,
         boolean,
         boolean,
-        boolean,
+        string[],
       ],
     ];
     const prizeWithBalanceData = prizeWithoutBalance.data.map(
       (prize, index) => {
+        console.log(results[index][8], 'contributors');
         return {
           ...prize,
           balance: parseInt(results[index][0].toString()),
@@ -293,6 +295,7 @@ export class PrizesController {
           voting_period_active_blockchain: results[index][7],
           is_active_blockchain: results[index][4],
           submission_perio_active_blockchain: results[index][6],
+          contributors: results[index][8],
         } as PrizeWithBlockchainData;
       },
     );
@@ -318,6 +321,7 @@ export class PrizesController {
       isActive,
       submissionPeriod,
       votingPeriod,
+      allFunders,
     ] = (
       await this.blockchainService.getPrizesV2PublicVariables(
         [prize.contract_address],
@@ -331,6 +335,7 @@ export class PrizesController {
           'isActive',
           'submissionPeriod',
           'votingPeriod',
+          'allFunders',
         ],
       )
     )[0] as [
@@ -343,8 +348,8 @@ export class PrizesController {
       boolean,
       boolean,
       boolean,
+      string[],
     ];
-
     return {
       ...prize,
       distributed: distributed,
@@ -357,6 +362,7 @@ export class PrizesController {
       voting_period_active_blockchain: votingPeriod,
       is_active_blockchain: isActive,
       submission_perio_active_blockchain: submissionPeriod,
+      contributors: allFunders,
     };
   }
 
@@ -456,6 +462,7 @@ export class PrizesController {
   @Get('/:slug/submission/:id')
   async getSubmission(
     @TypedParam('id') id: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @TypedParam('slug') _: string,
   ): Promise<FetchSubmissionDto> {
     const sub = await this.submissionService.findSubmissionById(id);
