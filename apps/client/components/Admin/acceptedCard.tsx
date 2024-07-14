@@ -1,14 +1,5 @@
 import type { User } from '@/lib/api';
-import {
-  ADMINS,
-  ETH_PRICE,
-  SWAP_ROUTER,
-  USDC,
-  USDC_BRIDGE,
-  USDC_TO_ETH_POOL,
-  USDC_TO_USDCE_POOL,
-  WETH,
-} from '@/lib/constants';
+import { ADMINS, USDC } from '@/lib/constants';
 import { prepareWritePrizeFactoryV2, writePrizeFactoryV2 } from '@/lib/smartContract';
 import { Badge, Button, Card, Group, Image, Modal, Text } from '@mantine/core';
 import { IconCircleCheck } from '@tabler/icons-react';
@@ -129,12 +120,6 @@ function AdminAcceptedCard({
           BigInt(platfromFeePercentage),
           BigInt(proposerFeePercentage),
           USDC,
-          USDC_BRIDGE,
-          SWAP_ROUTER,
-          USDC_TO_USDCE_POOL,
-          USDC_TO_ETH_POOL,
-          ETH_PRICE,
-          WETH,
         ],
       });
       console.log(requestJudges, 'requestJudges');
