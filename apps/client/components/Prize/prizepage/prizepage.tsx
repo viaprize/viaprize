@@ -150,6 +150,22 @@ function FundUsdcCard({
   };
 
   const donateUsingFiat = async () => {
+    const balance = (
+      await (
+        await fetch(
+          'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
+          {
+            headers: {
+              'x-chain-id': '8453',
+            },
+          },
+        )
+      ).json()
+    ).balance;
+    if (parseFloat(value) * 1_000_000 > balance) {
+      toast.error('Not enough balance to donate');
+      return;
+    }
     try {
       setSendLoading(true);
       const signedData = await getUsdcSignatureData();
@@ -329,16 +345,18 @@ export default function PrizePageComponent({
           username=""
         />
       </Center>
+      {prize.is_active_blockchain && (
+        <FundUsdcCard
+          contractAddress={prize.contract_address}
+          prizeId={prize.id}
+          title={prize.title}
+          cancelUrl={window.location.href}
+          imageUrl={prize.images[0] || ''}
+          successUrl={`${window.location.href}#success`}
+          slug={prize.slug}
+        />
+      )}
 
-      <FundUsdcCard
-        contractAddress={prize.contract_address}
-        prizeId={prize.id}
-        title={prize.title}
-        cancelUrl={window.location.href}
-        imageUrl={prize.images[0] || ''}
-        successUrl={`${window.location.href}#success`}
-        slug={prize.slug}
-      />
       {appUser
         ? (appUser.username === prize.user.username || appUser.isAdmin) &&
           prize.submission_time_blockchain === 0 && (

@@ -3,7 +3,6 @@ import type { ConvertUSD } from '@/lib/types';
 import { Button, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useQuery } from 'react-query';
-import { formatEther } from 'viem';
 import Shell from '../custom/shell';
 import SkeletonLoad from '../custom/skeleton-load-explore';
 import useAuthPerson from '../hooks/useAuthPerson';
@@ -55,10 +54,9 @@ export default function AllPortals({ params }: { params: { id: string } }) {
       {data.data.map((portal) => {
         return (
           <PortalCard
-            ethToUsd={cryptoToUsd?.ethereum.usd ?? 3800}
             description={portal.description}
             imageUrl={portal.images[0]}
-            amountRaised={formatEther(BigInt(portal.totalFunds ?? 0))}
+            amountRaised={((portal.totalFunds ?? 0) / 1_000_000).toString()}
             authorName=""
             totalContributors="0"
             isActive={portal.isActive ?? false}

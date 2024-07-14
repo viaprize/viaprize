@@ -4,7 +4,7 @@
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import useAppUser from '@/components/hooks/useAppUser';
 import { backendApi } from '@/lib/backend';
-import { USDC } from '@/lib/constants';
+import { EXTRA_FUNDRAISERS_IDS, USDC } from '@/lib/constants';
 import { prepareWritePortal, writePortal } from '@/lib/smartContract';
 import type { ConvertUSD } from '@/lib/types';
 import { formatDate, usdcSignType } from '@/lib/utils';
@@ -128,6 +128,23 @@ function FundUsdcCard({
     return signData;
   };
   const donateUsingUsdc = async () => {
+    const balance = (
+      await (
+        await fetch(
+          'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
+          {
+            headers: {
+              'x-chain-id': '8453',
+            },
+          },
+        )
+      ).json()
+    ).balance;
+    if (parseFloat(value) * 1_000_000 > balance) {
+      toast.error('Not enough balance to donate');
+      return;
+    }
+
     try {
       setSendLoading(true);
       if (!walletClient) {
@@ -222,7 +239,6 @@ function FundUsdcCard({
 
   return (
     <Stack my="md">
-
       <Text fw="sm">Your donation needs to be at least $1</Text>
        {appUser ? null : (
           <Button
@@ -257,7 +273,7 @@ function FundUsdcCard({
           await donateUsingUsdc();
         }}
       >
-        Donate
+        Donate with Crypto
       </Button>
 
       <Button
@@ -431,8 +447,10 @@ export default function AmountDonateCard({
   });
 
   const { data: extraData } = useQuery(['get-extra-data'], async () => {
-    const final = (await backendApi(false)).portals.extraDataDetail(id);
-    return final;
+    if (EXTRA_FUNDRAISERS_IDS.includes(id)) {
+      const final = (await backendApi(false)).portals.extraDataDetail(id);
+      return final;
+    }
   });
   useEffect(() => {
     if (!balance) {
@@ -462,8 +480,7 @@ export default function AmountDonateCard({
             toast.success(
               <TransactionToast hash={data.hash} title="Transaction Successful" />,
               {
-                 
-              closeButton: true,
+                closeButton: true,
               },
             );
           });
@@ -485,7 +502,7 @@ export default function AmountDonateCard({
           Total Amount Raised
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
-          {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
+          {EXTRA_FUNDRAISERS_IDS.includes(id) ? (
             <>
               {cryptoToUsd ? (
                 <>
@@ -829,7 +846,6 @@ export default function AmountDonateCard({
           </Button>
         ) : null}
       </Stack>
-     
     </Card>
   );
 }

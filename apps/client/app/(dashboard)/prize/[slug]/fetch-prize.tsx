@@ -28,9 +28,21 @@ export async function generateMetadata({
     description: prize.description,
     metadataBase: new URL('https://viaprize.org/'),
     openGraph: {
+      title: prize.title,
+      description: prize.description,
+      url: prize.slug,
       images: {
+        width: 1200,
+        height: 630,
+        alt: prize.title,
         url: prize.images[0],
       },
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: prize.title,
+      description: prize.description.slice(0, 300),
+      images: prize.images,
     },
   };
 }

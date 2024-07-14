@@ -334,6 +334,10 @@ export interface PrizeWithBlockchainData {
   voting_time_blockchain: number;
   dispute_period_time_blockchain: number;
   refunded: boolean;
+  voting_period_active_blockchain: boolean;
+  is_active_blockchain: boolean;
+  submission_perio_active_blockchain: boolean;
+  contributors: string[];
   balance: number;
   id: string;
   description: string;

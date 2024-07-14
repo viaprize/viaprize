@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars -- I will use them later */
 'use client';
 
 import ImageComponent from '@/components/Prize/dropzone';
@@ -11,34 +10,34 @@ import {
   Badge,
   Button,
   Card,
+  Loader,
   Modal,
-  NumberInput,
   SimpleGrid,
+  Text,
   TextInput,
   Title,
-  Text,
-  Loader,
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconAlertTriangleFilled } from '@tabler/icons-react';
-import { addMinutes } from 'date-fns';
-import Link from 'next/link';
+import { addDays, differenceInMinutes } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useMutation } from 'wagmi';
-
 function Prize() {
   const [judges, setJudges] = useState<string[]>([]);
   const [showJudges, setShowJudges] = useState(false);
   const [title, setTitle] = useState('');
   const [richtext, setRichtext] = useState('');
   const [isAutomatic, setIsAutomatic] = useState(false);
-  const [votingTime, setVotingTime] = useState(0);
-  const [proposalTime, setProposalTime] = useState(0);
+
+  const [votingDateTime, setVotingDateTime] = useState<Date>(
+    addDaysToDate(new Date(), 6),
+  );
+
   const { user } = usePrivy();
   const { appUser } = useAppUser();
   const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -49,11 +48,21 @@ function Prize() {
   const router = useRouter();
   const [modalOpened, setModalOpened] = useState(false);
 
-  const [startVotingDate, setStartVotingDate] = useState<Date | null>(
-    addDaysToDate(new Date(), 1),
+  const [startVotingDate, setStartVotingDate] = useState<Date>(
+    addDaysToDate(new Date(), 3),
   );
 
-  const [startSubmisionDate, setStartSubmissionDate] = useState<Date | null>(new Date());
+  const [startSubmisionDate, setStartSubmissionDate] = useState<Date>(new Date());
+
+  const [proposalTime, setProposalTime] = useState(
+    parseInt(differenceInMinutes(startVotingDate, startSubmisionDate).toString()),
+  );
+
+  const [votingTime, setVotingTime] = useState(
+    parseInt(differenceInMinutes(votingDateTime, startVotingDate).toString()),
+  );
+
+  console.log({ proposalTime, startSubmisionDate, startVotingDate, votingTime });
 
   const { mutateAsync: addProposalsMutation, isLoading: submittingProposal } =
     useMutation(addProposals);
@@ -79,8 +88,22 @@ function Prize() {
     if (!startVotingDate) {
       throw Error('Start voting date');
     }
+    console.log({
+      admins: [wallet.address],
+      description: richtext,
+      isAutomatic,
+      voting_time: votingTime,
+      proposer_address: wallet.address,
+      priorities: [],
+      proficiencies: [],
+      submission_time: proposalTime,
+      startSubmissionDate: startSubmisionDate.toISOString(),
+      startVotingDate: startVotingDate.toISOString(),
+
+      judges: showJudges ? judges : [],
+      title,
+    });
     const newImages = await handleUploadImages();
-    // const finalAddress = address.filter((x) => x);
     await addProposalsMutation({
       admins: [wallet.address],
       description: richtext,
@@ -161,7 +184,6 @@ function Prize() {
         Create a Prize
       </Title>
       <ImageComponent files={files} setfiles={setFiles} />
-
       <TextInput
         className="my-2"
         placeholder="Waster Management System"
@@ -172,42 +194,70 @@ function Prize() {
         }}
       />
       <TextEditor richtext={richtext} setRichtext={setRichtext} canSetRichtext />
-
-      <SimpleGrid cols={2} className="my-3">
-        <div className="">
-          <DateTimePicker
-            label="Pick date and time of starting submission time"
-            placeholder="Make sure its above the submission time and date"
-            value={startSubmisionDate ?? new Date()}
-            onChange={(da) => {
-              setStartSubmissionDate(da);
-            }}
-          />
-          <NumberInput
+      <SimpleGrid cols={{ base: 1, sm: 1, lg: 3 }} className="my-3">
+        <DateTimePicker
+          label="Submissions open"
+          placeholder="Make sure its above the submission time and date"
+          minDate={new Date()}
+          value={startSubmisionDate}
+          onChange={(da) => {
+            if (!da) return;
+            setStartSubmissionDate(da);
+          }}
+        />
+        {/* <NumberInput
             placeholder="Submission Time (in minutes)"
             label={
               proposalTime && startSubmisionDate
                 ? `Submission will end at ${addMinutes(startSubmisionDate ?? new Date(), proposalTime)}`
-                : `This is the number of minutes you want the submission to last `
+                : `This is the number of minutes you want the submission to last `a
             }
             value={proposalTime}
             onChange={(e) => {
               setProposalTime(parseInt(e.toString()));
             }}
             allowNegative={false}
-          />
-        </div>
-        <div className="">
-          <DateTimePicker
-            label="Pick date and time of starting voting time"
-            placeholder="Make sure its above the voting time and date"
-            value={startVotingDate ?? new Date()}
-            onChange={(da) => {
-              setStartVotingDate(da);
-            }}
-          />
+          /> */}
+        <DateTimePicker
+          label="Submissions end and judging begins"
+          placeholder="Make sure its above the voting time and date"
+          minDate={addDays(new Date(), 3)}
+          value={startVotingDate}
+          onChange={(da) => {
+            if (!da) return;
+            setStartVotingDate(da);
+            if (da && startSubmisionDate) {
+              setProposalTime(
+                parseInt(differenceInMinutes(da, startSubmisionDate).toString()),
+              );
+              console.log(proposalTime, 'proposal time');
+            }
+          }}
+        />
 
-          <NumberInput
+        <DateTimePicker
+          label="End judging"
+          placeholder="Make sure its above the voting time and date"
+          minDate={addDays(new Date(), 4)}
+          value={votingDateTime}
+          onChange={(da) => {
+            if (!da) return;
+            setVotingDateTime(da);
+            console.log('sljdflsjdlsdjlfsssssjd');
+            console.log(da.getMinutes(), 'minutes');
+            if (da && startVotingDate) {
+              setVotingTime(
+                parseInt(differenceInMinutes(da, startVotingDate).toString()),
+              );
+            }
+          }}
+          onDateChange={(da) => {
+            console.log('sdklflksjkldjl');
+            console.log({ da });
+          }}
+        />
+
+        {/* <NumberInput
             placeholder="Voting Time (in minutes)"
             label={
               votingTime && startVotingDate
@@ -219,8 +269,7 @@ function Prize() {
             onChange={(e) => {
               setVotingTime(parseInt(e.toString()));
             }}
-          />
-        </div>
+          /> */}
       </SimpleGrid>
       <Button
         className="mt-3 "

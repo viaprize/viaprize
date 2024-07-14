@@ -1,6 +1,7 @@
 'use client';
 
 import { backendApi } from '@/lib/backend';
+import { EXTRA_FUNDRAISERS_IDS } from '@/lib/constants';
 import { formatDate, htmlToPlainText } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
@@ -20,7 +21,6 @@ import { PiTimerFill } from 'react-icons/pi';
 import { useQuery } from 'wagmi';
 
 interface PortalCardProps {
-  ethToUsd: number;
   imageUrl: string;
   title: string;
   authorName: string;
@@ -46,7 +46,6 @@ export default function PortalCard({
   id,
   fundingGoalWithPlatformFee,
   deadline,
-  ethToUsd,
   isActive,
   tags,
   isIframe,
@@ -54,9 +53,11 @@ export default function PortalCard({
 }: PortalCardProps) {
   const isRefunded = !isActive && parseFloat(amountRaised) < fundingGoalWithPlatformFee;
   const { data: extraData } = useQuery([`get-extra-data-${id}`], async () => {
-    const final = await (await backendApi(false)).portals.extraDataDetail(id);
-    console.log({ final }, 'fionaodjs');
-    return final;
+    if (EXTRA_FUNDRAISERS_IDS.includes(id)) {
+      const final = await (await backendApi(false)).portals.extraDataDetail(id);
+      console.log({ final }, 'fionaodjs');
+      return final;
+    }
   });
 
   const filteredTags = tags.filter(
@@ -134,11 +135,10 @@ export default function PortalCard({
       </p>
 
       <Text fw="bold" size="xl">
-        {id === 'bacb6584-7e45-465b-b4af-a3ed24a84233' ? (
+        {EXTRA_FUNDRAISERS_IDS.includes(id) ? (
           <>
             {(
-              parseFloat(amountRaised) * ethToUsd +
-              parseInt(extraData?.data.funds.toString() ?? '0')
+              parseFloat(amountRaised) + parseInt(extraData?.data.funds.toString() ?? '0')
             ).toFixed(2)}{' '}
             USD
           </>
@@ -162,8 +162,8 @@ export default function PortalCard({
       </Text> */}
       {fundingGoalWithPlatformFee !== 0 && (
         <Text size="xs" mt="sm" fw="bold">
-          {(fundingGoalWithPlatformFee * ethToUsd).toFixed(2)} USD (
-          {fundingGoalWithPlatformFee} {chain.nativeCurrency.symbol}) Funding Goal
+          {fundingGoalWithPlatformFee.toFixed(2)} USD ({fundingGoalWithPlatformFee}{' '}
+          {chain.nativeCurrency.symbol}) Funding Goal
         </Text>
       )}
 

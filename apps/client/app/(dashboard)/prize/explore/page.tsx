@@ -3,8 +3,6 @@ import { Button, Group, Text } from '@mantine/core';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchPrizes from './fetchprizes';
-import HistoryPage from '@/components/history/history-page';
-import Paging from '@/components/custom/paging';
 
 function ExplorePage() {
   return (
