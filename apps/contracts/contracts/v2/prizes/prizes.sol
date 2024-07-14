@@ -86,6 +86,9 @@ contract PrizeV2 {
     /// @notice this will be the address of the platform
     address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
+    /// @notice this will be the address where the refund  of fiat will be sent
+    address public immutable refundAddress = 0xF7D1D901d15BBf60a8e896fbA7BBD4AB4C1021b3;
+
     /// @notice / @notice _submissionTree contract
     SubmissionAVLTree private _submissionTree;
 
@@ -131,7 +134,7 @@ contract PrizeV2 {
     event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
     event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, bool _isFiat, uint256 amount);
     event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
-    event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
+    event FiatFunderRefund(address indexed _address, uint256 _amount);
 
     constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
@@ -248,8 +251,8 @@ contract PrizeV2 {
             for(uint256 i=0; i<fiatFunders.length; i++) {
                 uint256 transferable_amount = fiatFunderAmount[fiatFunders[i]];
                 fiatFunderAmount[fiatFunders[i]] = 0;
-                _usdc.transfer(platformAddress, transferable_amount);
-                emit fiatFunderRefund(fiatFunders[i], transferable_amount, true);
+                _usdc.transfer(refundAddress, transferable_amount);
+                emit FiatFunderRefund(fiatFunders[i], transferable_amount);
             }
             refunded = true;
             distributed = true;
@@ -314,12 +317,12 @@ contract PrizeV2 {
                                         uint256 fiatToSend = (reward_amount.mul(individualFiatPercentage[refundRequestedFunders[j]])).div(100);
                                         uint256 cryptoToSend = (reward_amount.mul(individualCryptoPercentage[refundRequestedFunders[j]])).div(100);
                                         reward_amount = 0;
-                                        _usdc.transfer(platformAddress, fiatToSend);
-                                        emit fiatFunderRefund(refundRequestedFunders[j], fiatToSend, true);
+                                        _usdc.transfer(refundAddress, fiatToSend);
+                                        emit FiatFunderRefund(refundRequestedFunders[j], fiatToSend);
                                         _usdc.transfer(refundRequestedFunders[j], cryptoToSend);
                                     } else if(isFiatFunder[refundRequestedFunders[j]]) {
-                                        _usdc.transfer(platformAddress, reward_amount);
-                                        emit fiatFunderRefund(refundRequestedFunders[j], reward_amount, true);
+                                        _usdc.transfer(refundAddress, reward_amount);
+                                        emit FiatFunderRefund(refundRequestedFunders[j], reward_amount);
                                         reward_amount = 0;
                                     } else if(isCryptoFunder[refundRequestedFunders[j]]) {
                                         _usdc.transfer(refundRequestedFunders[j], reward_amount);
@@ -354,8 +357,8 @@ contract PrizeV2 {
             for(uint256 i=0; i<fiatFunders.length; i++) {
                 uint256 transferable_amount = fiatFunderAmount[fiatFunders[i]];
                 fiatFunderAmount[fiatFunders[i]] = 0;
-                _usdc.transfer(platformAddress, transferable_amount);
-                emit fiatFunderRefund(fiatFunders[i], transferable_amount, true);
+                _usdc.transfer(refundAddress, transferable_amount);
+                emit FiatFunderRefund(fiatFunders[i], transferable_amount);
             }
             distributed = true;
         }
@@ -605,7 +608,8 @@ contract PrizeV2 {
                     uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(_PRECISION).div(total_unused_usdc_votes));
                     uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(_PRECISION));
                     if(individual_transferable_usdc_amount > 0) {
-                        _usdc.transfer(platformAddress, individual_transferable_usdc_amount);
+                        _usdc.transfer(refundAddress, individual_transferable_usdc_amount);
+                        emit FiatFunderRefund(fiatFunders[j], individual_transferable_usdc_amount);
                     }
                 }
             }
