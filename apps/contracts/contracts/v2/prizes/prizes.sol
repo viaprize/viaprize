@@ -5,9 +5,6 @@ import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
 import "../../helperContracts/safemath.sol";
 import "../../helperContracts/ierc20_permit.sol";                                         
-import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
-import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "../../helperContracts/ierc20_weth.sol";
 
 contract PrizeV2 {
@@ -63,25 +60,7 @@ contract PrizeV2 {
     mapping(address => bool) public isPlatformAdmin;
 
     IERC20Permit private immutable _usdc;
-    IERC20Permit private immutable _usdcBridged;
-    
-    /// @notice minimum slippage fee percentage for minimum output in swap
-    uint public minimumSlipageFeePercentage = 2; 
 
-    /// @notice initializing the interface for weth
-    IWETH private _weth;
-
-    /// @notice initializing swaprouter interface
-    ISwapRouter public immutable swapRouter;
-
-    /// @notice initializing brdiged usdc and usdc pool 
-    IUniswapV3Pool public immutable bridgedUsdcPool;
-
-    /// @notice initalizing eth and usdc pool
-    IUniswapV3Pool public immutable ethUsdcPool;
-
-    /// @notice initializing chainlink or oracle price aggregator
-    AggregatorV3Interface public immutable ethPriceAggregator;
 
     /// @notice this will be the address of the platform
     address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
@@ -136,7 +115,7 @@ contract PrizeV2 {
     event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
     event FiatFunderRefund(address indexed _address, uint256 _amount);
 
-    constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
+    constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
 
         proposer = _proposer;
@@ -150,13 +129,7 @@ contract PrizeV2 {
         proposerFee = _proposerFee;
         platformFee = _platFormFee;
         _usdc = IERC20Permit(_usdcAddress);
-        _usdcBridged = IERC20Permit(_usdcBridgedAddress);
         isActive = true;
-        swapRouter = ISwapRouter(_swapRouter);
-        bridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
-        ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
-        ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
-        _weth = IWETH(_wethToken);
         _submissionTree.addSubmission(platformAdmins[0], REFUND_SUBMISSION_HASH, "REFUND");
         
         emit CampaignCreated(proposer, address(this));
@@ -539,54 +512,8 @@ contract PrizeV2 {
         emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _fiatPayment, _amountUsdc);
     }
 
-    function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive noReentrant payable {
-        require(_amountUsdc > 0, "F<0");
-        address sender = msg.sender; 
-        _usdcBridged.transferFrom(sender,address(this),_amountUsdc);
-        _usdcBridged.approve(address(swapRouter), _amountUsdc);
-        ISwapRouter.ExactInputParams memory params =
-            ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(address(_usdcBridged), bridgedUsdcPool.fee(), address(_usdc)),
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: _amountUsdc,
-                amountOutMinimum: _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100)
-        });
 
-        uint256 _donation  = swapRouter.exactInput(params);
-        _depositLogic(sender, _donation);
-        emit Donation(msg.sender, address(_usdcBridged), DonationType.PAYMENT, TokenType.TOKEN, false, _donation);
-    }
 
-    /// @notice function to donate eth into the campaign
-    function addEthFunds(uint256 _amountOutMinimum) public onlyActive noReentrant payable  {
-        if (msg.value == 0) revert NotEnoughFunds();
-        uint256 eth_donation =  msg.value;
-        address sender = msg.sender;
-        _weth.deposit{value:msg.value}();
-        _weth.approve(address(swapRouter), eth_donation);
-        ISwapRouter.ExactInputParams memory params =
-            ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(address(_weth), ethUsdcPool.fee(), address(_usdc)),
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: eth_donation,
-                amountOutMinimum: _amountOutMinimum
-        });
-        uint256 _donation = swapRouter.exactInput(params);
-        _depositLogic(sender, _donation);
-        emit Donation(msg.sender,address(_weth),DonationType.PAYMENT,TokenType.TOKEN, false, _donation);
-
-    }
-
-    /// @notice external function to receive eth funds
-    receive() external payable {
-        uint ethValue = msg.value;
-        uint decimals = ethPriceAggregator.decimals() - uint256(_usdc.decimals());
-        (, int256 latestPrice , , ,)  = ethPriceAggregator.latestRoundData();
-        uint price_in_correct_decimals = uint(latestPrice)/ (10 ** decimals);
-        addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
-    }
 
     function _unusedRefundSubmissionLogic(uint256 transferable_usdc_amount, uint256 total_unused_usdc_votes) private {
         uint256 _PRECISION = PRECISION;
@@ -676,10 +603,4 @@ contract PrizeV2 {
         disputePeriod = block.timestamp - 1 seconds;
         endDispute();
    }
-
-    /// @notice function to change slippage tolerance of other token donations
-    /// @param _minimumSlipageFeePercentage of new minimumSlipageFeePercentage
-    function changeMinimumSlipageFeePercentage(uint256 _minimumSlipageFeePercentage) public onlyPlatformAdmin {
-        minimumSlipageFeePercentage  = _minimumSlipageFeePercentage;
-    } 
 } 
