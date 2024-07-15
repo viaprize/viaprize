@@ -335,7 +335,7 @@ export class PrizesController {
           'isActive',
           'submissionPeriod',
           'votingPeriod',
-          'allFunders',
+          'getAllFunders',
         ],
       )
     )[0] as [
@@ -350,6 +350,8 @@ export class PrizesController {
       boolean,
       string[],
     ];
+
+    console.log(allFunders, 'allFunders');
     return {
       ...prize,
       distributed: distributed,
