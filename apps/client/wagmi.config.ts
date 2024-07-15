@@ -27,7 +27,7 @@ export default defineConfig({
           8453: '0xdCcF514720AABBfFF6bed7a7Db4b498677EfD3D3',
         },
         PrizeFactoryV2: {
-          8453: '0xC90f540ef6F819F38ade5E283f6CA1De8A223b80',
+          8453: '0x7D5cA64760A33DF30CA2319b7947879D259cD7d1',
         },
       },
     }),

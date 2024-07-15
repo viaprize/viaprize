@@ -279,7 +279,7 @@ export const portalABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xC90f540ef6F819F38ade5E283f6CA1De8A223b80)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
  */
 export const prizeFactoryV2ABI = [
   {
@@ -313,14 +313,14 @@ export const prizeFactoryV2ABI = [
 ] as const;
 
 /**
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xC90f540ef6F819F38ade5E283f6CA1De8A223b80)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
  */
 export const prizeFactoryV2Address = {
-  8453: '0xC90f540ef6F819F38ade5E283f6CA1De8A223b80',
+  8453: '0x7D5cA64760A33DF30CA2319b7947879D259cD7d1',
 } as const;
 
 /**
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xC90f540ef6F819F38ade5E283f6CA1De8A223b80)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
  */
 export const prizeFactoryV2Config = {
   address: prizeFactoryV2Address,
@@ -634,6 +634,13 @@ export const prizeV2ABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [],
+    name: 'getAllCryptoFunders',
+    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
     name: 'getAllFiatFunders',
     outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
   },
@@ -666,13 +673,6 @@ export const prizeV2ABI = [
         ],
       },
     ],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'getAllcryptoFunders',
-    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
   },
   {
     stateMutability: 'view',
@@ -998,7 +998,7 @@ export function prepareWritePortal<
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xC90f540ef6F819F38ade5E283f6CA1De8A223b80)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
  */
 export function writePrizeFactoryV2<
   TFunctionName extends string,
@@ -1035,7 +1035,7 @@ export function writePrizeFactoryV2<
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xC90f540ef6F819F38ade5E283f6CA1De8A223b80)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
  */
 export function prepareWritePrizeFactoryV2<
   TAbi extends readonly unknown[] = typeof prizeFactoryV2ABI,
@@ -1729,7 +1729,7 @@ export function usePreparePortalEndKickStarterCampaign(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xC90f540ef6F819F38ade5E283f6CA1De8A223b80)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
  */
 export function usePrizeFactoryV2Write<
   TFunctionName extends string,
@@ -1758,7 +1758,7 @@ export function usePrizeFactoryV2Write<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xC90f540ef6F819F38ade5E283f6CA1De8A223b80)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
  */
 export function usePrizeFactoryV2CreateViaPrize<
   TMode extends WriteContractMode = undefined,
@@ -1791,7 +1791,7 @@ export function usePrizeFactoryV2CreateViaPrize<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xC90f540ef6F819F38ade5E283f6CA1De8A223b80)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
  */
 export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
   config: Omit<
@@ -1809,7 +1809,7 @@ export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xC90f540ef6F819F38ade5E283f6CA1De8A223b80)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
  */
 export function usePreparePrizeFactoryV2CreateViaPrize(
   config: Omit<
@@ -2092,6 +2092,25 @@ export function usePrizeV2FunderVotes<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getAllCryptoFunders"`.
+ */
+export function usePrizeV2GetAllCryptoFunders<
+  TFunctionName extends 'getAllCryptoFunders',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'getAllCryptoFunders',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getAllFiatFunders"`.
  */
 export function usePrizeV2GetAllFiatFunders<
@@ -2144,25 +2163,6 @@ export function usePrizeV2GetAllSubmissions<
   return useContractRead({
     abi: prizeV2ABI,
     functionName: 'getAllSubmissions',
-    ...config,
-  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getAllcryptoFunders"`.
- */
-export function usePrizeV2GetAllcryptoFunders<
-  TFunctionName extends 'getAllcryptoFunders',
-  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeV2ABI,
-    functionName: 'getAllcryptoFunders',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
