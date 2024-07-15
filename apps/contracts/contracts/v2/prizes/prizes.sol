@@ -45,7 +45,7 @@ contract PrizeV2 {
     mapping(address => uint256) public totalFunderAmount;
 
     bool public isActive = false;
-    uint8 public constant  VERSION = 2;
+    uint8 public constant  VERSION = 201;
     bool private _locked;
 
     using SafeMath for uint256;
@@ -584,7 +584,7 @@ contract PrizeV2 {
    }
 
    /// @notice function to retrieve all the cryptoFunders
-   function getAllcryptoFunders() public view returns(address[] memory) {
+   function getAllCryptoFunders() public view returns(address[] memory) {
         return cryptoFunders;
    }
 
