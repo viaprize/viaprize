@@ -608,6 +608,7 @@ export class WalletController {
             body.s as `0x${string}`,
             body.r as `0x${string}`,
             body.hash as `0x${string}`,
+            false,
           ],
           contractAddress,
           'gasless',
