@@ -182,7 +182,7 @@ export default function SubmissionsCard({
                 label={
                   loading
                     ? 'Loading.....'
-                    : `Total Votes you can allocate(Max: ${parseUsdc(funderAmount ?? BigInt(0))} )`
+                    : `Total votes you can allocate (Max: ${parseUsdc(funderAmount ?? BigInt(0))})`
                 }
                 placeholder="Enter Value of Votes"
                 mt="md"
