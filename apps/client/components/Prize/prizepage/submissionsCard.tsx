@@ -69,7 +69,7 @@ export default function SubmissionsCard({
   const { data: funderAmount, refetch } = useContractRead({
     abi: VOTE_ABI,
     address: contractAddress as `0x${string}`,
-    functionName: 'funderAmount',
+    functionName: 'totalFunderAmount',
     args: [walletClient?.account.address as `0x${string}`],
   });
 
@@ -89,15 +89,20 @@ export default function SubmissionsCard({
     const finalVote = formatUsdc(parseFloat(debounced.toString()));
     try {
       setSendLoading(true);
-      const isFunder = await readContract({
+      const isCryptoFunder = await readContract({
         abi: VOTE_ABI,
         address: contractAddress as `0x${string}`,
-        functionName: 'isFunder',
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        functionName: 'isCryptoFunder',
+        args: [address as `0x${string}`],
+      });
+      const isFiatFunder = await readContract({
+        abi: VOTE_ABI,
+        address: contractAddress as `0x${string}`,
+        functionName: 'isFiatFunder',
         args: [address as `0x${string}`],
       });
 
-      if (!isFunder) {
+      if (!isCryptoFunder && !isFiatFunder) {
         toast.error('You are not a funder');
         return;
       }

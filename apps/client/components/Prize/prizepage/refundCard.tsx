@@ -42,7 +42,7 @@ export default function RefundCard({
   const { data: funderAmount, refetch } = useContractRead({
     abi: VOTE_ABI,
     address: contractAddress as `0x${string}`,
-    functionName: 'funderAmount',
+    functionName: 'totalFunderAmount',
     args: [walletClient?.account.address as `0x${string}`],
   });
 
@@ -67,14 +67,20 @@ export default function RefundCard({
 
     const finalVote = formatUsdc(parseFloat(debounced.toString()));
     try {
-      const isFunder = await readContract({
+      const isCryptoFunder = await readContract({
         abi: VOTE_ABI,
         address: contractAddress as `0x${string}`,
-        functionName: 'isFunder',
+        functionName: 'isCryptoFunder',
+        args: [address as `0x${string}`],
+      });
+      const isFiatFunder = await readContract({
+        abi: VOTE_ABI,
+        address: contractAddress as `0x${string}`,
+        functionName: 'isFiatFunder',
         args: [address as `0x${string}`],
       });
 
-      if (!isFunder) {
+      if (!isCryptoFunder && !isFiatFunder) {
         toast.error('You are not a funder');
         return;
       }
