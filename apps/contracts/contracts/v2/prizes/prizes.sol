@@ -461,14 +461,9 @@ contract PrizeV2 {
         }
     }
     function disputeChangeVote( bytes32  _previousSubmissionHash, bytes32 _newSubmissionHash, address[] calldata _funders, uint256[] calldata _amounts) onlyActive onlyPlatformAdmin disputePeriodActive public {
-        // require(_funders.length == _amounts.length, "LM"); //LM -> Length Mismatch
-        // require(disputePeriod > block.timestamp, "DPNA");  //DPNA -> Dispute Period Not Active
         if(_funders.length != _amounts.length) revert ErrorLibrary.LM(); //LM -> Length Mismatch
-        // if(disputePeriod < block.timestamp) revert DPNA(); //DPNA -> Dispute Period Not Active
         for (uint256 i = 0; i < _funders.length; i++) {
-            address funder = _funders[i];
-            uint256 amount = _amounts[i];
-            _changeVote(funder, _previousSubmissionHash, _newSubmissionHash, amount);
+            _changeVote(_funders[i], _previousSubmissionHash, _newSubmissionHash, _amounts[i]);
         }
         _changeSubmissionVoteLogic(_previousSubmissionHash, _newSubmissionHash);
     }
@@ -521,23 +516,27 @@ contract PrizeV2 {
         emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _fiatPayment, _amountUsdc);
     }
 
+    function _swapRouterLogic(address sender, uint256 _amountUsdc, address swapFrom, uint256 poolFee, uint256 _amountOutMinimum ) private {
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: abi.encodePacked(address(_usdcBridged), poolFee, address(_usdc)),
+                recipient: address(this),
+                deadline: block.timestamp,
+                amountIn: _amountUsdc,
+                amountOutMinimum: _amountOutMinimum
+        });
+        uint256 _donation  = swapRouter.exactInput(params);
+        _depositLogic(sender, _donation);
+        emit Donation(sender, swapFrom, DonationType.PAYMENT, TokenType.TOKEN, false, _donation);
+    }
+
     function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive noReentrant payable {
         require(_amountUsdc > 0, "F<0");
         address sender = msg.sender; 
         _usdcBridged.transferFrom(sender,address(this),_amountUsdc);
         _usdcBridged.approve(address(swapRouter), _amountUsdc);
-        ISwapRouter.ExactInputParams memory params =
-            ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(address(_usdcBridged), bridgedUsdcPool.fee(), address(_usdc)),
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: _amountUsdc,
-                amountOutMinimum: _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100)
-        });
-
-        uint256 _donation  = swapRouter.exactInput(params);
-        _depositLogic(sender, _donation);
-        emit Donation(msg.sender, address(_usdcBridged), DonationType.PAYMENT, TokenType.TOKEN, false, _donation);
+        uint256 _amountOutMinimum = _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100);
+        _swapRouterLogic(sender, _amountUsdc, address(_usdcBridged), bridgedUsdcPool.fee(), _amountOutMinimum );
     }
 
     /// @notice function to donate eth into the campaign
@@ -547,18 +546,7 @@ contract PrizeV2 {
         address sender = msg.sender;
         _weth.deposit{value:msg.value}();
         _weth.approve(address(swapRouter), eth_donation);
-        ISwapRouter.ExactInputParams memory params =
-            ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(address(_weth), ethUsdcPool.fee(), address(_usdc)),
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: eth_donation,
-                amountOutMinimum: _amountOutMinimum
-        });
-        uint256 _donation = swapRouter.exactInput(params);
-        _depositLogic(sender, _donation);
-        emit Donation(msg.sender,address(_weth),DonationType.PAYMENT,TokenType.TOKEN, false, _donation);
-
+        _swapRouterLogic(sender, eth_donation, address(_usdcBridged), bridgedUsdcPool.fee(), _amountOutMinimum );
     }
 
     function addOtherFunds(uint256 _amountOutMinimum) public onlyActive noReentrant payable  {
@@ -591,7 +579,6 @@ contract PrizeV2 {
     }
 
     function _unusedRefundSubmissionLogic(uint256 transferable_usdc_amount, uint256 total_unused_usdc_votes) private {
-        // uint256 _PRECISION = PRECISION;
         if(transferable_usdc_amount > 0) {
             for(uint256 j=0; j<cryptoFunders.length; j++) {
                 if(cryptoFunderAmount[cryptoFunders[j]] > 0){
