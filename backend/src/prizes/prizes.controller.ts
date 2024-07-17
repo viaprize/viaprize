@@ -25,7 +25,10 @@ import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
 import { sleep } from 'src/utils/sleep';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
-import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
+import {
+  IndividualPrizeWithBalance,
+  PrizeWithBlockchainData,
+} from 'src/utils/types/prize-blockchain.type';
 import { WalletService } from 'src/wallet/wallet.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
@@ -309,7 +312,7 @@ export class PrizesController {
   @Get('/:slug')
   async getPrize(
     @TypedParam('slug') slug: string,
-  ): Promise<PrizeWithBlockchainData> {
+  ): Promise<IndividualPrizeWithBalance> {
     const prize = await this.prizeService.findAndReturnBySlug(slug);
     const [
       totalFunds,
@@ -351,6 +354,25 @@ export class PrizesController {
       string[],
     ];
 
+    const contributorsAndAmount =
+      await this.blockchainService.getPortalContributors(
+        prize.contract_address,
+      );
+
+    const ContributorsWithUser = contributorsAndAmount.data.map(
+      async (contributor) => {
+        return {
+          ...contributor,
+          contributor: await this.userService.findUserByWallett(
+            contributor.contributor,
+          ),
+        };
+      },
+    );
+
+    const resultsWithContributors = {
+      data: await Promise.all(ContributorsWithUser),
+    };
     console.log(allFunders, 'allFunders');
     return {
       ...prize,
@@ -364,7 +386,7 @@ export class PrizesController {
       voting_period_active_blockchain: votingPeriod,
       is_active_blockchain: isActive,
       submission_perio_active_blockchain: submissionPeriod,
-      contributors: allFunders,
+      contributors: resultsWithContributors,
     };
   }
 

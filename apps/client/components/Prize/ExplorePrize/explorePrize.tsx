@@ -67,15 +67,7 @@ function ExploreCard({
         <CopyButton value={`https://viaprize.org/prize/${slug}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
-              <ActionIcon
-                size="lg"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  copy();
-                }}
-                color={copied ? 'teal' : 'primary'}
-              >
+              <ActionIcon size="lg" onClick={copy} color={copied ? 'teal' : 'primary'}>
                 {copied ? <IconCheck size="1rem" /> : <IconCopy size="1rem" />}
               </ActionIcon>
             </Tooltip>

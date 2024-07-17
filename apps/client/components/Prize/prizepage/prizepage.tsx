@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
-import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
+import type { IndividualPrizeWithBalance, PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
 import { calculateDeadline, usdcSignType } from '@/lib/utils';
 
 import { TransactionToast } from '@/components/custom/transaction-toast';
@@ -38,6 +39,7 @@ import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import RefundCard from './refundCard';
 import Submissions from './submissions';
+import useIsMounted from '@/components/hooks/useIsMounted';
 
 function FundUsdcCard({
   contractAddress,
@@ -261,7 +263,7 @@ export default function PrizePageComponent({
   prize,
   submissions,
 }: {
-  prize: PrizeWithBlockchainData;
+  prize: IndividualPrizeWithBalance;
   submissions: SubmissionWithBlockchainData[];
 }) {
   const { appUser } = useAppUser();
@@ -270,9 +272,9 @@ export default function PrizePageComponent({
     new Date(prize.submission_time_blockchain * 1000),
   );
   const params = useParams();
-  useEffect(() => {
+  useEffect( () => {
     if (window.location.hash.includes('success')) {
-      fetch('https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash').then(
+      void fetch('https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash').then(
         (res) => {
           res.json().then((data) => {
             toast.success(
@@ -286,6 +288,7 @@ export default function PrizePageComponent({
       );
     }
   }, [params]);
+  const mounted = useIsMounted();
 
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
@@ -332,19 +335,20 @@ export default function PrizePageComponent({
               : undefined
           }
           username=""
+          contributions={prize.contributors}
         />
       </Center>
-      {prize.is_active_blockchain && (
+      {prize.is_active_blockchain ? (
         <FundUsdcCard
           contractAddress={prize.contract_address}
           prizeId={prize.id}
           title={prize.title}
-          cancelUrl={window.location.href}
+          cancelUrl={mounted ? window.location.href : ''}
           imageUrl={prize.images[0] || ''}
           successUrl={`${window.location.href}#success`}
           slug={prize.slug}
         />
-      )}
+      ) : null}
 
       {appUser
         ? (appUser.username === prize.user.username || appUser.isAdmin) &&
