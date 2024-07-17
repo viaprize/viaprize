@@ -16,7 +16,6 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { addMinutes } from 'date-fns';
 import { PiTimerFill } from 'react-icons/pi';
 
 interface ExploreCardProps {
@@ -35,6 +34,7 @@ interface ExploreCardProps {
   contestants: number;
   startSubmissionDate: Date;
   startVotingDate: Date;
+  refunded: boolean;
 }
 
 function ExploreCard({
@@ -52,12 +52,10 @@ function ExploreCard({
   submissionMinutes,
   startSubmissionDate,
   contestants,
+  refunded,
 }: ExploreCardProps) {
   const submissionEndDate = new Date(startingTimeBlockchain * 1000);
-  const deadlineString = calculateDeadline(
-    new Date(),
-    submissionEndDate,
-  );
+  const deadlineString = calculateDeadline(new Date(), submissionEndDate);
 
   return (
     <Card
@@ -92,13 +90,10 @@ function ExploreCard({
               </Text>
             </div>
 
-            {deadlineString === 'Time is up!' && distributed === true ? (
+            {distributed ? (
               <Badge color="green">Won</Badge>
             ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-            deadlineString === 'Time is up!' &&
-              distributed === false &&
-              parseInt(usdAmount) > 0 &&
-              startingTimeBlockchain ? (
+            refunded ? (
               <Badge color="yellow">Refunded</Badge>
             ) : null}
           </div>
