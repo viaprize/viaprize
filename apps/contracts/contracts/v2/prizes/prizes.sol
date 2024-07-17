@@ -179,7 +179,7 @@ contract PrizeV2 is ReentrancyGuard {
     }
 
     /// @notice create a function to start the submission period
-    function startSubmissionPeriod(uint256 _submissionTime) public  onlyPlatformAdminOrProposer {
+    function startSubmissionPeriod(uint256 _submissionTime) public  onlyPlatformAdminOrProposer onlyActive {
         /// @notice submission time will be in minutes
         submissionTime = block.timestamp + _submissionTime * 1 minutes;
         submissionPeriod = true;
@@ -204,7 +204,7 @@ contract PrizeV2 is ReentrancyGuard {
         return votingTime;
     }
 
-    function endSubmissionPeriod() public onlyPlatformAdmin {
+    function endSubmissionPeriod() public onlyPlatformAdmin onlyActive{
         if(submissionTime == 0) revert ErrorLibrary.SubmissionPeriodNotActive();
         submissionPeriod = false;
         submissionTime = 0;
@@ -246,7 +246,7 @@ contract PrizeV2 is ReentrancyGuard {
         emit ErrorLibrary.DisputeRaised(_submissionHash, sender);
     }
 
-    function endDispute() public onlyPlatformAdmin disputePeriodActive {
+    function endDispute() public onlyPlatformAdmin disputePeriodActive onlyActive {
         // require(disputePeriod < block.timestamp, "DPA"); // DPA -> Dispute Period is in Active
         // if(disputePeriod < block.timestamp) revert DPNA(); //DPNA - Dispute Period Not Active
         _distributeUnusedVotes();
@@ -254,13 +254,13 @@ contract PrizeV2 is ReentrancyGuard {
         isActive = false;
     }
 
-    function changeSubmissionPeriod(uint256 _submissionTime) public onlyPlatformAdmin {
+    function changeSubmissionPeriod(uint256 _submissionTime) public onlyPlatformAdmin onlyActive {
         if(votingPeriod) revert ErrorLibrary.VotingPeriodActive();
         if(!submissionPeriod) revert ErrorLibrary.SubmissionPeriodNotActive();
         submissionTime = block.timestamp + _submissionTime * 1 minutes;
     }
 
-    function changeVotingPeriod(uint256 _votingTime) public onlyPlatformAdmin {
+    function changeVotingPeriod(uint256 _votingTime) public onlyPlatformAdmin onlyActive {
         if(!votingPeriod) revert ErrorLibrary.VotingPeriodNotActive();
         if(distributed == true) revert ErrorLibrary.RewardsAlreadyDistributed();
         votingTime = block.timestamp + _votingTime * 1 minutes;
@@ -335,7 +335,7 @@ contract PrizeV2 is ReentrancyGuard {
     }
 
     /// @notice addSubmission should return the submissionHash
-    function addSubmission(address contestant, string memory submissionText) public onlyPlatformAdmin nonReentrant returns(bytes32) {
+    function addSubmission(address contestant, string memory submissionText) public onlyActive onlyPlatformAdmin nonReentrant returns(bytes32) {
         if (block.timestamp > submissionTime) revert ErrorLibrary.SubmissionPeriodNotActive();
         if(isContestant[contestant]) revert ErrorLibrary.CAE(); // CAE -> Contestant already Exists
         bytes32 submissionHash = keccak256(abi.encodePacked(contestant, submissionText));
@@ -600,7 +600,7 @@ contract PrizeV2 is ReentrancyGuard {
    /// @param _tokenAddress contract address of the token
    /// @param _to receiver address
    /// @param _amount amount to withdraw
-   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin nonReentrant {
+   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyActive onlyPlatformAdmin nonReentrant {
         IERC20Permit token = IERC20Permit(_tokenAddress);
         uint256 balance = token.balanceOf(address(this));
         if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists
@@ -626,7 +626,7 @@ contract PrizeV2 is ReentrancyGuard {
    }
 
    /// @notice function to end the dispute period early
-   function endDisputePeriodEarly() public onlyPlatformAdmin {
+   function endDisputePeriodEarly() public onlyActive onlyPlatformAdmin {
         disputePeriod = block.timestamp - 1 seconds;
         endDispute();
    }
