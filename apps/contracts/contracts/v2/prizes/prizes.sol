@@ -4,15 +4,16 @@ pragma solidity ^0.8.1;
 import "./SubmissionLibrary.sol";
 import "./SubmissionAVLTree.sol";
 import "./hashLibrary.sol";
-import "./errorLibrary.sol";
+import "./errorEventsLibrary.sol";
 import "../../helperContracts/safemath.sol";
 import "../../helperContracts/ierc20_permit.sol";                                         
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "../../helperContracts/ierc20_weth.sol";
+import "../../helperContracts/nonReentrant.sol";
 
-contract PrizeV2 {
+contract PrizeV2 is ReentrancyGuard {
     // uint256 public constant PRECISION = 10000;
 
     bytes32 public constant REFUND_SUBMISSION_HASH = keccak256(abi.encodePacked("REFUND"));
@@ -28,9 +29,9 @@ contract PrizeV2 {
     bool public distributed;
     bool public refunded;
     /// @notice this will be the time that the voting period ends
-    uint256 votingTime; 
+    uint256 private votingTime; 
     /// @notice this will be the time that the submission period ends
-    uint256 submissionTime;
+    uint256 private submissionTime;
     /// @notice  this will be a mapping of the addresses of the proposers to a boolean value of true or false
     mapping (address => bool) public isProposer;
     /// @notice  person who proposed the prize;
@@ -39,13 +40,13 @@ contract PrizeV2 {
     mapping (address => uint256) public cryptoFunderAmount;
     mapping(address => uint256) public fiatFunderAmount;
     /// @notice array of funders
-    address[] public cryptoFunders;
-    address[] public fiatFunders;
+    address[] private cryptoFunders;
+    address[] private fiatFunders;
     mapping(address => bool) public isCryptoFunder;
     mapping(address => bool) public isFiatFunder;
     /// @notice Add a new mapping to store each funder's votes on each submission
     mapping(address => mapping(bytes32 => uint256)) public funderVotes;
-    address[] public refundRequestedFunders;
+    address[] private refundRequestedFunders;
     mapping(address => bool) public isRefundRequestedAddress;
     mapping(address => bool) public isContestant;
     mapping(address => uint256) public individualFiatPercentage;
@@ -54,17 +55,17 @@ contract PrizeV2 {
 
     bool public isActive = false;
     uint8 public constant  VERSION = 201;
-    bool private _locked;
+    // bool private _locked;
 
     using SafeMath for uint256;
 
-    uint public proposerFee;
-    uint public platformFee;
+    uint private proposerFee;
+    uint private platformFee;
 
     bool public votingPeriod = false;
     bool public submissionPeriod = false;
         
-    address[] public platformAdmins;
+    address[] private platformAdmins;
     mapping(address => bool) public isPlatformAdmin;
 
     IERC20Permit private immutable _usdc;
@@ -89,30 +90,30 @@ contract PrizeV2 {
     AggregatorV3Interface public immutable ethPriceAggregator;
 
     /// @notice this will be the address of the platform
-    address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
+    address private immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
     /// @notice / @notice _submissionTree contract
     SubmissionAVLTree private _submissionTree;
 
-    uint256 public totalVotes;
+    uint256 private totalVotes;
     uint256 public disputePeriod;
-    uint256 public nonce;
+    uint256 private nonce;
 
-    enum DonationType {
-        GIFT,
-        PAYMENT
-    }
-    enum TokenType {
-        NFT,
-        TOKEN
-    }
+    // enum DonationType {
+    //     GIFT,
+    //     PAYMENT
+    // }
+    // enum TokenType {
+    //     NFT,
+    //     TOKEN
+    // }
 
-    event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
-    event CampaignCreated(address indexed proposer, address indexed contractAddress);
-    event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
-    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, bool _isFiat, uint256 amount);
-    event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
-    event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
+    // event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
+    // event CampaignCreated(address indexed proposer, address indexed contractAddress);
+    // event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
+    // event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, bool _isFiat, uint256 amount);
+    // event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
+    // event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
 
     constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
@@ -137,18 +138,7 @@ contract PrizeV2 {
         _weth = IWETH(_wethToken);
         _submissionTree.addSubmission(platformAdmins[0], REFUND_SUBMISSION_HASH, "REFUND");
         
-        emit CampaignCreated(proposer, address(this));
-    }
-
-    function _nonReentrant() private view {
-        if(_locked) revert ErrorLibrary.NR();
-    }
-
-    modifier noReentrant() {
-        _nonReentrant();
-        _locked = true;
-        _;
-        _locked = false;
+        emit ErrorLibrary.CampaignCreated(proposer, address(this));
     }
 
     function _onlyActive() private view {
@@ -229,7 +219,7 @@ contract PrizeV2 {
                 uint256 transferable_amount = fiatFunderAmount[fiatFunders[i]];
                 fiatFunderAmount[fiatFunders[i]] = 0;
                 _usdc.transfer(platformAddress, transferable_amount);
-                emit fiatFunderRefund(fiatFunders[i], transferable_amount, true);
+                emit ErrorLibrary.fiatFunderRefund(fiatFunders[i], transferable_amount, true);
             }
             refunded = true;
             distributed = true;
@@ -253,7 +243,7 @@ contract PrizeV2 {
         address sender =  ecrecover(signedMessageHash, v, r, s);
         // require(sender == submission.contestant, "NAS"); 
         if(sender != submission.contestant) revert ErrorLibrary.NAS(); //NAS - Not a Submitter
-        emit DisputeRaised(_submissionHash, sender);
+        emit ErrorLibrary.DisputeRaised(_submissionHash, sender);
     }
 
     function endDispute() public onlyPlatformAdmin disputePeriodActive {
@@ -286,11 +276,11 @@ contract PrizeV2 {
                     uint256 cryptoToSend = (reward_amount.mul(individualCryptoPercentage[refundRequestedFunders[j]])).div(100);
                     reward_amount = 0;
                     _usdc.transfer(platformAddress, fiatToSend);
-                    emit fiatFunderRefund(refundRequestedFunders[j], fiatToSend, true);
+                    emit ErrorLibrary.fiatFunderRefund(refundRequestedFunders[j], fiatToSend, true);
                     _usdc.transfer(refundRequestedFunders[j], cryptoToSend);
                 } else if(isFiatFunder[refundRequestedFunders[j]]) {
                     _usdc.transfer(platformAddress, reward_amount);
-                    emit fiatFunderRefund(refundRequestedFunders[j], reward_amount, true);
+                    emit ErrorLibrary.fiatFunderRefund(refundRequestedFunders[j], reward_amount, true);
                     reward_amount = 0;
                 } else if(isCryptoFunder[refundRequestedFunders[j]]) {
                     _usdc.transfer(refundRequestedFunders[j], reward_amount);
@@ -336,9 +326,8 @@ contract PrizeV2 {
                 cryptoFunderAmount[cryptoFunders[i]] = 0;
             }
             for(uint256 i=0; i<fiatFunders.length; i++) {
-                // uint256 transferable_amount = fiatFunderAmount[fiatFunders[i]];
                 _usdc.transfer(platformAddress, fiatFunderAmount[fiatFunders[i]]);
-                emit fiatFunderRefund(fiatFunders[i], fiatFunderAmount[fiatFunders[i]], true);
+                emit ErrorLibrary.fiatFunderRefund(fiatFunders[i], fiatFunderAmount[fiatFunders[i]], true);
                 fiatFunderAmount[fiatFunders[i]] = 0;
             }
             distributed = true;
@@ -346,13 +335,13 @@ contract PrizeV2 {
     }
 
     /// @notice addSubmission should return the submissionHash
-    function addSubmission(address contestant, string memory submissionText) public onlyPlatformAdmin returns(bytes32) {
+    function addSubmission(address contestant, string memory submissionText) public onlyPlatformAdmin nonReentrant returns(bytes32) {
         if (block.timestamp > submissionTime) revert ErrorLibrary.SubmissionPeriodNotActive();
         if(isContestant[contestant]) revert ErrorLibrary.CAE(); // CAE -> Contestant already Exists
         bytes32 submissionHash = keccak256(abi.encodePacked(contestant, submissionText));
         isContestant[contestant] = true;
         _submissionTree.addSubmission(contestant, submissionHash, submissionText);
-        emit SubmissionCreated(contestant, submissionHash);
+        emit ErrorLibrary.SubmissionCreated(contestant, submissionHash);
         return submissionHash;
     }
 
@@ -391,12 +380,12 @@ contract PrizeV2 {
         if (submission.usdcVotes > 0) {
             _submissionTree.setFundedTrue(_submissionHash, true);
         }
-        emit Voted(_submissionHash, sender, _amount);
+        emit ErrorLibrary.Voted(_submissionHash, sender, _amount);
     }
 
     /// @notice create a function to allow funders to vote for a submission
     /// @notice  Update the vote function
-    function vote(bytes32 _submissionHash, uint256 _amount, uint8 v, bytes32 s, bytes32 r) onlyActive public {
+    function vote(bytes32 _submissionHash, uint256 _amount, uint8 v, bytes32 s, bytes32 r) onlyActive nonReentrant public {
         if (block.timestamp > votingTime) revert ErrorLibrary.VotingPeriodNotActive();
         bytes32 hash = VoteLibrary.VOTE_HASH(address(this), nonce+=1, _submissionHash, _amount);
         address sender =  ecrecover(hash, v, r, s);
@@ -432,7 +421,7 @@ contract PrizeV2 {
     }
 
     /// @notice Change_votes should now stop folks from being able to change someone elses vote
-    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint8 v, bytes32 s, bytes32 r, uint256 amount) onlyActive public {
+    function changeVote(bytes32 _previous_submissionHash, bytes32 _new_submissionHash, uint8 v, bytes32 s, bytes32 r, uint256 amount) onlyActive nonReentrant public {
         if (block.timestamp > votingTime) revert ErrorLibrary.VotingPeriodNotActive();
         if(_previous_submissionHash == _new_submissionHash) revert ErrorLibrary.SS(); //SME -> Same Submission
         bytes32 signedMessageHash = VoteLibrary.CHANGE_VOTE_HASH(address(this), nonce+=1, _previous_submissionHash, amount, _new_submissionHash);
@@ -441,7 +430,7 @@ contract PrizeV2 {
         if(!isCryptoFunder[sender] || !isFiatFunder[sender]) revert ErrorLibrary.NAF(); // NF -> Not a Funder
         _changeVote(sender, _previous_submissionHash, _new_submissionHash, amount);
         _changeSubmissionVoteLogic(_previous_submissionHash, _new_submissionHash);
-        emit Voted(_new_submissionHash, sender, amount);
+        emit ErrorLibrary.Voted(_new_submissionHash, sender, amount);
     }
 
     function _changeVote(address _sender,bytes32 _previous_submission_hash,bytes32 _new_submission_hash,uint256 amount) private {
@@ -492,7 +481,7 @@ contract PrizeV2 {
         totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
     }
 
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public onlyActive noReentrant payable {
+    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public onlyActive nonReentrant payable {
         // require(_amountUsdc > 0, "F<0"); // F<0 -> funds should be greater than zero.
         if(_amountUsdc <= 0) revert ErrorLibrary.NotEnoughFunds();
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
@@ -513,7 +502,7 @@ contract PrizeV2 {
             _depositLogic(sender, _amountUsdc);
         }
         _usdc.transferFrom(sender, address(this), _amountUsdc);
-        emit Donation(sender, address(_usdc), DonationType.PAYMENT, TokenType.TOKEN, _fiatPayment, _amountUsdc);
+        emit ErrorLibrary.Donation(sender, address(_usdc), ErrorLibrary.DonationType.PAYMENT, ErrorLibrary.TokenType.TOKEN, _fiatPayment, _amountUsdc);
     }
 
     function _swapRouterLogic(address sender, uint256 _amountUsdc, address swapFrom, uint256 poolFee, uint256 _amountOutMinimum ) private {
@@ -527,10 +516,10 @@ contract PrizeV2 {
         });
         uint256 _donation  = swapRouter.exactInput(params);
         _depositLogic(sender, _donation);
-        emit Donation(sender, swapFrom, DonationType.PAYMENT, TokenType.TOKEN, false, _donation);
+        emit ErrorLibrary.Donation(sender, swapFrom, ErrorLibrary.DonationType.PAYMENT, ErrorLibrary.TokenType.TOKEN, false, _donation);
     }
 
-    function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive noReentrant payable {
+    function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive nonReentrant payable {
         require(_amountUsdc > 0, "F<0");
         address sender = msg.sender; 
         _usdcBridged.transferFrom(sender,address(this),_amountUsdc);
@@ -540,7 +529,7 @@ contract PrizeV2 {
     }
 
     /// @notice function to donate eth into the campaign
-    function addEthFunds(uint256 _amountOutMinimum) public onlyActive noReentrant payable  {
+    function addEthFunds(uint256 _amountOutMinimum) public onlyActive nonReentrant payable  {
         if (msg.value == 0) revert ErrorLibrary.NotEnoughFunds();
         uint256 eth_donation =  msg.value;
         address sender = msg.sender;
@@ -611,7 +600,7 @@ contract PrizeV2 {
    /// @param _tokenAddress contract address of the token
    /// @param _to receiver address
    /// @param _amount amount to withdraw
-   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin noReentrant {
+   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin nonReentrant {
         IERC20Permit token = IERC20Permit(_tokenAddress);
         uint256 balance = token.balanceOf(address(this));
         if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists

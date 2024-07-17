@@ -37,4 +37,20 @@ library ErrorLibrary {
 
     /// @notice error for trying to claim a refund when the voting period is still active
     error VotingPeriodActive();
+
+    enum DonationType {
+        GIFT,
+        PAYMENT
+    }
+    enum TokenType {
+        NFT,
+        TOKEN
+    }
+
+    event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
+    event CampaignCreated(address indexed proposer, address indexed contractAddress);
+    event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
+    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, bool _isFiat, uint256 amount);
+    event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
+    event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
 }
