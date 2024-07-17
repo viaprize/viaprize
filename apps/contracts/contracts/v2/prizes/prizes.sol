@@ -53,7 +53,7 @@ contract PrizeV2 {
     mapping(address => uint256) public totalFunderAmount;
 
     bool public isActive = false;
-    uint8 public constant  VERSION = 201;
+    uint8 public constant  VERSION = 2;
     bool private _locked;
 
     using SafeMath for uint256;
@@ -276,6 +276,30 @@ contract PrizeV2 {
         votingTime = block.timestamp + _votingTime * 1 minutes;
     }
 
+    function _distributeRewardsLogic(uint256 reward) private {
+        for(uint256 j=0; j<refundRequestedFunders.length; j++) {
+            uint256 reward_amount = _submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,refundRequestedFunders[j]);
+            reward -= reward_amount;
+            if(reward_amount > 0) {
+                if(isFiatFunder[refundRequestedFunders[j]] && isCryptoFunder[refundRequestedFunders[j]]) {
+                    uint256 fiatToSend = (reward_amount.mul(individualFiatPercentage[refundRequestedFunders[j]])).div(100);
+                    uint256 cryptoToSend = (reward_amount.mul(individualCryptoPercentage[refundRequestedFunders[j]])).div(100);
+                    reward_amount = 0;
+                    _usdc.transfer(platformAddress, fiatToSend);
+                    emit fiatFunderRefund(refundRequestedFunders[j], fiatToSend, true);
+                    _usdc.transfer(refundRequestedFunders[j], cryptoToSend);
+                } else if(isFiatFunder[refundRequestedFunders[j]]) {
+                    _usdc.transfer(platformAddress, reward_amount);
+                    emit fiatFunderRefund(refundRequestedFunders[j], reward_amount, true);
+                    reward_amount = 0;
+                } else if(isCryptoFunder[refundRequestedFunders[j]]) {
+                    _usdc.transfer(refundRequestedFunders[j], reward_amount);
+                    reward_amount = 0;
+                }
+            }
+        }
+    }
+
     /// @notice Distribute rewards
     function _distributeRewards() private {
         if(distributed == true) revert ErrorLibrary.RewardsAlreadyDistributed();
@@ -286,33 +310,10 @@ contract PrizeV2 {
             /// @notice  Count the number of funded submissions and add them to the fundedSubmissions array
             for (uint256 i = 0; i < allSubmissions.length;) {
                 if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
-                    if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH) {
-                        uint256 reward = allSubmissions[i].usdcVotes;
-                        if(reward > 0) {
-                            for(uint256 j=0; j<refundRequestedFunders.length; j++) {
-                                uint256 reward_amount = _submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,refundRequestedFunders[j]);
-                                reward -= reward_amount;
-                                if(reward_amount > 0) {
-                                    if(isFiatFunder[refundRequestedFunders[j]] && isCryptoFunder[refundRequestedFunders[j]]) {
-                                        uint256 fiatToSend = (reward_amount.mul(individualFiatPercentage[refundRequestedFunders[j]])).div(100);
-                                        uint256 cryptoToSend = (reward_amount.mul(individualCryptoPercentage[refundRequestedFunders[j]])).div(100);
-                                        reward_amount = 0;
-                                        _usdc.transfer(platformAddress, fiatToSend);
-                                        emit fiatFunderRefund(refundRequestedFunders[j], fiatToSend, true);
-                                        _usdc.transfer(refundRequestedFunders[j], cryptoToSend);
-                                    } else if(isFiatFunder[refundRequestedFunders[j]]) {
-                                        _usdc.transfer(platformAddress, reward_amount);
-                                        emit fiatFunderRefund(refundRequestedFunders[j], reward_amount, true);
-                                        reward_amount = 0;
-                                    } else if(isCryptoFunder[refundRequestedFunders[j]]) {
-                                        _usdc.transfer(refundRequestedFunders[j], reward_amount);
-                                        reward_amount = 0;
-                                    }
-                                }
-                            }
-                        }
+                    uint256 reward = allSubmissions[i].usdcVotes;
+                    if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH && reward > 0) {
+                        _distributeRewardsLogic(reward);
                     } else {
-                        uint256 reward = (allSubmissions[i].usdcVotes);
                         allSubmissions[i].usdcVotes = 0;
                         _usdc.transfer(allSubmissions[i].contestant, reward);
                     }
@@ -355,7 +356,32 @@ contract PrizeV2 {
         return submissionHash;
     }
 
-    function _voteLogic(uint256 _amount, bytes32 _submissionHash, address sender) onlyActive private {
+    function _voteLogic(uint256 _amount, bytes32 _submissionHash, address sender) private {
+        if(cryptoFunderAmount[sender] > 0 && fiatFunderAmount[sender] > 0){
+            uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
+            uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
+            if(!(_amount == cryptoAmountToVote + fiatAmountToVote)) revert ErrorLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
+            cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
+            fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
+            totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote + fiatAmountToVote);
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+            cryptoAmountToVote = 0;
+            fiatAmountToVote = 0;
+        } else if(cryptoFunderAmount[sender] > 0) {
+            uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
+            if(!(_amount == cryptoAmountToVote)) revert ErrorLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
+            cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
+            totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote);
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+            cryptoAmountToVote = 0;
+        } else if(fiatFunderAmount[sender] > 0) {
+            uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
+            if(!(_amount == fiatAmountToVote)) revert ErrorLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
+            fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
+            totalFunderAmount[sender] = totalFunderAmount[sender].sub(fiatAmountToVote);
+            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
+            fiatAmountToVote = 0;
+        }
         uint256 amountToSubmission = (_amount * (100 - platformFee - proposerFee)) / 100;
         _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
         _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
@@ -386,31 +412,6 @@ contract PrizeV2 {
                 refundRequestedFunders.push(sender);
                 isRefundRequestedAddress[sender] = true;
             }
-        }
-        if(cryptoFunderAmount[sender] > 0 && fiatFunderAmount[sender] > 0){
-            uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
-            uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
-            if(!(_amount == cryptoAmountToVote + fiatAmountToVote)) revert ErrorLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
-            cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
-            fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
-            totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote + fiatAmountToVote);
-            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-            cryptoAmountToVote = 0;
-            fiatAmountToVote = 0;
-        } else if(cryptoFunderAmount[sender] > 0) {
-            uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
-            if(!(_amount == cryptoAmountToVote)) revert ErrorLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
-            cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
-            totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote);
-            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-            cryptoAmountToVote = 0;
-        } else if(fiatFunderAmount[sender] > 0) {
-            uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
-            if(!(_amount == fiatAmountToVote)) revert ErrorLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
-            fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
-            totalFunderAmount[sender] = totalFunderAmount[sender].sub(fiatAmountToVote);
-            funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
-            fiatAmountToVote = 0;
         }
         _voteLogic(_amount, _submissionHash, sender);
     }
@@ -654,7 +655,7 @@ contract PrizeV2 {
    }
 
    /// @notice function to retrieve all the cryptoFunders
-   function getAllCryptoFunders() public view returns(address[] memory) {
+   function getAllcryptoFunders() public view returns(address[] memory) {
         return cryptoFunders;
    }
 
