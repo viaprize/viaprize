@@ -549,26 +549,6 @@ contract PrizeV2 {
         _swapRouterLogic(sender, eth_donation, address(_usdcBridged), bridgedUsdcPool.fee(), _amountOutMinimum );
     }
 
-    function addOtherFunds(uint256 _amountOutMinimum) public onlyActive noReentrant payable  {
-        if (msg.value == 0) revert ErrorLibrary.NotEnoughFunds();
-        uint256 eth_donation =  msg.value;
-        address sender = msg.sender;
-        _weth.deposit{value:msg.value}();
-        _weth.approve(address(swapRouter), eth_donation);
-        ISwapRouter.ExactInputParams memory params =
-            ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(address(_weth), ethUsdcPool.fee(), address(_usdc)),
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: eth_donation,
-                amountOutMinimum: _amountOutMinimum
-        });
-        uint256 _donation = swapRouter.exactInput(params);
-        _depositLogic(sender, _donation);
-        emit Donation(msg.sender,address(_weth),DonationType.PAYMENT,TokenType.TOKEN, false, _donation);
-
-    }
-
     /// @notice external function to receive eth funds
     receive() external payable {
         uint ethValue = msg.value;
