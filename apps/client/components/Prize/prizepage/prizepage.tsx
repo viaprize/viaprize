@@ -367,9 +367,7 @@ export default function PrizePageComponent({
             />
           )
         : null}
-      {appUser?.isAdmin &&
-      !(deadlineString === 'Time is up!') &&
-      prize.submission_time_blockchain > 0 ? (
+      {appUser?.isAdmin && prize.submission_time_blockchain > 0 ? (
         <EndSubmission contractAddress={prize.contract_address} slug={prize.slug} />
       ) : null}
 
