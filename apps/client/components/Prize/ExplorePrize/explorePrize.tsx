@@ -97,15 +97,8 @@ function ExploreCard({
           <div>
             <div className="flex justify-between items-center my-3 gap-2 text-red-600">
               <div className="flex items-center space-x-2">
-                <PiTimerFill
-                // color='red'
-                />
-                <Text
-                  // c="red"
-                  fw="bold"
-                >
-                  {deadlineString}
-                </Text>
+                <PiTimerFill />
+                <Text fw="bold">{deadlineString}</Text>
               </div>
 
               {deadlineString === 'Time is up!' && distributed === true ? (
@@ -119,19 +112,9 @@ function ExploreCard({
             </div>
             <Group mb="xs" mt="md" justify="space-between">
               <h2 className="text-xl font-bold my-0">{title}</h2>
-              {/* <Badge color="blue" variant="light" p="sm" radius="md">
-              {profileName}
-            </Badge> */}
             </Group>
-            {/* <p
-            className="text-md h-20 overflow-y-auto"
-            // dangerouslySetInnerHTML={{ __html: description }}
-          >
-            {htmlToPlainText(description)}
-          </p> */}
           </div>
           <div>
-            {/*  >{htmlToPlainText(description)}</p> */}
             <Flex gap="sm">{skills}</Flex>
             <div className="flex gap-2">
               <Tooltip label="Funds Allocated" withArrow>
@@ -165,19 +148,6 @@ function ExploreCard({
                 </Button>
               </Tooltip>
             </div>
-            {/* <Text fw="bold" size="xl">
-            {usdAmount} USD
-          </Text>
-          <Text fw="bold" className="flex">
-            Submission Deadline :{' '}
-            {new Date() < submissionEndDate ? (
-              formatDateString(submissionEndDate.toLocaleDateString())
-            ) : (
-              <Text c="red" fw="bold" className="pl-2">
-                Ended
-              </Text>
-            )}
-          </Text> */}
             <div className="flex gap-2 my-2">
               <Button
                 variant="light"
@@ -206,7 +176,5 @@ function ExploreCard({
     </div>
   );
 }
-
-
 
 export default ExploreCard;

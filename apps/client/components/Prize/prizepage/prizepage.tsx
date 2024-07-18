@@ -5,7 +5,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
-import type { IndividualPrizeWithBalance, PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
+import type {
+  IndividualPrizeWithBalance,
+  PrizeWithBlockchainData,
+  SubmissionWithBlockchainData,
+} from '@/lib/api';
 import { calculateDeadline, usdcSignType } from '@/lib/utils';
 
 import { TransactionToast } from '@/components/custom/transaction-toast';
@@ -274,25 +278,25 @@ export default function PrizePageComponent({
     new Date(prize.submission_time_blockchain * 1000),
   );
   const params = useParams();
-  useEffect( () => {
+  useEffect(() => {
     if (window.location.hash.includes('success')) {
-      void fetch('https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash').then(
-        (res) => {
-          res.json().then((data) => {
-            toast.success(
-              <TransactionToast hash={data.hash} title="Transaction Successful" />,
-              {
-                duration: 6000,
-              },
-            );
-          });
-        },
-      );
+      void fetch(
+        'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash',
+      ).then((res) => {
+        res.json().then((data) => {
+          toast.success(
+            <TransactionToast hash={data.hash} title="Transaction Successful" />,
+            {
+              duration: 6000,
+            },
+          );
+        });
+      });
     }
   }, [params]);
 
   const mounted = useMounted();
-  
+
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
@@ -301,8 +305,7 @@ export default function PrizePageComponent({
           <Badge size="lg" color="green">
             Won
           </Badge>
-        ) : 
-        prize.refunded ? (
+        ) : prize.refunded ? (
           <Badge size="lg" color="yellow">
             Refunded
           </Badge>
