@@ -11,7 +11,7 @@ interface PrizeFunderCardProps {
   walletAddress?: string;
   avatar?: string;
   username: string;
-  badge: string | number;
+  badge?: string | number;
   date?: string;
 }
 
@@ -42,15 +42,17 @@ export default function PrizeFunderCard({
         </div>
       </div>
       <Group gap="sm">
-        <Badge
-          size="lg"
-          radius="md"
-          variant="light"
-          color={typeof badge === 'string' ? 'yellow' : 'green'}
-          leftSection={typeof badge === 'string' ? <FaUser /> : <FaSackDollar />}
-        >
-          {typeof badge === 'string' ? badge : `$${badge}`}
-        </Badge>
+        {badge ? (
+          <Badge
+            size="lg"
+            radius="md"
+            variant="light"
+            color={typeof badge === 'string' ? 'yellow' : 'green'}
+            leftSection={typeof badge === 'string' ? <FaUser /> : <FaSackDollar />}
+          >
+            {typeof badge === 'string' ? badge : `$${badge}`}
+          </Badge>
+        ) : null}
         {date ? (
           <Badge size="lg" radius="md" variant="light" color="blue">
             {formatDateString(new Date(parseInt(date) * 1000).toLocaleDateString())}
