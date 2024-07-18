@@ -1,3 +1,4 @@
+import { formatDateString } from '@/lib/utils';
 import { Avatar, Badge, Button, Card, Group, Text } from '@mantine/core';
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
@@ -52,9 +53,7 @@ export default function PrizeFunderCard({
         </Badge>
         {date ? (
           <Badge size="lg" radius="md" variant="light" color="blue">
-            {formatDistanceToNow(new Date(parseInt(date) * 1000), {
-              addSuffix: true,
-            })}
+            {formatDateString(new Date(parseInt(date) * 1000).toLocaleDateString())}
           </Badge>
         ) : null}
       </Group>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-boolean-literal-compare */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -40,6 +41,7 @@ import PrizePageTabs from './prizepagetabs';
 import RefundCard from './refundCard';
 import Submissions from './submissions';
 import useIsMounted from '@/components/hooks/useIsMounted';
+import useMounted from '@/components/hooks/useMounted';
 
 function FundUsdcCard({
   contractAddress,
@@ -288,8 +290,9 @@ export default function PrizePageComponent({
       );
     }
   }, [params]);
-  const mounted = useIsMounted();
 
+  const mounted = useMounted();
+  
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
@@ -298,7 +301,7 @@ export default function PrizePageComponent({
           <Badge size="lg" color="green">
             Won
           </Badge>
-        ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+        ) : 
         prize.refunded ? (
           <Badge size="lg" color="yellow">
             Refunded

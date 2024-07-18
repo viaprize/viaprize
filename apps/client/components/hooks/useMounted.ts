@@ -1,19 +1,16 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
-function useIsMounted() {
-  const isMounted = useRef(false); // unmounted by default
+function useMounted() {
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      isMounted.current = false;
-    }
+    setIsMounted(true);
+  }, []);
 
-    return () => {
-      isMounted.current = true; // unmounted
-    };
-  }, []); // run once on mount
-
-  return useCallback(() => isMounted.current, []); // return function that checks mounted status
+  if (!isMounted) {
+    return null;
+  }
+  return isMounted;
 }
 
-export default useIsMounted;
+export default useMounted;

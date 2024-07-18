@@ -2,7 +2,7 @@
 /* eslint-disable no-nested-ternary */
 'use client';
 
-import { calculateDeadline } from '@/lib/utils';
+import { calculateDeadline, formatDateString } from '@/lib/utils';
 import {
   ActionIcon,
   Badge,
@@ -207,14 +207,6 @@ function ExploreCard({
   );
 }
 
-function formatDateString(dateString: string): string {
-  // Parse the date string to a Date object
-  const date = parse(dateString, 'M/d/yyyy', new Date());
 
-  // Format the Date object to the desired format
-  const formattedDate = format(date, 'd MMMM yyyy');
-
-  return formattedDate;
-}
 
 export default ExploreCard;
