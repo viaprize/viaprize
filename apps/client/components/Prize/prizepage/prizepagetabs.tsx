@@ -1,4 +1,4 @@
-import { Tabs, Text } from '@mantine/core';
+import { Badge, Tabs, Text } from '@mantine/core';
 import { BsInfoLg } from 'react-icons/bs';
 import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 
@@ -6,6 +6,7 @@ import AboutPrize from './aboutprize';
 import Contestants from './contestants';
 import PrizeFunderCard from './prizeFunderCard';
 import { Contributions } from '@/lib/api';
+import { StarFilledIcon } from '@radix-ui/react-icons';
 
 export default function PrizePageTabs({
   contractAddress,
@@ -37,7 +38,10 @@ export default function PrizePageTabs({
           About
         </Tabs.Tab>
         <Tabs.Tab value="creators" leftSection={<FaMoneyBillWaveAlt size="1rem" />}>
-          Backed By
+          Backed By{' '}
+          <Badge color="green" rightSection={<StarFilledIcon />}>
+            {contributions.data.length}
+          </Badge>
         </Tabs.Tab>
         <Tabs.Tab value="contestants">Contestants</Tabs.Tab>
       </Tabs.List>
@@ -76,7 +80,7 @@ export default function PrizePageTabs({
             key={contribution.contributor}
             name={contribution.contributor}
             email={contribution.contributor}
-            badge={(parseFloat(contribution.amount) / 1_000_000)}
+            badge={parseFloat(contribution.amount) / 1_000_000}
             // avatar={contribution.avatar}
             date={contribution.donationTime}
             username={contribution.contributor}
