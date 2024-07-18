@@ -12,10 +12,12 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { PrizesService } from 'src/prizes/services/prizes.service';
 import { UsersService } from 'src/users/users.service';
+import { SEND_USDC } from 'src/utils/constants';
 import { BaseError, ContractFunctionRevertedError } from 'viem';
 import { AddUsdcFundsDto } from './dto/add-usdc-funds.dto';
 import { ChangeSubmissionDto } from './dto/change-submission.dto';
 import { ChangeVotingDto } from './dto/change-voting.dto';
+import { SendUsdcTransactionDto } from './dto/send-usdc-transaction.dto';
 import { VoteDTO } from './dto/vote.dto';
 import { WalletService } from './wallet.service';
 
@@ -665,6 +667,58 @@ export class WalletController {
           'gasless',
           '0',
         );
+      return { hash };
+    } catch (err) {
+      if (err instanceof BaseError) {
+        console.log({ err });
+        const revertError = err.walk(
+          (err) => err instanceof ContractFunctionRevertedError,
+        );
+        if (revertError instanceof ContractFunctionRevertedError) {
+          console.log({ err });
+          const errorName = revertError.data?.errorName ?? '';
+          throw new HttpException(
+            'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          'Error: ' + err.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/send_usdc_transaction')
+  async sendTransaction(
+    @Body() body: SendUsdcTransactionDto,
+    @Request() req,
+  ): Promise<WalletResponse | undefined> {
+    const user = this.userService.findOneByAuthId(req.user.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractSendUsdc(
+          'sendUsdc',
+          [
+            body.receiver as `0x${string}`,
+            BigInt(body.amount),
+            BigInt(body.deadline),
+            body.v,
+            body.r as `0x${string}`,
+            body.s as `0x${string}`,
+            body.ethSignedMessageHash as `0x${string}`,
+          ],
+          SEND_USDC,
+          'gasless',
+          '0',
+        );
+
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {

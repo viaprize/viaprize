@@ -2116,3 +2116,81 @@ export type SubmissionsTypePrizeV2 = ContractFunctionReturnType<
   'view',
   'getAllSubmissions'
 >;
+
+export const SEND_USDC_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_usdcAddress',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
+  {
+    inputs: [],
+    name: '_usdc',
+    outputs: [
+      {
+        internalType: 'contract IERC20Permit',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address payable',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'value',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'deadline',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint8',
+        name: 'v',
+        type: 'uint8',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'r',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 's',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_ethSignedMessageHash',
+        type: 'bytes32',
+      },
+    ],
+    name: 'sendUsdc',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: 'success',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const;
+
+export const SEND_USDC = '0xC0842e4f312bd2Ea9E052Faf74b8C8A5002D7912';
