@@ -32,6 +32,44 @@ export const VOTE_ABI = [
         type: 'address',
       },
     ],
+    name: 'isFiatFunder',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'isCryptoFunder',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
     name: 'isFunder',
     outputs: [
       {
@@ -51,7 +89,7 @@ export const VOTE_ABI = [
         type: 'address',
       },
     ],
-    name: 'funderAmount',
+    name: 'totalFunderAmount',
     outputs: [
       {
         internalType: 'uint256',

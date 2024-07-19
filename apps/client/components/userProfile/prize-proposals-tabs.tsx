@@ -1,14 +1,5 @@
 import type { PrizeProposals } from '@/lib/api';
-import {
-  ADMINS,
-  ETH_PRICE,
-  SWAP_ROUTER,
-  USDC,
-  USDC_BRIDGE,
-  USDC_TO_ETH_POOL,
-  USDC_TO_USDCE_POOL,
-  WETH,
-} from '@/lib/constants';
+import { ADMINS, USDC } from '@/lib/constants';
 import { prepareWritePrizeFactoryV2, writePrizeFactoryV2 } from '@/lib/smartContract';
 import type { ProposalStatus } from '@/lib/types';
 import { Button, Text } from '@mantine/core';
@@ -129,12 +120,6 @@ export default function ProposalsTab({ params }: { params: { id: string } }) {
                           BigInt(item.platformFeePercentage),
                           BigInt(item.proposerFeePercentage),
                           USDC,
-                          USDC_BRIDGE,
-                          SWAP_ROUTER,
-                          USDC_TO_USDCE_POOL,
-                          USDC_TO_ETH_POOL,
-                          ETH_PRICE,
-                          WETH,
                         ],
                       });
                       out = await writePrizeFactoryV2(requestJudges);

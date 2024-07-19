@@ -18,14 +18,6 @@ export default async function FetchPrizes() {
       },
     )
   ).data.data;
-  const usdToEth: { ethereum: { usd: number } } = await (
-    await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    })
-  ).json();
 
   console.log(prizes[0], 'prizes');
 

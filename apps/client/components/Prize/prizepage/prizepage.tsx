@@ -64,6 +64,7 @@ function FundUsdcCard({
   cancelUrl: string;
   slug: string;
 }) {
+  const { logoutUser, appUser, loginUser } = useAppUser();
   const [sendLoading, setSendLoading] = useState(false);
   const { data: walletClient } = useWalletClient();
   const [value, setValue] = useState('');
@@ -223,12 +224,22 @@ function FundUsdcCard({
     }
   };
   return (
-    <Stack my="md">
-      <Text fw="sm">Your donation needs to be at least $1.</Text>
-
+    <Stack>
+      <Group>
+        <Text fw="sm">Your donation needs to be at least $1</Text>
+        {appUser ? null : (
+          <Button
+            color="primary"
+            onClick={() => {
+              void loginUser();
+            }}
+          >
+            Connect Wallet 
+          </Button>
+        )}
+      </Group>
       <NumberInput
         placeholder="Enter Value  in $ To Donate"
-        mt="md"
         allowDecimal
         defaultValue={1}
         allowNegative={false}

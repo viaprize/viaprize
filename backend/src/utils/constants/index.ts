@@ -40,36 +40,6 @@ export const PRIZE_V2_ABI = [
         name: '_usdcAddress',
         type: 'address',
       },
-      {
-        internalType: 'address',
-        name: '_usdcBridgedAddress',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_swapRouter',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_usdcToUsdcePool',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_usdcToEthPool',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_ethPriceAggregator',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_wethToken',
-        type: 'address',
-      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -181,12 +151,37 @@ export const PRIZE_V2_ABI = [
       },
       {
         indexed: false,
+        internalType: 'bool',
+        name: '_isFiat',
+        type: 'bool',
+      },
+      {
+        indexed: false,
         internalType: 'uint256',
         name: 'amount',
         type: 'uint256',
       },
     ],
     name: 'Donation',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_address',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'FiatFunderRefund',
     type: 'event',
   },
   {
@@ -362,32 +357,6 @@ export const PRIZE_V2_ABI = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '_amountUsdc',
-        type: 'uint256',
-      },
-    ],
-    name: 'addBridgedUsdcFunds',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_amountOutMinimum',
-        type: 'uint256',
-      },
-    ],
-    name: 'addEthFunds',
-    outputs: [],
-    stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
         internalType: 'address',
         name: 'contestant',
         type: 'address',
@@ -446,55 +415,15 @@ export const PRIZE_V2_ABI = [
         name: '_ethSignedMessageHash',
         type: 'bytes32',
       },
+      {
+        internalType: 'bool',
+        name: '_fiatPayment',
+        type: 'bool',
+      },
     ],
     name: 'addUsdcFunds',
     outputs: [],
     stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'allFunders',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'bridgedUsdcPool',
-    outputs: [
-      {
-        internalType: 'contract IUniswapV3Pool',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_minimumSlipageFeePercentage',
-        type: 'uint256',
-      },
-    ],
-    name: 'changeMinimumSlipageFeePercentage',
-    outputs: [],
-    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -559,6 +488,44 @@ export const PRIZE_V2_ABI = [
     name: 'changeVotingPeriod',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'cryptoFunderAmount',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'cryptoFunders',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -644,26 +611,19 @@ export const PRIZE_V2_ABI = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'ethPriceAggregator',
-    outputs: [
+    inputs: [
       {
-        internalType: 'contract AggregatorV3Interface',
+        internalType: 'address',
         name: '',
         type: 'address',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'ethUsdcPool',
+    name: 'fiatFunderAmount',
     outputs: [
       {
-        internalType: 'contract IUniswapV3Pool',
+        internalType: 'uint256',
         name: '',
-        type: 'address',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -672,17 +632,17 @@ export const PRIZE_V2_ABI = [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'funderAmount',
-    outputs: [
-      {
         internalType: 'uint256',
         name: '',
         type: 'uint256',
+      },
+    ],
+    name: 'fiatFunders',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
       },
     ],
     stateMutability: 'view',
@@ -707,6 +667,32 @@ export const PRIZE_V2_ABI = [
         internalType: 'uint256',
         name: '',
         type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getAllCryptoFunders',
+    outputs: [
+      {
+        internalType: 'address[]',
+        name: '',
+        type: 'address[]',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getAllFiatFunders',
+    outputs: [
+      {
+        internalType: 'address[]',
+        name: '',
+        type: 'address[]',
       },
     ],
     stateMutability: 'view',
@@ -881,6 +867,44 @@ export const PRIZE_V2_ABI = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'individualCryptoPercentage',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'individualFiatPercentage',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'isActive',
     outputs: [
@@ -920,7 +944,26 @@ export const PRIZE_V2_ABI = [
         type: 'address',
       },
     ],
-    name: 'isFunder',
+    name: 'isCryptoFunder',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'isFiatFunder',
     outputs: [
       {
         internalType: 'bool',
@@ -983,19 +1026,6 @@ export const PRIZE_V2_ABI = [
         internalType: 'bool',
         name: '',
         type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'minimumSlipageFeePercentage',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -1114,6 +1144,19 @@ export const PRIZE_V2_ABI = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'refundAddress',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'uint256',
@@ -1127,6 +1170,19 @@ export const PRIZE_V2_ABI = [
         internalType: 'address',
         name: '',
         type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'refunded',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
       },
     ],
     stateMutability: 'view',
@@ -1172,13 +1228,19 @@ export const PRIZE_V2_ABI = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'swapRouter',
-    outputs: [
+    inputs: [
       {
-        internalType: 'contract ISwapRouter',
+        internalType: 'address',
         name: '',
         type: 'address',
+      },
+    ],
+    name: 'totalFunderAmount',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -1291,10 +1353,6 @@ export const PRIZE_V2_ABI = [
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
-  },
-  {
-    stateMutability: 'payable',
-    type: 'receive',
   },
 ] as const;
 export const PASS_THROUGH_ABI = [

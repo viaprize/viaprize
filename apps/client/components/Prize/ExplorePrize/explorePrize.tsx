@@ -16,11 +16,11 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 import { FaUsers } from 'react-icons/fa';
+import { FaSackDollar } from 'react-icons/fa6';
 import { GiSandsOfTime, GiTwoCoins } from 'react-icons/gi';
 import { PiTimerFill } from 'react-icons/pi';
-import { FaSackDollar } from 'react-icons/fa6';
 
 interface ExploreCardProps {
   distributed: boolean;
@@ -58,6 +58,7 @@ function ExploreCard({
   contributers,
   contestants,
 }: ExploreCardProps) {
+  console.log({ startingTimeBlockchain });
   const submissionEndDate = new Date(startingTimeBlockchain * 1000);
   const deadlineString = calculateDeadline(new Date(), submissionEndDate);
 
@@ -136,28 +137,32 @@ function ExploreCard({
                   className="text-md font-bold cursor-pointer"
                   leftSection={<GiSandsOfTime />}
                 >
-                  <Text fw="bold" className="flex">
-                    {new Date() < submissionEndDate ? (
-                      formatDateString(submissionEndDate.toLocaleDateString())
-                    ) : (
-                      <Text c="red" fw="bold" className="pl-2">
-                        Ended
-                      </Text>
-                    )}
-                  </Text>
+                  {startingTimeBlockchain !== 0 && (
+                    <Text fw="bold" className="flex">
+                      {new Date() < submissionEndDate ? (
+                        formatDateString(submissionEndDate.toLocaleDateString())
+                      ) : (
+                        <Text c="red" fw="bold" className="pl-2">
+                          Ended
+                        </Text>
+                      )}
+                    </Text>
+                  )}
                 </Button>
               </Tooltip>
             </div>
             <div className="flex gap-2 my-2">
-              <Button
-                variant="light"
-                color="blue"
-                fullWidth
-                className="text-md font-bold pointer-events-none"
-                leftSection={<GiTwoCoins />}
-              >
-                {contributers.length} {contributers.length === 1 ? 'Funder' : 'Funders'}
-              </Button>
+              {contributers && (
+                <Button
+                  variant="light"
+                  color="blue"
+                  fullWidth
+                  className="text-md font-bold pointer-events-none"
+                  leftSection={<GiTwoCoins />}
+                >
+                  {contributers.length} {contributers.length === 1 ? 'Funder' : 'Funders'}
+                </Button>
+              )}
               <Tooltip label="Individuals working on winning this prize" withArrow>
                 <Button
                   variant="light"

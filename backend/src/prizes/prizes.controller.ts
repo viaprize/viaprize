@@ -267,7 +267,7 @@ export class PrizesController {
         'totalVotes',
         'submissionPeriod',
         'votingPeriod',
-        'getAllFunders',
+        'VERSION',
       ],
     )) as [
       [
@@ -279,12 +279,11 @@ export class PrizesController {
         bigint,
         boolean,
         boolean,
-        string[],
+        bigint,
       ],
     ];
     const prizeWithBalanceData = prizeWithoutBalance.data.map(
       (prize, index) => {
-        console.log(results[index][8], 'contributors');
         return {
           ...prize,
           balance: parseInt(results[index][0].toString()),
@@ -298,13 +297,45 @@ export class PrizesController {
           voting_period_active_blockchain: results[index][7],
           is_active_blockchain: results[index][4],
           submission_perio_active_blockchain: results[index][6],
-          contributors: results[index][8],
         } as PrizeWithBlockchainData;
       },
     );
     console.log(prizeWithBalanceData, 'prizeWithBalanceData');
+    const prizeWithContributorsPromises = prizeWithBalanceData.map(
+      async (prize, index) => {
+        const version = results[index][8];
+        console.log(version, 'version');
+        if (version.toString() === '2') {
+          const [[allFunders]] =
+            (await this.blockchainService.getPrizesV2PublicVariables(
+              [prize.contract_address],
+              ['getAllFunders'],
+            )) as [[string[]]];
+          return {
+            ...prize,
+            contributors: allFunders,
+          };
+        } else if (version.toString() === '201') {
+          const [[allCryptoFunders, allFiatFunders]] =
+            (await this.blockchainService.getPrizesV2PublicVariables(
+              [prize.contract_address],
+              ['getAllCryptoFunders', 'getAllFiatFunders'],
+            )) as [string[], string[]];
+          return {
+            ...prize,
+            contributors: [
+              ...new Set([...allCryptoFunders, ...allFiatFunders]),
+            ],
+          };
+        }
+      },
+    );
+    const prizeWithContributors = await Promise.all(
+      prizeWithContributorsPromises,
+    );
+    console.log(prizeWithContributors, 'prizeWithContributors');
     return {
-      data: prizeWithBalanceData as PrizeWithBlockchainData[],
+      data: prizeWithContributors as PrizeWithBlockchainData[],
       hasNextPage: prizeWithoutBalance.hasNextPage,
     };
   }
@@ -314,6 +345,7 @@ export class PrizesController {
     @TypedParam('slug') slug: string,
   ): Promise<IndividualPrizeWithBalance> {
     const prize = await this.prizeService.findAndReturnBySlug(slug);
+    let contributors: string[] = [];
     const [
       totalFunds,
       distributed,
@@ -324,7 +356,7 @@ export class PrizesController {
       isActive,
       submissionPeriod,
       votingPeriod,
-      allFunders,
+      version,
     ] = (
       await this.blockchainService.getPrizesV2PublicVariables(
         [prize.contract_address],
@@ -338,7 +370,7 @@ export class PrizesController {
           'isActive',
           'submissionPeriod',
           'votingPeriod',
-          'getAllFunders',
+          'VERSION',
         ],
       )
     )[0] as [
@@ -352,28 +384,26 @@ export class PrizesController {
       boolean,
       boolean,
       string[],
+      bigint,
     ];
+    if (version.toString() === '2') {
+      const [[allFunders]] =
+        (await this.blockchainService.getPrizesV2PublicVariables(
+          [prize.contract_address],
+          ['getAllFunders'],
+        )) as [[string[]]];
+      contributors = allFunders;
+    } else if (version.toString() === '201') {
+      const [[allCryptoFunders, allFiatFunders]] =
+        (await this.blockchainService.getPrizesV2PublicVariables(
+          [prize.contract_address],
+          ['getAllCryptoFunders', 'getAllFiatFunders'],
+        )) as [[string[], string[]]];
 
-    const contributorsAndAmount =
-      await this.blockchainService.getPortalContributors(
-        prize.contract_address,
-      );
+      contributors = [...new Set([...allCryptoFunders, ...allFiatFunders])];
+    }
 
-    const ContributorsWithUser = contributorsAndAmount.data.map(
-      async (contributor) => {
-        return {
-          ...contributor,
-          contributor: await this.userService.findUserByWallett(
-            contributor.contributor,
-          ),
-        };
-      },
-    );
-
-    const resultsWithContributors = {
-      data: await Promise.all(ContributorsWithUser),
-    };
-    console.log(allFunders, 'allFunders');
+    console.log(contributors, 'contributors');
     return {
       ...prize,
       distributed: distributed,
@@ -386,7 +416,7 @@ export class PrizesController {
       voting_period_active_blockchain: votingPeriod,
       is_active_blockchain: isActive,
       submission_perio_active_blockchain: submissionPeriod,
-      contributors: resultsWithContributors,
+      contributors: contributors,
     };
   }
 
