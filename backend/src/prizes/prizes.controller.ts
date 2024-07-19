@@ -402,6 +402,24 @@ export class PrizesController {
 
       contributors = [...new Set([...allCryptoFunders, ...allFiatFunders])];
     }
+    const contributorsData = await this.blockchainService.getPortalContributors(
+      prize.contract_address,
+    );
+
+    const ContributorsWithUser = contributorsData.data.map(
+      async (contributor) => {
+        return {
+          ...contributor,
+          contributor: await this.userService.findUserByWallett(
+            contributor.contributor,
+          ),
+        };
+      },
+    );
+
+    const resultsWithContributors = {
+      data: await Promise.all(ContributorsWithUser),
+    };
 
     console.log(contributors, 'contributors');
     return {
@@ -416,7 +434,7 @@ export class PrizesController {
       voting_period_active_blockchain: votingPeriod,
       is_active_blockchain: isActive,
       submission_perio_active_blockchain: submissionPeriod,
-      contributors: contributors,
+      contributors: resultsWithContributors,
     };
   }
 
