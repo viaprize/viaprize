@@ -18,11 +18,14 @@ import { useUser } from '../hooks/useUser';
 import AuthWrap from './auth-wrapper';
 import SendCard from './donation-card';
 import EditProfileModal from './edit-profile-modal';
+import { notFound } from 'next/navigation';
+import useAuthPerson from '../hooks/useAuthPerson';
 
 export default function Profile({ params }: { params: { id: string } }) {
   const [opened, { open, close }] = useDisclosure(false);
   const { getUserByUserName } = useUser();
   // const params = useParams<{ id: string }>();
+  const isProfileOwner = useAuthPerson();
 
   const { data: userData, refetch: fetchUser } = useQuery(
     'getUserByUserName',
@@ -33,7 +36,10 @@ export default function Profile({ params }: { params: { id: string } }) {
       },
     },
   );
-  console.log(userData, 'user data');
+
+  if (!userData) {
+    return notFound();
+  }
 
   return (
     <Card
@@ -77,31 +83,39 @@ export default function Profile({ params }: { params: { id: string } }) {
             Proficiencies
           </Text>
           <div className="flex flex-wrap gap-1">
-            {userData?.proficiencies.map((proficiency: string) => (
-              <Badge key={proficiency} variant="light" color="green">
-                {proficiency}
-              </Badge>
-            ))}
+            {userData?.proficiencies.map((proficiency: string) =>
+              proficiency !== '[]' ? (
+                <Badge key={proficiency} variant="light" color="green">
+                  {proficiency}
+                </Badge>
+              ) : (
+                'No Proficiencies'
+              ),
+            )}
           </div>
 
           <Text fw={700} mb="sm" mt="md" className="pl-1">
             Priorities
           </Text>
           <div className="flex flex-wrap gap-1">
-            {userData?.priorities.map((priority: string) => (
-              <Badge key={priority} variant="light" color="blue">
-                {priority}
-              </Badge>
-            ))}
+            {userData?.priorities.map((priority: string) =>
+              priority !== '[]' && priority !== '' ? (
+                <Badge key={priority} variant="light" color="blue">
+                  {priority}
+                </Badge>
+              ) : (
+                'No Priorities'
+              ),
+            )}
           </div>
         </Box>
       </div>
-      {params?.id === userData?.username && (
+      {isProfileOwner ? (
         <>
           <Divider orientation="vertical" className="hidden md:block" />
           <SendCard />
         </>
-      )}
+      ) : null}
     </Card>
   );
 }
