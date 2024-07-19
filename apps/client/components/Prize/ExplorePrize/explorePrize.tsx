@@ -137,22 +137,26 @@ function ExploreCard({
                   className="text-md font-bold cursor-pointer"
                   leftSection={<GiSandsOfTime />}
                 >
-                  {startingTimeBlockchain !== 0 && (
+                  {startingTimeBlockchain !== 0 ? (
                     <Text fw="bold" className="flex">
                       {new Date() < submissionEndDate ? (
-                        formatDateString(submissionEndDate.toLocaleDateString())
+                        formatDateString(submissionEndDate)
                       ) : (
                         <Text c="red" fw="bold" className="pl-2">
                           Ended
                         </Text>
                       )}
                     </Text>
+                  ) : (
+                    <Text>
+                      Ended
+                    </Text>
                   )}
                 </Button>
               </Tooltip>
             </div>
             <div className="flex gap-2 my-2">
-              {contributers && (
+              {contributers ? (
                 <Button
                   variant="light"
                   color="blue"
@@ -162,7 +166,7 @@ function ExploreCard({
                 >
                   {contributers.length} {contributers.length === 1 ? 'Funder' : 'Funders'}
                 </Button>
-              )}
+              ) : null}
               <Tooltip label="Individuals working on winning this prize" withArrow>
                 <Button
                   variant="light"

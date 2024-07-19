@@ -118,10 +118,8 @@ export const calculateRemainingTime = (submissionDate: string) => {
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
 };
 
-export function formatDateString(dateString: string): string {
+export function formatDateString(date: Date): string {
   // Parse the date string to a Date object
-  const date = parse(dateString, 'M/d/yyyy', new Date());
-
   // Format the Date object to the desired format
   const formattedDate = format(date, 'd MMMM yyyy');
 

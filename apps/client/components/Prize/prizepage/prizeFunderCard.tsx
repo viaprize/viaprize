@@ -55,7 +55,7 @@ export default function PrizeFunderCard({
         ) : null}
         {date ? (
           <Badge size="lg" radius="md" variant="light" color="blue">
-            {formatDateString(new Date(parseInt(date) * 1000).toLocaleDateString())}
+            {formatDateString(new Date(parseInt(date) * 1000))}
           </Badge>
         ) : null}
       </Group>
