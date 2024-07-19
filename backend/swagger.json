@@ -2034,7 +2034,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PrizeWithBlockchainData"
+                  "$ref": "#/components/schemas/IndividualPrizeWithBalance"
                 }
               }
             },
@@ -6284,6 +6284,239 @@
           "contestants",
           "submissions",
           "slug",
+          "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IndividualPrizeWithBalance": {
+        "type": "object",
+        "properties": {
+          "contributors": {
+            "$ref": "#/components/schemas/Contributions"
+          },
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "distributed": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submission_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "voting_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "dispute_period_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "refunded": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "voting_period_active_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "is_active_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submission_perio_active_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "balance": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAutomatic": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submissionTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "votingTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "startVotingDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "startSubmissionDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "proposer_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "contract_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "admins": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "judges": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "proficiencies": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "contestants": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "submissions": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Submission"
+            }
+          },
+          "comments": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizesComments"
+            }
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "contributors",
+          "slug",
+          "description",
+          "images",
+          "title",
+          "distributed",
+          "submission_time_blockchain",
+          "voting_time_blockchain",
+          "dispute_period_time_blockchain",
+          "refunded",
+          "voting_period_active_blockchain",
+          "is_active_blockchain",
+          "submission_perio_active_blockchain",
+          "balance",
+          "id",
+          "isAutomatic",
+          "submissionTime",
+          "votingTime",
+          "startVotingDate",
+          "startSubmissionDate",
+          "proposer_address",
+          "contract_address",
+          "admins",
+          "proficiencies",
+          "priorities",
+          "created_at",
+          "updated_at",
+          "contestants",
+          "submissions",
           "user"
         ],
         "x-typia-jsDocTags": []

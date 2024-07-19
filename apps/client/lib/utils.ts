@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 import { encodePacked, keccak256 } from 'viem';
 import { USDC } from './constants';
+import { format, parse } from 'date-fns';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
@@ -116,6 +117,17 @@ export const calculateRemainingTime = (submissionDate: string) => {
   const days = Math.floor(remainingTime / (24 * 60 * 60 * 1000));
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
 };
+
+export function formatDateString(dateString: string): string {
+  // Parse the date string to a Date object
+  const date = parse(dateString, 'M/d/yyyy', new Date());
+
+  // Format the Date object to the desired format
+  const formattedDate = format(date, 'd MMMM yyyy');
+
+  return formattedDate;
+}
+
 export const calculateDeadline = (createdDate: Date, endDate: Date) => {
   const remainingTime = endDate.getTime() - createdDate.getTime();
   if (remainingTime <= 0) {

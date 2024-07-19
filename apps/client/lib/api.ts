@@ -367,6 +367,45 @@ export interface PrizeWithBlockchainData {
   user: User;
 }
 
+export interface IndividualPrizeWithBalance {
+  contributors: Contributions;
+  slug: string;
+  description: string;
+  images: string[];
+  title: string;
+  distributed: boolean;
+  submission_time_blockchain: number;
+  voting_time_blockchain: number;
+  dispute_period_time_blockchain: number;
+  refunded: boolean;
+  voting_period_active_blockchain: boolean;
+  is_active_blockchain: boolean;
+  submission_perio_active_blockchain: boolean;
+  balance: number;
+  id: string;
+  isAutomatic: boolean;
+  submissionTime: number;
+  votingTime: number;
+  /** @format date-time */
+  startVotingDate: string;
+  /** @format date-time */
+  startSubmissionDate: string;
+  proposer_address: string;
+  contract_address: string;
+  admins: string[];
+  judges?: string[];
+  proficiencies: string[];
+  priorities: string[];
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  updated_at: string;
+  contestants: User[];
+  submissions: Submission[];
+  comments?: PrizesComments[];
+  user: User;
+}
+
 export interface UpdatePrizeDto {
   platformFeePercentage?: number;
   proposerFeePercentage?: number;
@@ -1107,7 +1146,7 @@ export namespace Prizes {
     export type RequestQuery = {};
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = PrizeWithBlockchainData;
+    export type ResponseBody = IndividualPrizeWithBalance;
   }
 
   /**
@@ -2560,7 +2599,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      * @request GET:/prizes/{slug}
      */
     prizesDetail: (slug: string, params: RequestParams = {}) =>
-      this.request<PrizeWithBlockchainData, any>({
+      this.request<IndividualPrizeWithBalance, any>({
         path: `/prizes/${slug}`,
         method: 'GET',
         format: 'json',
