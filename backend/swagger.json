@@ -4341,6 +4341,39 @@
         ],
         "x-nestia-method": "POST"
       }
+    },
+    "/wallet/send_usdc_transaction": {
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendUsdcTransactionDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.send_usdc_transaction.sendTransaction",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
     }
   },
   "components": {
@@ -7458,6 +7491,57 @@
           "s",
           "r",
           "hash"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "SendUsdcTransactionDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "receiver": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "deadline": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "v": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "r": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "s": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "ethSignedMessageHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "amount",
+          "receiver",
+          "deadline",
+          "v",
+          "r",
+          "s",
+          "ethSignedMessageHash"
         ],
         "x-typia-jsDocTags": []
       }

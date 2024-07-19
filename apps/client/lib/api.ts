@@ -625,6 +625,16 @@ export interface AddUsdcFundsDto {
   hash: string;
 }
 
+export interface SendUsdcTransactionDto {
+  amount: number;
+  receiver: string;
+  deadline: number;
+  v: number;
+  r: string;
+  s: string;
+  ethSignedMessageHash: string;
+}
+
 export namespace Indexer {
   /**
    * No description
@@ -1772,6 +1782,19 @@ export namespace Wallet {
     };
     export type RequestQuery = {};
     export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name SendUsdcTransactionCreate
+   * @request POST:/wallet/send_usdc_transaction
+   */
+  export namespace SendUsdcTransactionCreate {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = SendUsdcTransactionDto;
     export type RequestHeaders = {};
     export type ResponseBody = WalletResponse;
   }
@@ -3272,6 +3295,25 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         path: `/wallet/fund_raisers/${contractAddress}/end_campaign`,
         method: 'POST',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name SendUsdcTransactionCreate
+     * @request POST:/wallet/send_usdc_transaction
+     */
+    sendUsdcTransactionCreate: (
+      data: SendUsdcTransactionDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/send_usdc_transaction`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
