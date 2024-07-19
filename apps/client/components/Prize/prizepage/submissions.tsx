@@ -70,7 +70,7 @@ export default function Submissions({
               })
             }
           >
-            Participate
+            Join Contest
           </Button>
         ))}
       <Title order={3} style={{ textAlign: 'left' }}>
@@ -78,7 +78,7 @@ export default function Submissions({
       </Title>
       {submissions.map((submission: SubmissionWithBlockchainData) => (
         <SubmissionsCard
-         username={submission.user.username}
+          username={submission.user.username}
           fullname={submission.user.name}
           contractAddress={contractAddress}
           hash={submission.submissionHash}

@@ -1,9 +1,10 @@
 'use client';
 
-import { Button, Input } from '@mantine/core';
+import { Button, Input ,Text} from '@mantine/core';
 import { useState } from 'react';
 import { subscribeToNewsletter } from 'utils/actions';
 import { toast } from 'sonner';
+import { IconBell, IconBellRinging, IconMailFilled } from '@tabler/icons-react';
 
 export default function SubscriptionForm() {
   const [email, setEmail] = useState('');
@@ -25,11 +26,13 @@ export default function SubscriptionForm() {
   };
 
   return (
-    <div className="rounded-xl p-2 shadow-lg w-1/3 bg-gradient-to-r from-cyan-500 to-blue-500">
-      <div className="font-bold ml-2">Subscribe to our Newsletter!</div>
+    <div className="rounded-xl p-3 shadow-lg w-full   bg-gradient-to-r bg-cyan-50">
+      <div className="font-bold ml-2 flex items-center space-x-2">
+        <IconBell /> <Text fw='bold'>Subscribe to our Newsletter!</Text>
+      </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="flex items-center">
+        <div className="lg:flex lg:space-x-2 space-y-2 lg:space-y-0 items-center ">
           <Input
             type="email"
             id="EMAIL"
@@ -38,9 +41,10 @@ export default function SubscriptionForm() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="example@gmail.com"
             required
-            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            leftSection={<IconMailFilled />}
+            className="w-full lg:w-2/3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <Button type="submit" className="w-[40%]" loading={loading}>
+          <Button type="submit" className="w-full lg:w-1/3 bg-[#4f8597]" loading={loading}>
             SUBSCRIBE
           </Button>
         </div>
