@@ -9,7 +9,6 @@ import {
   Loader,
   Text,
   TextInput,
-  Textarea,
 } from '@mantine/core';
 
 import useAppUser from '@/components/hooks/useAppUser';
@@ -17,8 +16,9 @@ import { Api } from '@/lib/api';
 import { sleep } from '@/lib/utils';
 import { useDebouncedValue } from '@mantine/hooks';
 import { usePrivy } from '@privy-io/react-auth';
-import { useRouter } from 'next/router';
-import { ChangeEvent, useCallback, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import type { ChangeEvent } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import { toast } from 'sonner';
 
@@ -35,7 +35,7 @@ export default function Details() {
   const { createNewUser } = useAppUser();
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: () => {
-      router.push('/prize/explore').then(console.log).catch(console.error);
+      router.push('/prize/explore')
     },
   });
 
@@ -110,6 +110,7 @@ export default function Details() {
         setUsernameLoading(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [debouncedUsername],
   );
 
@@ -137,7 +138,7 @@ export default function Details() {
         />
 
         <Flex>
-          {usernameLoading && <Loader m="xs" size={'xs'} />}
+          {usernameLoading ? <Loader m="xs" size="xs" /> : null}
           {!usernameLoading &&
             debouncedUsername.length > 0 &&
             (exists && debouncedUsername.length > 0 ? (
