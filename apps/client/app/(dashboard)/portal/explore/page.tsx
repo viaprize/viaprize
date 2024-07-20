@@ -19,7 +19,7 @@ export default function ExplorePortal({ searchParams }: { searchParams: SearchPa
           <Text size="md" fw="initial" mt="xs" ml="md">
             you can explore fundraisers and work on them
           </Text>
-          <Group m='md' className="max-sm:ml-7">
+          <Group m="md" className="max-sm:ml-7">
             <Link href="/portal/about">
               <Button component="a">About Fundraisers</Button>
             </Link>

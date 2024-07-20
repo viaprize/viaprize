@@ -107,9 +107,11 @@ export default function SearchFiltersPortals() {
           <Button onClick={open} variant="outline" leftSection={<IconFilter />}>
             Filter
           </Button>
-          <Menu shadow="md" width={200} >
+          <Menu shadow="md" width={200}>
             <Menu.Target>
-              <Button variant='outline' leftSection={<IconAdjustmentsAlt/>}>Sort</Button>
+              <Button variant="outline" leftSection={<IconAdjustmentsAlt />}>
+                Sort
+              </Button>
             </Menu.Target>
 
             <Menu.Dropdown>

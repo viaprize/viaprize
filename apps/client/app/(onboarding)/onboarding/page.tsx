@@ -35,7 +35,7 @@ export default function Details() {
   const { createNewUser } = useAppUser();
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: () => {
-      router.push('/prize/explore')
+      router.push('/prize/explore');
     },
   });
 

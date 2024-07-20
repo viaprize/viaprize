@@ -13,7 +13,11 @@ import { Editor as NovalEditor } from 'novel';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-export default function SubmissionEditor({ submission }: { submission : FetchSubmissionDto}) {
+export default function SubmissionEditor({
+  submission,
+}: {
+  submission: FetchSubmissionDto;
+}) {
   console.log(submission);
   const [content, setContent] = useState<JSONContent | undefined>(
     JSON.parse(submission.submissionDescription) as JSONContent,
@@ -109,4 +113,3 @@ export default function SubmissionEditor({ submission }: { submission : FetchSub
     </div>
   );
 }
-

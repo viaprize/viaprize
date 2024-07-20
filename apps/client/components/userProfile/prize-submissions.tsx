@@ -18,7 +18,7 @@ export default function ProfilePrizeSubmission({ params }: { params: { id: strin
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
       {data.data.map((submission) => (
         <SubmissionsCard
-        username=''
+          username=""
           allowVoting={false}
           contractAddress=""
           description={submission.submissionDescription}

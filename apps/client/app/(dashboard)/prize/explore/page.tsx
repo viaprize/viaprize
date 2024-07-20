@@ -16,7 +16,7 @@ function ExplorePage() {
           <Text size="md" fw="initial" mt="xs" ml="md">
             you can explore prizes and work on them
           </Text>
-          <Group m='md' className="max-sm:ml-7">
+          <Group m="md" className="max-sm:ml-7">
             <Link href="/prize/about">
               <Button component="a">About Prizes</Button>
             </Link>

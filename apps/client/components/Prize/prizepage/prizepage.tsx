@@ -226,7 +226,7 @@ function FundUsdcCard({
               void loginUser();
             }}
           >
-            Connect Wallet 
+            Connect Wallet
           </Button>
         )}
       </Group>

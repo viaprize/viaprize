@@ -36,7 +36,7 @@ export default function HistoryCard({
   imageUrl,
   id,
   category,
-  contestants
+  contestants,
 }: HistoryCardProps) {
   const statusColor = status.toLowerCase() === 'won' ? 'green' : 'yellow';
 
@@ -63,9 +63,7 @@ export default function HistoryCard({
       <Group mt="xs" justify="space-between ">
         <div className="flex items-center space-x-2">
           <PiTimerFill color="red" />
-          <div className='text-red-600 font-bold'>
-            Time is up!
-          </div>
+          <div className="text-red-600 font-bold">Time is up!</div>
         </div>
         {/* {datePosted?.length > 0 ? (
           <Badge color="blue" variant="light" p="sm">

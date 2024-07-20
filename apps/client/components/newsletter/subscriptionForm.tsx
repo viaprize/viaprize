@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Input ,Text} from '@mantine/core';
+import { Button, Input, Text } from '@mantine/core';
 import { useState } from 'react';
 import { subscribeToNewsletter } from 'utils/actions';
 import { toast } from 'sonner';
@@ -28,7 +28,7 @@ export default function SubscriptionForm() {
   return (
     <div className="rounded-xl p-3 shadow-lg w-full   bg-gradient-to-r bg-cyan-50">
       <div className="font-bold ml-2 flex items-center space-x-2">
-        <IconBell /> <Text fw='bold'>Subscribe to our Newsletter!</Text>
+        <IconBell /> <Text fw="bold">Subscribe to our Newsletter!</Text>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -44,7 +44,11 @@ export default function SubscriptionForm() {
             leftSection={<IconMailFilled />}
             className="w-full lg:w-2/3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <Button type="submit" className="w-full lg:w-1/3 bg-[#4f8597]" loading={loading}>
+          <Button
+            type="submit"
+            className="w-full lg:w-1/3 bg-[#4f8597]"
+            loading={loading}
+          >
             SUBSCRIBE
           </Button>
         </div>

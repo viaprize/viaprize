@@ -79,5 +79,4 @@ function EditorsPage() {
   );
 }
 
-
 export default EditorsPage;
