@@ -85,7 +85,7 @@ export default function Home() {
               The home for all your crowdfunding needs
             </h1>
             <Flex gap="md" wrap="wrap" className="sm:w-[60%] lg:w-[70%]">
-              <Link href="/prize/explore" >
+              <Link href="/prize/explore">
                 <Button
                   className="bg-gradient-to-r from-[#005A6D] to-[#147EA3] w-full"
                   color="primary"

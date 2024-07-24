@@ -12,7 +12,7 @@ interface CSVData {
   WonRefunded: string; // Assuming this is a string, adjust according to actual data
   AwardedUSDe: string;
   WinnersAmount: string;
-  ContestantsCount:number;
+  ContestantsCount: number;
   Transactionlinks: string;
   Awarded: string;
   RefundedUSDe: string;
