@@ -45,144 +45,6 @@
         "x-nestia-method": "POST"
       }
     },
-    "/pacts": {
-      "post": {
-        "tags": [],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreatePact"
-              }
-            }
-          },
-          "required": true,
-          "x-nestia-encrypted": false
-        },
-        "responses": {
-          "201": {
-            "description": "The created pact object.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Pact"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "x-nestia-namespace": "pacts.create",
-        "x-nestia-jsDocTags": [
-          {
-            "name": "summary",
-            "text": [
-              {
-                "text": "Create Pact by passing pact data",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "param",
-            "text": [
-              {
-                "text": "createUserType",
-                "kind": "parameterName"
-              },
-              {
-                "text": " ",
-                "kind": "space"
-              },
-              {
-                "text": "- The user creation Interface.",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "see",
-            "text": [
-              {
-                "text": "{CreatePact}",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "returns",
-            "text": [
-              {
-                "text": "The created pact object.",
-                "kind": "text"
-              }
-            ]
-          }
-        ],
-        "x-nestia-method": "POST"
-      }
-    },
-    "/pacts/{address}": {
-      "get": {
-        "tags": [],
-        "parameters": [
-          {
-            "name": "address",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "description": "",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns all pacts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Pact.Nullable"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "x-nestia-namespace": "pacts.findOne",
-        "x-nestia-jsDocTags": [
-          {
-            "name": "summary",
-            "text": [
-              {
-                "text": "Get all pacts of application",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "see",
-            "text": [
-              {
-                "text": "{Pact}",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "returns",
-            "text": [
-              {
-                "text": "Returns all pacts",
-                "kind": "text"
-              }
-            ]
-          }
-        ],
-        "x-nestia-method": "GET"
-      }
-    },
     "/portals/clear_cache": {
       "get": {
         "tags": [],
@@ -1993,45 +1855,6 @@
         "x-nestia-method": "GET"
       }
     },
-    "/portals/alkdslkf": {
-      "get": {
-        "tags": [],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Http200Response"
-                }
-              }
-            },
-            "x-nestia-encrypted": false
-          }
-        },
-        "description": "The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals",
-        "x-nestia-namespace": "portals.alkdslkf.testing",
-        "x-nestia-jsDocTags": [
-          {
-            "name": "date",
-            "text": [
-              {
-                "text": "9/25/2023 - 5:35:35 AM",
-                "kind": "text"
-              }
-            ]
-          },
-          {
-            "name": "async"
-          },
-          {
-            "name": "returns"
-          }
-        ],
-        "x-nestia-method": "GET"
-      }
-    },
     "/price/usd_to_eth": {
       "get": {
         "tags": [],
@@ -2211,7 +2034,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PrizeWithBlockchainData"
+                  "$ref": "#/components/schemas/IndividualPrizeWithBalance"
                 }
               }
             },
@@ -2541,6 +2364,73 @@
         "x-nestia-namespace": "prizes.submission.EditSubmission",
         "x-nestia-jsDocTags": [],
         "x-nestia-method": "PATCH"
+      }
+    },
+    "/prizes/{slug}/participate": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.participate.participate",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/prizes/{slug}/contestants": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.contestants.getContestants",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
       }
     },
     "/prizes/{id}/comment": {
@@ -3437,6 +3327,38 @@
         "x-nestia-method": "GET"
       }
     },
+    "/prizes/address/{id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.address.address",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/users": {
       "post": {
         "tags": [],
@@ -3858,243 +3780,604 @@
         ],
         "x-nestia-method": "GET"
       }
+    },
+    "/wallet/prize/{contract_address}/start_submission": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.start_submission.startSubmission",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/end_submission": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.end_submission.endSubmission",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/start_voting": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.start_voting.startVoting",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/end_voting": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.end_voting.endVoting",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/change_submission": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeSubmissionDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.change_submission.changeSubmission",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/change_voting": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeVotingDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.change_voting.changeVoting",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/end_dispute": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.end_dispute.endDispute",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/end_dispute_early": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.end_dispute_early.endEarlyDisputePeriod",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/vote": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoteDTO"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.vote.vote",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/prize/{contract_address}/add_usdc_funds": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUsdcFundsDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.prize.add_usdc_funds.addUsdc",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/fund_raisers/{contract_address}/end_campaign": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "x-nestia-namespace": "wallet.fund_raisers.end_campaign.endCampaign",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "security",
+            "text": [
+              {
+                "text": "bearer",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/send_usdc_transaction": {
+      "post": {
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendUsdcTransactionDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.send_usdc_transaction.sendTransaction",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
     }
   },
   "components": {
     "schemas": {
-      "CreatePact": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "Name of the pact i.e the title, which is gotten in the pact form",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "johnsmith",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "terms": {
-            "description": "Terms of the pact i.e the Description",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "test",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "address": {
-            "description": "Address of the pact on the blockchain",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "0xe7399b79838acc8caaa567fF84e5EFd0d11BB010",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "maxLength": 44,
-            "x-typia-typeTags": [
-              {
-                "target": "string",
-                "name": "MaxLength<44>",
-                "kind": "maxLength",
-                "value": 44,
-                "validate": "$input.length <= 44",
-                "exclusive": true
-              }
-            ]
-          },
-          "transactionHash": {
-            "description": "Transaction hash of the pact on the blockchain",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "0x2e8937d96e633c82df2f8f5a19aafa132795496cd98d0ca3d3c336a6c79f09e4",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "maxLength": 66,
-            "x-typia-typeTags": [
-              {
-                "target": "string",
-                "name": "MaxLength<66>",
-                "kind": "maxLength",
-                "value": 66,
-                "validate": "$input.length <= 66",
-                "exclusive": true
-              }
-            ]
-          },
-          "blockHash": {
-            "description": "Block hash of the pact on the blockchain",
-            "x-typia-jsDocTags": [
-              {
-                "name": "example",
-                "text": [
-                  {
-                    "text": "0x2e8937d96e633c82df2f8f5a19aafa132795496cd98d0ca3d3c336a6c79f09e4",
-                    "kind": "text"
-                  }
-                ]
-              }
-            ],
-            "x-typia-required": false,
-            "x-typia-optional": true,
-            "type": "string"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "name",
-          "terms",
-          "address",
-          "transactionHash"
-        ],
-        "description": "Interface of Create Pactt , using this interface it create a new pact in pact.service.ts",
-        "x-typia-jsDocTags": [
-          {
-            "name": "see",
-            "text": [
-              {
-                "text": "",
-                "kind": "text"
-              },
-              {
-                "text": "{@link ",
-                "kind": "link"
-              },
-              {
-                "text": "PactsService ",
-                "kind": "linkText"
-              },
-              {
-                "text": "}",
-                "kind": "link"
-              }
-            ]
-          }
-        ]
-      },
-      "Pact": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "name": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "terms": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "address": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "transactionHash": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "blockHash": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          }
-        },
-        "nullable": false,
-        "required": [
-          "id",
-          "name",
-          "terms",
-          "address",
-          "transactionHash",
-          "blockHash"
-        ],
-        "x-typia-jsDocTags": []
-      },
-      "Pact.Nullable": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "number"
-          },
-          "name": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "terms": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "address": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "transactionHash": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          },
-          "blockHash": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string"
-          }
-        },
-        "nullable": true,
-        "required": [
-          "id",
-          "name",
-          "terms",
-          "address",
-          "transactionHash",
-          "blockHash"
-        ],
-        "x-typia-jsDocTags": []
-      },
       "Http200Response": {
         "type": "object",
         "properties": {
@@ -4676,6 +4959,14 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "contestants": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
           "submissions": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -4719,6 +5010,7 @@
           "updated_at",
           "images",
           "title",
+          "contestants",
           "submissions",
           "slug",
           "user"
@@ -5774,6 +6066,41 @@
             "x-typia-optional": false,
             "type": "number"
           },
+          "dispute_period_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "refunded": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "voting_period_active_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "is_active_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submission_perio_active_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "contributors": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
           "balance": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -5893,6 +6220,14 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "contestants": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
           "submissions": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -5923,6 +6258,12 @@
           "distributed",
           "submission_time_blockchain",
           "voting_time_blockchain",
+          "dispute_period_time_blockchain",
+          "refunded",
+          "voting_period_active_blockchain",
+          "is_active_blockchain",
+          "submission_perio_active_blockchain",
+          "contributors",
           "balance",
           "id",
           "description",
@@ -5940,8 +6281,242 @@
           "updated_at",
           "images",
           "title",
+          "contestants",
           "submissions",
           "slug",
+          "user"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "IndividualPrizeWithBalance": {
+        "type": "object",
+        "properties": {
+          "contributors": {
+            "$ref": "#/components/schemas/Contributions"
+          },
+          "slug": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "description": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "images": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "title": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "distributed": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submission_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "voting_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "dispute_period_time_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "refunded": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "voting_period_active_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "is_active_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submission_perio_active_blockchain": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "balance": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "isAutomatic": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "submissionTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "votingTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "startVotingDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "startSubmissionDate": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "proposer_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "contract_address": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "admins": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "judges": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "x-typia-required": false,
+              "x-typia-optional": true,
+              "type": "string"
+            }
+          },
+          "proficiencies": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "x-typia-required": true,
+              "x-typia-optional": false,
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "contestants": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "submissions": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Submission"
+            }
+          },
+          "comments": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PrizesComments"
+            }
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "contributors",
+          "slug",
+          "description",
+          "images",
+          "title",
+          "distributed",
+          "submission_time_blockchain",
+          "voting_time_blockchain",
+          "dispute_period_time_blockchain",
+          "refunded",
+          "voting_period_active_blockchain",
+          "is_active_blockchain",
+          "submission_perio_active_blockchain",
+          "balance",
+          "id",
+          "isAutomatic",
+          "submissionTime",
+          "votingTime",
+          "startVotingDate",
+          "startSubmissionDate",
+          "proposer_address",
+          "contract_address",
+          "admins",
+          "proficiencies",
+          "priorities",
+          "created_at",
+          "updated_at",
+          "contestants",
+          "submissions",
           "user"
         ],
         "x-typia-jsDocTags": []
@@ -6788,6 +7363,186 @@
           }
         },
         "nullable": false,
+        "x-typia-jsDocTags": []
+      },
+      "WalletResponse": {
+        "type": "object",
+        "properties": {
+          "hash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "hash"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "ChangeSubmissionDto": {
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "minutes"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "ChangeVotingDto": {
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "minutes"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "VoteDTO": {
+        "type": "object",
+        "properties": {
+          "submissionHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "v": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "s": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "r": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "amount": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "submissionHash",
+          "v",
+          "s",
+          "r",
+          "amount"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "AddUsdcFundsDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "deadline": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "v": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "s": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "r": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "hash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "amount",
+          "deadline",
+          "v",
+          "s",
+          "r",
+          "hash"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "SendUsdcTransactionDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "receiver": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "deadline": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "v": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "r": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "s": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "ethSignedMessageHash": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "amount",
+          "receiver",
+          "deadline",
+          "v",
+          "r",
+          "s",
+          "ethSignedMessageHash"
+        ],
         "x-typia-jsDocTags": []
       }
     },

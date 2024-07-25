@@ -15,6 +15,7 @@ import { UsersService } from './users.service';
  * The Users controller is responsible for handling requests from the client related to user data.
  * This includes creating a new user, getting a user by ID, and getting a user by username.
  */
+
 @Controller('users')
 export class UsersController {
   constructor(
@@ -74,6 +75,8 @@ export class UsersController {
       return cacheUser;
     }
     const user = await this.usersService.findOneByAuthId(authId);
+
+    console.log({ user });
     await this.cacheManager.set(authId, user);
     return user;
   }
@@ -129,27 +132,17 @@ export class UsersController {
     @TypedParam('username') username: string,
   ): Promise<PrizeWithBlockchainData[]> {
     const prizes = await this.usersService.findUserPrizesByUsername(username);
-    const results = await this.blockchainService.getPrizesPublicVariables(
+    const results = (await this.blockchainService.getPrizesV2PublicVariables(
       prizes.map((prize) => prize.contract_address),
-    );
-
-    let start = 0;
-    let end = 4;
-
-    const prizeWithBalanceData = prizes.map((prize) => {
-      const portalResults = results.slice(start, end);
-      start += 4;
-      end += 4;
+      ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
+    )) as [[bigint, boolean, bigint, bigint]];
+    const prizeWithBalanceData = prizes.map((prize, index) => {
       return {
         ...prize,
-        balance: parseInt((portalResults[0].result as bigint).toString()),
-        distributed: portalResults[1].result as boolean,
-        submission_time_blockchain: parseInt(
-          (portalResults[2].result as bigint).toString(),
-        ),
-        voting_time_blockchain: parseInt(
-          (portalResults[3].result as bigint).toString(),
-        ),
+        balance: parseInt(results[index][0].toString()),
+        distributed: results[index][1],
+        submission_time_blockchain: parseInt(results[index][2].toString()),
+        voting_time_blockchain: parseInt(results[index][3].toString()),
       } as PrizeWithBlockchainData;
     });
 

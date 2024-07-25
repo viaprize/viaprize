@@ -12,6 +12,7 @@ export class SubmissionService {
     @InjectRepository(Submission)
     private submissionRepository: Repository<Submission>,
   ) {}
+
   async create(
     submission: CreateSubmissionDto,
     user: User,
@@ -35,7 +36,9 @@ export class SubmissionService {
       skip: (paginationOptions.page - 1) * paginationOptions.limit,
       take: paginationOptions.limit,
       where: paginationOptions.where,
-      relations: ['user'],
+      relations: {
+        user: true,
+      },
     });
   }
 

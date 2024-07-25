@@ -4,7 +4,13 @@ import CommentForm from './comment-form';
 import CommentList from './comment-list';
 
 export default async function CommentSection({ portalId }: { portalId: string }) {
-  const portalComments = (await new Api().portals.commentDetail(portalId)).data;
+  const portalComments = (
+    await new Api().portals.commentDetail(portalId, {
+      next: {
+        tags: ['portalComments'],
+      },
+    })
+  ).data;
   console.log(portalComments, 'portal');
 
   return (

@@ -24,6 +24,7 @@ import { MailService } from 'src/mail/mail.service';
 import { CreatePortalDto } from 'src/portals/dto/create-portal.dto';
 import { RejectProposalDto } from 'src/prizes/dto/reject-proposal.dto';
 import { UsersService } from 'src/users/users.service';
+import { addMinutes, extractMinutes, formatDateToUTC } from 'src/utils/date';
 import { infinityPagination } from 'src/utils/infinity-pagination';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
@@ -46,30 +47,6 @@ import { ExtraPortalDataService } from './services/extra-portal-data.service';
 import { PortalCommentService } from './services/portal-comments.service';
 import { PortalProposalsService } from './services/portal-proposals.service';
 import { PortalsService } from './services/portals.service';
-
-function addMinutes(date: Date, minutes: number): Date {
-  date.setMinutes(date.getMinutes() + minutes);
-
-  return date;
-}
-
-function formatDateToUTC(date) {
-  const pad = (num) => num.toString().padStart(2, '0');
-
-  const year = date.getUTCFullYear();
-  const month = pad(date.getUTCMonth() + 1); // getUTCMonth() returns 0-11
-  const day = pad(date.getUTCDate());
-  const hours = pad(date.getUTCHours());
-  const minutes = pad(date.getUTCMinutes());
-  const seconds = pad(date.getUTCSeconds());
-
-  return `${year}${month}${day}${hours}${minutes}${seconds}`;
-}
-
-function extractMinutes(isoString: string) {
-  const minutesMatch = isoString.match(/:(\d{2})/);
-  return minutesMatch ? parseInt(minutesMatch[1]) : null;
-}
 
 // Example usage:
 @Controller('portals')
@@ -215,27 +192,22 @@ export class PortalsController {
         21600000,
       );
     }
-    const results = await this.blockchainService.getPortalsPublicVariables(
+    const results = (await this.blockchainService.getPassThroughPublicVariables(
       portalWithoutBalance.data.map((portal) => portal.contract_address),
-    );
-    console.log({ results });
-    let start = 0;
-    let end = 4;
-    const portalWithBalanceData: PortalWithBalance[] =
-      portalWithoutBalance.data.map((portal) => {
-        const portalResults = results.slice(start, end);
-        start += 4;
-        end += 4;
+      ['totalFunds', 'totalFunds', 'totalRewards', 'isActive'],
+    )) as [[bigint, bigint, bigint, boolean]];
+
+    const portalWithBalanceData = portalWithoutBalance.data.map(
+      (portal, index) => {
         return {
           ...portal,
-          balance: parseInt((portalResults[0].result as bigint).toString()),
-          totalFunds: parseInt((portalResults[1].result as bigint).toString()),
-          totalRewards: parseInt(
-            (portalResults[2].result as bigint).toString(),
-          ),
-          isActive: portalResults[3].result as boolean,
+          balance: parseInt((results[index][0] as bigint).toString()),
+          totalFunds: parseInt((results[index][1] as bigint).toString()),
+          totalRewards: parseInt((results[index][2] as bigint).toString()),
+          isActive: results[index][3] as boolean,
         } as PortalWithBalance;
-      });
+      },
+    );
     return {
       data: portalWithBalanceData,
       hasNextPage: portalWithoutBalance.hasNextPage,
@@ -256,9 +228,11 @@ export class PortalsController {
   ): Promise<PortalWithBalance> {
     console.log(slug, 'slug');
     const portal = await this.portalsService.findOneBySlug(slug);
-    const results = await this.blockchainService.getPortalPublicVariables(
-      portal.contract_address,
-    );
+    console.log({ portal });
+    const results = (await this.blockchainService.getPassThroughPublicVariables(
+      [portal.contract_address],
+      ['totalFunds', 'totalFunds', 'totalRewards', 'isActive'],
+    )) as [[bigint, bigint, bigint, boolean]];
     const contributors = await this.blockchainService.getPortalContributors(
       portal.contract_address,
     );
@@ -276,12 +250,14 @@ export class PortalsController {
       data: await Promise.all(ContributorsWithUser),
     };
 
+    console.log({ results });
+
     return {
       ...portal,
-      balance: parseInt((results[0].result as bigint).toString()),
-      totalFunds: parseInt((results[1].result as bigint).toString()),
-      totalRewards: parseInt((results[2].result as bigint).toString()),
-      isActive: results[3].result as boolean,
+      balance: parseFloat(results[0][1].toString()),
+      totalFunds: parseFloat(results[0][1].toString()),
+      totalRewards: parseFloat(results[0][2].toString()),
+      isActive: results[0][3] as boolean,
       contributors: resultsWithContributors,
     };
   }
@@ -876,20 +852,6 @@ export class PortalsController {
     const slug = await this.portalsService.getPortalSlugById(id);
     return {
       slug,
-    };
-  }
-  /**
-   * The function `getSlugById` is an asynchronous function that takes an id parameter returns the slug associated with id in portals
-   *
-   * @date 9/25/2023 - 5:35:35 AM
-   * @async
-   * @returns {Promise<Http200Response>}
-   */
-  @Get('/alkdslkf')
-  async testing(): Promise<Http200Response> {
-    await this.portalProposalsService.updateFundingGoal();
-    return {
-      message: 'done',
     };
   }
 }

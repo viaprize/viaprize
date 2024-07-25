@@ -1,19 +1,15 @@
 import type { User } from '@/lib/api';
-import {
-  prepareWritePrizeFactory,
-  prepareWritePrizeJudgesFactory,
-  writePrizeFactory,
-  writePrizeJudgesFactory,
-} from '@/lib/smartContract';
+import { ADMINS, USDC } from '@/lib/constants';
+import { prepareWritePrizeFactoryV2, writePrizeFactoryV2 } from '@/lib/smartContract';
 import { Badge, Button, Card, Group, Image, Modal, Text } from '@mantine/core';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
+import Link from 'next/link';
 import router from 'next/router';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { usePrize } from '../hooks/usePrize';
 import ViewDetails from './details';
-import Link from 'next/link';
-import { IconCircleCheck } from '@tabler/icons-react';
 
 interface AdminCardProps {
   images: string[];
@@ -27,9 +23,45 @@ interface AdminCardProps {
   proposerFeePercentage: number;
   platfromFeePercentage: number;
   isAccepted?: boolean;
-  submissionTime: number;
+  startVotingDate: string;
+  startSubmissionDate: string;
   judges?: string[];
 }
+
+// Utility function to format dates
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toString();
+};
+
+// Utility function to calculate remaining time
+const calculateRemainingTime = (startDateString: string, durationMinutes: number) => {
+  const startDate = new Date(startDateString);
+  const endDate = new Date(startDate.getTime() + durationMinutes * 60000);
+  const now = new Date();
+
+  const elapsedTime = now.getTime() - startDate.getTime();
+  const remainingTime = endDate.getTime() - now.getTime();
+
+  let remainingDays = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+  let remainingHours = Math.floor(
+    (remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+  );
+  let remainingMinutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (elapsedTime < 0) {
+    remainingDays = Math.floor(durationMinutes / (60 * 24));
+    remainingHours = Math.floor((durationMinutes % (60 * 24)) / 60);
+    remainingMinutes = durationMinutes % 60;
+  }
+
+  return {
+    endDate: endDate.toString(),
+    remainingDays,
+    remainingHours,
+    remainingMinutes,
+  };
+};
 
 function AdminAcceptedCard({
   id,
@@ -40,7 +72,8 @@ function AdminAcceptedCard({
   title,
   user,
   voting,
-  submissionTime,
+  startSubmissionDate,
+  startVotingDate,
   judges,
   platfromFeePercentage,
   proposerFeePercentage,
@@ -56,45 +89,47 @@ function AdminAcceptedCard({
     });
     let out;
     if (judges && judges.length > 0) {
-      const requestJudges = await prepareWritePrizeJudgesFactory({
-        functionName: 'createViaPrizeJudges',
-        args: [
-          admins as `0x${string}`[],
-          [
-            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
-          ] as `0x${string}`[],
-          judges as `0x${string}`[],
-          BigInt(platfromFeePercentage),
-          BigInt(proposerFeePercentage),
-          '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-          BigInt(submissionTime),
-          BigInt(currentTimestamp.current),
-        ],
-      });
-      out = await writePrizeJudgesFactory(requestJudges);
+      // const requestJudges = await prepareWritePrizeJudgesFactory({
+      //   functionName: 'createViaPrizeJudges',
+      //   args: [
+      //     admins as `0x${string}`[],
+      //     [
+      //       '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
+      //       '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
+      //       '0x598B7Cd048e97E1796784d92D06910F359dA5913',
+      //     ] as `0x${string}`[],
+      //     judges as `0x${string}`[],
+      //     BigInt(platfromFeePercentage),
+      //     BigInt(proposerFeePercentage),
+      //     '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
+      //     BigInt(submissionTime),
+      //     BigInt(currentTimestamp.current),
+      //   ],
+      // });
+      // out = await writePrizeJudgesFactory(requestJudges);
+      toast.error("Judges aren't supported yet");
       console.log(out, 'outJudges');
     } else {
-      const requestJudges = await prepareWritePrizeFactory({
+      console.log({ admins });
+      const requestJudges = await prepareWritePrizeFactoryV2({
         functionName: 'createViaPrize',
         args: [
-          admins as `0x${string}`[],
-          [
-            '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-            '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-            '0x598B7Cd048e97E1796784d92D06910F359dA5913',
-          ] as `0x${string}`[],
+          BigInt(currentTimestamp.current),
+          admins[0] as `0x${string}`,
+          ADMINS,
           BigInt(platfromFeePercentage),
           BigInt(proposerFeePercentage),
-          '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-          BigInt(submissionTime),
-          BigInt(currentTimestamp.current),
+          USDC,
         ],
       });
-      out = await writePrizeFactory(requestJudges);
+      console.log(requestJudges, 'requestJudges');
+      out = await writePrizeFactoryV2(requestJudges).catch((_) => {
+        toast.error('Transaction Failed');
+        toast.dismiss(firstLoadingToast);
+      });
       console.log(out, 'out');
     }
+    if (!out) return toast.error('Transaction Failed');
     const waitForTransactionOut = await waitForTransaction({
       hash: out.hash,
       confirmations: 1,
@@ -130,6 +165,9 @@ function AdminAcceptedCard({
     await router.push('/prize/explore');
     toast.success('Redirected to Prize Explore Page');
   };
+
+  const submissionTime = calculateRemainingTime(startSubmissionDate, submission);
+
   return (
     <>
       <Card shadow="sm" padding="lg" radius="md" withBorder my="md">
@@ -151,7 +189,9 @@ function AdminAcceptedCard({
         </p>
         <Group justify="space-evenly" mt="md" mb="xs">
           <Text fw={500} color="red">
-            Submission Days is {submission} Days
+            Time from submission start to deadline: {submissionTime.remainingDays} days{' '}
+            {submissionTime.remainingHours} hours {submissionTime.remainingMinutes}{' '}
+            minutes
           </Text>
           <Button
             onClick={() => {
@@ -179,6 +219,8 @@ function AdminAcceptedCard({
           title={title}
           submission={submission}
           voting={voting}
+          startVotingDate={startVotingDate}
+          startSubmissionDate={startSubmissionDate}
         />
       </Modal>
     </>

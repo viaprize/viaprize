@@ -1,6 +1,6 @@
+import * as nanoid from 'nanoid';
 export async function generateId(size = 5) {
-  const { customAlphabet } = await import('nanoid');
-  const id = customAlphabet(
+  const id = nanoid.customAlphabet(
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789',
     size,
   );

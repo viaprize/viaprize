@@ -7,10 +7,13 @@
 import { env } from '@env';
 import { getAccessToken } from '@privy-io/react-auth';
 import { createClient } from '@supabase/supabase-js';
+import { clsx, type ClassValue } from 'clsx';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
-import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { encodePacked, keccak256 } from 'viem';
+import { USDC } from './constants';
+import { format, parse } from 'date-fns';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
@@ -114,6 +117,15 @@ export const calculateRemainingTime = (submissionDate: string) => {
   const days = Math.floor(remainingTime / (24 * 60 * 60 * 1000));
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
 };
+
+export function formatDateString(date: Date): string {
+  // Parse the date string to a Date object
+  // Format the Date object to the desired format
+  const formattedDate = format(date, 'd MMMM yyyy');
+
+  return formattedDate;
+}
+
 export const calculateDeadline = (createdDate: Date, endDate: Date) => {
   const remainingTime = endDate.getTime() - createdDate.getTime();
   if (remainingTime <= 0) {
@@ -154,8 +166,6 @@ export const formatDate = (date: string): string => {
   });
   return format.format(new Date(date));
 };
-
-export const ADMINS = [];
 
 export function slugify(str: string) {
   return str
@@ -226,4 +236,95 @@ export const storeFiles = async (files: File[]) => {
   }
   console.log(data.path, 'image path');
   return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaigns/${data.path}`;
+};
+export const parseUsdc = (value: bigint) => parseFloat(value.toString()) / 10 ** 6;
+export const formatUsdc = (value: number) => BigInt(value * 10 ** 6);
+export const usdcSignType = ({
+  owner,
+  spender,
+  value,
+  nonce,
+  deadline,
+}: {
+  owner: string;
+  spender: string;
+  value: BigInt;
+  nonce: BigInt;
+  deadline: BigInt;
+}) => {
+  return {
+    message: {
+      owner,
+      spender,
+      value,
+      nonce,
+      deadline,
+    },
+    types: {
+      Permit: [
+        {
+          name: 'owner',
+          type: 'address',
+        },
+        {
+          name: 'spender',
+          type: 'address',
+        },
+        {
+          name: 'value',
+          type: 'uint256',
+        },
+        {
+          name: 'nonce',
+          type: 'uint256',
+        },
+        {
+          name: 'deadline',
+          type: 'uint256',
+        },
+      ],
+    },
+    primaryType: 'Permit',
+    domain: {
+      chainId: 8453,
+      verifyingContract: USDC,
+      name: 'USD Coin',
+      version: '2',
+    },
+  };
+};
+
+export function voteMessageHash(
+  submission: string,
+  amount: number,
+  nonce: number,
+  contractAddress: string,
+): string {
+  const encodedMessage = encodePacked(
+    ['string', 'bytes32', 'string', 'uint256', 'string', 'uint256', 'string', 'address'],
+    [
+      'VOTE FOR ',
+      submission as `0x${string}`,
+      ' WITH AMOUNT ',
+      BigInt(amount),
+      ' AND NONCE ',
+      BigInt(nonce),
+      ' WITH PRIZE CONTRACT ',
+      contractAddress as `0x${string}`,
+    ],
+  );
+  const messageHash = keccak256(encodedMessage);
+  return messageHash;
+}
+
+export const refundHash = () => keccak256(encodePacked(['string'], ['REFUND']));
+
+export const addDaysToDate = (date: Date, days: number) => {
+  const newDate = date.setDate(date.getDate() + days);
+  return new Date(newDate);
+};
+
+export const addMinutesToDate = (date: Date, minutes: number) => {
+  const newDate = date.setMinutes(date.getMinutes() + minutes);
+  return new Date(newDate);
 };

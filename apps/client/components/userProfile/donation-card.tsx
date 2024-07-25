@@ -1,6 +1,8 @@
 'use client';
 
 import { backendApi } from '@/lib/backend';
+import { USDC } from '@/lib/constants';
+import { usdcSignType } from '@/lib/utils';
 import { chain } from '@/lib/wagmi';
 import {
   ActionIcon,
@@ -19,12 +21,12 @@ import { useForm } from '@mantine/form';
 import { useClipboard, useDisclosure } from '@mantine/hooks';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { prepareSendTransaction, sendTransaction, waitForTransaction } from '@wagmi/core';
+import { erc20ABI, readContract } from '@wagmi/core';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { isAddress, parseEther } from 'viem';
-import { useBalance, useQuery } from 'wagmi';
-import getCryptoToUsd from '../hooks/server-actions/CryptotoUsd';
+import { hashTypedData, hexToSignature, isAddress } from 'viem';
+import { useContractRead, useWalletClient } from 'wagmi';
+import { TransactionToast } from '../custom/transaction-toast';
 import useAppUser from '../hooks/useAppUser';
 
 interface MoonpayFormValues {
@@ -39,13 +41,51 @@ interface ConversionRates {
 }
 
 export default function SendCard() {
-  const { data: conversionRates } = useQuery(['cryptoToUsd'], async () => {
-    const data = await getCryptoToUsd();
-    return {
-      ethToUsd: data.ethereum.usd,
-      usdToEth: 1 / data.ethereum.usd,
+  const { data: walletClient } = useWalletClient();
+  const getUsdcSignatureData = async (value: number) => {
+    const walletAddress = walletClient?.account.address;
+    if (!walletAddress) {
+      throw new Error('Please login to donate');
+    }
+    const amount = BigInt(value);
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000);
+    const nonce = await readContract({
+      abi: [
+        {
+          constant: true,
+          inputs: [
+            {
+              name: 'owner',
+              type: 'address',
+            },
+          ],
+          name: 'nonces',
+          outputs: [
+            {
+              name: '',
+              type: 'uint256',
+            },
+          ],
+          payable: false,
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ] as const,
+      address: USDC,
+      functionName: 'nonces',
+      args: [walletAddress],
+    });
+
+    const signData = {
+      owner: walletClient?.account.address,
+      spender: `0xC0842e4f312bd2Ea9E052Faf74b8C8A5002D7912`,
+      value: amount,
+      nonce: BigInt(nonce),
+      deadline: deadline,
     };
-  });
+
+    return signData;
+  };
   const form = useForm<MoonpayFormValues>({
     initialValues: {
       email: '',
@@ -65,8 +105,11 @@ export default function SendCard() {
   const [opened, { open, close }] = useDisclosure(false);
   const [openedChangeNow, { open: openChangeNow, close: closeChangeNow }] =
     useDisclosure(false);
-  const { data: balance, refetch } = useBalance({
-    address: wallet?.address as `0x${string}`,
+  const { data: balance, refetch } = useContractRead({
+    address: USDC as `0x${string}`,
+    abi: erc20ABI,
+    functionName: 'balanceOf',
+    args: [(wallet?.address ?? '') as `0x${string}`],
   });
 
   useEffect(() => {
@@ -82,8 +125,15 @@ export default function SendCard() {
       setLoading(false);
       return;
     }
+    if (!walletClient) {
+      toast.error('Please connect wallet');
+      setLoading(false);
+      return;
+    }
 
-    if (parseEther(amount) > balance.value) {
+    const amountInUsdcTokens = parseInt((parseFloat(amount) * 1_000_000).toString());
+
+    if (amountInUsdcTokens > balance) {
       toast.error('Insufficient Balance');
       setLoading(false);
       return;
@@ -94,22 +144,34 @@ export default function SendCard() {
         const a = (await (await backendApi()).users.usernameDetail(recieverAddress)).data;
         finalReceiverAddress = a.walletAddress;
       }
-      const config = await prepareSendTransaction({
-        to: finalReceiverAddress,
-        value: parseEther(amount),
-      });
       setRecieverAddress(finalReceiverAddress);
-      const { hash } = await sendTransaction(config);
-      toast.promise(
-        waitForTransaction({
-          hash,
-        }),
-        {
-          loading: 'Sending Transaction',
-          success: 'Transaction Sent',
-          error: 'Error Sending Transaction',
-        },
-      );
+      const signData = await getUsdcSignatureData(amountInUsdcTokens);
+
+      const hash = hashTypedData(usdcSignType(signData) as any);
+
+      const signature = await walletClient.signTypedData(usdcSignType(signData) as any);
+      const rsv = hexToSignature(signature);
+
+      const trxHash = await (
+        await backendApi()
+      ).wallet
+        .sendUsdcTransactionCreate({
+          amount: amountInUsdcTokens,
+          deadline: parseInt(signData.deadline.toString()),
+          ethSignedMessageHash: hash,
+          r: rsv.r,
+          s: rsv.s,
+          v: parseInt(rsv.v.toString()),
+          receiver: finalReceiverAddress,
+        })
+        .then((res) => res.data.hash);
+
+      toast.success(<TransactionToast hash={trxHash} title="Transaction Successful" />, {
+        duration: 6000,
+      });
+      await refetch();
+
+      window.location.reload();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       /* eslint-disable */
@@ -119,23 +181,6 @@ export default function SendCard() {
     setLoading(false);
   }, [recieverAddress, amount, balance]);
   const clipboard = useClipboard({ timeout: 500 });
-
-  const [ethAmount, setEthAmount] = useState<number | string>('');
-  const [usdAmount, setUsdAmount] = useState<number | string>('');
-
-  const handleEthChange = (value: number | string) => {
-    setEthAmount(value);
-    const convertedValue =
-      typeof value === 'number' ? value * (conversionRates!.ethToUsd ?? 0) : '';
-    setUsdAmount(convertedValue);
-  };
-
-  const handleUsdChange = (value: number | string) => {
-    setUsdAmount(value);
-    const convertedValue =
-      typeof value === 'number' ? value * (conversionRates!.usdToEth ?? 0) : '';
-    setEthAmount(convertedValue);
-  };
 
   const copyWalletAddresToClipboard = () => {
     clipboard.copy(wallet?.address ?? '');
@@ -196,7 +241,7 @@ export default function SendCard() {
           </Flex>
 
           <iframe
-            src={`https://buy.onramper.com?apiKey=pk_prod_01HKCG8FGCY3QA5EAZAJYRG6GH&mode=buy&onlyCryptos=eth_optimism&wallets=eth_optimism:${wallet?.address}&onlyCryptoNetworks=optimism`}
+            src={`https://buy.onramper.com?apiKey=pk_prod_01HKCG8FGCY3QA5EAZAJYRG6GH&mode=buy&onlyCryptos=eth_optimism&wallets=eth_optimism:${wallet?.address}&onlyCryptoNetworks=base`}
             title="Onramper Widget"
             height="630px"
             width="420px"
@@ -286,7 +331,7 @@ export default function SendCard() {
             Address : {wallet?.address}
           </Badge>
           <Badge size="lg" color="green" radius="md">
-            Balance : {balance.formatted} {balance.symbol}
+            Balance : {(parseInt(balance.toString()) / 1_000_000).toFixed(3)} USDC
           </Badge>
           {/* Total Amount Raised */}
           <Text>Network : {chain.name.toUpperCase()}</Text>
@@ -304,7 +349,7 @@ export default function SendCard() {
             allowNegative={false}
             defaultValue={0}
             value={amount}
-            max={parseInt(balance.value.toString() ?? '1000')}
+            max={parseInt(balance.toString()) / 1_000_000}
             onChange={(value) => {
               setAmount(value.toString());
             }}

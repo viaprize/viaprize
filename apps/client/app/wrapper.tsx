@@ -12,14 +12,13 @@ import '@mantine/tiptap/styles.css';
 import { PrivyProvider } from '@privy-io/react-auth';
 import { PrivyWagmiConnector } from '@privy-io/wagmi-connector';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import Script from 'next/script';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { theme } from 'utils/theme';
 import '../styles/globals.css';
 import '../styles/index.css';
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export default function WrapperLayout({
   // Layouts must accept a children prop.
@@ -41,7 +40,7 @@ export default function WrapperLayout({
           appearance: {
             theme: 'dark',
             accentColor: '#676FFF',
-            showWalletLoginFirst: true,
+            logo: 'https://www.viaprize.org/_next/image?url=%2FviaprizeBg.png&w=64&q=75',
 
             // logo: 'https://your-logo-url',
           },
@@ -51,7 +50,7 @@ export default function WrapperLayout({
           <QueryClientProvider client={queryClient}>
             <MantineProvider theme={theme} defaultColorScheme="auto">
               <ModalsProvider>
-                <Toaster />
+                <Toaster richColors />
                 <NavigationProvider>{children}</NavigationProvider>
               </ModalsProvider>
             </MantineProvider>

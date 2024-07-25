@@ -37,6 +37,7 @@ export class MailService {
         infer: true,
       },
     );
+    console.log(this.facebookLink, 'face book link');
   }
   async submission(email: string) {
     await this.mailerService.sendMail({
@@ -46,6 +47,9 @@ export class MailService {
       templateName: 'submission.hbs',
       context: {
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -60,6 +64,9 @@ export class MailService {
         name,
         proposalTitle: title,
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -74,6 +81,9 @@ export class MailService {
         name,
         proposalTitle,
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -86,6 +96,9 @@ export class MailService {
       context: {
         name,
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -106,8 +119,10 @@ export class MailService {
       context: {
         name,
         proposalTitle,
-
         telegramLink: this.telegramLink,
+        twitterLink: this.twitterLink,
+        linkedinLink: this.linkedinLink,
+        facebookLink: this.facebookLink,
       },
     });
   }
@@ -121,6 +136,9 @@ export class MailService {
         name,
         comment,
         telegramLink: this.telegramLink,
+        facebookLink: this.facebookLink,
+        linkedinLink: this.linkedinLink,
+        twitterLink: this.twitterLink,
       },
     });
   }
@@ -131,8 +149,10 @@ export class MailService {
       context: {
         name,
         proposalTitle,
-
         telegramLink: this.telegramLink,
+        facebookLink: this.facebookLink,
+        linkedinLink: this.linkedinLink,
+        twitterLink: this.twitterLink,
       },
       templateName: 'proposalSent.hbs',
     });

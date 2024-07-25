@@ -11,7 +11,7 @@ import PortalFilterDrawer from './portal-filter-drawer';
 // import Filter from "./filterComponent";
 import { useDebounce } from '@/components/hooks/useDebounce';
 import { useCallback, useEffect, useState, useTransition } from 'react';
-
+import { IconFilter, IconAdjustmentsAlt } from '@tabler/icons-react';
 type Sorts = Record<string, string>;
 
 const sorts: Sorts = {
@@ -86,7 +86,7 @@ export default function SearchFiltersPortals() {
     <div className="p-5">
       <Group mb="xs" mt="md" justify="space-between">
         <TextInput
-          icon={<IconSearch size="1rem" />}
+          leftSection={<IconSearch size="1rem" />}
           placeholder="Search"
           className="sm:w-[500px]"
           value={search}
@@ -105,10 +105,14 @@ export default function SearchFiltersPortals() {
           }
         />
         <Group justify="space-between">
-          <Button onClick={open}>Filter</Button>
+          <Button onClick={open} variant="outline" leftSection={<IconFilter />}>
+            Filter
+          </Button>
           <Menu shadow="md" width={200}>
             <Menu.Target>
-              <Button>Sort</Button>
+              <Button variant="outline" leftSection={<IconAdjustmentsAlt />}>
+                Sort
+              </Button>
             </Menu.Target>
 
             <Menu.Dropdown>

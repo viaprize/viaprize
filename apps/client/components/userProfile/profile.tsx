@@ -1,6 +1,5 @@
 'use client';
 
-import useAppUser from '@/components/hooks/useAppUser';
 import {
   Avatar,
   Badge,
@@ -13,19 +12,34 @@ import {
   Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+// import { useParams } from 'next/navigation';
 import { useQuery } from 'react-query';
 import { useUser } from '../hooks/useUser';
+import AuthWrap from './auth-wrapper';
 import SendCard from './donation-card';
 import EditProfileModal from './edit-profile-modal';
+import { notFound } from 'next/navigation';
+import useAuthPerson from '../hooks/useAuthPerson';
 
-export default function Profile() {
+export default function Profile({ params }: { params: { id: string } }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const { appUser } = useAppUser();
   const { getUserByUserName } = useUser();
+  // const params = useParams<{ id: string }>();
+  const isProfileOwner = useAuthPerson();
 
-  const { data: userData, refetch: fetchUser } = useQuery('getUserByUserName', () =>
-    getUserByUserName(appUser?.username || ''),
+  const { data: userData, refetch: fetchUser } = useQuery(
+    'getUserByUserName',
+    () => getUserByUserName(params?.id || ''),
+    {
+      onError: (error) => {
+        console.error(error);
+      },
+    },
   );
+
+  if (!userData) {
+    return notFound();
+  }
 
   return (
     <Card
@@ -39,59 +53,69 @@ export default function Profile() {
             {userData?.name}
           </Text>
           <Group justify="space-between">
-            <Text className="lg my-0">@{appUser?.username}</Text>
-            <Button size="xs" onClick={open}>
-              Edit Profile
-            </Button>
-            <Modal opened={opened} onClose={close} title="Edit Profile">
-              <EditProfileModal
-                IBio={userData?.bio || ''}
-                IName={userData?.name || ''}
-                IProficiencies={userData?.proficiencies || []}
-                IPriorities={userData?.priorities || []}
-                IAvatar={userData?.avatar || ''}
-                fetchUser={fetchUser}
-                closeModal={close}
-              />
-            </Modal>
+            <Text className="lg my-0">@{params?.id}</Text>
+            <AuthWrap>
+              <Button size="xs" onClick={open}>
+                Edit Profile
+              </Button>
+              <Modal opened={opened} onClose={close} title="Edit Profile">
+                <EditProfileModal
+                  IBio={userData?.bio || ''}
+                  IName={userData?.name || ''}
+                  IProficiencies={userData?.proficiencies || []}
+                  IPriorities={userData?.priorities || []}
+                  IAvatar={userData?.avatar || ''}
+                  fetchUser={fetchUser}
+                  closeModal={close}
+                />
+              </Modal>
+            </AuthWrap>
           </Group>
         </div>
 
-        <div>
+        {/* <div>
           <h1 className="mb-0 text-xl font-bold">Bio</h1>
           <p className="my-0">{userData?.bio}</p>
-        </div>
+        </div> */}
 
         <Box mt="md">
           <Text fw={700} mb="sm" mt="md" className="pl-1">
             Proficiencies
           </Text>
           <div className="flex flex-wrap gap-1">
-            {userData?.proficiencies.map((proficiency: string) => (
-              <Badge key={proficiency} variant="light" color="green">
-                {proficiency}
-              </Badge>
-            ))}
+            {userData?.proficiencies.map((proficiency: string) =>
+              proficiency !== '[]' ? (
+                <Badge key={proficiency} variant="light" color="green">
+                  {proficiency}
+                </Badge>
+              ) : (
+                'No Proficiencies'
+              ),
+            )}
           </div>
 
           <Text fw={700} mb="sm" mt="md" className="pl-1">
             Priorities
           </Text>
           <div className="flex flex-wrap gap-1">
-            {userData?.priorities.map((priority: string) => (
-              <Badge key={priority} variant="light" color="blue">
-                {priority}
-              </Badge>
-            ))}
+            {userData?.priorities.map((priority: string) =>
+              priority !== '[]' && priority !== '' ? (
+                <Badge key={priority} variant="light" color="blue">
+                  {priority}
+                </Badge>
+              ) : (
+                'No Priorities'
+              ),
+            )}
           </div>
         </Box>
       </div>
-      {appUser?.authId === userData?.authId && (
+      {isProfileOwner ? (
         <>
           <Divider orientation="vertical" className="hidden md:block" />
           <SendCard />
         </>
-      )}
+      ) : null}
     </Card>
   );
 }

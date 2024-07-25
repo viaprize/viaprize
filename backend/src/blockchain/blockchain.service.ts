@@ -1,18 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ethers } from 'ethers';
+import { ExtractAbiFunctionNames } from 'abitype';
 import { AllConfigType } from 'src/config/config.type';
-import { PublicClient, createPublicClient, http, parseAbi } from 'viem';
-import { optimism } from 'viem/chains';
+import { PASS_THROUGH_ABI, PRIZE_V2_ABI } from 'src/utils/constants';
+import {
+  MulticallReturnType,
+  PublicClient,
+  createPublicClient,
+  encodeFunctionData,
+  http,
+  parseAbi,
+} from 'viem';
+import { base } from 'viem/chains';
 import {
   Contribution,
   Contributions,
   TransactionApiResponse,
 } from './blockchain';
+
+function splitArray<T>(arr: T[], chunkSize: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize);
+    chunks.push(chunk);
+  }
+  return chunks;
+}
 @Injectable()
 export class BlockchainService {
   provider: PublicClient;
-  wallet: ethers.Wallet;
   multiCallContract = {
     address: '0xcA11bde05977b3631167028862bE2a173976CA11' as `0x${string}`,
     abi: parseAbi([
@@ -25,7 +41,7 @@ export class BlockchainService {
     });
     // const privateKey = this.configService.getOrThrow<AllConfigType>('PRIVATE_KEY', { infer: true });
     this.provider = createPublicClient({
-      chain: optimism,
+      chain: base,
       transport: http(key),
     });
     // this.wallet = new ethers.Wallet(privateKey, this.provider);
@@ -37,50 +53,6 @@ export class BlockchainService {
       address: address as `0x${string}`,
     });
   }
-  // async setEndKickStarterCampaign(contractAddress: string) {
-  //   const contract = new ethers.Contract(
-  //     contractAddress,
-  //     [
-  //       "function endKickStarterCampaign()",
-  //     ],
-  //     this.wallet,
-  //   );
-  //   try {
-  //     const gasEstimate = await contract.endKickStarterCampaign.estimateGas(
-  //       this.wallet.address,
-  //     );
-  //     const gasLimit = parseInt(gasEstimate.toString()) * 2;
-  //     const tx = await contract.endKickStarterCampaign(this.wallet.address, {
-  //       gasLimit: BigInt(gasLimit),
-  //     });
-
-  //     const receipt = await tx.wait();
-
-  //     return receipt;
-  //   } catch (error) {
-
-  //     return new Error(error);
-  //   }
-  // }
-  async getSubmissionTime(viaprizeContractAddress: string): Promise<bigint> {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_submission_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-    ] as const;
-    const data = await this.provider.readContract({
-      abi,
-      address: viaprizeContractAddress as `0x${string}`,
-      functionName: 'get_submission_time',
-    });
-
-    return data;
-  }
-
   async getVotingTime(viaprizeContractAddress: string): Promise<bigint> {
     const abi = [
       {
@@ -200,30 +172,6 @@ export class BlockchainService {
     return data;
   }
 
-  async getSubmissionVotes(
-    viaprizeContractAddress: string,
-    hash: string,
-  ): Promise<bigint> {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [
-          { name: 'submissionHash', internalType: 'bytes32', type: 'bytes32' },
-        ],
-        name: 'get_submission_by_hash',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-    ] as const;
-    const data = await this.provider.readContract({
-      address: viaprizeContractAddress as `0x${string}`,
-      abi,
-      args: [hash as `0x${string}`],
-      functionName: 'get_submission_by_hash',
-    });
-    return data;
-  }
-
   async getPortalsPublicVariables(portalContractAddress: string[]) {
     const abi = [
       {
@@ -297,137 +245,17 @@ export class BlockchainService {
     return results;
   }
 
-  async getPrizesPublicVariables(prizeAddresses: string[]) {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_voting_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_submission_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'total_funds',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'distributed',
-        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-      },
-    ];
-    const calls: any = [];
-    prizeAddresses.forEach((address) => {
-      const wagmiContract = {
-        address: address as `0x${string}`,
-        abi: abi,
-      } as const;
-      calls.push(
-        {
-          ...wagmiContract,
-          functionName: 'total_funds',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'distributed',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'get_submission_time',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'get_voting_time',
-        },
-      );
-    });
-    const results = await this.provider.multicall({
-      contracts: calls,
-    });
-    console.log(results, 'results');
-    return results;
-  }
-
-  async getPrizePublicVariables(prizeContractAddress: string) {
-    const abi = [
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_voting_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'get_submission_time',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'distributed',
-        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-      },
-      {
-        stateMutability: 'view',
-        type: 'function',
-        inputs: [],
-        name: 'total_funds',
-        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-      },
-    ];
-    const wagmiContract = {
-      address: prizeContractAddress as `0x${string}`,
-      abi: abi,
-    } as const;
-    const results = await this.provider.multicall({
-      contracts: [
-        {
-          ...this.multiCallContract,
-          functionName: 'getEthBalance',
-          args: [prizeContractAddress as `0x${string}`],
-        },
-        {
-          ...wagmiContract,
-          functionName: 'get_submission_time',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'get_voting_time',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'distributed',
-        },
-        {
-          ...wagmiContract,
-          functionName: 'total_funds',
-        },
-      ],
-    });
-    return results;
-  }
-
   async getPortalContributors(
     portalContractAddress: string,
   ): Promise<Contributions> {
-    console.log(process.env.ETHERSCAN_API_KEY, 'ehterscan');
-    const fetchUrl = `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`;
+    const etherscanApiKey = this.configService.getOrThrow<AllConfigType>(
+      'ETHERSCAN_API_KEY',
+      {
+        infer: true,
+      },
+    );
+    // const fetchUrl = `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`;
+    const fetchUrl = `https://api.basescan.org/api?module=account&action=tokentx&contractaddress=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&address=${portalContractAddress}&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=${etherscanApiKey}`;
     const res = await fetch(fetchUrl);
     console.log(fetchUrl, 'url');
     const result = (await res.json()) as TransactionApiResponse;
@@ -435,7 +263,10 @@ export class BlockchainService {
     const contributions: Contributions = {
       data: result.result
         .map((transaction) => {
-          if (transaction.isError !== '1') {
+          if (
+            transaction.isError !== '1' &&
+            transaction.to == portalContractAddress
+          ) {
             return {
               contributor: transaction.from,
               amount: transaction.value,
@@ -517,7 +348,103 @@ export class BlockchainService {
         },
       ],
     });
-
     return results;
+  }
+
+  async getPassThroughPublicVariables<T extends any>(
+    passThroughtContractAddresses: string[],
+    variables: ExtractAbiFunctionNames<
+      typeof PASS_THROUGH_ABI,
+      'pure' | 'view'
+    >[],
+  ): Promise<T[][]> {
+    const calls: any = [];
+    passThroughtContractAddresses.forEach((address) => {
+      const wagmiContract = {
+        address: address as `0x${string}`,
+        abi: PASS_THROUGH_ABI,
+      } as const;
+      const contracts = variables.map((variable) => {
+        return {
+          ...wagmiContract,
+          functionName: variable,
+        };
+      });
+      calls.push(...contracts);
+    });
+    const results: MulticallReturnType<any, true> =
+      await this.provider.multicall({
+        contracts: calls,
+      });
+    const final_results_unsliced = results.map((result) => {
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      return result.result;
+    });
+
+    const final = splitArray(final_results_unsliced, variables.length);
+
+    console.log({ final });
+    return final as never as T[][];
+  }
+
+  async getPrizesV2PublicVariables<T extends any>(
+    prizeContractAddresses: string[],
+    variables: ExtractAbiFunctionNames<typeof PRIZE_V2_ABI, 'pure' | 'view'>[],
+  ): Promise<T[][]> {
+    const calls: any = [];
+    prizeContractAddresses.forEach((address) => {
+      const wagmiContract = {
+        address: address as `0x${string}`,
+        abi: PRIZE_V2_ABI,
+      } as const;
+      const contracts = variables.map((variable) => {
+        return {
+          ...wagmiContract,
+          functionName: variable,
+        };
+      });
+      calls.push(...contracts);
+    });
+    const results: MulticallReturnType<any, true> =
+      await this.provider.multicall({
+        contracts: calls,
+      });
+    const final_results_unsliced = results.map((result) => {
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      return result.result;
+    });
+
+    const final = splitArray(final_results_unsliced, variables.length);
+
+    console.log({ final });
+    return final as never as T[][];
+  }
+
+  async getSubmissionHashFromTransactionPrizeV2(hash: string) {
+    const reciept = await this.provider.waitForTransactionReceipt({
+      hash: hash as `0x${string}`,
+      confirmations: 1,
+    });
+    console.log({ reciept });
+    return reciept.logs[1].topics[2];
+  }
+
+  async getPrizeV2FunctionEncoded(
+    functionName: ExtractAbiFunctionNames<
+      typeof PRIZE_V2_ABI,
+      'pure' | 'view' | 'nonpayable' | 'payable'
+    >,
+    args: any[],
+  ) {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: functionName,
+      args: args as any,
+    });
+    return data;
   }
 }

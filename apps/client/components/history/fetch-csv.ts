@@ -12,6 +12,7 @@ interface CSVData {
   WonRefunded: string; // Assuming this is a string, adjust according to actual data
   AwardedUSDe: string;
   WinnersAmount: string;
+  ContestantsCount: number;
   Transactionlinks: string;
   Awarded: string;
   RefundedUSDe: string;
@@ -43,7 +44,7 @@ interface CSVData {
 
 export async function FetchPrizesCsv() {
   const csvUrl =
-    'https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/old_viaprize_data/oldprizefinal107.csv?t=2024-04-08T08%3A26%3A20.784Z';
+    'https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/old_viaprize_data/oldprizefinal109.csv?t=2024-07-17T07%3A02%3A10.173Z';
   const data: CSVData[] = [];
 
   const response = await fetch(csvUrl);

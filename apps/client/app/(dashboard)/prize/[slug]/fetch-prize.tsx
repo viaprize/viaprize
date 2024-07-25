@@ -28,9 +28,21 @@ export async function generateMetadata({
     description: prize.description,
     metadataBase: new URL('https://viaprize.org/'),
     openGraph: {
+      title: prize.title,
+      description: prize.description,
+      url: prize.slug,
       images: {
+        width: 1200,
+        height: 630,
+        alt: prize.title,
         url: prize.images[0],
       },
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: prize.title,
+      description: prize.description.slice(0, 300),
+      images: prize.images,
     },
   };
 }
@@ -47,17 +59,26 @@ export default async function FetchPrize({ params }: { params: { slug: string } 
     await new Api().prizes.prizesDetail(params.slug, {
       next: {
         revalidate: 0,
+        tags: [params.slug],
       },
     })
   ).data;
 
   const submissions = (
-    await new Api().prizes.submissionDetail(params.slug, {
-      limit: 5,
-      page: 1,
-    })
+    await new Api().prizes.submissionDetail(
+      params.slug,
+      {
+        limit: 5,
+        page: 1,
+      },
+      {
+        next: {
+          revalidate: 0,
+          tags: [params.slug],
+        },
+      },
+    )
   ).data.data;
-  console.log(submissions, 'sub');
 
   return <PrizePageComponent prize={prize} submissions={submissions} />;
 }

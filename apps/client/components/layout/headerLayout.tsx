@@ -8,10 +8,8 @@ import {
   Divider,
   Flex,
   Menu,
-  Pill,
   Stack,
   Text,
-  ThemeIcon,
   Tooltip,
   rem,
 } from '@mantine/core';
@@ -21,7 +19,6 @@ import {
   IconCheck,
   IconChevronDown,
   IconCopy,
-  IconInfoCircle,
   IconInfoCircleFilled,
   IconSearch,
 } from '@tabler/icons-react';
@@ -32,7 +29,6 @@ export default function HeaderLayout() {
   const { user, ready } = usePrivy();
   const { appUser, logoutUser } = useAppUser();
   const { wallet, ready: walletReady } = usePrivyWagmi();
-  console.log({ wallet }, 'walletttttttttttt');
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
@@ -97,7 +93,7 @@ export default function HeaderLayout() {
                 // href="/portal/explore"
                 className="pl-3 font-bold hover:text-blue-600"
               >
-                PORTALS
+                FUNDRAISERS
               </Box>
               <IconChevronDown style={{ width: rem(20), height: rem(16) }} />
             </Center>
@@ -117,13 +113,13 @@ export default function HeaderLayout() {
                   <IconSearch />
 
                   <Text size="md" fw={500} className="pl-1">
-                    Explore Portals
+                    Explore Fundraisers
                   </Text>
                 </Link>
               </Menu.Item>
               <Divider />
               <Button>
-                <Link href="/portal/create">Create Portal</Link>
+                <Link href="/portal/create">Create Fundraisers</Link>
               </Button>
             </Stack>
           </Menu.Dropdown>

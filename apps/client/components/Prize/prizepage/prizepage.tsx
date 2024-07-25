@@ -1,142 +1,247 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-boolean-literal-compare */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
-import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
-import type { ConvertUSD } from '@/lib/types';
-import { chain } from '@/lib/wagmi';
+import type {
+  IndividualPrizeWithBalance,
+  PrizeWithBlockchainData,
+  SubmissionWithBlockchainData,
+} from '@/lib/api';
+import { calculateDeadline, usdcSignType } from '@/lib/utils';
+
+import { TransactionToast } from '@/components/custom/transaction-toast';
+import { backendApi } from '@/lib/backend';
+import { USDC } from '@/lib/constants';
 import {
-  ActionIcon,
+  Badge,
   Button,
   Center,
   Group,
   NumberInput,
   Stack,
-  Title,
   Text,
-  Badge,
+  Title,
 } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
-import { modals } from '@mantine/modals';
-import { IconCircleCheck, IconRefresh } from '@tabler/icons-react';
-import { prepareSendTransaction, sendTransaction } from '@wagmi/core';
+import { readContract } from '@wagmi/core';
 import Image from 'next/image';
-import { useMemo, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { parseEther } from 'viem';
-import { useAccount, useBalance, useQuery } from 'wagmi';
+import revalidate from 'utils/revalidate';
+import { hashTypedData, hexToSignature } from 'viem';
+import { useWalletClient } from 'wagmi';
 import ChangeSubmission from './buttons/changeSubmission';
-import ChangeVoting from './buttons/changeVoting';
-import EarlyRefund from './buttons/earlyRefund';
+import ChangeVotingTime from './buttons/changeVotingTime';
+import EndDispute from './buttons/endDispute';
+import EndDisputeEarly from './buttons/endDisputeEarly';
 import EndSubmission from './buttons/endSubmission';
 import EndVoting from './buttons/endVoting';
 import StartSubmission from './buttons/startSubmission';
 import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
+import RefundCard from './refundCard';
 import Submissions from './submissions';
-import { calculateDeadline } from '@/lib/utils';
-import Link from 'next/link';
+import useIsMounted from '@/components/hooks/useIsMounted';
+import useMounted from '@/components/hooks/useMounted';
 
-function FundCard({ contractAddress }: { contractAddress: string }) {
-  const { address } = useAccount();
+function FundUsdcCard({
+  contractAddress,
+  prizeId,
+  title,
+  imageUrl,
+  successUrl,
+  cancelUrl,
+  slug,
+}: {
+  contractAddress: string;
+  prizeId: string;
+  title: string;
+  imageUrl: string;
+  successUrl: string;
+  cancelUrl: string;
+  slug: string;
+}) {
+  const { logoutUser, appUser, loginUser } = useAppUser();
+  const [sendLoading, setSendLoading] = useState(false);
+  const { data: walletClient } = useWalletClient();
   const [value, setValue] = useState('');
-  const [debounced] = useDebouncedValue(value, 500);
-  const { loginUser } = useAppUser();
+  const router = useRouter();
 
-  const { data: balance, isLoading, refetch } = useBalance({ address });
-
-  // const { config } = usePrepareSendTransaction({
-  //   to: contractAddress,
-  //   value: debounced ? parseEther(debounced) : undefined,
-  // });
-
-  const openDeleteModal = () => {
-    modals.openConfirmModal({
-      title: 'Please Login to Donate',
-      centered: true,
-      children: (
-        <p>
-          Please Login to donate to the prize, orelse you wont be able to get the refund
-        </p>
-      ),
-      labels: { confirm: 'Login', cancel: 'Cancel' },
-      onCancel: () => {
-        console.log('Cancel');
-      },
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      onConfirm: async () => {
-        await loginUser();
-      },
+  const getUsdcSignatureData = async () => {
+    if (parseFloat(value) <= 0) {
+      throw new Error('Donation must be at least 1$');
+    }
+    const walletAddress = walletClient?.account.address;
+    if (!walletAddress) {
+      throw new Error('Please login to donate');
+    }
+    const amount = BigInt(parseFloat(value) * 1000000);
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000);
+    const nonce = await readContract({
+      abi: [
+        {
+          constant: true,
+          inputs: [
+            {
+              name: 'owner',
+              type: 'address',
+            },
+          ],
+          name: 'nonces',
+          outputs: [
+            {
+              name: '',
+              type: 'uint256',
+            },
+          ],
+          payable: false,
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ] as const,
+      address: USDC,
+      functionName: 'nonces',
+      args: [walletAddress],
     });
+
+    const signData = {
+      owner: walletClient?.account.address,
+      spender: contractAddress,
+      value: amount,
+      nonce: BigInt(nonce),
+      deadline: deadline,
+    };
+
+    return signData;
+  };
+  const donateUsingUsdc = async () => {
+    try {
+      setSendLoading(true);
+      if (!walletClient) {
+        throw new Error('Please login to donate');
+      }
+      const signData = await getUsdcSignatureData();
+
+      const hash = hashTypedData(usdcSignType(signData) as any);
+
+      const signature = await walletClient.signTypedData(usdcSignType(signData) as any);
+      const rsv = hexToSignature(signature);
+
+      const trxHash = await (
+        await backendApi()
+      ).wallet
+        .prizeAddUsdcFundsCreate(contractAddress, {
+          amount: parseInt(signData.value.toString()),
+          deadline: parseInt(signData.deadline.toString()),
+          r: rsv.r,
+          hash: hash,
+          s: rsv.s,
+          v: parseInt(rsv.v.toString()),
+        })
+        .then((res) => res.data.hash);
+
+      toast.success(<TransactionToast hash={trxHash} title="Transaction Successful" />, {
+        duration: 6000,
+      });
+      await revalidate({ tag: slug });
+      router.refresh();
+      window.location.reload();
+    } catch (e: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
+      toast.error((e as any)?.message);
+    } finally {
+      setSendLoading(false);
+    }
   };
 
-  const [sendLoading, setSendLoading] = useState(false);
-
-  const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const final = await (
-      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
-    ).json();
-    return Object.keys(final).length === 0
-      ? {
-          [chain.name.toLowerCase()]: {
-            usd: 0,
+  const donateUsingFiat = async () => {
+    const balance = (
+      await (
+        await fetch(
+          'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
+          {
+            headers: {
+              'x-chain-id': '8453',
+            },
           },
-        }
-      : final;
-  });
-
-  const ethOfDonateValue = useMemo(() => {
-    if (!cryptoToUsd) {
-      console.error('cryptoToUsd is undefined');
-      return 0;
+        )
+      ).json()
+    ).balance;
+    if (parseFloat(value) * 1_000_000 > balance) {
+      toast.error('Not enough balance to donate');
+      return;
     }
-    const cryptoToUsdValue = cryptoToUsd.ethereum.usd;
-    const useToEth = parseFloat(value) / cryptoToUsdValue;
-    return isNaN(useToEth) ? 0 : useToEth;
-  }, [value]);
+    try {
+      setSendLoading(true);
+      const signedData = await getUsdcSignatureData();
+      if (!walletClient) {
+        throw new Error('Please login to donate');
+      }
+      const hash = hashTypedData(usdcSignType(signedData) as any);
+      const signature = await walletClient.signTypedData(usdcSignType(signedData) as any);
+      const { r, s, v } = hexToSignature(signature);
+      const checkoutUrl = await fetch(
+        'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            checkoutMetadata: {
+              contractAddress,
+              backendId: prizeId,
+              deadline: parseInt(signedData.deadline.toString()),
+              amount: parseInt(signedData.value.toString()),
+              ethSignedMessage: hash,
+              v: parseInt(v.toString()),
+              r: r,
+              s: s,
+              chainId: 8453,
+            },
+            title,
+            imageUrl,
+            successUrl,
+            cancelUrl,
+          }),
+        },
+      )
+        .then((res) => res.json())
+        .then((data) => data.checkoutUrl);
 
-  // const { isLoading: sendLoading, sendTransaction } = useSendTransaction({
-  //   ...config,
-  //   async onSuccess(data) {
-  //     toast.success(`Transaction Sent with Hash ${data?.hash}`, {
-  //       duration: 6000,
-  //     });
-  //     await refetch();
-  //   },
-  // });
-
+      console.log({ checkoutUrl });
+      await revalidate({ tag: slug });
+      router.refresh();
+      router.replace(checkoutUrl);
+    } catch (e: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
+      toast.error((e as any)?.message);
+    } finally {
+      setSendLoading(false);
+    }
+  };
   return (
-    <Stack my="md">
+    <Stack>
+      <Group>
+        <Text fw="sm">Your donation needs to be at least $1</Text>
+        {appUser ? null : (
+          <Button
+            color="primary"
+            onClick={() => {
+              void loginUser();
+            }}
+          >
+            Connect Wallet
+          </Button>
+        )}
+      </Group>
       <NumberInput
-        description={
-          isLoading
-            ? 'Loading.....'
-            : `Wallet Balance: ${
-                balance
-                  ? `$${(
-                      parseFloat(balance.formatted.toString()) *
-                      (cryptoToUsd?.ethereum.usd ?? 0)
-                    ).toFixed(2)} (${parseFloat(balance.formatted).toFixed(3)} ${
-                      balance.symbol
-                    })`
-                  : `Login To See Balance`
-              }`
-        }
         placeholder="Enter Value  in $ To Donate"
-        mt="md"
-        label={`You will donate ${value} USD (${ethOfDonateValue.toFixed(4) ?? 0} ${
-          chain.nativeCurrency.symbol
-        })`}
-        rightSection={
-          <ActionIcon>
-            <IconRefresh onClick={() => refetch({})} />
-          </ActionIcon>
-        }
-        max={parseInt(balance?.formatted ?? '0')}
         allowDecimal
-        defaultValue={0}
+        defaultValue={1}
         allowNegative={false}
         value={value}
         onChange={(v) => {
@@ -151,60 +256,31 @@ function FundCard({ contractAddress }: { contractAddress: string }) {
       <Button
         disabled={!value}
         loading={sendLoading}
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises -- will replace later
         onClick={async () => {
-          if (!address) {
-            openDeleteModal();
-          }
-          await refetch();
-          setSendLoading(true);
-          try {
-            const config = await prepareSendTransaction({
-              to: contractAddress,
-              value: debounced ? parseEther(ethOfDonateValue.toString()) : undefined,
-              data: '0x',
-            });
-            const { hash } = await sendTransaction(config);
-            toast.success(
-              <div className="flex items-center ">
-                <IconCircleCheck />{' '}
-                <Text fw="md" size="sm" className="ml-2">
-                  {' '}
-                  Transaction Successfull
-                </Text>
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://optimistic.etherscan.io/tx/${hash}`}
-                >
-                  <Button variant="transparent" className="text-blue-400 underline">
-                    See here
-                  </Button>
-                </Link>
-              </div>,
-              {
-                duration: 6000,
-              },
-            );
-            window.location.reload();
-          } catch (e: unknown) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
-            toast.error((e as any)?.message);
-          } finally {
-            setSendLoading(false);
-          }
+          await donateUsingUsdc();
         }}
       >
-        Donate
+        Donate with Crypto
+      </Button>
+
+      <Button
+        disabled={!value}
+        loading={sendLoading}
+        onClick={async () => {
+          await donateUsingFiat();
+        }}
+      >
+        Donate With Card
       </Button>
     </Stack>
   );
 }
+
 export default function PrizePageComponent({
   prize,
   submissions,
 }: {
-  prize: PrizeWithBlockchainData;
+  prize: IndividualPrizeWithBalance;
   submissions: SubmissionWithBlockchainData[];
 }) {
   const { appUser } = useAppUser();
@@ -212,6 +288,26 @@ export default function PrizePageComponent({
     new Date(),
     new Date(prize.submission_time_blockchain * 1000),
   );
+  const params = useParams();
+  useEffect(() => {
+    if (window.location.hash.includes('success')) {
+      void fetch(
+        'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash',
+      ).then((res) => {
+        res.json().then((data) => {
+          toast.success(
+            <TransactionToast hash={data.hash} title="Transaction Successful" />,
+            {
+              duration: 6000,
+            },
+          );
+        });
+      });
+    }
+  }, [params]);
+
+  const mounted = useMounted();
+
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
@@ -220,21 +316,11 @@ export default function PrizePageComponent({
           <Badge size="lg" color="green">
             Won
           </Badge>
-        ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-        deadlineString === 'Time is up!' && prize.distributed === false ? (
+        ) : prize.refunded ? (
           <Badge size="lg" color="yellow">
             Refunded
           </Badge>
         ) : null}
-
-        {/* <Group justify="right" gap="0" wrap="nowrap">
-          <Button color="black" mx="5px">
-            Upvote
-          </Button>
-          <ActionIcon variant="filled" size="lg" color="blue">
-            <Text>0</Text>
-          </ActionIcon>
-        </Group> */}
       </Group>
       <Image
         className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-fit max-w-full  rounded-md"
@@ -265,15 +351,29 @@ export default function PrizePageComponent({
               ? new Date(prize.voting_time_blockchain * 1000)
               : undefined
           }
+          username=""
+          contributions={prize.contributors}
         />
       </Center>
-      <FundCard contractAddress={prize.contract_address} />
+      {prize.is_active_blockchain ? (
+        <FundUsdcCard
+          contractAddress={prize.contract_address}
+          prizeId={prize.id}
+          title={prize.title}
+          cancelUrl={mounted ? window.location.href : ''}
+          imageUrl={prize.images[0] || ''}
+          successUrl={`${window.location.href}#success`}
+          slug={prize.slug}
+        />
+      ) : null}
+
       {appUser
         ? (appUser.username === prize.user.username || appUser.isAdmin) &&
           prize.submission_time_blockchain === 0 && (
             <StartSubmission
               contractAddress={prize.contract_address}
               submissionTime={prize.submissionTime}
+              slug={prize.slug}
             />
           )
         : null}
@@ -284,31 +384,31 @@ export default function PrizePageComponent({
             <StartVoting
               contractAddress={prize.contract_address}
               votingTime={prize.votingTime}
+              slug={prize.slug}
             />
           )
         : null}
       {appUser?.isAdmin &&
       !(deadlineString === 'Time is up!') &&
       prize.submission_time_blockchain > 0 ? (
-        <EndSubmission contractAddress={prize.contract_address} />
+        <EndSubmission contractAddress={prize.contract_address} slug={prize.slug} />
       ) : null}
 
       {appUser?.isAdmin && prize.submission_time_blockchain ? (
         <ChangeSubmission
           contractAddress={prize.contract_address}
           submissionTime={prize.submission_time_blockchain}
+          slug={prize.slug}
         />
       ) : null}
-      {appUser?.isAdmin && !prize.distributed ? (
-        <EarlyRefund contractAddress={prize.contract_address} />
+      {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
+        <EndVoting contractAddress={prize.contract_address} slug={prize.slug} />
       ) : null}
       {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
-        <EndVoting contractAddress={prize.contract_address} />
-      ) : null}
-      {appUser?.isAdmin && prize.voting_time_blockchain > 0 ? (
-        <ChangeVoting
+        <ChangeVotingTime
           contractAddress={prize.contract_address}
           votingTime={prize.voting_time_blockchain}
+          slug={prize.slug}
         />
       ) : null}
 
@@ -318,6 +418,21 @@ export default function PrizePageComponent({
         submissions={submissions}
         contractAddress={prize.contract_address}
       />
+
+      {appUser?.isAdmin && prize.dispute_period_time_blockchain > 0 ? (
+        <>
+          <EndDispute contractAddress={prize.contract_address} />
+          <EndDisputeEarly contractAddress={prize.contract_address} />
+        </>
+      ) : null}
+
+      {prize.voting_time_blockchain > 0 ? (
+        <RefundCard
+          allowVoting={prize.voting_time_blockchain > 0}
+          contractAddress={prize.contract_address}
+          showVote
+        />
+      ) : null}
       {/* <CommentSection /> */}
     </div>
   );
