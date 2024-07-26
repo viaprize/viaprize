@@ -1,22 +1,19 @@
+import { Application } from 'types/gitcoin.types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-export interface CartItem {
-  id: string;
-  imageURL: string;
-  title: string;
-  description: string;
-  raised: number;
-  contributors: number;
-  link: string;
-}
-
+type CartFinalItem = {
+  roundId: string;
+  chainId: number;
+  amount: string;
+};
+export type CartItem = Application & CartFinalItem;
 interface CartState {
   items: CartItem[];
   addItem: (item: CartItem) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
   isItemInCart: (id: string) => boolean;
+  changeAmount: (id: string, amount: number) => void;
 }
 
 export const useCartStore = create(
@@ -34,6 +31,18 @@ export const useCartStore = create(
         set((state) => ({ items: state.items.filter((item) => item.id !== id) })),
       clearCart: () => set(() => ({ items: [] })),
       isItemInCart: (id) => get().items.some((item) => item.id === id),
+      changeAmount: (id, amount) => {
+        set((state) => {
+          const newItems = state.items.map((item) => {
+            if (item.id === id) {
+              return { ...item, amount: amount.toString() };
+            }
+            return item;
+          });
+
+          return { ...state, items: newItems };
+        });
+      },
     }),
     {
       name: 'cart-storage', // unique name

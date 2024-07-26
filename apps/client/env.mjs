@@ -31,6 +31,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_API_KEY: z.string(),
     NEXT_PUBLIC_RPC_URL: z.string(),
     NEXT_PUBLIC_BREVO_NEWSLETTER_URL: z.string().url(),
+    NEXT_PUBLIC_GITCOIN_GRAPHQL: z.string().url(),
   },
   /*
    * Due to how Next.js bundles enironment variables on Edge and Client,

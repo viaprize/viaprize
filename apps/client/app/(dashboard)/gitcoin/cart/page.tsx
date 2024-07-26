@@ -1,6 +1,11 @@
-import { Divider, Text } from '@mantine/core';
+'use client';
+import { Divider } from '@mantine/core';
 import AddedProjects from './added-projects';
 import SummaryCard from './summary-card';
+export type CartAmountItem = {
+  amount: number;
+};
+export type CartItemToAcount = { [key: string]: number };
 
 export default function CartPage() {
   return (
@@ -8,7 +13,7 @@ export default function CartPage() {
       <h2>Cart</h2>
       <Divider my="md" />
       <h3>Hypercerts Ecosystem Round</h3>
-      <div className='text-md mb-3'>
+      <div className="text-md mb-3">
         Your donation to each project must be valued at 3 USD or more to be eligible for
         matching.
       </div>

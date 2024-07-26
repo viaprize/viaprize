@@ -2,22 +2,31 @@
 
 import {
   ActionIcon,
-  Badge,
   Button,
   Card,
   CopyButton,
   Divider,
-  Group,
   Text,
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import type { CartItem } from 'app/(dashboard)/(_utils)/store/datastore';
+
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { renderToPlainText } from 'app/(dashboard)/(_utils)/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Application } from 'types/gitcoin.types';
+export interface CartItem {
+  id: string;
+  imageURL: string;
+  title: string;
+  description: string;
+  raised: number;
+  contributors: number;
+  link: string;
+  application: Application;
+}
 
 export default function GitcoinCard({
   id,
@@ -27,6 +36,7 @@ export default function GitcoinCard({
   raised,
   contributors,
   link,
+  application,
 }: CartItem) {
   const addItem = useCartStore((state) => state.addItem);
   const removeItem = useCartStore((state) => state.removeItem);
@@ -34,9 +44,18 @@ export default function GitcoinCard({
   const router = useRouter();
   const isItemInCart = (itemID: string) => cartItems.some((item) => item.id === itemID);
 
+  // const tokens = getTokensByChainId(8453);
+
+  // console.log(tokens, 'tokens');
+
   const handleAddToCart = () => {
     if (!isItemInCart(id)) {
-      addItem({ id, imageURL, title, description, raised, contributors, link });
+      addItem({
+        ...application,
+        roundId: '31',
+        chainId: 8453,
+        amount: '0',
+      });
       toast.success(`${title} added to cart`);
     }
   };

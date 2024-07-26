@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.10.4",
+    "@gitcoin/gitcoin-chain-data": "^1.0.18",
     "@hookform/resolvers": "^3.4.2",
     "@mantine/core": "^7.1.7",
     "@mantine/dates": "^7.1.7",
@@ -99,6 +100,7 @@
     "ldrs": "^1.0.1",
     "markdown-it": "^14.1.0",
     "marked": "^12.0.2",
+    "nanoid": "^5.0.7",
     "next": "14.0.3",
     "next-nprogress-bar": "^2.1.2",
     "next-themes": "^0.3.0",

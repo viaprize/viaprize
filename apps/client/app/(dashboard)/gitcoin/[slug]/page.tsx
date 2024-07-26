@@ -1,6 +1,5 @@
-import { fetchApplicationByNodeId, fetchRoundByNodeId } from '@/lib/actions';
+import { fetchApplicationById, fetchRoundForExplorer } from '@/lib/actions';
 import { Text } from '@mantine/core';
-import { marked } from 'marked';
 import Description from './description';
 import DetailCard from './detail-card';
 import ImageTitleCard from './image-title-card';
@@ -13,46 +12,31 @@ export default async function GitcoinApplication({
     slug: string;
   };
 }) {
-  const applicationsInRound = await fetchApplicationByNodeId(
-    decodeURIComponent(params.slug),
-  );
-  const round = await fetchRoundByNodeId('WyJyb3VuZHMiLCI2MyIsNDIxNjFd');
-
+  const applicationsInRound = await fetchApplicationById(params.slug, 8453, '31');
+  const round = await fetchRoundForExplorer(8453, '31');
+  console.log(applicationsInRound);
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
       <ImageTitleCard
-        title={applicationsInRound.applicationByNodeId.project.name}
-        img={`https://ipfs.io/ipfs/${applicationsInRound.applicationByNodeId.metadata.application.project.bannerImg}`}
+        title={applicationsInRound.project.metadata.title}
+        img={`https://ipfs.io/ipfs/${applicationsInRound.project.metadata.bannerImg}`}
       />
       <div className="w-full lg:flex gap-4 justify-between mt-3">
         <SocialCard
-          createdOn={
-            applicationsInRound.applicationByNodeId.metadata.application.project.createdAt
-          }
-          website={
-            applicationsInRound.applicationByNodeId.metadata.application.project.website
-          }
-          twitter={
-            applicationsInRound.applicationByNodeId.metadata.application.project
-              .projectTwitter
-          }
+          createdOn={applicationsInRound.project.metadata.createdAt}
+          website={applicationsInRound.project.metadata.website}
+          twitter={applicationsInRound.project.metadata.projectTwitter ?? ''}
         />
         <DetailCard
-          fundingRecieved={
-            applicationsInRound.applicationByNodeId.totalAmountDonatedInUsd
-          }
-          daysLeft={round.roundByNodeId.donationsEndTime}
-          contributors={applicationsInRound.applicationByNodeId.uniqueDonorsCount}
+          fundingRecieved={applicationsInRound.totalAmountDonatedInUsd}
+          daysLeft={round.donationsEndTime}
+          contributors={applicationsInRound.uniqueDonorsCount}
         />
       </div>
       <Text size="xl" mt="md" fw="bold">
         About
       </Text>
-      <Description
-        description={
-          applicationsInRound.applicationByNodeId.metadata.application.project.description
-        }
-      />
+      <Description description={applicationsInRound.project.metadata.description} />
     </div>
   );
 }

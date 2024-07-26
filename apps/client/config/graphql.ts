@@ -36,5 +36,9 @@ export const errorLink = onError(({ graphQLErrors, networkError }) => {
 
 export const gitcoinGraphClient = new ApolloClient({
   link: ApolloLink.from([errorLink, logLink, httpLink]),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    resultCaching: false,
+  }),
 });
+
+gitcoinGraphClient.clearStore();

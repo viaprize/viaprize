@@ -5,15 +5,24 @@
  */
 
 import { env } from '@env';
+import { TToken } from '@gitcoin/gitcoin-chain-data';
 import { getAccessToken } from '@privy-io/react-auth';
 import { createClient } from '@supabase/supabase-js';
 import { clsx, type ClassValue } from 'clsx';
+import { format } from 'date-fns';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
-import { encodePacked, keccak256 } from 'viem';
+import {
+  encodeAbiParameters,
+  encodePacked,
+  getAddress,
+  Hex,
+  keccak256,
+  parseAbiParameters,
+  parseUnits,
+} from 'viem';
 import { USDC } from './constants';
-import { format, parse } from 'date-fns';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
@@ -328,3 +337,36 @@ export const addMinutesToDate = (date: Date, minutes: number) => {
   const newDate = date.setMinutes(date.getMinutes() + minutes);
   return new Date(newDate);
 };
+
+export function encodedQFAllocation(
+  donationToken: TToken,
+  donations: { anchorAddress: string; amount: string }[],
+): Hex[] {
+  const tokenAddress = donationToken.address;
+
+  const encodedData = donations.map((donation) => {
+    if (!donation.anchorAddress) {
+      throw new Error('Anchor address is required for QF allocation');
+    }
+    return encodeAbiParameters(
+      parseAbiParameters('address,uint8,(((address,uint256),uint256,uint256),bytes)'),
+      [
+        getAddress(donation.anchorAddress),
+        0, // permit type of none on the strategy
+        [
+          [
+            [
+              getAddress(tokenAddress),
+              parseUnits(donation.amount, donationToken.decimals),
+            ],
+            BigInt(0), // nonce, since permit type is none
+            BigInt(0), // deadline, since permit type is none
+          ],
+          '0x0000000000000000000000000000000000000000000000000000000000000000', // signature, since permit type is none
+        ],
+      ],
+    );
+  });
+
+  return encodedData;
+}
