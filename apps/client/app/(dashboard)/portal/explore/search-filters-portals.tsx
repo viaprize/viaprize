@@ -19,6 +19,7 @@ const sorts: Sorts = {
   'Date: New to Old': 'DESC',
   // 'Prize: Low to High': 'prize.asc',
   // 'Prize: High to Low': 'prize.desc',
+
   // 'Deadline: Sooner to Later': 'deadline.asc',
   // 'Deadline: Later to Sooner': 'deadline.desc',
 };

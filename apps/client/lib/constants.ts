@@ -210,3 +210,98 @@ export const EXTRA_FUNDRAISERS_IDS = [
   'a4dac4dc-e5e7-4840-84a9-f00587eac3ec',
   '97a24692-9762-4384-8bf5-837cd3aaaa3b',
 ];
+
+export const FUND_MCR_ADDRESS = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'reserveAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'spender',
+        type: 'address',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_ethSignedMessageHash',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes[]',
+        name: '_data',
+        type: 'bytes[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_poolIds',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_amounts',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalAmount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'deadline',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint8',
+        name: 'v',
+        type: 'uint8',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'r',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 's',
+        type: 'bytes32',
+      },
+    ],
+    name: 'fundUsingUsdc',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_usdcAddress',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
+  {
+    inputs: [],
+    name: '_usdc',
+    outputs: [
+      {
+        internalType: 'contract IERC20Permit',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;

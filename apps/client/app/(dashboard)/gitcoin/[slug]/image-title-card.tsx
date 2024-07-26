@@ -1,4 +1,4 @@
-import { Card, Image, Text, Title } from '@mantine/core';
+import { Image, Title } from '@mantine/core';
 
 export default function ImageTitleCard({ title, img }: { title: string; img: string }) {
   return (
