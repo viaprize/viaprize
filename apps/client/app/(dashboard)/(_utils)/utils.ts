@@ -19,13 +19,11 @@ markdownIt.renderer.rules.link_open = function linkOpen(tokens, idx, options, en
   return defaultLinkOpen(tokens, idx, options, env, self);
 };
 
-
 export function renderToHTML(markdownSourceText: string) {
   return sanitize(markdownIt.render(markdownSourceText), {
     ADD_ATTR: ['target'],
   });
 }
-
 
 export function renderToPlainText(markdownSourceText: string) {
   return sanitize(renderToHTML(markdownSourceText), {

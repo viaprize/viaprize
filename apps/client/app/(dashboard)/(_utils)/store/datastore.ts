@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 type CartFinalItem = {
   roundId: string;
-  chainId: number;
   amount: string;
 };
 export type CartItem = Application & CartFinalItem;
@@ -23,7 +22,7 @@ export const useCartStore = create(
       addItem: (item) =>
         set((state) => {
           if (!state.items.some((cartItem) => cartItem.id === item.id)) {
-            return { items: [...state.items, item] };
+            return { items: [...state.items, { ...item }] };
           }
           return state;
         }),

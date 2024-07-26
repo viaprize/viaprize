@@ -97,14 +97,17 @@ export default function SummaryCard() {
     );
 
     const groupedEncodedVotes: Record<string, Hex[]> = {};
-
+    if (!groupedDonationsByRoundId) {
+      throw new Error('groupedDonationsByRoundId is null');
+    }
     for (const roundId in groupedDonationsByRoundId) {
       if (!groupedDonationsByRoundId[roundId]) {
-        continue;
+        throw new Error('groupedDonationsByRoundId[roundId] is null');
       }
       groupedEncodedVotes[roundId] = encodedQFAllocation(
         usdcToken,
-        groupedDonationsByRoundId[roundId]?.map((d) => ({
+        // @ts-ignore: Object is possibly 'null'.
+        groupedDonationsByRoundId![roundId].map((d) => ({
           anchorAddress: d.anchorAddress ?? '',
           amount: d.amount,
         })),
@@ -125,6 +128,7 @@ export default function SummaryCard() {
       if (!groupedDonationsByRoundId[roundId]) {
         continue;
       }
+      // @ts-ignore: Object is possibly 'null'.
       groupedDonationsByRoundId[roundId].map((donation) => {
         amountArray.push(parseUnits(donation.amount, usdcToken.decimals));
       });

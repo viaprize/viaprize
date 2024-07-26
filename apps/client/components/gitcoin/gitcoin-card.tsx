@@ -53,7 +53,7 @@ export default function GitcoinCard({
       addItem({
         ...application,
         roundId: '31',
-        chainId: 8453,
+        chainId: '8453',
         amount: '0',
       });
       toast.success(`${title} added to cart`);

@@ -1,6 +1,5 @@
-import { VerifiableCredential } from '@gitcoinco/passport-sdk-types';
 import { Address } from 'viem';
-import { RoundApplicationMetadata } from './roundApplication.types';
+
 export type RoundPayoutType =
   | 'allov1.Direct'
   | 'allov1.QF'
@@ -37,10 +36,6 @@ export type GrantApplicationFormAnswer = {
   type?: string;
 };
 
-export type ProjectCredentials = {
-  [key: string]: VerifiableCredential;
-};
-
 export interface ProjectOwner {
   address: string;
 }
@@ -54,7 +49,7 @@ export type ProjectMetadata = {
   projectTwitter?: string;
   userGithub?: string;
   projectGithub?: string;
-  credentials: ProjectCredentials;
+  credentials: any;
   owners: ProjectOwner[];
   createdAt: number;
   lastUpdated: number;
@@ -124,105 +119,6 @@ export type ProjectRole = {
     tags: string[];
   };
   projectId: string;
-};
-
-/**
- * The project type for v2
- *
- * @remarks
- *
- * This is the type for v2 projects which get created on Allo as `Profiles`.
- *
- */
-export type v2Project = {
-  /**
-   * The on-chain unique project ID - `bytes32` string.
-   */
-  id: string;
-  /**
-   * The chain ID of the network
-   */
-  chainId: number;
-  /**
-   * The metadata of the project
-   */
-  metadata: {
-    protocol: number;
-    pointer: string;
-    id: string;
-    title: string;
-    description: string;
-    logoImg?: string;
-    website: string;
-    bannerImg?: string;
-    logoImgData?: Blob;
-    bannerImgData?: Blob;
-    userGithub?: string;
-    projectGithub?: string;
-    projectTwitter?: string;
-    credentials?: ProjectCredentials;
-    createdAt?: number;
-    updatedAt?: number;
-  };
-  /**
-   * The metadata CID of the project
-   */
-  metadataCid: string;
-  name: string;
-  nodeId: string;
-  /**
-   * The project number from v1
-   *
-   * @deprecated - This is deprecated and will return `null` for v2 projects.
-   */
-  projectNumber: number | null;
-  /**
-   * The registry address of the project
-   */
-  registryAddress: string;
-  /**
-   * The tags of the project
-   *
-   * @remarks
-   *
-   * The tags are used to filter the projects based on the version of Allo.
-   */
-  tags: ('allo-v1' | 'allo-v2' | 'program')[];
-  /**
-   * Address which created the project
-   */
-  createdByAddress: string;
-  /**
-   * The block the project was created at
-   */
-  createdAtBlock: string;
-  /**
-   * The block the project was updated at
-   */
-  updatedAtBlock: string;
-  roles: AddressAndRole[];
-  nonce?: bigint;
-  anchorAddress?: string;
-  /**
-   * The type of the project - `CANONICAL` or `LINKED`
-   */
-  projectType: ProjectType;
-  /**
-   * The linked chains to the canonical project
-   */
-  linkedChains?: number[];
-  qfRounds?: string[];
-  dgRounds?: string[];
-};
-
-/**
- * The program type for v1
- **/
-
-export type Program = Omit<v2Project, 'metadata'> & {
-  metadata: {
-    name: string;
-  };
 };
 
 export type ProjectApplicationMetadata = {
@@ -332,7 +228,7 @@ export type V2Round = {
   matchTokenAddress: string;
   roundMetadata: RoundMetadata | null;
   roundMetadataCid: string;
-  applicationMetadata: RoundApplicationMetadata | null;
+  applicationMetadata: any | null;
   applicationMetadataCid: string;
   strategyId: string;
   projectId: string;
