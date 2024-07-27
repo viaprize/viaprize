@@ -10,8 +10,9 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export default async function FetchGitcoins() {
   const applicationsInRound = await fetchRoundForExplorer(8453, '31');
-  const shuffledApplications: (Application & { anchorAddress: `0x${string}` })[] =
-    shuffleArray(applicationsInRound.applications);
+  const shuffledApplications: Application[] = shuffleArray(
+    applicationsInRound.applications,
+  );
   console.log(shuffledApplications);
 
   return (
@@ -20,7 +21,7 @@ export default async function FetchGitcoins() {
         <GitcoinCard
           id={application.id}
           key={application.id}
-          imageURL={`https://ipfs.io/ipfs/${application.metadata.application.project.bannerImg}`}
+          imageURL={`https://ipfs.io/ipfs/${application.project.metadata.bannerImg}`}
           title={application.project.metadata.title}
           description={application.project.metadata.description}
           raised={application.totalAmountDonatedInUsd}

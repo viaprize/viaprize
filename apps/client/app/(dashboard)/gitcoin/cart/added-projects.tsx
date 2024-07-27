@@ -1,4 +1,5 @@
 'use client';
+import { renderToPlainText } from '@/lib/utils';
 import {
   ActionIcon,
   Avatar,
@@ -9,7 +10,6 @@ import {
   Text,
 } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
-import { renderToPlainText } from 'app/(dashboard)/(_utils)/utils';
 import { useCartStore } from '../../(_utils)/store/datastore';
 
 export default function AddedProjects() {

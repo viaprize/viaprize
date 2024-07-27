@@ -6,10 +6,10 @@ interface DetailProps {
   contributors: number;
 }
 
-function getRemainingDays(endTime) {
+function getRemainingDays(endTime: string) {
   const endDate = new Date(endTime);
   const currentDate = new Date();
-  const diffTime = endDate - currentDate;
+  const diffTime = endDate.getTime() - currentDate.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   if (diffDays > 0) {

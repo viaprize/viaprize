@@ -1,6 +1,7 @@
 /** @type {import("eslint").Linter.Config} */
 const config = {
   // extends: ["custom/next"],
+  // @ts-ignore
   extends: [
     '@vercel/style-guide/eslint/node',
     '@vercel/style-guide/eslint/browser',
@@ -32,7 +33,7 @@ const config = {
       },
     },
   },
-  ignorePatterns: ['node_modules/', 'dist/', 'lib/smartContract.ts','next/babel'],
+  ignorePatterns: ['node_modules/', 'dist/', 'lib/smartContract.ts', 'next/babel'],
   // add rules configurations here
   rules: {
     'unicorn/filename-case': 'off',

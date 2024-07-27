@@ -1,5 +1,6 @@
 'use client';
 
+import { renderToPlainText } from '@/lib/utils';
 import {
   ActionIcon,
   Button,
@@ -12,7 +13,6 @@ import {
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
-import { renderToPlainText } from 'app/(dashboard)/(_utils)/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -53,7 +53,7 @@ export default function GitcoinCard({
       addItem({
         ...application,
         roundId: '31',
-        chainId: 8453,
+        chainId: '8453',
         amount: '0',
       });
       toast.success(`${title} added to cart`);
