@@ -1,8 +1,7 @@
-import { Badge, Button, Card, Divider, Pill, Text, TextInput } from '@mantine/core';
+import { Badge, Button, Card, Divider, Pill, Text } from '@mantine/core';
 import {
   IconCalendarMonth,
   IconCircleCheckFilled,
-  IconSearch,
   IconShoppingCart,
 } from '@tabler/icons-react';
 import Link from 'next/link';
