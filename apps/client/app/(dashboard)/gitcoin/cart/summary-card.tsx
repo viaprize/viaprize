@@ -160,7 +160,7 @@ export default function SummaryCard() {
 
     try {
       const checkoutUrl = await fetch(
-        'https://49yjt1y4yg.execute-api.us-west-1.amazonaws.com/checkout/paypal',
+        'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout/paypal',
         {
           method: 'POST',
           headers: {
