@@ -178,7 +178,7 @@ export default function SummaryCard() {
 
       console.log({ checkoutUrl });
 
-      // router.replace(checkoutUrl.links[1].href);
+      router.replace(checkoutUrl.links[1].href);
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
