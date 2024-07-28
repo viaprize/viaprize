@@ -181,6 +181,8 @@ export default function SummaryCard() {
       console.log({ checkoutUrl });
       setCustomerId(customerId);
 
+      console.log({ customerId });
+
       return checkoutUrl.id as string;
     } catch (e: unknown) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
@@ -232,7 +234,7 @@ export default function SummaryCard() {
 
                   body: JSON.stringify({
                     orderId: data.orderID,
-                    customerId: customerId,
+                    customId: customerId,
                   }),
                 },
               )
