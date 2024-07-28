@@ -14,6 +14,7 @@ import { encodeFunctionData, hashTypedData, Hex, hexToSignature, parseUnits } fr
 import { useWalletClient } from 'wagmi';
 export default function SummaryCard() {
   const [rawTxData, setRawTxData] = useState('');
+  const [customerId, setCustomerId] = useState<string>();
   const { data: walletClient } = useWalletClient();
   const router = useRouter();
   const { items } = useCartStore();
@@ -158,6 +159,8 @@ export default function SummaryCard() {
   };
   const sumbit = async () => {
     try {
+      const customerId = nanoid();
+
       const checkoutUrl = await fetch(
         'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout/paypal',
         {
@@ -167,7 +170,7 @@ export default function SummaryCard() {
           },
           body: JSON.stringify({
             metadata: rawTxData,
-            customId: nanoid(),
+            customId: customerId,
             amount: totalAmount,
           }),
         },
@@ -176,6 +179,7 @@ export default function SummaryCard() {
         .then((data) => data);
 
       console.log({ checkoutUrl });
+      setCustomerId(customerId);
 
       return checkoutUrl.id as string;
     } catch (e: unknown) {
@@ -220,7 +224,7 @@ export default function SummaryCard() {
               }
               return id;
             }}
-            onApprove={(data) => {
+            onApprove={(data, actions) => {
               return fetch(
                 'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout/paypal/capture',
                 {
@@ -228,6 +232,7 @@ export default function SummaryCard() {
 
                   body: JSON.stringify({
                     orderId: data.orderID,
+                    customerId: customerId,
                   }),
                 },
               )
