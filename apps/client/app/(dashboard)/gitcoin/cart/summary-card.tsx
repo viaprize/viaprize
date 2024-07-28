@@ -2,17 +2,18 @@
 import { FUND_MCR_ADDRESS, USDC } from '@/lib/constants';
 import { encodedQFAllocation, usdcSignType } from '@/lib/utils';
 import { getTokenByChainIdAndAddress } from '@gitcoin/gitcoin-chain-data';
-import { Card, Divider, Text } from '@mantine/core';
+import { Button, Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { readContract } from '@wagmi/core';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { nanoid } from 'nanoid';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { encodeFunctionData, hashTypedData, Hex, hexToSignature, parseUnits } from 'viem';
 import { useWalletClient } from 'wagmi';
 export default function SummaryCard() {
+  const [rawTxData, setRawTxData] = useState('');
   const { data: walletClient } = useWalletClient();
   const router = useRouter();
   const { items } = useCartStore();
@@ -20,7 +21,10 @@ export default function SummaryCard() {
     () => items.reduce((acc, item) => acc + parseFloat(item.amount), 0),
     [items],
   );
-  const sumbit = async () => {
+  useEffect(() => {
+    setRawTxData('');
+  }, [totalAmount]);
+  const signDonations = async () => {
     if (!walletClient) {
       throw new Error('Wallet client not found');
     }
@@ -36,9 +40,6 @@ export default function SummaryCard() {
 
     const chainId = 8453;
     const donations = projectsByChain[chainId];
-
-    let sig;
-
     const nonce = await readContract({
       abi: [
         {
@@ -65,7 +66,6 @@ export default function SummaryCard() {
       functionName: 'nonces',
       args: [walletAddress],
     });
-
     const hash = hashTypedData(
       usdcSignType({
         deadline: BigInt(deadline),
@@ -75,7 +75,6 @@ export default function SummaryCard() {
         value: BigInt(totalDonationInUSDCOnChain),
       }) as any,
     );
-
     const signature = await walletClient.signTypedData(
       usdcSignType({
         deadline: BigInt(deadline),
@@ -85,7 +84,6 @@ export default function SummaryCard() {
         value: BigInt(totalDonationInUSDCOnChain),
       }) as any,
     );
-
     const rsv = hexToSignature(signature);
 
     const groupedDonationsByRoundId = Object.groupBy(
@@ -95,7 +93,6 @@ export default function SummaryCard() {
       })),
       ({ roundId }) => roundId,
     );
-
     const groupedEncodedVotes: Record<string, Hex[]> = {};
     if (!groupedDonationsByRoundId) {
       throw new Error('groupedDonationsByRoundId is null');
@@ -139,7 +136,7 @@ export default function SummaryCard() {
     });
     const data = Object.values(groupedEncodedVotes).flat();
 
-    const rawTxData = encodeFunctionData({
+    const newRawTxData = encodeFunctionData({
       abi: FUND_MCR_ADDRESS,
       functionName: 'fundUsingUsdc',
       args: [
@@ -157,7 +154,9 @@ export default function SummaryCard() {
         rsv.s as Hex,
       ],
     });
-
+    setRawTxData(newRawTxData);
+  };
+  const sumbit = async () => {
     try {
       const checkoutUrl = await fetch(
         'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout/paypal',
@@ -203,41 +202,44 @@ export default function SummaryCard() {
         </Text>
       </div>
       <Divider />
-      {/* <Button onClick={sumbit}>Pay With Card</Button> */}
-      <PayPalScriptProvider
-        options={{
-          clientId:
-            'ARWRaruLPRFS3ekuyixocUzPBxKUEacRHjzVR5HP-1lLJS-Fj0BJkHZ_CmA-OlQsicXGenwgOqMnYAqs',
-        }}
-      >
-        <PayPalButtons
-          style={{ layout: 'horizontal' }}
-          createOrder={async () => {
-            const id = await sumbit();
-            if (!id) {
-              throw new Error('Checkout ID not found');
-            }
-            return id;
+      {rawTxData.length === 0 ? (
+        <Button onClick={signDonations}>Sign With Wallet</Button>
+      ) : (
+        <PayPalScriptProvider
+          options={{
+            clientId:
+              'ARWRaruLPRFS3ekuyixocUzPBxKUEacRHjzVR5HP-1lLJS-Fj0BJkHZ_CmA-OlQsicXGenwgOqMnYAqs',
           }}
-          onApprove={(data) => {
-            return fetch(
-              'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout/paypal/capture',
-              {
-                method: 'POST',
+        >
+          <PayPalButtons
+            style={{ layout: 'horizontal' }}
+            createOrder={async () => {
+              const id = await sumbit();
+              if (!id) {
+                throw new Error('Checkout ID not found');
+              }
+              return id;
+            }}
+            onApprove={(data) => {
+              return fetch(
+                'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout/paypal/capture',
+                {
+                  method: 'POST',
 
-                body: JSON.stringify({
-                  orderId: data.orderID,
-                }),
-              },
-            )
-              .then((response) => response.json())
-              .then((orderData) => {
-                const name = orderData.payer.name.given_name;
-                alert(`Transaction completed by ${name}`);
-              });
-          }}
-        />
-      </PayPalScriptProvider>
+                  body: JSON.stringify({
+                    orderId: data.orderID,
+                  }),
+                },
+              )
+                .then((response) => response.json())
+                .then((orderData) => {
+                  const name = orderData.payer.name.given_name;
+                  alert(`Transaction completed by ${name}`);
+                });
+            }}
+          />
+        </PayPalScriptProvider>
+      )}
     </Card>
   );
 }
