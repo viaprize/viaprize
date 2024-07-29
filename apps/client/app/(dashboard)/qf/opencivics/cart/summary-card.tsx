@@ -22,9 +22,13 @@ export default function SummaryCard() {
     () => items.reduce((acc, item) => acc + parseFloat(item.amount), 0),
     [items],
   );
+
+  const meetsMinimumDonation = totalAmount >= 1.5;
+
   useEffect(() => {
     setRawTxData('');
   }, [totalAmount]);
+
   const signDonations = async () => {
     if (!walletClient) {
       throw new Error('Wallet client not found');
@@ -111,16 +115,6 @@ export default function SummaryCard() {
         })),
       );
     }
-    // const groupedAmounts: Record<string, bigint> = {};
-    // for (const roundId in groupedDonationsByRoundId) {
-    //   if (!groupedDonationsByRoundId[roundId]) {
-    //     continue;
-    //   }
-    //   groupedAmounts[roundId] = groupedDonationsByRoundId[roundId].reduce(
-    //     (acc, donation) => acc + parseUnits(donation.amount, usdcToken.decimals),
-    //     BigInt(0),
-    //   );
-    // }
     const amountArray: bigint[] = [];
     for (const roundId in groupedDonationsByRoundId) {
       if (!groupedDonationsByRoundId[roundId]) {
@@ -157,6 +151,7 @@ export default function SummaryCard() {
     });
     setRawTxData(newRawTxData);
   };
+
   const sumbit = async () => {
     try {
       const customerId = nanoid();
@@ -178,17 +173,11 @@ export default function SummaryCard() {
         .then((res) => res.json())
         .then((data) => data);
 
-      console.log({ checkoutUrl });
       setCustomerId(customerId);
-
-      console.log({ customerId });
 
       return checkoutUrl.id as string;
     } catch (e: unknown) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
-    } finally {
-      // setSendLoading(false);
     }
   };
 
@@ -199,17 +188,22 @@ export default function SummaryCard() {
       </Text>
       <Divider />
       <div className="flex items-center justify-between">
-        <div className="">
+        <div>
           <Text>Your total contribution to </Text>
           <Text c="blue">Gitcoin</Text>
         </div>
         <Text fw="bold" size="lg">
-          ${totalAmount}
+          ${totalAmount.toFixed(2)}
         </Text>
       </div>
       <Divider />
+      {!meetsMinimumDonation && (
+        <Text color="red">Minimum donation amount is $1.5 USD.</Text>
+      )}
       {rawTxData.length === 0 ? (
-        <Button onClick={signDonations}>Sign With Wallet</Button>
+        <Button onClick={signDonations} disabled={!meetsMinimumDonation}>
+          Sign With Wallet
+        </Button>
       ) : (
         <PayPalScriptProvider
           options={{
@@ -231,7 +225,6 @@ export default function SummaryCard() {
                 'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout/paypal/capture',
                 {
                   method: 'POST',
-
                   body: JSON.stringify({
                     orderId: data.orderID,
                     customId: customerId,
