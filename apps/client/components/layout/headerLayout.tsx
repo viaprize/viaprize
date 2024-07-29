@@ -125,7 +125,7 @@ export default function HeaderLayout() {
           </Menu.Dropdown>
         </Menu>
 
-        <Menu withArrow shadow="md" position="bottom" trigger="hover">
+        {/* <Menu withArrow shadow="md" position="bottom" trigger="hover">
           <Menu.Target>
             <Center>
               <Box
@@ -150,7 +150,7 @@ export default function HeaderLayout() {
               </Menu.Item>
             </Stack>
           </Menu.Dropdown>
-        </Menu>
+        </Menu> */}
       </Flex>
 
       <Flex gap="sm" align="center">
