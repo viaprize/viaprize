@@ -74,7 +74,8 @@ export default function GitcoinCard({
       withBorder
       className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out cursor-pointer"
       pos="relative"
-      onClick={() => router.push(link)}
+   component="a"
+   href={link}
     >
       <Card.Section>
         <Image
