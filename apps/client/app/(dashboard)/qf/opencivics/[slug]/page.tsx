@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 import { fetchApplicationById, fetchRoundForExplorer } from '@/lib/actions';
 import { Text } from '@mantine/core';
 import Description from './description';

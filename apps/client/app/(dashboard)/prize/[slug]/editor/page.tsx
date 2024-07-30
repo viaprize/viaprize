@@ -10,10 +10,10 @@ import useAppUser from '@/components/hooks/useAppUser';
 import AppShellLayout from '@/components/layout/appshell';
 import { backendApi } from '@/lib/backend';
 import { useWallets } from '@privy-io/react-auth';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
-function EditorsPage() {
+function EditorsPage({ params }: { params: { slug: string } }) {
   const [content, setContent] = useState<JSONContent | undefined>(
     PrizeSubmissionTemplate,
   );
@@ -30,18 +30,14 @@ function EditorsPage() {
 
     const res = await (
       await backendApi()
-    ).prizes.submissionCreate(router.query.slug as string, {
+    ).prizes.submissionCreate(params.slug, {
       submissionDescription: JSON.stringify(content),
       submissionHash: '',
       submitterAddress: address,
     });
     console.log({ res }, 'ressss');
 
-    toast.promise(router.push(`/prize/${router.query.slug as string}`), {
-      loading: 'Redirecting please wait ',
-      success: 'Submission Submitted',
-      error: 'Error Submitting Proposal',
-    });
+   router.push(`/prize/${params.slug}`);
   };
   const onSumbit = () => {
     console.log('on sumbitttt');

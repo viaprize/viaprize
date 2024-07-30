@@ -9,6 +9,7 @@ import { Suspense } from 'react';
 import FetchGitcoins from './fetch-explore';
 import StepperInfo from './stepper-info';
 
+export const dynamic = 'force-dynamic';
 export default function ExploreGitcoin() {
   return (
     <div>
