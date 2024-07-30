@@ -184,14 +184,9 @@ export default function SummaryCard() {
 
       console.log({ checkoutUrl });
 
-      console.log({ customerId });
-
       return checkoutUrl.id as string;
     } catch (e: unknown) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
-    } finally {
-      // setSendLoading(false);
     }
   };
 
@@ -202,12 +197,12 @@ export default function SummaryCard() {
       </Text>
       <Divider />
       <div className="flex items-center justify-between">
-        <div className="">
+        <div>
           <Text>Your total contribution to </Text>
           <Text c="blue">Gitcoin</Text>
         </div>
         <Text fw="bold" size="lg">
-          ${totalAmount}
+          ${totalAmount.toFixed(2)}
         </Text>
       </div>
       <Divider />

@@ -22,7 +22,7 @@ export default function ExploreGitcoin() {
               Credit Card Donation Available
             </Badge>
 
-            <Link href="/gitcoin/cart">
+            <Link href="/qf/opencivics/cart">
               <Button
                 className="ml-4 mt-2 lg:mt-0 "
                 leftSection={<IconShoppingCart />}

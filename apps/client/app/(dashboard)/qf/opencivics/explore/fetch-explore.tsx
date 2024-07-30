@@ -26,7 +26,7 @@ export default async function FetchGitcoins() {
           description={application.project.metadata.description}
           raised={application.totalAmountDonatedInUsd}
           contributors={application.uniqueDonorsCount}
-          link={`/gitcoin/${application.id}`}
+          link={`/qf/opencivics/${application.id}`}
           application={application}
         />
       ))}
