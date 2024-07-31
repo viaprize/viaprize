@@ -27,12 +27,12 @@ export default function useAppUser() {
 
   // const isMounted = useIsMounted()
   // useEffect(() => {
-  //   if ((!user || !wallet) && ready && isMounted()) {
-  //     logoutUser()
+  //   console.log({ appUser, wallet, loading });
 
+  //   if (!loading && appUser && wallet) {
+  //     logoutUser();
   //   }
-
-  // }, [user, wallet])
+  // }, [appUser, wallet, loading]);
 
   const { login } = useLogin({
     async onComplete(loginUser, isNewUser, wasAlreadyAuthenticated) {
@@ -49,6 +49,7 @@ export default function useAppUser() {
       if (wasAlreadyAuthenticated || isNewUser) {
         const walletAddress = loginUser.wallet?.address;
         if (!walletAddress) {
+          await logoutUser();
           toast('Wallet address not found, please try again');
           return;
         }
@@ -63,7 +64,8 @@ export default function useAppUser() {
           toast('Welcome to Viaprize! Please complete your profile to continue');
       }
     },
-    onError(error) {
+    async onError(error) {
+      await logoutUser();
       toast.error(`Error: ${error} While Logging In `);
     },
   });
