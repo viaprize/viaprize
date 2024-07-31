@@ -63,7 +63,8 @@ export default function useAppUser() {
           toast('Welcome to Viaprize! Please complete your profile to continue');
       }
     },
-    onError(error) {
+    async onError(error) {
+      await logoutUser();
       toast.error(`Error: ${error} While Logging In `);
     },
   });
@@ -83,6 +84,9 @@ export default function useAppUser() {
 
   // eslint-disable-next-line @typescript-eslint/require-await -- its being waited in the hook
   const loginUser = async (): Promise<void> => {
+    if (!user && appUser) {
+      await logoutUser();
+    }
     login();
   };
 
