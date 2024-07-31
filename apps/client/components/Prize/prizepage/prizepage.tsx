@@ -18,9 +18,9 @@ import {
   Stack,
   Text,
   Title,
+  Image,
 } from '@mantine/core';
 import { readContract } from '@wagmi/core';
-import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -303,15 +303,12 @@ export default function PrizePageComponent({
         ) : null}
       </Group>
       <Image
-        className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-fit max-w-full  rounded-md"
         src={
           prize.images[0] ||
           'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
         }
-        width={1280}
-        height={768}
+        radius="md"
         alt="prize info tumbnail"
-        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
       <Center my="xl">
         <PrizePageTabs
