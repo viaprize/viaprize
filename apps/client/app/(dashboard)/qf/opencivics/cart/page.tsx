@@ -14,7 +14,7 @@ export default function CartPage() {
       <Divider my="md" />
       <h3>Hypercerts Ecosystem Round</h3>
       <div className="text-md mb-3">
-        Your donation to each project must be valued at 3 USD or more to be eligible for
+        Your donation to each project must be valued at 2 USD or more to be eligible for
         matching.
       </div>
       <div className="w-full lg:flex space-y-3 mb-4 lg:gap-4 justify-between">
