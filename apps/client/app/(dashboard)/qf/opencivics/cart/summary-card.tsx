@@ -122,8 +122,8 @@ export default function SummaryCard() {
                           {orderData.payer.name.given_name}
                         </span>
                       </div>
-                      After the transaction is approved,it may take 15-20 seconds for your
-                      donation record to update in the projects.The donation amount will
+                      After the transaction is approved, it may take 15-20 seconds for your
+                      donation record to update in the projects. The donation amount will
                       then be displayed on the explore and info page of the projects.
                     </div>
                   </div>,
@@ -137,9 +137,9 @@ export default function SummaryCard() {
         />
       </PayPalScriptProvider>
 
-      <Button component="a" href="/qf/opencivics/explore">
+      {/* <Button component="a" href="/qf/opencivics/explore">
         Go to explore page
-      </Button>
+      </Button> */}
     </Card>
   );
 }
