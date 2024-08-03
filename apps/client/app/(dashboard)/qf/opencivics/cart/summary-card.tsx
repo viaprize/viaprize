@@ -1,22 +1,19 @@
 'use client';
-import { Card, Divider, Text } from '@mantine/core';
+import { TransactionToast } from '@/components/custom/transaction-toast';
+import { Button, Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { nanoid } from 'nanoid';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { useWalletClient } from 'wagmi';
 export default function SummaryCard() {
   const [customerId, setCustomerId] = useState<string>(nanoid());
-  const { data: walletClient } = useWalletClient();
-  const router = useRouter();
-  const items = useCartStore((state) => state.items);
   const totalAmount = useCartStore((state) =>
     state.items.reduce((acc, item) => acc + parseFloat(item.amount), 0),
   );
+  const { clearCart } = useCartStore();
 
-  const meetsMinimumDonation = totalAmount >= 1.5;
+  const meetsMinimumDonation = totalAmount >= 2;
 
   useEffect(() => {
     setCustomerId(nanoid());
@@ -75,7 +72,7 @@ export default function SummaryCard() {
       </div>
       <Divider />
       {!meetsMinimumDonation && (
-        <Text color="red">Minimum donation amount is $1.5 USD.</Text>
+        <Text color="red">Minimum donation amount is $2 USD.</Text>
       )}
 
       <PayPalScriptProvider
@@ -107,11 +104,42 @@ export default function SummaryCard() {
               .then((response) => response.json())
               .then((orderData) => {
                 const name = orderData.payer.name.given_name;
-                alert(`Transaction completed by ${name}`);
+                toast.success(
+                  // <TransactionToast
+                  //   title="Transaction completed by"
+                  //   hash={orderData.payer.name.given_name}
+                  // />,
+                  <div className="">
+                    <TransactionToast
+                      title="Transaction Successful"
+                      hash={orderData.hash}
+                      scanner="https://arbiscan.io/tx/"
+                    />
+                    <div className="bg-slate-100 items-center ">
+                      <div className="">
+                        Donor name:{' '}
+                        <span className="text-blue-400">
+                          {orderData.payer.name.given_name}
+                        </span>
+                      </div>
+                      After the transaction is approved,it may take 15-20 seconds for your
+                      donation record to update in the projects.The donation amount will
+                      then be displayed on the explore and info page of the projects.
+                    </div>
+                  </div>,
+                  {
+                    duration: 6000,
+                  },
+                );
+                clearCart();
               });
           }}
         />
       </PayPalScriptProvider>
+
+      <Button component="a" href="/qf/opencivics/explore">
+        Goto explore page
+      </Button>
     </Card>
   );
 }

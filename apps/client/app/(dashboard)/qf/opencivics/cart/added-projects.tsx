@@ -19,15 +19,13 @@ export default function AddedProjects() {
       return acc + parseFloat(currentItem.amount);
     }, 0);
 
-    // if (items.length === 1 && value < 2 && Number.isNaN(value)) {
-    //   setError('Donation amount must be at least $2 USD.');
-    // }
-
-    // else if (totalAmount < 2 ) {
-    //   setError('Total donation amount must be at least $2 USD.');
-    // } else {
-    //   setError('');
-    // }
+    if (items.length === 1 && value < 2 && Number.isNaN(value)) {
+      setError('Donation amount must be at least $2 USD.');
+    } else if (totalAmount < 2) {
+      setError('Total donation amount must be at least $2 USD.');
+    } else {
+      setError('');
+    }
   };
 
   return (
