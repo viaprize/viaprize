@@ -43,6 +43,10 @@ export default function RootLayout({
   gtag('js', new Date());
   gtag('config', 'G-HF9F0C1910');`}
         </Script>
+        <Script
+          src="https://retune.so/api/script/chat.js?id=11ef511c-e77f-eef0-80e0-75ef9fd91023"
+          defer
+        />
       </head>
       <body>
         <WrapperLayout>{children}</WrapperLayout>
