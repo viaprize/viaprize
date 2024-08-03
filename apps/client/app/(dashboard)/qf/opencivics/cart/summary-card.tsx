@@ -138,7 +138,7 @@ export default function SummaryCard() {
       </PayPalScriptProvider>
 
       <Button component="a" href="/qf/opencivics/explore">
-        Goto explore page
+        Go to explore page
       </Button>
     </Card>
   );
