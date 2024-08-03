@@ -1,5 +1,6 @@
 // 'use client';
 import { fetchApplicationById, fetchRoundForExplorer } from '@/lib/actions';
+import { gitcoinRoundData } from '@/lib/constants';
 import { Text } from '@mantine/core';
 import Description from './description';
 import DetailCard from './detail-card';
@@ -13,8 +14,15 @@ export default async function GitcoinApplication({
     slug: string;
   };
 }) {
-  const applicationsInRound = await fetchApplicationById(params.slug, 8453, '31');
-  const round = await fetchRoundForExplorer(8453, '31');
+  const applicationsInRound = await fetchApplicationById(
+    params.slug,
+    gitcoinRoundData.chainId,
+    gitcoinRoundData.roundId,
+  );
+  const round = await fetchRoundForExplorer(
+    gitcoinRoundData.chainId,
+    gitcoinRoundData.roundId,
+  );
   console.log(applicationsInRound);
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">

@@ -1,18 +1,9 @@
 'use client';
 import { renderToPlainText } from '@/lib/utils';
-import {
-  ActionIcon,
-  Avatar,
-  Button,
-  Card,
-  Divider,
-  NumberInput,
-  Text,
-  Tooltip,
-} from '@mantine/core';
+import { ActionIcon, Avatar, Button, Card, Divider, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
-import { CartItem, useCartStore } from '../../../(_utils)/store/datastore';
 import { useState } from 'react';
+import { CartItem, useCartStore } from '../../../(_utils)/store/datastore';
 
 export default function AddedProjects() {
   const { items, removeItem, clearCart, changeAmount } = useCartStore();
@@ -28,15 +19,15 @@ export default function AddedProjects() {
       return acc + parseFloat(currentItem.amount);
     }, 0);
 
-    if (items.length === 1 && value < 2 && Number.isNaN(value)) {
-      setError('Donation amount must be at least $2 USD.');
-    } 
-   
-    else if (totalAmount < 2 ) {
-      setError('Total donation amount must be at least $2 USD.');
-    } else {
-      setError('');
-    }
+    // if (items.length === 1 && value < 2 && Number.isNaN(value)) {
+    //   setError('Donation amount must be at least $2 USD.');
+    // }
+
+    // else if (totalAmount < 2 ) {
+    //   setError('Total donation amount must be at least $2 USD.');
+    // } else {
+    //   setError('');
+    // }
   };
 
   return (

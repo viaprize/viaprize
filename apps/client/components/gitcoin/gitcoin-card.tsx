@@ -1,5 +1,6 @@
 'use client';
 
+import { gitcoinRoundData } from '@/lib/constants';
 import { renderToPlainText } from '@/lib/utils';
 import {
   ActionIcon,
@@ -52,8 +53,8 @@ export default function GitcoinCard({
     if (!isItemInCart(id)) {
       addItem({
         ...application,
-        roundId: '31',
-        chainId: '8453',
+        roundId: gitcoinRoundData.roundId,
+        chainId: gitcoinRoundData.chainId.toString(),
         amount: '0',
       });
       toast.success(`${title} added to cart`);
@@ -74,8 +75,8 @@ export default function GitcoinCard({
       withBorder
       className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out cursor-pointer"
       pos="relative"
-   component="a"
-   href={link}
+      component="a"
+      href={link}
     >
       <Card.Section>
         <Image

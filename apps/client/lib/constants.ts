@@ -785,3 +785,8 @@ export const MULTI_ROUND_CHECKOUT = [
     type: 'function',
   },
 ] as const;
+
+export const gitcoinRoundData = {
+  chainId: 42161,
+  roundId: '384',
+};

@@ -24,6 +24,7 @@ export const useCartStore = create(
           if (!state.items.some((cartItem) => cartItem.id === item.id)) {
             return { items: [...state.items, { ...item }] };
           }
+
           return state;
         }),
       removeItem: (id) =>
