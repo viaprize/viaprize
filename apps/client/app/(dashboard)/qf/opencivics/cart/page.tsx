@@ -1,5 +1,5 @@
 'use client';
-import { Divider } from '@mantine/core';
+import { Button, Divider } from '@mantine/core';
 import AddedProjects from './added-projects';
 import SummaryCard from './summary-card';
 export type CartAmountItem = {
@@ -10,7 +10,12 @@ export type CartItemToAcount = { [key: string]: number };
 export default function CartPage() {
   return (
     <div className="max-w-screen-xl w-screen">
-      <h2>Cart</h2>
+      <div className="flex items-center space-x-5">
+        <h2>Cart</h2>
+        <Button component="a" href="/qf/opencivics/explore">
+          Go to explore page
+        </Button>
+      </div>
       <Divider my="md" />
       <h3>Hypercerts Ecosystem Round</h3>
       <div className="text-md mb-3">

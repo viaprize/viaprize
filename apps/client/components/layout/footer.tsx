@@ -23,7 +23,7 @@ export default function Footer() {
               viaPrize
             </span>
           </Link>
-          <div className="">
+          <div className="lg:w-1/3 ">
             <div className="flex justify-center w-full text-black my-2">
               <SubscriptionForm />
             </div>
