@@ -32,6 +32,7 @@ export default async function FetchGitcoins() {
           contributors={application.uniqueDonorsCount}
           link={`/qf/opencivics/${application.id}`}
           application={application}
+          logoURL={`https://ipfs.io/ipfs/${application.project.metadata.logoImg}`}
         />
       ))}
     </>
