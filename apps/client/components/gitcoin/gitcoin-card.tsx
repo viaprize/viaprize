@@ -4,6 +4,7 @@ import { gitcoinRoundData } from '@/lib/constants';
 import { renderToPlainText } from '@/lib/utils';
 import {
   ActionIcon,
+  Avatar,
   Button,
   Card,
   CopyButton,
@@ -15,6 +16,7 @@ import { IconCheck, IconCopy } from '@tabler/icons-react';
 
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Application } from 'types/gitcoin.types';
@@ -26,6 +28,7 @@ export interface CartItem {
   raised: number;
   contributors: number;
   link: string;
+  logoURL: string;
   application: Application;
 }
 
@@ -38,6 +41,7 @@ export default function GitcoinCard({
   contributors,
   link,
   application,
+  logoURL
 }: CartItem) {
   const addItem = useCartStore((state) => state.addItem);
   const removeItem = useCartStore((state) => state.removeItem);
@@ -75,31 +79,46 @@ export default function GitcoinCard({
       withBorder
       className="shadow-sm hover:shadow-lg transition duration-300 ease-in-out cursor-pointer"
       pos="relative"
-      component="a"
-      href={link}
+      // component="a"
+      // href={link}
     >
-      <Card.Section>
+      <Link href={link}>
+        <Card.Section>
+          <Image
+            alt="Image"
+            height={160}
+            width={420}
+            src={
+              imageURL ||
+              'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
+            }
+          />
+        </Card.Section>
+      </Link>
+      <Link href={link} className="mt-4 flex justify-between items-center">
+        <div className="">
+          {title.length > 35 ? (
+            <Text fw="bold" size="lg">
+              {title.substring(0, 35)}...
+            </Text>
+          ) : (
+            <Text fw="bold" size="lg">
+              {title}
+            </Text>
+          )}
+        </div>
         <Image
-          alt="Image"
-          height={160}
-          width={420}
+          alt="Logo"
+          height={70}
+          width={70}
           src={
-            imageURL ||
+            logoURL ||
             'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
           }
+          className="rounded-full absolute  right-4"
         />
-      </Card.Section>
-      <div className="flex flex-col justify-between h-full">
-        {title.length > 35 ? (
-          <Text fw="bold" size="lg">
-            {title.substring(0, 35)}...
-          </Text>
-        ) : (
-          <Text fw="bold" size="lg">
-            {title}
-          </Text>
-        )}
-
+      </Link>
+      <Link href={link}>
         <div>
           <p className="text-md h-20 overflow-y-auto overflow-x-hidden">
             {renderToPlainText(description).substring(0, 130)}...
@@ -112,21 +131,22 @@ export default function GitcoinCard({
             Total raised by <span className="text-gray font-bold">{contributors}</span>{' '}
             contributors
           </Text>
-          <Button
-            color={isItemInCart(id) ? 'red' : 'primary'}
-            component="a"
-            fullWidth
-            mt="md"
-            radius="md"
-            onClick={(e) => {
-              e.stopPropagation();
-              isItemInCart(id) ? handleRemoveFromCart() : handleAddToCart();
-            }}
-          >
-            {isItemInCart(id) ? 'Remove from Cart' : 'Add to Cart'}
-          </Button>
         </div>
-      </div>
+      </Link>
+      <Button
+        color={isItemInCart(id) ? 'red' : 'primary'}
+        component="a"
+        fullWidth
+        mt="md"
+        radius="md"
+        onClick={(e) => {
+          e.stopPropagation();
+          isItemInCart(id) ? handleRemoveFromCart() : handleAddToCart();
+        }}
+      >
+        {isItemInCart(id) ? 'Remove from Cart' : 'Add to Cart'}
+      </Button>
+
       <div className="absolute top-2 right-2">
         <CopyButton value={`https://www.viaprize.org/qf/opencivics/${link}`}>
           {({ copied, copy }) => (

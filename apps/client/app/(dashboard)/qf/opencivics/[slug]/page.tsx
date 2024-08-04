@@ -1,7 +1,7 @@
 // 'use client';
 import { fetchApplicationById, fetchRoundForExplorer } from '@/lib/actions';
 import { gitcoinRoundData } from '@/lib/constants';
-import { Text } from '@mantine/core';
+import { Button, Text } from '@mantine/core';
 import Description from './description';
 import DetailCard from './detail-card';
 import ImageTitleCard from './image-title-card';
@@ -26,11 +26,13 @@ export default async function GitcoinApplication({
   console.log(applicationsInRound);
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
+     
       <ImageTitleCard
         title={applicationsInRound.project.metadata.title}
         img={`https://ipfs.io/ipfs/${applicationsInRound.project.metadata.bannerImg}`}
+        logoURL={`https://ipfs.io/ipfs/${applicationsInRound.project.metadata.logoImg}`}
       />
-      <div className="w-full lg:flex gap-4 justify-between mt-3">
+      <div className="w-full lg:flex gap-4 justify-between mt-12">
         <SocialCard
           createdOn={applicationsInRound.project.metadata.createdAt}
           website={applicationsInRound.project.metadata.website}
