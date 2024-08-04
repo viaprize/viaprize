@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use client';
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import { Button, Card, Divider, Text } from '@mantine/core';
@@ -70,6 +73,50 @@ export default function SummaryCard() {
           ${totalAmount.toFixed(2)}
         </Text>
       </div>
+      <Button
+        onClick={() => {
+          toast.success(
+            // <TransactionToast
+            //   title="Transaction completed by"
+            //   hash={orderData.payer.name.given_name}
+            // />,
+            <div>
+              <TransactionToast
+                title="Transaction Successful"
+                hash={'orderData.hash'}
+                scanner="https://arbiscan.io/tx/"
+              />
+              <div
+                style={{
+                  borderRadius: '0.5rem',
+                }}
+                className="rounded-lg items-center p-3 text-lg font-bold "
+              >
+                <div className="">
+                  Donor name: <span className="text-blue-400">{'swaraj'}</span>
+                </div>
+                <p>
+                  After the transaction is approved, it may take 15-20 seconds for your
+                  donation record to update in the projects. The donation amount will then
+                  be displayed on the explore and info page of the projects.
+                </p>
+                <Button
+                  onClick={() => {
+                    toast.dismiss();
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+            </div>,
+            {
+              duration: 20000,
+            },
+          );
+        }}
+      >
+        test
+      </Button>
       <Divider />
       {!meetsMinimumDonation && (
         <Text color="red">Minimum donation amount is $2 USD.</Text>
@@ -109,7 +156,7 @@ export default function SummaryCard() {
                   //   title="Transaction completed by"
                   //   hash={orderData.payer.name.given_name}
                   // />,
-                  <div className="">
+                  <div className="w-96">
                     <TransactionToast
                       title="Transaction Successful"
                       hash={orderData.hash}
@@ -122,13 +169,13 @@ export default function SummaryCard() {
                           {orderData.payer.name.given_name}
                         </span>
                       </div>
-                      After the transaction is approved, it may take 15-20 seconds for your
-                      donation record to update in the projects. The donation amount will
-                      then be displayed on the explore and info page of the projects.
+                      After the transaction is approved, it may take 15-20 seconds for
+                      your donation record to update in the projects. The donation amount
+                      will then be displayed on the explore and info page of the projects.
                     </div>
                   </div>,
                   {
-                    duration: 6000,
+                    duration: 20000,
                   },
                 );
                 clearCart();
