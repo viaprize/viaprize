@@ -30,6 +30,7 @@ interface ExploreCardProps {
   skills: string[];
   submissionMinutes: number;
   startingTimeBlockchain: number;
+  startingVoteTimeBlockahin: number;
   slug: string;
   contestants: number;
   startSubmissionDate: Date;
@@ -51,10 +52,12 @@ function ExploreCard({
   slug,
   submissionMinutes,
   startSubmissionDate,
+  startingVoteTimeBlockahin,
   contestants,
   refunded,
 }: ExploreCardProps) {
   const submissionEndDate = new Date(startingTimeBlockchain * 1000);
+  // const voting = new Date(startingVoteTimeBlockahin * 1000);
   const deadlineString = calculateDeadline(new Date(), submissionEndDate);
 
   return (
@@ -116,16 +119,16 @@ function ExploreCard({
           <Text fw="bold" size="xl">
             {usdAmount} USD
           </Text>
-          <Text fw="bold" className="flex">
+          {/* <Text fw="bold" className="flex">
             Submission Deadline :{' '}
-            {new Date() < submissionEndDate ? (
+            {(new Date() >= voting && ) ? (
               submissionEndDate.toLocaleDateString()
             ) : (
               <Text c="red" fw="bold" className="pl-2">
                 Ended
               </Text>
             )}
-          </Text>
+          </Text> */}
           <p className="text-md font-bold">
             {contestants} {contestants === 1 ? 'Contestant' : 'Contestants'}
           </p>
