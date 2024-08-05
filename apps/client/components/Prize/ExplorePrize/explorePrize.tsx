@@ -30,7 +30,6 @@ interface ExploreCardProps {
   skills: string[];
   submissionMinutes: number;
   startingTimeBlockchain: number;
-  startingVoteTimeBlockahin: number;
   slug: string;
   contestants: number;
   startSubmissionDate: Date;
