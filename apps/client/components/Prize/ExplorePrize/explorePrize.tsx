@@ -52,7 +52,6 @@ function ExploreCard({
   slug,
   submissionMinutes,
   startSubmissionDate,
-  startingVoteTimeBlockahin,
   contestants,
   refunded,
 }: ExploreCardProps) {
