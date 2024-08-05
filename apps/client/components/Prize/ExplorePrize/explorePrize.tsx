@@ -16,7 +16,6 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { PiTimerFill } from 'react-icons/pi';
 
 interface ExploreCardProps {
   distributed: boolean;
@@ -79,7 +78,7 @@ function ExploreCard({
       <div className="flex flex-col justify-between">
         <div>
           <div className="flex justify-between items-center my-3 gap-2 text-red-600">
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <PiTimerFill
               // color='red'
               />
@@ -89,7 +88,7 @@ function ExploreCard({
               >
                 {deadlineString}
               </Text>
-            </div>
+            </div> */}
 
             {distributed ? (
               <Badge color="green">Won</Badge>
