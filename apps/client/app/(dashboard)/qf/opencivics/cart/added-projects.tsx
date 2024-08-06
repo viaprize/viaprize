@@ -10,16 +10,17 @@ export default function AddedProjects() {
   const [error, setError] = useState('');
 
   const handleAmountChange = (item: CartItem, value: number) => {
-    changeAmount(item.id, value);
+    const amount = isNaN(value) ? 0 : value;
+    changeAmount(item.id, amount);
 
     const totalAmount = items.reduce((acc, currentItem) => {
       if (currentItem.id === item.id) {
-        return acc + value;
+        return acc + amount;
       }
       return acc + parseFloat(currentItem.amount);
     }, 0);
 
-    if (items.length === 1 && value < 2 && Number.isNaN(value)) {
+    if (items.length === 1 && amount < 2) {
       setError('Donation amount must be at least $2 USD.');
     } else if (totalAmount < 2) {
       setError('Total donation amount must be at least $2 USD.');
@@ -47,9 +48,6 @@ export default function AddedProjects() {
                   <Text fw="bold" size="lg" className="lg:block">
                     {item.project.metadata.title}
                   </Text>
-                  {/* <Text fw="bold" size="lg" className="lg:hidden">
-                    {item.project.metadata.title.substring(0, 6)}...
-                  </Text> */}
                   <p className="text-md hidden lg:visible lg:block">
                     {renderToPlainText(item.project.metadata.description).substring(
                       0,
