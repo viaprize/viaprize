@@ -47,7 +47,6 @@ export default async function FetchPrizes() {
             slug={prize.slug}
             startSubmissionDate={new Date(prize.startSubmissionDate)}
             startVotingDate={new Date(prize.startVotingDate)}
-            refunded={prize.refunded}
             contributers={prize.contributors}
             stage={prize.stage}
           />
