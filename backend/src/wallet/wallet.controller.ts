@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
+import { PrizeStages } from 'src/prizes/entities/prize.entity';
 import { PrizesService } from 'src/prizes/services/prizes.service';
 import { UsersService } from 'src/users/users.service';
 import { SEND_USDC } from 'src/utils/constants';
@@ -77,7 +78,12 @@ export class WalletController {
           'gasless',
           '0',
         );
-
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          prize.contract_address,
+          PrizeStages.SUMISSION_STARTED,
+        );
+      }
       return {
         hash,
       };
@@ -138,6 +144,13 @@ export class WalletController {
           'gasless',
           '0',
         );
+
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.SUBMISSION_ENDED,
+        );
+      }
       return {
         hash,
       };
@@ -181,6 +194,7 @@ export class WalletController {
         throw new HttpException('Prize does not exist', HttpStatus.BAD_REQUEST);
       });
 
+    console.log('this is serrrrrr');
     const [[votingPeriod]] =
       (await this.blockchainService.getPrizesV2PublicVariables(
         [contractAddress],
@@ -202,27 +216,19 @@ export class WalletController {
           'gasless',
           '0',
         );
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.VOTING_STARTED,
+        );
+      }
+
+      console.log({ hash });
       return {
         hash,
       };
     } catch (err) {
-      if (err instanceof BaseError) {
-        const revertError = err.walk(
-          (err) => err instanceof ContractFunctionRevertedError,
-        );
-        if (revertError instanceof ContractFunctionRevertedError) {
-          const errorName = revertError.data?.errorName ?? '';
-          throw new HttpException(
-            'Error: ' + errorName,
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      } else {
-        throw new HttpException(
-          'Error: ' + err.message,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      throw new HttpException('Error: ' + err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -259,6 +265,12 @@ export class WalletController {
           'gasless',
           '0',
         );
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.VOTING_ENDED,
+        );
+      }
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
@@ -436,6 +448,12 @@ export class WalletController {
           'gasless',
           '0',
         );
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.PRIZE_ENDED,
+        );
+      }
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
@@ -494,6 +512,13 @@ export class WalletController {
           'gasless',
           '0',
         );
+
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.PRIZE_ENDED,
+        );
+      }
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {

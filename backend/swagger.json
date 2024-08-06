@@ -4959,6 +4959,9 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "stage": {
+            "$ref": "#/components/schemas/PrizeStages"
+          },
           "contestants": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -5010,12 +5013,25 @@
           "updated_at",
           "images",
           "title",
+          "stage",
           "contestants",
           "submissions",
           "slug",
           "user"
         ],
         "x-typia-jsDocTags": []
+      },
+      "PrizeStages": {
+        "type": "string",
+        "enum": [
+          "not started",
+          "submission started",
+          "submission ended",
+          "voting started",
+          "voting ended",
+          "prize distributed",
+          "prize ended"
+        ]
       },
       "PrizesComments": {
         "type": "object",
@@ -6220,6 +6236,9 @@
             "x-typia-optional": false,
             "type": "string"
           },
+          "stage": {
+            "$ref": "#/components/schemas/PrizeStages"
+          },
           "contestants": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -6281,6 +6300,7 @@
           "updated_at",
           "images",
           "title",
+          "stage",
           "contestants",
           "submissions",
           "slug",
@@ -6458,6 +6478,9 @@
             "type": "string",
             "format": "date-time"
           },
+          "stage": {
+            "$ref": "#/components/schemas/PrizeStages"
+          },
           "contestants": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -6515,6 +6538,7 @@
           "priorities",
           "created_at",
           "updated_at",
+          "stage",
           "contestants",
           "submissions",
           "user"

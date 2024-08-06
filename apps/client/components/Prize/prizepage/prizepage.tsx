@@ -5,14 +5,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
-import type {
-  IndividualPrizeWithBalance,
-  PrizeWithBlockchainData,
-  SubmissionWithBlockchainData,
-} from '@/lib/api';
+import type { IndividualPrizeWithBalance, SubmissionWithBlockchainData } from '@/lib/api';
 import { calculateDeadline, usdcSignType } from '@/lib/utils';
 
 import { TransactionToast } from '@/components/custom/transaction-toast';
+import useMounted from '@/components/hooks/useMounted';
 import { backendApi } from '@/lib/backend';
 import { USDC } from '@/lib/constants';
 import {
@@ -44,8 +41,6 @@ import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import RefundCard from './refundCard';
 import Submissions from './submissions';
-import useIsMounted from '@/components/hooks/useIsMounted';
-import useMounted from '@/components/hooks/useMounted';
 
 function FundUsdcCard({
   contractAddress,
@@ -71,9 +66,9 @@ function FundUsdcCard({
   const router = useRouter();
 
   const getUsdcSignatureData = async () => {
-    if (parseFloat(value) <= 0) {
-      throw new Error('Donation must be at least 1$');
-    }
+    // if (parseFloat(value) <= 0) {
+    //   throw new Error('Donation must be at least 1$');
+    // }
     const walletAddress = walletClient?.account.address;
     if (!walletAddress) {
       throw new Error('Please login to donate');
@@ -150,6 +145,7 @@ function FundUsdcCard({
       router.refresh();
       window.location.reload();
     } catch (e: unknown) {
+      console.log(e, 'sklfjlsdfjlkjljlksdjflksjl');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
     } finally {

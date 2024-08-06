@@ -13,13 +13,13 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 // import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { useQuery } from 'react-query';
+import useAuthPerson from '../hooks/useAuthPerson';
 import { useUser } from '../hooks/useUser';
 import AuthWrap from './auth-wrapper';
 import SendCard from './donation-card';
 import EditProfileModal from './edit-profile-modal';
-import { notFound } from 'next/navigation';
-import useAuthPerson from '../hooks/useAuthPerson';
 
 export default function Profile({ params }: { params: { id: string } }) {
   const [opened, { open, close }] = useDisclosure(false);
@@ -27,17 +27,20 @@ export default function Profile({ params }: { params: { id: string } }) {
   // const params = useParams<{ id: string }>();
   const isProfileOwner = useAuthPerson();
 
-  const { data: userData, refetch: fetchUser } = useQuery(
-    'getUserByUserName',
-    () => getUserByUserName(params?.id || ''),
-    {
-      onError: (error) => {
-        console.error(error);
-      },
+  const {
+    data: userData,
+    refetch: fetchUser,
+    isFetched,
+    isError,
+    error,
+  } = useQuery('getUserByUserName', () => getUserByUserName(params?.id || ''), {
+    onError: (error) => {
+      console.error(error);
     },
-  );
+  });
 
-  if (!userData) {
+
+  if (!userData && isFetched && isError) {
     return notFound();
   }
 
