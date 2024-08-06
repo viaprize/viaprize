@@ -19,7 +19,10 @@ import { parseUnits } from 'viem/utils';
 export default function SummaryCard() {
   const [customerId, setCustomerId] = useState<string>(nanoid());
   const totalAmount = useCartStore((state) =>
-    state.items.reduce((acc, item) => acc + parseFloat(item.amount), 0),
+    state.items.reduce(
+      (acc, item) => acc + (isNaN(parseFloat(item.amount)) ? 0 : parseFloat(item.amount)),
+      0,
+    ),
   );
   const { clearCart } = useCartStore();
 
@@ -60,10 +63,10 @@ export default function SummaryCard() {
     refetchMatchingEstimates();
   }, [totalAmount]);
 
-  const sumbit = async () => {
+  const submit = async () => {
     try {
       const finalItems = useCartStore.getState().items.map((item) => ({
-        amount: item.amount,
+        amount: isNaN(parseFloat(item.amount)) ? '0' : item.amount,
         anchorAddress: item.anchorAddress,
         roundId: item.roundId,
       }));
@@ -139,7 +142,7 @@ export default function SummaryCard() {
         <PayPalButtons
           style={{ layout: 'horizontal' }}
           createOrder={async () => {
-            const id = await sumbit();
+            const id = await submit();
             if (!id) {
               throw new Error('Checkout ID not found');
             }
@@ -160,10 +163,6 @@ export default function SummaryCard() {
               .then((orderData) => {
                 const name = orderData.payer.name.given_name;
                 toast.success(
-                  // <TransactionToast
-                  //   title="Transaction completed by"
-                  //   hash={orderData.payer.name.given_name}
-                  // />,
                   <div className="w-96">
                     <TransactionToast
                       title="Transaction Successful"
@@ -175,10 +174,8 @@ export default function SummaryCard() {
                         Donor name: <span className="text-blue-400">{name}</span>
                       </div>
                       <p>
-                        After the transaction is approved, it may take 15-20 seconds for
-                        your donation record to update in the projects. The donation
-                        amount will then be displayed on the explore and info page of the
-                        projects.
+                        It may take 15-20 seconds for your donation to show in the
+                        project totals.
                       </p>
                     </div>
                   </div>,
@@ -189,12 +186,9 @@ export default function SummaryCard() {
                 clearCart();
               });
           }}
+          disabled={!meetsMinimumDonation}
         />
       </PayPalScriptProvider>
-
-      {/* <Button component="a" href="/qf/opencivics/explore">
-        Go to explore page
-      </Button> */}
     </Card>
   );
 }

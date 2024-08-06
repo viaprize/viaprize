@@ -64,17 +64,22 @@ export default function Footer() {
             </Link>
           </div>
           <ul className="flex flex-wrap items-center mb-6 text-md font-bold text-gray-500  sm:mb-0 dark:text-gray-400">
-            {/* <li>
-              <Link href="#" className="mr-4 hover:underline md:mr-6 ">
-                About
+            <li>
+              <Link
+                href="/terms-of-service"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mr-4 hover:underline md:mr-6"
+              >
+                Terms of Service
               </Link>
-            </li> */}
+            </li>
             <li>
               <Link
                 href="/privacy-policy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mr-14 hover:underline "
+                className="hover:underline "
               >
                 Privacy Policy
               </Link>
