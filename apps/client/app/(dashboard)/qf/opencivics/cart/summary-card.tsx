@@ -3,12 +3,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use client';
 import { TransactionToast } from '@/components/custom/transaction-toast';
-import { Button, Card, Divider, Text } from '@mantine/core';
+import {
+  matchingEstimatesToText,
+  useMatchingEstimates,
+} from '@/components/hooks/useMatchingEstimate';
+import { gitcoinRoundData } from '@/lib/constants';
+import { getTokenByChainIdAndAddress } from '@gitcoin/gitcoin-chain-data';
+import { Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { nanoid } from 'nanoid';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { parseUnits } from 'viem/utils';
 export default function SummaryCard() {
   const [customerId, setCustomerId] = useState<string>(nanoid());
   const totalAmount = useCartStore((state) =>
@@ -17,9 +24,40 @@ export default function SummaryCard() {
   const { clearCart } = useCartStore();
 
   const meetsMinimumDonation = totalAmount >= 2;
+  const items = useCartStore((state) => state.items);
+  const tokenTT = getTokenByChainIdAndAddress(
+    gitcoinRoundData.chainId,
+    gitcoinRoundData.token,
+  );
+  const {
+    data: matchingEstimates,
+    error: matchingEstimateError,
+    isLoading: matchingEstimateLoading,
+    refetch: refetchMatchingEstimates,
+  } = useMatchingEstimates([
+    {
+      roundId: gitcoinRoundData.roundId,
+      chainId: gitcoinRoundData.chainId,
+      potentialVotes: items.map((item) => ({
+        roundId: item.roundId,
+        projectId: item.projectId,
+        amount:
+          !!item.amount && !Number.isNaN(parseInt(item.amount))
+            ? parseUnits(item.amount ?? '0', tokenTT.decimals ?? 18)
+            : BigInt(0),
+        grantAddress: item.metadata.application.recipient,
+        voter: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+        token: tokenTT.address,
+        applicationId: item.id,
+      })),
+    },
+  ]);
+
+  const estimate = matchingEstimatesToText(matchingEstimates);
 
   useEffect(() => {
     setCustomerId(nanoid());
+    refetchMatchingEstimates();
   }, [totalAmount]);
 
   const sumbit = async () => {
@@ -67,12 +105,26 @@ export default function SummaryCard() {
       <div className="flex items-center justify-between">
         <div>
           <Text>Your total contribution to </Text>
-          <Text c="blue">Gitcoin</Text>
         </div>
         <Text fw="bold" size="lg">
           ${totalAmount.toFixed(2)}
         </Text>
       </div>
+      {!Number.isNaN(totalAmount) && estimate !== 0 && estimate ? (
+        <div className="flex items-center justify-between">
+          <div>
+            <Text>Your total matching to</Text>
+          </div>
+          <Text fw="bold" size="lg">
+            ${estimate?.toFixed(2)}
+          </Text>
+        </div>
+      ) : null}
+      {matchingEstimateLoading && (
+        <div className="flex items-center justify-between">
+          <Text>Loading Estimated Matching</Text>
+        </div>
+      )}
       <Divider />
       {!meetsMinimumDonation && (
         <Text color="red">Minimum donation amount is $2 USD.</Text>
