@@ -19,7 +19,10 @@ import { parseUnits } from 'viem/utils';
 export default function SummaryCard() {
   const [customerId, setCustomerId] = useState<string>(nanoid());
   const totalAmount = useCartStore((state) =>
-    state.items.reduce((acc, item) => acc + parseFloat(item.amount), 0),
+    state.items.reduce(
+      (acc, item) => acc + (isNaN(parseFloat(item.amount)) ? 0 : parseFloat(item.amount)),
+      0,
+    ),
   );
   const { clearCart } = useCartStore();
 
@@ -113,7 +116,7 @@ export default function SummaryCard() {
       {!Number.isNaN(totalAmount) && estimate !== 0 && estimate ? (
         <div className="flex items-center justify-between">
           <div>
-            <Text>Your total matching is</Text>
+            <Text>Total estimated matching is</Text>
           </div>
           <Text fw="bold" size="lg">
             ${estimate?.toFixed(2)}
@@ -126,9 +129,7 @@ export default function SummaryCard() {
         </div>
       )}
       <Divider />
-      {!meetsMinimumDonation && (
-        <Text color="red">Minimum donation amount is $2 USD.</Text>
-      )}
+      {!meetsMinimumDonation && <Text c="red">Minimum donation amount is $2 USD.</Text>}
 
       <PayPalScriptProvider
         options={{
@@ -175,10 +176,8 @@ export default function SummaryCard() {
                         Donor name: <span className="text-blue-400">{name}</span>
                       </div>
                       <p>
-                        After the transaction is approved, it may take 15-20 seconds for
-                        your donation record to update in the projects. The donation
-                        amount will then be displayed on the explore and info page of the
-                        projects.
+                        It may take 15-20 seconds for your donation to show in the project
+                        totals.
                       </p>
                     </div>
                   </div>,
@@ -189,6 +188,7 @@ export default function SummaryCard() {
                 clearCart();
               });
           }}
+          disabled={!meetsMinimumDonation}
         />
       </PayPalScriptProvider>
 

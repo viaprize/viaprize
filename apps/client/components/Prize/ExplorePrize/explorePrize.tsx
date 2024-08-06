@@ -3,7 +3,7 @@
 'use client';
 
 import { PrizeStages } from '@/lib/api';
-import { formatDateString, getCorrectStage, toTitleCase } from '@/lib/utils';
+import { getCorrectStage, toTitleCase } from '@/lib/utils';
 import {
   ActionIcon,
   Badge,
@@ -164,8 +164,12 @@ function ExploreCard({
                   className="text-md font-bold cursor-pointer"
                   leftSection={<GiSandsOfTime />}
                 >
-                  {stage === PrizeStages.NotStarted ? (
-                    <Text>{formatDateString(submissionDate)}</Text>
+                  {startingTimeBlockchain !== 0 ? (
+                    <Text>
+                      {exactStage?.includes('remaining')
+                        ? exactStage.replace('remaining', '')
+                        : exactStage}
+                    </Text>
                   ) : (
                     <Text>Ended</Text>
                   )}
