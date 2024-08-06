@@ -164,7 +164,7 @@ function ExploreCard({
                   className="text-md font-bold cursor-pointer"
                   leftSection={<GiSandsOfTime />}
                 >
-                  {stage === PrizeStages.NotStarted ? (
+                  {startingTimeBlockchain !== 0 ? (
                     <Text>{formatDateString(submissionDate)}</Text>
                   ) : (
                     <Text>Ended</Text>
