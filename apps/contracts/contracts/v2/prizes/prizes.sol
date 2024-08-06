@@ -316,7 +316,6 @@ contract PrizeV2 {
             if(totalFunds > 0) {
                 usdcPlatformReward = (totalFunds * platformFee) / 100;
                 usdcProposerReward = (totalFunds * proposerFee) / 100;
-                totalFunds = totalFunds.sub(usdcPlatformReward.add(usdcProposerReward));
                 _usdc.transfer(platformAddress, usdcPlatformReward);
                 _usdc.transfer(proposer, usdcProposerReward);
             }
@@ -578,8 +577,6 @@ contract PrizeV2 {
         uint256 balance = token.balanceOf(address(this));
         if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists
         require(_amount <= balance, "AEB"); //AEB -> Amount Exceeds Balance
-        totalFunds = totalFunds.sub(_amount);
-        totalRewards = totalRewards.sub(_amount);
         token.transfer(_to, _amount); 
    }
 

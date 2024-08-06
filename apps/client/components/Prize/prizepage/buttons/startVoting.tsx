@@ -22,12 +22,13 @@ export default function StartVoting({
     {
       onSuccess: async (data) => {
         await revalidate({ tag: slug });
-        router.refresh();
 
         console.log(data);
+
         toast.success(
           <TransactionToast hash={data.data.hash} title="Voting Period Started" />,
         );
+        router.refresh();
         window.location.reload();
       },
     },
@@ -38,7 +39,10 @@ export default function StartVoting({
       fullWidth
       loading={isLoading}
       onClick={async () => {
-        const result = await mutateAsync?.();
+        const result = await mutateAsync?.().catch((e) => {
+          console.log(e);
+          toast.error(e?.error.message);
+        });
         console.log(result);
       }}
     >
