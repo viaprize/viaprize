@@ -10,12 +10,15 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
+import { PrizeStages } from 'src/prizes/entities/prize.entity';
 import { PrizesService } from 'src/prizes/services/prizes.service';
 import { UsersService } from 'src/users/users.service';
+import { SEND_USDC } from 'src/utils/constants';
 import { BaseError, ContractFunctionRevertedError } from 'viem';
 import { AddUsdcFundsDto } from './dto/add-usdc-funds.dto';
 import { ChangeSubmissionDto } from './dto/change-submission.dto';
 import { ChangeVotingDto } from './dto/change-voting.dto';
+import { SendUsdcTransactionDto } from './dto/send-usdc-transaction.dto';
 import { VoteDTO } from './dto/vote.dto';
 import { WalletService } from './wallet.service';
 
@@ -75,7 +78,12 @@ export class WalletController {
           'gasless',
           '0',
         );
-
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          prize.contract_address,
+          PrizeStages.SUMISSION_STARTED,
+        );
+      }
       return {
         hash,
       };
@@ -136,6 +144,13 @@ export class WalletController {
           'gasless',
           '0',
         );
+
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.SUBMISSION_ENDED,
+        );
+      }
       return {
         hash,
       };
@@ -179,6 +194,7 @@ export class WalletController {
         throw new HttpException('Prize does not exist', HttpStatus.BAD_REQUEST);
       });
 
+    console.log('this is serrrrrr');
     const [[votingPeriod]] =
       (await this.blockchainService.getPrizesV2PublicVariables(
         [contractAddress],
@@ -200,27 +216,19 @@ export class WalletController {
           'gasless',
           '0',
         );
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.VOTING_STARTED,
+        );
+      }
+
+      console.log({ hash });
       return {
         hash,
       };
     } catch (err) {
-      if (err instanceof BaseError) {
-        const revertError = err.walk(
-          (err) => err instanceof ContractFunctionRevertedError,
-        );
-        if (revertError instanceof ContractFunctionRevertedError) {
-          const errorName = revertError.data?.errorName ?? '';
-          throw new HttpException(
-            'Error: ' + errorName,
-            HttpStatus.BAD_REQUEST,
-          );
-        }
-      } else {
-        throw new HttpException(
-          'Error: ' + err.message,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      throw new HttpException('Error: ' + err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -257,6 +265,12 @@ export class WalletController {
           'gasless',
           '0',
         );
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.VOTING_ENDED,
+        );
+      }
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
@@ -434,6 +448,12 @@ export class WalletController {
           'gasless',
           '0',
         );
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.PRIZE_ENDED,
+        );
+      }
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
@@ -492,6 +512,13 @@ export class WalletController {
           'gasless',
           '0',
         );
+
+      if (hash) {
+        this.prizeService.switchPrizeStageByContractAddress(
+          contractAddress,
+          PrizeStages.PRIZE_ENDED,
+        );
+      }
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {
@@ -608,6 +635,7 @@ export class WalletController {
             body.s as `0x${string}`,
             body.r as `0x${string}`,
             body.hash as `0x${string}`,
+            false,
           ],
           contractAddress,
           'gasless',
@@ -664,6 +692,58 @@ export class WalletController {
           'gasless',
           '0',
         );
+      return { hash };
+    } catch (err) {
+      if (err instanceof BaseError) {
+        console.log({ err });
+        const revertError = err.walk(
+          (err) => err instanceof ContractFunctionRevertedError,
+        );
+        if (revertError instanceof ContractFunctionRevertedError) {
+          console.log({ err });
+          const errorName = revertError.data?.errorName ?? '';
+          throw new HttpException(
+            'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          'Error: ' + err.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/send_usdc_transaction')
+  async sendTransaction(
+    @Body() body: SendUsdcTransactionDto,
+    @Request() req,
+  ): Promise<WalletResponse | undefined> {
+    const user = this.userService.findOneByAuthId(req.user.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const hash =
+        await this.walletService.simulateAndWriteSmartContractSendUsdc(
+          'sendUsdc',
+          [
+            body.receiver as `0x${string}`,
+            BigInt(body.amount),
+            BigInt(body.deadline),
+            body.v,
+            body.r as `0x${string}`,
+            body.s as `0x${string}`,
+            body.ethSignedMessageHash as `0x${string}`,
+          ],
+          SEND_USDC,
+          'gasless',
+          '0',
+        );
+
       return { hash };
     } catch (err) {
       if (err instanceof BaseError) {

@@ -100,7 +100,7 @@ export default function PortalProposalForm({
     return parseFloat(fundingGoal.toString()) + fundingGoalPercentage;
   }, [fundingGoal]);
 
-  const { appUser } = useAppUser();
+  const { appUser, logoutUser } = useAppUser();
   const router = useRouter();
 
   const handleUploadImages = async () => {
@@ -140,6 +140,10 @@ export default function PortalProposalForm({
   }, [fundingGoal]);
   const submit = async () => {
     if (!wallet) {
+      if (!wallet && appUser) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        await logoutUser();
+      }
       throw Error('Wallet is undefined');
     }
 
@@ -151,7 +155,7 @@ export default function PortalProposalForm({
         allowDonationAboveThreshold: allowFundsAboveGoal,
         deadline:
           portalType === 'all-or-nothing'
-            ? deadline?.toISOString() ?? undefined
+            ? (deadline?.toISOString() ?? undefined)
             : undefined,
         description: richtext,
         tags: generateTags(),

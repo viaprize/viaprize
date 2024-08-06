@@ -18,14 +18,6 @@ export default async function FetchPrizes() {
       },
     )
   ).data.data;
-  const usdToEth: { ethereum: { usd: number } } = await (
-    await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    })
-  ).json();
 
   console.log(prizes[0], 'prizes');
 
@@ -36,6 +28,9 @@ export default async function FetchPrizes() {
       {prizes.map((prize) => {
         return (
           <ExploreCard
+            refund={prize.refunded}
+            isActive={prize.is_active_blockchain}
+            startVoteBlockchain={prize.voting_time_blockchain}
             distributed={prize.distributed}
             description={prize.description}
             imageUrl={prize.images[0]}
@@ -53,6 +48,8 @@ export default async function FetchPrizes() {
             startSubmissionDate={new Date(prize.startSubmissionDate)}
             startVotingDate={new Date(prize.startVotingDate)}
             refunded={prize.refunded}
+            contributers={prize.contributors}
+            stage={prize.stage}
           />
         );
       })}
@@ -79,6 +76,7 @@ export default async function FetchPrizes() {
               description={prize.SimpleDescription}
               awarded={`${prize.AwardedUSDe} USD`}
               category={prize.Category}
+              contestants={prize.ContestantsCount}
             />
           );
         }

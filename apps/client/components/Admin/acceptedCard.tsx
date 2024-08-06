@@ -1,24 +1,16 @@
+'use client';
 import type { User } from '@/lib/api';
-import {
-  ADMINS,
-  ETH_PRICE,
-  SWAP_ROUTER,
-  USDC,
-  USDC_BRIDGE,
-  USDC_TO_ETH_POOL,
-  USDC_TO_USDCE_POOL,
-  WETH,
-} from '@/lib/constants';
+import { ADMINS, USDC } from '@/lib/constants';
 import { prepareWritePrizeFactoryV2, writePrizeFactoryV2 } from '@/lib/smartContract';
 import { Badge, Button, Card, Group, Image, Modal, Text } from '@mantine/core';
-import { IconCircleCheck } from '@tabler/icons-react';
 import { waitForTransaction } from '@wagmi/core';
-import Link from 'next/link';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { TransactionToast } from '../custom/transaction-toast';
 import { usePrize } from '../hooks/usePrize';
 import ViewDetails from './details';
+('next/navigation');
 
 interface AdminCardProps {
   images: string[];
@@ -91,94 +83,63 @@ function AdminAcceptedCard({
   const currentTimestamp = useRef(Date.now());
 
   const { createPrize } = usePrize();
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const deployPrize = async () => {
     const firstLoadingToast = toast.loading('Transaction Waiting To Be approved', {
       dismissible: false,
     });
-    let out;
-    if (judges && judges.length > 0) {
-      // const requestJudges = await prepareWritePrizeJudgesFactory({
-      //   functionName: 'createViaPrizeJudges',
-      //   args: [
-      //     admins as `0x${string}`[],
-      //     [
-      //       '0x850a146D7478dAAa98Fc26Fd85e6A24e50846A9d',
-      //       '0xd9ee3059F3d85faD72aDe7f2BbD267E73FA08D7F',
-      //       '0x598B7Cd048e97E1796784d92D06910F359dA5913',
-      //     ] as `0x${string}`[],
-      //     judges as `0x${string}`[],
-      //     BigInt(platfromFeePercentage),
-      //     BigInt(proposerFeePercentage),
-      //     '0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c' as `0x${string}`,
-      //     BigInt(submissionTime),
-      //     BigInt(currentTimestamp.current),
-      //   ],
-      // });
-      // out = await writePrizeJudgesFactory(requestJudges);
-      toast.error("Judges aren't supported yet");
-      console.log(out, 'outJudges');
-    } else {
-      console.log({ admins });
-      const requestJudges = await prepareWritePrizeFactoryV2({
-        functionName: 'createViaPrize',
-        args: [
-          BigInt(currentTimestamp.current),
-          admins[0] as `0x${string}`,
-          ADMINS,
-          BigInt(platfromFeePercentage),
-          BigInt(proposerFeePercentage),
-          USDC,
-          USDC_BRIDGE,
-          SWAP_ROUTER,
-          USDC_TO_USDCE_POOL,
-          USDC_TO_ETH_POOL,
-          ETH_PRICE,
-          WETH,
-        ],
-      });
-      console.log(requestJudges, 'requestJudges');
-      out = await writePrizeFactoryV2(requestJudges).catch((_) => {
-        toast.error('Transaction Failed');
+    setLoading(true);
+    try {
+      let out;
+      if (judges && judges.length > 0) {
+        throw new Error('Judges are not supported yet');
+      } else {
+        console.log({ admins });
+
+        const requestJudges = await prepareWritePrizeFactoryV2({
+          functionName: 'createViaPrize',
+          args: [
+            BigInt(currentTimestamp.current),
+            admins[0] as `0x${string}`,
+            ADMINS,
+            BigInt(platfromFeePercentage),
+            BigInt(proposerFeePercentage),
+            USDC,
+          ],
+        });
+        console.log(requestJudges, 'requestJudges');
+        out = await writePrizeFactoryV2(requestJudges);
+        if (!out) throw new Error('Transaction Failed');
+
+        console.log(out, 'out');
+
+        const waitForTransactionOut = await waitForTransaction({
+          hash: out.hash,
+          confirmations: 1,
+        });
         toast.dismiss(firstLoadingToast);
-      });
-      console.log(out, 'out');
+        console.log(waitForTransactionOut.logs[0].topics[2]);
+        const prizeAddress = `0x${waitForTransactionOut.logs[0].topics[2]?.slice(-40)}`;
+        console.log(prizeAddress, 'prizeAddress');
+        const prize = await createPrize({
+          address: prizeAddress,
+          proposal_id: id,
+        }).catch((c) => console.log(c));
+
+        toast.success(<TransactionToast title="Deployment successful" hash={out.hash} />);
+        // router.push('/prize/explore');
+
+        router.push('/prize/explore');
+      }
+    } catch (error) {
+      toast.error(`Error: ${(error as Error).message}`);
+      toast.dismiss(firstLoadingToast);
+    } finally {
+      setLoading(false);
     }
-    if (!out) return toast.error('Transaction Failed');
-    const waitForTransactionOut = await waitForTransaction({
-      hash: out.hash,
-      confirmations: 1,
-    });
-    console.log(waitForTransactionOut.logs[0].topics[2]);
-    const prizeAddress = `0x${waitForTransactionOut.logs[0].topics[2]?.slice(-40)}`;
-    console.log(prizeAddress, 'prizeAddress');
-    const prize = await createPrize({
-      address: prizeAddress,
-      proposal_id: id,
-    });
-    toast.dismiss(firstLoadingToast);
-    console.log(prize, 'prize');
-    toast.success(
-      <div className="flex items-center ">
-        <IconCircleCheck />{' '}
-        <Text fw="md" size="sm" className="ml-2">
-          {' '}
-          Prize Address
-        </Text>
-        <Link
-          target="_blank"
-          rel="noopener noreferrer"
-          href={`https://optimistic.etherscan.io/address/${prizeAddress}`}
-        >
-          <Button variant="transparent" className="text-blue-400 underline">
-            See here
-          </Button>
-        </Link>
-      </div>,
-    );
-    toast.loading('Redirecting Please Wait');
-    await router.push('/prize/explore');
-    toast.success('Redirected to Prize Explore Page');
   };
 
   const submissionTime = calculateRemainingTime(startSubmissionDate, submission);
@@ -215,7 +176,9 @@ function AdminAcceptedCard({
           >
             View Details
           </Button>
-          <Button onClick={deployPrize}>Deploy</Button>
+          <Button loading={loading} onClick={deployPrize}>
+            Deploy
+          </Button>
         </Group>
       </Card>
       <Modal

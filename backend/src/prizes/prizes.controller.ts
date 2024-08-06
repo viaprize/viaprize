@@ -25,7 +25,10 @@ import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
 import { sleep } from 'src/utils/sleep';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
-import { PrizeWithBlockchainData } from 'src/utils/types/prize-blockchain.type';
+import {
+  IndividualPrizeWithBalance,
+  PrizeWithBlockchainData,
+} from 'src/utils/types/prize-blockchain.type';
 import { WalletService } from 'src/wallet/wallet.service';
 import { AdminAuthGuard } from '../auth/admin-auth.guard';
 import { AuthGuard } from '../auth/auth.guard';
@@ -264,6 +267,7 @@ export class PrizesController {
         'totalVotes',
         'submissionPeriod',
         'votingPeriod',
+        'VERSION',
       ],
     )) as [
       [
@@ -275,7 +279,7 @@ export class PrizesController {
         bigint,
         boolean,
         boolean,
-        boolean,
+        bigint,
       ],
     ];
     const prizeWithBalanceData = prizeWithoutBalance.data.map(
@@ -297,8 +301,41 @@ export class PrizesController {
       },
     );
     console.log(prizeWithBalanceData, 'prizeWithBalanceData');
+    const prizeWithContributorsPromises = prizeWithBalanceData.map(
+      async (prize, index) => {
+        const version = results[index][8];
+        console.log(version, 'version');
+        if (version.toString() === '2') {
+          const [[allFunders]] =
+            (await this.blockchainService.getPrizesV2PublicVariables(
+              [prize.contract_address],
+              ['getAllFunders'],
+            )) as [[string[]]];
+          return {
+            ...prize,
+            contributors: allFunders,
+          };
+        } else if (version.toString() === '201') {
+          const [[allCryptoFunders, allFiatFunders]] =
+            (await this.blockchainService.getPrizesV2PublicVariables(
+              [prize.contract_address],
+              ['getAllCryptoFunders', 'getAllFiatFunders'],
+            )) as [string[], string[]];
+          return {
+            ...prize,
+            contributors: [
+              ...new Set([...allCryptoFunders, ...allFiatFunders]),
+            ],
+          };
+        }
+      },
+    );
+    const prizeWithContributors = await Promise.all(
+      prizeWithContributorsPromises,
+    );
+    console.log(prizeWithContributors, 'prizeWithContributors');
     return {
-      data: prizeWithBalanceData as PrizeWithBlockchainData[],
+      data: prizeWithContributors as PrizeWithBlockchainData[],
       hasNextPage: prizeWithoutBalance.hasNextPage,
     };
   }
@@ -306,8 +343,9 @@ export class PrizesController {
   @Get('/:slug')
   async getPrize(
     @TypedParam('slug') slug: string,
-  ): Promise<PrizeWithBlockchainData> {
+  ): Promise<IndividualPrizeWithBalance> {
     const prize = await this.prizeService.findAndReturnBySlug(slug);
+    let contributors: string[] = [];
     const [
       totalFunds,
       distributed,
@@ -318,6 +356,7 @@ export class PrizesController {
       isActive,
       submissionPeriod,
       votingPeriod,
+      version,
     ] = (
       await this.blockchainService.getPrizesV2PublicVariables(
         [prize.contract_address],
@@ -331,6 +370,7 @@ export class PrizesController {
           'isActive',
           'submissionPeriod',
           'votingPeriod',
+          'VERSION',
         ],
       )
     )[0] as [
@@ -343,8 +383,45 @@ export class PrizesController {
       boolean,
       boolean,
       boolean,
+      string[],
+      bigint,
     ];
+    if (version.toString() === '2') {
+      const [[allFunders]] =
+        (await this.blockchainService.getPrizesV2PublicVariables(
+          [prize.contract_address],
+          ['getAllFunders'],
+        )) as [[string[]]];
+      contributors = allFunders;
+    } else if (version.toString() === '201') {
+      const [[allCryptoFunders, allFiatFunders]] =
+        (await this.blockchainService.getPrizesV2PublicVariables(
+          [prize.contract_address],
+          ['getAllCryptoFunders', 'getAllFiatFunders'],
+        )) as [[string[], string[]]];
 
+      contributors = [...new Set([...allCryptoFunders, ...allFiatFunders])];
+    }
+    const contributorsData = await this.blockchainService.getPortalContributors(
+      prize.contract_address,
+    );
+
+    const ContributorsWithUser = contributorsData.data.map(
+      async (contributor) => {
+        return {
+          ...contributor,
+          contributor: await this.userService.findUserByWallett(
+            contributor.contributor,
+          ),
+        };
+      },
+    );
+
+    const resultsWithContributors = {
+      data: await Promise.all(ContributorsWithUser),
+    };
+
+    console.log(contributors, 'contributors');
     return {
       ...prize,
       distributed: distributed,
@@ -357,6 +434,7 @@ export class PrizesController {
       voting_period_active_blockchain: votingPeriod,
       is_active_blockchain: isActive,
       submission_perio_active_blockchain: submissionPeriod,
+      contributors: resultsWithContributors,
     };
   }
 
@@ -456,6 +534,7 @@ export class PrizesController {
   @Get('/:slug/submission/:id')
   async getSubmission(
     @TypedParam('id') id: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @TypedParam('slug') _: string,
   ): Promise<FetchSubmissionDto> {
     const sub = await this.submissionService.findSubmissionById(id);

@@ -28,6 +28,7 @@ export default async function HistoryPage() {
                 description={prize.SimpleDescription}
                 awarded={`${prize.AwardedUSDe} USD`}
                 category={prize.Category}
+                contestants={prize.ContestantsCount}
               />
             );
           }

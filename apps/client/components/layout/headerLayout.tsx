@@ -124,6 +124,33 @@ export default function HeaderLayout() {
             </Stack>
           </Menu.Dropdown>
         </Menu>
+
+        {/* <Menu withArrow shadow="md" position="bottom" trigger="hover">
+          <Menu.Target>
+            <Center>
+              <Box
+                // href="/portal/explore"
+                className="pl-3 font-bold hover:text-blue-600"
+              >
+                GITCOIN
+              </Box>
+              <IconChevronDown style={{ width: rem(20), height: rem(16) }} />
+            </Center>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Stack gap="md" p="md">
+              <Menu.Item>
+                <Link href="/gitcoin/explore" className="flex items-center">
+                  <IconSearch />
+
+                  <Text size="md" fw={500} className="pl-1">
+                    Explore Gitcoin Round
+                  </Text>
+                </Link>
+              </Menu.Item>
+            </Stack>
+          </Menu.Dropdown>
+        </Menu> */}
       </Flex>
 
       <Flex gap="sm" align="center">

@@ -1,0 +1,9 @@
+/* styles.css or a relevant CSS file */
+.ql-tooltip {
+  position: absolute;
+  top: 100%;
+    left: 100%;
+  transform: translateY(-10px);
+  z-index: 10;
+}
+

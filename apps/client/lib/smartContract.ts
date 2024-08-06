@@ -1,21 +1,21 @@
 import {
+  prepareWriteContract,
   PrepareWriteContractConfig,
+  writeContract,
   WriteContractArgs,
   WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
-  prepareWriteContract,
-  writeContract,
 } from 'wagmi/actions';
 
 import {
   Address,
-  UseContractReadConfig,
-  UseContractWriteConfig,
-  UsePrepareContractWriteConfig,
   useContractRead,
+  UseContractReadConfig,
   useContractWrite,
+  UseContractWriteConfig,
   usePrepareContractWrite,
+  UsePrepareContractWriteConfig,
 } from 'wagmi';
 import { PrepareWriteContractResult, ReadContractResult } from 'wagmi/actions';
 
@@ -275,7 +275,7 @@ export const portalABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export const prizeFactoryV2ABI = [
   {
@@ -302,12 +302,6 @@ export const prizeFactoryV2ABI = [
       { name: '_platFormFee', internalType: 'uint256', type: 'uint256' },
       { name: '_proposerFee', internalType: 'uint256', type: 'uint256' },
       { name: '_usdcAddress', internalType: 'address', type: 'address' },
-      { name: '_usdcBridgedAddress', internalType: 'address', type: 'address' },
-      { name: '_swapRouter', internalType: 'address', type: 'address' },
-      { name: '_usdcToUsdcePool', internalType: 'address', type: 'address' },
-      { name: '_usdcToEthPool', internalType: 'address', type: 'address' },
-      { name: '_ethPriceAggregator', internalType: 'address', type: 'address' },
-      { name: '_wethToken', internalType: 'address', type: 'address' },
     ],
     name: 'createViaPrize',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
@@ -315,14 +309,14 @@ export const prizeFactoryV2ABI = [
 ] as const;
 
 /**
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export const prizeFactoryV2Address = {
-  8453: '0xc58a61454497523b832665326a8C9Ce84a6b1746',
+  8453: '0x3248830b677B43D18E2907e9a8267D47e0C98856',
 } as const;
 
 /**
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export const prizeFactoryV2Config = {
   address: prizeFactoryV2Address,
@@ -343,12 +337,6 @@ export const prizeV2ABI = [
       { name: '_platFormFee', internalType: 'uint256', type: 'uint256' },
       { name: '_proposerFee', internalType: 'uint256', type: 'uint256' },
       { name: '_usdcAddress', internalType: 'address', type: 'address' },
-      { name: '_usdcBridgedAddress', internalType: 'address', type: 'address' },
-      { name: '_swapRouter', internalType: 'address', type: 'address' },
-      { name: '_usdcToUsdcePool', internalType: 'address', type: 'address' },
-      { name: '_usdcToEthPool', internalType: 'address', type: 'address' },
-      { name: '_ethPriceAggregator', internalType: 'address', type: 'address' },
-      { name: '_wethToken', internalType: 'address', type: 'address' },
     ],
   },
   { type: 'error', inputs: [], name: 'NotEnoughFunds' },
@@ -405,9 +393,19 @@ export const prizeV2ABI = [
         type: 'uint8',
         indexed: false,
       },
+      { name: '_isFiat', internalType: 'bool', type: 'bool', indexed: false },
       { name: 'amount', internalType: 'uint256', type: 'uint256', indexed: false },
     ],
     name: 'Donation',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      { name: '_address', internalType: 'address', type: 'address', indexed: true },
+      { name: '_amount', internalType: 'uint256', type: 'uint256', indexed: false },
+    ],
+    name: 'FiatFunderRefund',
   },
   {
     type: 'event',
@@ -483,20 +481,6 @@ export const prizeV2ABI = [
     outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
   },
   {
-    stateMutability: 'payable',
-    type: 'function',
-    inputs: [{ name: '_amountUsdc', internalType: 'uint256', type: 'uint256' }],
-    name: 'addBridgedUsdcFunds',
-    outputs: [],
-  },
-  {
-    stateMutability: 'payable',
-    type: 'function',
-    inputs: [{ name: '_amountOutMinimum', internalType: 'uint256', type: 'uint256' }],
-    name: 'addEthFunds',
-    outputs: [],
-  },
-  {
     stateMutability: 'nonpayable',
     type: 'function',
     inputs: [
@@ -517,31 +501,9 @@ export const prizeV2ABI = [
       { name: 's', internalType: 'bytes32', type: 'bytes32' },
       { name: 'r', internalType: 'bytes32', type: 'bytes32' },
       { name: '_ethSignedMessageHash', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_fiatPayment', internalType: 'bool', type: 'bool' },
     ],
     name: 'addUsdcFunds',
-    outputs: [],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'allFunders',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'bridgedUsdcPool',
-    outputs: [{ name: '', internalType: 'contract IUniswapV3Pool', type: 'address' }],
-  },
-  {
-    stateMutability: 'nonpayable',
-    type: 'function',
-    inputs: [
-      { name: '_minimumSlipageFeePercentage', internalType: 'uint256', type: 'uint256' },
-    ],
-    name: 'changeMinimumSlipageFeePercentage',
     outputs: [],
   },
   {
@@ -571,6 +533,20 @@ export const prizeV2ABI = [
     inputs: [{ name: '_votingTime', internalType: 'uint256', type: 'uint256' }],
     name: 'changeVotingPeriod',
     outputs: [],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'cryptoFunderAmount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'cryptoFunders',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
   },
   {
     stateMutability: 'nonpayable',
@@ -629,25 +605,16 @@ export const prizeV2ABI = [
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [],
-    name: 'ethPriceAggregator',
-    outputs: [
-      { name: '', internalType: 'contract AggregatorV3Interface', type: 'address' },
-    ],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'ethUsdcPool',
-    outputs: [{ name: '', internalType: 'contract IUniswapV3Pool', type: 'address' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'funderAmount',
+    name: 'fiatFunderAmount',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    name: 'fiatFunders',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
   },
   {
     stateMutability: 'view',
@@ -663,7 +630,14 @@ export const prizeV2ABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [],
-    name: 'getAllFunders',
+    name: 'getAllCryptoFunders',
+    outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'getAllFiatFunders',
     outputs: [{ name: '', internalType: 'address[]', type: 'address[]' }],
   },
   {
@@ -736,6 +710,20 @@ export const prizeV2ABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'individualCryptoPercentage',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'individualFiatPercentage',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [],
     name: 'isActive',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
@@ -751,7 +739,14 @@ export const prizeV2ABI = [
     stateMutability: 'view',
     type: 'function',
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
-    name: 'isFunder',
+    name: 'isCryptoFunder',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'isFiatFunder',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
@@ -774,13 +769,6 @@ export const prizeV2ABI = [
     inputs: [{ name: '', internalType: 'address', type: 'address' }],
     name: 'isRefundRequestedAddress',
     outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-  },
-  {
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [],
-    name: 'minimumSlipageFeePercentage',
-    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
@@ -839,9 +827,23 @@ export const prizeV2ABI = [
   {
     stateMutability: 'view',
     type: 'function',
+    inputs: [],
+    name: 'refundAddress',
+    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
     inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     name: 'refundRequestedFunders',
     outputs: [{ name: '', internalType: 'address', type: 'address' }],
+  },
+  {
+    stateMutability: 'view',
+    type: 'function',
+    inputs: [],
+    name: 'refunded',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
   },
   {
     stateMutability: 'nonpayable',
@@ -867,9 +869,9 @@ export const prizeV2ABI = [
   {
     stateMutability: 'view',
     type: 'function',
-    inputs: [],
-    name: 'swapRouter',
-    outputs: [{ name: '', internalType: 'contract ISwapRouter', type: 'address' }],
+    inputs: [{ name: '', internalType: 'address', type: 'address' }],
+    name: 'totalFunderAmount',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
   },
   {
     stateMutability: 'view',
@@ -923,7 +925,6 @@ export const prizeV2ABI = [
     name: 'withdrawTokens',
     outputs: [],
   },
-  { stateMutability: 'payable', type: 'receive' },
 ] as const;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -993,7 +994,7 @@ export function prepareWritePortal<
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function writePrizeFactoryV2<
   TFunctionName extends string,
@@ -1030,7 +1031,7 @@ export function writePrizeFactoryV2<
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function prepareWritePrizeFactoryV2<
   TAbi extends readonly unknown[] = typeof prizeFactoryV2ABI,
@@ -1724,7 +1725,7 @@ export function usePreparePortalEndKickStarterCampaign(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function usePrizeFactoryV2Write<
   TFunctionName extends string,
@@ -1753,7 +1754,7 @@ export function usePrizeFactoryV2Write<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function usePrizeFactoryV2CreateViaPrize<
   TMode extends WriteContractMode = undefined,
@@ -1786,7 +1787,7 @@ export function usePrizeFactoryV2CreateViaPrize<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
   config: Omit<
@@ -1804,7 +1805,7 @@ export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0xc58a61454497523b832665326a8C9Ce84a6b1746)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function usePreparePrizeFactoryV2CreateViaPrize(
   config: Omit<
@@ -1954,10 +1955,10 @@ export function usePrizeV2VoteHash<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"allFunders"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"cryptoFunderAmount"`.
  */
-export function usePrizeV2AllFunders<
-  TFunctionName extends 'allFunders',
+export function usePrizeV2CryptoFunderAmount<
+  TFunctionName extends 'cryptoFunderAmount',
   TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
 >(
   config: Omit<
@@ -1967,16 +1968,16 @@ export function usePrizeV2AllFunders<
 ) {
   return useContractRead({
     abi: prizeV2ABI,
-    functionName: 'allFunders',
+    functionName: 'cryptoFunderAmount',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"bridgedUsdcPool"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"cryptoFunders"`.
  */
-export function usePrizeV2BridgedUsdcPool<
-  TFunctionName extends 'bridgedUsdcPool',
+export function usePrizeV2CryptoFunders<
+  TFunctionName extends 'cryptoFunders',
   TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
 >(
   config: Omit<
@@ -1986,7 +1987,7 @@ export function usePrizeV2BridgedUsdcPool<
 ) {
   return useContractRead({
     abi: prizeV2ABI,
-    functionName: 'bridgedUsdcPool',
+    functionName: 'cryptoFunders',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
@@ -2030,10 +2031,10 @@ export function usePrizeV2Distributed<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"ethPriceAggregator"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"fiatFunderAmount"`.
  */
-export function usePrizeV2EthPriceAggregator<
-  TFunctionName extends 'ethPriceAggregator',
+export function usePrizeV2FiatFunderAmount<
+  TFunctionName extends 'fiatFunderAmount',
   TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
 >(
   config: Omit<
@@ -2043,16 +2044,16 @@ export function usePrizeV2EthPriceAggregator<
 ) {
   return useContractRead({
     abi: prizeV2ABI,
-    functionName: 'ethPriceAggregator',
+    functionName: 'fiatFunderAmount',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"ethUsdcPool"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"fiatFunders"`.
  */
-export function usePrizeV2EthUsdcPool<
-  TFunctionName extends 'ethUsdcPool',
+export function usePrizeV2FiatFunders<
+  TFunctionName extends 'fiatFunders',
   TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
 >(
   config: Omit<
@@ -2062,26 +2063,7 @@ export function usePrizeV2EthUsdcPool<
 ) {
   return useContractRead({
     abi: prizeV2ABI,
-    functionName: 'ethUsdcPool',
-    ...config,
-  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"funderAmount"`.
- */
-export function usePrizeV2FunderAmount<
-  TFunctionName extends 'funderAmount',
-  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeV2ABI,
-    functionName: 'funderAmount',
+    functionName: 'fiatFunders',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
@@ -2106,10 +2088,10 @@ export function usePrizeV2FunderVotes<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getAllFunders"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getAllCryptoFunders"`.
  */
-export function usePrizeV2GetAllFunders<
-  TFunctionName extends 'getAllFunders',
+export function usePrizeV2GetAllCryptoFunders<
+  TFunctionName extends 'getAllCryptoFunders',
   TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
 >(
   config: Omit<
@@ -2119,7 +2101,26 @@ export function usePrizeV2GetAllFunders<
 ) {
   return useContractRead({
     abi: prizeV2ABI,
-    functionName: 'getAllFunders',
+    functionName: 'getAllCryptoFunders',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"getAllFiatFunders"`.
+ */
+export function usePrizeV2GetAllFiatFunders<
+  TFunctionName extends 'getAllFiatFunders',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'getAllFiatFunders',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
@@ -2220,6 +2221,44 @@ export function usePrizeV2GetVotingTime<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"individualCryptoPercentage"`.
+ */
+export function usePrizeV2IndividualCryptoPercentage<
+  TFunctionName extends 'individualCryptoPercentage',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'individualCryptoPercentage',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"individualFiatPercentage"`.
+ */
+export function usePrizeV2IndividualFiatPercentage<
+  TFunctionName extends 'individualFiatPercentage',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'individualFiatPercentage',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isActive"`.
  */
 export function usePrizeV2IsActive<
@@ -2258,10 +2297,10 @@ export function usePrizeV2IsContestant<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isFunder"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isCryptoFunder"`.
  */
-export function usePrizeV2IsFunder<
-  TFunctionName extends 'isFunder',
+export function usePrizeV2IsCryptoFunder<
+  TFunctionName extends 'isCryptoFunder',
   TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
 >(
   config: Omit<
@@ -2271,7 +2310,26 @@ export function usePrizeV2IsFunder<
 ) {
   return useContractRead({
     abi: prizeV2ABI,
-    functionName: 'isFunder',
+    functionName: 'isCryptoFunder',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"isFiatFunder"`.
+ */
+export function usePrizeV2IsFiatFunder<
+  TFunctionName extends 'isFiatFunder',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'isFiatFunder',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
@@ -2329,25 +2387,6 @@ export function usePrizeV2IsRefundRequestedAddress<
   return useContractRead({
     abi: prizeV2ABI,
     functionName: 'isRefundRequestedAddress',
-    ...config,
-  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
-}
-
-/**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"minimumSlipageFeePercentage"`.
- */
-export function usePrizeV2MinimumSlipageFeePercentage<
-  TFunctionName extends 'minimumSlipageFeePercentage',
-  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
->(
-  config: Omit<
-    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return useContractRead({
-    abi: prizeV2ABI,
-    functionName: 'minimumSlipageFeePercentage',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
@@ -2467,6 +2506,25 @@ export function usePrizeV2ProposerFee<
 }
 
 /**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"refundAddress"`.
+ */
+export function usePrizeV2RefundAddress<
+  TFunctionName extends 'refundAddress',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'refundAddress',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
  * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"refundRequestedFunders"`.
  */
 export function usePrizeV2RefundRequestedFunders<
@@ -2481,6 +2539,25 @@ export function usePrizeV2RefundRequestedFunders<
   return useContractRead({
     abi: prizeV2ABI,
     functionName: 'refundRequestedFunders',
+    ...config,
+  } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
+}
+
+/**
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"refunded"`.
+ */
+export function usePrizeV2Refunded<
+  TFunctionName extends 'refunded',
+  TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
+>(
+  config: Omit<
+    UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>,
+    'abi' | 'functionName'
+  > = {} as any,
+) {
+  return useContractRead({
+    abi: prizeV2ABI,
+    functionName: 'refunded',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
@@ -2505,10 +2582,10 @@ export function usePrizeV2SubmissionPeriod<
 }
 
 /**
- * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"swapRouter"`.
+ * Wraps __{@link useContractRead}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"totalFunderAmount"`.
  */
-export function usePrizeV2SwapRouter<
-  TFunctionName extends 'swapRouter',
+export function usePrizeV2TotalFunderAmount<
+  TFunctionName extends 'totalFunderAmount',
   TSelectData = ReadContractResult<typeof prizeV2ABI, TFunctionName>,
 >(
   config: Omit<
@@ -2518,7 +2595,7 @@ export function usePrizeV2SwapRouter<
 ) {
   return useContractRead({
     abi: prizeV2ABI,
-    functionName: 'swapRouter',
+    functionName: 'totalFunderAmount',
     ...config,
   } as UseContractReadConfig<typeof prizeV2ABI, TFunctionName, TSelectData>);
 }
@@ -2623,55 +2700,6 @@ export function usePrizeV2Write<
 }
 
 /**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addBridgedUsdcFunds"`.
- */
-export function usePrizeV2AddBridgedUsdcFunds<
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeV2ABI,
-          'addBridgedUsdcFunds'
-        >['request']['abi'],
-        'addBridgedUsdcFunds',
-        TMode
-      > & { functionName?: 'addBridgedUsdcFunds' }
-    : UseContractWriteConfig<typeof prizeV2ABI, 'addBridgedUsdcFunds', TMode> & {
-        abi?: never;
-        functionName?: 'addBridgedUsdcFunds';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeV2ABI, 'addBridgedUsdcFunds', TMode>({
-    abi: prizeV2ABI,
-    functionName: 'addBridgedUsdcFunds',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addEthFunds"`.
- */
-export function usePrizeV2AddEthFunds<TMode extends WriteContractMode = undefined>(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<typeof prizeV2ABI, 'addEthFunds'>['request']['abi'],
-        'addEthFunds',
-        TMode
-      > & { functionName?: 'addEthFunds' }
-    : UseContractWriteConfig<typeof prizeV2ABI, 'addEthFunds', TMode> & {
-        abi?: never;
-        functionName?: 'addEthFunds';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeV2ABI, 'addEthFunds', TMode>({
-    abi: prizeV2ABI,
-    functionName: 'addEthFunds',
-    ...config,
-  } as any);
-}
-
-/**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addSubmission"`.
  */
 export function usePrizeV2AddSubmission<TMode extends WriteContractMode = undefined>(
@@ -2711,37 +2739,6 @@ export function usePrizeV2AddUsdcFunds<TMode extends WriteContractMode = undefin
   return useContractWrite<typeof prizeV2ABI, 'addUsdcFunds', TMode>({
     abi: prizeV2ABI,
     functionName: 'addUsdcFunds',
-    ...config,
-  } as any);
-}
-
-/**
- * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeMinimumSlipageFeePercentage"`.
- */
-export function usePrizeV2ChangeMinimumSlipageFeePercentage<
-  TMode extends WriteContractMode = undefined,
->(
-  config: TMode extends 'prepared'
-    ? UseContractWriteConfig<
-        PrepareWriteContractResult<
-          typeof prizeV2ABI,
-          'changeMinimumSlipageFeePercentage'
-        >['request']['abi'],
-        'changeMinimumSlipageFeePercentage',
-        TMode
-      > & { functionName?: 'changeMinimumSlipageFeePercentage' }
-    : UseContractWriteConfig<
-        typeof prizeV2ABI,
-        'changeMinimumSlipageFeePercentage',
-        TMode
-      > & {
-        abi?: never;
-        functionName?: 'changeMinimumSlipageFeePercentage';
-      } = {} as any,
-) {
-  return useContractWrite<typeof prizeV2ABI, 'changeMinimumSlipageFeePercentage', TMode>({
-    abi: prizeV2ABI,
-    functionName: 'changeMinimumSlipageFeePercentage',
     ...config,
   } as any);
 }
@@ -3080,38 +3077,6 @@ export function usePreparePrizeV2Write<TFunctionName extends string>(
 }
 
 /**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addBridgedUsdcFunds"`.
- */
-export function usePreparePrizeV2AddBridgedUsdcFunds(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addBridgedUsdcFunds'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeV2ABI,
-    functionName: 'addBridgedUsdcFunds',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addBridgedUsdcFunds'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addEthFunds"`.
- */
-export function usePreparePrizeV2AddEthFunds(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addEthFunds'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeV2ABI,
-    functionName: 'addEthFunds',
-    ...config,
-  } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addEthFunds'>);
-}
-
-/**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"addSubmission"`.
  */
 export function usePreparePrizeV2AddSubmission(
@@ -3141,25 +3106,6 @@ export function usePreparePrizeV2AddUsdcFunds(
     functionName: 'addUsdcFunds',
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeV2ABI, 'addUsdcFunds'>);
-}
-
-/**
- * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeV2ABI}__ and `functionName` set to `"changeMinimumSlipageFeePercentage"`.
- */
-export function usePreparePrizeV2ChangeMinimumSlipageFeePercentage(
-  config: Omit<
-    UsePrepareContractWriteConfig<typeof prizeV2ABI, 'changeMinimumSlipageFeePercentage'>,
-    'abi' | 'functionName'
-  > = {} as any,
-) {
-  return usePrepareContractWrite({
-    abi: prizeV2ABI,
-    functionName: 'changeMinimumSlipageFeePercentage',
-    ...config,
-  } as UsePrepareContractWriteConfig<
-    typeof prizeV2ABI,
-    'changeMinimumSlipageFeePercentage'
-  >);
 }
 
 /**

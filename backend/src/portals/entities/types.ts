@@ -1,7 +1,7 @@
 import { PaginateQuery } from 'nestjs-paginate';
+import { Contributions } from 'src/blockchain/blockchain';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import { Portals } from './portal.entity';
-import { Contributions } from 'src/blockchain/blockchain';
 
 export type PortalPaginateQuery = PaginateQuery & {
   tags: string[];

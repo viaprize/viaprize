@@ -235,10 +235,21 @@ function FundUsdcCard({
       setSendLoading(false);
     }
   };
+  const { logoutUser, appUser, loginUser } = useAppUser();
+
   return (
     <Stack my="md">
       <Text fw="sm">Your donation needs to be at least $1</Text>
-
+      {appUser ? null : (
+        <Button
+          color="primary"
+          onClick={() => {
+            void loginUser();
+          }}
+        >
+          Connect Wallet
+        </Button>
+      )}
       <NumberInput
         placeholder="Enter Value in $ To Donate"
         mt="md"

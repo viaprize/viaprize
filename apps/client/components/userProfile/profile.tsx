@@ -13,7 +13,9 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 // import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { useQuery } from 'react-query';
+import useAuthPerson from '../hooks/useAuthPerson';
 import { useUser } from '../hooks/useUser';
 import AuthWrap from './auth-wrapper';
 import SendCard from './donation-card';
@@ -23,17 +25,24 @@ export default function Profile({ params }: { params: { id: string } }) {
   const [opened, { open, close }] = useDisclosure(false);
   const { getUserByUserName } = useUser();
   // const params = useParams<{ id: string }>();
+  const isProfileOwner = useAuthPerson();
 
-  const { data: userData, refetch: fetchUser } = useQuery(
-    'getUserByUserName',
-    () => getUserByUserName(params?.id || ''),
-    {
-      onError: (error) => {
-        console.error(error);
-      },
+  const {
+    data: userData,
+    refetch: fetchUser,
+    isFetched,
+    isError,
+    error,
+  } = useQuery('getUserByUserName', () => getUserByUserName(params?.id || ''), {
+    onError: (error) => {
+      console.error(error);
     },
-  );
-  console.log(userData, 'user data');
+  });
+
+
+  if (!userData && isFetched && isError) {
+    return notFound();
+  }
 
   return (
     <Card
@@ -67,41 +76,49 @@ export default function Profile({ params }: { params: { id: string } }) {
           </Group>
         </div>
 
-        <div>
+        {/* <div>
           <h1 className="mb-0 text-xl font-bold">Bio</h1>
           <p className="my-0">{userData?.bio}</p>
-        </div>
+        </div> */}
 
         <Box mt="md">
           <Text fw={700} mb="sm" mt="md" className="pl-1">
             Proficiencies
           </Text>
           <div className="flex flex-wrap gap-1">
-            {userData?.proficiencies.map((proficiency: string) => (
-              <Badge key={proficiency} variant="light" color="green">
-                {proficiency}
-              </Badge>
-            ))}
+            {userData?.proficiencies.map((proficiency: string) =>
+              proficiency !== '[]' ? (
+                <Badge key={proficiency} variant="light" color="green">
+                  {proficiency}
+                </Badge>
+              ) : (
+                'No Proficiencies'
+              ),
+            )}
           </div>
 
           <Text fw={700} mb="sm" mt="md" className="pl-1">
             Priorities
           </Text>
           <div className="flex flex-wrap gap-1">
-            {userData?.priorities.map((priority: string) => (
-              <Badge key={priority} variant="light" color="blue">
-                {priority}
-              </Badge>
-            ))}
+            {userData?.priorities.map((priority: string) =>
+              priority !== '[]' && priority !== '' ? (
+                <Badge key={priority} variant="light" color="blue">
+                  {priority}
+                </Badge>
+              ) : (
+                'No Priorities'
+              ),
+            )}
           </div>
         </Box>
       </div>
-      {params?.id === userData?.username && (
+      {isProfileOwner ? (
         <>
           <Divider orientation="vertical" className="hidden md:block" />
           <SendCard />
         </>
-      )}
+      ) : null}
     </Card>
   );
 }

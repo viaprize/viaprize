@@ -4,6 +4,7 @@ import useAppUser from '@/components/hooks/useAppUser';
 import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 import { Button, Card, Flex } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
+import { IconTags } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -76,17 +77,17 @@ export default function Home() {
     <div className="w-full min-h-screen flex flex-col items-center relative overflow-clip">
       {/*Nav bar*/}
       {/* <NavBar /> */}
-      <div className="max-w-screen-2xl px-8 pt-4 pb-8 w-full bg-transparent">
+      <div className="max-w-screen-2xl px-8 pt-3 pb-7 w-full bg-transparent">
         {/* Hero Section */}
         <section className="md:flex justify-betweem items-center min-h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
             <h1 className="font-bold text-4xl sm:text-5xl my-6">
               The home for all your crowdfunding needs
             </h1>
-            <Flex gap="md">
+            <Flex gap="md" wrap="wrap" className="sm:w-[60%] lg:w-[70%]">
               <Link href="/prize/explore">
                 <Button
-                  className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]"
+                  className="bg-gradient-to-r from-[#005A6D] to-[#147EA3] w-full"
                   color="primary"
                 >
                   Explore Prizes
@@ -94,7 +95,7 @@ export default function Home() {
               </Link>
               <Link href="/portal/explore">
                 <Button
-                  className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]"
+                  className="bg-gradient-to-r from-[#005A6D] to-[#147EA3] w-full"
                   color="primary"
                 >
                   Explore Fundraisers
@@ -102,7 +103,7 @@ export default function Home() {
               </Link>
             </Flex>
             <Flex
-              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[60%]"
+              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[60%] lg:w-[70%]"
               style={{
                 background: `rgba(125, 185, 206, 0.15)`,
               }}
@@ -110,14 +111,17 @@ export default function Home() {
               align="center"
             >
               <div className="text-center">
-                <h3 className="my-0">$50,000+</h3>
-                <p className="my-0">Total contributions</p>
+                <h3 className="my-0"> $50,000+</h3>
+                <h3 className="my-0">Total contributions</h3>
               </div>
               <div className="text-center">
-                <h3 className="my-0">100+</h3>
-                <p className="my-0">Total campaigns</p>
+                <h3 className="my-0 ">100+</h3>
+                <h3 className="my-0">Total campaigns</h3>
               </div>
             </Flex>
+            <div className="flex justify-center w-full lg:w-[70%] my-2">
+              <SubscriptionForm />
+            </div>
           </div>
 
           <div className="md:w-1/2">
@@ -141,9 +145,9 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="flex justify-center w-full">
+        {/* <div className="flex justify-center w-full">
           <SubscriptionForm />
-        </div>
+        </div> */}
         {/* How it works */}
         <div className="flex flex-col items-center my-4">
           <h1>Why viaPrize?</h1>

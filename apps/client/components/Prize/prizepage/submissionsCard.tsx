@@ -27,6 +27,7 @@ import { useContractRead, useWalletClient } from 'wagmi';
 import { extractPlainTextFromEditor } from './utils';
 
 interface SubmissionsCardProps {
+  username: string;
   fullname: string;
   wallet: string;
   time: string;
@@ -43,6 +44,7 @@ interface SubmissionsCardProps {
   prize?: Prize;
 }
 export default function SubmissionsCard({
+  username,
   fullname,
   votes,
   time,
@@ -67,7 +69,7 @@ export default function SubmissionsCard({
   const { data: funderAmount, refetch } = useContractRead({
     abi: VOTE_ABI,
     address: contractAddress as `0x${string}`,
-    functionName: 'funderAmount',
+    functionName: 'totalFunderAmount',
     args: [walletClient?.account.address as `0x${string}`],
   });
 
@@ -87,15 +89,20 @@ export default function SubmissionsCard({
     const finalVote = formatUsdc(parseFloat(debounced.toString()));
     try {
       setSendLoading(true);
-      const isFunder = await readContract({
+      const isCryptoFunder = await readContract({
         abi: VOTE_ABI,
         address: contractAddress as `0x${string}`,
-        functionName: 'isFunder',
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        functionName: 'isCryptoFunder',
+        args: [address as `0x${string}`],
+      });
+      const isFiatFunder = await readContract({
+        abi: VOTE_ABI,
+        address: contractAddress as `0x${string}`,
+        functionName: 'isFiatFunder',
         args: [address as `0x${string}`],
       });
 
-      if (!isFunder) {
+      if (!isCryptoFunder && !isFiatFunder) {
         toast.error('You are not a funder');
         return;
       }
@@ -175,7 +182,7 @@ export default function SubmissionsCard({
                 label={
                   loading
                     ? 'Loading.....'
-                    : `Total Votes you can allocate(Max: ${parseUsdc(funderAmount ?? BigInt(0))} )`
+                    : `Total votes you can allocate (Max: ${parseUsdc(funderAmount ?? BigInt(0))})`
                 }
                 placeholder="Enter Value of Votes"
                 mt="md"
@@ -204,14 +211,15 @@ export default function SubmissionsCard({
           </Modal>
           <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
             <div className="flex items-center justify-between w-full">
-              <Group>
-                <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
-                <div>
-                  <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+              <Link href={`/profile/${username}`} className="hover:underline">
+                <Group>
+                  <Avatar color="blue" radius="md" alt="creator" className="rounded-sm" />
+
+                  <Text variant="p" fw="bold" my="0px" className="leading-[15px] ">
                     {fullname}
                   </Text>
-                </div>
-              </Group>
+                </Group>
+              </Link>
               {won ? <Badge bg="green">{won}</Badge> : null}
             </div>
             <div>

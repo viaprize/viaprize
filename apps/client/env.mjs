@@ -31,6 +31,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_API_KEY: z.string(),
     NEXT_PUBLIC_RPC_URL: z.string(),
     NEXT_PUBLIC_BREVO_NEWSLETTER_URL: z.string().url(),
+    NEXT_PUBLIC_GITCOIN_GRAPHQL: z.string().url(),
   },
   /*
    * Due to how Next.js bundles enironment variables on Edge and Client,
@@ -39,6 +40,7 @@ export const env = createEnv({
    * 💡 You'll get type errors if not all variables from `server` & `client` are included here.
    */
   runtimeEnv: {
+    NEXT_PUBLIC_GITCOIN_GRAPHQL: process.env.NEXT_PUBLIC_GITCOIN_GRAPHQL,
     NEXT_PUBLIC_CHAIN: process.env.NEXT_PUBLIC_CHAIN,
     NEXT_PUBLIC_NETWORK_TYPE: process.env.NEXT_PUBLIC_NETWORK_TYPE,
     NEXT_PUBLIC_PRIVY_APP_ID: process.env.NEXT_PUBLIC_PRIVY_APP_ID,

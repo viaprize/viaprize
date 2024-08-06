@@ -6,7 +6,7 @@ import { generateId } from 'src/utils/generate-id';
 import { IPaginationOptions } from 'src/utils/types/pagination-options';
 import {} from 'typedoc.json';
 import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
-import { Prize } from '../entities/prize.entity';
+import { Prize, PrizeStages } from '../entities/prize.entity';
 import { Submission } from '../entities/submission.entity';
 import { PrizePaginateQuery } from '../entities/types';
 type CreatPrize = {
@@ -214,5 +214,19 @@ export class PrizesService {
       select: ['slug'],
     });
     return prize.slug;
+  }
+
+  async switchPrizeStageByContractAddress(
+    contract_address: string,
+    stage: PrizeStages,
+  ) {
+    return await this.prizeRepository.update(
+      {
+        contract_address,
+      },
+      {
+        stage,
+      },
+    );
   }
 }

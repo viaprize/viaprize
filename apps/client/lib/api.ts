@@ -115,11 +115,22 @@ export interface Prize {
   updated_at: string;
   images: string[];
   title: string;
+  stage: PrizeStages;
   contestants: User[];
   submissions: Submission[];
   comments?: PrizesComments[];
   slug: string;
   user: User;
+}
+
+export enum PrizeStages {
+  NotStarted = 'not started',
+  SubmissionStarted = 'submission started',
+  SubmissionEnded = 'submission ended',
+  VotingStarted = 'voting started',
+  VotingEnded = 'voting ended',
+  PrizeDistributed = 'prize distributed',
+  PrizeEnded = 'prize ended',
 }
 
 export interface PrizesComments {
@@ -337,6 +348,7 @@ export interface PrizeWithBlockchainData {
   voting_period_active_blockchain: boolean;
   is_active_blockchain: boolean;
   submission_perio_active_blockchain: boolean;
+  contributors: string[];
   balance: number;
   id: string;
   description: string;
@@ -359,10 +371,51 @@ export interface PrizeWithBlockchainData {
   updated_at: string;
   images: string[];
   title: string;
+  stage: PrizeStages;
   contestants: User[];
   submissions: Submission[];
   comments?: PrizesComments[];
   slug: string;
+  user: User;
+}
+
+export interface IndividualPrizeWithBalance {
+  contributors: Contributions;
+  slug: string;
+  description: string;
+  images: string[];
+  title: string;
+  distributed: boolean;
+  submission_time_blockchain: number;
+  voting_time_blockchain: number;
+  dispute_period_time_blockchain: number;
+  refunded: boolean;
+  voting_period_active_blockchain: boolean;
+  is_active_blockchain: boolean;
+  submission_perio_active_blockchain: boolean;
+  balance: number;
+  id: string;
+  isAutomatic: boolean;
+  submissionTime: number;
+  votingTime: number;
+  /** @format date-time */
+  startVotingDate: string;
+  /** @format date-time */
+  startSubmissionDate: string;
+  proposer_address: string;
+  contract_address: string;
+  admins: string[];
+  judges?: string[];
+  proficiencies: string[];
+  priorities: string[];
+  /** @format date-time */
+  created_at: string;
+  /** @format date-time */
+  updated_at: string;
+  stage: PrizeStages;
+  contestants: User[];
+  submissions: Submission[];
+  comments?: PrizesComments[];
   user: User;
 }
 
@@ -583,6 +636,16 @@ export interface AddUsdcFundsDto {
   s: string;
   r: string;
   hash: string;
+}
+
+export interface SendUsdcTransactionDto {
+  amount: number;
+  receiver: string;
+  deadline: number;
+  v: number;
+  r: string;
+  s: string;
+  ethSignedMessageHash: string;
 }
 
 export namespace Indexer {
@@ -1096,7 +1159,7 @@ export namespace Prizes {
     export type RequestQuery = {};
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = PrizeWithBlockchainData;
+    export type ResponseBody = IndividualPrizeWithBalance;
   }
 
   /**
@@ -1735,6 +1798,19 @@ export namespace Wallet {
     export type RequestHeaders = {};
     export type ResponseBody = WalletResponse;
   }
+
+  /**
+   * No description
+   * @name SendUsdcTransactionCreate
+   * @request POST:/wallet/send_usdc_transaction
+   */
+  export namespace SendUsdcTransactionCreate {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = SendUsdcTransactionDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
 }
 
 export type QueryParamsType = Record<string | number, any>;
@@ -1846,9 +1922,9 @@ export class HttpClient<SecurityDataType = unknown> {
         : input,
     [ContentType.Text]: (input: any) =>
       input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
-    [ContentType.FormData]: (input: FormData) =>
-      (Array.from(input.keys()) || []).reduce((formData, key) => {
-        const property = input.get(key);
+    [ContentType.FormData]: (input: any) =>
+      Object.keys(input || {}).reduce((formData, key) => {
+        const property = input[key];
         formData.append(
           key,
           property instanceof Blob
@@ -2536,7 +2612,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      * @request GET:/prizes/{slug}
      */
     prizesDetail: (slug: string, params: RequestParams = {}) =>
-      this.request<PrizeWithBlockchainData, any>({
+      this.request<IndividualPrizeWithBalance, any>({
         path: `/prizes/${slug}`,
         method: 'GET',
         format: 'json',
@@ -3232,6 +3308,25 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         path: `/wallet/fund_raisers/${contractAddress}/end_campaign`,
         method: 'POST',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name SendUsdcTransactionCreate
+     * @request POST:/wallet/send_usdc_transaction
+     */
+    sendUsdcTransactionCreate: (
+      data: SendUsdcTransactionDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/send_usdc_transaction`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

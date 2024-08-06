@@ -1,12 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-boolean-literal-compare */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
-import type { PrizeWithBlockchainData, SubmissionWithBlockchainData } from '@/lib/api';
-import { calculateDeadline, usdcSignType } from '@/lib/utils';
+import {
+  type IndividualPrizeWithBalance,
+  type SubmissionWithBlockchainData,
+} from '@/lib/api';
+import { usdcSignType } from '@/lib/utils';
 
 import { TransactionToast } from '@/components/custom/transaction-toast';
+import useMounted from '@/components/hooks/useMounted';
 import { backendApi } from '@/lib/backend';
 import { USDC } from '@/lib/constants';
 import {
@@ -56,15 +62,16 @@ function FundUsdcCard({
   cancelUrl: string;
   slug: string;
 }) {
+  const { logoutUser, appUser, loginUser } = useAppUser();
   const [sendLoading, setSendLoading] = useState(false);
   const { data: walletClient } = useWalletClient();
   const [value, setValue] = useState('');
   const router = useRouter();
 
   const getUsdcSignatureData = async () => {
-    if (parseFloat(value) <= 0) {
-      throw new Error('Donation must be at least 1$');
-    }
+    // if (parseFloat(value) <= 0) {
+    //   throw new Error('Donation must be at least 1$');
+    // }
     const walletAddress = walletClient?.account.address;
     if (!walletAddress) {
       throw new Error('Please login to donate');
@@ -141,6 +148,7 @@ function FundUsdcCard({
       router.refresh();
       window.location.reload();
     } catch (e: unknown) {
+      console.log(e, 'sklfjlsdfjlkjljlksdjflksjl');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
     } finally {
@@ -215,12 +223,22 @@ function FundUsdcCard({
     }
   };
   return (
-    <Stack my="md">
-      <Text fw="sm">Your donation needs to be at least $1.</Text>
-
+    <Stack>
+      <Group>
+        <Text fw="sm">Your donation needs to be at least $1</Text>
+        {appUser ? null : (
+          <Button
+            color="primary"
+            onClick={() => {
+              void loginUser();
+            }}
+          >
+            Connect Wallet
+          </Button>
+        )}
+      </Group>
       <NumberInput
         placeholder="Enter Value  in $ To Donate"
-        mt="md"
         allowDecimal
         defaultValue={1}
         allowNegative={false}
@@ -261,42 +279,40 @@ export default function PrizePageComponent({
   prize,
   submissions,
 }: {
-  prize: PrizeWithBlockchainData;
+  prize: IndividualPrizeWithBalance;
   submissions: SubmissionWithBlockchainData[];
 }) {
   const { appUser } = useAppUser();
-  const deadlineString = calculateDeadline(
-    new Date(),
-    new Date(prize.submission_time_blockchain * 1000),
-  );
+  console.log(prize.submission_time_blockchain, 'lsljfkjds prize subision');
   const params = useParams();
   useEffect(() => {
     if (window.location.hash.includes('success')) {
-      fetch('https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash').then(
-        (res) => {
-          res.json().then((data) => {
-            toast.success(
-              <TransactionToast hash={data.hash} title="Transaction Successful" />,
-              {
-                duration: 6000,
-              },
-            );
-          });
-        },
-      );
+      void fetch(
+        'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash',
+      ).then((res) => {
+        res.json().then((data) => {
+          toast.success(
+            <TransactionToast hash={data.hash} title="Transaction Successful" />,
+            {
+              duration: 6000,
+            },
+          );
+        });
+      });
     }
   }, [params]);
+
+  const mounted = useMounted();
 
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
         <Title order={2}>{prize.title}</Title>
-        {deadlineString === 'Time is up!' && prize.distributed === true ? (
+        {prize.distributed === true ? (
           <Badge size="lg" color="green">
             Won
           </Badge>
-        ) : // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
-        prize.refunded ? (
+        ) : prize.refunded ? (
           <Badge size="lg" color="yellow">
             Refunded
           </Badge>
@@ -329,22 +345,23 @@ export default function PrizePageComponent({
               : undefined
           }
           username=""
+          contributions={prize.contributors}
         />
       </Center>
-      {prize.is_active_blockchain && (
+      {prize.is_active_blockchain ? (
         <FundUsdcCard
           contractAddress={prize.contract_address}
           prizeId={prize.id}
           title={prize.title}
-          cancelUrl={window.location.href}
+          cancelUrl={mounted ? window.location.href : ''}
           imageUrl={prize.images[0] || ''}
           successUrl={`${window.location.href}#success`}
           slug={prize.slug}
         />
-      )}
+      ) : null}
 
       {appUser
-        ? (appUser.username === prize.user.username || appUser.isAdmin) &&
+        ? appUser.isAdmin &&
           prize.submission_time_blockchain === 0 && (
             <StartSubmission
               contractAddress={prize.contract_address}
@@ -354,7 +371,7 @@ export default function PrizePageComponent({
           )
         : null}
       {appUser
-        ? (appUser.username === prize.user.username || appUser.isAdmin) &&
+        ? appUser.isAdmin &&
           prize.submission_time_blockchain === 0 &&
           prize.voting_time_blockchain === 0 && (
             <StartVoting

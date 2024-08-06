@@ -83,7 +83,7 @@ function ProposalExploreCard({
           Details
         </Button> */}
       <Button my="xs" onClick={() => void onStatusClick(status)}>
-        {status === 'approved' ? 'Deploy Proposal' : 'Edit Proposal'}
+        {status === 'approved' ? 'Go to page' : 'Edit Proposal'}
       </Button>
       <div className="absolute top-2 right-2">
         <ActionIcon

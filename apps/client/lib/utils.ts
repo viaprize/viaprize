@@ -5,13 +5,23 @@
  */
 
 import { env } from '@env';
+import { TToken } from '@gitcoin/gitcoin-chain-data';
 import { getAccessToken } from '@privy-io/react-auth';
 import { createClient } from '@supabase/supabase-js';
 import { clsx, type ClassValue } from 'clsx';
+import { format } from 'date-fns';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
-import { encodePacked, keccak256 } from 'viem';
+import {
+  encodeAbiParameters,
+  encodePacked,
+  getAddress,
+  Hex,
+  keccak256,
+  parseAbiParameters,
+  parseUnits,
+} from 'viem';
 import { USDC } from './constants';
 
 /* eslint-disable  -- needed */
@@ -116,6 +126,15 @@ export const calculateRemainingTime = (submissionDate: string) => {
   const days = Math.floor(remainingTime / (24 * 60 * 60 * 1000));
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
 };
+
+export function formatDateString(date: Date): string {
+  // Parse the date string to a Date object
+  // Format the Date object to the desired format
+  const formattedDate = format(date, 'd MMMM yyyy');
+
+  return formattedDate;
+}
+
 export const calculateDeadline = (createdDate: Date, endDate: Date) => {
   const remainingTime = endDate.getTime() - createdDate.getTime();
   if (remainingTime <= 0) {
@@ -133,6 +152,35 @@ export const calculateDeadline = (createdDate: Date, endDate: Date) => {
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
 };
 
+export const getCorrectStage = (
+  blockchainSubmissionTime: number,
+  blockchianVoteTime: number,
+  stage: PrizeStages,
+  distributed: boolean,
+  refund: boolean,
+  isActive: boolean,
+) => {
+  if (refund) {
+    return 'Refunded';
+  }
+  if (!isActive) {
+    return PrizeStages.PrizeEnded;
+  }
+  if (distributed) {
+    return PrizeStages.PrizeEnded;
+  }
+  if (blockchianVoteTime > 0) {
+    return PrizeStages.VotingStarted;
+  }
+
+  if (blockchainSubmissionTime > 0 && blockchianVoteTime == 0) {
+    return calculateDeadline(new Date(), new Date(blockchainSubmissionTime * 1000));
+  }
+
+  if (blockchainSubmissionTime == 0 && blockchianVoteTime == 0) {
+    return stage;
+  }
+};
 export const calculateDeadlineDate = (
   startSubmissionTime: string,
   submissionDays: number,
@@ -318,3 +366,91 @@ export const addMinutesToDate = (date: Date, minutes: number) => {
   const newDate = date.setMinutes(date.getMinutes() + minutes);
   return new Date(newDate);
 };
+
+export function encodedQFAllocation(
+  donationToken: TToken,
+  donations: { anchorAddress: string; amount: string }[],
+): Hex[] {
+  const tokenAddress = donationToken.address;
+
+  const encodedData = donations.map((donation) => {
+    if (!donation.anchorAddress) {
+      throw new Error('Anchor address is required for QF allocation');
+    }
+    return encodeAbiParameters(
+      parseAbiParameters('address,uint8,(((address,uint256),uint256,uint256),bytes)'),
+      [
+        getAddress(donation.anchorAddress),
+        0, // permit type of none on the strategy
+        [
+          [
+            [
+              getAddress(tokenAddress),
+              parseUnits(donation.amount, donationToken.decimals),
+            ],
+            BigInt(0), // nonce, since permit type is none
+            BigInt(0), // deadline, since permit type is none
+          ],
+          '0x0000000000000000000000000000000000000000000000000000000000000000', // signature, since permit type is none
+        ],
+      ],
+    );
+  });
+
+  return encodedData;
+}
+
+function groupBy(list: any[], keyGetter: Function) {
+  const map = new Map();
+  list.forEach((item) => {
+    const key = keyGetter(item);
+    const collection = map.get(key);
+    if (!collection) {
+      map.set(key, [item]);
+    } else {
+      collection.push(item);
+    }
+  });
+  return map;
+}
+
+import { sanitize } from 'isomorphic-dompurify';
+import MarkdownIt from 'markdown-it';
+import { PrizeStages } from './api';
+
+const markdownIt = new MarkdownIt({
+  linkify: true,
+  html: false,
+});
+
+const defaultLinkOpen =
+  markdownIt.renderer.rules.link_open ||
+  function defaultLinkOpen(tokens, idx, options, env, self) {
+    return self.renderToken(tokens, idx, options);
+  };
+
+// Open all links in a new tab and instruct search engines not to follow them
+markdownIt.renderer.rules.link_open = function linkOpen(tokens, idx, options, env, self) {
+  tokens[idx].attrPush(['target', '_blank']);
+  tokens[idx].attrPush(['rel', 'nofollow noopener noreferrer']);
+  return defaultLinkOpen(tokens, idx, options, env, self);
+};
+
+export function renderToHTML(markdownSourceText: string) {
+  return sanitize(markdownIt.render(markdownSourceText), {
+    ADD_ATTR: ['target'],
+  });
+}
+
+export function renderToPlainText(markdownSourceText: string) {
+  return sanitize(renderToHTML(markdownSourceText), {
+    USE_PROFILES: { html: false },
+  });
+}
+
+export function truncateDescription(description: string, maxLength: number) {
+  if (description.length > maxLength) {
+    return `${description.slice(0, maxLength)}...`;
+  }
+  return description;
+}

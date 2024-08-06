@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import FetchPortals from './fetchportals';
 import SearchFiltersPortals from './search-filters-portals';
 import Paging from '@/components/custom/paging';
+import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 
 export default function ExplorePortal({ searchParams }: { searchParams: SearchParams }) {
   return (
@@ -18,15 +19,18 @@ export default function ExplorePortal({ searchParams }: { searchParams: SearchPa
           <Text size="md" fw="initial" mt="xs" ml="md">
             you can explore fundraisers and work on them
           </Text>
+          <Group m="md" className="max-sm:ml-7">
+            <Link href="/portal/about">
+              <Button component="a">About Fundraisers</Button>
+            </Link>
+            <Link href="/portal/create">
+              <Button component="a">Create Fundraisers</Button>
+            </Link>
+          </Group>
         </div>
-        <Group mt="md" mb="md" className="max-sm:ml-7">
-          <Link href="/portal/about">
-            <Button component="a">About Fundraisers</Button>
-          </Link>
-          <Link href="/portal/create">
-            <Button component="a">Create Fundraisers</Button>
-          </Link>
-        </Group>
+        <div className=" w-full lg:w-1/3 my-2">
+          <SubscriptionForm />
+        </div>
       </div>
       <SearchFiltersPortals />
 

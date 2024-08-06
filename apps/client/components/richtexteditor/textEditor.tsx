@@ -15,6 +15,7 @@ import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import 'react-quill/dist/quill.snow.css';
+import './richtext.styles.css';
 
 interface TextEditorProps {
   disabled?: boolean;
@@ -120,7 +121,7 @@ export function TextEditor({
                 [{ header: [1, 2, 3, 4] }],
                 ['blockquote', 'code-block'],
                 [{ list: 'ordered' }, { list: 'bullet' }],
-                ['link', 'image'],
+                ['link', 'image', 'video'],
                 [{ align: [] }],
               ],
         }}
