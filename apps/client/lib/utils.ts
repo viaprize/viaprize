@@ -135,15 +135,7 @@ export function formatDateString(date: Date): string {
   return formattedDate;
 }
 
-export const calculateDeadline = (
-  createdDate: Date,
-  endDate: Date,
-  stage: string,
-  isValid: boolean,
-) => {
-  if (!isValid) {
-    return stage;
-  }
+export const calculateDeadline = (createdDate: Date, endDate: Date) => {
   const remainingTime = endDate.getTime() - createdDate.getTime();
   if (remainingTime <= 0) {
     return 'Time is up!';
@@ -160,6 +152,35 @@ export const calculateDeadline = (
   return `${days} day${days !== 1 ? 's' : ''} remaining`;
 };
 
+export const getCorrectStage = (
+  blockchainSubmissionTime: number,
+  blockchianVoteTime: number,
+  stage: PrizeStages,
+  distributed: boolean,
+  refund: boolean,
+  isActive: boolean,
+) => {
+  if (refund) {
+    return 'Refunded';
+  }
+  if (!isActive) {
+    return PrizeStages.PrizeEnded;
+  }
+  if (distributed) {
+    return PrizeStages.PrizeEnded;
+  }
+  if (blockchianVoteTime > 0) {
+    return PrizeStages.VotingStarted;
+  }
+
+  if (blockchainSubmissionTime > 0 && blockchianVoteTime == 0) {
+    return calculateDeadline(new Date(), new Date(blockchainSubmissionTime * 1000));
+  }
+
+  if (blockchainSubmissionTime == 0 && blockchianVoteTime == 0) {
+    return stage;
+  }
+};
 export const calculateDeadlineDate = (
   startSubmissionTime: string,
   submissionDays: number,
@@ -395,6 +416,7 @@ function groupBy(list: any[], keyGetter: Function) {
 
 import { sanitize } from 'isomorphic-dompurify';
 import MarkdownIt from 'markdown-it';
+import { PrizeStages } from './api';
 
 const markdownIt = new MarkdownIt({
   linkify: true,

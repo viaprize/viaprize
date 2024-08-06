@@ -111,9 +111,7 @@ function AdminAcceptedCard({
           ],
         });
         console.log(requestJudges, 'requestJudges');
-        out = await writePrizeFactoryV2(requestJudges).catch((err) => {
-          throw new Error(err.message);
-        });
+        out = await writePrizeFactoryV2(requestJudges);
         if (!out) throw new Error('Transaction Failed');
 
         console.log(out, 'out');
@@ -129,7 +127,7 @@ function AdminAcceptedCard({
         const prize = await createPrize({
           address: prizeAddress,
           proposal_id: id,
-        });
+        }).catch((c) => console.log(c));
 
         toast.success(<TransactionToast title="Deployment successful" hash={out.hash} />);
         // router.push('/prize/explore');

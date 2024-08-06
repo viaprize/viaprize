@@ -28,6 +28,9 @@ export default async function FetchPrizes() {
       {prizes.map((prize) => {
         return (
           <ExploreCard
+            refund={prize.refunded}
+            isActive={prize.is_active_blockchain}
+            startVoteBlockchain={prize.voting_time_blockchain}
             distributed={prize.distributed}
             description={prize.description}
             imageUrl={prize.images[0]}

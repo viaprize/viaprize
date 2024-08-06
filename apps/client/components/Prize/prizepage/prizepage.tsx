@@ -5,8 +5,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
-import type { IndividualPrizeWithBalance, SubmissionWithBlockchainData } from '@/lib/api';
-import { calculateDeadline, usdcSignType } from '@/lib/utils';
+import {
+  type IndividualPrizeWithBalance,
+  type SubmissionWithBlockchainData,
+} from '@/lib/api';
+import { usdcSignType } from '@/lib/utils';
 
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import useMounted from '@/components/hooks/useMounted';
@@ -280,10 +283,7 @@ export default function PrizePageComponent({
   submissions: SubmissionWithBlockchainData[];
 }) {
   const { appUser } = useAppUser();
-  const deadlineString = calculateDeadline(
-    new Date(),
-    new Date(prize.submission_time_blockchain * 1000),
-  );
+  console.log(prize.submission_time_blockchain, 'lsljfkjds prize subision');
   const params = useParams();
   useEffect(() => {
     if (window.location.hash.includes('success')) {
@@ -364,7 +364,7 @@ export default function PrizePageComponent({
       ) : null}
 
       {appUser
-        ? (appUser.username === prize.user.username || appUser.isAdmin) &&
+        ? appUser.isAdmin &&
           prize.submission_time_blockchain === 0 && (
             <StartSubmission
               contractAddress={prize.contract_address}
@@ -374,7 +374,7 @@ export default function PrizePageComponent({
           )
         : null}
       {appUser
-        ? (appUser.username === prize.user.username || appUser.isAdmin) &&
+        ? appUser.isAdmin &&
           prize.submission_time_blockchain === 0 &&
           prize.voting_time_blockchain === 0 && (
             <StartVoting
@@ -384,9 +384,7 @@ export default function PrizePageComponent({
             />
           )
         : null}
-      {appUser?.isAdmin &&
-      !(deadlineString === 'Time is up!') &&
-      prize.submission_time_blockchain > 0 ? (
+      {appUser?.isAdmin && prize.submission_time_blockchain > 0 ? (
         <EndSubmission contractAddress={prize.contract_address} slug={prize.slug} />
       ) : null}
 

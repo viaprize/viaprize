@@ -3,7 +3,7 @@
 'use client';
 
 import { PrizeStages } from '@/lib/api';
-import { calculateDeadline, formatDateString, toTitleCase } from '@/lib/utils';
+import { formatDateString, getCorrectStage, toTitleCase } from '@/lib/utils';
 import {
   ActionIcon,
   Badge,
@@ -34,6 +34,7 @@ interface ExploreCardProps {
   skills: string[];
   submissionMinutes: number;
   startingTimeBlockchain: number;
+  startVoteBlockchain: number;
   slug: string;
   contestants: number;
   startSubmissionDate: Date;
@@ -41,6 +42,7 @@ interface ExploreCardProps {
   contributers: string[];
   stage: PrizeStages;
   refund: boolean;
+  isActive: boolean;
 }
 
 function ExploreCard({
@@ -58,17 +60,24 @@ function ExploreCard({
   submissionMinutes,
   startSubmissionDate,
   contributers,
+  startVoteBlockchain,
   contestants,
   stage,
   refund,
+  isActive,
 }: ExploreCardProps) {
+  const submissionDate =
+    startingTimeBlockchain === 0
+      ? startSubmissionDate
+      : new Date(startingTimeBlockchain * 1000);
   console.log({ startingTimeBlockchain });
-  const submissionEndDate = new Date(startingTimeBlockchain * 1000);
-  const deadlineString = calculateDeadline(
-    new Date(),
-    submissionEndDate,
+  const exactStage = getCorrectStage(
+    startingTimeBlockchain,
+    startVoteBlockchain,
     stage,
-    stage == PrizeStages.NotStarted,
+    distributed,
+    refund,
+    isActive,
   );
 
   return (
@@ -106,18 +115,28 @@ function ExploreCard({
         <div className="flex flex-col justify-between h-full">
           <div>
             <div className="flex justify-between items-center my-3 gap-2 text-red-600">
-              {stage !== PrizeStages.NotStarted && (
+              {stage === PrizeStages.NotStarted ||
+              stage === PrizeStages.SubmissionStarted ? (
                 <div className="flex items-center space-x-2">
                   <PiTimerFill />
-                  <Text fw="bold">{deadlineString}</Text>
+                  <Text fw="bold">{toTitleCase(exactStage ?? '')}</Text>
                 </div>
-              )}
+              ) : null}
 
               {refund ? <Badge color="yellow">Refunded</Badge> : null}
 
-              <Badge color="blue" variant="light" p="sm">
-                {toTitleCase(stage)}
-              </Badge>
+              {[
+                PrizeStages.PrizeDistributed,
+                PrizeStages.PrizeEnded,
+                PrizeStages.SubmissionEnded,
+                PrizeStages.VotingStarted,
+                PrizeStages.VotingEnded,
+                PrizeStages.PrizeEnded,
+              ].includes(stage) && (
+                <Badge color="blue" variant="light" p="sm">
+                  {toTitleCase(exactStage ?? '')}
+                </Badge>
+              )}
             </div>
             <Group mb="xs" mt="md" justify="space-between">
               <h2 className="text-xl font-bold my-0">{title}</h2>
@@ -145,16 +164,8 @@ function ExploreCard({
                   className="text-md font-bold cursor-pointer"
                   leftSection={<GiSandsOfTime />}
                 >
-                  {startingTimeBlockchain !== 0 ? (
-                    <Text fw="bold" className="flex">
-                      {new Date() < submissionEndDate ? (
-                        formatDateString(submissionEndDate)
-                      ) : (
-                        <Text c="red" fw="bold" className="pl-2">
-                          Ended
-                        </Text>
-                      )}
-                    </Text>
+                  {stage === PrizeStages.NotStarted ? (
+                    <Text>{formatDateString(submissionDate)}</Text>
                   ) : (
                     <Text>Ended</Text>
                   )}
