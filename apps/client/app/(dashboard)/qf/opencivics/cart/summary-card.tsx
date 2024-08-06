@@ -104,7 +104,7 @@ export default function SummaryCard() {
       <Divider />
       <div className="flex items-center justify-between">
         <div>
-          <Text>Your total contribution to </Text>
+          <Text>Your total contribution is </Text>
         </div>
         <Text fw="bold" size="lg">
           ${totalAmount.toFixed(2)}
@@ -113,7 +113,7 @@ export default function SummaryCard() {
       {!Number.isNaN(totalAmount) && estimate !== 0 && estimate ? (
         <div className="flex items-center justify-between">
           <div>
-            <Text>Your total matching to</Text>
+            <Text>Your total matching is</Text>
           </div>
           <Text fw="bold" size="lg">
             ${estimate?.toFixed(2)}
