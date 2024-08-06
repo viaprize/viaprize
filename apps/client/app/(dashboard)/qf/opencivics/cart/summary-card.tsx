@@ -19,10 +19,7 @@ import { parseUnits } from 'viem/utils';
 export default function SummaryCard() {
   const [customerId, setCustomerId] = useState<string>(nanoid());
   const totalAmount = useCartStore((state) =>
-    state.items.reduce(
-      (acc, item) => acc + (isNaN(parseFloat(item.amount)) ? 0 : parseFloat(item.amount)),
-      0,
-    ),
+    state.items.reduce((acc, item) => acc + parseFloat(item.amount), 0),
   );
   const { clearCart } = useCartStore();
 
@@ -63,10 +60,10 @@ export default function SummaryCard() {
     refetchMatchingEstimates();
   }, [totalAmount]);
 
-  const submit = async () => {
+  const sumbit = async () => {
     try {
       const finalItems = useCartStore.getState().items.map((item) => ({
-        amount: isNaN(parseFloat(item.amount)) ? '0' : item.amount,
+        amount: item.amount,
         anchorAddress: item.anchorAddress,
         roundId: item.roundId,
       }));
@@ -107,7 +104,7 @@ export default function SummaryCard() {
       <Divider />
       <div className="flex items-center justify-between">
         <div>
-          <Text>Your total contribution is </Text>
+          <Text>Your total contribution is</Text>
         </div>
         <Text fw="bold" size="lg">
           ${totalAmount.toFixed(2)}
@@ -142,7 +139,7 @@ export default function SummaryCard() {
         <PayPalButtons
           style={{ layout: 'horizontal' }}
           createOrder={async () => {
-            const id = await submit();
+            const id = await sumbit();
             if (!id) {
               throw new Error('Checkout ID not found');
             }
@@ -163,6 +160,10 @@ export default function SummaryCard() {
               .then((orderData) => {
                 const name = orderData.payer.name.given_name;
                 toast.success(
+                  // <TransactionToast
+                  //   title="Transaction completed by"
+                  //   hash={orderData.payer.name.given_name}
+                  // />,
                   <div className="w-96">
                     <TransactionToast
                       title="Transaction Successful"
@@ -174,8 +175,10 @@ export default function SummaryCard() {
                         Donor name: <span className="text-blue-400">{name}</span>
                       </div>
                       <p>
-                        It may take 15-20 seconds for your donation to show in the
-                        project totals.
+                        After the transaction is approved, it may take 15-20 seconds for
+                        your donation record to update in the projects. The donation
+                        amount will then be displayed on the explore and info page of the
+                        projects.
                       </p>
                     </div>
                   </div>,
@@ -186,9 +189,12 @@ export default function SummaryCard() {
                 clearCart();
               });
           }}
-          disabled={!meetsMinimumDonation}
         />
       </PayPalScriptProvider>
+
+      {/* <Button component="a" href="/qf/opencivics/explore">
+        Go to explore page
+      </Button> */}
     </Card>
   );
 }
