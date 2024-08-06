@@ -2,7 +2,8 @@
 /* eslint-disable no-nested-ternary */
 'use client';
 
-import { calculateDeadline, formatDateString } from '@/lib/utils';
+import { PrizeStages } from '@/lib/api';
+import { calculateDeadline, formatDateString, toTitleCase } from '@/lib/utils';
 import {
   ActionIcon,
   Badge,
@@ -16,7 +17,6 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { format } from 'date-fns';
 import { FaUsers } from 'react-icons/fa';
 import { FaSackDollar } from 'react-icons/fa6';
 import { GiSandsOfTime, GiTwoCoins } from 'react-icons/gi';
@@ -39,6 +39,8 @@ interface ExploreCardProps {
   startSubmissionDate: Date;
   startVotingDate: Date;
   contributers: string[];
+  stage: PrizeStages;
+  refund: boolean;
 }
 
 function ExploreCard({
@@ -57,10 +59,17 @@ function ExploreCard({
   startSubmissionDate,
   contributers,
   contestants,
+  stage,
+  refund,
 }: ExploreCardProps) {
   console.log({ startingTimeBlockchain });
   const submissionEndDate = new Date(startingTimeBlockchain * 1000);
-  const deadlineString = calculateDeadline(new Date(), submissionEndDate);
+  const deadlineString = calculateDeadline(
+    new Date(),
+    submissionEndDate,
+    stage,
+    stage == PrizeStages.NotStarted,
+  );
 
   return (
     <div className="relative">
@@ -97,19 +106,18 @@ function ExploreCard({
         <div className="flex flex-col justify-between h-full">
           <div>
             <div className="flex justify-between items-center my-3 gap-2 text-red-600">
-              <div className="flex items-center space-x-2">
-                <PiTimerFill />
-                <Text fw="bold">{deadlineString}</Text>
-              </div>
+              {stage !== PrizeStages.NotStarted && (
+                <div className="flex items-center space-x-2">
+                  <PiTimerFill />
+                  <Text fw="bold">{deadlineString}</Text>
+                </div>
+              )}
 
-              {deadlineString === 'Time is up!' && distributed === true ? (
-                <Badge color="green">Won</Badge>
-              ) : deadlineString === 'Time is up!' &&
-                distributed === false &&
-                parseInt(usdAmount) > 0 &&
-                startingTimeBlockchain ? (
-                <Badge color="yellow">Refunded</Badge>
-              ) : null}
+              {refund ? <Badge color="yellow">Refunded</Badge> : null}
+
+              <Badge color="blue" variant="light" p="sm">
+                {toTitleCase(stage)}
+              </Badge>
             </div>
             <Group mb="xs" mt="md" justify="space-between">
               <h2 className="text-xl font-bold my-0">{title}</h2>
@@ -148,9 +156,7 @@ function ExploreCard({
                       )}
                     </Text>
                   ) : (
-                    <Text>
-                      Ended
-                    </Text>
+                    <Text>Ended</Text>
                   )}
                 </Button>
               </Tooltip>

@@ -138,6 +138,7 @@ function AdminAcceptedCard({
       }
     } catch (error) {
       toast.error(`Error: ${(error as Error).message}`);
+      toast.dismiss(firstLoadingToast);
     } finally {
       setLoading(false);
     }

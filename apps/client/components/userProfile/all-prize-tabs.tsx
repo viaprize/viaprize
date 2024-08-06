@@ -76,6 +76,7 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
             startSubmissionDate={new Date(prize.startSubmissionDate)}
             startVotingDate={new Date(prize.startVotingDate)}
             contributers={prize.contributors}
+            stage={prize.stage}
           />
         );
       })}

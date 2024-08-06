@@ -45,6 +45,8 @@ export default async function FetchPrizes() {
             startSubmissionDate={new Date(prize.startSubmissionDate)}
             startVotingDate={new Date(prize.startVotingDate)}
             contributers={prize.contributors}
+            stage={prize.stage}
+            refund={prize.refunded}
           />
         );
       })}

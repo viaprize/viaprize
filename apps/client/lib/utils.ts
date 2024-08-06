@@ -135,7 +135,15 @@ export function formatDateString(date: Date): string {
   return formattedDate;
 }
 
-export const calculateDeadline = (createdDate: Date, endDate: Date) => {
+export const calculateDeadline = (
+  createdDate: Date,
+  endDate: Date,
+  stage: string,
+  isValid: boolean,
+) => {
+  if (!isValid) {
+    return stage;
+  }
   const remainingTime = endDate.getTime() - createdDate.getTime();
   if (remainingTime <= 0) {
     return 'Time is up!';

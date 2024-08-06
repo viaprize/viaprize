@@ -308,7 +308,7 @@ export default function PrizePageComponent({
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
         <Title order={2}>{prize.title}</Title>
-        {deadlineString === 'Time is up!' && prize.distributed === true ? (
+        {prize.distributed === true ? (
           <Badge size="lg" color="green">
             Won
           </Badge>

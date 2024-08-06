@@ -72,7 +72,7 @@ export default function PortalForm() {
     return parseFloat(eth_to_cryto.toFixed(4));
   }
 
-  const { appUser } = useAppUser();
+  const { appUser, logoutUser } = useAppUser();
   const router = useRouter();
 
   const handleUploadImages = async () => {
@@ -122,8 +122,13 @@ export default function PortalForm() {
       return [...prev, ...tags];
     });
   };
+
   const submit = async () => {
     if (!wallet) {
+      if (!wallet && appUser) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        await logoutUser();
+      }
       throw Error('Wallet is undefined');
     }
     generateTags();

@@ -61,6 +61,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       logoutUser();
     }
+    console.log('walletjjjjjdksfjdskfslfj', wallet);
   }, [walletReady, appUser, wallet]);
 
   return (
