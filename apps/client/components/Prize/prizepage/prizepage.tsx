@@ -317,6 +317,7 @@ function FundUsdcCard({
         )
       ).json()
     ).balance;
+    console.log({ balance });
     if (parseFloat(value) * 1_000_000 > balance) {
       toast.error('Not enough balance to donate');
       return;
@@ -348,6 +349,7 @@ function FundUsdcCard({
               r: r,
               s: s,
               chainId: 8453,
+              payWihtoutLogin: 0,
             },
             title,
             imageUrl,
@@ -359,6 +361,7 @@ function FundUsdcCard({
         .then((res) => res.json())
         .then((data) => data.checkoutUrl);
 
+      console.log({ checkoutUrl });
       console.log({ checkoutUrl });
       await revalidate({ tag: slug });
       router.refresh();
