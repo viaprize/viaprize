@@ -437,7 +437,7 @@ export default function PrizePageComponent({
       void fetch(
         'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash',
       ).then((res) => {
-        res.json().then((data) => {
+        void res.json().then((data) => {
           toast.success(
             <TransactionToast hash={data.hash} title="Transaction Successful" />,
             {
@@ -580,6 +580,7 @@ export default function PrizePageComponent({
         allowSubmission={prize.submission_time_blockchain > 0}
         submissions={submissions}
         contractAddress={prize.contract_address}
+        loggedIn={Boolean(appUser)}
       />
 
       {appUser?.isAdmin && prize.dispute_period_time_blockchain > 0 ? (
