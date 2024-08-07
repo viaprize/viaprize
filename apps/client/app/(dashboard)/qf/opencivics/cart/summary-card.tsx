@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use client';
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import {
@@ -16,6 +13,7 @@ import { nanoid } from 'nanoid';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { parseUnits } from 'viem/utils';
+
 export default function SummaryCard() {
   const [customerId, setCustomerId] = useState<string>(nanoid());
   const totalAmount = useCartStore((state) =>
@@ -26,7 +24,9 @@ export default function SummaryCard() {
   );
   const { clearCart } = useCartStore();
 
-  const meetsMinimumDonation = totalAmount >= 2;
+  const meetsMinimumDonation = useCartStore((state) =>
+    state.items.every((item) => parseFloat(item.amount) >= 2),
+  );
   const items = useCartStore((state) => state.items);
   const tokenTT = getTokenByChainIdAndAddress(
     gitcoinRoundData.chainId,
@@ -128,8 +128,13 @@ export default function SummaryCard() {
           <Text>Loading Estimated Matching</Text>
         </div>
       )}
+      <Text fs="italic" td="underline" fw={500}>
+        PayPal fees and a 5% platform fee will be deducted
+      </Text>
       <Divider />
-      {!meetsMinimumDonation && <Text c="red">Minimum donation amount is $2 USD.</Text>}
+      {!meetsMinimumDonation && (
+        <Text c="red">Each project must have a minimum donation amount of 2 USD.</Text>
+      )}
 
       <PayPalScriptProvider
         options={{
@@ -161,10 +166,6 @@ export default function SummaryCard() {
               .then((orderData) => {
                 const name = orderData.payer.name.given_name;
                 toast.success(
-                  // <TransactionToast
-                  //   title="Transaction completed by"
-                  //   hash={orderData.payer.name.given_name}
-                  // />,
                   <div className="w-96">
                     <TransactionToast
                       title="Transaction Successful"
@@ -188,13 +189,9 @@ export default function SummaryCard() {
                 clearCart();
               });
           }}
-          disabled={!meetsMinimumDonation}
+          disabled={!meetsMinimumDonation || items.length === 0}
         />
       </PayPalScriptProvider>
-
-      {/* <Button component="a" href="/qf/opencivics/explore">
-        Go to explore page
-      </Button> */}
     </Card>
   );
 }

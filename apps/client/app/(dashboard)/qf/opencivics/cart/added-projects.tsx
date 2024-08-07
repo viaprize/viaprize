@@ -13,17 +13,10 @@ export default function AddedProjects() {
     const amount = isNaN(value) ? 0 : value;
     changeAmount(item.id, amount);
 
-    const totalAmount = items.reduce((acc, currentItem) => {
-      if (currentItem.id === item.id) {
-        return acc + amount;
-      }
-      return acc + parseFloat(currentItem.amount);
-    }, 0);
-
-    if (items.length === 1 && amount < 2) {
-      setError('Donation amount must be at least $2 USD.');
-    } else if (totalAmount < 2) {
-      setError('Total donation amount must be at least $2 USD.');
+    if (amount < 2) {
+      setError(
+        `Donation amount for ${item.project.metadata.title} must be at least 2 USD.`,
+      );
     } else {
       setError('');
     }
