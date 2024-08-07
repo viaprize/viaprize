@@ -10,6 +10,7 @@ import { Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { nanoid } from 'nanoid';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { parseUnits } from 'viem/utils';
@@ -139,8 +140,19 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
           <Text>Loading Estimated Matching</Text>
         </div>
       )}
-      <Text fs="italic" td="underline" fw={500}>
-        PayPal fees and a 5% platform fee will be deducted
+      <Text fs="italic" fw={500}>
+        PayPal fees and a 5% platform fee will be deducted.{' '}
+        <span>
+          To know more about the PayPal fees
+          <Link
+            href="https://www.paypal.com/us/webapps/mpp/merchant-fees"
+            className="text-blue-400 underline mx-2"
+            target="_blank"
+            rel="noreferrer"
+          >
+            click here
+          </Link>
+        </span>
       </Text>
       <Divider />
       {!meetsMinimumDonation && (
