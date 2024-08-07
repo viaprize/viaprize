@@ -291,7 +291,7 @@ export class PrizesController {
           submission_time_blockchain: parseInt(results[index][2].toString()),
           voting_time_blockchain: parseInt(results[index][3].toString()),
           refunded:
-            results[index][4] &&
+            !results[index][4] &&
             parseInt(results[index][5].toString()) === 0 &&
             results[index][1],
           voting_period_active_blockchain: results[index][7],

@@ -60,7 +60,7 @@ function PrizeEdit({
   const [votingTime, setVotingTime] = useState(tvotingTime);
   const [proposalTime, setProposalTime] = useState(tsubmissionTime);
   const { user } = usePrivy();
-  const { appUser } = useAppUser();
+  const { appUser, logoutUser } = useAppUser();
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [images, setImages] = useState<string>(timages[0]);
   const { updateProposal, uploadImages } = usePrizeProposal();
@@ -87,6 +87,10 @@ function PrizeEdit({
 
   const submit = async () => {
     if (!wallet) {
+      if (!wallet && appUser) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        await logoutUser();
+      }
       throw Error('Wallet is undefined');
     }
     if (!wallet.address) {

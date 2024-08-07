@@ -5,14 +5,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import useAppUser from '@/components/hooks/useAppUser';
-import type {
-  IndividualPrizeWithBalance,
-  PrizeWithBlockchainData,
-  SubmissionWithBlockchainData,
+import {
+  type IndividualPrizeWithBalance,
+  type SubmissionWithBlockchainData,
 } from '@/lib/api';
-import { calculateDeadline, usdcSignType } from '@/lib/utils';
+import { usdcSignType } from '@/lib/utils';
 
 import { TransactionToast } from '@/components/custom/transaction-toast';
+import useMounted from '@/components/hooks/useMounted';
 import { backendApi } from '@/lib/backend';
 import { USDC } from '@/lib/constants';
 import {
@@ -20,15 +20,16 @@ import {
   Button,
   Center,
   Group,
+  Image,
+  Modal,
   NumberInput,
   Stack,
   Text,
   Title,
 } from '@mantine/core';
 import { readContract } from '@wagmi/core';
-import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import revalidate from 'utils/revalidate';
 import { hashTypedData, hexToSignature } from 'viem';
@@ -44,8 +45,153 @@ import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import RefundCard from './refundCard';
 import Submissions from './submissions';
-import useIsMounted from '@/components/hooks/useIsMounted';
-import useMounted from '@/components/hooks/useMounted';
+
+import { useDisclosure } from '@mantine/hooks';
+import { IconXboxX } from '@tabler/icons-react';
+
+interface DonatingWithoutLoginProps {
+  opened: boolean;
+  open: () => void;
+  contractAddress: string;
+  prizeId: string;
+  title: string;
+  imageUrl: string;
+  successUrl: string;
+  cancelUrl: string;
+  slug: string;
+  close: () => void;
+}
+
+const DonatingWithoutLoginModal: React.FC<DonatingWithoutLoginProps> = ({
+  opened,
+  open,
+  contractAddress,
+  prizeId,
+  close,
+  imageUrl,
+  title,
+  successUrl,
+  cancelUrl,
+  slug,
+}) => {
+  const router = useRouter();
+
+  const [sendLoading, setSendLoading] = useState(false);
+
+  const [value, setValue] = useState('');
+
+  const onDonate = async () => {
+    try {
+      setSendLoading(true);
+      const balance = (
+        await (
+          await fetch(
+            'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
+          )
+        ).json()
+      ).balance;
+
+      if (parseFloat(value) * 1_000_000 > balance) {
+        toast.error('Not enough reserves to complete this transaction');
+        return;
+      }
+      const amount = parseFloat(value) * 1_000_000;
+      const checkoutUrl = await fetch(
+        'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            checkoutMetadata: {
+              contractAddress,
+              backendId: prizeId,
+              deadline: 0,
+              amount: amount,
+              ethSignedMessage: '',
+              v: 0,
+              r: '',
+              s: '',
+              chainId: 8453,
+              payWihtoutLogin: 1,
+            },
+            title,
+            imageUrl,
+            successUrl,
+            cancelUrl,
+          }),
+        },
+      )
+        .then((res) => res.json())
+        .then((data) => data.checkoutUrl);
+
+      await revalidate({ tag: slug });
+      router.refresh();
+      router.replace(checkoutUrl);
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setSendLoading(false);
+    }
+  };
+  return (
+    <>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Notice"
+        classNames={{
+          title: 'text-lg font-semibold',
+        }}
+        closeButtonProps={{
+          icon: <IconXboxX size={20} stroke={1.5} />,
+        }}
+      >
+        <div className="text-center">
+          <Text className="font-bold">
+            If you want to <span className="text-blue-600">vote on the winner</span>, you
+            will need to log in before donating, else{' '}
+            <span className="text-red-500">donate as guest.</span>
+          </Text>
+        </div>
+        <Group className="mt-4">
+          <Stack className="mx-auto">
+            <Group>
+              <Text fw="sm" className="text-center">
+                Your donation needs to be at least $1
+              </Text>
+            </Group>
+            <NumberInput
+              placeholder="Enter Value  in $ To Donate"
+              allowDecimal
+              defaultValue={1}
+              allowNegative={false}
+              value={value}
+              onChange={(v) => {
+                if (!v) {
+                  // console.log({ v }, 'inner v');
+                  setValue('0');
+                }
+                setValue(v.toString());
+              }}
+            />
+
+            <Button
+              disabled={!value}
+              loading={sendLoading}
+              onClick={async () => {
+                await onDonate();
+              }}
+            >
+              Donate as guest
+            </Button>
+          </Stack>
+        </Group>
+      </Modal>
+    </>
+  );
+};
 
 function FundUsdcCard({
   contractAddress,
@@ -71,9 +217,9 @@ function FundUsdcCard({
   const router = useRouter();
 
   const getUsdcSignatureData = async () => {
-    if (parseFloat(value) <= 0) {
-      throw new Error('Donation must be at least 1$');
-    }
+    // if (parseFloat(value) <= 0) {
+    //   throw new Error('Donation must be at least 1$');
+    // }
     const walletAddress = walletClient?.account.address;
     if (!walletAddress) {
       throw new Error('Please login to donate');
@@ -150,6 +296,7 @@ function FundUsdcCard({
       router.refresh();
       window.location.reload();
     } catch (e: unknown) {
+      console.log(e, 'sklfjlsdfjlkjljlksdjflksjl');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
     } finally {
@@ -170,6 +317,7 @@ function FundUsdcCard({
         )
       ).json()
     ).balance;
+    console.log({ balance });
     if (parseFloat(value) * 1_000_000 > balance) {
       toast.error('Not enough balance to donate');
       return;
@@ -201,6 +349,7 @@ function FundUsdcCard({
               r: r,
               s: s,
               chainId: 8453,
+              payWihtoutLogin: 0,
             },
             title,
             imageUrl,
@@ -212,6 +361,7 @@ function FundUsdcCard({
         .then((res) => res.json())
         .then((data) => data.checkoutUrl);
 
+      console.log({ checkoutUrl });
       console.log({ checkoutUrl });
       await revalidate({ tag: slug });
       router.refresh();
@@ -284,10 +434,7 @@ export default function PrizePageComponent({
   submissions: SubmissionWithBlockchainData[];
 }) {
   const { appUser } = useAppUser();
-  const deadlineString = calculateDeadline(
-    new Date(),
-    new Date(prize.submission_time_blockchain * 1000),
-  );
+  console.log(prize.submission_time_blockchain, 'lsljfkjds prize subision');
   const params = useParams();
   useEffect(() => {
     if (window.location.hash.includes('success')) {
@@ -306,13 +453,15 @@ export default function PrizePageComponent({
     }
   }, [params]);
 
+  const [opened, { open, close }] = useDisclosure(false);
+
   const mounted = useMounted();
 
   return (
     <div className="max-w-screen-lg px-6 py-6 shadow-md rounded-md min-h-screen my-6 relative">
       <Group justify="space-between" my="lg">
         <Title order={2}>{prize.title}</Title>
-        {deadlineString === 'Time is up!' && prize.distributed === true ? (
+        {prize.distributed === true ? (
           <Badge size="lg" color="green">
             Won
           </Badge>
@@ -323,15 +472,12 @@ export default function PrizePageComponent({
         ) : null}
       </Group>
       <Image
-        className="aspect-video object-cover sm:max-h-[350px] max-h-[200px] md:max-h-fit max-w-full  rounded-md"
         src={
           prize.images[0] ||
           'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
         }
-        width={1280}
-        height={768}
+        radius="md"
         alt="prize info tumbnail"
-        // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
       />
       <Center my="xl">
         <PrizePageTabs
@@ -367,8 +513,32 @@ export default function PrizePageComponent({
         />
       ) : null}
 
+      {!appUser && prize.is_active_blockchain && (
+        <>
+          <DonatingWithoutLoginModal
+            cancelUrl={mounted ? window.location.href : ''}
+            imageUrl={prize.images[0] || ''}
+            contractAddress={prize.contract_address}
+            prizeId={prize.id}
+            slug={prize.slug}
+            successUrl={`${window.location.href}#success`}
+            opened={opened}
+            open={open}
+            close={close}
+            title={prize.title}
+          />
+
+          <Button
+            onClick={open}
+            className="bg-blue-600 hover:bg-blue-700 text-white mx-auto w-full my-4"
+          >
+            Donate without login
+          </Button>
+        </>
+      )}
+
       {appUser
-        ? (appUser.username === prize.user.username || appUser.isAdmin) &&
+        ? appUser.isAdmin &&
           prize.submission_time_blockchain === 0 && (
             <StartSubmission
               contractAddress={prize.contract_address}
@@ -378,7 +548,7 @@ export default function PrizePageComponent({
           )
         : null}
       {appUser
-        ? (appUser.username === prize.user.username || appUser.isAdmin) &&
+        ? appUser.isAdmin &&
           prize.submission_time_blockchain === 0 &&
           prize.voting_time_blockchain === 0 && (
             <StartVoting
@@ -388,9 +558,7 @@ export default function PrizePageComponent({
             />
           )
         : null}
-      {appUser?.isAdmin &&
-      !(deadlineString === 'Time is up!') &&
-      prize.submission_time_blockchain > 0 ? (
+      {appUser?.isAdmin && prize.submission_time_blockchain > 0 ? (
         <EndSubmission contractAddress={prize.contract_address} slug={prize.slug} />
       ) : null}
 

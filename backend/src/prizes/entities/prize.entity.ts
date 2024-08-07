@@ -18,6 +18,17 @@ import { Submission } from './submission.entity';
 
 /* The Prize class represents a prize in a TypeScript application, with various properties such as
 description, start dates, addresses, and arrays of admins, proficiencies, and priorities. */
+
+export enum PrizeStages {
+  NOT_STARTED = 'not started',
+  SUMISSION_STARTED = 'submission started',
+  SUBMISSION_ENDED = 'submission ended',
+  VOTING_STARTED = 'voting started',
+  VOTING_ENDED = 'voting ended',
+  PRIZE_DISTRIBUTED = 'prize distributed',
+  PRIZE_ENDED = 'prize ended',
+}
+
 @Entity()
 export class Prize {
   @PrimaryGeneratedColumn('uuid')
@@ -76,6 +87,9 @@ export class Prize {
 
   @Column({ default: '' })
   title: string;
+
+  @Column({ default: PrizeStages.NOT_STARTED, type: 'enum', enum: PrizeStages })
+  stage: PrizeStages;
 
   @ManyToMany(() => User, (user) => user.id)
   @JoinTable()

@@ -3,6 +3,7 @@ import {
   PrepareWriteContractConfig,
   writeContract,
   WriteContractArgs,
+  WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
 } from 'wagmi/actions';
@@ -16,11 +17,7 @@ import {
   usePrepareContractWrite,
   UsePrepareContractWriteConfig,
 } from 'wagmi';
-import {
-  PrepareWriteContractResult,
-  ReadContractResult,
-  WriteContractMode,
-} from 'wagmi/actions';
+import { PrepareWriteContractResult, ReadContractResult } from 'wagmi/actions';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PassThroughV2Factory
@@ -278,7 +275,7 @@ export const portalABI = [
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export const prizeFactoryV2ABI = [
   {
@@ -312,14 +309,14 @@ export const prizeFactoryV2ABI = [
 ] as const;
 
 /**
- * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export const prizeFactoryV2Address = {
-  8453: '0x7D5cA64760A33DF30CA2319b7947879D259cD7d1',
+  8453: '0x3248830b677B43D18E2907e9a8267D47e0C98856',
 } as const;
 
 /**
- * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export const prizeFactoryV2Config = {
   address: prizeFactoryV2Address,
@@ -997,7 +994,7 @@ export function prepareWritePortal<
 /**
  * Wraps __{@link writeContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function writePrizeFactoryV2<
   TFunctionName extends string,
@@ -1034,7 +1031,7 @@ export function writePrizeFactoryV2<
 /**
  * Wraps __{@link prepareWriteContract}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function prepareWritePrizeFactoryV2<
   TAbi extends readonly unknown[] = typeof prizeFactoryV2ABI,
@@ -1728,7 +1725,7 @@ export function usePreparePortalEndKickStarterCampaign(
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function usePrizeFactoryV2Write<
   TFunctionName extends string,
@@ -1757,7 +1754,7 @@ export function usePrizeFactoryV2Write<
 /**
  * Wraps __{@link useContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function usePrizeFactoryV2CreateViaPrize<
   TMode extends WriteContractMode = undefined,
@@ -1790,7 +1787,7 @@ export function usePrizeFactoryV2CreateViaPrize<
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
   config: Omit<
@@ -1808,7 +1805,7 @@ export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
 /**
  * Wraps __{@link usePrepareContractWrite}__ with `abi` set to __{@link prizeFactoryV2ABI}__ and `functionName` set to `"createViaPrize"`.
  *
- * [__View Contract on Base Basescan__](https://basescan.org/address/0x7D5cA64760A33DF30CA2319b7947879D259cD7d1)
+ * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export function usePreparePrizeFactoryV2CreateViaPrize(
   config: Omit<

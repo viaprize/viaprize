@@ -1,25 +1,66 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 'use client';
 import { TransactionToast } from '@/components/custom/transaction-toast';
-import { Button, Card, Divider, Text } from '@mantine/core';
+import {
+  matchingEstimatesToText,
+  useMatchingEstimates,
+} from '@/components/hooks/useMatchingEstimate';
+import { gitcoinRoundData } from '@/lib/constants';
+import { getTokenByChainIdAndAddress } from '@gitcoin/gitcoin-chain-data';
+import { Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { nanoid } from 'nanoid';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { parseUnits } from 'viem/utils';
+
 export default function SummaryCard() {
   const [customerId, setCustomerId] = useState<string>(nanoid());
   const totalAmount = useCartStore((state) =>
-    state.items.reduce((acc, item) => acc + parseFloat(item.amount), 0),
+    state.items.reduce(
+      (acc, item) => acc + (isNaN(parseFloat(item.amount)) ? 0 : parseFloat(item.amount)),
+      0,
+    ),
   );
   const { clearCart } = useCartStore();
 
-  const meetsMinimumDonation = totalAmount >= 2;
+  const meetsMinimumDonation = useCartStore((state) =>
+    state.items.every((item) => parseFloat(item.amount) >= 2),
+  );
+  const items = useCartStore((state) => state.items);
+  const tokenTT = getTokenByChainIdAndAddress(
+    gitcoinRoundData.chainId,
+    gitcoinRoundData.token,
+  );
+  const {
+    data: matchingEstimates,
+    error: matchingEstimateError,
+    isLoading: matchingEstimateLoading,
+    refetch: refetchMatchingEstimates,
+  } = useMatchingEstimates([
+    {
+      roundId: gitcoinRoundData.roundId,
+      chainId: gitcoinRoundData.chainId,
+      potentialVotes: items.map((item) => ({
+        roundId: item.roundId,
+        projectId: item.projectId,
+        amount:
+          !!item.amount && !Number.isNaN(parseInt(item.amount))
+            ? parseUnits(item.amount ?? '0', tokenTT.decimals ?? 18)
+            : BigInt(0),
+        grantAddress: item.metadata.application.recipient,
+        voter: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+        token: tokenTT.address,
+        applicationId: item.id,
+      })),
+    },
+  ]);
+
+  const estimate = matchingEstimatesToText(matchingEstimates);
 
   useEffect(() => {
     setCustomerId(nanoid());
+    refetchMatchingEstimates();
   }, [totalAmount]);
 
   const sumbit = async () => {
@@ -66,16 +107,33 @@ export default function SummaryCard() {
       <Divider />
       <div className="flex items-center justify-between">
         <div>
-          <Text>Your total contribution to </Text>
-          <Text c="blue">Gitcoin</Text>
+          <Text>Your total contribution is</Text>
         </div>
         <Text fw="bold" size="lg">
           ${totalAmount.toFixed(2)}
         </Text>
       </div>
+      {!Number.isNaN(totalAmount) && estimate !== 0 && estimate ? (
+        <div className="flex items-center justify-between">
+          <div>
+            <Text>Total estimated matching is</Text>
+          </div>
+          <Text fw="bold" size="lg">
+            ${estimate?.toFixed(2)}
+          </Text>
+        </div>
+      ) : null}
+      {matchingEstimateLoading && (
+        <div className="flex items-center justify-between">
+          <Text>Loading Estimated Matching</Text>
+        </div>
+      )}
+      <Text fs="italic" td="underline" fw={500}>
+        PayPal fees and a 5% platform fee will be deducted
+      </Text>
       <Divider />
       {!meetsMinimumDonation && (
-        <Text color="red">Minimum donation amount is $2 USD.</Text>
+        <Text c="red">Each project must have a minimum donation amount of 2 USD.</Text>
       )}
 
       <PayPalScriptProvider
@@ -108,10 +166,6 @@ export default function SummaryCard() {
               .then((orderData) => {
                 const name = orderData.payer.name.given_name;
                 toast.success(
-                  // <TransactionToast
-                  //   title="Transaction completed by"
-                  //   hash={orderData.payer.name.given_name}
-                  // />,
                   <div className="w-96">
                     <TransactionToast
                       title="Transaction Successful"
@@ -123,10 +177,8 @@ export default function SummaryCard() {
                         Donor name: <span className="text-blue-400">{name}</span>
                       </div>
                       <p>
-                        After the transaction is approved, it may take 15-20 seconds for
-                        your donation record to update in the projects. The donation
-                        amount will then be displayed on the explore and info page of the
-                        projects.
+                        It may take 15-20 seconds for your donation to show in the project
+                        totals.
                       </p>
                     </div>
                   </div>,
@@ -137,12 +189,9 @@ export default function SummaryCard() {
                 clearCart();
               });
           }}
+          disabled={!meetsMinimumDonation || items.length === 0}
         />
       </PayPalScriptProvider>
-
-      {/* <Button component="a" href="/qf/opencivics/explore">
-        Go to explore page
-      </Button> */}
     </Card>
   );
 }

@@ -4,7 +4,6 @@ import { gitcoinRoundData } from '@/lib/constants';
 import { renderToPlainText } from '@/lib/utils';
 import {
   ActionIcon,
-  Avatar,
   Button,
   Card,
   CopyButton,
@@ -41,7 +40,7 @@ export default function GitcoinCard({
   contributors,
   link,
   application,
-  logoURL
+  logoURL,
 }: CartItem) {
   const addItem = useCartStore((state) => state.addItem);
   const removeItem = useCartStore((state) => state.removeItem);

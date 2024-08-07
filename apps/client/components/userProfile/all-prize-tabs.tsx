@@ -59,6 +59,9 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
       {getPrizesOfUserMutation.data.map((prize) => {
         return (
           <ExploreCard
+            refund={prize.refunded}
+            isActive={prize.is_active_blockchain}
+            startVoteBlockchain={prize.voting_time_blockchain}
             contestants={prize.contestants?.length || 0}
             startingTimeBlockchain={prize.submission_time_blockchain}
             distributed={false}
@@ -76,6 +79,7 @@ export default function PrizeTabs({ params }: { params: { id: string } }) {
             startSubmissionDate={new Date(prize.startSubmissionDate)}
             startVotingDate={new Date(prize.startVotingDate)}
             contributers={prize.contributors}
+            stage={prize.stage}
           />
         );
       })}

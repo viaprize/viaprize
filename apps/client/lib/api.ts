@@ -115,11 +115,22 @@ export interface Prize {
   updated_at: string;
   images: string[];
   title: string;
+  stage: PrizeStages;
   contestants: User[];
   submissions: Submission[];
   comments?: PrizesComments[];
   slug: string;
   user: User;
+}
+
+export enum PrizeStages {
+  NotStarted = 'not started',
+  SubmissionStarted = 'submission started',
+  SubmissionEnded = 'submission ended',
+  VotingStarted = 'voting started',
+  VotingEnded = 'voting ended',
+  PrizeDistributed = 'prize distributed',
+  PrizeEnded = 'prize ended',
 }
 
 export interface PrizesComments {
@@ -360,6 +371,7 @@ export interface PrizeWithBlockchainData {
   updated_at: string;
   images: string[];
   title: string;
+  stage: PrizeStages;
   contestants: User[];
   submissions: Submission[];
   comments?: PrizesComments[];
@@ -400,6 +412,7 @@ export interface IndividualPrizeWithBalance {
   created_at: string;
   /** @format date-time */
   updated_at: string;
+  stage: PrizeStages;
   contestants: User[];
   submissions: Submission[];
   comments?: PrizesComments[];
@@ -1909,9 +1922,9 @@ export class HttpClient<SecurityDataType = unknown> {
         : input,
     [ContentType.Text]: (input: any) =>
       input !== null && typeof input !== 'string' ? JSON.stringify(input) : input,
-    [ContentType.FormData]: (input: FormData) =>
-      (Array.from(input.keys()) || []).reduce((formData, key) => {
-        const property = input.get(key);
+    [ContentType.FormData]: (input: any) =>
+      Object.keys(input || {}).reduce((formData, key) => {
+        const property = input[key];
         formData.append(
           key,
           property instanceof Blob

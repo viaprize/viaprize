@@ -32,10 +32,13 @@ export default function Details() {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
 
-  const { createNewUser } = useAppUser();
+  const { createNewUser, getLastVisitedPage } = useAppUser();
+
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: () => {
-      router.push('/prize/explore');
+      const lastVisitedPage = getLastVisitedPage(); // Get the last visited page
+      router.push(lastVisitedPage); 
+      // router.push('/prize/explore');
     },
   });
 

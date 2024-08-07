@@ -2,7 +2,8 @@
 /* eslint-disable no-nested-ternary */
 'use client';
 
-import { calculateDeadline, formatDateString } from '@/lib/utils';
+import { PrizeStages } from '@/lib/api';
+import { getCorrectStage, toTitleCase } from '@/lib/utils';
 import {
   ActionIcon,
   Badge,
@@ -16,7 +17,6 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
-import { format } from 'date-fns';
 import { FaUsers } from 'react-icons/fa';
 import { FaSackDollar } from 'react-icons/fa6';
 import { GiSandsOfTime, GiTwoCoins } from 'react-icons/gi';
@@ -34,11 +34,15 @@ interface ExploreCardProps {
   skills: string[];
   submissionMinutes: number;
   startingTimeBlockchain: number;
+  startVoteBlockchain: number;
   slug: string;
   contestants: number;
   startSubmissionDate: Date;
   startVotingDate: Date;
   contributers: string[];
+  stage: PrizeStages;
+  refund: boolean;
+  isActive: boolean;
 }
 
 function ExploreCard({
@@ -56,11 +60,25 @@ function ExploreCard({
   submissionMinutes,
   startSubmissionDate,
   contributers,
+  startVoteBlockchain,
   contestants,
+  stage,
+  refund,
+  isActive,
 }: ExploreCardProps) {
+  const submissionDate =
+    startingTimeBlockchain === 0
+      ? startSubmissionDate
+      : new Date(startingTimeBlockchain * 1000);
   console.log({ startingTimeBlockchain });
-  const submissionEndDate = new Date(startingTimeBlockchain * 1000);
-  const deadlineString = calculateDeadline(new Date(), submissionEndDate);
+  const exactStage = getCorrectStage(
+    startingTimeBlockchain,
+    startVoteBlockchain,
+    stage,
+    distributed,
+    refund,
+    isActive,
+  );
 
   return (
     <div className="relative">
@@ -97,19 +115,28 @@ function ExploreCard({
         <div className="flex flex-col justify-between h-full">
           <div>
             <div className="flex justify-between items-center my-3 gap-2 text-red-600">
-              <div className="flex items-center space-x-2">
-                <PiTimerFill />
-                <Text fw="bold">{deadlineString}</Text>
-              </div>
-
-              {deadlineString === 'Time is up!' && distributed === true ? (
-                <Badge color="green">Won</Badge>
-              ) : deadlineString === 'Time is up!' &&
-                distributed === false &&
-                parseInt(usdAmount) > 0 &&
-                startingTimeBlockchain ? (
-                <Badge color="yellow">Refunded</Badge>
+              {stage === PrizeStages.NotStarted ||
+              stage === PrizeStages.SubmissionStarted ? (
+                <div className="flex items-center space-x-2">
+                  <PiTimerFill />
+                  <Text fw="bold">{toTitleCase(exactStage ?? '')}</Text>
+                </div>
               ) : null}
+
+              {refund ? <Badge color="yellow">Refunded</Badge> : null}
+
+              {[
+                PrizeStages.PrizeDistributed,
+                PrizeStages.PrizeEnded,
+                PrizeStages.SubmissionEnded,
+                PrizeStages.VotingStarted,
+                PrizeStages.VotingEnded,
+                PrizeStages.PrizeEnded,
+              ].includes(stage) && (
+                <Badge color="blue" variant="light" p="sm">
+                  {toTitleCase(exactStage ?? '')}
+                </Badge>
+              )}
             </div>
             <Group mb="xs" mt="md" justify="space-between">
               <h2 className="text-xl font-bold my-0">{title}</h2>
@@ -138,19 +165,13 @@ function ExploreCard({
                   leftSection={<GiSandsOfTime />}
                 >
                   {startingTimeBlockchain !== 0 ? (
-                    <Text fw="bold" className="flex">
-                      {new Date() < submissionEndDate ? (
-                        formatDateString(submissionEndDate)
-                      ) : (
-                        <Text c="red" fw="bold" className="pl-2">
-                          Ended
-                        </Text>
-                      )}
+                    <Text>
+                      {exactStage?.includes('remaining')
+                        ? exactStage.replace('remaining', '')
+                        : exactStage}
                     </Text>
                   ) : (
-                    <Text>
-                      Ended
-                    </Text>
+                    <Text>Ended</Text>
                   )}
                 </Button>
               </Tooltip>

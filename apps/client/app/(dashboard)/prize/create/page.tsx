@@ -7,7 +7,6 @@ import usePrizeProposal from '@/components/hooks/usePrizeProposal';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { addDaysToDate } from '@/lib/utils';
 import {
-  Badge,
   Button,
   Card,
   Loader,
@@ -21,7 +20,6 @@ import { DateTimePicker } from '@mantine/dates';
 import type { FileWithPath } from '@mantine/dropzone';
 import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { IconAlertTriangleFilled } from '@tabler/icons-react';
 import { addDays, differenceInMinutes } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -39,7 +37,7 @@ function Prize() {
   );
 
   const { user } = usePrivy();
-  const { appUser } = useAppUser();
+  const { appUser, logoutUser } = useAppUser();
   const [files, setFiles] = useState<FileWithPath[]>([]);
   const [images, setImages] = useState<string>();
   const { addProposals, uploadImages } = usePrizeProposal();
@@ -80,6 +78,10 @@ function Prize() {
 
   const submit = async () => {
     if (!wallet) {
+      if (!wallet && appUser) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        await logoutUser();
+      }
       throw Error('Wallet is undefined');
     }
     if (!startSubmisionDate) {
