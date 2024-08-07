@@ -1,12 +1,12 @@
 // 'use client';
 import { fetchApplicationById, fetchRoundForExplorer } from '@/lib/actions';
-import { gitcoinRoundData, gitcoinRounds } from '@/lib/constants';
-import { Button, Text } from '@mantine/core';
+import { gitcoinRounds } from '@/lib/constants';
+import { Text } from '@mantine/core';
+import { notFound } from 'next/navigation';
 import Description from './description';
 import DetailCard from './detail-card';
 import ImageTitleCard from './image-title-card';
 import SocialCard from './social-card';
-import { notFound } from 'next/navigation';
 
 export default async function GitcoinApplication({
   params,
