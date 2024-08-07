@@ -62,7 +62,7 @@ interface DonatingWithoutLoginProps {
   close: () => void;
 }
 
-const DonatingWithoutLoginModal: React.FC<DonatingWithoutLoginProps> = ({
+function DonatingWithoutLoginModal({
   opened,
   open,
   contractAddress,
@@ -73,12 +73,12 @@ const DonatingWithoutLoginModal: React.FC<DonatingWithoutLoginProps> = ({
   successUrl,
   cancelUrl,
   slug,
-}) => {
+}: DonatingWithoutLoginProps) {
   const router = useRouter();
 
   const [sendLoading, setSendLoading] = useState(false);
 
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(0);
 
   const onDonate = async () => {
     try {
@@ -136,62 +136,57 @@ const DonatingWithoutLoginModal: React.FC<DonatingWithoutLoginProps> = ({
     }
   };
   return (
-    <>
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Notice"
-        classNames={{
-          title: 'text-lg font-semibold',
-        }}
-        closeButtonProps={{
-          icon: <IconXboxX size={20} stroke={1.5} />,
-        }}
-      >
-        <div className="text-center">
-          <Text className="font-bold">
-            If you want to <span className="text-blue-600">vote on the winner</span>, you
-            will need to log in before donating, else{' '}
-            <span className="text-red-500">donate as guest.</span>
-          </Text>
-        </div>
-        <Group className="mt-4">
-          <Stack className="mx-auto">
-            <Group>
-              <Text fw="sm" className="text-center">
-                Your donation needs to be at least $1
-              </Text>
-            </Group>
-            <NumberInput
-              placeholder="Enter Value  in $ To Donate"
-              allowDecimal
-              defaultValue={1}
-              allowNegative={false}
-              value={value}
-              onChange={(v) => {
-                if (!v) {
-                  // console.log({ v }, 'inner v');
-                  setValue('0');
-                }
-                setValue(v.toString());
-              }}
-            />
+    <Modal
+      opened={opened}
+      onClose={close}
+      title="Notice"
+      classNames={{
+        title: 'text-lg font-semibold',
+      }}
+      closeButtonProps={{
+        icon: <IconXboxX size={20} stroke={1.5} />,
+      }}
+    >
+      <div className="text-center">
+        <Text className="font-bold">
+          If you want to <span className="text-blue-600">vote on the winner</span>, you
+          will need to log in before donating, else{' '}
+          <span className="text-red-500">donate as guest.</span>
+        </Text>
+      </div>
+      <Group className="mt-4">
+        <Stack className="mx-auto">
+          <Group>
+            <Text fw="sm" className="text-center">
+              Your donation needs to be at least $1
+            </Text>
+          </Group>
+          <NumberInput
+            placeholder="Enter Value  in $ To Donate"
+            allowDecimal
+            defaultValue={1}
+            allowNegative={false}
+            value={value}
+            min={0}
+            onChange={(v) => {
+              setValue(parseInt(v.toString()));
+            }}
+          />
 
-            <Button
-              disabled={!value}
-              loading={sendLoading}
-              onClick={async () => {
-                await onDonate();
-              }}
-            >
-              Donate as guest
-            </Button>
-          </Stack>
-        </Group>
-      </Modal>
-    </>
+          <Button
+            disabled={!value}
+            loading={sendLoading}
+            onClick={async () => {
+              await onDonate();
+            }}
+          >
+            Donate as guest
+          </Button>
+        </Stack>
+      </Group>
+    </Modal>
   );
-};
+}
 
 function FundUsdcCard({
   contractAddress,
