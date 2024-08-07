@@ -2,12 +2,9 @@
 
 import type { JSONContent } from '@tiptap/react';
 import { Editor as NovalEditor } from 'novel';
-import type { ReactElement } from 'react';
 import { useState } from 'react';
 
 import { PrizeSubmissionTemplate } from '@/components/Prize/prizepage/defaultcontent';
-import useAppUser from '@/components/hooks/useAppUser';
-import AppShellLayout from '@/components/layout/appshell';
 import { backendApi } from '@/lib/backend';
 import { useWallets } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
@@ -17,7 +14,6 @@ function EditorsPage({ params }: { params: { slug: string } }) {
   const [content, setContent] = useState<JSONContent | undefined>(
     PrizeSubmissionTemplate,
   );
-  const { appUser } = useAppUser();
   const { wallets } = useWallets();
   const router = useRouter();
 
@@ -27,6 +23,7 @@ function EditorsPage({ params }: { params: { slug: string } }) {
     }
 
     const address = wallets[0].address as `0x${string}`;
+    console.log(content, 'content'); 
 
     const res = await (
       await backendApi()

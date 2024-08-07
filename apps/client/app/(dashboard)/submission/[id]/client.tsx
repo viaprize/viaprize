@@ -7,7 +7,7 @@ import type { JSONContent } from '@tiptap/react';
 import { Editor as NovalEditor } from 'novel';
 
 export default function SubmissionsClient({ submission }: { submission: Submission }) {
-  console.log(submission);
+
   return (
     <Paper>
       <NovalEditor
