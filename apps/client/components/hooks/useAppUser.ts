@@ -50,7 +50,7 @@ export default function useAppUser() {
         console.log({ error }, 'errror');
         if (error?.status) {
           if (error.status === 404) {
-              setLastVisitedPage(pathname); 
+            setLastVisitedPage(pathname);
             router.push('/onboarding');
           }
         }
@@ -70,7 +70,7 @@ export default function useAppUser() {
       }
 
       if (isNewUser && !wasAlreadyAuthenticated) {
-        setLastVisitedPage(pathname); 
+        setLastVisitedPage(pathname);
         router.push('/onboarding'),
           toast('Welcome to Viaprize! Please complete your profile to continue');
       }

@@ -39,7 +39,6 @@ export default function Profile({ params }: { params: { id: string } }) {
     },
   });
 
-
   if (!userData && isFetched && isError) {
     return notFound();
   }

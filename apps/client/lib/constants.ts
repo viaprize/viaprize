@@ -792,8 +792,29 @@ export const usdcAddress = {
   42161: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
 } as const;
 
-export const gitcoinRoundData = {
-  chainId: 42161,
-  roundId: '386',
-  token: usdcAddress[42161],
-};
+export const gitcoinRounds = [
+  {
+    roundSlug: 'opencivics',
+    roundId: '386',
+    chainId: 42161,
+    token: usdcAddress[42161],
+    description:
+      'The OpenCivics Collaborative Research Round is designed to foster collaboration among researchers, civic innovators, and community organizers through open source research and knowledge production. Projects in this round are committed to contributing critical research into the commons and collaborating with others to share that knowledge in forms that directly empower community organizers',
+    title: 'OpenCivics Collaborative Research Round',
+    startDate: new Date('2024-08-07T17:30:00+05:30'),
+    endDate: new Date('2024-08-21T17:29:00+05:30'),
+    matchingPool: 42_000,
+  },
+  {
+    roundSlug: 'collabtech',
+    roundId: '384',
+    chainId: 42161,
+    token: usdcAddress[42161],
+    description:
+      'Let’s grow CollabTech: organisations on-chain, evolution of B2B SaaS, and future of work; projects advancing identity & reputation, governance & decision making, operations (accounting, sales automation, inventory management, talent, etc), community, and contributor tooling!',
+    title: 'CollabTech Round and Thresholds Experiment',
+    startDate: new Date('2024-08-07T03:30:00+05:30'),
+    endDate: new Date('2024-08-21T03:30:00+05:30'),
+    matchingPool: 30_000,
+  },
+];

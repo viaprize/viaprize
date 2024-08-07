@@ -5,10 +5,10 @@ import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import { CartItem, useCartStore } from '../../../(_utils)/store/datastore';
 
-export default function AddedProjects() {
+export default function AddedProjects({ roundId }: { roundId: string }) {
   const { items, removeItem, clearCart, changeAmount } = useCartStore();
   const [error, setError] = useState('');
-
+  const filteredItems = items.filter((item) => item.roundId == roundId);
   const handleAmountChange = (item: CartItem, value: number) => {
     const amount = isNaN(value) ? 0 : value;
     changeAmount(item.id, amount);
@@ -24,32 +24,34 @@ export default function AddedProjects() {
 
   return (
     <Card padding="lg" radius="lg" withBorder className="w-full">
-      {items.length === 0 ? (
+      {filteredItems.length === 0 ? (
         <Text>Your cart is empty.</Text>
       ) : (
         <div>
-          {items.map((item, index) => (
+          {filteredItems.map((item, index) => (
             <div key={item.id}>
-              <div className="flex items-center gap-1 lg:gap-3 justify-between my-2">
-                <Avatar
-                  alt="Image"
-                  radius="xl"
-                  size="lg"
-                  src={`https://ipfs.io/ipfs/${item.project.metadata.bannerImg}`}
-                />
-                <div className="mt-3">
-                  <Text fw="bold" size="lg" className="lg:block">
-                    {item.project.metadata.title}
-                  </Text>
-                  <p className="text-md hidden lg:visible lg:block">
-                    {renderToPlainText(item.project.metadata.description).substring(
-                      0,
-                      130,
-                    )}
-                    ...
-                  </p>
+              <div className="lg:flex lg:items-center gap-1 lg:gap-3 justify-between my-2">
+                <div className="flex mb-2 lg:mb-0 items-center space-x-2">
+                  <Avatar
+                    alt="Image"
+                    radius="xl"
+                    size="lg"
+                    src={`https://ipfs.io/ipfs/${item.project.metadata.bannerImg}`}
+                  />
+                  <div className="mt-3">
+                    <Text fw="bold" size="lg" className="lg:block">
+                      {item.project.metadata.title}
+                    </Text>
+                    <p className="text-md hidden lg:visible lg:block">
+                      {renderToPlainText(item.project.metadata.description).substring(
+                        0,
+                        130,
+                      )}
+                      ...
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center justify-center w-full lg:w-1/3">
+                <div className="flex items-center space-x-3 justify-center w-full lg:w-1/3">
                   <input
                     type="number"
                     id="number-input"
@@ -61,18 +63,20 @@ export default function AddedProjects() {
                     min={0}
                     required
                   />
-                  <Text fw="bold" ml="sm">
+                  <Text fw="bold" >
                     USD
                   </Text>
+
+                  <ActionIcon
+                    variant="light"
+                    p="3px"
+                   
+                    color="red"
+                    onClick={() => removeItem(item.id)}
+                  >
+                    <IconTrash color="red" />
+                  </ActionIcon>
                 </div>
-                <ActionIcon
-                  variant="light"
-                  p="3px"
-                  color="red"
-                  onClick={() => removeItem(item.id)}
-                >
-                  <IconTrash color="red" />
-                </ActionIcon>
               </div>
               <Divider />
             </div>

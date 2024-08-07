@@ -1,4 +1,4 @@
-import { Text } from '@mantine/core';
+import { Card, Text } from '@mantine/core';
 
 interface DetailProps {
   fundingRecieved: number;
@@ -14,9 +14,8 @@ function getRemainingDays(endTime: string) {
 
   if (diffDays > 0) {
     return `${diffDays} days to go`;
-  } else {
-    return `Ended ${Math.abs(diffDays)} days ago`;
   }
+  return `Ended ${Math.abs(diffDays)} days ago`;
 }
 
 export default function DetailCard({
@@ -25,7 +24,7 @@ export default function DetailCard({
   contributors,
 }: DetailProps) {
   return (
-    <div className="bg-gray-200 p-2 rounded-xl w-full">
+    <Card className="p-2 rounded-xl w-full">
       <div className="lg:flex items-center justify-between mx-2">
         <div className="">
           <Text size="lg" fw="bold">
@@ -47,6 +46,6 @@ export default function DetailCard({
       <Text size="md" ml="md">
         contributors
       </Text>
-    </div>
+    </Card>
   );
 }

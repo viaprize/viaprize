@@ -5,8 +5,8 @@ import SubmissionEditor from './client';
 export default async function SubmissionEditorPage({
   params,
 }: {
-  params: { id: string };
+  params: { slug: string };
 }) {
-  const data = (await new Api().prizes.submissionDetail2(params.id, '')).data;
+  const data = (await new Api().prizes.submissionDetail2(params.slug, '')).data;
   return <SubmissionEditor submission={data} />;
 }

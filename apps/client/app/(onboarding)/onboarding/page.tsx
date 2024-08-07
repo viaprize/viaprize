@@ -37,7 +37,7 @@ export default function Details() {
   const uploadUserMutation = useMutation(createNewUser, {
     onSuccess: () => {
       const lastVisitedPage = getLastVisitedPage(); // Get the last visited page
-      router.push(lastVisitedPage); 
+      router.push(lastVisitedPage);
       // router.push('/prize/explore');
     },
   });

@@ -4,11 +4,9 @@ import useAppUser from '@/components/hooks/useAppUser';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import type { FetchSubmissionDto, Submission } from '@/lib/api';
-import { Api } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
 import type { JSONContent } from '@tiptap/react';
-import type { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Editor as NovalEditor } from 'novel';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -44,7 +42,7 @@ export default function SubmissionEditor({
         error: (e) => `Error Updating Submission ${e?.response?.data?.message}`,
       },
     );
-    await router.push(`/submission/${submission.id}`);
+    router.push(`/submission/${submission.id}`);
     setLoading(false);
   };
 
