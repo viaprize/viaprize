@@ -38,13 +38,14 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   const computedColorScheme = useComputedColorScheme('light');
   const isMounted = useIsMounted();
   const { ready } = usePrivy();
-  const { appUser, logoutUser } = useAppUser();
+  const { appUser, logoutUser,loginUser } = useAppUser();
   useEffect(() => {
     if (currentChain && currentChain?.id !== base.id && ready && appUser) {
       openChainModal();
     }
   }, [currentChain, isMounted, ready, appUser]);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
 
   const switchToBase = async () => {
     console.log('hsjlflsjflsdklfjsdlkfjlsdj');
