@@ -1,6 +1,14 @@
 import { Button, Image, Title } from '@mantine/core';
 
-export default function ImageTitleCard({ title, img ,logoURL}: { title: string; img: string; logoURL:string }) {
+export default function ImageTitleCard({
+  title,
+  img,
+  logoURL,
+}: {
+  title: string;
+  img: string;
+  logoURL: string;
+}) {
   return (
     <div className="max-h-fit  h-full p-0 space-y-3 relative">
       <div className="flex flex-col-reverse lg:flex-row justify-between lg:items-center">

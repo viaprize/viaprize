@@ -797,3 +797,18 @@ export const gitcoinRoundData = {
   roundId: '386',
   token: usdcAddress[42161],
 };
+
+export const gitcoinRounds = [
+  {
+    roundSlug: 'opencivics',
+    roundId: '386',
+    chainId: 42161,
+    token: usdcAddress[42161],
+  },
+  {
+    roundSlug: 'collab-tech',
+    roundId: '384',
+    chainId: 42161,
+    token: usdcAddress[42161],
+  },
+];

@@ -10,7 +10,7 @@ import FetchGitcoins from './fetch-explore';
 import StepperInfo from './stepper-info';
 
 export const dynamic = 'force-dynamic';
-export default function ExploreGitcoin() {
+export default function ExploreGitcoin({ params }: { params: { roundslug: string } }) {
   return (
     <div>
       <div className="max-w-screen-xl w-screen">
@@ -84,7 +84,7 @@ export default function ExploreGitcoin() {
         <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
           <Suspense fallback={<div>Loading...</div>}>
             {/* @ts-expect-error Server Component */}
-            <FetchGitcoins />
+            <FetchGitcoins params={params} />
           </Suspense>
         </div>
       </div>

@@ -14,7 +14,7 @@ export default function StepperInfo() {
         Follow the steps below to donate
       </Text>
 
-      <Stepper className="mx-2 mb-3"  active={-1} >
+      <Stepper className="mx-2 mb-3" active={-1}>
         <Stepper.Step
           icon={<IconShoppingCartFilled />}
           label="Add to cart"

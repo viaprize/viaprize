@@ -26,7 +26,6 @@ export default async function GitcoinApplication({
   console.log(applicationsInRound);
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
-     
       <ImageTitleCard
         title={applicationsInRound.project.metadata.title}
         img={`https://ipfs.io/ipfs/${applicationsInRound.project.metadata.bannerImg}`}

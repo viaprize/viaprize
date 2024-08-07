@@ -15,7 +15,6 @@ function formatDate(timestamp: string | number | Date) {
   return date.toLocaleDateString('en-US');
 }
 
-
 export default function SocialCard({ createdOn, website, twitter }: SocialCardProps) {
   return (
     <div className="space-y-5 w-full">

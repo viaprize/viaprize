@@ -23,7 +23,7 @@ function EditorsPage({ params }: { params: { slug: string } }) {
     }
 
     const address = wallets[0].address as `0x${string}`;
-    console.log(content, 'content'); 
+    console.log(content, 'content');
 
     const res = await (
       await backendApi()
@@ -34,7 +34,7 @@ function EditorsPage({ params }: { params: { slug: string } }) {
     });
     console.log({ res }, 'ressss');
 
-   router.push(`/prize/${params.slug}`);
+    router.push(`/prize/${params.slug}`);
   };
   const onSumbit = () => {
     console.log('on sumbitttt');
