@@ -34,7 +34,7 @@ export default function ChangeSubmission({
           onChange={(event) => {
             setnewSubmissionTime(parseInt(event.toString()));
           }}
-          placeholder="Enter in %"
+          placeholder="Enter in minutes"
           description={`This will increase submission time by ${newSubmissionTime} minutes from ${new Date()}`}
         />
 
@@ -65,6 +65,7 @@ export default function ChangeSubmission({
             }
           }}
           loading={loading}
+          className='mt-2'
         >
           {' '}
           Confirm

@@ -20,15 +20,16 @@ import {
   Button,
   Center,
   Group,
+  Image,
+  Modal,
   NumberInput,
   Stack,
   Text,
   Title,
-  Image,
 } from '@mantine/core';
 import { readContract } from '@wagmi/core';
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import revalidate from 'utils/revalidate';
 import { hashTypedData, hexToSignature } from 'viem';
@@ -44,6 +45,153 @@ import StartVoting from './buttons/startVoting';
 import PrizePageTabs from './prizepagetabs';
 import RefundCard from './refundCard';
 import Submissions from './submissions';
+
+import { useDisclosure } from '@mantine/hooks';
+import { IconXboxX } from '@tabler/icons-react';
+
+interface DonatingWithoutLoginProps {
+  opened: boolean;
+  open: () => void;
+  contractAddress: string;
+  prizeId: string;
+  title: string;
+  imageUrl: string;
+  successUrl: string;
+  cancelUrl: string;
+  slug: string;
+  close: () => void;
+}
+
+const DonatingWithoutLoginModal: React.FC<DonatingWithoutLoginProps> = ({
+  opened,
+  open,
+  contractAddress,
+  prizeId,
+  close,
+  imageUrl,
+  title,
+  successUrl,
+  cancelUrl,
+  slug,
+}) => {
+  const router = useRouter();
+
+  const [sendLoading, setSendLoading] = useState(false);
+
+  const [value, setValue] = useState('');
+
+  const onDonate = async () => {
+    try {
+      setSendLoading(true);
+      const balance = (
+        await (
+          await fetch(
+            'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
+          )
+        ).json()
+      ).balance;
+
+      if (parseFloat(value) * 1_000_000 > balance) {
+        toast.error('Not enough reserves to complete this transaction');
+        return;
+      }
+      const amount = parseFloat(value) * 1_000_000;
+      const checkoutUrl = await fetch(
+        'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            checkoutMetadata: {
+              contractAddress,
+              backendId: prizeId,
+              deadline: 0,
+              amount: amount,
+              ethSignedMessage: '',
+              v: 0,
+              r: '',
+              s: '',
+              chainId: 8453,
+              payWihtoutLogin: 1,
+            },
+            title,
+            imageUrl,
+            successUrl,
+            cancelUrl,
+          }),
+        },
+      )
+        .then((res) => res.json())
+        .then((data) => data.checkoutUrl);
+
+      await revalidate({ tag: slug });
+      router.refresh();
+      router.replace(checkoutUrl);
+    } catch (err) {
+      toast.error((err as Error).message);
+    } finally {
+      setSendLoading(false);
+    }
+  };
+  return (
+    <>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Notice"
+        classNames={{
+          title: 'text-lg font-semibold',
+        }}
+        closeButtonProps={{
+          icon: <IconXboxX size={20} stroke={1.5} />,
+        }}
+      >
+        <div className="text-center">
+          <Text className="font-bold">
+            If you want to <span className="text-blue-600">vote on the winner</span>, you
+            will need to log in before donating, else{' '}
+            <span className="text-red-500">donate as guest.</span>
+          </Text>
+        </div>
+        <Group className="mt-4">
+          <Stack className="mx-auto">
+            <Group>
+              <Text fw="sm" className="text-center">
+                Your donation needs to be at least $1
+              </Text>
+            </Group>
+            <NumberInput
+              placeholder="Enter Value  in $ To Donate"
+              allowDecimal
+              defaultValue={1}
+              allowNegative={false}
+              value={value}
+              onChange={(v) => {
+                if (!v) {
+                  // console.log({ v }, 'inner v');
+                  setValue('0');
+                }
+                setValue(v.toString());
+              }}
+            />
+
+            <Button
+              disabled={!value}
+              loading={sendLoading}
+              onClick={async () => {
+                await onDonate();
+              }}
+            >
+              Donate as guest
+            </Button>
+          </Stack>
+        </Group>
+      </Modal>
+    </>
+  );
+};
 
 function FundUsdcCard({
   contractAddress,
@@ -302,6 +450,8 @@ export default function PrizePageComponent({
     }
   }, [params]);
 
+  const [opened, { open, close }] = useDisclosure(false);
+
   const mounted = useMounted();
 
   return (
@@ -359,6 +509,30 @@ export default function PrizePageComponent({
           slug={prize.slug}
         />
       ) : null}
+
+      {!appUser && prize.is_active_blockchain && (
+        <>
+          <DonatingWithoutLoginModal
+            cancelUrl={mounted ? window.location.href : ''}
+            imageUrl={prize.images[0] || ''}
+            contractAddress={prize.contract_address}
+            prizeId={prize.id}
+            slug={prize.slug}
+            successUrl={`${window.location.href}#success`}
+            opened={opened}
+            open={open}
+            close={close}
+            title={prize.title}
+          />
+
+          <Button
+            onClick={open}
+            className="bg-blue-600 hover:bg-blue-700 text-white mx-auto w-full my-4"
+          >
+            Donate without login
+          </Button>
+        </>
+      )}
 
       {appUser
         ? appUser.isAdmin &&

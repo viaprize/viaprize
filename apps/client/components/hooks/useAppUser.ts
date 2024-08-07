@@ -2,9 +2,17 @@ import type { CreateUser, UpdateUser } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
 import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import useAppUserStore from 'store/app-user';
+
+const setLastVisitedPage = (page: string) => {
+  localStorage.setItem('lastVisitedPage', page);
+};
+
+const getLastVisitedPage = () => {
+  return localStorage.getItem('lastVisitedPage') || '/';
+};
 
 interface UpdateUserDtoWithUserName extends UpdateUser {
   userName: string;
@@ -12,6 +20,7 @@ interface UpdateUserDtoWithUserName extends UpdateUser {
 
 export default function useAppUser() {
   const router = useRouter();
+  const pathname = usePathname();
   const appUser = useAppUserStore((state) => state.user);
   const refresh = useAppUserStore((state) => state.refreshUser);
   const uploadUser = useAppUserStore((state) => state.uploadUser);
@@ -41,6 +50,7 @@ export default function useAppUser() {
         console.log({ error }, 'errror');
         if (error?.status) {
           if (error.status === 404) {
+              setLastVisitedPage(pathname); 
             router.push('/onboarding');
           }
         }
@@ -60,6 +70,7 @@ export default function useAppUser() {
       }
 
       if (isNewUser && !wasAlreadyAuthenticated) {
+        setLastVisitedPage(pathname); 
         router.push('/onboarding'),
           toast('Welcome to Viaprize! Please complete your profile to continue');
       }
@@ -97,7 +108,7 @@ export default function useAppUser() {
       clearUser();
     });
 
-    router.push('/');
+    // router.push('/');
   };
 
   const updateUser = async (updateUserDTO: UpdateUserDtoWithUserName) => {
@@ -132,5 +143,7 @@ export default function useAppUser() {
     updateUser,
     getUserByUserName,
     loading,
+    setLastVisitedPage,
+    getLastVisitedPage,
   };
 }
