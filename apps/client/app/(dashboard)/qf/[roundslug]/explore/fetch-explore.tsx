@@ -41,6 +41,7 @@ export default async function FetchGitcoins({
         <GitcoinCard
           id={application.id}
           key={application.id}
+          roundSlug={params.roundslug}
           imageURL={`https://ipfs.io/ipfs/${application.project.metadata.bannerImg}`}
           title={application.project.metadata.title}
           description={application.project.metadata.description}

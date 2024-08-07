@@ -15,6 +15,7 @@ import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import type { Application } from 'types/gitcoin.types';
@@ -28,6 +29,7 @@ export interface CartItem {
   contributors: number;
   link: string;
   logoURL: string;
+  roundSlug: string;
   application: Application;
 }
 
@@ -40,6 +42,7 @@ export default function GitcoinCard({
   contributors,
   link,
   application,
+  roundSlug,
   logoURL,
 }: CartItem) {
   const addItem = useCartStore((state) => state.addItem);
@@ -47,6 +50,7 @@ export default function GitcoinCard({
   const cartItems = useCartStore((state) => state.items);
   const isItemInCart = (itemID: string) => cartItems.some((item) => item.id === itemID);
   const [imgSrc, setImgSrc] = useState<string>(imageURL);
+  const router = useRouter();
 
   // const tokens = getTokensByChainId(8453);
 
@@ -60,14 +64,21 @@ export default function GitcoinCard({
         chainId: gitcoinRoundData.chainId.toString(),
         amount: '0',
       });
-      toast.success(`${title} added to cart`);
+      toast.success(`${title} added to cart`, {
+        action: {
+          label: 'View Cart',
+          onClick: () => {
+            router.push(`/qf/${roundSlug}/cart`);
+          },
+        },
+      });
     }
   };
 
   const handleRemoveFromCart = () => {
     if (isItemInCart(id)) {
       removeItem(id);
-      toast.success(`${title} removed from cart`);
+      toast.warning(`${title} removed from cart`);
     }
   };
 
