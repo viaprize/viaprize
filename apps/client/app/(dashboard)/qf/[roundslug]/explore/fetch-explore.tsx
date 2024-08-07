@@ -31,6 +31,14 @@ export default async function FetchGitcoins({
 
   return (
     <>
+      {shuffledApplications.length === 0 && (
+        <>
+          <span />
+          <div className="flex justify-center items-center h-[50vh] w-full">
+            <h3>No Applications Found</h3>
+          </div>
+        </>
+      )}
       {shuffledApplications.map((application: Application) => (
         <GitcoinCard
           id={application.id}
