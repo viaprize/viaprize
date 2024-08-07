@@ -1,7 +1,8 @@
 import GitcoinCard from '@/components/gitcoin/gitcoin-card';
 import { fetchRoundForExplorer } from '@/lib/actions';
-import { gitcoinRoundData } from '@/lib/constants';
-import { Application } from 'types/gitcoin.types';
+import { gitcoinRounds } from '@/lib/constants';
+import { notFound } from 'next/navigation';
+import type { Application } from 'types/gitcoin.types';
 
 export const dynamic = 'force-dynamic';
 function shuffleArray<T>(array: T[]): T[] {
@@ -9,28 +10,44 @@ function shuffleArray<T>(array: T[]): T[] {
   return arrayCopy.sort(() => Math.random() - 0.5);
 }
 
-export default async function FetchGitcoins() {
-  const applicationsInRound = await fetchRoundForExplorer(
-    gitcoinRoundData.chainId,
-    gitcoinRoundData.roundId,
-  );
+export default async function FetchGitcoins({
+  params,
+}: {
+  params: { roundslug: string };
+}) {
+
+  const getIds = gitcoinRounds.find((round) => round.roundSlug === params.roundslug);
+
+  if (!getIds) {
+    return notFound();
+  }
+
+  const applicationsInRound = await fetchRoundForExplorer(getIds.chainId, getIds.roundId);
   const shuffledApplications: Application[] = shuffleArray(
     applicationsInRound.applications,
   );
-  console.log(shuffledApplications);
 
   return (
     <>
+      {shuffledApplications.length === 0 && (
+        <>
+          <span />
+          <div className="flex justify-center items-center h-[50vh] w-full">
+            <h3>No Applications Found</h3>
+          </div>
+        </>
+      )}
       {shuffledApplications.map((application: Application) => (
         <GitcoinCard
           id={application.id}
           key={application.id}
+          roundSlug={params.roundslug}
           imageURL={`https://ipfs.io/ipfs/${application.project.metadata.bannerImg}`}
           title={application.project.metadata.title}
           description={application.project.metadata.description}
           raised={application.totalAmountDonatedInUsd}
           contributors={application.uniqueDonorsCount}
-          link={`/qf/opencivics/${application.id}`}
+          link={`/qf/${params.roundslug}/${application.id}`}
           application={application}
           logoURL={`https://ipfs.io/ipfs/${application.project.metadata.logoImg}`}
         />

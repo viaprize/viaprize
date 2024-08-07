@@ -65,7 +65,7 @@ export default function ChangeSubmission({
             }
           }}
           loading={loading}
-          className='mt-2'
+          className="mt-2"
         >
           {' '}
           Confirm

@@ -417,6 +417,7 @@ function FundUsdcCard({
       </Button>
 
       <Button
+        my="md"
         disabled={!value}
         loading={sendLoading}
         onClick={async () => {
@@ -436,7 +437,7 @@ export default function PrizePageComponent({
   prize: IndividualPrizeWithBalance;
   submissions: SubmissionWithBlockchainData[];
 }) {
-  const { appUser } = useAppUser();
+  const { appUser, loginUser } = useAppUser();
   console.log(prize.submission_time_blockchain, 'lsljfkjds prize subision');
   const params = useParams();
   useEffect(() => {
@@ -504,7 +505,7 @@ export default function PrizePageComponent({
           contributions={prize.contributors}
         />
       </Center>
-      {prize.is_active_blockchain ? (
+      {prize.is_active_blockchain && appUser ? (
         <FundUsdcCard
           contractAddress={prize.contract_address}
           prizeId={prize.id}
@@ -516,8 +517,11 @@ export default function PrizePageComponent({
         />
       ) : null}
 
-      {!appUser && prize.is_active_blockchain && (
+      {!appUser && prize.is_active_blockchain ? (
         <>
+          <Button fullWidth onClick={loginUser}>
+            Login
+          </Button>
           <DonatingWithoutLoginModal
             cancelUrl={mounted ? window.location.href : ''}
             imageUrl={prize.images[0] || ''}
@@ -530,15 +534,11 @@ export default function PrizePageComponent({
             close={close}
             title={prize.title}
           />
-
-          <Button
-            onClick={open}
-            className="bg-blue-600 hover:bg-blue-700 text-white mx-auto w-full my-4"
-          >
-            Donate without login
+          <Button onClick={open} fullWidth my="sm">
+            Donate as guest
           </Button>
         </>
-      )}
+      ) : null}
 
       {appUser
         ? appUser.isAdmin &&
