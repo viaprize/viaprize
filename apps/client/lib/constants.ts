@@ -794,6 +794,6 @@ export const usdcAddress = {
 
 export const gitcoinRoundData = {
   chainId: 42161,
-  roundId: '399',
+  roundId: '386',
   token: usdcAddress[42161],
 };
