@@ -1,6 +1,6 @@
 'use client';
 
-import { gitcoinRoundData } from '@/lib/constants';
+import { gitcoinRounds } from '@/lib/constants';
 import { renderToPlainText } from '@/lib/utils';
 import {
   ActionIcon,
@@ -50,6 +50,7 @@ export default function GitcoinCard({
   const cartItems = useCartStore((state) => state.items);
   const isItemInCart = (itemID: string) => cartItems.some((item) => item.id === itemID);
   const [imgSrc, setImgSrc] = useState<string>(imageURL);
+  const round = gitcoinRounds.find((round) => round.roundSlug === roundSlug);
   const router = useRouter();
 
   // const tokens = getTokensByChainId(8453);
@@ -57,11 +58,14 @@ export default function GitcoinCard({
   // console.log(tokens, 'tokens');
 
   const handleAddToCart = () => {
+    if (!round) {
+      throw Error('Round not defined');
+    }
     if (!isItemInCart(id)) {
       addItem({
         ...application,
-        roundId: gitcoinRoundData.roundId,
-        chainId: gitcoinRoundData.chainId.toString(),
+        roundId: round.roundId,
+        chainId: round.chainId.toString(),
         amount: '0',
       });
       toast.success(`${title} added to cart`, {
@@ -169,7 +173,7 @@ export default function GitcoinCard({
       </Button>
 
       <div className="absolute top-2 right-2">
-        <CopyButton value={`https://www.viaprize.org/qf/opencivics/${link}`}>
+        <CopyButton value={`https://www.viaprize.org/qf/${round?.roundSlug}/${link}`}>
           {({ copied, copy }) => (
             <Tooltip label={copied ? 'Copied' : 'Share URL'} withArrow>
               <ActionIcon

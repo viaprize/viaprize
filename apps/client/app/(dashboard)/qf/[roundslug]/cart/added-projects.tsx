@@ -5,10 +5,10 @@ import { IconTrash } from '@tabler/icons-react';
 import { useState } from 'react';
 import { CartItem, useCartStore } from '../../../(_utils)/store/datastore';
 
-export default function AddedProjects() {
+export default function AddedProjects({ roundId }: { roundId: string }) {
   const { items, removeItem, clearCart, changeAmount } = useCartStore();
   const [error, setError] = useState('');
-
+  const filteredItems = items.filter((item) => item.roundId == roundId);
   const handleAmountChange = (item: CartItem, value: number) => {
     const amount = isNaN(value) ? 0 : value;
     changeAmount(item.id, amount);
@@ -24,11 +24,11 @@ export default function AddedProjects() {
 
   return (
     <Card padding="lg" radius="lg" withBorder className="w-full">
-      {items.length === 0 ? (
+      {filteredItems.length === 0 ? (
         <Text>Your cart is empty.</Text>
       ) : (
         <div>
-          {items.map((item, index) => (
+          {filteredItems.map((item, index) => (
             <div key={item.id}>
               <div className="flex items-center gap-1 lg:gap-3 justify-between my-2">
                 <Avatar

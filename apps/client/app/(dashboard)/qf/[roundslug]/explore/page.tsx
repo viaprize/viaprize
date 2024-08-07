@@ -25,7 +25,7 @@ export default function ExploreGitcoin({ params }: { params: { roundslug: string
               Credit Card Donation Available
             </Badge>
 
-            <Link href="/qf/opencivics/cart">
+            <Link href={`/qf/${round?.roundSlug}/cart`}>
               <Button
                 className="ml-4 mt-2 lg:mt-0 "
                 leftSection={<IconShoppingCart />}
@@ -44,7 +44,7 @@ export default function ExploreGitcoin({ params }: { params: { roundslug: string
               color: 'white',
             }}
           >
-            60,000 USDC <br /> Matching Pool
+            {round?.matchingPool} USDC <br /> Matching Pool
           </Card>
         </div>
         <div className="sm:flex justify-between items-center my-2">

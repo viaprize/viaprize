@@ -4,7 +4,7 @@ import {
   matchingEstimatesToText,
   useMatchingEstimates,
 } from '@/components/hooks/useMatchingEstimate';
-import { gitcoinRoundData } from '@/lib/constants';
+import { gitcoinRounds } from '@/lib/constants';
 import { getTokenByChainIdAndAddress } from '@gitcoin/gitcoin-chain-data';
 import { Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
@@ -14,24 +14,32 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { parseUnits } from 'viem/utils';
 
-export default function SummaryCard() {
+export default function SummaryCard({ roundId }: { roundId: string }) {
   const [customerId, setCustomerId] = useState<string>(nanoid());
+  const round = gitcoinRounds.find((round) => round.roundId === roundId);
+  if (!round) {
+    throw new Error('Round not found');
+  }
   const totalAmount = useCartStore((state) =>
-    state.items.reduce(
-      (acc, item) => acc + (isNaN(parseFloat(item.amount)) ? 0 : parseFloat(item.amount)),
-      0,
-    ),
+    state.items
+      .filter((item) => item.roundId == roundId)
+      .reduce(
+        (acc, item) =>
+          acc + (isNaN(parseFloat(item.amount)) ? 0 : parseFloat(item.amount)),
+        0,
+      ),
   );
   const { clearCart } = useCartStore();
 
   const meetsMinimumDonation = useCartStore((state) =>
-    state.items.every((item) => parseFloat(item.amount) >= 2),
+    state.items
+      .filter((item) => item.roundId == roundId)
+      .every((item) => parseFloat(item.amount) >= 2),
   );
-  const items = useCartStore((state) => state.items);
-  const tokenTT = getTokenByChainIdAndAddress(
-    gitcoinRoundData.chainId,
-    gitcoinRoundData.token,
+  const items = useCartStore((state) =>
+    state.items.filter((item) => item.roundId == roundId),
   );
+  const tokenTT = getTokenByChainIdAndAddress(round.chainId, round.token);
   const {
     data: matchingEstimates,
     error: matchingEstimateError,
@@ -39,8 +47,8 @@ export default function SummaryCard() {
     refetch: refetchMatchingEstimates,
   } = useMatchingEstimates([
     {
-      roundId: gitcoinRoundData.roundId,
-      chainId: gitcoinRoundData.chainId,
+      roundId: round.roundId,
+      chainId: round.chainId,
       potentialVotes: items.map((item) => ({
         roundId: item.roundId,
         projectId: item.projectId,
@@ -65,11 +73,14 @@ export default function SummaryCard() {
 
   const sumbit = async () => {
     try {
-      const finalItems = useCartStore.getState().items.map((item) => ({
-        amount: item.amount,
-        anchorAddress: item.anchorAddress,
-        roundId: item.roundId,
-      }));
+      const finalItems = useCartStore
+        .getState()
+        .items.filter((item) => item.roundId == roundId)
+        .map((item) => ({
+          amount: item.amount,
+          anchorAddress: item.anchorAddress,
+          roundId: item.roundId,
+        }));
       const finalTotalAmount = finalItems.reduce(
         (acc, item) => acc + parseFloat(item.amount),
         0,

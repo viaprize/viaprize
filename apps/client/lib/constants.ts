@@ -792,12 +792,6 @@ export const usdcAddress = {
   42161: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
 } as const;
 
-export const gitcoinRoundData = {
-  chainId: 42161,
-  roundId: '386',
-  token: usdcAddress[42161],
-};
-
 export const gitcoinRounds = [
   {
     roundSlug: 'opencivics',
@@ -809,9 +803,10 @@ export const gitcoinRounds = [
     title: 'OpenCivics Collaborative Research Round',
     startDate: new Date('2024-08-07T17:30:00+05:30'),
     endDate: new Date('2024-08-21T17:29:00+05:30'),
+    matchingPool: 42_000,
   },
   {
-    roundSlug: 'collab-tech',
+    roundSlug: 'collabtech',
     roundId: '384',
     chainId: 42161,
     token: usdcAddress[42161],
@@ -820,5 +815,6 @@ export const gitcoinRounds = [
     title: 'CollabTech Round and Thresholds Experiment',
     startDate: new Date('2024-08-07T03:30:00+05:30'),
     endDate: new Date('2024-08-21T03:30:00+05:30'),
+    matchingPool: 30_000,
   },
 ];
