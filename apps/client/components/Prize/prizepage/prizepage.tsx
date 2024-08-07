@@ -299,6 +299,9 @@ function FundUsdcCard({
       console.log(e, 'sklfjlsdfjlkjljlksdjflksjl');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
       toast.error((e as any)?.message);
+      if ((e as any).data == null) {
+        toast.error((e as any).error.message);
+      }
     } finally {
       setSendLoading(false);
     }
