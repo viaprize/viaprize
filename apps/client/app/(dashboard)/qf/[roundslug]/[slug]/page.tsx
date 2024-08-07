@@ -1,32 +1,38 @@
 // 'use client';
 import { fetchApplicationById, fetchRoundForExplorer } from '@/lib/actions';
-import { gitcoinRoundData } from '@/lib/constants';
+import { gitcoinRoundData, gitcoinRounds } from '@/lib/constants';
 import { Button, Text } from '@mantine/core';
 import Description from './description';
 import DetailCard from './detail-card';
 import ImageTitleCard from './image-title-card';
 import SocialCard from './social-card';
+import { notFound } from 'next/navigation';
 
 export default async function GitcoinApplication({
   params,
 }: {
   params: {
+    roundslug: string;
     slug: string;
   };
 }) {
+  const getIds = gitcoinRounds.find((round) => round.roundSlug === params.roundslug);
+
+  if (!getIds) {
+    return notFound();
+  }
+
   const applicationsInRound = await fetchApplicationById(
     params.slug,
-    gitcoinRoundData.chainId,
-    gitcoinRoundData.roundId,
+    getIds.chainId,
+    getIds.roundId,
   );
-  const round = await fetchRoundForExplorer(
-    gitcoinRoundData.chainId,
-    gitcoinRoundData.roundId,
-  );
+  const round = await fetchRoundForExplorer(getIds.chainId, getIds.roundId);
   console.log(applicationsInRound);
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
       <ImageTitleCard
+        exploreUrl={`/qf/${params.roundslug}/explore`}
         title={applicationsInRound.project.metadata.title}
         img={`https://ipfs.io/ipfs/${applicationsInRound.project.metadata.bannerImg}`}
         logoURL={`https://ipfs.io/ipfs/${applicationsInRound.project.metadata.logoImg}`}

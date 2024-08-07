@@ -15,7 +15,6 @@ export default async function FetchGitcoins({
 }: {
   params: { roundslug: string };
 }) {
-  console.log(params.roundslug, 'params');
 
   const getIds = gitcoinRounds.find((round) => round.roundSlug === params.roundslug);
 
@@ -27,7 +26,6 @@ export default async function FetchGitcoins({
   const shuffledApplications: Application[] = shuffleArray(
     applicationsInRound.applications,
   );
-  console.log(shuffledApplications);
 
   return (
     <>
@@ -48,7 +46,7 @@ export default async function FetchGitcoins({
           description={application.project.metadata.description}
           raised={application.totalAmountDonatedInUsd}
           contributors={application.uniqueDonorsCount}
-          link={`/qf/opencivics/${application.id}`}
+          link={`/qf/${params.roundslug}/${application.id}`}
           application={application}
           logoURL={`https://ipfs.io/ipfs/${application.project.metadata.logoImg}`}
         />
