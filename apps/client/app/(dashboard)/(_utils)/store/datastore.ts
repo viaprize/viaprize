@@ -1,10 +1,11 @@
-import { Application } from 'types/gitcoin.types';
+import type { Application } from 'types/gitcoin.types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-type CartFinalItem = {
+
+interface CartFinalItem {
   roundId: string;
   amount: string;
-};
+}
 export type CartItem = Application & CartFinalItem;
 interface CartState {
   items: CartItem[];

@@ -50,7 +50,7 @@ export default function GitcoinCard({
   const cartItems = useCartStore((state) => state.items);
   const isItemInCart = (itemID: string) => cartItems.some((item) => item.id === itemID);
   const [imgSrc, setImgSrc] = useState<string>(imageURL);
-  const round = gitcoinRounds.find((round) => round.roundSlug === roundSlug);
+  const round = gitcoinRounds.find((roundd) => roundd.roundSlug === roundSlug);
   const router = useRouter();
 
   // const tokens = getTokensByChainId(8453);

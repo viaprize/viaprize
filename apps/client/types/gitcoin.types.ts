@@ -1,4 +1,4 @@
-import { Address } from 'viem';
+import type { Address } from 'viem';
 
 export type RoundPayoutType =
   | 'allov1.Direct'
@@ -23,24 +23,23 @@ export type ApplicationStatus =
   | 'APPEAL'
   | 'FRAUD'
   | 'RECEIVED'
-  | 'CANCELLED'
-  | 'IN_REVIEW';
+  | 'CANCELLED';
 
 export type ProjectType = 'CANONICAL' | 'LINKED';
 
-export type GrantApplicationFormAnswer = {
+export interface GrantApplicationFormAnswer {
   questionId: number;
   question: string;
   answer: string | string[];
   hidden: boolean;
   type?: string;
-};
+}
 
 export interface ProjectOwner {
   address: string;
 }
 
-export type ProjectMetadata = {
+export interface ProjectMetadata {
   title: string;
   description: string;
   website: string;
@@ -53,19 +52,19 @@ export type ProjectMetadata = {
   owners: ProjectOwner[];
   createdAt: number;
   lastUpdated: number;
-};
+}
 
-export type ProgramMetadata = {
+export interface ProgramMetadata {
   name: string;
   type: string;
-};
+}
 
-export type AddressAndRole = {
+export interface AddressAndRole {
   address: string;
   role: string;
   createdAtBlock: string;
   // updatedAtBlock: string;
-};
+}
 
 /**
  * The project type for v1
@@ -76,7 +75,7 @@ export type AddressAndRole = {
  *
  * @deprecated - This type is deprecated and should not be used for new projects.
  */
-export type Project = {
+export interface Project {
   grantApplicationId: string;
   projectRegistryId: string;
   anchorAddress?: string;
@@ -85,7 +84,7 @@ export type Project = {
   grantApplicationFormAnswers: GrantApplicationFormAnswer[];
   status: ApplicationStatus;
   applicationIndex: number;
-};
+}
 
 /**
  * The project role type for v2
@@ -110,7 +109,7 @@ export type Project = {
  *
  * ```
  */
-export type ProjectRole = {
+export interface ProjectRole {
   project: {
     chainId: number;
     createdAtBlock: number;
@@ -119,9 +118,9 @@ export type ProjectRole = {
     tags: string[];
   };
   projectId: string;
-};
+}
 
-export type ProjectApplicationMetadata = {
+export interface ProjectApplicationMetadata {
   signature: string;
   application: {
     round: string;
@@ -138,7 +137,7 @@ export type ProjectApplicationMetadata = {
     project: ProjectMetadata;
     recipient: string;
   };
-};
+}
 
 /**
  * The round type with applications for v1
@@ -157,7 +156,7 @@ export type RoundForExplorer = Omit<RoundGetRound, 'applications'> & {
  * The project application type for v2
  *
  */
-export type ProjectApplication = {
+export interface ProjectApplication {
   id: string;
   projectId: string;
   chainId: number;
@@ -169,7 +168,7 @@ export type ProjectApplication = {
   totalAmountDonatedInUsd: number;
   uniqueDonorsCount: number;
   distributionTransaction: string | null;
-};
+}
 
 export type ProjectApplicationForManager = ProjectApplication & {
   anchorAddress: Address;
@@ -218,7 +217,7 @@ export type ProjectApplicationWithRoundAndProgram = ProjectApplication & {
 /**
  * V2 Round
  */
-export type V2Round = {
+export interface V2Round {
   id: string;
   chainId: number;
   applicationsStartTime: string;
@@ -236,7 +235,7 @@ export type V2Round = {
   strategyName: string;
   readyForPayoutTransaction: string | null;
   tags: string[];
-};
+}
 
 /**
  * V2 Round with project
@@ -249,7 +248,7 @@ export type V2RoundWithProject = V2RoundWithRoles & {
   };
 };
 
-export type DistributionMatch = {
+export interface DistributionMatch {
   projectId: string;
   projectName: string;
   applicationId: string;
@@ -259,7 +258,7 @@ export type DistributionMatch = {
   matchAmountInToken: string;
   projectPayoutAddress: string;
   originalMatchAmountInToken: string;
-};
+}
 
 export type RoundForManager = V2RoundWithProject & {
   matchingDistribution: {
@@ -272,24 +271,22 @@ export type RoundForManager = V2RoundWithProject & {
   fundedAmountInUsd: number;
 };
 
-export type ProjectApplicationWithProject = {
+export interface ProjectApplicationWithProject {
   id: string;
   name: string;
-};
+}
 
 export type V2RoundWithRoles = V2Round & {
   roles: AddressAndRole[];
   createdByAddress: string;
 };
 
-export type ProjectEvents = {
+export interface ProjectEvents {
   createdAtBlock: number | undefined;
   updatedAtBlock: number | undefined;
-};
+}
 
-export type ProjectEventsMap = {
-  [projectID: string]: ProjectEvents;
-};
+export type ProjectEventsMap = Record<string, ProjectEvents>;
 
 export interface PayoutStrategy {
   id: string;
@@ -313,17 +310,17 @@ export interface MetadataPointer {
   pointer: string;
 }
 
-export type Requirement = {
+export interface Requirement {
   // Requirement for the round
   requirement?: string;
-};
+}
 
-export type Eligibility = {
+export interface Eligibility {
   // Eligibility for the round
   description: string;
   // Requirements for the round
   requirements?: Requirement[];
-};
+}
 
 export type SybilDefense = 'passport' | 'passport-mbds' | 'none';
 
@@ -401,7 +398,7 @@ export interface Round {
   /**
    * Addresses of wallets that will have admin privileges to operate the Grant program
    */
-  operatorWallets?: Array<string>;
+  operatorWallets?: string[];
   /**
    * List of projects approved for the round
    */
@@ -409,23 +406,23 @@ export interface Round {
   uniqueDonorsCount?: number;
 }
 
-export type TimeFilter = {
+export interface TimeFilter {
   greaterThan?: string;
   lessThan?: string;
   greaterThanOrEqualTo?: string;
   lessThanOrEqualTo?: string;
   isNull?: boolean;
-};
+}
 
-export type TimeFilterVariables = {
+export interface TimeFilterVariables {
   applicationsStartTime?: TimeFilter;
   applicationsEndTime?: TimeFilter;
   donationsStartTime?: TimeFilter;
   donationsEndTime?: TimeFilter;
   or?: TimeFilterVariables[];
-};
+}
 
-export type RoundsQueryVariables = {
+export interface RoundsQueryVariables {
   first?: number;
   orderBy?: OrderByRounds;
   filter?: {
@@ -446,9 +443,9 @@ export type RoundsQueryVariables = {
         }
     )[];
   };
-};
+}
 
-export type RoundOverview = {
+export interface RoundOverview {
   id: string;
   chainId: number;
   createdAt: string;
@@ -466,12 +463,12 @@ export type RoundOverview = {
     id: string;
     strategyName: RoundPayoutType;
   };
-};
+}
 
 /**
  * Shape of IPFS content of Round RoundMetaPtr
  */
-export type RoundMetadata = {
+export interface RoundMetadata {
   name: string;
   roundType: RoundVisibilityType;
   eligibility: Eligibility;
@@ -480,31 +477,31 @@ export type RoundMetadata = {
     info: string;
     type: string;
   };
-};
+}
 
-export type SearchBasedProjectCategory = {
+export interface SearchBasedProjectCategory {
   id: string;
   name: string;
   images: string[];
   searchQuery: string;
-};
+}
 
-export type ExpandedApplicationRef = {
+export interface ExpandedApplicationRef {
   chainId: number;
   roundId: string;
   id: string;
-};
+}
 
-export type Collection = {
+export interface Collection {
   id: string;
   author: string;
   name: string;
   images: string[];
   description: string;
   applicationRefs: string[];
-};
+}
 
-export type RoundGetRound = {
+export interface RoundGetRound {
   id: string;
   tags: string[];
   chainId: number;
@@ -523,7 +520,7 @@ export type RoundGetRound = {
   strategyName: RoundPayoutType;
   strategyAddress: string;
   applications: ApplicationWithId[];
-};
+}
 
 export interface RoundMetadataGetRound {
   name: string;
@@ -615,7 +612,7 @@ export type OrderByRounds =
   | 'PRIMARY_KEY_ASC'
   | 'PRIMARY_KEY_DESC';
 
-export type Application = {
+export interface Application {
   id: string;
   chainId: string;
   roundId: string;
@@ -646,9 +643,9 @@ export type Application = {
       answers: GrantApplicationFormAnswer[];
     };
   };
-};
+}
 
-export type Contribution = {
+export interface Contribution {
   id: string;
   chainId: number;
   projectId: string;
@@ -672,9 +669,9 @@ export type Contribution = {
     };
   };
   timestamp: string;
-};
+}
 
-export type Payout = {
+export interface Payout {
   id: string;
   tokenAddress: string;
   amount: string;
@@ -682,9 +679,9 @@ export type Payout = {
   transactionHash: string;
   timestamp: string;
   sender: string;
-};
+}
 
-export type RoundApplicationPayout = {
+export interface RoundApplicationPayout {
   id: string;
   applications: [
     {
@@ -692,4 +689,4 @@ export type RoundApplicationPayout = {
       applicationsPayoutsByChainIdAndRoundIdAndApplicationId: Payout[];
     },
   ];
-};
+}
