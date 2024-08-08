@@ -15,11 +15,13 @@ export default function Submissions({
   submissions,
   allowSubmission,
   allowVoting,
+  loggedIn,
 }: {
   contractAddress: string;
   submissions: SubmissionWithBlockchainData[];
   allowSubmission: boolean;
   allowVoting: boolean;
+  loggedIn: boolean;
 }) {
   const id = usePathname();
   const slug = id?.split('/')[2] as string;
@@ -45,7 +47,7 @@ export default function Submissions({
 
   return (
     <div className="w-full flex flex-col gap-3 dont-break-out">
-      {allowSubmission &&
+      {loggedIn && allowSubmission &&
         (isContestants ? (
           <Button
             component="a"
@@ -76,6 +78,7 @@ export default function Submissions({
       <Title order={3} style={{ textAlign: 'left' }}>
         Submissions
       </Title>
+      {submissions.length === 0 && <p>No submissions yet</p>}
       {submissions.map((submission: SubmissionWithBlockchainData) => (
         <SubmissionsCard
           username={submission.user.username}
