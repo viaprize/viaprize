@@ -14,7 +14,11 @@ import { PrizeStages } from 'src/prizes/entities/prize.entity';
 import { PrizesService } from 'src/prizes/services/prizes.service';
 import { UsersService } from 'src/users/users.service';
 import { SEND_USDC } from 'src/utils/constants';
-import { BaseError, ContractFunctionRevertedError } from 'viem';
+import {
+  BaseError,
+  ContractFunctionRevertedError,
+  encodeFunctionData,
+} from 'viem';
 import { AddUsdcFundsDto } from './dto/add-usdc-funds.dto';
 import { ChangeSubmissionDto } from './dto/change-submission.dto';
 import { ChangeVotingDto } from './dto/change-voting.dto';
@@ -25,6 +29,52 @@ import { WalletService } from './wallet.service';
 type WalletResponse = {
   hash: string;
 };
+
+const ADD_USDC_V1 = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'spender',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_amountUsdc',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_deadline',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint8',
+        name: 'v',
+        type: 'uint8',
+      },
+      {
+        internalType: 'bytes32',
+        name: 's',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'r',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_ethSignedMessageHash',
+        type: 'bytes32',
+      },
+    ],
+    name: 'addUsdcFunds',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const;
 /**
  * This is the wallet controller class.
  * it handles the gasless transactions
@@ -624,8 +674,37 @@ export class WalletController {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
     try {
-      const hash =
-        await this.walletService.simulateAndWriteSmartContractPrizeV2(
+      const [version] = (
+        await this.blockchainService.getPrizesV2PublicVariables(
+          [contractAddress],
+          ['VERSION'],
+        )
+      )[0] as [bigint];
+      let hash;
+      if (version.toString() === '2') {
+        const encodedData = encodeFunctionData({
+          abi: ADD_USDC_V1,
+          args: [
+            contractAddress as `0x${string}`,
+            BigInt(body.amount),
+            BigInt(body.deadline),
+            body.v,
+            body.s as `0x${string}`,
+            body.r as `0x${string}`,
+            body.hash as `0x${string}`,
+          ],
+          functionName: 'addUsdcFunds',
+        });
+        hash = await this.walletService.sendTransaction(
+          {
+            data: encodedData,
+            to: contractAddress,
+            value: '0',
+          },
+          'gasless',
+        );
+      } else {
+        hash = await this.walletService.simulateAndWriteSmartContractPrizeV2(
           'addUsdcFunds',
           [
             contractAddress as `0x${string}`,
@@ -641,6 +720,7 @@ export class WalletController {
           'gasless',
           '0',
         );
+      }
       console.log({ hash });
       return { hash };
     } catch (err) {

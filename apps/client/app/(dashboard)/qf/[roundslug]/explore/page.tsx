@@ -1,3 +1,4 @@
+import { gitcoinRounds } from '@/lib/constants';
 import { Badge, Button, Card, Divider, Pill, Text } from '@mantine/core';
 import {
   IconCalendarMonth,
@@ -11,19 +12,20 @@ import StepperInfo from './stepper-info';
 
 export const dynamic = 'force-dynamic';
 export default function ExploreGitcoin({ params }: { params: { roundslug: string } }) {
+  const round = gitcoinRounds.find((round) => round.roundSlug === params.roundslug);
   return (
     <div>
       <div className="max-w-screen-xl w-screen">
         <div className="lg:flex items-center space-y-4 lg:space-y-0 justify-between">
           <div className="lg:flex items-center space-y-4 lg:space-y-0">
             <Text size="25px" fw="bolder" ml="md">
-              Hypercerts Ecosystem Round
+              {round?.title}
             </Text>
             <Badge leftSection={<IconCircleCheckFilled />} color="teal" size="lg" ml="md">
               Credit Card Donation Available
             </Badge>
 
-            <Link href="/qf/opencivics/cart">
+            <Link href={`/qf/${round?.roundSlug}/cart`}>
               <Button
                 className="ml-4 mt-2 lg:mt-0 "
                 leftSection={<IconShoppingCart />}
@@ -42,7 +44,7 @@ export default function ExploreGitcoin({ params }: { params: { roundslug: string
               color: 'white',
             }}
           >
-            60,000 USDC <br /> Matching Pool
+            {round?.matchingPool} USDC <br /> Matching Pool
           </Card>
         </div>
         <div className="sm:flex justify-between items-center my-2">
@@ -53,26 +55,16 @@ export default function ExploreGitcoin({ params }: { params: { roundslug: string
             <IconCalendarMonth />
             <div className="lg:flex">
               <Pill size="md" color="gray">
-                2024/04/23{' | '} 5:00 EAT
+                {round?.startDate.toLocaleString()}
               </Pill>{' '}
               -{' '}
               <Pill size="md" color="gray">
-                2024/05/08 {' | '}2:59 EAT
+                {round?.endDate.toLocaleString()}
               </Pill>
             </div>
           </div>
         </div>
-        <p className="ml-4">
-          This round aims to strengthen the Hypercerts Ecosystem to realize the vision of
-          an interconnected impact funding network. We specifically want to support
-          projects 1. that integrate hypercerts into existing funding platforms—similar to
-          the hypercerts integration with Gitcoin, 2. that develop new applications like
-          prize competitions leveraging the hypercerts infrastructure, 3. that build
-          tooling to extent the functionality for multiple integrations and applications,
-          such as Deresy to coordinate evaluators, or 4. that are tangible use cases
-          piloting new functionalities, e.g. implementing retroactive funding rounds with
-          hypercerts or using hyperboards.
-        </p>
+        <p className="ml-4">{round?.description}</p>
         <StepperInfo />
         <Divider />
         {/* <TextInput
