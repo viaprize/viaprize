@@ -12,7 +12,7 @@ import StepperInfo from './stepper-info';
 
 export const dynamic = 'force-dynamic';
 export default function ExploreGitcoin({ params }: { params: { roundslug: string } }) {
-  const round = gitcoinRounds.find((round) => round.roundSlug === params.roundslug);
+  const round = gitcoinRounds.find((roundd) => roundd.roundSlug === params.roundslug);
   return (
     <div>
       <div className="max-w-screen-xl w-screen">

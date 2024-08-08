@@ -47,11 +47,14 @@ export default function useAppUser() {
     async onComplete(loginUser, isNewUser, wasAlreadyAuthenticated) {
       const token = await getAccessToken();
       await refreshUser().catch((error) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         console.log({ error }, 'errror');
         if (error?.status) {
           if (error.status === 404) {
             setLastVisitedPage(pathname);
-            router.push('/onboarding');
+            router.push('/onboarding', {
+              query: { redirect: pathname },
+            });
           }
         }
       });
@@ -63,16 +66,18 @@ export default function useAppUser() {
           toast('Wallet address not found, please try again');
           return;
         }
-        wallets.forEach((wallet) => async () => {
-          await setActiveWallet(wallet);
+        wallets.forEach((wa) =>  () => {
+          setActiveWallet(wa);
         });
         console.log({ user });
       }
 
       if (isNewUser && !wasAlreadyAuthenticated) {
         setLastVisitedPage(pathname);
-        router.push('/onboarding'),
-          toast('Welcome to Viaprize! Please complete your profile to continue');
+        router.push('/onboarding', {
+          query: { redirect: pathname },
+        });
+        toast('Welcome to Viaprize! Please complete your profile to continue');
       }
     },
     async onError(error) {
@@ -107,6 +112,8 @@ export default function useAppUser() {
       wallet?.disconnect();
       clearUser();
     });
+    const path = localStorage.getItem('lastVisitedPage') as string;
+    router.push(path);
 
     // router.push('/');
   };
