@@ -91,11 +91,11 @@ function DonatingWithoutLoginModal({
         ).json()
       ).balance;
 
-      if (parseFloat(value) * 1_000_000 > balance) {
+      if (parseFloat(value.toString()) * 1_000_000 > balance) {
         toast.error('Not enough reserves to complete this transaction');
         return;
       }
-      const amount = parseFloat(value) * 1_000_000;
+      const amount = parseFloat(value.toString()) * 1_000_000;
       const checkoutUrl = await fetch(
         'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout',
         {
