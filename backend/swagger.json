@@ -3653,6 +3653,38 @@
         "x-nestia-method": "GET"
       }
     },
+    "/users/exists/email/{email}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "users.exists.email.emailExists",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/users/username/{username}/submissions": {
       "get": {
         "tags": [],

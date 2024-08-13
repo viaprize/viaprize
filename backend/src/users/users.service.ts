@@ -199,4 +199,13 @@ export class UsersService {
     });
     return !!user;
   }
+
+  async emailExists(email: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      where: {
+        email: email,
+      },
+    });
+    return !!user;
+  }
 }

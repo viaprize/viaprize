@@ -107,6 +107,11 @@ export class UsersController {
   async exists(@TypedParam('username') username: string): Promise<boolean> {
     return this.usersService.exists(username);
   }
+
+  @Get('exists/email/:email')
+  async emailExists(@TypedParam('email') username: string): Promise<boolean> {
+    return this.usersService.emailExists(username);
+  }
   /**
    * Endpoint for getting submission of a specified username.
    * @param username The username to check.
