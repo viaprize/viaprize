@@ -14,7 +14,6 @@ import "../../helperContracts/ierc20_weth.sol";
 import "../../helperContracts/nonReentrant.sol";
 
 contract PrizeV2 is ReentrancyGuard {
-    // uint256 public constant PRECISION = 10000;
 
     bytes32 public constant REFUND_SUBMISSION_HASH = keccak256(abi.encodePacked("REFUND"));
 
@@ -98,22 +97,6 @@ contract PrizeV2 is ReentrancyGuard {
     uint256 private totalVotes;
     uint256 public disputePeriod;
     uint256 private nonce;
-
-    // enum DonationType {
-    //     GIFT,
-    //     PAYMENT
-    // }
-    // enum TokenType {
-    //     NFT,
-    //     TOKEN
-    // }
-
-    // event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
-    // event CampaignCreated(address indexed proposer, address indexed contractAddress);
-    // event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
-    // event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, bool _isFiat, uint256 amount);
-    // event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
-    // event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
 
     constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
@@ -235,20 +218,15 @@ contract PrizeV2 is ReentrancyGuard {
     }
 
     function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r) public onlyActive disputePeriodActive {
-        // require(disputePeriod > block.timestamp, "DPNA"); //DPNA - Dispute Period Not Active
-        // if(disputePeriod < block.timestamp) revert DPNA(); //DPNA - Dispute Period Not Active
         bytes32 signedMessageHash = VoteLibrary.DISPUTE_HASH(address(this), nonce+=1, _submissionHash);
         SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
 
         address sender =  ecrecover(signedMessageHash, v, r, s);
-        // require(sender == submission.contestant, "NAS"); 
         if(sender != submission.contestant) revert ErrorLibrary.NAS(); //NAS - Not a Submitter
         emit ErrorLibrary.DisputeRaised(_submissionHash, sender);
     }
 
     function endDispute() public onlyPlatformAdmin disputePeriodActive onlyActive {
-        // require(disputePeriod < block.timestamp, "DPA"); // DPA -> Dispute Period is in Active
-        // if(disputePeriod < block.timestamp) revert DPNA(); //DPNA - Dispute Period Not Active
         _distributeUnusedVotes();
         _distributeRewards();
         isActive = false;
@@ -520,7 +498,7 @@ contract PrizeV2 is ReentrancyGuard {
     }
 
     function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive nonReentrant payable {
-        require(_amountUsdc > 0, "F<0");
+        if(_amountUsdc <= 0) revert ErrorLibrary.NotEnoughFunds();
         address sender = msg.sender; 
         _usdcBridged.transferFrom(sender,address(this),_amountUsdc);
         _usdcBridged.approve(address(swapRouter), _amountUsdc);
@@ -530,12 +508,34 @@ contract PrizeV2 is ReentrancyGuard {
 
     /// @notice function to donate eth into the campaign
     function addEthFunds(uint256 _amountOutMinimum) public onlyActive nonReentrant payable  {
-        if (msg.value == 0) revert ErrorLibrary.NotEnoughFunds();
+        if(msg.value <= 0) revert ErrorLibrary.NotEnoughFunds();
         uint256 eth_donation =  msg.value;
         address sender = msg.sender;
         _weth.deposit{value:msg.value}();
         _weth.approve(address(swapRouter), eth_donation);
         _swapRouterLogic(sender, eth_donation, address(_usdcBridged), bridgedUsdcPool.fee(), _amountOutMinimum );
+    }
+
+    function addTokenFunds(address _voter, uint256 _amount, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public {
+        address sender = ecrecover(_ethSignedMessageHash, v, r, s);
+        _usdc.permit(sender, address(this), _amount, _deadline,v,r,s);
+        if(_fiatPayment) {
+            if(!isFiatFunder[_voter]) {
+                fiatFunders.push(_voter);
+                isFiatFunder[_voter] = true;
+            }
+            fiatFunderAmount[_voter] = fiatFunderAmount[_voter].add(_amount);
+            totalFunderAmount[_voter] = totalFunderAmount[_voter].add(_amount);
+            totalRewards = totalRewards.add((_amount.mul(100 - (platformFee + proposerFee))).div(100));
+            individualFiatPercentage[_voter] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[_voter]);
+            individualCryptoPercentage[_voter] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[_voter]);
+            totalFunds = totalFunds.add(_amount);
+        }
+        else {
+            _depositLogic(_voter, _amount);
+        }
+        _usdc.transferFrom(sender, address(this), _amount);
+        emit ErrorLibrary.Donation(sender, address(_usdc), ErrorLibrary.DonationType.PAYMENT, ErrorLibrary.TokenType.TOKEN, _fiatPayment, _amount);
     }
 
     /// @notice external function to receive eth funds
