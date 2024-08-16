@@ -15,7 +15,6 @@ export default async function FetchGitcoins({
 }: {
   params: { roundslug: string };
 }) {
-
   const getIds = gitcoinRounds.find((round) => round.roundSlug === params.roundslug);
 
   if (!getIds) {
@@ -42,14 +41,18 @@ export default async function FetchGitcoins({
           id={application.id}
           key={application.id}
           roundSlug={params.roundslug}
-          imageURL={`https://ipfs.io/ipfs/${application.project.metadata.bannerImg}`}
+          imageURL={
+            application.project.metadata.bannerImg
+              ? `https://gitcoin.mypinata.cloud/ipfs/${application.project.metadata.bannerImg}`
+              : 'https://placehold.jp/24/3d4070/ffffff/600x300.jpg?text=Image%20not%20Found'
+          }
           title={application.project.metadata.title}
           description={application.project.metadata.description}
           raised={application.totalAmountDonatedInUsd}
           contributors={application.uniqueDonorsCount}
           link={`/qf/${params.roundslug}/${application.id}`}
           application={application}
-          logoURL={`https://ipfs.io/ipfs/${application.project.metadata.logoImg}`}
+          logoURL={`https://gitcoin.mypinata.cloud/ipfs/${application.project.metadata.logoImg}`}
         />
       ))}
     </>

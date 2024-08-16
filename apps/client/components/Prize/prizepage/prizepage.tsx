@@ -62,7 +62,7 @@ interface DonatingWithoutLoginProps {
   close: () => void;
 }
 
-const DonatingWithoutLoginModal: React.FC<DonatingWithoutLoginProps> = ({
+function DonatingWithoutLoginModal({
   opened,
   open,
   contractAddress,
@@ -73,12 +73,12 @@ const DonatingWithoutLoginModal: React.FC<DonatingWithoutLoginProps> = ({
   successUrl,
   cancelUrl,
   slug,
-}) => {
+}: DonatingWithoutLoginProps) {
   const router = useRouter();
 
   const [sendLoading, setSendLoading] = useState(false);
 
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(0);
 
   const onDonate = async () => {
     try {
@@ -91,11 +91,11 @@ const DonatingWithoutLoginModal: React.FC<DonatingWithoutLoginProps> = ({
         ).json()
       ).balance;
 
-      if (parseFloat(value) * 1_000_000 > balance) {
+      if (parseFloat(value.toString()) * 1_000_000 > balance) {
         toast.error('Not enough reserves to complete this transaction');
         return;
       }
-      const amount = parseFloat(value) * 1_000_000;
+      const amount = parseFloat(value.toString()) * 1_000_000;
       const checkoutUrl = await fetch(
         'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/checkout',
         {
@@ -136,62 +136,57 @@ const DonatingWithoutLoginModal: React.FC<DonatingWithoutLoginProps> = ({
     }
   };
   return (
-    <>
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Notice"
-        classNames={{
-          title: 'text-lg font-semibold',
-        }}
-        closeButtonProps={{
-          icon: <IconXboxX size={20} stroke={1.5} />,
-        }}
-      >
-        <div className="text-center">
-          <Text className="font-bold">
-            If you want to <span className="text-blue-600">vote on the winner</span>, you
-            will need to log in before donating, else{' '}
-            <span className="text-red-500">donate as guest.</span>
-          </Text>
-        </div>
-        <Group className="mt-4">
-          <Stack className="mx-auto">
-            <Group>
-              <Text fw="sm" className="text-center">
-                Your donation needs to be at least $1
-              </Text>
-            </Group>
-            <NumberInput
-              placeholder="Enter Value  in $ To Donate"
-              allowDecimal
-              defaultValue={1}
-              allowNegative={false}
-              value={value}
-              onChange={(v) => {
-                if (!v) {
-                  // console.log({ v }, 'inner v');
-                  setValue('0');
-                }
-                setValue(v.toString());
-              }}
-            />
+    <Modal
+      opened={opened}
+      onClose={close}
+      title="Notice"
+      classNames={{
+        title: 'text-lg font-semibold',
+      }}
+      closeButtonProps={{
+        icon: <IconXboxX size={20} stroke={1.5} />,
+      }}
+    >
+      <div className="text-center">
+        <Text className="font-bold">
+          If you want to <span className="text-blue-600">vote on the winner</span>, you
+          will need to log in before donating, else{' '}
+          <span className="text-red-500">donate as guest.</span>
+        </Text>
+      </div>
+      <Group className="mt-4">
+        <Stack className="mx-auto">
+          <Group>
+            <Text fw="sm" className="text-center">
+              Your donation needs to be at least $1
+            </Text>
+          </Group>
+          <NumberInput
+            placeholder="Enter Value  in $ To Donate"
+            allowDecimal
+            defaultValue={1}
+            allowNegative={false}
+            value={value}
+            min={0}
+            onChange={(v) => {
+              setValue(parseInt(v.toString()));
+            }}
+          />
 
-            <Button
-              disabled={!value}
-              loading={sendLoading}
-              onClick={async () => {
-                await onDonate();
-              }}
-            >
-              Donate as guest
-            </Button>
-          </Stack>
-        </Group>
-      </Modal>
-    </>
+          <Button
+            disabled={!value}
+            loading={sendLoading}
+            onClick={async () => {
+              await onDonate();
+            }}
+          >
+            Donate as guest
+          </Button>
+        </Stack>
+      </Group>
+    </Modal>
   );
-};
+}
 
 function FundUsdcCard({
   contractAddress,
@@ -445,7 +440,7 @@ export default function PrizePageComponent({
       void fetch(
         'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/hash',
       ).then((res) => {
-        res.json().then((data) => {
+        void res.json().then((data) => {
           toast.success(
             <TransactionToast hash={data.hash} title="Transaction Successful" />,
             {
@@ -588,6 +583,7 @@ export default function PrizePageComponent({
         allowSubmission={prize.submission_time_blockchain > 0}
         submissions={submissions}
         contractAddress={prize.contract_address}
+        loggedIn={Boolean(appUser)}
       />
 
       {appUser?.isAdmin && prize.dispute_period_time_blockchain > 0 ? (

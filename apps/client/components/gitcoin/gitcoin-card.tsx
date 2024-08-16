@@ -10,10 +10,10 @@ import {
   Divider,
   Text,
   Tooltip,
+  Image,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -50,7 +50,7 @@ export default function GitcoinCard({
   const cartItems = useCartStore((state) => state.items);
   const isItemInCart = (itemID: string) => cartItems.some((item) => item.id === itemID);
   const [imgSrc, setImgSrc] = useState<string>(imageURL);
-  const round = gitcoinRounds.find((round) => round.roundSlug === roundSlug);
+  const round = gitcoinRounds.find((roundd) => roundd.roundSlug === roundSlug);
   const router = useRouter();
 
   // const tokens = getTokensByChainId(8453);
@@ -100,47 +100,35 @@ export default function GitcoinCard({
         <Card.Section>
           <Image
             alt="Image"
-            height={160}
-            width={420}
-            className="rounded-lg"
-            // fallbackSrc="https://placehold.jp/24/3d4070/ffffff/600x300.jpg?text=Image%20not%20Found"
-            onError={(e) => {
-              e.currentTarget.src =
-                'https://placehold.jp/24/3d4070/ffffff/600x300.jpg?text=Image%20not%20Found';
-            }}
-            onLoadStart={(e) => {
-              e.currentTarget.src =
-                'https://placehold.jp/24/3d4070/ffffff/600x300.jpg?text=Image%20Loading';
-            }}
-            onLoad={(e) => {
-              e.currentTarget.src =
-                'https://placehold.jp/24/3d4070/ffffff/600x300.jpg?text=Image%20Loading';
-            }}
+            className="rounded-md relative h-40 w-full"
+            loading='lazy'
+            height={500}
+            width="100%"
+            fallbackSrc="https://placehold.jp/24/3d4070/ffffff/600x300.jpg?text=Image%20not%20Found"
             src={imgSrc}
           />
         </Card.Section>
       </Link>
       <Link href={link} className="mt-4 flex justify-between items-center">
         <div className="">
-          {title.length > 35 ? (
-            <Text fw="bold" size="lg">
-              {title.substring(0, 35)}...
+          {title.length > 30 ? (
+            <Text fw="bold" size="lg" mt="md">
+              {title.substring(0, 30)}...
             </Text>
           ) : (
-            <Text fw="bold" size="lg">
+            <Text fw="bold" size="lg" mt="md">
               {title}
             </Text>
           )}
         </div>
         <Image
           alt="Logo"
-          height={70}
-          width={70}
+          fallbackSrc='https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
           src={
             logoURL ||
             'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
           }
-          className="rounded-full absolute  right-4"
+          className="rounded-full absolute  size-16 right-4"
         />
       </Link>
       <Link href={link}>
