@@ -52,7 +52,7 @@ export default async function FetchGitcoins({
           contributors={application.uniqueDonorsCount}
           link={`/qf/${params.roundslug}/${application.id}`}
           application={application}
-          logoURL={`https://ipfs.io/ipfs/${application.project.metadata.logoImg}`}
+          logoURL={`https://gitcoin.mypinata.cloud/ipfs/${application.project.metadata.logoImg}`}
         />
       ))}
     </>

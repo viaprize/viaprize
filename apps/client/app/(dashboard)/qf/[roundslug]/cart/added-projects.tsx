@@ -36,7 +36,7 @@ export default function AddedProjects({ roundId }: { roundId: string }) {
                     alt="Image"
                     radius="xl"
                     size="lg"
-                    src={`https://ipfs.io/ipfs/${item.project.metadata.bannerImg}`}
+                    src={`https://gitcoin.mypinata.cloud/ipfs/${item.project.metadata.bannerImg}`}
                   />
                   <div className="mt-3">
                     <Text fw="bold" size="lg" className="lg:block">
@@ -63,14 +63,11 @@ export default function AddedProjects({ roundId }: { roundId: string }) {
                     min={0}
                     required
                   />
-                  <Text fw="bold" >
-                    USD
-                  </Text>
+                  <Text fw="bold">USD</Text>
 
                   <ActionIcon
                     variant="light"
                     p="3px"
-                   
                     color="red"
                     onClick={() => removeItem(item.id)}
                   >

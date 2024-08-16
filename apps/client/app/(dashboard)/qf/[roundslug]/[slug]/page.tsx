@@ -18,7 +18,6 @@ export default async function GitcoinApplication({
 }) {
   const getIds = gitcoinRounds.find((round) => round.roundSlug === params.roundslug);
 
-
   if (!getIds) {
     return notFound();
   }
@@ -31,15 +30,13 @@ export default async function GitcoinApplication({
   const round = await fetchRoundForExplorer(getIds.chainId, getIds.roundId);
   console.log(applicationsInRound);
 
-
-
   return (
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
       <ImageTitleCard
         exploreUrl={`/qf/${params.roundslug}/explore`}
         title={applicationsInRound.project.metadata.title}
-        img={`https://ipfs.io/ipfs/${applicationsInRound.project.metadata.bannerImg}`}
-        logoURL={`https://ipfs.io/ipfs/${applicationsInRound.project.metadata.logoImg}`}
+        img={`https://gitcoin.mypinata.cloud/ipfs/${applicationsInRound.project.metadata.bannerImg}`}
+        logoURL={`https://gitcoin.mypinata.cloud/ipfs/${applicationsInRound.project.metadata.logoImg}`}
         application={applicationsInRound}
         applicationID={applicationsInRound.id}
         roundId={getIds.roundId}

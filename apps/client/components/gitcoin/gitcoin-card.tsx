@@ -111,12 +111,12 @@ export default function GitcoinCard({
       </Link>
       <Link href={link} className="mt-4 flex justify-between items-center">
         <div className="">
-          {title.length > 35 ? (
+          {title.length > 30 ? (
             <Text fw="bold" size="lg" mt="md">
-              {title.substring(0, 35)}...
+              {title.substring(0, 30)}...
             </Text>
           ) : (
-            <Text fw="bold" size="lg">
+            <Text fw="bold" size="lg" mt="md">
               {title}
             </Text>
           )}

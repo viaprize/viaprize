@@ -97,7 +97,7 @@ export class CreatePrizeProposalDto {
   @ApiProperty({
     type: [String],
     example: [
-      'https://ipfs.io/ipfs/QmZ1X2Y3Z4A5B6C7D8E9F0G1H2I3J4K5L6M7N8O9P0Q1R2S3T4U5V6W7X8Y9Z0',
+      'https://gitcoin.mypinata.cloud/ipfs/QmZ1X2Y3Z4A5B6C7D8E9F0G1H2I3J4K5L6M7N8O9P0Q1R2S3T4U5V6W7X8Y9Z0',
     ],
   })
   @IsArray()
