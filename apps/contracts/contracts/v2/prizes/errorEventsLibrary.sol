@@ -53,4 +53,9 @@ library ErrorLibrary {
     event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, bool _isFiat, uint256 amount);
     event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
     event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
+    event SubmissionStarted(uint256 indexed startedAt, uint256 indexed Deadline);
+    event SubmissionEnded(uint256 indexed endedAt);
+    event VotingStarted(uint256 indexed startedAt, uint256 indexed Deadline);
+    event VotingEnded(uint256 indexed endedAt);
+    event DisputeEnded(uint256 indexed endedAt);
 }

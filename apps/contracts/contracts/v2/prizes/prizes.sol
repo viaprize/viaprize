@@ -12,9 +12,10 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "../../helperContracts/ierc20_weth.sol";
 import "../../helperContracts/nonReentrant.sol";
+import "./logicFunctions.sol";
 
 contract PrizeV2 is ReentrancyGuard {
-
+    
     bytes32 public constant REFUND_SUBMISSION_HASH = keccak256(abi.encodePacked("REFUND"));
 
     using VoteLibrary for *;
@@ -58,8 +59,8 @@ contract PrizeV2 is ReentrancyGuard {
 
     using SafeMath for uint256;
 
-    uint private proposerFee;
-    uint private platformFee;
+    uint8 private proposerFee;
+    uint8 private platformFee;
 
     bool public votingPeriod = false;
     bool public submissionPeriod = false;
@@ -71,7 +72,7 @@ contract PrizeV2 is ReentrancyGuard {
     IERC20Permit private immutable _usdcBridged;
     
     /// @notice minimum slippage fee percentage for minimum output in swap
-    uint public minimumSlipageFeePercentage = 2; 
+    uint8 public minimumSlipageFeePercentage = 2; 
 
     /// @notice initializing the interface for weth
     IWETH private _weth;
@@ -98,7 +99,7 @@ contract PrizeV2 is ReentrancyGuard {
     uint256 public disputePeriod;
     uint256 private nonce;
 
-    constructor(address _proposer, address[] memory _platformAdmins, uint _platFormFee, uint _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
+    constructor(address _proposer, address[] memory _platformAdmins, uint8 _platFormFee, uint8 _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
         /// @notice add as many proposer addresses as you need to -- replace msg.sender with the address of the proposer(s) for now this means the deployer will be the sole admin
 
         proposer = _proposer;
@@ -166,6 +167,7 @@ contract PrizeV2 is ReentrancyGuard {
         /// @notice submission time will be in minutes
         submissionTime = block.timestamp + _submissionTime * 1 minutes;
         submissionPeriod = true;
+        emit ErrorLibrary.SubmissionStarted(block.timestamp, submissionTime);
     }
 
     /// @notice start the voting period 
@@ -175,6 +177,7 @@ contract PrizeV2 is ReentrancyGuard {
         votingTime = block.timestamp + _votingTime * 1  minutes;
         /// @notice  tracks voting period
         votingPeriod = true;
+        emit ErrorLibrary.VotingStarted(block.timestamp, votingTime);
     }
 
     /// @notice getter for submission time
@@ -208,6 +211,7 @@ contract PrizeV2 is ReentrancyGuard {
             distributed = true;
             isActive = false;
         }
+        emit ErrorLibrary.SubmissionEnded(block.timestamp);
     }
 
     function endVotingPeriod() public onlyPlatformAdmin onlyActive {
@@ -215,6 +219,7 @@ contract PrizeV2 is ReentrancyGuard {
         votingTime = 0;
         votingPeriod = false;
         disputePeriod = block.timestamp + 2 days;
+        emit ErrorLibrary.VotingEnded(block.timestamp);
     }
 
     function raiseDispute(bytes32 _submissionHash, uint8 v, bytes32 s, bytes32 r) public onlyActive disputePeriodActive {
@@ -230,6 +235,7 @@ contract PrizeV2 is ReentrancyGuard {
         _distributeUnusedVotes();
         _distributeRewards();
         isActive = false;
+        emit ErrorLibrary.DisputeEnded(block.timestamp);
     }
 
     function changeSubmissionPeriod(uint256 _submissionTime) public onlyPlatformAdmin onlyActive {
@@ -600,7 +606,7 @@ contract PrizeV2 is ReentrancyGuard {
    /// @param _tokenAddress contract address of the token
    /// @param _to receiver address
    /// @param _amount amount to withdraw
-   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyActive onlyPlatformAdmin nonReentrant {
+   function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin nonReentrant {
         IERC20Permit token = IERC20Permit(_tokenAddress);
         uint256 balance = token.balanceOf(address(this));
         if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists
@@ -633,7 +639,7 @@ contract PrizeV2 is ReentrancyGuard {
 
     /// @notice function to change slippage tolerance of other token donations
     /// @param _minimumSlipageFeePercentage of new minimumSlipageFeePercentage
-    function changeMinimumSlipageFeePercentage(uint256 _minimumSlipageFeePercentage) public onlyPlatformAdmin {
+    function changeMinimumSlipageFeePercentage(uint8 _minimumSlipageFeePercentage) public onlyPlatformAdmin {
         minimumSlipageFeePercentage  = _minimumSlipageFeePercentage;
     } 
 } 
