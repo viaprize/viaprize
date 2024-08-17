@@ -1,10 +1,10 @@
 //SPDX-License-Identifier:MIT
 pragma solidity ^0.8.1;
 
-import "./SubmissionLibrary.sol";
-import "./SubmissionAVLTree.sol";
-import "./hashLibrary.sol";
-import "./errorEventsLibrary.sol";
+import "./helperLibraries/SubmissionLibrary.sol";
+import "./logicContracts/SubmissionAVLTree.sol";
+import "./helperLibraries/hashLibrary.sol";
+import "./helperLibraries/errorEventsLibrary.sol";
 import "../../helperContracts/safemath.sol";
 import "../../helperContracts/ierc20_permit.sol";                                         
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
@@ -12,7 +12,6 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "../../helperContracts/ierc20_weth.sol";
 import "../../helperContracts/nonReentrant.sol";
-import "./logicFunctions.sol";
 
 contract PrizeV2 is ReentrancyGuard {
     
