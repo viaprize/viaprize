@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "../../helperContracts/owner.sol";
+import "../../../helperContracts/owner.sol";
 
 contract SubmissionAVLTree is Ownable{
     mapping(bytes32 => mapping(address => uint256)) public submissionFunderBalances;
