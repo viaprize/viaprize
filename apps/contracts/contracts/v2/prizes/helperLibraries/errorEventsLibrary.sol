@@ -2,9 +2,8 @@
 pragma solidity ^0.8.0;
 
 library ErrorLibrary {
-        /// @notice error for not enough funds to vote
-    error NotEnoughFunds();
 
+    error NotEnoughFunds();
     error NotActive();
     error NR();
     error NP();
@@ -16,7 +15,6 @@ library ErrorLibrary {
     error NAF();
     error SS();
     error LM();
-
     /// @notice error for trying to change someone elses vote
     error NotYourVote();
 
@@ -53,6 +51,7 @@ library ErrorLibrary {
     event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, bool _isFiat, uint256 amount);
     event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
     event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
+    event cryptoFunderRefunded(address indexed _address, uint256 _amount, bool refunded);
     event SubmissionStarted(uint256 indexed startedAt, uint256 indexed Deadline);
     event SubmissionEnded(uint256 indexed endedAt);
     event VotingStarted(uint256 indexed startedAt, uint256 indexed Deadline);

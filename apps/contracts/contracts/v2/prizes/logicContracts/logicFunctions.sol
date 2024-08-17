@@ -4,36 +4,35 @@ pragma solidity ^0.8.0;
 import "../../../helperContracts/owner.sol";
 import "../../../helperContracts/safemath.sol";
 import "../../../helperContracts/ierc20_permit.sol";
+import "../helperLibraries/errorEventsLibrary.sol";
 
 contract LogicContract is Ownable {
-    /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
-    mapping (address => uint256) public cryptoFunderAmount;
-    mapping(address => uint256) public fiatFunderAmount;
-    /// @notice array of funders
-    address[] public cryptoFunders;
-    address[] public fiatFunders;
-    mapping(address => bool) public isCryptoFunder;
-    mapping(address => bool) public isFiatFunder;
-    /// @notice Add a new mapping to store each funder's votes on each submission
-    mapping(address => mapping(bytes32 => uint256)) public funderVotes;
-    address[] public refundRequestedFunders;
-    mapping(address => bool) public isRefundRequestedAddress;
-    mapping(address => bool) public isContestant;
-    mapping(address => uint256) public individualFiatPercentage;
-    mapping(address => uint256) public individualCryptoPercentage;
-    mapping(address => uint256) public totalFunderAmount;
-    /// @notice this will be the total amount of funds raised
-    uint256 public totalFunds; 
-    /// @notice this will be the total amount of rewards available
-    uint256 public totalRewards; 
-
-    IERC20Permit public immutable _usdc;
 
     uint8 public immutable proposerFee;
     uint8 public immutable platformFee;
+    uint256 public totalFunds; 
+    uint256 public totalRewards;
+
+    address[] public cryptoFunders;
+    address[] public fiatFunders;
+    address[] public refundRequestedFunders;
     address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
+    mapping (address => uint256) public cryptoFunderAmount;
+    mapping(address => uint256) public fiatFunderAmount;
+    mapping(address => uint256) public individualFiatPercentage;
+    mapping(address => uint256) public individualCryptoPercentage;
+    mapping(address => uint256) public totalFunderAmount;
+    mapping(address => bool) public isCryptoFunder;
+    mapping(address => bool) public isFiatFunder;
+    mapping(address => bool) public isRefundRequestedAddress;
+    mapping(address => bool) public isContestant;
+    mapping(address => mapping(bytes32 => uint256)) public funderVotes;
+
+    IERC20Permit public immutable _usdc;
+
     using SafeMath for uint256;
+    using ErrorLibrary for *;
 
     constructor(address initialOwner, uint8 _proposerFee, uint8 _platformFee, address _usdcAddress) Ownable(initialOwner) {
         proposerFee = _proposerFee;
@@ -41,8 +40,12 @@ contract LogicContract is Ownable {
         _usdc = IERC20Permit(_usdcAddress);
     }
 
-    function setFiatFunderStatus(address sender, bool status) external {
-        isFiatFunder[sender] = status;
+    function getAllCryptoFunders() view external returns(address[] memory){
+        return cryptoFunders;
+    }
+
+    function getAllFiatFunders() view external returns(address[] memory){
+        return fiatFunders;
     }
 
     function depositLogic(address sender, uint256 donation) external {
@@ -56,6 +59,36 @@ contract LogicContract is Ownable {
         individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
         totalFunds = totalFunds.add(donation);
         totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
+    }
+
+    function refundLogic() external {
+        for(uint64 i=0; i<cryptoFunders.length; i++) {
+            address funder = cryptoFunders[i];
+            uint256 transferable_amount = cryptoFunderAmount[cryptoFunders[i]];
+            cryptoFunderAmount[funder] = 0;
+            _usdc.transfer(funder, transferable_amount);
+            emit ErrorLibrary.cryptoFunderRefunded(funder, transferable_amount, true);
+        }
+        for(uint64 i=0; i<fiatFunders.length; i++) {
+            address funder = fiatFunders[i];
+            uint256 transferable_amount = fiatFunderAmount[funder];
+            fiatFunderAmount[funder] = 0;
+            _usdc.transfer(platformAddress, transferable_amount);
+            emit ErrorLibrary.fiatFunderRefund(funder, transferable_amount, true);
+        }
+    }
+
+    function tokenFundLogic(address sender, uint256 _amount) external {
+        if(isFiatFunder[sender]) {
+            fiatFunders.push(sender);
+            isFiatFunder[sender] = true;
+        }
+        fiatFunderAmount[sender] = fiatFunderAmount[sender].add(_amount);
+        totalFunderAmount[sender] = totalFunderAmount[sender].add(_amount);
+        totalRewards = totalRewards.add((_amount.mul(100 - (platformFee + proposerFee))).div(100));
+        individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
+        individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
+        totalFunds = totalFunds.add(_amount);
     }
 
     function voteLogic(uint256 _amount, bytes32 _submissionHash, address sender) external {
