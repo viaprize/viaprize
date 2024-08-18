@@ -15,7 +15,10 @@ import { UsersService } from './users.service';
  * The Users controller is responsible for handling requests from the client related to user data.
  * This includes creating a new user, getting a user by ID, and getting a user by username.
  */
-
+interface EmailExistsResponse {
+  exists: boolean;
+  walletAddress?: string;
+}
 @Controller('users')
 export class UsersController {
   constructor(
@@ -108,10 +111,18 @@ export class UsersController {
     return this.usersService.exists(username);
   }
 
+  /**
+   * Endpoint for checking if a user with the specified email exists.
+   * @param email The email to check.
+   * @returns {Promise<EmailExistsResponse>} The email exist object.
+   */
   @Get('exists/email/:email')
-  async emailExists(@TypedParam('email') username: string): Promise<boolean> {
-    return this.usersService.emailExists(username);
+  async emailExists(
+    @TypedParam('email') email: string,
+  ): Promise<EmailExistsResponse> {
+    return this.usersService.emailExists(email);
   }
+
   /**
    * Endpoint for getting submission of a specified username.
    * @param username The username to check.

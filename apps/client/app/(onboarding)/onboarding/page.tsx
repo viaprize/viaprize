@@ -7,6 +7,7 @@ import {
   Center,
   Flex,
   Loader,
+  Stack,
   Text,
   TextInput,
 } from '@mantine/core';
@@ -36,7 +37,7 @@ export default function Details() {
   const [emailLocked, setEmailLocked] = useState(Boolean(user?.email?.address));
   const [emailExists, setEmailExists] = useState(false);
   const [emailLoading, setEmailLoading] = useState(false);
-
+const [walletAddress, setWalletAddress] = useState('');
   const { createNewUser, getLastVisitedPage } = useAppUser();
 
   const uploadUserMutation = useMutation(createNewUser, {
@@ -105,21 +106,27 @@ export default function Details() {
     [debouncedUsername],
   );
 
-  const checkEmail = useCallback(
-    async () => {
-      try {
-        console.log('checking newEmail', debouncedEmail);
-        const response = await new Api().users.existsEmailDetail(debouncedEmail);
-        setEmailExists(response.data);
-        console.log('response', response.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setEmailLoading(false);
-      }
-    },
-    [debouncedEmail],
-  );
+const checkEmail = useCallback(async () => {
+  try {
+    console.log('checking newEmail', debouncedEmail);
+    const response = await new Api().users.existsEmailDetail(debouncedEmail);
+    setEmailExists(response.data.exists);
+
+    if (response.data.exists && response.data.walletAddress) {
+      // setEmailLocked(true); // Optionally lock the email field if it's already associated with a user
+      setWalletAddress(response.data.walletAddress);
+    } else {
+      setWalletAddress(''); // Clear if no wallet is found
+    }
+
+    console.log('response', response.data);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setEmailLoading(false);
+  }
+}, [debouncedEmail]);
+
    useEffect(() => {
      checkEmail().catch(console.error);
    }, [debouncedEmail]);
@@ -201,16 +208,19 @@ export default function Details() {
           disabled={emailLocked}
           leftSection={emailLocked ? <IconLock size={16} /> : null}
         />
-        <Flex>
+        <Stack>
           {emailLoading ? <Loader m="xs" size="xs" /> : null}
           {!emailLoading &&
             debouncedEmail.length > 0 &&
             (emailExists && debouncedEmail.length > 0 ? (
-              <Text c="red">Email already exists </Text>
+              <>
+                <Text c="red">Email already exists </Text>
+                <Text c="blue">Associated Wallet: {walletAddress}</Text>
+              </>
             ) : (
               <Text c="green">{email} Is a Valid Email </Text>
             ))}
-        </Flex>
+        </Stack>
         <Button
           onClick={handleLogin}
           loading={loading || uploadUserMutation.isLoading}
