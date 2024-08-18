@@ -48,6 +48,22 @@ contract LogicContract is Ownable {
         return fiatFunders;
     }
 
+    function updateTotalFunds(uint256 _totalFunds) external {
+        totalFunds = _totalFunds;
+    }
+
+    function updateTotalRewards(uint256 _totalRewards) external {
+        totalRewards = _totalRewards;
+    }
+
+    function retrieveFunderVotes(address _sender, bytes32 _submissionHash) view external returns(uint256) {
+        return funderVotes[_sender][_submissionHash];
+    } 
+
+    function updateFunderVotes(address _sender, bytes32 _submissionHash, uint256 _amount) external {
+        funderVotes[_sender][_submissionHash] = _amount;
+    }
+
     function depositLogic(address sender, uint256 donation) external {
         if(!isCryptoFunder[sender]) {
             isCryptoFunder[sender] = true;

@@ -18,19 +18,20 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 contract PrizeV2 is ReentrancyGuard {
     
     /// @notice this will be the total amount of funds raised
-    uint256 public totalFunds; 
+    // uint256 public totalFunds; 
     /// @notice this will be the total amount of rewards available
-    uint256 public totalRewards; 
+    // uint256 public totalRewards; 
+    uint256 public disputePeriod;
     /// @notice bool to check if rewards have been distributed with end_voting_period
     uint256 private totalVotes;
-    uint256 public disputePeriod;
     uint256 private nonce;
-    uint8 private proposerFee;
-    uint8 private platformFee;
-    /// @notice this will be the time that the voting period ends
     uint256 private votingTime; 
     /// @notice this will be the time that the submission period ends
     uint256 private submissionTime;
+    uint8 private immutable proposerFee;
+    uint8 private immutable platformFee;
+    /// @notice this will be the time that the voting period ends
+    
 
     bool public isActive = false;
     uint8 public constant  VERSION = 201;
@@ -51,22 +52,22 @@ contract PrizeV2 is ReentrancyGuard {
     mapping(address => bool) public isPlatformAdmin;
     
     /// @notice array of funders
-    address[] private cryptoFunders;
-    address[] private fiatFunders;
+    // address[] private cryptoFunders;
+    // address[] private fiatFunders;
     address[] private refundRequestedFunders;
-    mapping(address => bool) public isCryptoFunder;
-    mapping(address => bool) public isFiatFunder;
+    // mapping(address => bool) public isCryptoFunder;
+    // mapping(address => bool) public isFiatFunder;
     mapping(address => bool) public isRefundRequestedAddress;
     /// @notice this will be a mapping of the addresses of the funders to the amount of usd they have contributed
-    mapping(address => uint256) public cryptoFunderAmount;
-    mapping(address => uint256) public fiatFunderAmount;
-    mapping(address => uint256) public totalFunderAmount;
-    mapping(address => uint256) public individualFiatPercentage;
-    mapping(address => uint256) public individualCryptoPercentage;
+    // mapping(address => uint256) public cryptoFunderAmount;
+    // mapping(address => uint256) public fiatFunderAmount;
+    // mapping(address => uint256) public totalFunderAmount;
+    // mapping(address => uint256) public individualFiatPercentage;
+    // mapping(address => uint256) public individualCryptoPercentage;
     /// @notice mapping to store each funder's votes on each submission
-    mapping(address => mapping(bytes32 => uint256)) public funderVotes;
+    // mapping(address => mapping(bytes32 => uint256)) public funderVotes;
 
-    using SafeMath for uint256;
+    using SafeMath for *;
     using VoteLibrary for *;
     using ErrorLibrary for *;
 
@@ -155,7 +156,7 @@ contract PrizeV2 is ReentrancyGuard {
     }
 
     /// @notice create a function to start the submission period
-    function startSubmissionPeriod(uint256 _submissionTime) public  onlyPlatformAdminOrProposer onlyActive {
+    function startSubmissionPeriod(uint256 _submissionTime) public onlyPlatformAdminOrProposer onlyActive {
         /// @notice submission time will be in minutes
         submissionTime = block.timestamp + _submissionTime * 1 minutes;
         submissionPeriod = true;
@@ -163,7 +164,7 @@ contract PrizeV2 is ReentrancyGuard {
     }
 
     /// @notice start the voting period 
-    function startVotingPeriod(uint256 _votingTime) public  onlyPlatformAdminOrProposer onlyActive {
+    function startVotingPeriod(uint256 _votingTime) public onlyPlatformAdminOrProposer onlyActive {
         if(block.timestamp < submissionTime) revert ErrorLibrary.SubmissionPeriodActive();
         /// @notice voting time also in minutes
         votingTime = block.timestamp + _votingTime * 1  minutes;
@@ -238,8 +239,8 @@ contract PrizeV2 is ReentrancyGuard {
             reward -= reward_amount;
             if(reward_amount > 0) {
                 if(_logicFunctions.isFiatFunder(refundRequestedFunders[j]) && _logicFunctions.isCryptoFunder(refundRequestedFunders[j])) {
-                    uint256 fiatToSend = (reward_amount.mul(individualFiatPercentage[refundRequestedFunders[j]])).div(100);
-                    uint256 cryptoToSend = (reward_amount.mul(individualCryptoPercentage[refundRequestedFunders[j]])).div(100);
+                    uint256 fiatToSend = (reward_amount.mul(_logicFunctions.individualFiatPercentage(refundRequestedFunders[j]))).div(100);
+                    uint256 cryptoToSend = (reward_amount.mul(_logicFunctions.individualCryptoPercentage(refundRequestedFunders[j]))).div(100);
                     reward_amount = 0;
                     _usdc.transfer(platformAddress, fiatToSend);
                     emit ErrorLibrary.fiatFunderRefund(refundRequestedFunders[j], fiatToSend, true);
@@ -276,11 +277,12 @@ contract PrizeV2 is ReentrancyGuard {
                 }
                 unchecked { ++i; }
             }
-            totalRewards = 0;
-            if(totalFunds > 0) {
-                usdcPlatformReward = (totalFunds * platformFee) / 100;
-                usdcProposerReward = (totalFunds * proposerFee) / 100;
-                totalFunds = totalFunds.sub(usdcPlatformReward.add(usdcProposerReward));
+            _logicFunctions.updateTotalRewards(0);
+            if(_logicFunctions.totalFunds() > 0) {
+                usdcPlatformReward = (_logicFunctions.totalFunds() * platformFee) / 100;
+                usdcProposerReward = (_logicFunctions.totalFunds() * proposerFee) / 100;
+                _logicFunctions.updateTotalFunds(_logicFunctions.totalFunds().sub(usdcPlatformReward.add(usdcProposerReward)));
+                // totalFunds = totalFunds.sub(usdcPlatformReward.add(usdcProposerReward));
                 _usdc.transfer(platformAddress, usdcPlatformReward);
                 _usdc.transfer(proposer, usdcProposerReward);
             }
@@ -307,7 +309,7 @@ contract PrizeV2 is ReentrancyGuard {
         _logicFunctions.voteLogic(_amount, _submissionHash, sender);
         uint256 amountToSubmission = (_amount * (100 - platformFee - proposerFee)) / 100;
         _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
-        _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
+        _submissionTree.updateFunderVotes(_submissionHash, sender, (_logicFunctions.retrieveFunderVotes(sender, _submissionHash).mul(100.sub(platformFee.add(proposerFee)))).div(100));
         
         totalVotes = totalVotes.add(amountToSubmission);
         SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
@@ -324,7 +326,7 @@ contract PrizeV2 is ReentrancyGuard {
         bytes32 hash = VoteLibrary.VOTE_HASH(address(this), nonce+=1, _submissionHash, _amount);
         address sender =  ecrecover(hash, v, r, s);
         if(!(_logicFunctions.isFiatFunder(sender) || _logicFunctions.isCryptoFunder(sender))) revert ErrorLibrary.NAF(); // NAF -> Not a Funder
-        if (_amount > totalFunderAmount[sender]) revert ErrorLibrary.NotEnoughFunds();
+        if (_amount > _logicFunctions.totalFunderAmount(sender)) revert ErrorLibrary.NotEnoughFunds();
 
         SubmissionAVLTree.SubmissionInfo memory submissionCheck = _submissionTree.getSubmission(_submissionHash);
         /// @notice submission should return a struct with the submissionHash, the contestant, the submissionText, the threshhold, the votes, and the funded status 
@@ -355,7 +357,7 @@ contract PrizeV2 is ReentrancyGuard {
         if(_previous_submissionHash == _new_submissionHash) revert ErrorLibrary.SS(); //SME -> Same Submission
         bytes32 signedMessageHash = VoteLibrary.CHANGE_VOTE_HASH(address(this), nonce+=1, _previous_submissionHash, amount, _new_submissionHash);
         address sender = ecrecover(signedMessageHash, v, r, s);
-        if (funderVotes[sender][_previous_submissionHash] < amount) revert ErrorLibrary.NotYourVote();
+        if (_logicFunctions.retrieveFunderVotes(sender,_previous_submissionHash) < amount) revert ErrorLibrary.NotYourVote();
         if(!_logicFunctions.isCryptoFunder(sender) || !_logicFunctions.isFiatFunder(sender)) revert ErrorLibrary.NAF(); // NF -> Not a Funder
         _changeVote(sender, _previous_submissionHash, _new_submissionHash, amount);
         _changeSubmissionVoteLogic(_previous_submissionHash, _new_submissionHash);
@@ -370,10 +372,12 @@ contract PrizeV2 is ReentrancyGuard {
         }
         _submissionTree.subUsdcVotes(_previous_submission_hash, amountToSubmission);
         _submissionTree.addUsdcVotes(_new_submission_hash, amountToSubmission);
-        funderVotes[_sender][_previous_submission_hash] -= amount;
-        funderVotes[_sender][_new_submission_hash] += amount;
-        _submissionTree.updateFunderVotes(_previous_submission_hash, _sender, (funderVotes[_sender][_previous_submission_hash]*(100-platformFee-proposerFee))/100);
-        _submissionTree.updateFunderVotes(_new_submission_hash, _sender, (funderVotes[_sender][_new_submission_hash]*(100-platformFee - proposerFee))/100);
+        _logicFunctions.updateFunderVotes(_sender, _previous_submission_hash, _logicFunctions.retrieveFunderVotes(_sender, _previous_submission_hash).sub(amount));
+        // funderVotes[_sender][_previous_submission_hash] -= amount;
+        _logicFunctions.updateFunderVotes(_sender, _new_submission_hash, _logicFunctions.retrieveFunderVotes(_sender, _new_submission_hash).add(amount));
+        // funderVotes[_sender][_new_submission_hash] += amount;
+        _submissionTree.updateFunderVotes(_previous_submission_hash, _sender, (_logicFunctions.retrieveFunderVotes(_sender, _previous_submission_hash).mul(100.sub(platformFee.add(proposerFee)))).div(100));
+        _submissionTree.updateFunderVotes(_new_submission_hash, _sender, (_logicFunctions.retrieveFunderVotes(_sender, _new_submission_hash).mul(100.sub(platformFee.add(proposerFee)))).div(100));
         if(_previous_submission_hash == REFUND_SUBMISSION_HASH && _submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,_sender) == 0) {
             isRefundRequestedAddress[_sender] = false;
         }
@@ -406,9 +410,9 @@ contract PrizeV2 is ReentrancyGuard {
     function addTokenFunds(address _voter, uint256 _amount, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public {
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
         _usdc.permit(sender, address(this), _amount, _deadline,v,r,s);
-        _tokenFundLogic(_fiatPayment, sender, _amount);
+        _tokenFundLogic(_fiatPayment, _voter, _amount);
         _usdc.transferFrom(sender, address(this), _amount);
-        emit ErrorLibrary.Donation(sender, address(_usdc), ErrorLibrary.DonationType.PAYMENT, ErrorLibrary.TokenType.TOKEN, _fiatPayment, _amount);
+        emit ErrorLibrary.Donation(_voter, address(_usdc), ErrorLibrary.DonationType.PAYMENT, ErrorLibrary.TokenType.TOKEN, _fiatPayment, _amount);
     }
 
     function _swapRouterLogic(address sender, uint256 _amountUsdc, address swapFrom, uint256 poolFee, uint256 _amountOutMinimum ) private {
@@ -460,7 +464,7 @@ contract PrizeV2 is ReentrancyGuard {
        for(uint256 i=0; i<allSubmissions.length; i++) {
            total_usdc_votes += allSubmissions[i].usdcVotes;
        }
-       uint256 total_unused_usdc_votes = totalRewards.sub(total_usdc_votes);
+       uint256 total_unused_usdc_votes = _logicFunctions.totalRewards().sub(total_usdc_votes);
        for(uint64 i=0; i<allSubmissions.length; i++) {
             if(total_unused_usdc_votes > 0 && allSubmissions[i].usdcVotes > 0) {
                 uint256 individual_usdc_percentage = ((allSubmissions[i].usdcVotes.mul(10000)).div(total_usdc_votes));
@@ -484,8 +488,10 @@ contract PrizeV2 is ReentrancyGuard {
         uint256 balance = token.balanceOf(address(this));
         if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists
         require(_amount <= balance, "AEB"); //AEB -> Amount Exceeds Balance
-        totalFunds = totalFunds.sub(_amount);
-        totalRewards = totalRewards.sub(_amount);
+        _logicFunctions.updateTotalFunds(_logicFunctions.totalFunds().sub(_amount));
+        // totalFunds = totalFunds.sub(_amount);
+        _logicFunctions.updateTotalRewards(_logicFunctions.totalRewards().sub((_amount.mul(100 - (platformFee + proposerFee))).div(100)));
+        // totalRewards = totalRewards.sub((_amount.mul(100 - (platformFee + proposerFee))).div(100));
         token.transfer(_to, _amount); 
    }
 
@@ -500,6 +506,7 @@ contract PrizeV2 is ReentrancyGuard {
         return submission;
     }
 
+    /// @notice function to get total Funds and total Rewards
     function getTotalAndRewards() public view returns(uint256, uint256) {
         return(_logicFunctions.totalFunds(), _logicFunctions.totalRewards());
     }
@@ -513,6 +520,11 @@ contract PrizeV2 is ReentrancyGuard {
    function getAllFiatFunders() public view returns(address[] memory) {
     return _logicFunctions.getAllFiatFunders();
    }
+
+   /// @notice function to retrieve funder votes to a specific submission
+   function getFunderVotes(address funder, bytes32 submissionHash) public view returns(uint256) {
+        return _logicFunctions.retrieveFunderVotes(funder, submissionHash);
+   } 
 
    /// @notice function to retrieve all the platformAdmins
    function getAllPlatformAdmins() public view returns(address[] memory) {
