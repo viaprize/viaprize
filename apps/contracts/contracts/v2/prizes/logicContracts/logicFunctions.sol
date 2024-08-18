@@ -32,7 +32,7 @@ contract LogicContract is Ownable {
     IERC20Permit public immutable _usdc;
 
     using SafeMath for uint256;
-    using ErrorLibrary for *;
+    using ErrorAndEventsLibrary for *;
 
     constructor(address initialOwner, uint8 _proposerFee, uint8 _platformFee, address _usdcAddress) Ownable(initialOwner) {
         proposerFee = _proposerFee;
@@ -83,14 +83,14 @@ contract LogicContract is Ownable {
             uint256 transferable_amount = cryptoFunderAmount[cryptoFunders[i]];
             cryptoFunderAmount[funder] = 0;
             _usdc.transfer(funder, transferable_amount);
-            emit ErrorLibrary.cryptoFunderRefunded(funder, transferable_amount, true);
+            emit ErrorAndEventsLibrary.cryptoFunderRefunded(funder, transferable_amount, true);
         }
         for(uint64 i=0; i<fiatFunders.length; i++) {
             address funder = fiatFunders[i];
             uint256 transferable_amount = fiatFunderAmount[funder];
             fiatFunderAmount[funder] = 0;
             _usdc.transfer(platformAddress, transferable_amount);
-            emit ErrorLibrary.fiatFunderRefund(funder, transferable_amount, true);
+            emit ErrorAndEventsLibrary.fiatFunderRefund(funder, transferable_amount, true);
         }
     }
 

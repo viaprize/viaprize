@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-library ErrorLibrary {
+library ErrorAndEventsLibrary {
 
     error NotEnoughFunds();
     error NotActive();
@@ -45,16 +45,19 @@ library ErrorLibrary {
         TOKEN
     }
 
-    event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
+    
     event CampaignCreated(address indexed proposer, address indexed contractAddress);
-    event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
     event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, bool _isFiat, uint256 amount);
-    event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
-    event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
-    event cryptoFunderRefunded(address indexed _address, uint256 _amount, bool refunded);
     event SubmissionStarted(uint256 indexed startedAt, uint256 indexed Deadline);
+    event SubmissionCreated(address indexed contestant, bytes32 indexed submissionHash);
+    event SubmissionperiodChanged(uint256 indexed changedAt, uint256 increasedBy, uint256 indexed Deadline);
     event SubmissionEnded(uint256 indexed endedAt);
     event VotingStarted(uint256 indexed startedAt, uint256 indexed Deadline);
+    event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
+    event VotingperiodChanged(uint256 indexed changedAt, uint256 increasedBy, uint256 indexed Deadline);
     event VotingEnded(uint256 indexed endedAt);
+    event fiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
+    event cryptoFunderRefunded(address indexed _address, uint256 _amount, bool refunded);
+    event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
     event DisputeEnded(uint256 indexed endedAt);
 }
