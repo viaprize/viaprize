@@ -3,6 +3,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BlockchainModule } from 'src/blockchain/blockchain.module';
 import { MailModule } from 'src/mail/mail.module';
+import { PriceService } from 'src/price/price.service';
 import { UsersModule } from 'src/users/users.module';
 import { WalletModule } from 'src/wallet/wallet.module';
 import { PrizeProposals } from './entities/prize-proposals.entity';
@@ -36,6 +37,7 @@ import { SubmissionService } from './services/submissions.service';
     SubmissionService,
     PrizeProposalsService,
     PrizeCommentService,
+    PriceService,
   ],
 })
 export class PrizesModule {}

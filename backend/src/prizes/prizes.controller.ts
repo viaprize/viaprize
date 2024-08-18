@@ -19,6 +19,7 @@ import { addMinutes, differenceInSeconds } from 'date-fns';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
+import { PriceService } from 'src/price/price.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
@@ -35,6 +36,8 @@ import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreateExtraDonationPrizeDataDto } from './dto/create-extra-donation.dto';
+import { CreateExtraPrizeDto } from './dto/create-extra-prize.dto';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
@@ -45,6 +48,8 @@ import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
 import { PrizesComments } from './entities/prizes-comments.entity';
 import { Submission } from './entities/submission.entity';
+import { ExtraDonationPrizeDataService } from './services/extra-donation-prize-data.service';
+import { ExtraPrizeDataService } from './services/extra-prize.service';
 import { PrizeCommentService } from './services/prize-comment.service';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 import { PrizesService } from './services/prizes.service';
@@ -78,6 +83,9 @@ export class PrizesController {
     private readonly userService: UsersService,
     private readonly prizeCommentsService: PrizeCommentService,
     private readonly walletService: WalletService,
+    private readonly extraPrizeService: ExtraPrizeDataService,
+    private readonly extraPrizeDonationService: ExtraDonationPrizeDataService,
+    private readonly priceService: PriceService
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -951,6 +959,52 @@ export class PrizesController {
     return {
       slug,
     };
+  }
+
+  @Post('/extra_data/:prize_id')
+  async createExtraData(
+    @TypedParam('prize_id') prizeId: string,
+    @Body() body: CreateExtraPrizeDto,
+  ): Promise<Http200Response> {
+    try {
+      await this.extraPrizeService.createFund(body);
+      return {
+        message: `Extra prize proposal with id ${prizeId} has been created`,
+      };
+    } catch (e) {
+      console.error(e);
+      throw new HttpException(`Error creating extra prize ${e.message}`, 400);
+    }
+  }
+
+  @Get('/extra_data/:prize_id')
+  async getExtraData(
+    @TypedParam('prize_id') prizeId: string,
+  ): Promise<number> {
+    const extraPrize = await this.extraPrizeService.getFundByExternalId(prizeId);
+    const btcToUsd = (await this.priceService.getPrice("bitcoin"))["bitcoin"].usd;
+    const ethToUsd = (await this.priceService.getPrice("ethereum"))["ethereum"].usd;
+    const solToUsd = (await this.priceService.getPrice("solana"))["solana"].usd;
+
+    return extraPrize.fundsUsd + (extraPrize.fundsInBtc * btcToUsd) +( extraPrize.fundsInEth * ethToUsd )+( extraPrize.fundsInSol * solToUsd);
+  }
+
+
+
+  @Post('/extra_data/donation/:prize_id')
+  async createExtraDonationData(
+    @TypedParam('prize_id') prizeId: string,
+    @Body() body: CreateExtraDonationPrizeDataDto,
+  ): Promise<Http200Response> {
+    try {
+      await this.extraPrizeDonationService.createDonation(body);
+      return {
+        message: `Extra prize proposal with id ${prizeId} has been created`,
+      };
+    } catch (e) {
+      console.error(e);
+      throw new HttpException(`Error creating extra prize ${e.message}`, 400);
+    }
   }
 
   @Get('/address/:id')
