@@ -199,4 +199,20 @@ export class UsersService {
     });
     return !!user;
   }
+
+  async emailExists(
+    email: string,
+  ): Promise<{ exists: boolean; walletAddress?: string }> {
+    const user = await this.userRepository.findOne({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!user) {
+      return { exists: false };
+    }
+
+    return { exists: true, walletAddress: user.walletAddress };
+  }
 }

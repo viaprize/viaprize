@@ -3653,6 +3653,67 @@
         "x-nestia-method": "GET"
       }
     },
+    "/users/exists/email/{email}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The email to check.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The email exist object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailExistsResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Endpoint for checking if a user with the specified email exists",
+        "description": "Endpoint for checking if a user with the specified email exists.",
+        "x-nestia-namespace": "users.exists.email.emailExists",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "email",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "The email to check.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "The email exist object.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
     "/users/username/{username}/submissions": {
       "get": {
         "tags": [],
@@ -7387,6 +7448,27 @@
           }
         },
         "nullable": false,
+        "x-typia-jsDocTags": []
+      },
+      "EmailExistsResponse": {
+        "type": "object",
+        "properties": {
+          "exists": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "walletAddress": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "exists"
+        ],
+        "description": "The Users controller is responsible for handling requests from the client related to user data.\nThis includes creating a new user, getting a user by ID, and getting a user by username.",
         "x-typia-jsDocTags": []
       },
       "WalletResponse": {
