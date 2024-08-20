@@ -85,7 +85,7 @@ export class PrizesController {
     private readonly walletService: WalletService,
     private readonly extraPrizeService: ExtraPrizeDataService,
     private readonly extraPrizeDonationService: ExtraDonationPrizeDataService,
-    private readonly priceService: PriceService
+    private readonly priceService: PriceService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -978,18 +978,23 @@ export class PrizesController {
   }
 
   @Get('/extra_data/:prize_id')
-  async getExtraData(
-    @TypedParam('prize_id') prizeId: string,
-  ): Promise<number> {
-    const extraPrize = await this.extraPrizeService.getFundByExternalId(prizeId);
-    const btcToUsd = (await this.priceService.getPrice("bitcoin"))["bitcoin"].usd;
-    const ethToUsd = (await this.priceService.getPrice("ethereum"))["ethereum"].usd;
-    const solToUsd = (await this.priceService.getPrice("solana"))["solana"].usd;
+  async getExtraData(@TypedParam('prize_id') prizeId: string): Promise<number> {
+    const extraPrize = await this.extraPrizeService.getFundByExternalId(
+      prizeId,
+    );
+    const btcToUsd = (await this.priceService.getPrice('bitcoin'))['bitcoin']
+      .usd;
+    const ethToUsd = (await this.priceService.getPrice('ethereum'))['ethereum']
+      .usd;
+    const solToUsd = (await this.priceService.getPrice('solana'))['solana'].usd;
 
-    return extraPrize.fundsUsd + (extraPrize.fundsInBtc * btcToUsd) +( extraPrize.fundsInEth * ethToUsd )+( extraPrize.fundsInSol * solToUsd);
+    return (
+      extraPrize.fundsUsd +
+      extraPrize.fundsInBtc * btcToUsd +
+      extraPrize.fundsInEth * ethToUsd +
+      extraPrize.fundsInSol * solToUsd
+    );
   }
-
-
 
   @Post('/extra_data/donation/:prize_id')
   async createExtraDonationData(

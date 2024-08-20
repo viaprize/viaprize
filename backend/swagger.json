@@ -1875,6 +1875,46 @@
         "x-nestia-method": "GET"
       }
     },
+    "/price/usd_to_sol": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "price.usd_to_sol.usd_to_sol",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/price/usd_to_btc": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "price.usd_to_btc.usd_to_btc",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/prizes": {
       "post": {
         "tags": [],
@@ -3325,6 +3365,122 @@
           }
         ],
         "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/extra_data/{prize_id}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExtraPrizeDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.extra_data.createExtraData",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "number"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.extra_data.getExtraData",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/extra_data/donation/{prize_id}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExtraDonationPrizeDataDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "prizes.extra_data.donation.createExtraDonationData",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
       }
     },
     "/prizes/address/{id}": {
@@ -7136,6 +7292,85 @@
           "slug"
         ],
         "description": "From T, pick a set of properties whose keys are in the union K",
+        "x-typia-jsDocTags": []
+      },
+      "CreateExtraPrizeDto": {
+        "type": "object",
+        "properties": {
+          "fundsUsd": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "fundsInBtc": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "fundsInEth": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "fundsInSol": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "externalId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "fundsUsd",
+          "fundsInBtc",
+          "fundsInEth",
+          "fundsInSol",
+          "externalId"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "CreateExtraDonationPrizeDataDto": {
+        "type": "object",
+        "properties": {
+          "donatedAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "donor": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "value": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "valueIn": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "externalId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "donatedAt",
+          "donor",
+          "value",
+          "valueIn",
+          "externalId"
+        ],
         "x-typia-jsDocTags": []
       },
       "CreateUser": {
