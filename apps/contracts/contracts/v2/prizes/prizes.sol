@@ -6,12 +6,12 @@ import "./logicContracts/SubmissionAVLTree.sol";
 import "./helperLibraries/hashLibrary.sol";
 import "./helperLibraries/errorEventsLibrary.sol";
 import "../../helperContracts/safemath.sol";
-import "../../helperContracts/ierc20_permit.sol";  
-import "../../helperContracts/ierc20_weth.sol";
-import "../../helperContracts/nonReentrant.sol";                                       
+import "../../helperContracts/ierc20_permit.sol";                                         
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "../../helperContracts/ierc20_weth.sol";
+import "../../helperContracts/nonReentrant.sol";
 
 contract PrizeV2 is ReentrancyGuard {
 
@@ -26,7 +26,7 @@ contract PrizeV2 is ReentrancyGuard {
     uint256 private submissionTime;
     uint256 private totalVotes;
     uint256 private nonce;
-    uint8 private proposerFee;
+    uint8 private visionaryFee;
     uint8 private platformFee;
     uint8 public constant  VERSION = 201;
     /// @notice bool to check if rewards have been distributed with end_voting_period
@@ -36,14 +36,14 @@ contract PrizeV2 is ReentrancyGuard {
     bool public submissionPeriod = false;
     bool public isActive = false;
     /// @notice  person who proposed the prize;
-    address public proposer;
+    address public visionary;
     /// @notice array of funders
     address[] private cryptoFunders;
     address[] private fiatFunders;
     address[] private platformAdmins;
     address[] private refundRequestedFunders;
-    /// @notice  this will be a mapping of the addresses of the proposers to a boolean value of true or false
-    mapping(address => bool) public isProposer;
+    
+    mapping(address => bool) public isVisionary;
     mapping(address => bool) public isCryptoFunder;
     mapping(address => bool) public isFiatFunder;
     mapping(address => bool) public isRefundRequestedAddress;
@@ -90,16 +90,16 @@ contract PrizeV2 is ReentrancyGuard {
 
     bytes32 public constant REFUND_SUBMISSION_HASH = keccak256(abi.encodePacked("REFUND"));
 
-    constructor(address _proposer, address[] memory _platformAdmins, uint8 _platFormFee, uint8 _proposerFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
+    constructor(address _visionary, address[] memory _platformAdmins, uint8 _platFormFee, uint8 _visionaryFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
 
-        proposer = _proposer;
-        isProposer[proposer] = true;
+        visionary = _visionary;
+        isVisionary[visionary] = true;
         for (uint i = 0; i < _platformAdmins.length; i++) {
             platformAdmins.push(_platformAdmins[i]);
             isPlatformAdmin[_platformAdmins[i]] = true;
         }
         _submissionTree = SubmissionAVLTree(SubmissionLibrary.deploySubmission(address(this)));
-        proposerFee = _proposerFee;
+        visionaryFee = _visionaryFee;
         platformFee = _platFormFee;
         _usdc = IERC20Permit(_usdcAddress);
         _usdcBridged = IERC20Permit(_usdcBridgedAddress);
@@ -111,7 +111,7 @@ contract PrizeV2 is ReentrancyGuard {
         _weth = IWETH(_wethToken);
         _submissionTree.addSubmission(platformAdmins[0], REFUND_SUBMISSION_HASH, "REFUND");
         
-        emit ErrorAndEventsLibrary.CampaignCreated(proposer, address(this));
+        emit ErrorAndEventsLibrary.CampaignCreated(visionary, address(this));
     }
 
     function _onlyActive() private view {
@@ -132,12 +132,12 @@ contract PrizeV2 is ReentrancyGuard {
         _;
     }
 
-    function _onlyPlatformAdminOrProposer() private view {
-        if(!(isPlatformAdmin[msg.sender] || isProposer[msg.sender])) revert ErrorAndEventsLibrary.NPP();
+    function _onlyPlatformAdminOrVisionary() private view {
+        if(!(isPlatformAdmin[msg.sender] || isVisionary[msg.sender])) revert ErrorAndEventsLibrary.NPP();
     }
 
-    modifier onlyPlatformAdminOrProposer() {
-        _onlyPlatformAdminOrProposer();
+    modifier onlyPlatformAdminOrVisionary() {
+        _onlyPlatformAdminOrVisionary();
         _;
     }
 
@@ -151,7 +151,7 @@ contract PrizeV2 is ReentrancyGuard {
     }
 
     /// @notice create a function to start the submission period
-    function startSubmissionPeriod(uint256 _submissionTime) public  onlyPlatformAdminOrProposer onlyActive {
+    function startSubmissionPeriod(uint256 _submissionTime) public  onlyPlatformAdminOrVisionary onlyActive {
         submissionTime = block.timestamp + _submissionTime * 1 minutes;
         submissionPeriod = true;
         emit ErrorAndEventsLibrary.SubmissionStarted(block.timestamp, submissionTime);
@@ -184,7 +184,7 @@ contract PrizeV2 is ReentrancyGuard {
     }
 
     /// @notice start the voting period 
-    function startVotingPeriod(uint256 _votingTime) public  onlyPlatformAdminOrProposer onlyActive {
+    function startVotingPeriod(uint256 _votingTime) public  onlyPlatformAdminOrVisionary onlyActive {
         if(block.timestamp < submissionTime) revert ErrorAndEventsLibrary.SubmissionPeriodActive();
         votingTime = block.timestamp + _votingTime * 1  minutes;
         votingPeriod = true;
@@ -207,7 +207,7 @@ contract PrizeV2 is ReentrancyGuard {
         if(votingTime == 0) revert ErrorAndEventsLibrary.VotingPeriodNotActive();
         votingTime = 0;
         votingPeriod = false;
-        disputePeriod = block.timestamp + 2 days;
+        disputePeriod = block.timestamp + 5 seconds;
         emit ErrorAndEventsLibrary.VotingEnded(block.timestamp);
     }
 
@@ -274,10 +274,10 @@ contract PrizeV2 is ReentrancyGuard {
             totalRewards = 0;
             if(totalFunds > 0) {
                 usdcPlatformReward = (totalFunds * platformFee) / 100;
-                usdcProposerReward = (totalFunds * proposerFee) / 100;
+                usdcProposerReward = (totalFunds * visionaryFee) / 100;
                 totalFunds = totalFunds.sub(usdcPlatformReward.add(usdcProposerReward));
                 _usdc.transfer(platformAddress, usdcPlatformReward);
-                _usdc.transfer(proposer, usdcProposerReward);
+                _usdc.transfer(visionary, usdcProposerReward);
             }
             distributed = true;
         }
@@ -324,9 +324,9 @@ contract PrizeV2 is ReentrancyGuard {
             funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
             fiatAmountToVote = 0;
         }
-        uint256 amountToSubmission = (_amount * (100 - platformFee - proposerFee)) / 100;
+        uint256 amountToSubmission = (_amount * (100 - platformFee - visionaryFee)) / 100;
         _submissionTree.addUsdcVotes(_submissionHash, amountToSubmission);
-        _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-proposerFee))/100);
+        _submissionTree.updateFunderVotes(_submissionHash, sender, (funderVotes[sender][_submissionHash] * (100-platformFee-visionaryFee))/100);
         
         totalVotes = totalVotes.add(amountToSubmission);
         SubmissionAVLTree.SubmissionInfo memory submission = _submissionTree.getSubmission(_submissionHash);
@@ -381,7 +381,7 @@ contract PrizeV2 is ReentrancyGuard {
     }
 
     function _changeVote(address _sender,bytes32 _previous_submission_hash,bytes32 _new_submission_hash,uint256 amount) private {
-        uint256 amountToSubmission = (amount * (100 - platformFee - proposerFee)) / 100;
+        uint256 amountToSubmission = (amount * (100 - platformFee - visionaryFee)) / 100;
         if(_new_submission_hash == REFUND_SUBMISSION_HASH && !isRefundRequestedAddress[_sender]){
             refundRequestedFunders.push(_sender);
             isRefundRequestedAddress[_sender] = true;
@@ -390,8 +390,8 @@ contract PrizeV2 is ReentrancyGuard {
         _submissionTree.addUsdcVotes(_new_submission_hash, amountToSubmission);
         funderVotes[_sender][_previous_submission_hash] -= amount;
         funderVotes[_sender][_new_submission_hash] += amount;
-        _submissionTree.updateFunderVotes(_previous_submission_hash, _sender, (funderVotes[_sender][_previous_submission_hash]*(100-platformFee-proposerFee))/100);
-        _submissionTree.updateFunderVotes(_new_submission_hash, _sender, (funderVotes[_sender][_new_submission_hash]*(100-platformFee - proposerFee))/100);
+        _submissionTree.updateFunderVotes(_previous_submission_hash, _sender, (funderVotes[_sender][_previous_submission_hash]*(100-platformFee-visionaryFee))/100);
+        _submissionTree.updateFunderVotes(_new_submission_hash, _sender, (funderVotes[_sender][_new_submission_hash]*(100-platformFee - visionaryFee))/100);
         if(_previous_submission_hash == REFUND_SUBMISSION_HASH && _submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,_sender) == 0) {
                 isRefundRequestedAddress[_sender] = false;
         }
@@ -426,7 +426,7 @@ contract PrizeV2 is ReentrancyGuard {
         individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
         individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
         totalFunds = totalFunds.add(donation);
-        totalRewards = totalRewards.add((donation.mul(100 - (platformFee + proposerFee))).div(100));
+        totalRewards = totalRewards.add((donation.mul(100 - (platformFee + visionaryFee))).div(100));
     }
 
     function _tokenFundLogic(bool _fiatPayment, address sender, uint256 _amount) private {
@@ -437,7 +437,7 @@ contract PrizeV2 is ReentrancyGuard {
             }
             fiatFunderAmount[sender] = fiatFunderAmount[sender].add(_amount);
             totalFunderAmount[sender] = totalFunderAmount[sender].add(_amount);
-            totalRewards = totalRewards.add((_amount.mul(100 - (platformFee + proposerFee))).div(100));
+            totalRewards = totalRewards.add((_amount.mul(100 - (platformFee + visionaryFee))).div(100));
             individualFiatPercentage[sender] = (fiatFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
             individualCryptoPercentage[sender] = (cryptoFunderAmount[sender].mul(100)).div(totalFunderAmount[sender]);
             totalFunds = totalFunds.add(_amount);
@@ -467,7 +467,7 @@ contract PrizeV2 is ReentrancyGuard {
     function _swapRouterLogic(address sender, uint256 _amountUsdc, address swapFrom, uint256 poolFee, uint256 _amountOutMinimum ) private {
         ISwapRouter.ExactInputParams memory params =
             ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(address(_usdcBridged), poolFee, address(_usdc)),
+                path: abi.encodePacked(swapFrom, poolFee, address(_usdc)),
                 recipient: address(this),
                 deadline: block.timestamp,
                 amountIn: _amountUsdc,
@@ -478,15 +478,6 @@ contract PrizeV2 is ReentrancyGuard {
         emit ErrorAndEventsLibrary.Donation(sender, swapFrom, ErrorAndEventsLibrary.DonationType.PAYMENT, ErrorAndEventsLibrary.TokenType.TOKEN, false, _donation);
     }
 
-    function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive nonReentrant payable {
-        if(_amountUsdc <= 0) revert ErrorAndEventsLibrary.NotEnoughFunds();
-        address sender = msg.sender; 
-        _usdcBridged.transferFrom(sender,address(this),_amountUsdc);
-        _usdcBridged.approve(address(swapRouter), _amountUsdc);
-        uint256 _amountOutMinimum = _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100);
-        _swapRouterLogic(sender, _amountUsdc, address(_usdcBridged), bridgedUsdcPool.fee(), _amountOutMinimum );
-    }
-
     /// @notice function to donate eth into the campaign
     function addEthFunds(uint256 _amountOutMinimum) public onlyActive nonReentrant payable  {
         if(msg.value <= 0) revert ErrorAndEventsLibrary.NotEnoughFunds();
@@ -494,7 +485,16 @@ contract PrizeV2 is ReentrancyGuard {
         address sender = msg.sender;
         _weth.deposit{value:msg.value}();
         _weth.approve(address(swapRouter), eth_donation);
-        _swapRouterLogic(sender, eth_donation, address(_usdcBridged), bridgedUsdcPool.fee(), _amountOutMinimum );
+        _swapRouterLogic(sender, eth_donation, address(_weth), ethUsdcPool.fee(), _amountOutMinimum );
+    }
+
+    function addBridgedUsdcFunds(uint256 _amountUsdc) public onlyActive nonReentrant payable {
+        if(_amountUsdc <= 0) revert ErrorAndEventsLibrary.NotEnoughFunds();
+        address sender = msg.sender; 
+        _usdcBridged.transferFrom(sender,address(this),_amountUsdc);
+        _usdcBridged.approve(address(swapRouter), _amountUsdc);
+        uint256 _amountOutMinimum = _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100);
+        _swapRouterLogic(sender, _amountUsdc, address(_usdcBridged), bridgedUsdcPool.fee(), _amountOutMinimum );
     }
 
     /// @notice external function to receive eth funds
@@ -510,7 +510,7 @@ contract PrizeV2 is ReentrancyGuard {
         if(transferable_usdc_amount > 0) {
             for(uint256 j=0; j<cryptoFunders.length; j++) {
                 if(cryptoFunderAmount[cryptoFunders[j]] > 0){
-                    uint256 individual_unused_votes = cryptoFunderAmount[cryptoFunders[j]].mul(100 - platformFee - proposerFee).div(100);
+                    uint256 individual_unused_votes = cryptoFunderAmount[cryptoFunders[j]].mul(100 - platformFee - visionaryFee).div(100);
                     uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(10000).div(total_unused_usdc_votes));
                     uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(10000));
                     if(individual_transferable_usdc_amount > 0) {
@@ -521,7 +521,7 @@ contract PrizeV2 is ReentrancyGuard {
             }
             for(uint256 j=0; j<fiatFunders.length; j++) {
                 if(fiatFunderAmount[fiatFunders[j]] > 0) {
-                    uint256 individual_unused_votes = fiatFunderAmount[fiatFunders[j]].mul(100 - platformFee - proposerFee).div(100);
+                    uint256 individual_unused_votes = fiatFunderAmount[fiatFunders[j]].mul(100 - platformFee - visionaryFee).div(100);
                     uint256 individual_refund_usdc_percentage =   (individual_unused_votes.mul(10000).div(total_unused_usdc_votes));
                     uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(10000));
                     if(individual_transferable_usdc_amount > 0) {
