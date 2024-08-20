@@ -960,7 +960,15 @@ export class PrizesController {
       slug,
     };
   }
-
+  /**
+   * Create extra data for a prize
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} prizeId - The ID of the prize
+   * @param {CreateExtraPrizeDto} body - The data to be used for creating extra prize
+   * @returns {Promise<Http200Response>}
+   * @throws {HttpException} - Throws an error if creating extra prize fails
+   */
   @Post('/extra_data/:prize_id')
   async createExtraData(
     @TypedParam('prize_id') prizeId: string,
@@ -977,6 +985,13 @@ export class PrizesController {
     }
   }
 
+  /**
+   * Get extra data for a prize
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} prizeId - The ID of the prize
+   * @returns {Promise<number>} - The total value of the extra prize in USD
+   */
   @Get('/extra_data/:prize_id')
   async getExtraData(@TypedParam('prize_id') prizeId: string): Promise<number> {
     const extraPrize = await this.extraPrizeService.getFundByExternalId(
@@ -995,7 +1010,15 @@ export class PrizesController {
       extraPrize.fundsInSol * solToUsd
     );
   }
-
+  /**
+   * Create extra donation data for a prize
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} prizeId - The ID of the prize
+   * @param {CreateExtraDonationPrizeDataDto} body - The data to be used for creating extra donation
+   * @returns {Promise<Http200Response>}
+   * @throws {HttpException} - Throws an error if creating extra donation fails
+   */
   @Post('/extra_data/donation/:prize_id')
   async createExtraDonationData(
     @TypedParam('prize_id') prizeId: string,

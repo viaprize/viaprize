@@ -3377,11 +3377,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "",
+            "description": "- The ID of the prize",
             "required": true
           }
         ],
         "requestBody": {
+          "description": "- The data to be used for creating extra prize",
           "content": {
             "application/json": {
               "schema": {
@@ -3405,8 +3406,76 @@
             "x-nestia-encrypted": false
           }
         },
+        "description": "Create extra data for a prize",
         "x-nestia-namespace": "prizes.extra_data.createExtraData",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "prizeId",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The ID of the prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The data to be used for creating extra prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          },
+          {
+            "name": "throws",
+            "text": [
+              {
+                "text": "{HttpException}",
+                "kind": "text"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- Throws an error if creating extra prize fails",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       },
       "get": {
@@ -3418,13 +3487,13 @@
             "schema": {
               "type": "string"
             },
-            "description": "",
+            "description": "- The ID of the prize",
             "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "- The total value of the extra prize in USD",
             "content": {
               "application/json": {
                 "schema": {
@@ -3435,8 +3504,48 @@
             "x-nestia-encrypted": false
           }
         },
+        "description": "Get extra data for a prize",
         "x-nestia-namespace": "prizes.extra_data.getExtraData",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "prizeId",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The ID of the prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "- The total value of the extra prize in USD",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "GET"
       }
     },
@@ -3450,11 +3559,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "",
+            "description": "- The ID of the prize",
             "required": true
           }
         ],
         "requestBody": {
+          "description": "- The data to be used for creating extra donation",
           "content": {
             "application/json": {
               "schema": {
@@ -3478,8 +3588,76 @@
             "x-nestia-encrypted": false
           }
         },
+        "description": "Create extra donation data for a prize",
         "x-nestia-namespace": "prizes.extra_data.donation.createExtraDonationData",
-        "x-nestia-jsDocTags": [],
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "prizeId",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The ID of the prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The data to be used for creating extra donation",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          },
+          {
+            "name": "throws",
+            "text": [
+              {
+                "text": "{HttpException}",
+                "kind": "text"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- Throws an error if creating extra donation fails",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
         "x-nestia-method": "POST"
       }
     },
