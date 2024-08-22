@@ -17,10 +17,9 @@ function ProfileMenu() {
       toast.promise(logoutUser(), {
         loading: 'Logging out',
         success: 'Logged out',
-        error: 'Error logging out',
       });
     } catch {
-      toast.error('Error logging out');
+      console.error('Error logging out');
     }
   };
 

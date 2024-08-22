@@ -83,7 +83,6 @@ const [walletAddress, setWalletAddress] = useState('');
     setLogoutLoading(true);
     await logoutUser()
       .catch((error) => {
-        console.log('error logging out');
         console.error(error);
       })
       .finally(() => {
