@@ -20,7 +20,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, type ReactNode } from 'react';
 import { base } from 'viem/chains';
-import { useNetwork } from 'wagmi';
+import { useNetwork, useWalletClient } from 'wagmi';
 import useAppUser from '../hooks/useAppUser';
 import useIsMounted from '../hooks/useIsMounted';
 import Footer from './footer';
@@ -32,20 +32,20 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
   const { chain: currentChain } = useNetwork();
   const [opened, { toggle }] = useDisclosure();
+  const { data: walletClient } = useWalletClient();
   const { wallets } = useWallets();
   const [openedChainModal, { open: openChainModal, close: closeChainModal }] =
     useDisclosure(false);
   const computedColorScheme = useComputedColorScheme('light');
   const isMounted = useIsMounted();
-  const { ready } = usePrivy();
-  const { appUser, logoutUser,loginUser } = useAppUser();
+  const { ready, user } = usePrivy();
+  const { appUser, logoutUser, loginUser, loading } = useAppUser();
   useEffect(() => {
     if (currentChain && currentChain?.id !== base.id && ready && appUser) {
       openChainModal();
     }
   }, [currentChain, isMounted, ready, appUser]);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-
 
   const switchToBase = async () => {
     console.log('hsjlflsjflsdklfjsdlkfjlsdj');
@@ -57,13 +57,20 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   };
 
   const { wallet, ready: walletReady } = usePrivyWagmi();
+
   useDidUpdate(() => {
-    if (!wallet && appUser && ready && walletReady) {
+    if (
+      (!walletClient || !wallet || !user?.wallet) &&
+      appUser &&
+      ready &&
+      walletReady &&
+      !loading
+    ) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       logoutUser();
     }
     console.log('walletjjjjjdksfjdskfslfj', wallet);
-  }, [walletReady, appUser, wallet]);
+  }, [walletReady, appUser, wallet, walletClient, user, loading]);
 
   return (
     <AppShell

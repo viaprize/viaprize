@@ -46,6 +46,7 @@ export default function useAppUser() {
   const { login } = useLogin({
     async onComplete(loginUser, isNewUser, wasAlreadyAuthenticated) {
       const token = await getAccessToken();
+
       await refreshUser().catch((error) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         console.log({ error }, 'errror');
@@ -66,7 +67,7 @@ export default function useAppUser() {
           toast('Wallet address not found, please try again');
           return;
         }
-        wallets.forEach((wa) =>  () => {
+        wallets.forEach((wa) => () => {
           setActiveWallet(wa);
         });
         console.log({ user });
