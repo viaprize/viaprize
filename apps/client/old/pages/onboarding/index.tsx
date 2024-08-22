@@ -7,7 +7,6 @@ import {
   Loader,
   Text,
   TextInput,
-  Textarea,
 } from '@mantine/core';
 
 import useAppUser from '@/components/hooks/useAppUser';
@@ -89,7 +88,6 @@ export default function Details() {
     setLogoutLoading(true);
     await logoutUser()
       .catch((error) => {
-        console.log('error logging out');
         console.error(error);
       })
       .finally(() => {
