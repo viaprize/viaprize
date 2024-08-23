@@ -223,7 +223,7 @@ function Prize() {
         <DateTimePicker
           label="Submissions end and judging begins"
           placeholder="Make sure its above the voting time and date"
-          minDate={addDays(new Date(), 3)}
+          minDate={startSubmisionDate}
           value={startVotingDate}
           onChange={(da) => {
             if (!da) return;
@@ -240,7 +240,7 @@ function Prize() {
         <DateTimePicker
           label="End judging"
           placeholder="Make sure its above the voting time and date"
-          minDate={addDays(new Date(), 4)}
+          minDate={startVotingDate}
           value={votingDateTime}
           onChange={(da) => {
             if (!da) return;
