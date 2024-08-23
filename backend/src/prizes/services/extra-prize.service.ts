@@ -31,13 +31,14 @@ export class ExtraPrizeDataService {
   }
 
   async updateFund(prize: UpdateExtraPrizeDto): Promise<ExtraPrize> {
-    const prizeObject = this.prizeRepository.create({
-      externalId: prize.externalId,
-      fundsInBtc: prize.fundsInBtc,
-      fundsInEth: prize.fundsInEth,
-      fundsInSol: prize.fundsInSol,
-      fundsUsd: prize.fundsUsd,
+    const oldPrize = await this.getFundByExternalId(prize.externalId);
+    const newPrize = await this.getFundByExternalId(prize.externalId);
+    await this.prizeRepository.update(oldPrize.id, {
+      fundsInBtc: oldPrize.fundsInBtc + (prize.fundsInBtc ?? 0),
+      fundsInEth: oldPrize.fundsInEth + (prize.fundsInEth ?? 0),
+      fundsInSol: oldPrize.fundsInSol + (prize.fundsInSol ?? 0),
+      fundsUsd: oldPrize.fundsUsd + (prize.fundsUsd ?? 0),
     });
-    return await this.prizeRepository.save(prizeObject);
+    return newPrize;
   }
 }
