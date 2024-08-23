@@ -37,12 +37,12 @@ import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreateExtraDonationPrizeDataDto } from './dto/create-extra-donation.dto';
-import { UpdateExtraPrizeDto } from './dto/create-extra-prize.dto';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { FetchSubmissionDto } from './dto/submission.dto';
+import { UpdateExtraPrizeDto } from './dto/update-extra-prize.dto';
 import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
 import { ExtraDonationPrizeData } from './entities/extra-donation-prize-data.entity';
 import { PrizeProposals } from './entities/prize-proposals.entity';
@@ -979,8 +979,9 @@ export class PrizesController {
     @TypedParam('prize_id') prizeId: string,
     @Body() body: UpdateExtraPrizeDto,
   ): Promise<Http200Response> {
+    console.log({ body });
     try {
-      await this.extraPrizeService.updateFund(body);
+      await this.extraPrizeService.updateFund(body, prizeId);
       return {
         message: `Extra prize proposal with id ${prizeId} has been created`,
       };
@@ -1011,10 +1012,10 @@ export class PrizesController {
     const solToUsd = (await this.priceService.getPrice('solana'))['solana'].usd;
 
     const totalFunds =
-      extraPrize.fundsUsd +
-      extraPrize.fundsInBtc * btcToUsd +
-      extraPrize.fundsInEth * ethToUsd +
-      extraPrize.fundsInSol * solToUsd;
+      parseFloat(extraPrize.fundsUsd.toString()) +
+      parseFloat(extraPrize.fundsInBtc.toString()) * btcToUsd +
+      parseFloat(extraPrize.fundsInEth.toString()) * ethToUsd +
+      parseFloat(extraPrize.fundsInSol.toString()) * solToUsd;
     return {
       totalFundsInUsd: totalFunds,
     };
@@ -1055,6 +1056,7 @@ export class PrizesController {
     @TypedParam('prize_id') prizeId: string,
     @Body() body: CreateExtraDonationPrizeDataDto,
   ): Promise<Http200Response> {
+    console.log('hiiiiiiiiiiiiiiiiiii');
     try {
       await this.extraPrizeDonationService.createDonation(body);
       return {
