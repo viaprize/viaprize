@@ -1,10 +1,6 @@
-import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateExtraDonationPrizeDataDto {
-  @IsDate()
-  @IsNotEmpty()
-  donatedAt: Date;
-
   @IsString()
   @IsNotEmpty()
   donor: string;

@@ -562,11 +562,11 @@ export interface PickPrizeslug {
   slug: string;
 }
 
-export interface CreateExtraPrizeDto {
-  fundsUsd: number;
-  fundsInBtc: number;
-  fundsInEth: number;
-  fundsInSol: number;
+export interface UpdateExtraPrizeDto {
+  fundsUsd?: string;
+  fundsInBtc?: string;
+  fundsInEth?: string;
+  fundsInSol?: string;
   externalId: string;
 }
 
@@ -577,7 +577,7 @@ export interface TotalFunds {
 export interface ExtraDonationPrizeData {
   id: string;
   /** @format date-time */
-  donatedAt: string;
+  donationTime: string;
   donor: string;
   value: number;
   valueIn: string;
@@ -585,8 +585,6 @@ export interface ExtraDonationPrizeData {
 }
 
 export interface CreateExtraDonationPrizeDataDto {
-  /** @format date-time */
-  donatedAt: string;
   donor: string;
   value: number;
   valueIn: string;
@@ -1556,7 +1554,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       prizeId: string;
     };
     export type RequestQuery = {};
-    export type RequestBody = CreateExtraPrizeDto;
+    export type RequestBody = UpdateExtraPrizeDto;
     export type RequestHeaders = {};
     export type ResponseBody = Http200Response;
   }
@@ -3157,7 +3155,7 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
      */
     extraDataCreate: (
       prizeId: string,
-      data: CreateExtraPrizeDto,
+      data: UpdateExtraPrizeDto,
       params: RequestParams = {},
     ) =>
       this.request<Http200Response, any>({

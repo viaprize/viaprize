@@ -1,14 +1,19 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class ExtraDonationPrizeData {
   @PrimaryGeneratedColumn('increment')
   id: string;
-  @Column('timestamptz')
-  donatedAt: Date;
+  @CreateDateColumn()
+  donationTime: Date;
   @Column()
   donor: string;
-  @Column()
+  @Column({ type: 'decimal' })
   value: number;
   @Column()
   valueIn: string;
