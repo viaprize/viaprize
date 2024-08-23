@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UpdateExtraPrizeDto } from '../dto/create-extra-prize.dto';
+import { UpdateExtraPrizeDto } from '../dto/update-extra-prize.dto';
 import { ExtraPrize } from '../entities/extra-prize.entity';
 
 @Injectable()
@@ -30,15 +30,27 @@ export class ExtraPrizeDataService {
     );
   }
 
-  async updateFund(prize: UpdateExtraPrizeDto): Promise<ExtraPrize> {
-    const oldPrize = await this.getFundByExternalId(prize.externalId);
-    const newPrize = await this.getFundByExternalId(prize.externalId);
+  async updateFund(
+    prize: UpdateExtraPrizeDto,
+    externalId: string,
+  ): Promise<ExtraPrize> {
+    const oldPrize = await this.getFundByExternalId(externalId);
+
     await this.prizeRepository.update(oldPrize.id, {
-      fundsInBtc: oldPrize.fundsInBtc + (prize.fundsInBtc ?? 0),
-      fundsInEth: oldPrize.fundsInEth + (prize.fundsInEth ?? 0),
-      fundsInSol: oldPrize.fundsInSol + (prize.fundsInSol ?? 0),
-      fundsUsd: oldPrize.fundsUsd + (prize.fundsUsd ?? 0),
+      fundsInBtc:
+        parseFloat(oldPrize.fundsInBtc.toString()) +
+        parseFloat(prize.fundsInBtc ?? '0'),
+      fundsInEth:
+        parseFloat(oldPrize.fundsInEth.toString()) +
+        parseFloat(prize.fundsInEth ?? '0'),
+      fundsInSol:
+        parseFloat(oldPrize.fundsInSol.toString()) +
+        parseFloat(prize.fundsInSol ?? '0'),
+      fundsUsd:
+        parseFloat(oldPrize.fundsUsd.toString()) +
+        parseFloat(prize.fundsUsd ?? '0'),
     });
+    const newPrize = await this.getFundByExternalId(prize.externalId);
     return newPrize;
   }
 }

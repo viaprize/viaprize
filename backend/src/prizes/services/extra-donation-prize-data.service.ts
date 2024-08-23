@@ -27,6 +27,8 @@ export class ExtraDonationPrizeDataService {
   ): Promise<ExtraDonationPrizeData> {
     const prize = this.prizeRepository.create(prizeDto);
 
+    console.log({ prize });
+
     return await this.prizeRepository.save(prize);
   }
 }

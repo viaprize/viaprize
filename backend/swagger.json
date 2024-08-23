@@ -7579,22 +7579,22 @@
           "fundsUsd": {
             "x-typia-required": false,
             "x-typia-optional": true,
-            "type": "number"
+            "type": "string"
           },
           "fundsInBtc": {
             "x-typia-required": false,
             "x-typia-optional": true,
-            "type": "number"
+            "type": "string"
           },
           "fundsInEth": {
             "x-typia-required": false,
             "x-typia-optional": true,
-            "type": "number"
+            "type": "string"
           },
           "fundsInSol": {
             "x-typia-required": false,
             "x-typia-optional": true,
-            "type": "number"
+            "type": "string"
           },
           "externalId": {
             "x-typia-required": true,

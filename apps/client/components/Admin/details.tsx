@@ -1,5 +1,5 @@
 import { User } from '@/lib/api';
-import { Badge, Card, Flex, Group, Image, Stack } from '@mantine/core';
+import { Badge, Card, Flex, Image, Stack } from '@mantine/core';
 import PrizeFunderCard from '../Prize/prizepage/prizeFunderCard';
 import { TextEditor } from '../richtexteditor/textEditor';
 
@@ -73,6 +73,7 @@ export default function ViewDetails({
         name={user.name}
         email={user.email}
         avatar={user.avatar}
+        amountIn=""
       />
       <div>
         Admin wallets
