@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateExtraPrizeDto } from '../dto/create-extra-prize.dto';
+import { UpdateExtraPrizeDto } from '../dto/create-extra-prize.dto';
 import { ExtraPrize } from '../entities/extra-prize.entity';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class ExtraPrizeDataService {
     );
   }
 
-  async createFund(prize: CreateExtraPrizeDto): Promise<ExtraPrize> {
+  async updateFund(prize: UpdateExtraPrizeDto): Promise<ExtraPrize> {
     const prizeObject = this.prizeRepository.create({
       externalId: prize.externalId,
       fundsInBtc: prize.fundsInBtc,

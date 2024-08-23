@@ -37,7 +37,7 @@ import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreateExtraDonationPrizeDataDto } from './dto/create-extra-donation.dto';
-import { CreateExtraPrizeDto } from './dto/create-extra-prize.dto';
+import { UpdateExtraPrizeDto } from './dto/create-extra-prize.dto';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
@@ -970,17 +970,17 @@ export class PrizesController {
    * @date 9/25/2023 - 5:35:35 AM
    * @async
    * @param {string} prizeId - The ID of the prize
-   * @param {CreateExtraPrizeDto} body - The data to be used for creating extra prize
+   * @param {UpdateExtraPrizeDto} body - The data to be used for creating extra prize
    * @returns {Promise<Http200Response>}
    * @throws {HttpException} - Throws an error if creating extra prize fails
    */
   @Post('/extra_data/:prize_id')
   async createExtraData(
     @TypedParam('prize_id') prizeId: string,
-    @Body() body: CreateExtraPrizeDto,
+    @Body() body: UpdateExtraPrizeDto,
   ): Promise<Http200Response> {
     try {
-      await this.extraPrizeService.createFund(body);
+      await this.extraPrizeService.updateFund(body);
       return {
         message: `Extra prize proposal with id ${prizeId} has been created`,
       };
