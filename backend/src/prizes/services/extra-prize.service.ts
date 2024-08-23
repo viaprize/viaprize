@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateExtraPrizeDto } from '../dto/create-extra-prize.dto';
+import { UpdateExtraPrizeDto } from '../dto/create-extra-prize.dto';
 import { ExtraPrize } from '../entities/extra-prize.entity';
 
 @Injectable()
@@ -30,14 +30,15 @@ export class ExtraPrizeDataService {
     );
   }
 
-  async createFund(prize: CreateExtraPrizeDto): Promise<ExtraPrize> {
-    const prizeObject = this.prizeRepository.create({
-      externalId: prize.externalId,
-      fundsInBtc: prize.fundsInBtc,
-      fundsInEth: prize.fundsInEth,
-      fundsInSol: prize.fundsInSol,
-      fundsUsd: prize.fundsUsd,
+  async updateFund(prize: UpdateExtraPrizeDto): Promise<ExtraPrize> {
+    const oldPrize = await this.getFundByExternalId(prize.externalId);
+    const newPrize = await this.getFundByExternalId(prize.externalId);
+    await this.prizeRepository.update(oldPrize.id, {
+      fundsInBtc: oldPrize.fundsInBtc + (prize.fundsInBtc ?? 0),
+      fundsInEth: oldPrize.fundsInEth + (prize.fundsInEth ?? 0),
+      fundsInSol: oldPrize.fundsInSol + (prize.fundsInSol ?? 0),
+      fundsUsd: oldPrize.fundsUsd + (prize.fundsUsd ?? 0),
     });
-    return await this.prizeRepository.save(prizeObject);
+    return newPrize;
   }
 }

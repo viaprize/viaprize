@@ -3386,7 +3386,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateExtraPrizeDto"
+                "$ref": "#/components/schemas/UpdateExtraPrizeDto"
               }
             }
           },
@@ -3497,7 +3497,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "number"
+                  "$ref": "#/components/schemas/TotalFunds"
                 }
               }
             },
@@ -3549,7 +3549,108 @@
         "x-nestia-method": "GET"
       }
     },
-    "/prizes/extra_data/donation/{prize_id}": {
+    "/prizes/extra_data/donations/{prize_id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "- The ID of the prize",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExtraDonationPrizeData"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "Fetch extra donation data for a prize",
+        "x-nestia-namespace": "prizes.extra_data.donations.getExtraDonationsData",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "prizeId",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The ID of the prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The data to be used for creating extra donation",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          },
+          {
+            "name": "throws",
+            "text": [
+              {
+                "text": "{HttpException}",
+                "kind": "text"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- Throws an error if creating extra donation fails",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      },
       "post": {
         "tags": [],
         "parameters": [
@@ -3589,7 +3690,7 @@
           }
         },
         "description": "Create extra donation data for a prize",
-        "x-nestia-namespace": "prizes.extra_data.donation.createExtraDonationData",
+        "x-nestia-namespace": "prizes.extra_data.donations.createExtraDonationData",
         "x-nestia-jsDocTags": [
           {
             "name": "date",
@@ -7472,27 +7573,27 @@
         "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
-      "CreateExtraPrizeDto": {
+      "UpdateExtraPrizeDto": {
         "type": "object",
         "properties": {
           "fundsUsd": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "fundsInBtc": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "fundsInEth": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "fundsInSol": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
+            "x-typia-required": false,
+            "x-typia-optional": true,
             "type": "number"
           },
           "externalId": {
@@ -7503,10 +7604,67 @@
         },
         "nullable": false,
         "required": [
-          "fundsUsd",
-          "fundsInBtc",
-          "fundsInEth",
-          "fundsInSol",
+          "externalId"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "TotalFunds": {
+        "type": "object",
+        "properties": {
+          "totalFundsInUsd": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "totalFundsInUsd"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "ExtraDonationPrizeData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "donatedAt": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "donor": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "value": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "valueIn": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "externalId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "donatedAt",
+          "donor",
+          "value",
+          "valueIn",
           "externalId"
         ],
         "x-typia-jsDocTags": []

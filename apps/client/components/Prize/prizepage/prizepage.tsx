@@ -14,7 +14,7 @@ import { usdcSignType } from '@/lib/utils';
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import useMounted from '@/components/hooks/useMounted';
 import { backendApi } from '@/lib/backend';
-import { USDC } from '@/lib/constants';
+import { EXTRA_PRIZES, USDC } from '@/lib/constants';
 import {
   Badge,
   Button,
@@ -29,7 +29,7 @@ import {
 } from '@mantine/core';
 import { readContract } from '@wagmi/core';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import revalidate from 'utils/revalidate';
 import { hashTypedData, hexToSignature } from 'viem';
@@ -48,6 +48,7 @@ import Submissions from './submissions';
 
 import { useDisclosure } from '@mantine/hooks';
 import { IconXboxX } from '@tabler/icons-react';
+import { useQuery } from 'react-query';
 
 interface DonatingWithoutLoginProps {
   opened: boolean;
@@ -452,6 +453,14 @@ export default function PrizePageComponent({
     }
   }, [params]);
 
+  const { data: extraData } = useQuery(['get-extra-prize-data'], async () => {
+    if (EXTRA_PRIZES.includes(prize.id)) {
+      const final = (await (await backendApi(false)).prizes.extraDataDetail(prize.id))
+        .data;
+      return final;
+    }
+  });
+
   const [opened, { open, close }] = useDisclosure(false);
 
   const mounted = useMounted();
@@ -485,7 +494,10 @@ export default function PrizePageComponent({
           name={prize.user.name}
           description={prize.description}
           contractAddress={prize.contract_address}
-          totalFunds={prize.balance}
+          prizeId={prize.id}
+          totalFunds={
+            (prize.balance + (extraData ? extraData.totalFundsInUsd : 0)) * 1_000_000
+          }
           submissionDeadline={
             prize.submission_time_blockchain !== 0
               ? new Date(prize.submission_time_blockchain * 1000)

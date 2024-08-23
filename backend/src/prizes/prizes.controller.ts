@@ -37,13 +37,14 @@ import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreateExtraDonationPrizeDataDto } from './dto/create-extra-donation.dto';
-import { CreateExtraPrizeDto } from './dto/create-extra-prize.dto';
+import { UpdateExtraPrizeDto } from './dto/create-extra-prize.dto';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { FetchSubmissionDto } from './dto/submission.dto';
 import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
+import { ExtraDonationPrizeData } from './entities/extra-donation-prize-data.entity';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
 import { PrizesComments } from './entities/prizes-comments.entity';
@@ -56,6 +57,10 @@ import { PrizesService } from './services/prizes.service';
 import { SubmissionService } from './services/submissions.service';
 interface SubmissionWithBlockchainData extends Submission {
   voting_blockchain: number;
+}
+
+interface TotalFunds {
+  totalFundsInUsd: number;
 }
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
@@ -965,17 +970,17 @@ export class PrizesController {
    * @date 9/25/2023 - 5:35:35 AM
    * @async
    * @param {string} prizeId - The ID of the prize
-   * @param {CreateExtraPrizeDto} body - The data to be used for creating extra prize
+   * @param {UpdateExtraPrizeDto} body - The data to be used for creating extra prize
    * @returns {Promise<Http200Response>}
    * @throws {HttpException} - Throws an error if creating extra prize fails
    */
   @Post('/extra_data/:prize_id')
   async createExtraData(
     @TypedParam('prize_id') prizeId: string,
-    @Body() body: CreateExtraPrizeDto,
+    @Body() body: UpdateExtraPrizeDto,
   ): Promise<Http200Response> {
     try {
-      await this.extraPrizeService.createFund(body);
+      await this.extraPrizeService.updateFund(body);
       return {
         message: `Extra prize proposal with id ${prizeId} has been created`,
       };
@@ -993,7 +998,9 @@ export class PrizesController {
    * @returns {Promise<number>} - The total value of the extra prize in USD
    */
   @Get('/extra_data/:prize_id')
-  async getExtraData(@TypedParam('prize_id') prizeId: string): Promise<number> {
+  async getExtraData(
+    @TypedParam('prize_id') prizeId: string,
+  ): Promise<TotalFunds> {
     const extraPrize = await this.extraPrizeService.getFundByExternalId(
       prizeId,
     );
@@ -1003,12 +1010,36 @@ export class PrizesController {
       .usd;
     const solToUsd = (await this.priceService.getPrice('solana'))['solana'].usd;
 
-    return (
+    const totalFunds =
       extraPrize.fundsUsd +
       extraPrize.fundsInBtc * btcToUsd +
       extraPrize.fundsInEth * ethToUsd +
-      extraPrize.fundsInSol * solToUsd
-    );
+      extraPrize.fundsInSol * solToUsd;
+    return {
+      totalFundsInUsd: totalFunds,
+    };
+  }
+  /**
+   * Fetch extra donation data for a prize
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} prizeId - The ID of the prize
+   * @param {CreateExtraDonationPrizeDataDto} body - The data to be used for creating extra donation
+   * @returns {Promise<ExtraDonationPrizeData[]>}
+   * @throws {HttpException} - Throws an error if creating extra donation fails
+   */
+  @Get('/extra_data/donations/:prize_id')
+  async getExtraDonationsData(
+    @TypedParam('prize_id') prizeId: string,
+  ): Promise<ExtraDonationPrizeData[]> {
+    try {
+      const donations =
+        await this.extraPrizeDonationService.getDonationByExternalId(prizeId);
+      return donations;
+    } catch (e) {
+      console.error(e);
+      throw new HttpException(`Error creating extra prize ${e.message}`, 400);
+    }
   }
   /**
    * Create extra donation data for a prize
@@ -1019,7 +1050,7 @@ export class PrizesController {
    * @returns {Promise<Http200Response>}
    * @throws {HttpException} - Throws an error if creating extra donation fails
    */
-  @Post('/extra_data/donation/:prize_id')
+  @Post('/extra_data/donations/:prize_id')
   async createExtraDonationData(
     @TypedParam('prize_id') prizeId: string,
     @Body() body: CreateExtraDonationPrizeDataDto,

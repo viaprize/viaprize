@@ -1,21 +1,21 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class CreateExtraPrizeDto {
+export class UpdateExtraPrizeDto {
   @IsNumber()
-  @IsNotEmpty()
-  fundsUsd: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  fundsInBtc: number;
+  @IsOptional()
+  fundsUsd?: number;
 
   @IsNumber()
-  @IsNotEmpty()
-  fundsInEth: number;
+  @IsOptional()
+  fundsInBtc?: number;
 
   @IsNumber()
-  @IsNotEmpty()
-  fundsInSol: number;
+  @IsOptional()
+  fundsInEth?: number;
+
+  @IsNumber()
+  @IsOptional()
+  fundsInSol?: number;
 
   @IsString()
   @IsNotEmpty()
