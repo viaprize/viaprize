@@ -36,7 +36,7 @@ export default function PrizeFunderCard({
         <Avatar radius="md" alt="creator" className="rounded-sm" src={avatar} />
         <div>
           <Link href={`/profile/${username}`}>
-            <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+            <Text variant="p" fw="lighter" my="0px" className="leading-[15px]">
               {name}
             </Text>
           </Link>

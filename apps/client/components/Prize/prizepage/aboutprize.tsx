@@ -1,8 +1,7 @@
 'use client';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
 import { parseUsdc } from '@/lib/utils';
-import { ActionIcon, Badge, CopyButton, Divider, Flex, Text, Title } from '@mantine/core';
-import { IconCheck, IconCopy } from '@tabler/icons-react';
+import { Badge, Flex, Text, Title } from '@mantine/core';
 
 export default function AboutPrize({
   amount,
@@ -13,6 +12,7 @@ export default function AboutPrize({
   description: string;
   contractAddress: string;
 }) {
+  console.log({ amount });
   return (
     <div className="w-full mt-4 min-w-0">
       <Flex direction={'column'} gap={'sm'} justify={'center'}>
@@ -20,7 +20,7 @@ export default function AboutPrize({
           Total Amount Raised
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
-          {parseUsdc(BigInt(amount))} USD
+          {parseUsdc(BigInt(parseInt(amount))).toFixed(2)} USD
         </Text>
       </Flex>
       <div className="py-4">

@@ -108,9 +108,9 @@ export default function PrizePageTabs({
               key={donation.id}
               name={donation.donor}
               email={donation.donor}
-              badge={donation.value}
+              badge={parseFloat(donation.value.toString())}
               // avatar={contribution.avatar}
-              date={donation.donatedAt}
+              date={donation.donationTime}
               amountIn={donation.valueIn}
               username={donation.donor}
             />

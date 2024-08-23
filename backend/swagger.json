@@ -7631,7 +7631,7 @@
             "x-typia-optional": false,
             "type": "string"
           },
-          "donatedAt": {
+          "donationTime": {
             "x-typia-required": true,
             "x-typia-optional": false,
             "type": "string",
@@ -7661,7 +7661,7 @@
         "nullable": false,
         "required": [
           "id",
-          "donatedAt",
+          "donationTime",
           "donor",
           "value",
           "valueIn",
@@ -7672,12 +7672,6 @@
       "CreateExtraDonationPrizeDataDto": {
         "type": "object",
         "properties": {
-          "donatedAt": {
-            "x-typia-required": true,
-            "x-typia-optional": false,
-            "type": "string",
-            "format": "date-time"
-          },
           "donor": {
             "x-typia-required": true,
             "x-typia-optional": false,
@@ -7701,7 +7695,6 @@
         },
         "nullable": false,
         "required": [
-          "donatedAt",
           "donor",
           "value",
           "valueIn",

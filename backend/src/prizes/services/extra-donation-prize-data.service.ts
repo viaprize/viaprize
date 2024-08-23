@@ -25,7 +25,9 @@ export class ExtraDonationPrizeDataService {
   async createDonation(
     prizeDto: CreateExtraDonationPrizeDataDto,
   ): Promise<ExtraDonationPrizeData> {
-    const prize = this.prizeRepository.create(prizeDto);
+    const prize = this.prizeRepository.create({
+      ...prizeDto,
+    });
 
     console.log({ prize });
 
