@@ -17,7 +17,7 @@ export default function AllPortals({ params }: { params: { id: string } }) {
   const { data: cryptoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const final = await (
-      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
+      await fetch(`https://prod-api.viaprize.org/api/price/usd_to_eth`)
     ).json();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return Object.keys(final).length === 0

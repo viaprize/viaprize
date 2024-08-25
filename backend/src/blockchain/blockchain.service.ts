@@ -263,7 +263,6 @@ export class BlockchainService {
         'Content-Type': 'application/json',
       },
     });
-    console.log(fetchUrl, 'url');
     const result = (await res.json()) as TransactionApiResponse;
 
     const contributions: Contributions = {

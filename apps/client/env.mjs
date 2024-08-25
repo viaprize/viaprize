@@ -21,10 +21,11 @@ export const env = createEnv({
     NEXT_PUBLIC_PRIVY_APP_ID: z.string(),
     NEXT_PUBLIC_BACKEND_URL: z
       .enum([
-        'https://api-prod.pactsmith.com/api',
+        'https://prod-api.viaprize.org/api',
         'http://localhost:3001/api',
         'https://api-dev.viaprize.org/api',
         'http://127.0.0.1:3001/api',
+        'https://prod-api.viaprize.org/api',
       ])
       .default('http://localhost:3001/api'),
     NEXT_PUBLIC_SUPABASE_URL: z.string(),

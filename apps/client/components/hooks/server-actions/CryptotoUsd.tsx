@@ -10,7 +10,7 @@ type ConvertUSD = Record<
 >;
 
 export default async function getCryptoToUsd(): Promise<ConvertUSD> {
-  const response = await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`);
+  const response = await fetch(`https://prod-api.viaprize.org/api/price/usd_to_eth`);
   const final = await response.json();
   return Object.keys(final).length === 0
     ? {

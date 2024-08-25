@@ -47,7 +47,7 @@ export default async function FetchPortals({
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- will check later
   const final: { ethereum: { usd: number } } = await (
-    await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`, {
+    await fetch(`https://prod-api.viaprize.org/api/price/usd_to_eth`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
