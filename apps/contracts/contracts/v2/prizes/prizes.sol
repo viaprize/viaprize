@@ -35,7 +35,7 @@ contract PrizeV2 is ReentrancyGuard {
     uint8 private platformFee;
     /// @notice This constant represents the version of the contract.
     uint8 public constant VERSION = 201;
-    /// @notice This variable represents the minimum slippage fee percentage for the minimum output in swaps.
+    /// @notice This variable represents the minimum slippage fee percentage for the minimum output in swaps. EDIT - RENAME TO MAXSLIPPAGE ADD EXTRA P TO FIX TYPO 
     uint8 public minimumSlipageFeePercentage = 2;
 
     /// @notice This boolean indicates whether rewards have been distributed at the end of the voting period.
@@ -122,8 +122,8 @@ contract PrizeV2 is ReentrancyGuard {
     /// @param _usdcAddress The address of the USDC token contract.
     /// @param _usdcBridgedAddress The address of the bridged USDC (USDC.e) token contract.
     /// @param _swapRouter The address of the Uniswap V3 SwapRouter contract.
-    /// @param _usdcToUsdcePool The address of the Uniswap V3 pool for USDC to USDC.e swaps.
-    /// @param _usdcToEthPool The address of the Uniswap V3 pool for USDC to ETH swaps.
+    /// @param _usdcToUsdcePool The address of the Uniswap V3 pool for USDC to USDC.e swaps. EDIT - SHOULD BE USDC.e to USDC
+    /// @param _usdcToEthPool The address of the Uniswap V3 pool for USDC to ETH swaps. EDIT = SHOULD BE ETH TO USDC
     /// @param _ethPriceAggregator The address of the Chainlink price aggregator for ETH.
     /// @param _wethToken The address of the WETH token contract.
     constructor(address _visionary, address[] memory _platformAdmins, uint8 _platFormFee, uint8 _visionaryFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
@@ -141,7 +141,9 @@ contract PrizeV2 is ReentrancyGuard {
         _usdcBridged = IERC20Permit(_usdcBridgedAddress);
         isActive = true;
         swapRouter = ISwapRouter(_swapRouter);
+/// EDIT - SHOULD BE TO USDC
         bridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
+/// EDIT - SHOULD BE TO USDC
         ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
         _weth = IWETH(_wethToken);
