@@ -6,8 +6,3 @@ export class Viaprize {
     this.config = viaprizeConfigSchema.parse(config);
   }
 }
-new Viaprize({
-    config:{
-        
-    }
-})

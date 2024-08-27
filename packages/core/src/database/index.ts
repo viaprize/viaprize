@@ -14,7 +14,6 @@ export class ViaprizeDatabase {
 
     await migrate(drizzle(migrationClient), {
       migrationsFolder: "./migrations",
-      migrationsTable: "migrations",
     });
   }
 }

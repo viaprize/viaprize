@@ -5,8 +5,9 @@
     "@viaprize/core": "*",
     "sst": "*"
   },
+  "exports": "./dist/index.mjs",
   "scripts": {
-    "shell": "tsx"
+    "index": "tsx ./src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",
