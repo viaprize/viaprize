@@ -1,10 +1,16 @@
 {
-  "name": "monorepo-template",
+  "name": "viaprize",
   "version": "0.0.0",
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {},
+  "scripts": {
+    "dev": "sst dev",
+    "build": "sst build",
+    "deploy": "sst deploy",
+    "remove": "sst remove",
+    "console": "sst console",
+    "typecheck": "tsc --noEmit",
+    "test": "sst bind -- vitest run",
+    "gen": "hygen"
+  },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
     "typescript": "5.3.3"
