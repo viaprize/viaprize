@@ -160,7 +160,7 @@ function FundUsdcCard({
       const trxHash = await (
         await backendApi()
       ).wallet
-        .prizeAddUsdcFundsCreate(contractAddress, {
+        .portalAddUsdcFundsCreate(contractAddress, {
           amount: parseInt(signData.value.toString()),
           deadline: parseInt(signData.deadline.toString()),
           r: rsv.r,
@@ -214,6 +214,7 @@ function FundUsdcCard({
               s: s,
               chainId: 8453,
               payWihtoutLogin: 0,
+              type: 'portal',
             },
             title,
             imageUrl,

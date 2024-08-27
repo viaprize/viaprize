@@ -146,7 +146,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["DESC", "ASC"]
+              "enum": [
+                "DESC",
+                "ASC"
+              ]
             },
             "description": "",
             "required": false
@@ -4292,6 +4295,49 @@
         "x-nestia-method": "POST"
       }
     },
+    "/wallet/portal/{contract_address}/add_usdc_funds": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUsdcFundsDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.portal.add_usdc_funds.addPortalUsdc",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "POST"
+      }
+    },
     "/wallet/fund_raisers/{contract_address}/end_campaign": {
       "post": {
         "tags": [],
@@ -4385,7 +4431,9 @@
           }
         },
         "nullable": false,
-        "required": ["message"],
+        "required": [
+          "message"
+        ],
         "x-typia-jsDocTags": []
       },
       "CreatePortalDto": {
@@ -4403,7 +4451,10 @@
           }
         },
         "nullable": false,
-        "required": ["address", "proposal_id"],
+        "required": [
+          "address",
+          "proposal_id"
+        ],
         "x-typia-jsDocTags": []
       },
       "Portals": {
@@ -5046,7 +5097,12 @@
           }
         },
         "nullable": false,
-        "required": ["id", "comment", "user", "prize"],
+        "required": [
+          "id",
+          "comment",
+          "user",
+          "prize"
+        ],
         "x-typia-jsDocTags": []
       },
       "PrizeProposals": {
@@ -5364,7 +5420,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5561,7 +5620,9 @@
           }
         },
         "nullable": false,
-        "required": ["data"],
+        "required": [
+          "data"
+        ],
         "x-typia-jsDocTags": []
       },
       "Contribution": {
@@ -5584,7 +5645,11 @@
           }
         },
         "nullable": false,
-        "required": ["contributor", "amount", "donationTime"],
+        "required": [
+          "contributor",
+          "amount",
+          "donationTime"
+        ],
         "x-typia-jsDocTags": []
       },
       "CreateCommentDto": {
@@ -5597,7 +5662,9 @@
           }
         },
         "nullable": false,
-        "required": ["comment"],
+        "required": [
+          "comment"
+        ],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o1": {
@@ -5618,7 +5685,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5640,7 +5710,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5762,7 +5835,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -5776,7 +5852,9 @@
           }
         },
         "nullable": false,
-        "required": ["comment"],
+        "required": [
+          "comment"
+        ],
         "x-typia-jsDocTags": []
       },
       "UpdatePortalPropsalDto": {
@@ -5865,7 +5943,9 @@
           }
         },
         "nullable": false,
-        "required": ["platformFeePercentage"],
+        "required": [
+          "platformFeePercentage"
+        ],
         "x-typia-jsDocTags": []
       },
       "UpdatePlatformFeeDto": {
@@ -5878,7 +5958,9 @@
           }
         },
         "nullable": false,
-        "required": ["platformFeePercentage"],
+        "required": [
+          "platformFeePercentage"
+        ],
         "x-typia-jsDocTags": []
       },
       "TestTrigger": {
@@ -5891,7 +5973,9 @@
           }
         },
         "nullable": false,
-        "required": ["date"],
+        "required": [
+          "date"
+        ],
         "x-typia-jsDocTags": []
       },
       "ExtraPortal": {
@@ -5914,7 +5998,11 @@
           }
         },
         "nullable": false,
-        "required": ["id", "funds", "externalId"],
+        "required": [
+          "id",
+          "funds",
+          "externalId"
+        ],
         "x-typia-jsDocTags": []
       },
       "ExtraDonationPortalData": {
@@ -5948,7 +6036,13 @@
           }
         },
         "nullable": false,
-        "required": ["id", "donatedAt", "donor", "usdValue", "externalId"],
+        "required": [
+          "id",
+          "donatedAt",
+          "donor",
+          "usdValue",
+          "externalId"
+        ],
         "x-typia-jsDocTags": []
       },
       "PickPortalsslug": {
@@ -5961,7 +6055,9 @@
           }
         },
         "nullable": false,
-        "required": ["slug"],
+        "required": [
+          "slug"
+        ],
         "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
@@ -5980,7 +6076,10 @@
           }
         },
         "nullable": false,
-        "required": ["address", "proposal_id"],
+        "required": [
+          "address",
+          "proposal_id"
+        ],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o4": {
@@ -6001,7 +6100,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6717,7 +6819,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6785,7 +6890,9 @@
           }
         },
         "nullable": false,
-        "required": ["comment"],
+        "required": [
+          "comment"
+        ],
         "x-typia-jsDocTags": []
       },
       "Readonly__type.o6": {
@@ -6806,7 +6913,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6828,7 +6938,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6984,7 +7097,10 @@
           }
         },
         "nullable": false,
-        "required": ["data", "hasNextPage"],
+        "required": [
+          "data",
+          "hasNextPage"
+        ],
         "description": "Make all properties in T readonly",
         "x-typia-jsDocTags": []
       },
@@ -6998,7 +7114,9 @@
           }
         },
         "nullable": false,
-        "required": ["slug"],
+        "required": [
+          "slug"
+        ],
         "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
@@ -7029,7 +7147,10 @@
                 "kind": "format",
                 "value": "email",
                 "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
-                "exclusive": ["format", "pattern"]
+                "exclusive": [
+                  "format",
+                  "pattern"
+                ]
               }
             ]
           },
@@ -7144,7 +7265,13 @@
           }
         },
         "nullable": false,
-        "required": ["email", "authId", "name", "username", "bio"],
+        "required": [
+          "email",
+          "authId",
+          "name",
+          "username",
+          "bio"
+        ],
         "description": "Interface of Create User , using this interface it create a new user in",
         "x-typia-jsDocTags": [
           {
@@ -7185,7 +7312,10 @@
                 "kind": "format",
                 "value": "email",
                 "validate": "/^(([^<>()[\\]\\.,;:\\s@\\\"]+(\\.[^<>()[\\]\\.,;:\\s@\\\"]+)*)|(\\\".+\\\"))@(([^<>()[\\]\\.,;:\\s@\\\"]+\\.)+[^<>()[\\]\\.,;:\\s@\\\"]{2,})$/i.test($input)",
-                "exclusive": ["format", "pattern"]
+                "exclusive": [
+                  "format",
+                  "pattern"
+                ]
               }
             ]
           },
@@ -7312,7 +7442,9 @@
           }
         },
         "nullable": false,
-        "required": ["hash"],
+        "required": [
+          "hash"
+        ],
         "x-typia-jsDocTags": []
       },
       "ChangeSubmissionDto": {
@@ -7325,7 +7457,9 @@
           }
         },
         "nullable": false,
-        "required": ["minutes"],
+        "required": [
+          "minutes"
+        ],
         "x-typia-jsDocTags": []
       },
       "ChangeVotingDto": {
@@ -7338,7 +7472,9 @@
           }
         },
         "nullable": false,
-        "required": ["minutes"],
+        "required": [
+          "minutes"
+        ],
         "x-typia-jsDocTags": []
       },
       "VoteDTO": {
@@ -7371,7 +7507,13 @@
           }
         },
         "nullable": false,
-        "required": ["submissionHash", "v", "s", "r", "amount"],
+        "required": [
+          "submissionHash",
+          "v",
+          "s",
+          "r",
+          "amount"
+        ],
         "x-typia-jsDocTags": []
       },
       "AddUsdcFundsDto": {
@@ -7409,7 +7551,14 @@
           }
         },
         "nullable": false,
-        "required": ["amount", "deadline", "v", "s", "r", "hash"],
+        "required": [
+          "amount",
+          "deadline",
+          "v",
+          "s",
+          "r",
+          "hash"
+        ],
         "x-typia-jsDocTags": []
       },
       "SendUsdcTransactionDto": {

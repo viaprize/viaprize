@@ -750,6 +750,70 @@ export class WalletController {
       }
     }
   }
+
+  @UseGuards(AuthGuard)
+  @Post('/portal/:contract_address/add_usdc_funds')
+  async addPortalUsdc(
+    @TypedParam('contract_address') contractAddress: string,
+    @Body()
+    body: AddUsdcFundsDto,
+    @Request() req,
+  ): Promise<WalletResponse | undefined> {
+    const user = this.userService.findOneByAuthId(req.user.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const encodedData = encodeFunctionData({
+        abi: ADD_USDC_V1,
+        args: [
+          contractAddress as `0x${string}`,
+          BigInt(body.amount),
+          BigInt(body.deadline),
+          body.v,
+          body.s as `0x${string}`,
+          body.r as `0x${string}`,
+          body.hash as `0x${string}`,
+        ],
+        functionName: 'addUsdcFunds',
+      });
+      let hash = await this.walletService.sendTransaction(
+        {
+          data: encodedData,
+          to: contractAddress,
+          value: '0',
+        },
+        'gasless',
+      );
+      console.log({ hash });
+      return { hash };
+    } catch (err) {
+      console.log({ err });
+      if (err instanceof BaseError) {
+        const revertError = err.walk(
+          (err) => err instanceof ContractFunctionRevertedError,
+        );
+        if (revertError instanceof ContractFunctionRevertedError) {
+          console.log({ err });
+          const errorName = revertError.data?.errorName ?? '';
+          throw new HttpException(
+            'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        } else {
+          throw new HttpException(
+            'Error: ' + err.message,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          'Error: ' + err.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+  }
   /**
    * @security bearer
    **/

@@ -29,7 +29,7 @@ import {
 } from '@mantine/core';
 import { readContract } from '@wagmi/core';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import revalidate from 'utils/revalidate';
 import { hashTypedData, hexToSignature } from 'viem';
@@ -115,6 +115,7 @@ function DonatingWithoutLoginModal({
               s: '',
               chainId: 8453,
               payWihtoutLogin: 1,
+              type: 'prize',
             },
             title,
             imageUrl,
@@ -348,6 +349,7 @@ function FundUsdcCard({
               s: s,
               chainId: 8453,
               payWihtoutLogin: 0,
+              type: 'prize',
             },
             title,
             imageUrl,
