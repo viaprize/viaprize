@@ -2,7 +2,7 @@
   "name": "@viaprize/core",
   "version": "0.0.0",
   "scripts": {
-    "test": "sst shell vitest"
+    "test": "jest"
   },
   "exports": {
     "./*": [
@@ -11,9 +11,14 @@
     ]
   },
   "dependencies": {
-    "sst": "*"
+    "@electric-sql/pglite": "^0.2.4",
+    "drizzle-orm": "^0.33.0",
+    "postgres": "^3.4.4",
+    "sst": "*",
+    "zod": "^3.23.3"
   },
   "devDependencies": {
-    "vitest": "^2.0.3"
+    "drizzle-kit": "^0.24.0",
+    "vitest": "^2.0.5"
   }
 }

@@ -6,7 +6,7 @@
     "sst": "*"
   },
   "scripts": {
-    "shell": "sst shell tsx"
+    "shell": "tsx"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",

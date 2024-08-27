@@ -1,4 +1,8 @@
-import { Resource } from "sst";
-import { Example } from "@viaprize/core/example";
+import { Viaprize } from "@viaprize/core/index";
 
-console.log(`${Example.hello()} Linked to ${Resource.MyBucket.name}.`);
+const viaprize = new Viaprize({
+  config: {
+    mode: "development",
+    databaseUrl: "mongodb://localhost:27017/viaprize",
+  },
+});

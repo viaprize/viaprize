@@ -1,10 +1,6 @@
-import { Resource } from "sst";
-import { Handler } from "aws-lambda";
-import { Example } from "@viaprize/core/example";
-
-export const handler: Handler = async (_event) => {
+export const handler = () => {
   return {
     statusCode: 200,
-    body: `${Example.hello()} Linked to ${Resource.MyBucket.name}.`,
+    body: `$.`,
   };
 };
