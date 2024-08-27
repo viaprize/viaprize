@@ -14,36 +14,51 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 // import "@uniswap/v3-core/contracts/libraries/FullMath.sol";
 
 contract PassThroughV2 {
-    /// @notice this is the address of proposer who deploys a contract
-    address public proposer;
-    /// @notice this will be a mapping of the address of a proposer to a boolean value of true or false
-    mapping(address => bool) public isProposer;
-    ///@notice array of platformAdmins address, there can be multiple platform admins
-    address[] public platformAdmins;
-    /// @notice this will be a mapping of the addresses of a platformAdmins to a boolean value of true or false
-    mapping(address => bool) public isplatformAdmin;
-    /// @notice this will be the address to receive campaign funds, it can be similar to proposer address
-    address public receipent;
-    /// @notice this will be the address to receive platform Fee
-    address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
-    /// @notice this will the percentage from totalFunds which goes to the platform address as Fee
-    uint256 public  immutable platformFee;
-    /// @notice this will be an array of address who funding to this campaign
-    address[] public funders; 
-    /// @notice this will be a mapping of the addresses of a funder to a boolean value of true or false
-    mapping(address => bool) public isFunder;
-    /// @notice this will be a mapping of the addresses of the funders to the amount they have contributed
-    mapping(address => uint256) public funderAmount;
     /// @notice this will be the total funds yet contributed to this campaign by funders
     uint256 public totalFunds;
     /// @notice this will be the total Rewards which goes to recipent after deducting platform fees
     uint256 public totalRewards;
+    /// @notice to keep track of total platformAdmins
+    uint256 public totalPlatformAdmins;
+    /// @notice this will the percentage from totalFunds which goes to the platform address as Fee
+    uint256 public  immutable platformFee;
+    uint public minimumSlipageFeePercentage = 2; 
+
+    /// @notice this is the address of proposer who deploys a contract
+    address public proposer;
+    /// @notice this will be the address to receive campaign funds, it can be similar to proposer address
+    address public receipent;
+    /// @notice this is an usdc token address which will be assigned while deploying the contract.
+    address public USDC;
+    /// @notice this is an usdc token address which will be assigned while deploying the contract.
+    address public USDC_E;
+    /// @notice this is an Eth address which will be assigned while deploying the contract.
+    address public WETH;
+    /// @notice this will be the address to receive platform Fee
+    address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
+    ///@notice array of platformAdmins address, there can be multiple platform admins
+    address[] public platformAdmins;
+    /// @notice this will be an array of address who funding to this campaign
+    address[] public funders; 
+
     /// @notice bool to check status of campaign
     bool public isActive;
     /// @notice To-Do
     bool internal locked;
-
-    uint public minimumSlipageFeePercentage = 2; 
+    
+    /// @notice this will be a mapping of the address of a proposer to a boolean value of true or false
+    mapping(address => bool) public isProposer;
+    /// @notice this will be a mapping of the addresses of a platformAdmins to a boolean value of true or false
+    mapping(address => bool) public isplatformAdmin;
+    /// @notice this will be a mapping of the addresses of a funder to a boolean value of true or false
+    mapping(address => bool) public isFunder;
+    /// @notice this will be a mapping of the addresses of the funders to the amount they have contributed
+    mapping(address => uint256) public funderAmount;
+    /// @notice this mapping will be to track of votesToRevokePlatformAdmin for all the platformAdmins
+    mapping(address => uint8) public votesToRevokePlatformAdmin;
+    /// @notice this mapping will be to track of votes to add platformAdmin for all the platformAdmins
+    mapping(address => uint8) public votesToAddPlatformAdmin;
+   
     /// @notice initializing the erc20 interface for usdc token
     IERC20Permit private _usdc;
     /// @notice initializing the erc20 interface for usdc bridged usdc token
@@ -52,33 +67,18 @@ contract PassThroughV2 {
     IWETH private _weth;
     /// @notice initializing swaprouter interface
     ISwapRouter public immutable swapRouter;
-
     /// @notice initializing brdiged usdc and usdc pool 
     IUniswapV3Pool public immutable bridgedUsdcPool;
-
     /// @notice initalizing eth and usdc pool
     IUniswapV3Pool public immutable ethUsdcPool;
-
     /// @notice initializing chainlink or oracle price aggregator
     AggregatorV3Interface public immutable ethPriceAggregator;
     
-
-    /// @notice this is an usdc token address which will be assigned while deploying the contract.
-    address public USDC;
-    /// @notice this is an usdc token address which will be assigned while deploying the contract.
-    address public USDC_E;
-    /// @notice this is an Eth address which will be assigned while deploying the contract.
-    address public WETH;
-    /// @notice this mapping will be to track of votesToRevokePlatformAdmin for all the platformAdmins
-    mapping(address => uint) public votesToRevokePlatformAdmin;
-    /// @notice this mapping will be to track of votes to add platformAdmin for all the platformAdmins
-    mapping(address => uint) public votesToAddPlatformAdmin;
-    /// @notice to keep track of total platformAdmins
-    uint256 public totalPlatformAdmins;
     /// @notice error indicating insufficient funds while funding to the contract.
     error NotEnoughFunds();
     /// @notice error indicating the funding to the contract has ended
     error FundingToContractEnded();
+    error NPP();
 
     /// @notice initializing the use of safemath
     using SafeMath for uint256;
@@ -153,29 +153,6 @@ contract PassThroughV2 {
     modifier onlyProposerOrAdmin {
         require(isProposer[msg.sender] == true || isplatformAdmin[msg.sender] == true, "You are not a proposer or platformAdmin.");
         _;
-    }
-
-    function recoverSigner(
-        bytes32 _ethSignedMessageHash,
-        bytes memory _signature
-    ) public pure returns (address) {
-        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
-
-        return ecrecover(_ethSignedMessageHash, v, r, s);
-    }
-
-    function splitSignature(bytes memory sig)
-        public
-        pure
-        returns (bytes32 r, bytes32 s, uint8 v)
-    {
-        require(sig.length == 65, "invalid signature length");
-
-        assembly {
-            r := mload(add(sig, 32))
-            s := mload(add(sig, 64))
-            v := byte(0, mload(add(sig, 96)))
-        }
     }
 
     function _depositAndTransferLogic(address sender, uint256 _donation) private {
@@ -262,8 +239,6 @@ contract PassThroughV2 {
         _depositAndTransferLogic(sender, _donation);     
     }
 
-
-
     /// function to donate bridged tokens into campaign and swap to the usdc then sends to the campaign
     function addBridgedUSDCFunds(uint256 _amountUsdc) public noReentrant {
         require(_amountUsdc > 0, "funds should be greater than 0");
@@ -320,9 +295,10 @@ contract PassThroughV2 {
         totalPlatformAdmins += 1;
     }
 
-    /// @notice function to vote to add as a platformAdmin
+    /// @notice function vote to add as a platformAdmin
     /// @param _admin is the address to vote for platform Admin
     function voteToAddPlatformAdmin(address _admin) public {
+        if(!isplatformAdmin[msg.sender]) revert NPP();
         require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
         require(!isplatformAdmin[_admin], "the address you want to vote is already a platform admin");
         votesToAddPlatformAdmin[_admin] +=1;
@@ -341,7 +317,6 @@ contract PassThroughV2 {
             finalRevokePlatformAdmin(_admin);
         }
     }
-
 
     /// @notice function to change slippage tolerance of other token donations
     /// @param _minimumSlipageFeePercentage of new minimumSlipageFeePercentage
