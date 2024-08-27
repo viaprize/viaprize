@@ -16,3 +16,7 @@ node_modules
 
 # misc
 .DS_Store
+
+.next
+
+dist
