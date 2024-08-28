@@ -3,7 +3,7 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 import tailwind from "@viaprize/ui/tailwind";
 
 export default {
-  content: ["./src/**/*.tsx"],
+  content: ["./src/**/*.tsx", "../ui/**/*.{ts,tsx}"],
   presets: [tailwind],
   theme: {
     extend: {
