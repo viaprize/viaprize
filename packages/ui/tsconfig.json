@@ -10,7 +10,10 @@
     "moduleDetection": "force",
     "isolatedModules": true,
     "jsx": "preserve", // Use the new JSX runtime
-
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/*"]
+    },
     "incremental": true,
     "disableSourceOfProjectReferenceRedirect": true,
 

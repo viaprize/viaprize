@@ -308,6 +308,9 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.1.0
         version: 8.3.0(eslint@8.57.0)(typescript@5.5.4)
+      '@viaprize/ui':
+        specifier: workspace:*
+        version: link:../ui
       drizzle-kit:
         specifier: ^0.24.0
         version: 0.24.2
@@ -330,10 +333,10 @@ importers:
         specifier: ^0.6.5
         version: 0.6.6(prettier@3.3.3)
       tailwindcss:
-        specifier: ^3.4.3
+        specifier: ^3.4.10
         version: 3.4.10
       typescript:
-        specifier: ^5.5.3
+        specifier: 'catalog:'
         version: 5.5.4
 
 packages:

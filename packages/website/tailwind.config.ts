@@ -1,8 +1,10 @@
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import tailwind from "@viaprize/ui/tailwind";
 
 export default {
   content: ["./src/**/*.tsx"],
+  presets: [tailwind],
   theme: {
     extend: {
       fontFamily: {
@@ -10,5 +12,4 @@ export default {
       },
     },
   },
-  plugins: [],
 } satisfies Config;
