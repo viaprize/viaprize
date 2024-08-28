@@ -2,7 +2,6 @@
   "name": "@viaprize/scripts",
   "version": "0.0.0",
   "dependencies": {
-    "@viaprize/core": "*",
     "sst": "*"
   },
   "exports": "./dist/index.mjs",
@@ -11,6 +10,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.11",
-    "tsx": "^4.7.2"
+    "tsx": "^4.7.2",
+    "@viaprize/core": "workspace:*"
   }
 }

@@ -1,6 +1,6 @@
 {
   "markdown.extension.toc.levels": "2..6",
-  "cSpell.words": [],
+  "cSpell.words": ["viaprize"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,

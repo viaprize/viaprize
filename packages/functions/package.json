@@ -2,7 +2,7 @@
   "name": "@viaprize/functions",
   "version": "0.0.0",
   "dependencies": {
-    "@viaprize/core": "*",
+    "@viaprize/core": "workspace:*",
     "sst": "*"
   },
   "devDependencies": {
