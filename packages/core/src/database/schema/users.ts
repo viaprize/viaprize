@@ -10,6 +10,7 @@ import {
 import { prizeProposals } from "./prize-proposals";
 import { prizes } from "./prizes";
 import { wallets } from "./wallets";
+import { submissions } from "./submissions";
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey(),
@@ -22,18 +23,20 @@ export const users = pgTable("users", {
   avatar: text("avatar"),
   skillsets: text("skillset").array(),
   priorities: text("priorities").array(),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).$onUpdate(
-    () => new Date()
-  ),
-  createdAt: timestamp("createdAt", { mode: "date" }).$default(
-    () => new Date()
-  ),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdate(() => new Date()),
+  createdAt: timestamp("createdAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$default(() => new Date()),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
   wallets: many(wallets),
-
   prizes: many(prizes),
   prizeProposals: many(prizeProposals),
   prizeComments: many(users),
+  submission: many(submissions),
 }));

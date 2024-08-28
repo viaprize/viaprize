@@ -8,19 +8,20 @@ export const wallets = pgTable("wallets", {
   network: text("network").notNull(),
   key: text("key"),
   metadata: json("metadata"),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).$onUpdate(
-    () => new Date()
-  ),
   username: varchar("username").references(() => users.username, {
     onDelete: "cascade",
   }),
   prizeId: varchar("prizeId").references(() => prizes.id, {
     onDelete: "cascade",
   }),
-
-  createdAt: timestamp("createdAt", { mode: "date" }).$default(
-    () => new Date()
-  ),
+  createdAt: timestamp("createdAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$default(() => new Date()),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdate(() => new Date()),
 });
 
 export const walletRelations = relations(wallets, ({ one }) => ({

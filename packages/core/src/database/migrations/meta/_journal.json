@@ -5,22 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1724760548351,
-      "tag": "0000_powerful_starbolt",
+      "when": 1724860188272,
+      "tag": "0000_soft_black_tarantula",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1724839658362,
-      "tag": "0001_chunky_blue_marvel",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1724841541609,
-      "tag": "0002_amazing_jimmy_woo",
+      "when": 1724860487189,
+      "tag": "0001_smart_thunderball",
       "breakpoints": true
     }
   ]

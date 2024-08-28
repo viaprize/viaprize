@@ -1,6 +1,6 @@
 {
-  "id": "3488888d-4b6c-4e48-99bd-4d886d27b565",
-  "prevId": "7618e0df-6b71-4935-8a5c-c6142f32d496",
+  "id": "18bd9545-35e7-489e-b070-a707771aeb28",
+  "prevId": "3581dd56-d323-40e0-9e91-2a4d2c2bc591",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -112,13 +112,13 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         }
@@ -163,10 +163,49 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "prize_comments_prizeId_prizes_id_fk": {
+          "name": "prize_comments_prizeId_prizes_id_fk",
+          "tableFrom": "prize_comments",
+          "tableTo": "prizes",
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "prize_comments_username_users_username_fk": {
+          "name": "prize_comments_username_users_username_fk",
+          "tableFrom": "prize_comments",
+          "tableTo": "users",
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -222,8 +261,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "skillsets": {
-          "name": "skillsets",
+        "skillSets": {
+          "name": "skillSets",
           "type": "text[]",
           "primaryKey": false,
           "notNull": false
@@ -259,7 +298,7 @@
           "columnsTo": [
             "username"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -328,13 +367,13 @@
         },
         "judgesAddresses": {
           "name": "judgesAddresses",
-          "type": "text[]",
+          "type": "json",
           "primaryKey": false,
           "notNull": false
         },
-        "skillsets": {
-          "name": "skillsets",
-          "type": "text[]",
+        "skillSets": {
+          "name": "skillSets",
+          "type": "json",
           "primaryKey": false,
           "notNull": false
         },
@@ -350,8 +389,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "propserFeePercentage": {
-          "name": "propserFeePercentage",
+        "proposerFeePercentage": {
+          "name": "proposerFeePercentage",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -392,13 +431,21 @@
           "notNull": false,
           "default": 0
         },
-        "stage": {
-          "name": "stage",
-          "type": "prize",
+        "prizeStage": {
+          "name": "prizeStage",
+          "type": "prizeStage",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": false,
-          "default": "'not started'"
+          "default": "'NOT_STARTED'"
+        },
+        "proposalStage": {
+          "name": "proposalStage",
+          "type": "prizeProposalStage",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'PENDING'"
         },
         "proposerAddress": {
           "name": "proposerAddress",
@@ -408,13 +455,13 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
@@ -437,7 +484,7 @@
           "columnsTo": [
             "username"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -481,7 +528,7 @@
           "columnsTo": [
             "username"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "prizes_to_contestants_prizeId_prizes_id_fk": {
@@ -494,7 +541,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -537,15 +584,21 @@
           "primaryKey": false,
           "notNull": false
         },
+        "username": {
+          "name": "username",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         }
@@ -561,6 +614,19 @@
           ],
           "columnsTo": [
             "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "submissions_username_users_username_fk": {
+          "name": "submissions_username_users_username_fk",
+          "tableFrom": "submissions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -637,13 +703,13 @@
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         }
@@ -703,12 +769,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
         "username": {
           "name": "username",
           "type": "varchar",
@@ -723,7 +783,13 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         }
@@ -788,17 +854,26 @@
         "UNKNOWN"
       ]
     },
-    "public.prize": {
-      "name": "prize",
+    "public.prizeProposalStage": {
+      "name": "prizeProposalStage",
       "schema": "public",
       "values": [
-        "not started",
-        "submissions open",
-        "voting open",
-        "dispute available",
-        "dispute active",
-        "won",
-        "refunded"
+        "PENDING",
+        "APPROVED",
+        "REJECTED"
+      ]
+    },
+    "public.prizeStage": {
+      "name": "prizeStage",
+      "schema": "public",
+      "values": [
+        "NOT_STARTED",
+        "SUBMISSIONS_OPEN",
+        "VOTING_OPEN",
+        "DISPUTE_AVAILABLE",
+        "DISPUTE_ACTIVE",
+        "WON",
+        "REFUNDED"
       ]
     }
   },

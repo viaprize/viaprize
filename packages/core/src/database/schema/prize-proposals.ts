@@ -26,16 +26,18 @@ export const prizeProposals = pgTable("prize_proposals", {
   submissionDurationInMinutes: integer("submissionDurationInMinutes").notNull(),
   votingDurationInMinutes: integer("votingDurationInMinutes").notNull(),
   judgesAddresses: text("judgesAddresses").array(),
-  skillsets: text("skillsets").array(),
+  skillSets: text("skillSets").array(),
   priorities: text("priorities").array(),
   imageUrl: varchar("imageUrl"),
   // relations
   authorUsername: varchar("author")
-    .references(() => users.username)
+    .references(() => users.username,{
+      onDelete: "cascade",
+    })
     .notNull(),
 });
 
-export const prizePropalsRelations = relations(prizeProposals, ({ one }) => ({
+export const prizeProposalsRelations = relations(prizeProposals, ({ one }) => ({
   author: one(users, {
     fields: [prizeProposals.authorUsername],
     references: [users.username],

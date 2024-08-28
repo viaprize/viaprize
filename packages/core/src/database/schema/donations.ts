@@ -35,7 +35,6 @@ export const donations = pgTable("donations", {
   recipientType: recipientTypeEnum("recipientType")
     .notNull()
     .default("UNKNOWN"),
-
   transactionId: varchar("transactionId"),
   paymentId: varchar("paymentId").unique(),
 
@@ -44,12 +43,14 @@ export const donations = pgTable("donations", {
   isPartiallyRefunded: boolean("isPartiallyRefunded").notNull().default(false),
   totalRefunded: numeric("totalRefunded").notNull().default("0"),
 
-  createdAt: timestamp("createdAt", { mode: "date" }).$default(
-    () => new Date()
-  ),
-  updatedAt: timestamp("updatedAt", { mode: "date" }).$onUpdate(
-    () => new Date()
-  ),
+  createdAt: timestamp("createdAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$default(() => new Date()),
+  updatedAt: timestamp("updatedAt", {
+    mode: "date",
+    withTimezone: true,
+  }).$onUpdate(() => new Date()),
 });
 
 export const prizeDonationsView = pgMaterializedView("prize_donations_view").as(

@@ -17,7 +17,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- CREATE TYPE "public"."prize" AS ENUM('not started', 'submissions open', 'voting open', 'dispute available', 'dispute active', 'won', 'refunded');
+ CREATE TYPE "public"."prizeProposalStage" AS ENUM('PENDING', 'APPROVED', 'REJECTED');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."prizeStage" AS ENUM('NOT_STARTED', 'SUBMISSIONS_OPEN', 'VOTING_OPEN', 'DISPUTE_AVAILABLE', 'DISPUTE_ACTIVE', 'WON', 'REFUNDED');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -38,8 +44,8 @@ CREATE TABLE IF NOT EXISTS "donations" (
 	"isRefunded" boolean DEFAULT false NOT NULL,
 	"isPartiallyRefunded" boolean DEFAULT false NOT NULL,
 	"totalRefunded" numeric DEFAULT '0' NOT NULL,
-	"createdAt" timestamp,
-	"updatedAt" timestamp,
+	"createdAt" timestamp with time zone,
+	"updatedAt" timestamp with time zone,
 	CONSTRAINT "donations_paymentId_unique" UNIQUE("paymentId")
 );
 --> statement-breakpoint
@@ -47,7 +53,9 @@ CREATE TABLE IF NOT EXISTS "prize_comments" (
 	"id" varchar PRIMARY KEY NOT NULL,
 	"prizeId" varchar NOT NULL,
 	"username" varchar NOT NULL,
-	"comment" text NOT NULL
+	"comment" text NOT NULL,
+	"createdAt" timestamp with time zone,
+	"updatedAt" timestamp with time zone
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "prize_proposals" (
@@ -59,7 +67,7 @@ CREATE TABLE IF NOT EXISTS "prize_proposals" (
 	"submissionDurationInMinutes" integer NOT NULL,
 	"votingDurationInMinutes" integer NOT NULL,
 	"judgesAddresses" text[],
-	"skillsets" text[],
+	"skillSets" text[],
 	"priorities" text[],
 	"imageUrl" varchar,
 	"author" varchar NOT NULL,
@@ -75,17 +83,18 @@ CREATE TABLE IF NOT EXISTS "prizes" (
 	"submissionDurationInMinutes" integer NOT NULL,
 	"votingDurationInMinutes" integer NOT NULL,
 	"primaryContractAddress" text NOT NULL,
-	"judgesAddresses" text[],
-	"skillsets" text[],
+	"judgesAddresses" json,
+	"skillSets" json,
 	"priorities" text[],
 	"imageUrl" varchar,
-	"propserFeePercentage" integer DEFAULT 5,
+	"proposerFeePercentage" integer DEFAULT 5,
 	"platformFeePercentage" integer DEFAULT 5,
 	"contractVersion" integer DEFAULT 201,
 	"totalFunds" integer DEFAULT 0,
 	"totalRefunded" integer DEFAULT 0,
 	"totalWithdrawn" integer DEFAULT 0,
-	"stage" "prize" DEFAULT 'not started',
+	"prizeStage" "prizeStage" DEFAULT 'NOT_STARTED',
+	"proposalStage" "prizeProposalStage" DEFAULT 'PENDING',
 	"proposerAddress" text NOT NULL,
 	"createdAt" timestamp,
 	"updatedAt" timestamp,
@@ -104,8 +113,27 @@ CREATE TABLE IF NOT EXISTS "submissions" (
 	"description" text NOT NULL,
 	"submitterAddress" text NOT NULL,
 	"prizeId" varchar,
+	"username" varchar,
+	"createdAt" timestamp with time zone,
+	"updatedAt" timestamp with time zone
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "users" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"email" text,
+	"authId" varchar,
+	"username" varchar,
+	"fullName" varchar,
+	"isAdmin" boolean DEFAULT false,
+	"bio" text DEFAULT '',
+	"avatar" text,
+	"skillset" text[],
+	"priorities" text[],
+	"updatedAt" timestamp,
 	"createdAt" timestamp,
-	"updatedAt" timestamp
+	CONSTRAINT "users_email_unique" UNIQUE("email"),
+	CONSTRAINT "users_authId_unique" UNIQUE("authId"),
+	CONSTRAINT "users_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "wallets" (
@@ -119,7 +147,18 @@ CREATE TABLE IF NOT EXISTS "wallets" (
 	"createdAt" timestamp
 );
 --> statement-breakpoint
-ALTER TABLE "users" ADD COLUMN "fullName" varchar;--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "prize_comments" ADD CONSTRAINT "prize_comments_prizeId_prizes_id_fk" FOREIGN KEY ("prizeId") REFERENCES "public"."prizes"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "prize_comments" ADD CONSTRAINT "prize_comments_username_users_username_fk" FOREIGN KEY ("username") REFERENCES "public"."users"("username") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "prize_proposals" ADD CONSTRAINT "prize_proposals_author_users_username_fk" FOREIGN KEY ("author") REFERENCES "public"."users"("username") ON DELETE no action ON UPDATE no action;
 EXCEPTION
@@ -151,6 +190,12 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "submissions" ADD CONSTRAINT "submissions_username_users_username_fk" FOREIGN KEY ("username") REFERENCES "public"."users"("username") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "wallets" ADD CONSTRAINT "wallets_username_users_username_fk" FOREIGN KEY ("username") REFERENCES "public"."users"("username") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -161,5 +206,3 @@ DO $$ BEGIN
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
---> statement-breakpoint
-ALTER TABLE "users" DROP COLUMN IF EXISTS "walletAddress";

@@ -8,10 +8,14 @@ export const prizesToContestants = pgTable(
   {
     username: varchar("username")
       .notNull()
-      .references(() => users.username),
+      .references(() => users.username, {
+        onDelete: "cascade",
+      }),
     prizeId: varchar("prizeId")
       .notNull()
-      .references(() => prizes.id),
+      .references(() => prizes.id,{
+        onDelete: "cascade",
+      }),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.username, t.prizeId] }),

@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "push": "pnpm drizzle-kit push",
+    "migration:generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate"
   },
   "exports": {
     "./*": [
