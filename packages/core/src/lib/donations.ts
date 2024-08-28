@@ -34,9 +34,9 @@ export class Donations {
   }
 
   async count() {
-    const lenght = (
+    const length = (
       await this.db.select({ count: count() }).from(donations).execute()
     )[0];
-    return lenght.count;
+    return length?.count;
   }
 }
