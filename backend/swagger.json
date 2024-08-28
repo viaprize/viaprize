@@ -10,7 +10,7 @@
       "description": "Dev Server"
     },
     {
-      "url": "https://api-prod.pactsmith.com/api",
+      "url": "https://prod-api.viaprize.org/api",
       "description": "Prod Server"
     }
   ],
@@ -4788,6 +4788,49 @@
             ]
           }
         ],
+        "x-nestia-method": "POST"
+      }
+    },
+    "/wallet/portal/{contract_address}/add_usdc_funds": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddUsdcFundsDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WalletResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "wallet.portal.add_usdc_funds.addPortalUsdc",
+        "x-nestia-jsDocTags": [],
         "x-nestia-method": "POST"
       }
     },
