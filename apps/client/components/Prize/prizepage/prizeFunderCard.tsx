@@ -13,6 +13,7 @@ interface PrizeFunderCardProps {
   badge?: string | number;
   date?: string;
   amountIn: string;
+  notBlockChain?: boolean;
 }
 
 export default function PrizeFunderCard({
@@ -23,6 +24,7 @@ export default function PrizeFunderCard({
   date,
   amountIn = 'USD',
 }: PrizeFunderCardProps) {
+  console.log({ date }, 'dateee');
   return (
     <Card
       shadow="xs"
