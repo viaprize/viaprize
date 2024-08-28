@@ -51,7 +51,7 @@ export default function PrizeFunderCard({
             color={typeof badge === 'string' ? 'yellow' : 'green'}
             leftSection={typeof badge === 'string' ? <FaUser /> : <FaSackDollar />}
           >
-            {typeof badge === 'string' ? badge : `${badge} in ${amountIn}`}
+            {typeof badge === 'string' ? badge : `${badge} ${amountIn}`}
           </Badge>
         ) : null}
         {date ? (

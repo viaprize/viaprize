@@ -438,6 +438,7 @@ export default function PrizePageComponent({
   const { appUser, loginUser } = useAppUser();
   console.log(prize.submission_time_blockchain, 'lsljfkjds prize subision');
   const params = useParams();
+  console.log({ prize });
   useEffect(() => {
     if (window.location.hash.includes('success')) {
       void fetch(

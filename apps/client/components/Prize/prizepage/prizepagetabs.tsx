@@ -110,7 +110,7 @@ export default function PrizePageTabs({
               email={donation.donor}
               badge={parseFloat(donation.value.toString())}
               // avatar={contribution.avatar}
-              date={donation.donationTime}
+              date={new Date(donation.donationTime).toISOString()}
               amountIn={donation.valueIn}
               username={donation.donor}
             />
