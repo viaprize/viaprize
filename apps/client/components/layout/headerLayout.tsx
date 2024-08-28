@@ -14,7 +14,6 @@ import {
   rem,
 } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
-import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import {
   IconCheck,
   IconChevronDown,
@@ -23,12 +22,9 @@ import {
   IconSearch,
 } from '@tabler/icons-react';
 import Link from 'next/link';
-import useAppUser from '../hooks/useAppUser';
 
 export default function HeaderLayout() {
   const { user, ready } = usePrivy();
-  const { appUser, logoutUser } = useAppUser();
-  const { wallet, ready: walletReady } = usePrivyWagmi();
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };
