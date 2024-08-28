@@ -2,6 +2,9 @@
   "name": "viaprize",
   "version": "0.0.0",
   "packageManager": "pnpm@9.6.0",
+  "engines": {
+    "node": ">=20.15.0"
+  },
   "scripts": {
     "clean:all": "rm -rf node_modules pnpm-lock.yaml && pnpm store prune",
     "dev": "sst dev",

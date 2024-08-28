@@ -11,8 +11,8 @@ export default $config({
   async run() {
     await import("./infra/storage");
     const api = await import("./infra/api");
-    // const web = new sst.aws.Nextjs("MyWeb", {
-    //   link: [bucket],
+    // const web = new sst.aws.Nextjs("website-application", {
+    //   path: "packages/web",
     // });
   
     return {

@@ -9,6 +9,7 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
+    "jsx": "preserve", // Use the new JSX runtime
 
     "incremental": true,
     "disableSourceOfProjectReferenceRedirect": true,
@@ -19,7 +20,10 @@
 
     "module": "Preserve",
     "moduleResolution": "Bundler",
-    "noEmit": false
+    "rootDir": ".",
+    "outDir": "./dist", // Output directory
+    "noEmit": false,
+    "declaration": true // Generate .d.ts files for all TypeScript files
   },
   "exclude": ["node_modules", "build", "dist", ".next", ".expo", "*.config.js"]
 }
