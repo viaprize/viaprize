@@ -24,7 +24,7 @@ import {
 import Link from 'next/link';
 
 export default function HeaderLayout() {
-  const { user } = usePrivy();
+  const { user, ready } = usePrivy();
   const displayAddress = (address: string) => {
     return `${address.slice(0, 4)}....${address.slice(-4)}`;
   };

@@ -11,7 +11,7 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
-import { useDidUpdate, useDisclosure } from '@mantine/hooks';
+import { useDidUpdate, useDisclosure, useMounted } from '@mantine/hooks';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
@@ -38,8 +38,8 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
     useDisclosure(false);
   const computedColorScheme = useComputedColorScheme('light');
   const isMounted = useIsMounted();
-  const { ready, user } = usePrivy();
-  const { appUser, logoutUser, loginUser, loading } = useAppUser();
+  const { ready } = usePrivy();
+  const { appUser, logoutUser, loginUser } = useAppUser();
   useEffect(() => {
     if (currentChain && currentChain?.id !== base.id && ready && appUser) {
       openChainModal();
@@ -57,20 +57,14 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   };
 
   const { wallet, ready: walletReady } = usePrivyWagmi();
-
+  const mounted = useMounted();
   useDidUpdate(() => {
-    if (
-      (!walletClient || !wallet || !user?.wallet) &&
-      appUser &&
-      ready &&
-      walletReady &&
-      !loading
-    ) {
+    if (!wallet && appUser && ready && walletReady && mounted) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       logoutUser();
     }
     console.log('walletjjjjjdksfjdskfslfj', wallet);
-  }, [walletReady, appUser, wallet, walletClient, user, loading]);
+  }, [walletReady, appUser, wallet, mounted]);
 
   return (
     <AppShell
