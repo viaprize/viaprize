@@ -1,12 +1,15 @@
+'use client';
 import { Badge, Tabs, Text } from '@mantine/core';
 import { BsInfoLg } from 'react-icons/bs';
 import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 
+import { Contributions } from '@/lib/api';
+import { backendApi } from '@/lib/backend';
+import { StarFilledIcon } from '@radix-ui/react-icons';
+import { useQuery } from 'react-query';
 import AboutPrize from './aboutprize';
 import Contestants from './contestants';
 import PrizeFunderCard from './prizeFunderCard';
-import { Contributions } from '@/lib/api';
-import { StarFilledIcon } from '@radix-ui/react-icons';
 
 export default function PrizePageTabs({
   contractAddress,
@@ -19,6 +22,7 @@ export default function PrizePageTabs({
   avatar,
   username,
   contributions,
+  prizeId,
 }: {
   contractAddress: string;
   description: string;
@@ -30,7 +34,17 @@ export default function PrizePageTabs({
   avatar: string;
   username: string;
   contributions: Contributions;
+  prizeId: string;
 }) {
+  const { data: donations } = useQuery(
+    [`get-extra-data-donation-${contractAddress}`],
+    async () => {
+      const donations = (
+        await (await backendApi()).prizes.extraDataDonationsDetail(prizeId)
+      ).data;
+      return donations;
+    },
+  );
   return (
     <Tabs className="w-full" variant="pills" defaultValue="about">
       <Tabs.List justify="center" grow>
@@ -73,6 +87,7 @@ export default function PrizePageTabs({
           email={email}
           avatar={avatar}
           username={username}
+          amountIn=""
           badge="Proposer"
         />
         {contributions.data.map((contribution) => (
@@ -83,9 +98,23 @@ export default function PrizePageTabs({
             badge={parseFloat(contribution.amount) / 1_000_000}
             // avatar={contribution.avatar}
             date={contribution.donationTime}
+            amountIn="USD"
             username={contribution.contributor}
           />
         ))}
+        {donations &&
+          donations.map((donation) => (
+            <PrizeFunderCard
+              key={donation.id}
+              name={donation.donor}
+              email={donation.donor}
+              badge={parseFloat(donation.value.toString())}
+              // avatar={contribution.avatar}
+              date={new Date(donation.donationTime).toISOString()}
+              amountIn={donation.valueIn}
+              username={donation.donor}
+            />
+          ))}
       </Tabs.Panel>
       <Tabs.Panel value="contestants">
         <Contestants />

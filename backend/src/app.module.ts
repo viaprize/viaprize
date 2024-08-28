@@ -18,7 +18,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { BlockchainModule } from './blockchain/blockchain.module';
 import { IndexerModule } from './indexer/indexer.module';
 import { PortalsModule } from './portals/portals.module';
-import { PriceController } from './price/price.controller';
+import { PriceModule } from './price/price.module';
 import { WalletModule } from './wallet/wallet.module';
 
 @Module({
@@ -44,8 +44,9 @@ import { WalletModule } from './wallet/wallet.module';
     PortalsModule,
     IndexerModule,
     WalletModule,
+    PriceModule,
   ],
   providers: [],
-  controllers: [PriceController],
+  controllers: [],
 })
 export class AppModule {}

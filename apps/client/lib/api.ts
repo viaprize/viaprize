@@ -562,6 +562,35 @@ export interface PickPrizeslug {
   slug: string;
 }
 
+export interface UpdateExtraPrizeDto {
+  fundsUsd?: string;
+  fundsInBtc?: string;
+  fundsInEth?: string;
+  fundsInSol?: string;
+  externalId: string;
+}
+
+export interface TotalFunds {
+  totalFundsInUsd: number;
+}
+
+export interface ExtraDonationPrizeData {
+  id: string;
+  /** @format date-time */
+  donationTime: string;
+  donor: string;
+  value: number;
+  valueIn: string;
+  externalId: string;
+}
+
+export interface CreateExtraDonationPrizeDataDto {
+  donor: string;
+  value: number;
+  valueIn: string;
+  externalId: string;
+}
+
 /** Interface of Create User , using this interface it create a new user in */
 export interface CreateUser {
   /**
@@ -606,6 +635,15 @@ export interface UpdateUser {
   avatar?: string;
   proficiencies?: string[];
   priorities?: string[];
+  walletAddress?: string;
+}
+
+/**
+ * The Users controller is responsible for handling requests from the client related to user data.
+ * This includes creating a new user, getting a user by ID, and getting a user by username.
+ */
+export interface EmailExistsResponse {
+  exists: boolean;
   walletAddress?: string;
 }
 
@@ -1114,6 +1152,32 @@ export namespace Price {
     export type RequestHeaders = {};
     export type ResponseBody = any;
   }
+
+  /**
+   * No description
+   * @name UsdToSolList
+   * @request GET:/price/usd_to_sol
+   */
+  export namespace UsdToSolList {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = any;
+  }
+
+  /**
+   * No description
+   * @name UsdToBtcList
+   * @request GET:/price/usd_to_btc
+   */
+  export namespace UsdToBtcList {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = any;
+  }
 }
 
 export namespace Prizes {
@@ -1480,6 +1544,70 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
   }
 
   /**
+   * @description Create extra data for a prize
+   * @name ExtraDataCreate
+   * @request POST:/prizes/extra_data/{prize_id}
+   */
+  export namespace ExtraDataCreate {
+    export type RequestParams = {
+      /** - The ID of the prize */
+      prizeId: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = UpdateExtraPrizeDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
+   * @description Get extra data for a prize
+   * @name ExtraDataDetail
+   * @request GET:/prizes/extra_data/{prize_id}
+   */
+  export namespace ExtraDataDetail {
+    export type RequestParams = {
+      /** - The ID of the prize */
+      prizeId: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TotalFunds;
+  }
+
+  /**
+   * @description Fetch extra donation data for a prize
+   * @name ExtraDataDonationsDetail
+   * @request GET:/prizes/extra_data/donations/{prize_id}
+   */
+  export namespace ExtraDataDonationsDetail {
+    export type RequestParams = {
+      /** - The ID of the prize */
+      prizeId: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = ExtraDonationPrizeData[];
+  }
+
+  /**
+   * @description Create extra donation data for a prize
+   * @name ExtraDataDonationsCreate
+   * @request POST:/prizes/extra_data/donations/{prize_id}
+   */
+  export namespace ExtraDataDonationsCreate {
+    export type RequestParams = {
+      /** - The ID of the prize */
+      prizeId: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = CreateExtraDonationPrizeDataDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = Http200Response;
+  }
+
+  /**
    * No description
    * @name AddressDetail
    * @request GET:/prizes/address/{id}
@@ -1585,6 +1713,23 @@ export namespace Users {
     export type RequestBody = never;
     export type RequestHeaders = {};
     export type ResponseBody = boolean;
+  }
+
+  /**
+   * @description Endpoint for checking if a user with the specified email exists.
+   * @name ExistsEmailDetail
+   * @summary Endpoint for checking if a user with the specified email exists
+   * @request GET:/users/exists/email/{email}
+   */
+  export namespace ExistsEmailDetail {
+    export type RequestParams = {
+      /** The email to check. */
+      email: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = EmailExistsResponse;
   }
 
   /**
@@ -2580,6 +2725,34 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
         format: 'json',
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @name UsdToSolList
+     * @request GET:/price/usd_to_sol
+     */
+    usdToSolList: (params: RequestParams = {}) =>
+      this.request<any, any>({
+        path: `/price/usd_to_sol`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UsdToBtcList
+     * @request GET:/price/usd_to_btc
+     */
+    usdToBtcList: (params: RequestParams = {}) =>
+      this.request<any, any>({
+        path: `/price/usd_to_btc`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
   };
   prizes = {
     /**
@@ -2990,6 +3163,74 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
       }),
 
     /**
+     * @description Create extra data for a prize
+     *
+     * @name ExtraDataCreate
+     * @request POST:/prizes/extra_data/{prize_id}
+     */
+    extraDataCreate: (
+      prizeId: string,
+      data: UpdateExtraPrizeDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/extra_data/${prizeId}`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get extra data for a prize
+     *
+     * @name ExtraDataDetail
+     * @request GET:/prizes/extra_data/{prize_id}
+     */
+    extraDataDetail: (prizeId: string, params: RequestParams = {}) =>
+      this.request<TotalFunds, any>({
+        path: `/prizes/extra_data/${prizeId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Fetch extra donation data for a prize
+     *
+     * @name ExtraDataDonationsDetail
+     * @request GET:/prizes/extra_data/donations/{prize_id}
+     */
+    extraDataDonationsDetail: (prizeId: string, params: RequestParams = {}) =>
+      this.request<ExtraDonationPrizeData[], any>({
+        path: `/prizes/extra_data/donations/${prizeId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create extra donation data for a prize
+     *
+     * @name ExtraDataDonationsCreate
+     * @request POST:/prizes/extra_data/donations/{prize_id}
+     */
+    extraDataDonationsCreate: (
+      prizeId: string,
+      data: CreateExtraDonationPrizeDataDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<Http200Response, any>({
+        path: `/prizes/extra_data/donations/${prizeId}`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * No description
      *
      * @name AddressDetail
@@ -3091,6 +3332,21 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
     existsDetail: (username: string, params: RequestParams = {}) =>
       this.request<boolean, any>({
         path: `/users/exists/${username}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Endpoint for checking if a user with the specified email exists.
+     *
+     * @name ExistsEmailDetail
+     * @summary Endpoint for checking if a user with the specified email exists
+     * @request GET:/users/exists/email/{email}
+     */
+    existsEmailDetail: (email: string, params: RequestParams = {}) =>
+      this.request<EmailExistsResponse, any>({
+        path: `/users/exists/email/${email}`,
         method: 'GET',
         format: 'json',
         ...params,

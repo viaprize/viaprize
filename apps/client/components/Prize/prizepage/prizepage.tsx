@@ -14,7 +14,7 @@ import { usdcSignType } from '@/lib/utils';
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import useMounted from '@/components/hooks/useMounted';
 import { backendApi } from '@/lib/backend';
-import { USDC } from '@/lib/constants';
+import { EXTRA_PRIZES, USDC } from '@/lib/constants';
 import {
   Badge,
   Button,
@@ -48,6 +48,7 @@ import Submissions from './submissions';
 
 import { useDisclosure } from '@mantine/hooks';
 import { IconXboxX } from '@tabler/icons-react';
+import { useQuery } from 'react-query';
 
 interface DonatingWithoutLoginProps {
   opened: boolean;
@@ -437,6 +438,7 @@ export default function PrizePageComponent({
   const { appUser, loginUser } = useAppUser();
   console.log(prize.submission_time_blockchain, 'lsljfkjds prize subision');
   const params = useParams();
+  console.log({ prize });
   useEffect(() => {
     if (window.location.hash.includes('success')) {
       void fetch(
@@ -453,6 +455,14 @@ export default function PrizePageComponent({
       });
     }
   }, [params]);
+
+  const { data: extraData } = useQuery(['get-extra-prize-data'], async () => {
+    if (EXTRA_PRIZES.includes(prize.id)) {
+      const final = (await (await backendApi(false)).prizes.extraDataDetail(prize.id))
+        .data;
+      return final;
+    }
+  });
 
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -487,7 +497,10 @@ export default function PrizePageComponent({
           name={prize.user.name}
           description={prize.description}
           contractAddress={prize.contract_address}
-          totalFunds={prize.balance}
+          prizeId={prize.id}
+          totalFunds={
+            (prize.balance + (extraData ? extraData.totalFundsInUsd : 0)) * 1_000_000
+          }
           submissionDeadline={
             prize.submission_time_blockchain !== 0
               ? new Date(prize.submission_time_blockchain * 1000)

@@ -4,16 +4,16 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class ExtraPrize {
   @PrimaryGeneratedColumn('increment')
   id: string;
-  @Column()
+  @Column({ type: 'decimal' })
   fundsUsd: number;
 
-  @Column()
+  @Column({ type: 'decimal' })
   fundsInBtc: number;
 
-  @Column()
+  @Column({ type: 'decimal' })
   fundsInEth: number;
 
-  @Column()
+  @Column({ type: 'decimal' })
   fundsInSol: number;
 
   @Column()

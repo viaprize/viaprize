@@ -1875,6 +1875,46 @@
         "x-nestia-method": "GET"
       }
     },
+    "/price/usd_to_sol": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "price.usd_to_sol.usd_to_sol",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/price/usd_to_btc": {
+      "get": {
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "x-nestia-namespace": "price.usd_to_btc.usd_to_btc",
+        "x-nestia-jsDocTags": [],
+        "x-nestia-method": "GET"
+      }
+    },
     "/prizes": {
       "post": {
         "tags": [],
@@ -3327,6 +3367,401 @@
         "x-nestia-method": "GET"
       }
     },
+    "/prizes/extra_data/{prize_id}": {
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "- The ID of the prize",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "- The data to be used for creating extra prize",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExtraPrizeDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "Create extra data for a prize",
+        "x-nestia-namespace": "prizes.extra_data.createExtraData",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "prizeId",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The ID of the prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The data to be used for creating extra prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          },
+          {
+            "name": "throws",
+            "text": [
+              {
+                "text": "{HttpException}",
+                "kind": "text"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- Throws an error if creating extra prize fails",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      },
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "- The ID of the prize",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "- The total value of the extra prize in USD",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TotalFunds"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "Get extra data for a prize",
+        "x-nestia-namespace": "prizes.extra_data.getExtraData",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "prizeId",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The ID of the prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "- The total value of the extra prize in USD",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/prizes/extra_data/donations/{prize_id}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "- The ID of the prize",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExtraDonationPrizeData"
+                  }
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "Fetch extra donation data for a prize",
+        "x-nestia-namespace": "prizes.extra_data.donations.getExtraDonationsData",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "prizeId",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The ID of the prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The data to be used for creating extra donation",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          },
+          {
+            "name": "throws",
+            "text": [
+              {
+                "text": "{HttpException}",
+                "kind": "text"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- Throws an error if creating extra donation fails",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      },
+      "post": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "prize_id",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "- The ID of the prize",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "- The data to be used for creating extra donation",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExtraDonationPrizeDataDto"
+              }
+            }
+          },
+          "required": true,
+          "x-nestia-encrypted": false
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Http200Response"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "description": "Create extra donation data for a prize",
+        "x-nestia-namespace": "prizes.extra_data.donations.createExtraDonationData",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "date",
+            "text": [
+              {
+                "text": "9/25/2023 - 5:35:35 AM",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "async"
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "prizeId",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The ID of the prize",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "body",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- The data to be used for creating extra donation",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns"
+          },
+          {
+            "name": "throws",
+            "text": [
+              {
+                "text": "{HttpException}",
+                "kind": "text"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "- Throws an error if creating extra donation fails",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "POST"
+      }
+    },
     "/prizes/address/{id}": {
       "get": {
         "tags": [],
@@ -3645,6 +4080,67 @@
             "text": [
               {
                 "text": "A boolean indicating if the user exists.",
+                "kind": "text"
+              }
+            ]
+          }
+        ],
+        "x-nestia-method": "GET"
+      }
+    },
+    "/users/exists/email/{email}": {
+      "get": {
+        "tags": [],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The email to check.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The email exist object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailExistsResponse"
+                }
+              }
+            },
+            "x-nestia-encrypted": false
+          }
+        },
+        "summary": "Endpoint for checking if a user with the specified email exists",
+        "description": "Endpoint for checking if a user with the specified email exists.",
+        "x-nestia-namespace": "users.exists.email.emailExists",
+        "x-nestia-jsDocTags": [
+          {
+            "name": "param",
+            "text": [
+              {
+                "text": "email",
+                "kind": "parameterName"
+              },
+              {
+                "text": " ",
+                "kind": "space"
+              },
+              {
+                "text": "The email to check.",
+                "kind": "text"
+              }
+            ]
+          },
+          {
+            "name": "returns",
+            "text": [
+              {
+                "text": "The email exist object.",
                 "kind": "text"
               }
             ]
@@ -7120,6 +7616,135 @@
         "description": "From T, pick a set of properties whose keys are in the union K",
         "x-typia-jsDocTags": []
       },
+      "UpdateExtraPrizeDto": {
+        "type": "object",
+        "properties": {
+          "fundsUsd": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "fundsInBtc": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "fundsInEth": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "fundsInSol": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          },
+          "externalId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "externalId"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "TotalFunds": {
+        "type": "object",
+        "properties": {
+          "totalFundsInUsd": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "totalFundsInUsd"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "ExtraDonationPrizeData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "donationTime": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string",
+            "format": "date-time"
+          },
+          "donor": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "value": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "valueIn": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "externalId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "id",
+          "donationTime",
+          "donor",
+          "value",
+          "valueIn",
+          "externalId"
+        ],
+        "x-typia-jsDocTags": []
+      },
+      "CreateExtraDonationPrizeDataDto": {
+        "type": "object",
+        "properties": {
+          "donor": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "value": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "number"
+          },
+          "valueIn": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          },
+          "externalId": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "donor",
+          "value",
+          "valueIn",
+          "externalId"
+        ],
+        "x-typia-jsDocTags": []
+      },
       "CreateUser": {
         "type": "object",
         "properties": {
@@ -7430,6 +8055,27 @@
           }
         },
         "nullable": false,
+        "x-typia-jsDocTags": []
+      },
+      "EmailExistsResponse": {
+        "type": "object",
+        "properties": {
+          "exists": {
+            "x-typia-required": true,
+            "x-typia-optional": false,
+            "type": "boolean"
+          },
+          "walletAddress": {
+            "x-typia-required": false,
+            "x-typia-optional": true,
+            "type": "string"
+          }
+        },
+        "nullable": false,
+        "required": [
+          "exists"
+        ],
+        "description": "The Users controller is responsible for handling requests from the client related to user data.\nThis includes creating a new user, getting a user by ID, and getting a user by username.",
         "x-typia-jsDocTags": []
       },
       "WalletResponse": {

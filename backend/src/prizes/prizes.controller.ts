@@ -19,6 +19,7 @@ import { addMinutes, differenceInSeconds } from 'date-fns';
 import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { MailService } from 'src/mail/mail.service';
 import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
+import { PriceService } from 'src/price/price.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
@@ -35,22 +36,31 @@ import { AuthGuard } from '../auth/auth.guard';
 import { infinityPagination } from '../utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreateExtraDonationPrizeDataDto } from './dto/create-extra-donation.dto';
 import { CreatePrizeProposalDto } from './dto/create-prize-proposal.dto';
 import { CreatePrizeDto } from './dto/create-prize.dto';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
 import { RejectProposalDto } from './dto/reject-proposal.dto';
 import { FetchSubmissionDto } from './dto/submission.dto';
+import { UpdateExtraPrizeDto } from './dto/update-extra-prize.dto';
 import { UpdatePrizeDto } from './dto/update-prize-proposal.dto';
+import { ExtraDonationPrizeData } from './entities/extra-donation-prize-data.entity';
 import { PrizeProposals } from './entities/prize-proposals.entity';
 import { Prize } from './entities/prize.entity';
 import { PrizesComments } from './entities/prizes-comments.entity';
 import { Submission } from './entities/submission.entity';
+import { ExtraDonationPrizeDataService } from './services/extra-donation-prize-data.service';
+import { ExtraPrizeDataService } from './services/extra-prize.service';
 import { PrizeCommentService } from './services/prize-comment.service';
 import { PrizeProposalsService } from './services/prizes-proposals.service';
 import { PrizesService } from './services/prizes.service';
 import { SubmissionService } from './services/submissions.service';
 interface SubmissionWithBlockchainData extends Submission {
   voting_blockchain: number;
+}
+
+interface TotalFunds {
+  totalFundsInUsd: number;
 }
 /**
  * The PrizeProposalsPaginationResult class is a TypeScript implementation of the
@@ -78,6 +88,9 @@ export class PrizesController {
     private readonly userService: UsersService,
     private readonly prizeCommentsService: PrizeCommentService,
     private readonly walletService: WalletService,
+    private readonly extraPrizeService: ExtraPrizeDataService,
+    private readonly extraPrizeDonationService: ExtraDonationPrizeDataService,
+    private readonly priceService: PriceService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -951,6 +964,108 @@ export class PrizesController {
     return {
       slug,
     };
+  }
+  /**
+   * Create extra data for a prize
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} prizeId - The ID of the prize
+   * @param {UpdateExtraPrizeDto} body - The data to be used for creating extra prize
+   * @returns {Promise<Http200Response>}
+   * @throws {HttpException} - Throws an error if creating extra prize fails
+   */
+  @Post('/extra_data/:prize_id')
+  async createExtraData(
+    @TypedParam('prize_id') prizeId: string,
+    @Body() body: UpdateExtraPrizeDto,
+  ): Promise<Http200Response> {
+    console.log({ body });
+    try {
+      await this.extraPrizeService.updateFund(body, prizeId);
+      return {
+        message: `Extra prize proposal with id ${prizeId} has been created`,
+      };
+    } catch (e) {
+      console.error(e);
+      throw new HttpException(`Error creating extra prize ${e.message}`, 400);
+    }
+  }
+
+  /**
+   * Get extra data for a prize
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} prizeId - The ID of the prize
+   * @returns {Promise<number>} - The total value of the extra prize in USD
+   */
+  @Get('/extra_data/:prize_id')
+  async getExtraData(
+    @TypedParam('prize_id') prizeId: string,
+  ): Promise<TotalFunds> {
+    const extraPrize = await this.extraPrizeService.getFundByExternalId(
+      prizeId,
+    );
+    const btcToUsd = (await this.priceService.getPrice('bitcoin'))['bitcoin']
+      .usd;
+    const ethToUsd = (await this.priceService.getPrice('ethereum'))['ethereum']
+      .usd;
+    const solToUsd = (await this.priceService.getPrice('solana'))['solana'].usd;
+
+    const totalFunds =
+      parseFloat(extraPrize.fundsUsd.toString()) +
+      parseFloat(extraPrize.fundsInBtc.toString()) * btcToUsd +
+      parseFloat(extraPrize.fundsInEth.toString()) * ethToUsd +
+      parseFloat(extraPrize.fundsInSol.toString()) * solToUsd;
+    return {
+      totalFundsInUsd: totalFunds,
+    };
+  }
+  /**
+   * Fetch extra donation data for a prize
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} prizeId - The ID of the prize
+   * @param {CreateExtraDonationPrizeDataDto} body - The data to be used for creating extra donation
+   * @returns {Promise<ExtraDonationPrizeData[]>}
+   * @throws {HttpException} - Throws an error if creating extra donation fails
+   */
+  @Get('/extra_data/donations/:prize_id')
+  async getExtraDonationsData(
+    @TypedParam('prize_id') prizeId: string,
+  ): Promise<ExtraDonationPrizeData[]> {
+    try {
+      const donations =
+        await this.extraPrizeDonationService.getDonationByExternalId(prizeId);
+      return donations;
+    } catch (e) {
+      console.error(e);
+      throw new HttpException(`Error creating extra prize ${e.message}`, 400);
+    }
+  }
+  /**
+   * Create extra donation data for a prize
+   * @date 9/25/2023 - 5:35:35 AM
+   * @async
+   * @param {string} prizeId - The ID of the prize
+   * @param {CreateExtraDonationPrizeDataDto} body - The data to be used for creating extra donation
+   * @returns {Promise<Http200Response>}
+   * @throws {HttpException} - Throws an error if creating extra donation fails
+   */
+  @Post('/extra_data/donations/:prize_id')
+  async createExtraDonationData(
+    @TypedParam('prize_id') prizeId: string,
+    @Body() body: CreateExtraDonationPrizeDataDto,
+  ): Promise<Http200Response> {
+    console.log('hiiiiiiiiiiiiiiiiiii');
+    try {
+      await this.extraPrizeDonationService.createDonation(body);
+      return {
+        message: `Extra prize proposal with id ${prizeId} has been created`,
+      };
+    } catch (e) {
+      console.error(e);
+      throw new HttpException(`Error creating extra prize ${e.message}`, 400);
+    }
   }
 
   @Get('/address/:id')

@@ -1,8 +1,7 @@
 import { formatDateString } from '@/lib/utils';
-import { Avatar, Badge, Button, Card, Group, Text } from '@mantine/core';
-import { formatDistanceToNow } from 'date-fns';
+import { Avatar, Badge, Card, Group, Text } from '@mantine/core';
 import Link from 'next/link';
-import { FaSackDollar, FaUser, FaUsers } from 'react-icons/fa6';
+import { FaSackDollar, FaUser } from 'react-icons/fa6';
 
 interface PrizeFunderCardProps {
   name: string;
@@ -13,6 +12,7 @@ interface PrizeFunderCardProps {
   username: string;
   badge?: string | number;
   date?: string;
+  amountIn: string;
 }
 
 export default function PrizeFunderCard({
@@ -21,6 +21,7 @@ export default function PrizeFunderCard({
   username,
   badge,
   date,
+  amountIn = 'USD',
 }: PrizeFunderCardProps) {
   return (
     <Card
@@ -35,7 +36,7 @@ export default function PrizeFunderCard({
         <Avatar radius="md" alt="creator" className="rounded-sm" src={avatar} />
         <div>
           <Link href={`/profile/${username}`}>
-            <Text variant="p" fw="bold" my="0px" className="leading-[15px]">
+            <Text variant="p" fw="lighter" my="0px" className="leading-[15px]">
               {name}
             </Text>
           </Link>
@@ -50,7 +51,7 @@ export default function PrizeFunderCard({
             color={typeof badge === 'string' ? 'yellow' : 'green'}
             leftSection={typeof badge === 'string' ? <FaUser /> : <FaSackDollar />}
           >
-            {typeof badge === 'string' ? badge : `$${badge}`}
+            {typeof badge === 'string' ? badge : `${badge} ${amountIn}`}
           </Badge>
         ) : null}
         {date ? (

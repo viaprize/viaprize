@@ -45,16 +45,6 @@ export default async function FetchPortals({
 
   // console.log(portals);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- will check later
-  const final: { ethereum: { usd: number } } = await (
-    await fetch(`https://prod-api.viaprize.org/api/price/usd_to_eth`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    })
-  ).json();
-
   return (
     <>
       {portals.map((portal) => {

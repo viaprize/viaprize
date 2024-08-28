@@ -211,6 +211,11 @@ export const EXTRA_FUNDRAISERS_IDS = [
   '97a24692-9762-4384-8bf5-837cd3aaaa3b',
 ];
 
+export const EXTRA_PRIZES = [
+  '1c5a8b62-ae43-4dde-b550-95848c7f9729',
+  'ea2121a8-5801-4bc5-a74c-eb05068f4c36',
+];
+
 export const FUND_MCR_ADDRESS = [
   {
     inputs: [

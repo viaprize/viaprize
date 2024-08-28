@@ -21,6 +21,7 @@ export default function Contestants() {
           avatar={contestant.avatar}
           name={contestant.name}
           username={contestant.username}
+          amountIn=""
         />
       ))}
     </section>
