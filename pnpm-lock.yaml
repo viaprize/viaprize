@@ -27,6 +27,9 @@ importers:
       drizzle-orm:
         specifier: ^0.33.0
         version: 0.33.0(@electric-sql/pglite@0.2.4)(postgres@3.4.4)
+      drizzle-zod:
+        specifier: ^0.5.1
+        version: 0.5.1(drizzle-orm@0.33.0)(zod@3.23.8)
       nanoid:
         specifier: ^5.0.7
         version: 5.0.7
@@ -3313,6 +3316,16 @@ packages:
       '@types/react': 18.3.4
       postgres: 3.4.4
       react: 18.3.1
+    dev: false
+
+  /drizzle-zod@0.5.1(drizzle-orm@0.33.0)(zod@3.23.8):
+    resolution: {integrity: sha512-C/8bvzUH/zSnVfwdSibOgFjLhtDtbKYmkbPbUCq46QZyZCH6kODIMSOgZ8R7rVjoI+tCj3k06MRJMDqsIeoS4A==}
+    peerDependencies:
+      drizzle-orm: '>=0.23.13'
+      zod: '*'
+    dependencies:
+      drizzle-orm: 0.33.0(@electric-sql/pglite@0.2.4)(postgres@3.4.4)
+      zod: 3.23.8
     dev: false
 
   /eastasianwidth@0.2.0:

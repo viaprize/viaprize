@@ -13,6 +13,7 @@
   "dependencies": {
     "@electric-sql/pglite": "^0.2.4",
     "drizzle-orm": "^0.33.0",
+    "drizzle-zod": "^0.5.1",
     "nanoid": "^5.0.7",
     "postgres": "^3.4.4",
     "sst": "*",
