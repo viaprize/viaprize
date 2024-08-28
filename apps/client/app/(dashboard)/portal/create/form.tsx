@@ -50,8 +50,8 @@ export default function PortalForm() {
     useMutation(addProposals);
 
   const { data: crytoToUsd } = useQuery<ConvertUSD>(['get-crypto-to-usd'], async () => {
-    const final = await (
-      await fetch(`https://api-prod.pactsmith.com/api/price/usd_to_eth`)
+    const final = await(
+      await fetch(`https://prod-api.viaprize.org/api/price/usd_to_eth`),
     ).json();
     return Object.keys(final).length === 0
       ? {
