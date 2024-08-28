@@ -1,19 +1,20 @@
 //SPDX-License-Identifier:MIT
 pragma solidity ^0.8.0;
 
-import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
+import "./helperLibraries/errorEventsLibrary.sol";
 import "../../helperContracts/safemath.sol";
 import "../../helperContracts/ierc20_permit.sol";
 import "../../helperContracts/ierc20_weth.sol";
 import "../../helperContracts/ierc721.sol";
 import "../../helperContracts/ierc1155.sol";
-// import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../../helperContracts/nonReentrant.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
+import "@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-// import "@uniswap/v3-core/contracts/libraries/FullMath.sol";
 
-contract PassThroughV2 {
+contract PassThroughV2 is ReentrancyGuard {
+
     /// @notice this will be the total funds yet contributed to this campaign by funders
     uint256 public totalFunds;
     /// @notice this will be the total Rewards which goes to recipent after deducting platform fees
@@ -49,7 +50,7 @@ contract PassThroughV2 {
     /// @notice this will be a mapping of the address of a proposer to a boolean value of true or false
     mapping(address => bool) public isProposer;
     /// @notice this will be a mapping of the addresses of a platformAdmins to a boolean value of true or false
-    mapping(address => bool) public isplatformAdmin;
+    mapping(address => bool) public isPlatformAdmin;
     /// @notice this will be a mapping of the addresses of a funder to a boolean value of true or false
     mapping(address => bool) public isFunder;
     /// @notice this will be a mapping of the addresses of the funders to the amount they have contributed
@@ -73,27 +74,10 @@ contract PassThroughV2 {
     IUniswapV3Pool public immutable ethUsdcPool;
     /// @notice initializing chainlink or oracle price aggregator
     AggregatorV3Interface public immutable ethPriceAggregator;
-    
-    /// @notice error indicating insufficient funds while funding to the contract.
-    error NotEnoughFunds();
-    /// @notice error indicating the funding to the contract has ended
-    error FundingToContractEnded();
-    error NPP();
 
-    /// @notice initializing the use of safemath
+    /// @notice This directive allows the use of the SafeMath and ErrorAndEventsLibrary libraries.
     using SafeMath for uint256;
-
-    enum DonationType {
-        GIFT,
-        PAYMENT
-    }
-    enum TokenType {
-        NFT,
-        TOKEN
-    }
-    /// @notice Donation events triggered
-    event Donation(address indexed donator ,address indexed token_or_nft, DonationType  indexed _donationType, TokenType _tokenType, uint256 amount);
-    event Sender(address indexed _sender, uint256 indexed _amount);
+    using ErrorAndEventsLibrary for *;
 
     /// @notice constructor where we pass all the required parameters before deploying the contract
     /// @param _proposer who creates this campaign
@@ -124,7 +108,7 @@ contract PassThroughV2 {
         totalPlatformAdmins = _platformAdmins.length;
         for(uint256 i=0; i<totalPlatformAdmins; i++) {
             platformAdmins.push(_platformAdmins[i]);
-            isplatformAdmin[_platformAdmins[i]] = true;
+            isPlatformAdmin[_platformAdmins[i]] = true;
         }
         receipent = _proposer;
         platformFee = _platformFee;
@@ -139,126 +123,108 @@ contract PassThroughV2 {
         bridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
         ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
-    
     } 
 
-    /// @notice re-entrancy modifier
-    modifier noReentrant() {
-        require(!locked, "No cheat, No Re-entrancy");
-        locked = true;
-        _;
-        locked = false;
+    /// @notice Checks if the campaign is active. Reverts with NotActive error if not.
+    function _onlyActive() private view {
+        if (!isActive) revert ErrorAndEventsLibrary.NotActive();
     }
-    /// @notice modifer where only proposer or platformAdmin can call the functions.
-    modifier onlyProposerOrAdmin {
-        require(isProposer[msg.sender] == true || isplatformAdmin[msg.sender] == true, "You are not a proposer or platformAdmin.");
+    /// @notice Modifier to ensure the function is only executed if the campaign is active.
+    modifier onlyActive() {
+        _onlyActive();
         _;
     }
 
+    /// @notice Checks if the caller is a platform admin. Reverts with NP error if not.
+    function _onlyPlatformAdmin() private view {
+        if (!isPlatformAdmin[msg.sender]) revert ErrorAndEventsLibrary.NP();
+    }
+    /// @notice Modifier to ensure the function is only executed by platform admins.
+    modifier onlyPlatformAdmin() {
+        _onlyPlatformAdmin();
+        _;
+    }
+
+    /// @notice Checks if the caller is either a platform admin or the visionary. Reverts with NPP error if not.
+    function _onlyPlatformAdminOrVisionary() private view {
+        if (!(isPlatformAdmin[msg.sender] || isProposer[msg.sender])) revert ErrorAndEventsLibrary.NPP();
+    }
+    /// @notice Modifier to ensure the function is only executed by platform admins or the visionary.
+    modifier onlyPlatformAdminOrVisionary() {
+        _onlyPlatformAdminOrVisionary();
+        _;
+    }
+
+    /// @notice Handles the logic for depositing cryptocurrency donations.
+    /// @param sender The address of the funder making the donation.
+    /// @param _donation The amount of cryptocurrency being donated.
     function _depositAndTransferLogic(address sender, uint256 _donation) private {
-        funders.push(sender);
-        isFunder[sender] = true;
+        if(!isFunder[sender]) {
+            funders.push(sender);
+            isFunder[sender] = true;
+        }
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
-        emit Donation(sender,address(_usdc),DonationType.PAYMENT,TokenType.TOKEN,_donation);
     }
 
-    /// @notice function to donate the usdc tokens into the campaign
-    function addUsdcFunds(address spender, uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash) public noReentrant  {
-        require(_amountUsdc > 0, "funds should be greater than 0");
-        if (!isActive) revert FundingToContractEnded();
+    /// @notice function to add the tokens into campagin and give voting access to others
+    /// @param _amountUsdc The amount of tokens being added.
+    /// @param _deadline The deadline for the permit function.
+    /// @param v The `v, r, s` component of the ECDSA signature.
+    /// @param _ethSignedMessageHash The Ethereum signed message hash.
+    /// @param _fiatPayment A boolean indicating whether the payment is in fiat.
+    function addUsdcFunds(uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public nonReentrant onlyActive {
+        if(_amountUsdc <= 0) revert ErrorAndEventsLibrary.NotEnoughFunds();
         address funder = ecrecover(_ethSignedMessageHash, v, r, s);
-        _usdc.permit(funder, spender, _amountUsdc, _deadline, v, r, s);
-        _usdc.transferFrom(funder, spender, _amountUsdc);
+        _usdc.permit(funder, address(this), _amountUsdc, _deadline, v, r, s);
+        _usdc.transferFrom(funder, address(this), _amountUsdc);
         uint256 _donation = _amountUsdc;
         _depositAndTransferLogic(funder, _donation);
+        emit ErrorAndEventsLibrary.Donation(funder, address(_usdc), ErrorAndEventsLibrary.DonationType.PAYMENT, ErrorAndEventsLibrary.TokenType.TOKEN, _fiatPayment, _donation);
+    }
+
+    /// @notice function to handle the logic for swapping tokens through the router.
+    /// @param sender The address of the funder making the swap.
+    /// @param _amountUsdc The amount of USDC being swapped.
+    /// @param swapFrom The address of the token being swapped from.
+    /// @param poolFee The fee associated with the pool.
+    /// @param _amountOutMinimum The minimum amount out from the swap.
+    function _swapRouterLogic(address sender, uint256 _amountUsdc, address swapFrom, uint256 poolFee, uint256 _amountOutMinimum ) private {
+        ISwapRouter.ExactInputParams memory params =
+            ISwapRouter.ExactInputParams({
+                path: abi.encodePacked(swapFrom, poolFee, address(_usdc)),
+                recipient: address(this),
+                deadline: block.timestamp,
+                amountIn: _amountUsdc,
+                amountOutMinimum: _amountOutMinimum
+        });
+        uint256 _donation  = swapRouter.exactInput(params);
+        _depositAndTransferLogic(sender, _donation);
+        emit ErrorAndEventsLibrary.Donation(sender, swapFrom, ErrorAndEventsLibrary.DonationType.PAYMENT, ErrorAndEventsLibrary.TokenType.TOKEN, false, _donation);
     }
     
-
-    /// @notice function to donate eth into the campaign
-    function addEthFunds(uint256 _amountOutMinimum) public noReentrant payable  {
-        if (msg.value == 0) revert NotEnoughFunds();
-        if (!isActive) revert FundingToContractEnded();
+    /// @notice Allows users to donate ETH to the campaign. The ETH is swapped to USDC via a router.
+    /// @param _amountOutMinimum The minimum amount of USDC that must be received from the swap.
+    function addEthFunds(uint256 _amountOutMinimum) public nonReentrant payable onlyActive{
+        if(msg.value <= 0) revert ErrorAndEventsLibrary.NotEnoughFunds();
         uint256 eth_donation =  msg.value;
         address sender = msg.sender;
         _weth.deposit{value:msg.value}();
         _weth.approve(address(swapRouter), eth_donation);
-        ISwapRouter.ExactInputParams memory params =
-            ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(WETH, ethUsdcPool.fee(), USDC),
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: eth_donation,
-                amountOutMinimum: _amountOutMinimum
-        });
-        uint256 _donation = swapRouter.exactInput(params);
-        _depositAndTransferLogic(sender, _donation);
+        _swapRouterLogic(sender, eth_donation, address(_weth), ethUsdcPool.fee(), _amountOutMinimum);
     }
 
-    function giftNfts(address _nft , uint256 _tokenId, uint256 _amount) public noReentrant {
-        if (!isActive) revert FundingToContractEnded();
-        IERC1155 nfts = IERC1155(_nft);
-        nfts.safeTransferFrom(msg.sender,receipent, _tokenId, _amount,"");
-        emit Donation(msg.sender,_nft,DonationType.GIFT,TokenType.NFT,_amount);
-    }
-
-    function giftNfts(address _nft , uint256 _tokenId) public noReentrant {
-        if (!isActive) revert FundingToContractEnded();
-        IERC721 nft = IERC721(_nft);
-        nft.safeTransferFrom(msg.sender,receipent,_tokenId);
-        emit Donation(msg.sender,_nft,DonationType.GIFT,TokenType.NFT,1);
-    }
-
-
-    function giftTokens(address _token, uint256 _amount) public noReentrant {
-        if (!isActive) revert FundingToContractEnded();
-        TransferHelper.safeTransferFrom(_token, msg.sender, receipent, _amount);
-        emit Donation(msg.sender, _token, DonationType.GIFT, TokenType.TOKEN,_amount);
-
-    }
-
-    function  addTokenFunds(address _token , uint256 _amount , uint256 _minimumOutput,bytes memory paths) public noReentrant {
-        require(_amount > 0, "funds should be greater than 0");
-        if (!isActive) revert FundingToContractEnded();
-        IERC20 token = IERC20(_token);
-        require(token.allowance(msg.sender, address(this)) >= _amount, "Not enough Amount approved"); 
-        address sender = msg.sender;
-        TransferHelper.safeTransferFrom(_token, msg.sender, address(this), _amount);
-        TransferHelper.safeApprove(_token, address(swapRouter), _amount);
-        ISwapRouter.ExactInputParams memory params =
-            ISwapRouter.ExactInputParams({
-                path: paths,
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: _amount,
-                amountOutMinimum: _minimumOutput
-        });
-        uint256 _donation  = swapRouter.exactInput(params);
-        _depositAndTransferLogic(sender, _donation);     
-    }
-
-    /// function to donate bridged tokens into campaign and swap to the usdc then sends to the campaign
-    function addBridgedUSDCFunds(uint256 _amountUsdc) public noReentrant {
-        require(_amountUsdc > 0, "funds should be greater than 0");
-        require(_usdcBridged.allowance(msg.sender, address(this)) >= _amountUsdc, "Not enough USDC approved"); 
-        if (!isActive) revert FundingToContractEnded();
+    /// @notice Allows users to add bridged USDC funds to the platform.
+    /// @param _amountUsdc The amount of bridged USDC being added.
+    function addBridgedUSDCFunds(uint256 _amountUsdc) public nonReentrant onlyActive {
+        if(_amountUsdc <= 0) revert ErrorAndEventsLibrary.NotEnoughFunds();
         address sender = msg.sender;
         TransferHelper.safeTransferFrom(USDC_E, msg.sender, address(this), _amountUsdc);
         TransferHelper.safeApprove(USDC_E, address(swapRouter), _amountUsdc);
-        // IUniswapV3Pool pool = IUniswapV3Pool(0x2aB22ac86b25BD448A4D9dC041Bd2384655299c4);
-        ISwapRouter.ExactInputParams memory params =
-            ISwapRouter.ExactInputParams({
-                path: abi.encodePacked(USDC_E, bridgedUsdcPool.fee(), USDC),
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: _amountUsdc,
-                amountOutMinimum: _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100)
-        });
-        // Executes the swap.
-        uint256 _donation  = swapRouter.exactInput(params);
-        _depositAndTransferLogic(sender, _donation);
+        uint256 _amountOutMinimum = _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100);
+        _swapRouterLogic(sender, _amountUsdc, address(_usdcBridged), bridgedUsdcPool.fee(), _amountOutMinimum );
     }
 
     /// @notice external function to receive eth funds
@@ -270,37 +236,53 @@ contract PassThroughV2 {
         addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
     }
 
+    function giftERC1155(address _nft , uint256 _tokenId, uint256 _amount) public nonReentrant {
+        if (!isActive) revert ErrorAndEventsLibrary.FundingToContractEnded();
+        IERC1155 nfts = IERC1155(_nft);
+        nfts.safeTransferFrom(msg.sender,receipent, _tokenId, _amount,"");
+        emit ErrorAndEventsLibrary.Donation(msg.sender,_nft, ErrorAndEventsLibrary.DonationType.GIFT, ErrorAndEventsLibrary.TokenType.NFT, false, _amount);
+    }
+
+    function giftERC721(address _nft , uint256 _tokenId) public nonReentrant onlyActive {
+        IERC721 nft = IERC721(_nft);
+        nft.safeTransferFrom(msg.sender,receipent,_tokenId);
+        emit ErrorAndEventsLibrary.Donation(msg.sender, _nft, ErrorAndEventsLibrary.DonationType.GIFT, ErrorAndEventsLibrary.TokenType.NFT, false, 1);
+    }
+
+    function giftTokens(address _token, uint256 _amount) public nonReentrant onlyActive {
+        TransferHelper.safeTransferFrom(_token, msg.sender, receipent, _amount);
+        emit ErrorAndEventsLibrary.Donation(msg.sender, _token, ErrorAndEventsLibrary.DonationType.GIFT, ErrorAndEventsLibrary.TokenType.TOKEN, false, _amount);
+
+    }
+
     ///@notice function to get all the funders who donated to this campaign
     function retrieveAllFunders() public view  returns(address[] memory){
         return funders;
     }
 
-    /// @notice function to end campaign manually and only proposer or admin can do this
-    function endCampaign() public onlyProposerOrAdmin {
-        if(!isActive) revert("campaign is not active or already ended");
+    /// @notice function to end campaign manually and only proposer can do this
+    function endCampaign() public onlyPlatformAdmin nonReentrant onlyActive{
         isActive = false;
     }
 
     /// @notice function to revoke access for platform admin, it will be called in voteToRevokePlatformAdmin
     /// @param _admin address of platformAdmin to vote for revoke
     function finalRevokePlatformAdmin(address _admin) private {
-        isplatformAdmin[_admin] = false;
+        isPlatformAdmin[_admin] = false;
         totalPlatformAdmins -= 1;
     }
 
     /// @notice function to add access for platform admin, it will be called in voteToAddPlatformAdmin
     /// @param _admin address of platformAdmin to vote for add
     function finalAddPlatformAdmin(address _admin) private {
-        isplatformAdmin[_admin] = true;
+        isPlatformAdmin[_admin] = true;
         totalPlatformAdmins += 1;
     }
 
     /// @notice function vote to add as a platformAdmin
     /// @param _admin is the address to vote for platform Admin
-    function voteToAddPlatformAdmin(address _admin) public {
-        if(!isplatformAdmin[msg.sender]) revert NPP();
-        require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
-        require(!isplatformAdmin[_admin], "the address you want to vote is already a platform admin");
+    function voteToAddPlatformAdmin(address _admin) public nonReentrant onlyPlatformAdmin {
+        if(isPlatformAdmin[_admin]) revert("APA"); //APA -> Already a Platform Adim
         votesToAddPlatformAdmin[_admin] +=1;
         if(votesToAddPlatformAdmin[_admin] >= (2 * totalPlatformAdmins) / 3) {
             finalAddPlatformAdmin(_admin);
@@ -309,9 +291,8 @@ contract PassThroughV2 {
 
     /// @notice function to vote to revoke as a platformAdmin
     /// @param _admin address of platformAdmin to vote for revoke
-    function voteToRevokePlatformAdmin(address _admin) public {
-        require(isplatformAdmin[msg.sender], "you are not an platform admin to vote for revoke");
-        require(isplatformAdmin[_admin], "the address you want to vote is not a platform admin");
+    function voteToRevokePlatformAdmin(address _admin) public nonReentrant onlyPlatformAdmin{
+        if(!isPlatformAdmin[_admin]) revert("PANE"); //NPNE -> Platform Adim Not Exists
         votesToRevokePlatformAdmin[_admin] +=1;
         if(votesToRevokePlatformAdmin[_admin] >= (2 * totalPlatformAdmins) / 3) {
             finalRevokePlatformAdmin(_admin);
@@ -320,7 +301,7 @@ contract PassThroughV2 {
 
     /// @notice function to change slippage tolerance of other token donations
     /// @param _minimumSlipageFeePercentage of new minimumSlipageFeePercentage
-    function changeMinimumSlipageFeePercentage(uint256 _minimumSlipageFeePercentage) public onlyProposerOrAdmin {
+    function changeMinimumSlipageFeePercentage(uint256 _minimumSlipageFeePercentage) public onlyPlatformAdmin {
         minimumSlipageFeePercentage  = _minimumSlipageFeePercentage;
     } 
 }
