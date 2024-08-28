@@ -1,6 +1,5 @@
 'use client';
 import { TextEditor } from '@/components/richtexteditor/textEditor';
-import { parseUsdc } from '@/lib/utils';
 import { Badge, Flex, Text, Title } from '@mantine/core';
 
 export default function AboutPrize({
@@ -20,7 +19,7 @@ export default function AboutPrize({
           Total Amount Raised
         </Badge>
         <Text fw="bold" c="blue" className="lg:text-4xl md:text-3xl text-lg">
-          {parseUsdc(BigInt(parseInt(amount))).toFixed(2)} USD
+          {(parseFloat(amount) / 1_000_000).toFixed(2)} USD
         </Text>
       </Flex>
       <div className="py-4">

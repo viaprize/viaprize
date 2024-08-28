@@ -499,7 +499,7 @@ export default function PrizePageComponent({
           contractAddress={prize.contract_address}
           prizeId={prize.id}
           totalFunds={
-            (prize.balance + (extraData ? extraData.totalFundsInUsd : 0)) * 1_000_000
+            prize.balance + (extraData ? extraData.totalFundsInUsd * 1_000_000 : 0)
           }
           submissionDeadline={
             prize.submission_time_blockchain !== 0
