@@ -3,6 +3,8 @@
 'use client';
 
 import { PrizeStages } from '@/lib/api';
+import { backendApi } from '@/lib/backend';
+import { EXTRA_PRIZES } from '@/lib/constants';
 import { getCorrectStage, toTitleCase } from '@/lib/utils';
 import {
   ActionIcon,
@@ -21,6 +23,7 @@ import { FaUsers } from 'react-icons/fa';
 import { FaSackDollar } from 'react-icons/fa6';
 import { GiSandsOfTime, GiTwoCoins } from 'react-icons/gi';
 import { PiTimerFill } from 'react-icons/pi';
+import { useQuery } from 'react-query';
 
 interface ExploreCardProps {
   distributed: boolean;
@@ -80,6 +83,13 @@ function ExploreCard({
     isActive,
   );
 
+  const { data: extraData } = useQuery([`get-prize-extra-data-${id}`], async () => {
+    if (EXTRA_PRIZES.includes(id)) {
+      const final = await (await backendApi(false)).prizes.extraDataDetail(id);
+      console.log({ final }, 'fionaodjs');
+      return final;
+    }
+  });
   return (
     <div className="relative">
       <div className="absolute z-10 top-2 right-2">
@@ -146,7 +156,7 @@ function ExploreCard({
             <Flex gap="sm">{skills}</Flex>
             <div className="flex gap-2">
               <Tooltip label="Funds Allocated" withArrow>
-                <Button
+                {/* <Button
                   variant="light"
                   color="yellow"
                   fullWidth
@@ -154,7 +164,32 @@ function ExploreCard({
                   leftSection={<FaSackDollar />}
                 >
                   {usdAmount} USD
-                </Button>
+                </Button> */}
+                {EXTRA_PRIZES.includes(id) ? (
+                  <Button
+                    variant="light"
+                    color="yellow"
+                    fullWidth
+                    className="text-md font-bold cursor-pointer"
+                    leftSection={<FaSackDollar />}
+                  >
+                    {(
+                      parseFloat(usdAmount) +
+                      parseInt(extraData?.data.totalFundsInUsd.toString() ?? '0')
+                    ).toFixed(2)}{' '}
+                    USD
+                  </Button>
+                ) : (
+                  <Button
+                    variant="light"
+                    color="yellow"
+                    fullWidth
+                    className="text-md font-bold cursor-pointer"
+                    leftSection={<FaSackDollar />}
+                  >
+                    {parseFloat(usdAmount)} USD
+                  </Button>
+                )}
               </Tooltip>
               <Tooltip label="Submission Deadline" withArrow>
                 <Button
