@@ -42,8 +42,6 @@ contract PassThroughV2 is ReentrancyGuard {
 
     /// @notice bool to check status of campaign
     bool public isActive;
-    /// @notice To-Do
-    bool internal locked;
     
     /// @notice this will be a mapping of the address of a proposer to a boolean value of true or false
     mapping(address => bool) public isVisionary;

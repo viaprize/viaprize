@@ -19,8 +19,6 @@ contract PrizeV2 is ReentrancyGuard {
     uint256 public totalFunds;
     /// @notice This variable tracks the total amount of rewards available after deducting visionary and platform fees.
     uint256 public totalRewards;
-    /// @notice This variable represents the time when the dispute period ends.
-    uint256 public disputePeriod;
     /// @notice This variable represents the time when the voting period ends.
     uint256 private votingTime;
     /// @notice This variable represents the time when the submission period ends.
@@ -29,14 +27,18 @@ contract PrizeV2 is ReentrancyGuard {
     uint256 private totalVotes;
     /// @notice This variable is a nonce tracker used for creating unique vote hashes.
     uint256 private nonce;
+    /// @notice This variable represents the time when the dispute period ends.
+    uint256 public disputePeriod;
+    /// @notice This variable represents the time when the disputeSubmissionEnds.
+    uint256 public disputeSubmission;
     /// @notice This variable represents the fee percentage of total funds paid to the visionary who proposed the idea.
     uint8 private visionaryFee;
     /// @notice This variable represents the fee percentage of total funds paid to the platform as a fee.
     uint8 private platformFee;
     /// @notice This constant represents the version of the contract.
     uint8 public constant VERSION = 201;
-    /// @notice This variable represents the minimum slippage fee percentage for the minimum output in swaps. EDIT - RENAME TO MAXSLIPPAGE ADD EXTRA P TO FIX TYPO 
-    uint8 public minimumSlipageFeePercentage = 2;
+    /// @notice This variable represents the max slippage fee percentage for the minimum output in swaps.
+    uint8 public maximumSlipageFeePercentage = 2;
 
     /// @notice This boolean indicates whether rewards have been distributed at the end of the voting period.
     bool public distributed = false;
@@ -122,8 +124,8 @@ contract PrizeV2 is ReentrancyGuard {
     /// @param _usdcAddress The address of the USDC token contract.
     /// @param _usdcBridgedAddress The address of the bridged USDC (USDC.e) token contract.
     /// @param _swapRouter The address of the Uniswap V3 SwapRouter contract.
-    /// @param _usdcToUsdcePool The address of the Uniswap V3 pool for USDC to USDC.e swaps. EDIT - SHOULD BE USDC.e to USDC
-    /// @param _usdcToEthPool The address of the Uniswap V3 pool for USDC to ETH swaps. EDIT = SHOULD BE ETH TO USDC
+    /// @param _usdcToUsdcePool The address of the Uniswap V3 pool for USDC to USDC.e swaps.
+    /// @param _usdcToEthPool The address of the Uniswap V3 pool for USDC to ETH swaps.
     /// @param _ethPriceAggregator The address of the Chainlink price aggregator for ETH.
     /// @param _wethToken The address of the WETH token contract.
     constructor(address _visionary, address[] memory _platformAdmins, uint8 _platFormFee, uint8 _visionaryFee, address _usdcAddress, address _usdcBridgedAddress , address _swapRouter ,address _usdcToUsdcePool,address _usdcToEthPool,address _ethPriceAggregator,address _wethToken) {
@@ -141,9 +143,7 @@ contract PrizeV2 is ReentrancyGuard {
         _usdcBridged = IERC20Permit(_usdcBridgedAddress);
         isActive = true;
         swapRouter = ISwapRouter(_swapRouter);
-/// EDIT - SHOULD BE TO USDC
         bridgedUsdcPool = IUniswapV3Pool(_usdcToUsdcePool);
-/// EDIT - SHOULD BE TO USDC
         ethUsdcPool = IUniswapV3Pool(_usdcToEthPool);
         ethPriceAggregator = AggregatorV3Interface(_ethPriceAggregator);
         _weth = IWETH(_wethToken);
@@ -219,14 +219,19 @@ contract PrizeV2 is ReentrancyGuard {
     /// If only one submission exists(because by default we have refund as a submission), refunds the funds and ends the campaign.
     function endSubmissionPeriod() public onlyPlatformAdmin onlyActive{
         if(submissionTime == 0) revert ErrorAndEventsLibrary.SubmissionPeriodNotActive();
-        submissionPeriod = false;
-        submissionTime = 0;
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-        if(allSubmissions.length == 1 ) {
+        if(allSubmissions.length == 1 && disputeSubmission == 0) {
+            submissionTime = block.timestamp + 2 days;
+        } else if(allSubmissions.length == 1 && disputeSubmission != 0 && disputeSubmission <= block.timestamp) {
+            submissionPeriod = false;
+            submissionTime = 0;
             refundLogic();
             refunded = true;
             distributed = true;
             isActive = false;
+        } else if(allSubmissions.length > 1) {
+            submissionPeriod = false;
+            submissionTime = 0;
         }
         emit ErrorAndEventsLibrary.SubmissionEnded(block.timestamp);
     }
@@ -263,6 +268,9 @@ contract PrizeV2 is ReentrancyGuard {
         votingPeriod = false;
         disputePeriod = block.timestamp + 2 days;
         emit ErrorAndEventsLibrary.VotingEnded(block.timestamp);
+        if(totalVotes == 0) {
+            emit ErrorAndEventsLibrary.DisputeRaised(REFUND_SUBMISSION_HASH, platformAdmins[0]);
+        }
     }
 
     /// @notice Allows a contestant to raise a dispute, if they not satisfied with votes, during the dispute period.
@@ -606,7 +614,7 @@ contract PrizeV2 is ReentrancyGuard {
         address sender = msg.sender; 
         _usdcBridged.transferFrom(sender,address(this),_amountUsdc);
         _usdcBridged.approve(address(swapRouter), _amountUsdc);
-        uint256 _amountOutMinimum = _amountUsdc.mul(100-minimumSlipageFeePercentage).div(100);
+        uint256 _amountOutMinimum = _amountUsdc.mul(100-maximumSlipageFeePercentage).div(100);
         _swapRouterLogic(sender, _amountUsdc, address(_usdcBridged), bridgedUsdcPool.fee(), _amountOutMinimum );
     }
 
@@ -616,23 +624,23 @@ contract PrizeV2 is ReentrancyGuard {
         uint decimals = ethPriceAggregator.decimals() - uint256(_usdc.decimals());
         (, int256 latestPrice , , ,)  = ethPriceAggregator.latestRoundData();
         uint price_in_correct_decimals = uint(latestPrice)/ (10 ** decimals);
-        addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
+        addEthFunds((ethValue / price_in_correct_decimals).mul(100-maximumSlipageFeePercentage).div(100));
     }
 
     /// @notice internal refund logic called by _unusedRefundSubmissionLogic
-    function _refundFunder(uint256 transferable_usdc_amount, uint256 total_unused_usdc_votes, address funder, uint256 funderAmount, bool isFiatFunder) private {
+    function _refundFunder(uint256 transferable_usdc_amount, uint256 total_unused_usdc_votes, address funder, uint256 funderAmount, bool _isFiatFunder) private {
         if (funderAmount > 0) {
             uint256 individual_unused_votes = funderAmount.mul(100 - platformFee - visionaryFee).div(100);
             uint256 individual_refund_usdc_percentage = (individual_unused_votes.mul(10000).div(total_unused_usdc_votes));
             uint256 individual_transferable_usdc_amount = (transferable_usdc_amount.mul(individual_refund_usdc_percentage).div(10000));
             if (individual_transferable_usdc_amount > 0) {
-                address recipient = isFiatFunder ? platformAddress : funder;
+                address recipient = _isFiatFunder ? platformAddress : funder;
                 _usdc.transfer(recipient, individual_transferable_usdc_amount);
             }
         }
     }
 
-    /// @notice Distributes the unused USDC votes back to the respective crypto and fiat funders based on their contributions.
+    /// @notice Distributes the unused USDC votes back to the respective submissions based on their contributions.
     /// @param transferable_usdc_amount The total amount of USDC available for refund.
     /// @param total_unused_usdc_votes The total number of unused USDC votes.
     function _unusedRefundSubmissionLogic(uint256 transferable_usdc_amount, uint256 total_unused_usdc_votes) private {
@@ -684,7 +692,7 @@ contract PrizeV2 is ReentrancyGuard {
         token.transfer(_to, _amount); 
    }
 
-   /// @notice logic to refund amount back to funders, incase of no submissions or 0 totalVotes
+   /// @notice logic to refund amount back to funders, in case of no submissions or 0 totalVotes
    function refundLogic() private {
         for(uint64 i=0; i<cryptoFunders.length; i++) {
             address funder = cryptoFunders[i];
@@ -724,8 +732,8 @@ contract PrizeV2 is ReentrancyGuard {
    }
 
     /// @notice function to change slippage tolerance of other token donations
-    /// @param _minimumSlipageFeePercentage of new minimumSlipageFeePercentage
-    function changeMinimumSlipageFeePercentage(uint8 _minimumSlipageFeePercentage) public onlyPlatformAdmin {
-        minimumSlipageFeePercentage  = _minimumSlipageFeePercentage;
+    /// @param _maximumSlipageFeePercentage of new maximumSlipageFeePercentage
+    function changeMinimumSlipageFeePercentage(uint8 _maximumSlipageFeePercentage) public onlyPlatformAdmin {
+        maximumSlipageFeePercentage  = _maximumSlipageFeePercentage;
     } 
 }
