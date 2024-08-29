@@ -25,10 +25,8 @@ contract PassThroughV2 is ReentrancyGuard {
     uint256 public  immutable platformFee;
     uint public minimumSlipageFeePercentage = 2; 
 
-    /// @notice this is the address of proposer who deploys a contract
-    address public proposer;
-    /// @notice this will be the address to receive campaign funds, it can be similar to proposer address
-    address public receipent;
+    /// @notice this is the address of visionary who deploys a contract
+    address public visionary;
     /// @notice this is an usdc token address which will be assigned while deploying the contract.
     address public USDC;
     /// @notice this is an usdc token address which will be assigned while deploying the contract.
@@ -48,7 +46,7 @@ contract PassThroughV2 is ReentrancyGuard {
     bool internal locked;
     
     /// @notice this will be a mapping of the address of a proposer to a boolean value of true or false
-    mapping(address => bool) public isProposer;
+    mapping(address => bool) public isVisionary;
     /// @notice this will be a mapping of the addresses of a platformAdmins to a boolean value of true or false
     mapping(address => bool) public isPlatformAdmin;
     /// @notice this will be a mapping of the addresses of a funder to a boolean value of true or false
@@ -80,7 +78,7 @@ contract PassThroughV2 is ReentrancyGuard {
     using ErrorAndEventsLibrary for *;
 
     /// @notice constructor where we pass all the required parameters before deploying the contract
-    /// @param _proposer who creates this campaign
+    /// @param _visionary who creates this campaign
     /// @param _platformAdmins array of address of platform admins
     /// @param _tokenUsdc contract address of usdc token , 0x0b2c639c533813f4aa9d7837caf62653d097ff85 for op
     /// @param _bridgedTokenUsdc contract address of usdc.e token , 0x7f5c764cbc14f9669b88837ca1490cca17c31607 for op
@@ -91,7 +89,7 @@ contract PassThroughV2 is ReentrancyGuard {
     /// @param  _usdcToEthPool 0x1fb3cf6e48f1e7b10213e7b6d87d4c073c7fdb7b for optimism
     /// @param _ethPriceAggregator 0x13e3Ee699D1909E989722E753853AE30b17e08c5 for optimism
     constructor(
-        address _proposer,
+        address _visionary,
         address[] memory _platformAdmins,
         uint256 _platformFee,
         address _tokenUsdc,
@@ -103,14 +101,13 @@ contract PassThroughV2 is ReentrancyGuard {
         address _ethPriceAggregator
     ) {
 
-        proposer = _proposer;
-        isProposer[_proposer] = true;
+        visionary = _visionary;
+        isVisionary[_visionary] = true;
         totalPlatformAdmins = _platformAdmins.length;
         for(uint256 i=0; i<totalPlatformAdmins; i++) {
             platformAdmins.push(_platformAdmins[i]);
             isPlatformAdmin[_platformAdmins[i]] = true;
         }
-        receipent = _proposer;
         platformFee = _platformFee;
         isActive = true;
         _usdc = IERC20Permit(_tokenUsdc);
@@ -147,7 +144,7 @@ contract PassThroughV2 is ReentrancyGuard {
 
     /// @notice Checks if the caller is either a platform admin or the visionary. Reverts with NPP error if not.
     function _onlyPlatformAdminOrVisionary() private view {
-        if (!(isPlatformAdmin[msg.sender] || isProposer[msg.sender])) revert ErrorAndEventsLibrary.NPP();
+        if (!(isPlatformAdmin[msg.sender] || isVisionary[msg.sender])) revert ErrorAndEventsLibrary.NPP();
     }
     /// @notice Modifier to ensure the function is only executed by platform admins or the visionary.
     modifier onlyPlatformAdminOrVisionary() {
@@ -165,7 +162,7 @@ contract PassThroughV2 is ReentrancyGuard {
         }
         totalFunds = totalFunds.add(_donation);
         totalRewards = totalRewards.add((_donation.mul(100 - platformFee)).div(100));
-        _usdc.transfer(receipent, (_donation.mul(100 - platformFee)).div(100));
+        _usdc.transfer(visionary, (_donation.mul(100 - platformFee)).div(100));
         _usdc.transfer(platformAddress, (_donation.mul(platformFee)).div(100));
     }
 
@@ -236,23 +233,37 @@ contract PassThroughV2 is ReentrancyGuard {
         addEthFunds((ethValue / price_in_correct_decimals).mul(100-minimumSlipageFeePercentage).div(100));
     }
 
-    function giftERC1155(address _nft , uint256 _tokenId, uint256 _amount) public nonReentrant {
-        if (!isActive) revert ErrorAndEventsLibrary.FundingToContractEnded();
+    /**
+     * @notice Gifts ERC1155 tokens.
+     * @param _nft The address of the ERC1155 token contract.
+     * @param _tokenId The ID of the token to be transferred.
+     * @param _amount The amount of the token to be transferred.
+     */
+    function giftERC1155(address _nft , uint256 _tokenId, uint256 _amount) public nonReentrant onlyActive {
         IERC1155 nfts = IERC1155(_nft);
-        nfts.safeTransferFrom(msg.sender,receipent, _tokenId, _amount,"");
+        nfts.safeTransferFrom(msg.sender, visionary, _tokenId, _amount,"");
         emit ErrorAndEventsLibrary.Donation(msg.sender,_nft, ErrorAndEventsLibrary.DonationType.GIFT, ErrorAndEventsLibrary.TokenType.NFT, false, _amount);
     }
 
+    /**
+     * @notice Gifts an ERC721 token.
+     * @param _nft The address of the ERC721 token contract.
+     * @param _tokenId The ID of the token to be transferred.
+     */
     function giftERC721(address _nft , uint256 _tokenId) public nonReentrant onlyActive {
         IERC721 nft = IERC721(_nft);
-        nft.safeTransferFrom(msg.sender,receipent,_tokenId);
+        nft.safeTransferFrom(msg.sender, visionary, _tokenId);
         emit ErrorAndEventsLibrary.Donation(msg.sender, _nft, ErrorAndEventsLibrary.DonationType.GIFT, ErrorAndEventsLibrary.TokenType.NFT, false, 1);
     }
 
+    /**
+     * @notice Gifts ERC20 tokens.
+     * @param _token The address of the ERC20 token contract.
+     * @param _amount The amount of tokens to be transferred.
+     */
     function giftTokens(address _token, uint256 _amount) public nonReentrant onlyActive {
-        TransferHelper.safeTransferFrom(_token, msg.sender, receipent, _amount);
+        TransferHelper.safeTransferFrom(_token, msg.sender, visionary, _amount);
         emit ErrorAndEventsLibrary.Donation(msg.sender, _token, ErrorAndEventsLibrary.DonationType.GIFT, ErrorAndEventsLibrary.TokenType.TOKEN, false, _amount);
-
     }
 
     ///@notice function to get all the funders who donated to this campaign
@@ -282,7 +293,7 @@ contract PassThroughV2 is ReentrancyGuard {
     /// @notice function vote to add as a platformAdmin
     /// @param _admin is the address to vote for platform Admin
     function voteToAddPlatformAdmin(address _admin) public nonReentrant onlyPlatformAdmin {
-        if(isPlatformAdmin[_admin]) revert("APA"); //APA -> Already a Platform Adim
+        if(isPlatformAdmin[_admin]) revert("PAE"); //PAE -> Platform Admin Exists
         votesToAddPlatformAdmin[_admin] +=1;
         if(votesToAddPlatformAdmin[_admin] >= (2 * totalPlatformAdmins) / 3) {
             finalAddPlatformAdmin(_admin);
