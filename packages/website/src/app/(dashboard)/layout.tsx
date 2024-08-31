@@ -8,7 +8,7 @@ export default function DashBoardlayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-[100vh] w-full overflow-hidden bg-gray-100 dark:bg-neutral-800">
+    <div className="h-[100vh] w-full overflow-hidden bg-background">
       {/* Header at the top */}
       <Header />
 
@@ -20,7 +20,7 @@ export default function DashBoardlayout({
         </div>
 
         {/* Children content on the right */}
-        <div className="flex-1 overflow-auto bg-white p-4 dark:bg-neutral-900">
+        <div className="h-full w-full flex-1  p-2 overflow-auto bg-background">
           {children}
         </div>
       </div>
