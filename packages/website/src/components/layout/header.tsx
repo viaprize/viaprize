@@ -43,7 +43,7 @@ export default function Header(){
       </div>
       <div className="">
         <div className="relative flex  w-full items-center overflow-hidden rounded-2xl p-2 focus-within:shadow-lg border">
-          <div className="grid h-full w-12 place-items-center text-gray-300">
+          <div className="grid h-full  place-items-center text-gray-300">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -61,10 +61,10 @@ export default function Header(){
           </div>
 
           <input
-            className="peer h-full w-full pr-2 text-sm text-gray-700 outline-none"
+            className="peer h-full w-full px-2 text-sm text-gray-700 outline-none"
             type="text"
             id="search"
-            placeholder="Search something.."
+            placeholder="Search "
           />
         </div>
       </div>

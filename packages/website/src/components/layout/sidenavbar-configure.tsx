@@ -1,17 +1,18 @@
 'use client';
 import React from 'react'
 import { Sidebar, SidebarBody, SidebarLink } from './sidebar-ui';
-import { IconArrowLeft, IconBell, IconBrandTabler, IconSettings, IconTrophy, IconUserBolt } from '@tabler/icons-react';
+import { IconBell, IconCirclePlus, IconLogout, IconTrophy, IconUser } from '@tabler/icons-react';
 import {useState} from 'react';
 import Link from 'next/link';
 import { motion } from "framer-motion";
 import Image from 'next/image';
+import { Button } from '@viaprize/ui/button';
 
 const Logo = () => {
   return (
     <Link
       href="#"
-      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
+      className="relative z-20 flex items-center space-x-3 py-1"
     >
       <Image
         src="https://github.com/shadcn.png"
@@ -25,7 +26,10 @@ const Logo = () => {
         animate={{ opacity: 1 }}
         className="whitespace-pre font-medium text-black dark:text-white"
       >
-        Acet Labs
+        <div className="">
+          <div className='text-lg'>John Doe</div>
+<div className="text-sm text-gray-400"> Builder, Sponsor</div>
+        </div>
       </motion.span>
     </Link>
   );
@@ -39,7 +43,7 @@ const LogoIcon = () => {
     >
       <Image
         src="https://github.com/shadcn.png"
-        className="h-[34px] w-[34px] flex-shrink-0 rounded-full"
+        className="h-[36px] w-[36px] flex-shrink-0 rounded-full"
         width={50}
         height={50}
         alt="Avatar"
@@ -51,17 +55,16 @@ const LogoIcon = () => {
 export default function SideNavbarConfigure() {
     const links = [
       {
-        label: "Dashboard",
+        label: "Prizes",
         href: "#",
         icon: (
           <IconTrophy className="h-25 w-25 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
         ),
       },
       {
-        label: "Profile",
+        label: "Fundraisers",
         href: "#",
         icon: (
-          // <IconUserBolt className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
           <svg
             width="25"
             height="25"
@@ -80,47 +83,50 @@ export default function SideNavbarConfigure() {
         ),
       },
       {
-        label: "Settings",
+        label: "Notifications",
         href: "#",
         icon: (
           <IconBell className="h-25 w-25 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
         ),
       },
       {
+        label: "Dashboard",
+        href: "#",
+        icon: (
+          <IconUser className="h-25 w-25 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
+        ),
+      },
+      {
         label: "Logout",
         href: "#",
         icon: (
-          <IconArrowLeft className="h-5 w-5 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
+          <IconLogout className="h-25 w-25 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
         ),
       },
     ];
     const [open, setOpen] = useState(false);
   return (
     <Sidebar open={open} setOpen={setOpen}>
-      <SidebarBody className={open ? '' : 'flex flex-col items-center'}>
-        <div className="">
+      <SidebarBody className={open ? "" : "flex flex-col items-center"}>
+     
           {open ? <Logo /> : <LogoIcon />}
           <div className="mt-4 space-y-2">
             {links.map((link, idx) => (
               <SidebarLink key={idx} link={link} />
             ))}
           </div>
-        </div>
-        {/* <SidebarLink
-          link={{
-            label: "Manu Arora",
-            href: "#",
-            icon: (
-              <Image
-                src="https://github.com/shadcn.png"
-                className="h-7 w-7 flex-shrink-0 rounded-full"
-                width={50}
-                height={50}
-                alt="Avatar"
-              />
-            ),
-          }}
-        /> */}
+        
+        {/* Conditionally render buttons only when the sidebar is open */}
+        {open ? (
+          <>
+            <Button className="mt-7 w-[70%]">Create a Prize</Button>
+            <Button className="mt-2 w-[70%] text-green-600" variant="outline">
+              Create a Fundraiser
+            </Button>
+          </>
+        ) : (
+          <IconCirclePlus className='mt-5'/>
+        )}
       </SidebarBody>
     </Sidebar>
   );
