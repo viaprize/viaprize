@@ -2194,3 +2194,8 @@ export const SEND_USDC_ABI = [
 ] as const;
 
 export const SEND_USDC = '0xC0842e4f312bd2Ea9E052Faf74b8C8A5002D7912';
+
+export const EXTRA_PRIZES = [
+  '1c5a8b62-ae43-4dde-b550-95848c7f9729',
+  'ea2121a8-5801-4bc5-a74c-eb05068f4c36',
+];

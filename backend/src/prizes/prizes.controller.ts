@@ -22,7 +22,7 @@ import { UpdatePlatformFeeDto } from 'src/portals/dto/update-platform-fee.dto';
 import { PriceService } from 'src/price/price.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { SubmissionsTypePrizeV2 } from 'src/utils/constants';
+import { EXTRA_PRIZES, SubmissionsTypePrizeV2 } from 'src/utils/constants';
 import { sleep } from 'src/utils/sleep';
 import { stringToSlug } from 'src/utils/slugify';
 import { Http200Response } from 'src/utils/types/http.type';
@@ -318,6 +318,13 @@ export class PrizesController {
       async (prize, index) => {
         const version = results[index][8];
         console.log(version, 'version');
+        const extraContributors = EXTRA_PRIZES.includes(prize.id)
+          ? (
+              await this.extraPrizeDonationService.getDonationByExternalId(
+                prize.id,
+              )
+            ).map((a) => a.donor)
+          : [];
         if (version.toString() === '2') {
           const [[allFunders]] =
             (await this.blockchainService.getPrizesV2PublicVariables(
@@ -326,7 +333,7 @@ export class PrizesController {
             )) as [[string[]]];
           return {
             ...prize,
-            contributors: allFunders,
+            contributors: [...allFunders, ...extraContributors],
           };
         } else if (version.toString() === '201') {
           const [[allCryptoFunders, allFiatFunders]] =
@@ -337,7 +344,11 @@ export class PrizesController {
           return {
             ...prize,
             contributors: [
-              ...new Set([...allCryptoFunders, ...allFiatFunders]),
+              ...new Set([
+                ...extraContributors,
+                ...allCryptoFunders,
+                ...allFiatFunders,
+              ]),
             ],
           };
         }
