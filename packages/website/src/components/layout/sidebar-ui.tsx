@@ -133,11 +133,11 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          'flex h-10 w-full flex-row items-center justify-between bg-background px-4 py-4  md:hidden',
+          'flex h-10 w-full flex-row items-center justify-between bg-background px-4 py-4 border-b md:hidden',
         )}
         {...props}
       >
-        <div className="z-20 flex w-full justify-end">
+        <div className="z-20 flex w-full justify-end backdrop-blur-lg bg-opacity-10 md:bg-opacity-100 ">
           <IconMenu2 className="" onClick={() => setOpen(!open)} />
         </div>
         <AnimatePresence>
