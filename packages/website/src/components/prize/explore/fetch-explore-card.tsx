@@ -1,5 +1,5 @@
-import FilterSort from "@/components/common/filter-sort";
-import ExploreCard from "./explore-card";
+import FilterSort from '@/components/common/filter-sort'
+import ExploreCard from './explore-card'
 
 export default function FetchExploreCard() {
   return (
@@ -38,5 +38,5 @@ export default function FetchExploreCard() {
         <TabsContent value="completed">ehowhroi wiorqoi</TabsContent>
       </Tabs> */}
     </section>
-  );
+  )
 }

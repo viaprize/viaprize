@@ -1,22 +1,22 @@
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import Search from "./search";
+import Image from 'next/image'
+import Link from 'next/link'
+import React from 'react'
+import Search from './search'
 
 const header = [
   {
-    label: "Explore",
-    href: "#",
+    label: 'Explore',
+    href: '#',
   },
   {
-    label: "About",
-    href: "#",
+    label: 'About',
+    href: '#',
   },
   {
-    label: "Contact",
-    href: "#",
+    label: 'Contact',
+    href: '#',
   },
-];
+]
 
 export default function Header() {
   return (
@@ -39,5 +39,5 @@ export default function Header() {
         <Search />
       </div>
     </div>
-  );
+  )
 }

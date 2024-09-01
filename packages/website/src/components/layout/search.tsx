@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import React from "react";
+import React from 'react'
 
 import {
   Command,
@@ -12,24 +12,24 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from "@viaprize/ui/command";
+} from '@viaprize/ui/command'
 
-import { Input } from "@viaprize/ui/input";
-import { CiSearch } from "react-icons/ci";
+import { Input } from '@viaprize/ui/input'
+import { CiSearch } from 'react-icons/ci'
 
 export default function Search() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setOpen((open) => !open)
       }
-    };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
+    }
+    document.addEventListener('keydown', down)
+    return () => document.removeEventListener('keydown', down)
+  }, [])
 
   return (
     <div>
@@ -58,5 +58,5 @@ export default function Search() {
         </CommandList>
       </CommandDialog>
     </div>
-  );
+  )
 }

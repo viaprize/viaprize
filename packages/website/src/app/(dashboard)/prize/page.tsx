@@ -1,4 +1,4 @@
-import FetchExploreCard from "@/components/prize/explore/fetch-explore-card";
+import FetchExploreCard from '@/components/prize/explore/fetch-explore-card'
 
 export default function ExplorePage() {
   return (
@@ -12,5 +12,5 @@ export default function ExplorePage() {
       </div>
       <div className="w-[25%] mt-5 mx-2">wdufiuew</div>
     </div>
-  );
+  )
 }
