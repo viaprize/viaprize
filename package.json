@@ -6,6 +6,8 @@
     "node": ">=20.15.0"
   },
   "scripts": {
+    "format-and-lint": "biome check .",
+    "format-and-lint:fix": "biome check . --write",
     "clean:all": "rm -rf node_modules pnpm-lock.yaml && pnpm store prune",
     "dev": "sst dev",
     "build": "sst build",
@@ -17,6 +19,7 @@
     "gen": "hygen"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
     "@tsconfig/node20": "^20.1.4",
     "typescript": "5.3.3"
   },
