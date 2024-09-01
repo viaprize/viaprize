@@ -1,5 +1,5 @@
-import { IconBulb, IconCoin } from "@tabler/icons-react";
-import {Separator} from "@viaprize/ui/separator";
+import { IconBulb, IconCoin } from '@tabler/icons-react'
+import { Separator } from '@viaprize/ui/separator'
 
 export default function OverallPrizeStatus() {
   return (
@@ -19,5 +19,5 @@ export default function OverallPrizeStatus() {
         </div>
       </div>
     </div>
-  );
+  )
 }

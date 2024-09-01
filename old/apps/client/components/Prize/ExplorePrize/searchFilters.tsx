@@ -6,9 +6,9 @@
 import { Button, Drawer, Group, Menu, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Filter from './filterComponent';
-import Link from 'next/link';
 // import Filter from "./filterComponent";
 
 type Sorts = Record<string, string>;

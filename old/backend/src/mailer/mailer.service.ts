@@ -1,9 +1,9 @@
+import fs from 'node:fs/promises';
+import path from 'path';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Handlebars from 'handlebars';
-import fs from 'node:fs/promises';
 import nodemailer from 'nodemailer';
-import path from 'path';
 import { AllConfigType } from 'src/config/config.type';
 
 @Injectable()

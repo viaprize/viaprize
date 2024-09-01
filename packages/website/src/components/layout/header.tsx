@@ -1,30 +1,23 @@
-import Link from 'next/link';
+import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
-import Image from 'next/image';
 
-const header =[
-    {
-        label: "Explore",
-        href: "#",
-        
-      },
-      {
-        label: "About",
-        href: "#",
-        
-      },
-      {
-        label: "Contact",
-        href: "#",
-        
-      },
-     
+const header = [
+  {
+    label: 'Explore',
+    href: '#',
+  },
+  {
+    label: 'About',
+    href: '#',
+  },
+  {
+    label: 'Contact',
+    href: '#',
+  },
 ]
 
-
-
-
-export default function Header(){
+export default function Header() {
   return (
     <div className="bg-slate-50 flex h-[60px] w-full items-center justify-between px-5 dark:bg-neutral-800">
       <Image
@@ -36,7 +29,7 @@ export default function Header(){
       />
       <div className="flex items-center justify-between space-x-7 font-semibold">
         {header.map((item, index) => (
-          <Link key={index} href={item.href}>
+          <Link key={item.href} href={item.href}>
             {item.label}
           </Link>
         ))}
@@ -69,5 +62,5 @@ export default function Header(){
         </div>
       </div>
     </div>
-  );
+  )
 }

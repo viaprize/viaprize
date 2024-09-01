@@ -1,12 +1,12 @@
+import Paging from '@/components/custom/paging';
 import SkeletonLoad from '@/components/custom/skeleton-load-explore';
+import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 import type { SearchParams } from '@/lib/types';
 import { Button, Group, Text } from '@mantine/core';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchPortals from './fetchportals';
 import SearchFiltersPortals from './search-filters-portals';
-import Paging from '@/components/custom/paging';
-import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 
 export default function ExplorePortal({ searchParams }: { searchParams: SearchParams }) {
   return (

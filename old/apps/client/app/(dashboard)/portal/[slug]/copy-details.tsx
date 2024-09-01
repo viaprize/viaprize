@@ -1,7 +1,7 @@
 'use client';
 
-import { Badge, Flex, CopyButton, Tooltip, ActionIcon, rem, Text } from '@mantine/core';
-import { IconCurrencyEthereum, IconCheck, IconCopy } from '@tabler/icons-react';
+import { ActionIcon, Badge, CopyButton, Flex, Text, Tooltip, rem } from '@mantine/core';
+import { IconCheck, IconCopy, IconCurrencyEthereum } from '@tabler/icons-react';
 import React from 'react';
 
 export default function CopyDetails({ recipientAddress }: { recipientAddress: string }) {

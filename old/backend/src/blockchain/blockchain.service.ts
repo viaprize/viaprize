@@ -4,11 +4,11 @@ import { ExtractAbiFunctionNames } from 'abitype';
 import { AllConfigType } from 'src/config/config.type';
 import { PASS_THROUGH_ABI, PRIZE_V2_ABI } from 'src/utils/constants';
 import {
+  http,
   MulticallReturnType,
   PublicClient,
   createPublicClient,
   encodeFunctionData,
-  http,
   parseAbi,
 } from 'viem';
 import { base } from 'viem/chains';

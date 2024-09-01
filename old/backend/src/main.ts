@@ -1,3 +1,4 @@
+import { join } from 'path';
 import {
   ClassSerializerInterceptor,
   ValidationPipe,
@@ -8,7 +9,6 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { FastifyAdapter } from '@nestjs/platform-fastify';
 import { SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
-import { join } from 'path';
 import docs from '../swagger.json';
 import { AppModule } from './app.module';
 import { AllConfigType } from './config/config.type';

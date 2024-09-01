@@ -1,9 +1,9 @@
 'use client';
+import Image from 'next/image';
 import Link from 'next/link';
 import { BiLogoLinkedin } from 'react-icons/bi';
 import { BsTwitter } from 'react-icons/bs';
 import { ImTelegram } from 'react-icons/im';
-import Image from 'next/image';
 import SubscriptionForm from '../newsletter/subscriptionForm';
 
 export default function Footer() {

@@ -43,9 +43,13 @@
         "useDefaultParameterLast": "off",
         "noUselessElse": "off"
       },
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
       "suspicious": { "noExplicitAny": "off" }
     },
     "ignore": [
+      "old",
       ".next/**",
       "**/node_modules",
       "**/.pnp",

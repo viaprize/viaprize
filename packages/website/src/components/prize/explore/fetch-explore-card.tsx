@@ -1,6 +1,6 @@
-import FilterSort from "@/components/common/filter-sort";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@viaprize/ui/tabs";
-import ExploreCard from "./explore-card";
+import FilterSort from '@/components/common/filter-sort'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@viaprize/ui/tabs'
+import ExploreCard from './explore-card'
 
 export default function FetchExploreCard() {
   return (
@@ -16,7 +16,10 @@ export default function FetchExploreCard() {
         <div className="flex w-full justify-end p-6">
           <FilterSort />
         </div>
-        <TabsContent value="allprizes" className="grid grid-cols-3 gap-3 pb-3 px-7">
+        <TabsContent
+          value="allprizes"
+          className="grid grid-cols-3 gap-3 pb-3 px-7"
+        >
           <ExploreCard />
           <ExploreCard />
           <ExploreCard />
@@ -27,5 +30,5 @@ export default function FetchExploreCard() {
         <TabsContent value="completed">ehowhroi wiorqoi</TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }
