@@ -118,7 +118,7 @@ export default function SideNavbarConfigure() {
         >
           {open ? <Logo /> : <LogoIcon />}
           <div className="mt-4 space-y-2">
-            {links.map((link, idx) => (
+            {links.map((link) => (
               <SidebarLink key={link.href} link={link} />
             ))}
           </div>

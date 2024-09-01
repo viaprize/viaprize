@@ -153,7 +153,7 @@ export const MobileSidebar = ({
                 ease: "easeInOut",
               }}
               className={cn(
-                "fixed inset-0 z-[100] flex h-full w-full flex-col justify-between bg-white p-10 dark:bg-neutral-900",
+                "fixed inset-0 z-[100] flex h-full w-full flex-col justify-between bg-white px-4 pt-10 dark:bg-neutral-900",
                 className
               )}
             >
@@ -186,7 +186,7 @@ export const SidebarLink = ({
     <Link
       href={link.href}
       className={cn(
-        "group/sidebar flex items-center justify-start gap-3 p-3 rounded-md hover:bg-accent",
+        "group/sidebar flex items-center justify-start gap-3 p-3 rounded-md hover:bg-primary/30",
         className
       )}
       {...props}
