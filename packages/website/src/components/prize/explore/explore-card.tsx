@@ -12,7 +12,7 @@ export default function ExploreCard() {
         height={50}
         objectFit="cover"
         alt=""
-        className="h-40 w-full rounded-t-md"
+        className="h-40 w-full rounded-t-md object-cover"
       />
       <div className="p-3">
         <div className="flex text-lg">

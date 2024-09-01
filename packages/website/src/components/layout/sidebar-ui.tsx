@@ -3,6 +3,7 @@
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { cn } from "@viaprize/ui";
 import { Button } from "@viaprize/ui/button";
+import ToolTipSimple from "@viaprize/ui/tooltip-simple";
 import { AnimatePresence, motion } from "framer-motion";
 import Link, { type LinkProps } from "next/link";
 import type React from "react";
@@ -22,7 +23,7 @@ interface SidebarContextProps {
 }
 
 const SidebarContext = createContext<SidebarContextProps | undefined>(
-  undefined,
+  undefined
 );
 
 export const useSidebar = () => {
@@ -93,11 +94,11 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "relative hidden rounded-md h-[calc(100vh-60px)] w-[300px] flex-shrink-0 border-r-2 bg-background px-4 py-4 md:flex md:flex-col",
-          className,
+          "relative hidden rounded-md h-[calc(100vh-60px)] w-[300px] flex-shrink-0  bg-background px-4 py-4 md:flex md:flex-col",
+          className
         )}
         animate={{
-          width: animate ? (open ? "300px" : "80px") : "300px",
+          width: animate ? (open ? "260px" : "80px") : "300px",
         }}
         {...props}
       >
@@ -106,7 +107,17 @@ export const DesktopSidebar = ({
           variant="secondary"
           className="absolute -right-3 top-2 size-7 p-1 hover:bg-secondary"
         >
-          <MdArrowRightAlt />
+          <motion.span
+            animate={{
+              rotate: animate ? (open ? 180 : 0) : 0,
+              transition: {
+                duration: 0.3,
+                ease: "easeInOut",
+              },
+            }}
+          >
+            <MdArrowRightAlt />
+          </motion.span>
         </Button>
         {children as ReactNode}
       </motion.div>
@@ -124,7 +135,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "flex h-10 w-full flex-row items-center justify-between bg-neutral-100 px-4 py-4 dark:bg-neutral-800 md:hidden",
+          "flex h-10 w-full flex-row items-center justify-between bg-neutral-100 px-4 py-4 dark:bg-neutral-800 md:hidden"
         )}
         {...props}
       >
@@ -143,7 +154,7 @@ export const MobileSidebar = ({
               }}
               className={cn(
                 "fixed inset-0 z-[100] flex h-full w-full flex-col justify-between bg-white p-10 dark:bg-neutral-900",
-                className,
+                className
               )}
             >
               <div
@@ -175,19 +186,24 @@ export const SidebarLink = ({
     <Link
       href={link.href}
       className={cn(
-        "group/sidebar flex items-center justify-start gap-3 py-2",
-        className,
+        "group/sidebar flex items-center justify-start gap-3 p-3 rounded-md hover:bg-accent",
+        className
       )}
       {...props}
     >
-      {link.icon}
-
+      {!open ? (
+        <ToolTipSimple position="right" content={link.label}>
+          {link.icon}
+        </ToolTipSimple>
+      ) : (
+        link.icon
+      )}
       <motion.span
         animate={{
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="!m-0 inline-block whitespace-pre !p-0 text-lg text-neutral-700 transition duration-150 group-hover/sidebar:translate-x-1 dark:text-neutral-200"
+        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >
         {link.label}
       </motion.span>
