@@ -20,7 +20,7 @@ export default function DashBoardlayout({
         </div>
 
         {/* Children content on the right */}
-        <div className="h-full w-full flex-1 overflow-auto bg-background p-2">
+        <div className="h-full w-full flex-1 overflow-auto bg-background ">
           {children}
         </div>
       </div>

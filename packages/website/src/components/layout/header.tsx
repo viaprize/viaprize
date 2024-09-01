@@ -26,7 +26,7 @@ const header =[
 
 export default function Header(){
   return (
-    <div className="flex h-[60px] w-full items-center justify-between bg-neutral-50 px-5 dark:bg-neutral-800">
+    <div className="bg-slate-50 flex h-[60px] w-full items-center justify-between px-5 dark:bg-neutral-800">
       <Image
         src="/viaprizeBg.png"
         alt="Acet Labs"
@@ -42,8 +42,8 @@ export default function Header(){
         ))}
       </div>
       <div className="">
-        <div className="relative flex  w-full items-center overflow-hidden rounded-2xl p-2 focus-within:shadow-lg border">
-          <div className="grid h-full  place-items-center text-gray-300">
+        <div className="relative flex w-full items-center overflow-hidden rounded-2xl border p-2 focus-within:shadow-lg">
+          <div className="grid h-full place-items-center text-gray-300">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
@@ -61,7 +61,7 @@ export default function Header(){
           </div>
 
           <input
-            className="peer h-full w-full px-2 text-sm text-gray-700 outline-none"
+            className="peer h-full w-full px-2 text-sm bg-slate-50 text-gray-700 outline-none"
             type="text"
             id="search"
             placeholder="Search "

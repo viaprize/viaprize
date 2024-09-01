@@ -107,26 +107,29 @@ export default function SideNavbarConfigure() {
     const [open, setOpen] = useState(false);
   return (
     <Sidebar open={open} setOpen={setOpen}>
-      <SidebarBody className={open ? "" : "flex flex-col items-center"}>
-     
+      <SidebarBody>
+        <div className={`flex flex-col overflow-y-auto overflow-x-hidden ${
+    !open ? 'items-center' : ''
+  }`}>
           {open ? <Logo /> : <LogoIcon />}
           <div className="mt-4 space-y-2">
             {links.map((link, idx) => (
               <SidebarLink key={idx} link={link} />
             ))}
           </div>
-        
-        {/* Conditionally render buttons only when the sidebar is open */}
-        {open ? (
-          <>
-            <Button className="mt-7 w-[70%]">Create a Prize</Button>
-            <Button className="mt-2 w-[70%] text-green-600" variant="outline">
-              Create a Fundraiser
-            </Button>
-          </>
-        ) : (
-          <IconCirclePlus className='mt-5'/>
-        )}
+
+          {/* Conditionally render buttons only when the sidebar is open */}
+          {open ? (
+            <>
+              <Button className="mt-7 w-[70%]">Create a Prize</Button>
+              <Button className="mt-2 w-[70%] text-green-600" variant="outline">
+                Create a Fundraiser
+              </Button>
+            </>
+          ) : (
+            <IconCirclePlus className="mt-5" />
+          )}
+        </div>
       </SidebarBody>
     </Sidebar>
   );

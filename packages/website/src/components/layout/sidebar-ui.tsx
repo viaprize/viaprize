@@ -90,7 +90,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "hidden h-[calc(100vh-60px)] w-[300px] flex-shrink-0  px-4 py-4 bg-background border-r-2 md:flex md:flex-col",
+          "hidden h-[calc(100vh-60px)] w-[300px] flex-shrink-0 border-r-2 bg-background px-4 py-4 md:flex md:flex-col",
           className,
         )}
         animate={{
@@ -116,15 +116,12 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "flex h-10 w-full flex-row items-center justify-between  px-4 py-4 md:hidden",
+          "md:hidden flex h-10 w-full flex-row items-center justify-between bg-neutral-100 px-4 py-4 dark:bg-neutral-800",
         )}
         {...props}
       >
-        <div className="z-20 flex items-center w-full ">
-          <IconMenu2
-            className=""
-            onClick={() => setOpen(!open)}
-          />
+        <div className="z-20 flex w-full justify-end">
+          <IconMenu2 className="" onClick={() => setOpen(!open)} />
         </div>
         <AnimatePresence>
           {open && (
