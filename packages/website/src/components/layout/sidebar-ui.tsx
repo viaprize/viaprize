@@ -133,7 +133,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "flex h-10 w-full flex-row items-center justify-between bg-background px-4 py-4 border-b md:hidden"
+          'flex h-10 w-full flex-row items-center justify-between bg-background px-4 py-4 border-b md:hidden',
         )}
         {...props}
       >
@@ -143,16 +143,16 @@ export const MobileSidebar = ({
         <AnimatePresence>
           {open && (
             <motion.div
-              initial={{ x: "-100%", opacity: 0 }}
+              initial={{ x: '-100%', opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
+              exit={{ x: '-100%', opacity: 0 }}
               transition={{
                 duration: 0.3,
-                ease: "easeInOut",
+                ease: 'easeInOut',
               }}
               className={cn(
-                "fixed inset-0 z-[100] flex h-full w-full flex-col justify-between bg-white px-4 pt-10 dark:bg-neutral-900",
-                className
+                'fixed inset-0 z-[100] flex h-full w-full flex-col justify-between bg-white px-4 pt-10 dark:bg-neutral-900',
+                className,
               )}
             >
               <div
@@ -167,7 +167,7 @@ export const MobileSidebar = ({
         </AnimatePresence>
       </div>
     </>
-  );
+  )
 }
 
 export const SidebarLink = ({

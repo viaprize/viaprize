@@ -1,11 +1,11 @@
-import Header from "@/components/layout/header";
-import SideNavbarConfigure from "@/components/layout/sidenavbar-configure";
-import type React from "react";
+import Header from '@/components/layout/header'
+import SideNavbarConfigure from '@/components/layout/sidenavbar-configure'
+import type React from 'react'
 
 export default function DashBoardlayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <div className=" h-dvh w-full overflow-hidden bg-slate-100 dark:bg-zinc-900">
@@ -26,5 +26,5 @@ export default function DashBoardlayout({
         </div>
       </div>
     </div>
-  );
+  )
 }
