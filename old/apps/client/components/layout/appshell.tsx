@@ -18,7 +18,7 @@ import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import { switchNetwork } from '@wagmi/core';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { base } from 'viem/chains';
 import { useNetwork } from 'wagmi';
 import useAppUser from '../hooks/useAppUser';

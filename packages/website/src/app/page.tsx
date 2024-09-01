@@ -1,13 +1,12 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-import { LatestPost } from "@/app/_components/post";
-import { api, HydrateClient } from "@/trpc/server";
-import { Button } from "@viaprize/ui/button";
-import { Toggle } from "@viaprize/ui/toggle";
+import { LatestPost } from '@/app/_components/post'
+import { HydrateClient, api } from '@/trpc/server'
+import { Button } from '@viaprize/ui/button'
+import { Toggle } from '@viaprize/ui/toggle'
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
-
+  const hello = await api.post.hello({ text: 'from tRPC' })
 
   return (
     <HydrateClient>
@@ -43,7 +42,7 @@ export default async function Home() {
           </div>
           <div className="flex flex-col items-center gap-2">
             <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
+              {hello ? hello.greeting : 'Loading tRPC query...'}
             </p>
           </div>
           <Button>Hello World</Button>
@@ -52,5 +51,5 @@ export default async function Home() {
         </div>
       </main>
     </HydrateClient>
-  );
+  )
 }

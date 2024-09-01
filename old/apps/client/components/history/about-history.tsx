@@ -1,14 +1,14 @@
 import {
   Badge,
+  Box,
+  Center,
   Divider,
   Flex,
-  Text,
-  Title,
-  Center,
-  Box,
-  Paper,
   Group,
   Image,
+  Paper,
+  Text,
+  Title,
 } from '@mantine/core';
 // import Image from 'next/image';
 import { TextEditor } from '../richtexteditor/textEditor';

@@ -1,0 +1,18 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run Biome for both linting and formatting
+pnpm biome check
+
+# Check the exit status of the last command
+if [ $? -eq 0 ]; then
+  # If successful
+  echo '✅✅✅✅ You win this time... I am committing this now. ✅✅✅✅'
+else
+  # If there are any errors
+  echo ''
+  echo '🤢🤮🤢🤮 Its FOKING RAW - Your code looks disgusting. 🤢🤮🤢🤮'
+  echo 'Biome Check Failed. Make the required changes listed above, add changes, and try to commit again.'
+  echo 'run `pnpm format-and-lint:fix` to fix the issues.'
+  exit 1
+fi

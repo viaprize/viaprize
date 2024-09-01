@@ -10,10 +10,10 @@ import { Underline } from '@tiptap/extension-underline';
 import type { AnyExtension } from '@tiptap/react';
 import { useEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
-import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
 // import ReactQuill from 'react-quill';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
+import { PrizeCreationTemplate } from '../Prize/prizepage/defaultcontent';
 import 'react-quill/dist/quill.snow.css';
 import './richtext.styles.css';
 

@@ -3,13 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { ExtractAbiFunctionNames } from 'abitype';
 import { AllConfigType } from 'src/config/config.type';
 import {
+  http,
   Abi,
   ContractFunctionArgs,
   ContractFunctionName,
   PublicClient,
   createPublicClient,
   encodeFunctionData,
-  http,
 } from 'viem';
 
 import { JobService } from 'src/jobs/jobs.service';

@@ -2,11 +2,11 @@ import { Badge, Tabs, Text } from '@mantine/core';
 import { BsInfoLg } from 'react-icons/bs';
 import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 
+import { Contributions } from '@/lib/api';
+import { StarFilledIcon } from '@radix-ui/react-icons';
 import AboutPrize from './aboutprize';
 import Contestants from './contestants';
 import PrizeFunderCard from './prizeFunderCard';
-import { Contributions } from '@/lib/api';
-import { StarFilledIcon } from '@radix-ui/react-icons';
 
 export default function PrizePageTabs({
   contractAddress,

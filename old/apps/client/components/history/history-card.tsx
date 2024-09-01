@@ -1,13 +1,13 @@
 'use client';
 import {
-  Badge,
-  Card,
-  Group,
-  Text,
-  Image,
-  Button,
   ActionIcon,
+  Badge,
+  Button,
+  Card,
   CopyButton,
+  Group,
+  Image,
+  Text,
   Tooltip,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';

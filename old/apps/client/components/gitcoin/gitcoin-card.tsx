@@ -8,9 +8,9 @@ import {
   Card,
   CopyButton,
   Divider,
+  Image,
   Text,
   Tooltip,
-  Image,
 } from '@mantine/core';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';

@@ -1,7 +1,7 @@
+import { useParams } from 'next/navigation';
 import { useQuery } from 'react-query';
 import useAppUser from './useAppUser';
 import { useUser } from './useUser';
-import { useParams } from 'next/navigation';
 
 export default function useAuthPerson() {
   const { appUser } = useAppUser();

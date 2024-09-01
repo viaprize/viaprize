@@ -6,6 +6,8 @@
     "node": ">=20.15.0"
   },
   "scripts": {
+    "format-and-lint": "biome check .",
+    "format-and-lint:fix": "biome check . --write",
     "clean:all": "rm -rf node_modules pnpm-lock.yaml && pnpm store prune",
     "dev": "sst dev",
     "build": "sst build",
@@ -14,10 +16,13 @@
     "console": "sst console",
     "typecheck": "tsc --noEmit",
     "test": "sst bind -- vitest run",
-    "gen": "hygen"
+    "gen": "hygen",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
     "@tsconfig/node20": "^20.1.4",
+    "husky": "^9.1.5",
     "typescript": "5.3.3"
   },
   "dependencies": {

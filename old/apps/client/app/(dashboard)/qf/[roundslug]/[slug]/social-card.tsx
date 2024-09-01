@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-import { IconCalendarMonth, IconWorldWww, IconBrandTwitter } from '@tabler/icons-react';
-import Link from 'next/link';
 import { Divider, Text } from '@mantine/core';
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+import { IconBrandTwitter, IconCalendarMonth, IconWorldWww } from '@tabler/icons-react';
+import Link from 'next/link';
 
 interface SocialCardProps {
   createdOn: number;

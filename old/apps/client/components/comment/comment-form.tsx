@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useMutation } from 'react-query';
 import { toast } from 'sonner';
+import revalidate from 'utils/revalidate';
 import useAppUser from '../hooks/useAppUser';
 import { usePortal } from '../hooks/usePortal';
-import revalidate from 'utils/revalidate';
 
 interface CommentFormProps {
   portalId?: string;

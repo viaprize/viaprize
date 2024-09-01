@@ -3,15 +3,15 @@
 
 'use client';
 
+// import Filter from "./filterComponent";
+import { useDebounce } from '@/components/hooks/useDebounce';
 import { Button, CloseButton, Drawer, Group, Menu, TextInput } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons-react';
+import { IconAdjustmentsAlt, IconFilter } from '@tabler/icons-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import PortalFilterDrawer from './portal-filter-drawer';
-// import Filter from "./filterComponent";
-import { useDebounce } from '@/components/hooks/useDebounce';
 import { useCallback, useEffect, useState, useTransition } from 'react';
-import { IconFilter, IconAdjustmentsAlt } from '@tabler/icons-react';
+import PortalFilterDrawer from './portal-filter-drawer';
 type Sorts = Record<string, string>;
 
 const sorts: Sorts = {

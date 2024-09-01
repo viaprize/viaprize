@@ -10,6 +10,7 @@ import {
   IconThumbUp,
   IconTrash,
 } from '@tabler/icons-react';
+import { formatDistanceToNow } from 'date-fns';
 import { Suspense, useState } from 'react';
 import { useMutation } from 'react-query';
 import { toast } from 'sonner';
@@ -17,7 +18,6 @@ import useAppUser from '../hooks/useAppUser';
 import { usePortal } from '../hooks/usePortal';
 import CommentForm from './comment-form';
 import FetchChildComment from './fetch-child-comments';
-import { formatDistanceToNow } from 'date-fns';
 
 export default function Comment({ portalComment }: { portalComment: PortalsComments }) {
   const [areChildrenHidden, setAreChildrenHidden] = useState(true);

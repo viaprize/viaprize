@@ -1,9 +1,9 @@
 import SkeletonLoad from '@/components/custom/skeleton-load-explore';
+import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 import { Button, Group, Text } from '@mantine/core';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchPrizes from './fetchprizes';
-import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 
 function ExplorePage() {
   return (

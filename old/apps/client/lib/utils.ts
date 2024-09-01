@@ -8,16 +8,16 @@ import { env } from '@env';
 import { TToken } from '@gitcoin/gitcoin-chain-data';
 import { getAccessToken } from '@privy-io/react-auth';
 import { createClient } from '@supabase/supabase-js';
-import { clsx, type ClassValue } from 'clsx';
+import { type ClassValue, clsx } from 'clsx';
 import { format } from 'date-fns';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 import {
+  Hex,
   encodeAbiParameters,
   encodePacked,
   getAddress,
-  Hex,
   keccak256,
   parseAbiParameters,
   parseUnits,

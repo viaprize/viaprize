@@ -1,10 +1,10 @@
 'use client';
 
 import { Button, Input, Text } from '@mantine/core';
-import { useState } from 'react';
-import { subscribeToNewsletter } from 'utils/actions';
-import { toast } from 'sonner';
 import { IconBell, IconBellRinging, IconMailFilled } from '@tabler/icons-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
+import { subscribeToNewsletter } from 'utils/actions';
 
 export default function SubscriptionForm() {
   const [email, setEmail] = useState('');
