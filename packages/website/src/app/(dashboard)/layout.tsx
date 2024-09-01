@@ -18,7 +18,7 @@ export default function DashBoardlayout({
       <div className="flex md:flex-row flex-col h-full">
         {/* Sidebar on the left */}
         {/* <nav className="flex-shrink-0 m-2 "> */}
-          <SideNavbarConfigure />
+        <SideNavbarConfigure />
         {/* </nav> */}
 
         {/* Children content on the right */}
