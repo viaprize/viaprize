@@ -16,11 +16,11 @@ export default function DashBoardlayout({
         <SideNavbarConfigure />
         {/* </nav> */}
         <div className="w-full h-full">
-          <header className="sticky top-0 z-50 mt-2 mx-2">
+          <header className="sticky top-0 z-50 md:mt-2 mx-2">
             <Header />
           </header>
           {/* Children content on the right */}
-          <main className="h-full w-full flex-1 overflow-auto bg-background  rounded-md md:mr-2 md:my-2">
+          <main className="h-full w-full flex-1 overflow-auto bg-background rounded-md md:mr-2 md:my-2">
             {children}
           </main>
         </div>

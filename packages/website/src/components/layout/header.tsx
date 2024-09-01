@@ -23,7 +23,7 @@ const header = [
 
 export default function Header() {
   return (
-    <div className="bg-background flex h-[60px] w-full items-center justify-between px-5 rounded-md">
+    <div className="hidden bg-background md:flex h-[60px] w-full items-center justify-between px-5 rounded-md">
       <Image
         src="/viaprizeBg.png"
         alt="viaprize logo"
