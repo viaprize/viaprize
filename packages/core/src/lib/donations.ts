@@ -29,7 +29,7 @@ export class Donations {
       .insert(donations)
       .values(insertDonation)
       .execute()
-    this.db.transaction(async (trx) => {})
+
     return donation
   }
 

@@ -1,12 +1,10 @@
 import { Button } from '@viaprize/ui/button'
 import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
 import { BiSolidMessageSquare } from 'react-icons/bi'
 import { IoNotifications } from 'react-icons/io5'
 import Search from './search'
 
-const header = [
+const _header = [
   {
     label: 'Explore',
     href: '#',
