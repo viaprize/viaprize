@@ -9,10 +9,7 @@
     "migrate": "drizzle-kit migrate"
   },
   "exports": {
-    "./*": [
-      "./src/*/index.ts",
-      "./src/*.ts"
-    ]
+    "./*": ["./src/*/index.ts", "./src/*.ts"]
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.4",
