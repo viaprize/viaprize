@@ -18,12 +18,11 @@ export default $config({
   },
   async run() {
     const api = await import('./infra/api')
-    // const web = new sst.aws.Nextjs("website-application", {
-    //   path: "packages/web",
-    // });
+    const website = await import('./infra/website')
 
     return {
       api: api.myApi.url,
+      website: website.website.url,
     }
   },
 })
