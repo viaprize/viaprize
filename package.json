@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "packageManager": "pnpm@9.6.0",
   "engines": {
-    "node": ">=20.15.0"
+    "node": ">=20.11.1"
   },
   "scripts": {
     "format-and-lint": "biome check .",
@@ -17,7 +17,8 @@
     "typecheck": "tsc --noEmit",
     "test": "sst bind -- vitest run",
     "gen": "hygen",
-    "prepare": "husky"
+    "prepare": "husky",
+    "sso": "aws sso login --sso-session=viaprize"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
