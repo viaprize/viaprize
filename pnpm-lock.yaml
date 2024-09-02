@@ -83,9 +83,6 @@ importers:
 
   packages/functions:
     dependencies:
-      '@viaprize/core':
-        specifier: workspace:*
-        version: link:../core
       sst:
         specifier: '*'
         version: 3.0.83
@@ -259,6 +256,9 @@ importers:
 
   packages/website:
     dependencies:
+      '@auth/drizzle-adapter':
+        specifier: ^1.4.2
+        version: 1.4.2
       '@t3-oss/env-nextjs':
         specifier: ^0.10.1
         version: 0.10.1(typescript@5.5.4)(zod@3.23.8)
@@ -277,6 +277,9 @@ importers:
       '@trpc/server':
         specifier: ^11.0.0-rc.446
         version: 11.0.0-rc.490
+      '@viaprize/core':
+        specifier: workspace:*
+        version: link:../core
       drizzle-orm:
         specifier: ^0.33.0
         version: 0.33.0(@electric-sql/pglite@0.2.4)(@types/react@18.3.5)(postgres@3.4.4)(react@18.3.1)
@@ -365,6 +368,9 @@ packages:
         optional: true
       nodemailer:
         optional: true
+
+  '@auth/drizzle-adapter@1.4.2':
+    resolution: {integrity: sha512-rqukaT9CeWB8VOt6g2bQ6uYMHVOQIYCBkzddZXWshi8aqwLABatpRWAc+pehpcMDn0RSW/uvKMs7tkON+Bho9Q==}
 
   '@aws-crypto/crc32@3.0.0':
     resolution: {integrity: sha512-IzSgsrxUcsrejQbPVilIKy16kAT52EwB6zSaI+M3xxIhKh5+aldEyvI+z6erM7TCLB2BJsFrtHjp6/4/sr+3dA==}
@@ -4084,6 +4090,14 @@ snapshots:
       oauth4webapi: 2.12.0
       preact: 10.11.3
       preact-render-to-string: 5.2.3(preact@10.11.3)
+
+  '@auth/drizzle-adapter@1.4.2':
+    dependencies:
+      '@auth/core': 0.34.2
+    transitivePeerDependencies:
+      - '@simplewebauthn/browser'
+      - '@simplewebauthn/server'
+      - nodemailer
 
   '@aws-crypto/crc32@3.0.0':
     dependencies:

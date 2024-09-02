@@ -1,7 +1,8 @@
 {
-  "name": "@viaprize/core",
+  "name": "@terminal/core",
   "version": "0.0.0",
-  "private": true,
+  "type": "module",
+  "sideEffects": false,
   "scripts": {
     "test": "vitest",
     "push": "pnpm drizzle-kit push",
@@ -9,7 +10,7 @@
     "migrate": "drizzle-kit migrate"
   },
   "exports": {
-    "./*": ["./src/*/index.ts", "./src/*.ts"]
+    "./*": "./src/*.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.4",
