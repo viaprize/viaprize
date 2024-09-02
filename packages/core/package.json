@@ -9,13 +9,17 @@
     "migrate": "drizzle-kit migrate"
   },
   "exports": {
-    "./*": ["./src/*/index.ts", "./src/*.ts"]
+    "./*": [
+      "./src/*/index.ts",
+      "./src/*.ts"
+    ]
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.2.4",
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
     "nanoid": "^5.0.7",
+    "next-auth": "^4.24.7",
     "postgres": "^3.4.4",
     "sst": "*",
     "vite": "^5.4.2",

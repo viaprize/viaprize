@@ -1,9 +1,195 @@
 {
-  "id": "3581dd56-d323-40e0-9e91-2a4d2c2bc591",
+  "id": "87c18144-1f66-4bf6-a14f-b912aacf629d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.account": {
+      "name": "account",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "providerAccountId": {
+          "name": "providerAccountId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "refresh_token": {
+          "name": "refresh_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "token_type": {
+          "name": "token_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id_token": {
+          "name": "id_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "session_state": {
+          "name": "session_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "account_userId_user_id_fk": {
+          "name": "account_userId_user_id_fk",
+          "tableFrom": "account",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "account_provider_providerAccountId_pk": {
+          "name": "account_provider_providerAccountId_pk",
+          "columns": [
+            "provider",
+            "providerAccountId"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.authenticator": {
+      "name": "authenticator",
+      "schema": "",
+      "columns": {
+        "credentialID": {
+          "name": "credentialID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "providerAccountId": {
+          "name": "providerAccountId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "credentialPublicKey": {
+          "name": "credentialPublicKey",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "counter": {
+          "name": "counter",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "credentialDeviceType": {
+          "name": "credentialDeviceType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "credentialBackedUp": {
+          "name": "credentialBackedUp",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transports": {
+          "name": "transports",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "authenticator_userId_user_id_fk": {
+          "name": "authenticator_userId_user_id_fk",
+          "tableFrom": "authenticator",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "authenticator_userId_credentialID_pk": {
+          "name": "authenticator_userId_credentialID_pk",
+          "columns": [
+            "userId",
+            "credentialID"
+          ]
+        }
+      },
+      "uniqueConstraints": {
+        "authenticator_credentialID_unique": {
+          "name": "authenticator_credentialID_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "credentialID"
+          ]
+        }
+      }
+    },
     "public.donations": {
       "name": "donations",
       "schema": "",
@@ -110,6 +296,12 @@
           "notNull": true,
           "default": "'0'"
         },
+        "username": {
+          "name": "username",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp with time zone",
@@ -124,13 +316,29 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "donations_username_user_username_fk": {
+          "name": "donations_username_user_username_fk",
+          "tableFrom": "donations",
+          "tableTo": "user",
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "donations_paymentId_unique": {
           "name": "donations_paymentId_unique",
           "nullsNotDistinct": false,
-          "columns": ["paymentId"]
+          "columns": [
+            "paymentId"
+          ]
         }
       }
     },
@@ -181,18 +389,26 @@
           "name": "prize_comments_prizeId_prizes_id_fk",
           "tableFrom": "prize_comments",
           "tableTo": "prizes",
-          "columnsFrom": ["prizeId"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "prize_comments_username_users_username_fk": {
-          "name": "prize_comments_username_users_username_fk",
+        "prize_comments_username_user_username_fk": {
+          "name": "prize_comments_username_user_username_fk",
           "tableFrom": "prize_comments",
-          "tableTo": "users",
-          "columnsFrom": ["username"],
-          "columnsTo": ["username"],
-          "onDelete": "no action",
+          "tableTo": "user",
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -278,13 +494,17 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "prize_proposals_author_users_username_fk": {
-          "name": "prize_proposals_author_users_username_fk",
+        "prize_proposals_author_user_username_fk": {
+          "name": "prize_proposals_author_user_username_fk",
           "tableFrom": "prize_proposals",
-          "tableTo": "users",
-          "columnsFrom": ["author"],
-          "columnsTo": ["username"],
-          "onDelete": "no action",
+          "tableTo": "user",
+          "columnsFrom": [
+            "author"
+          ],
+          "columnsTo": [
+            "username"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -293,7 +513,9 @@
         "prize_proposals_slug_unique": {
           "name": "prize_proposals_slug_unique",
           "nullsNotDistinct": false,
-          "columns": ["slug"]
+          "columns": [
+            "slug"
+          ]
         }
       }
     },
@@ -439,13 +661,13 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
@@ -458,13 +680,17 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "prizes_author_users_username_fk": {
-          "name": "prizes_author_users_username_fk",
+        "prizes_author_user_username_fk": {
+          "name": "prizes_author_user_username_fk",
           "tableFrom": "prizes",
-          "tableTo": "users",
-          "columnsFrom": ["author"],
-          "columnsTo": ["username"],
-          "onDelete": "no action",
+          "tableTo": "user",
+          "columnsFrom": [
+            "author"
+          ],
+          "columnsTo": [
+            "username"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -473,7 +699,9 @@
         "prizes_slug_unique": {
           "name": "prizes_slug_unique",
           "nullsNotDistinct": false,
-          "columns": ["slug"]
+          "columns": [
+            "slug"
+          ]
         }
       }
     },
@@ -496,29 +724,40 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "prizes_to_contestants_username_users_username_fk": {
-          "name": "prizes_to_contestants_username_users_username_fk",
+        "prizes_to_contestants_username_user_username_fk": {
+          "name": "prizes_to_contestants_username_user_username_fk",
           "tableFrom": "prizes_to_contestants",
-          "tableTo": "users",
-          "columnsFrom": ["username"],
-          "columnsTo": ["username"],
-          "onDelete": "no action",
+          "tableTo": "user",
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "prizes_to_contestants_prizeId_prizes_id_fk": {
           "name": "prizes_to_contestants_prizeId_prizes_id_fk",
           "tableFrom": "prizes_to_contestants",
           "tableTo": "prizes",
-          "columnsFrom": ["prizeId"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "prizes_to_contestants_username_prizeId_pk": {
           "name": "prizes_to_contestants_username_prizeId_pk",
-          "columns": ["username", "prizeId"]
+          "columns": [
+            "username",
+            "prizeId"
+          ]
         }
       },
       "uniqueConstraints": {}
@@ -576,31 +815,39 @@
           "name": "submissions_prizeId_prizes_id_fk",
           "tableFrom": "submissions",
           "tableTo": "prizes",
-          "columnsFrom": ["prizeId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "submissions_username_users_username_fk": {
-          "name": "submissions_username_users_username_fk",
+        "submissions_username_user_username_fk": {
+          "name": "submissions_username_user_username_fk",
           "tableFrom": "submissions",
-          "tableTo": "users",
-          "columnsFrom": ["username"],
-          "columnsTo": ["username"],
-          "onDelete": "no action",
+          "tableTo": "user",
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.users": {
-      "name": "users",
+    "public.user": {
+      "name": "user",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },
@@ -648,8 +895,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "skillset": {
-          "name": "skillset",
+        "skillSets": {
+          "name": "skillSets",
           "type": "text[]",
           "primaryKey": false,
           "notNull": false
@@ -662,13 +909,13 @@
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         }
@@ -677,20 +924,26 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_email_unique": {
-          "name": "users_email_unique",
+        "user_email_unique": {
+          "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         },
-        "users_authId_unique": {
-          "name": "users_authId_unique",
+        "user_authId_unique": {
+          "name": "user_authId_unique",
           "nullsNotDistinct": false,
-          "columns": ["authId"]
+          "columns": [
+            "authId"
+          ]
         },
-        "users_username_unique": {
-          "name": "users_username_unique",
+        "user_username_unique": {
+          "name": "user_username_unique",
           "nullsNotDistinct": false,
-          "columns": ["username"]
+          "columns": [
+            "username"
+          ]
         }
       }
     },
@@ -722,12 +975,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
         "username": {
           "name": "username",
           "type": "varchar",
@@ -742,19 +989,29 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "timestamp",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "wallets_username_users_username_fk": {
-          "name": "wallets_username_users_username_fk",
+        "wallets_username_user_username_fk": {
+          "name": "wallets_username_user_username_fk",
           "tableFrom": "wallets",
-          "tableTo": "users",
-          "columnsFrom": ["username"],
-          "columnsTo": ["username"],
+          "tableTo": "user",
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -762,8 +1019,12 @@
           "name": "wallets_prizeId_prizes_id_fk",
           "tableFrom": "wallets",
           "tableTo": "prizes",
-          "columnsFrom": ["prizeId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -776,22 +1037,37 @@
     "public.donationTokenTypeEnum": {
       "name": "donationTokenTypeEnum",
       "schema": "public",
-      "values": ["TOKEN", "NFT"]
+      "values": [
+        "TOKEN",
+        "NFT"
+      ]
     },
     "public.donationTypeEnum": {
       "name": "donationTypeEnum",
       "schema": "public",
-      "values": ["PAYMENT", "GIFT"]
+      "values": [
+        "PAYMENT",
+        "GIFT"
+      ]
     },
     "public.recipientTypeEnum": {
       "name": "recipientTypeEnum",
       "schema": "public",
-      "values": ["PRIZE", "FUNDRAISER", "GITCOIN", "UNKNOWN"]
+      "values": [
+        "PRIZE",
+        "FUNDRAISER",
+        "GITCOIN",
+        "UNKNOWN"
+      ]
     },
     "public.prizeProposalStage": {
       "name": "prizeProposalStage",
       "schema": "public",
-      "values": ["PENDING", "APPROVED", "REJECTED"]
+      "values": [
+        "PENDING",
+        "APPROVED",
+        "REJECTED"
+      ]
     },
     "public.prizeStage": {
       "name": "prizeStage",
