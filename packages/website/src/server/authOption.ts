@@ -7,4 +7,7 @@ import { viaprize } from "./viaprize";
 export const nextAuth = NextAuth({
   providers: [Google, Resend, Github],
   adapter: DrizzleAdapter(viaprize.database.database),
+  session: {
+    strategy: "jwt",
+  },
 });
