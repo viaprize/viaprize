@@ -6,10 +6,10 @@ import {
   AUTH_RESEND_KEY,
   AUTH_SECRET,
   DATABASE_URL,
-} from "./secrets";
+} from './secrets'
 
-export const website = new sst.aws.Nextjs("website", {
-  path: "./packages/website",
+export const website = new sst.aws.Nextjs('website', {
+  path: './packages/website',
   link: [
     AUTH_SECRET,
     DATABASE_URL,
@@ -28,4 +28,4 @@ export const website = new sst.aws.Nextjs("website", {
     AUTH_GOOGLE_SECRET: AUTH_GOOGLE_SECRET.value,
     AUTH_RESEND_KEY: AUTH_RESEND_KEY.value,
   },
-});
+})

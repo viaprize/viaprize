@@ -1,15 +1,15 @@
-import "@/styles/globals.css";
-import "@viaprize/ui/globals.css";
+import '@/styles/globals.css'
+import '@viaprize/ui/globals.css'
 
-import { GeistSans } from "geist/font/sans";
-import type { Metadata } from "next";
-import { Providers } from "./providers";
+import { GeistSans } from 'geist/font/sans'
+import type { Metadata } from 'next'
+import { Providers } from './providers'
 
 export const metadata: Metadata = {
-  title: "viaPrize",
-  description: "viaPrize",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
-};
+  title: 'viaPrize',
+  description: 'viaPrize',
+  icons: [{ rel: 'icon', url: '/favicon.ico' }],
+}
 
 export default function RootLayout({
   children,
@@ -20,5 +20,5 @@ export default function RootLayout({
         <Providers>{children}</Providers>
       </body>
     </html>
-  );
+  )
 }
