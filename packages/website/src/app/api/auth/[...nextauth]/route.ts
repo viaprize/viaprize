@@ -1,3 +1,3 @@
-import { nextAuth } from "@/server/authOption";
+import { nextAuth } from "@/server/auth";
 
 export const { GET, POST } = nextAuth.handlers;
