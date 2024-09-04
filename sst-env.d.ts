@@ -31,11 +31,6 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "MyApi": {
-      "name": string
-      "type": "sst.aws.Function"
-      "url": string
-    }
     "WalletPaymentInfraApi": {
       "type": "sst.sst.Secret"
       "value": string

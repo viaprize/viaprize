@@ -4,9 +4,6 @@ import OnboardCard from "@/components/auth/onboard-card";
 import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 
-export const description =
-  "A login page with two columns. The first column has the login form with email and password. There's a Forgot your passwork link and a link to sign up if you do not have an account. The second column has a cover image.";
-
 export default async function Dashboard() {
   const session = await auth();
   console.log("session", session);
