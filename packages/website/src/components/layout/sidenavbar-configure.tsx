@@ -14,11 +14,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { Sidebar, SidebarBody, SidebarButton, SidebarLink } from "./sidebar-ui";
 
-const Logo = () => {
+const Logo = ({ name, image }: { name: string; image: string }) => {
   return (
     <Link href="#" className="relative z-20 flex items-center space-x-3 py-1">
       <Image
-        src="https://github.com/shadcn.png"
+        src={image}
         className="h-25 w-25 flex-shrink-0 rounded-full"
         width={50}
         height={50}
@@ -30,7 +30,7 @@ const Logo = () => {
         className="whitespace-pre font-medium text-black dark:text-white"
       >
         <div className="">
-          <div className="text-lg">John Doe</div>
+          <div className="text-lg">{name}</div>
           <div className="text-sm text-gray-400"> Builder, Sponsor</div>
         </div>
       </motion.span>
@@ -38,14 +38,14 @@ const Logo = () => {
   );
 };
 
-const LogoIcon = () => {
+const LogoIcon = ({ image }: { image: string }) => {
   return (
     <Link
       href="#"
       className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
     >
       <Image
-        src="https://github.com/shadcn.png"
+        src={image}
         className="h-[36px] w-[36px] flex-shrink-0 rounded-full"
         width={50}
         height={50}
@@ -111,7 +111,7 @@ export default function SideNavbarConfigure() {
   ];
   const [open, setOpen] = useState(false);
 
-  const { data, status } = useSession();
+  const { data, status, update } = useSession();
 
   if (status === "unauthenticated") {
     return null;
@@ -124,7 +124,16 @@ export default function SideNavbarConfigure() {
             !open ? "items-center" : ""
           }`}
         >
-          {open ? <Logo /> : <LogoIcon />}
+          {open ? (
+            <Logo
+              name={data?.user.name ?? "John Doe"}
+              image={data?.user.image ?? "https://github.com/shadcn.png"}
+            />
+          ) : (
+            <LogoIcon
+              image={data?.user.image ?? "https://github.com/shadcn.png"}
+            />
+          )}
           <div className="mt-4 space-y-2">
             {links.map((link) => (
               <SidebarLink key={link.label} link={link} />

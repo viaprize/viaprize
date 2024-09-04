@@ -1,6 +1,7 @@
 "use client";
-import { containsUppercase } from "@/lib/utils";
+import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { TRPCError } from "@trpc/server";
 import { Button } from "@viaprize/ui/button";
 import { Checkbox } from "@viaprize/ui/checkbox";
 import {
@@ -13,7 +14,8 @@ import {
   FormMessage,
 } from "@viaprize/ui/form";
 import { Input } from "@viaprize/ui/input";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 const formSchema = z.object({
@@ -27,9 +29,12 @@ const formSchema = z.object({
     })
     .refine((s) => !s.includes(" "), "No Spaces!")
     .refine((s) => !s.includes("@"), "No @!")
-    .refine((s) => containsUppercase(s), "No uppercase"),
-  email: z.string().email(),
-  name: z.string().max(255),
+    .refine(
+      (s) => /^[a-z0-9_]+$/.test(s),
+      "Username must contain only lowercase letters, numbers, or underscores"
+    ),
+  email: z.string().email().min(1, "Email is required"),
+  name: z.string().max(255).min(2, "Name must be at least 2 characters"),
   shouldGenerateWallet: z.boolean().default(false),
   walletAddress: z.string().optional(),
 });
@@ -41,6 +46,7 @@ interface OnBoardCardProps {
 }
 
 export default function OnboardCard(props: OnBoardCardProps) {
+  const { push } = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,14 +54,42 @@ export default function OnboardCard(props: OnBoardCardProps) {
       email: props.email || "",
       name: props.name || "",
       shouldGenerateWallet: !props.walletAddress,
-      walletAddress: props.walletAddress || "",
+      walletAddress: props.walletAddress || undefined,
     },
   });
+  const { update } = useSession();
+  const mutation = api.users.onboardUser.useMutation({
+    onSuccess: async (_, variables) => {
+      await update({
+        name: variables.name,
+        email: variables.email,
+        username: variables.username,
+      });
+      push("/prize");
+    },
+    onError: (error) => {
+      if (error instanceof TRPCError) {
+        if (error.code === "UNPROCESSABLE_CONTENT") {
+          form.setError("username", {
+            type: "manual",
+            message: error.message,
+          });
+        }
+      }
+    },
+  });
+
   const watchShouldGenerateWallet = form.watch("shouldGenerateWallet");
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+    await mutation.mutateAsync({
+      email: values.email,
+      name: values.name,
+      username: values.username,
+      walletAddress: values.walletAddress,
+    });
   }
 
   return (
@@ -163,7 +197,7 @@ export default function OnboardCard(props: OnBoardCardProps) {
                           <FormControl>
                             <Input
                               placeholder="Enter Wallet Address"
-                              disabled={!!props.email}
+                              disabled={!!props.walletAddress}
                               {...field}
                             />
                           </FormControl>
@@ -175,6 +209,7 @@ export default function OnboardCard(props: OnBoardCardProps) {
                       )}
                     />
                   )}
+                  <Button type="submit">Submit</Button>
                 </form>
               </Form>
             </div>

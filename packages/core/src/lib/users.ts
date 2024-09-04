@@ -28,29 +28,46 @@ export class Users {
     )?.username;
   }
 
+  async usernameExists(username: string) {
+    const result = await this.db
+      .select({
+        username: users.username,
+      })
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
+    return result.length > 0;
+  }
+
   async onboardUser(data: {
     name: string;
     email: string;
     walletAddress?: string;
     network: string;
     username: string;
+    userId: string;
   }) {
-    let address = data.walletAddress;
+    let address = data.walletAddress
+      ? data.walletAddress.toLowerCase()
+      : undefined;
     let key: string;
-    if (!data.walletAddress) {
+    if (!address) {
       const wallet = await this.wallet.generateWallet();
-      address = wallet.address;
+      address = wallet.address.toLowerCase();
       key = wallet.key;
     }
     if (!address) {
       throw new Error("Address is required either not generated");
     }
     await this.db.transaction(async (tx) => {
-      await tx.update(users).set({
-        name: data.name,
-        email: data.email,
-        username: data.username,
-      });
+      await tx
+        .update(users)
+        .set({
+          name: data.name,
+          email: data.email,
+          username: data.username,
+        })
+        .where(eq(users.id, data.userId));
       await tx.insert(wallets).values({
         address: address,
         network: data.network,

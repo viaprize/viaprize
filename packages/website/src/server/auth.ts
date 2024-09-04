@@ -20,6 +20,7 @@ declare module "next-auth" {
     user: {
       /** The user's postal address. */
       username?: string;
+      id?: string;
       /**
        * By default, TypeScript merges new interface properties and overwrites existing ones.
        * In this case, the default session user properties will be overwritten,
@@ -93,12 +94,17 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         throw new Error("No sub");
       }
       const username = await viaprize.users.getUserNameById(token.sub);
+
       return { ...token, username };
     },
     session({ session, token }) {
       return {
         ...session,
-        user: { ...session.user, username: token.username },
+        user: {
+          ...session.user,
+          username: token.username,
+          id: token.sub,
+        },
       };
     },
   },
