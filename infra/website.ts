@@ -6,10 +6,11 @@ import {
   AUTH_RESEND_KEY,
   AUTH_SECRET,
   DATABASE_URL,
-} from './secrets'
+  WALLET_PAYMENT_INFRA_API,
+} from "./secrets";
 
-export const website = new sst.aws.Nextjs('website', {
-  path: './packages/website',
+export const website = new sst.aws.Nextjs("website", {
+  path: "./packages/website",
   link: [
     AUTH_SECRET,
     DATABASE_URL,
@@ -18,6 +19,7 @@ export const website = new sst.aws.Nextjs('website', {
     AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET,
     AUTH_RESEND_KEY,
+    WALLET_PAYMENT_INFRA_API,
   ],
   environment: {
     AUTH_SECRET: AUTH_SECRET.value,
@@ -27,5 +29,6 @@ export const website = new sst.aws.Nextjs('website', {
     AUTH_GOOGLE_ID: AUTH_GOOGLE_ID.value,
     AUTH_GOOGLE_SECRET: AUTH_GOOGLE_SECRET.value,
     AUTH_RESEND_KEY: AUTH_RESEND_KEY.value,
+    WALLET_PAYMENT_INFRA_API: WALLET_PAYMENT_INFRA_API.value,
   },
-})
+});

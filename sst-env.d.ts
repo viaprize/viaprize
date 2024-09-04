@@ -36,6 +36,10 @@ declare module "sst" {
       "type": "sst.aws.Function"
       "url": string
     }
+    "WalletPaymentInfraApi": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "website": {
       "type": "sst.aws.Nextjs"
       "url": string
