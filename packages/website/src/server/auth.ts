@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { SIWE_PUBLIC_MESSAGE } from "@/lib/constant";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import NextAuth, { AuthError } from "next-auth";
+import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Github from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
@@ -9,6 +9,27 @@ import Resend from "next-auth/providers/resend";
 import { getCsrfToken } from "next-auth/react";
 import { SiweMessage } from "siwe";
 import { viaprize } from "./viaprize";
+
+import { type DefaultSession } from "next-auth";
+
+declare module "next-auth" {
+  /**
+   * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
+   */
+  interface Session {
+    user: {
+      /** The user's postal address. */
+      username?: string;
+      /**
+       * By default, TypeScript merges new interface properties and overwrites existing ones.
+       * In this case, the default session user properties will be overwritten,
+       * with the new ones defined above. To keep the default session user properties,
+       * you need to add them back into the newly declared interface.
+       */
+    } & DefaultSession["user"];
+  }
+}
+
 const SiweProvider = Credentials({
   id: "siwe",
   name: "Siwe",
@@ -57,7 +78,7 @@ const SiweProvider = Credentials({
   },
 });
 
-export const nextAuth = NextAuth({
+export const { auth, handlers, signIn, signOut } = NextAuth({
   providers: [
     Google,
     Resend({
@@ -66,44 +87,22 @@ export const nextAuth = NextAuth({
     Github,
     SiweProvider,
   ],
-
   callbacks: {
-    async jwt({ account, token, user, profile, session, trigger }) {
-      console.log({ account });
-      console.log({ user });
-      console.log({ profile });
-      console.log({ session });
-      console.log({ trigger });
-      console.log({ token });
-
-      if (!user.id) {
-        throw new AuthError("User ID not found");
+    jwt: async ({ token }) => {
+      if (!token.sub) {
+        throw new Error("No sub");
       }
-      if (!account?.providerAccountId) {
-        throw new AuthError("Account ID not found");
-      }
-      switch (trigger) {
-        case "signUp":
-          await viaprize.users
-            .updateUserById(user.id, {
-              email: user.email,
-              authId: account.providerAccountId,
-              provider: account.provider,
-            })
-            .catch((error) => {
-              throw new AuthError(error.message);
-            });
-          break;
-        case "signIn":
-          break;
-        case "update":
-          break;
-        default:
-          break;
-      }
-      return token;
+      const username = await viaprize.users.getUserNameById(token.sub);
+      return { ...token, username };
+    },
+    session({ session, token }) {
+      return {
+        ...session,
+        user: { ...session.user, username: token.username },
+      };
     },
   },
+
   adapter: DrizzleAdapter(viaprize.database.database),
   session: {
     strategy: "jwt",

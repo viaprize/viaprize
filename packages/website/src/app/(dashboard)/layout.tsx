@@ -1,20 +1,23 @@
-import Header from '@/components/layout/header'
-import SideNavbarConfigure from '@/components/layout/sidenavbar-configure'
-import type React from 'react'
-
-export default function DashBoardlayout({
+import Header from "@/components/layout/header";
+import SideNavbarConfigure from "@/components/layout/sidenavbar-configure";
+import { auth } from "@/server/auth";
+import { redirect } from "next/navigation";
+import type React from "react";
+export default async function DashBoardlayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
+  const session = await auth();
+  if (session && !session.user.username) {
+    return redirect("/onboard");
+  }
   return (
     <div className=" h-dvh w-full overflow-hidden bg-slate-100 dark:bg-zinc-900">
       {/* Main content area with sidebar and children */}
       <div className="flex md:flex-row flex-col h-full">
-        {/* Sidebar on the left */}
-        {/* <nav className="flex-shrink-0 m-2 "> */}
         <SideNavbarConfigure />
-        {/* </nav> */}
+
         <div className="w-full h-full">
           <header className="sticky top-0 z-50 md:mt-2 mx-2">
             <Header />
@@ -26,5 +29,5 @@ export default function DashBoardlayout({
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -14,4 +14,14 @@ export class Users {
       .set(data as any)
       .where(eq(users.id, id));
   }
+  async getUserNameById(id: string) {
+    return (
+      await this.db.query.users.findFirst({
+        columns: {
+          username: true,
+        },
+        where: eq(users.id, id),
+      })
+    )?.username;
+  }
 }

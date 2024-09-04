@@ -1,6 +1,5 @@
-import { nextAuth } from "@/server/auth";
+import { signIn } from "@/server/auth";
 import { Button } from "@viaprize/ui/button";
-
 export default function GithubAuthButton({
   redirectTo,
 }: {
@@ -10,7 +9,7 @@ export default function GithubAuthButton({
     <form
       action={async () => {
         "use server";
-        await nextAuth.signIn("github", {
+        await signIn("github", {
           redirect: !!redirectTo,
           redirectTo: redirectTo,
         });

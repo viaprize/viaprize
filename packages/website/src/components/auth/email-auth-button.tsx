@@ -1,4 +1,4 @@
-import { nextAuth } from "@/server/auth";
+import { signIn } from "@/server/auth";
 import { Button } from "@viaprize/ui/button";
 import { Input } from "@viaprize/ui/input";
 import { Label } from "@viaprize/ui/label";
@@ -8,7 +8,7 @@ export function EmailAuthButton({ redirectTo }: { redirectTo?: string }) {
       action={async (formData) => {
         "use server";
         console.log(formData);
-        await nextAuth.signIn("resend", {
+        await signIn("resend", {
           email: formData.get("email"),
           redirect: !!redirectTo,
           redirectTo: redirectTo,
