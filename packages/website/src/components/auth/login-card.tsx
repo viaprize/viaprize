@@ -1,3 +1,4 @@
+import { REDIRECT_TO_AFTER_AUTH } from "@/lib/constant";
 import Link from "next/link";
 import { EmailAuthButton } from "./email-auth-button";
 import GithubAuthButton from "./github-auth-button";
@@ -15,13 +16,13 @@ export default function LoginCard() {
           </div>
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <EmailAuthButton />
+              <EmailAuthButton redirectTo={REDIRECT_TO_AFTER_AUTH} />
             </div>
             <div className="grid gap-2">
-              <GithubAuthButton />
+              <GithubAuthButton redirectTo={REDIRECT_TO_AFTER_AUTH} />
             </div>
             <div className="grid gap-2">
-              <GoogleAuthButton />
+              <GoogleAuthButton redirectTo={REDIRECT_TO_AFTER_AUTH} />
             </div>
           </div>
           <div className="mt-4 text-center text-sm">

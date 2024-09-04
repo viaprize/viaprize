@@ -1,8 +1,7 @@
-import Link from 'next/link'
+import Link from "next/link";
 
-import { SignIn } from '@/components/auth/signin-button'
-import { HydrateClient } from '@/trpc/server'
-import { Button } from '@viaprize/ui/button'
+import { HydrateClient } from "@/trpc/server";
+import { Button } from "@viaprize/ui/button";
 
 export default async function Home() {
   return (
@@ -39,11 +38,10 @@ export default async function Home() {
           </div>
 
           <Button>Hello World</Button>
-          <SignIn />
 
           {/* <LatestPost /> */}
         </div>
       </main>
     </HydrateClient>
-  )
+  );
 }

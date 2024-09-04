@@ -15,6 +15,27 @@
       "when": 1725281647096,
       "tag": "0001_supreme_killraven",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1725441910592,
+      "tag": "0002_rainy_shockwave",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1725442218590,
+      "tag": "0003_hesitant_the_santerians",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1725447012190,
+      "tag": "0004_bright_beyonder",
+      "breakpoints": true
     }
   ]
 }

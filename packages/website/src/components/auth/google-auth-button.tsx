@@ -1,16 +1,24 @@
 import { nextAuth } from "@/server/auth";
 import { Button } from "@viaprize/ui/button";
 
-export default function GoogleAuthButton() {
+export default function GoogleAuthButton({
+  redirectTo,
+}: {
+  redirectTo?: string;
+}) {
   return (
-    <Button
-      onClick={async () => {
+    <form
+      action={async () => {
         "use server";
-        await nextAuth.signIn("google");
+        await nextAuth.signIn("google", {
+          redirect: !!redirectTo,
+          redirectTo: redirectTo,
+        });
       }}
-      className="w-full"
     >
-      Login with Google
-    </Button>
+      <Button type="submit" className="w-full">
+        Login with Google
+      </Button>
+    </form>
   );
 }
