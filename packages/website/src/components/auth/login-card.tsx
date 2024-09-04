@@ -1,7 +1,7 @@
-import { REDIRECT_TO_AFTER_AUTH } from "@/lib/constant";
-import { EmailAuthButton } from "./email-auth-button";
-import GithubAuthButton from "./github-auth-button";
-import GoogleAuthButton from "./google-auth-button";
+import { REDIRECT_TO_AFTER_AUTH } from '@/lib/constant'
+import { EmailAuthButton } from './email-auth-button'
+import GithubAuthButton from './github-auth-button'
+import GoogleAuthButton from './google-auth-button'
 export default function LoginCard() {
   return (
     <>
@@ -28,5 +28,5 @@ export default function LoginCard() {
         </div>
       </div>
     </>
-  );
+  )
 }

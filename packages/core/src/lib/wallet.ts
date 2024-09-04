@@ -1,13 +1,13 @@
 export class Wallet {
-  url: string;
+  url: string
   constructor(url: string) {
-    this.url = url;
+    this.url = url
   }
   async generateWallet() {
     // Generate a wallet
     const res: { address: string; key: string } = (await (
-      await fetch(this.url + "/wallet/generate")
-    ).json()) as any;
-    return res;
+      await fetch(this.url + '/wallet/generate')
+    ).json()) as any
+    return res
   }
 }

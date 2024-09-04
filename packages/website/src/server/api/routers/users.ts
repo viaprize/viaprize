@@ -5,7 +5,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 export const userRouter = createTRPCRouter({
   hello: protectedProcedure
     .input(z.object({ text: z.string() }))
-    .query(({ input, ctx }) => {
+    .query(({ input }) => {
       return {
         greeting: `Hello ${input.text}`,
       };

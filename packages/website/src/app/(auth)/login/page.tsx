@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image'
 
-import LoginCard from "@/components/auth/login-card";
+import LoginCard from '@/components/auth/login-card'
 
 export default function Dashboard() {
   return (
@@ -19,5 +19,5 @@ export default function Dashboard() {
         </div>
       </div>
     </>
-  );
+  )
 }

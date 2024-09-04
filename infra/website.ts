@@ -7,10 +7,10 @@ import {
   AUTH_SECRET,
   DATABASE_URL,
   WALLET_PAYMENT_INFRA_API,
-} from "./secrets";
+} from './secrets'
 
-export const website = new sst.aws.Nextjs("website", {
-  path: "./packages/website",
+export const website = new sst.aws.Nextjs('website', {
+  path: './packages/website',
   link: [
     AUTH_SECRET,
     DATABASE_URL,
@@ -31,4 +31,4 @@ export const website = new sst.aws.Nextjs("website", {
     AUTH_RESEND_KEY: AUTH_RESEND_KEY.value,
     WALLET_PAYMENT_INFRA_API: WALLET_PAYMENT_INFRA_API.value,
   },
-});
+})

@@ -111,7 +111,7 @@ export default function SideNavbarConfigure() {
   ];
   const [open, setOpen] = useState(false);
 
-  const { data, status, update } = useSession();
+  const { data, status } = useSession();
 
   if (status === "unauthenticated") {
     return null;
