@@ -1,18 +1,18 @@
-"use client";
+'use client'
 import {
   IconBell,
   IconCirclePlus,
   IconLogout,
   IconTrophy,
   IconUser,
-} from "@tabler/icons-react";
-import { Button } from "@viaprize/ui/button";
-import { motion } from "framer-motion";
-import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { Sidebar, SidebarBody, SidebarButton, SidebarLink } from "./sidebar-ui";
+} from '@tabler/icons-react'
+import { Button } from '@viaprize/ui/button'
+import { motion } from 'framer-motion'
+import { signOut, useSession } from 'next-auth/react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState } from 'react'
+import { Sidebar, SidebarBody, SidebarButton, SidebarLink } from './sidebar-ui'
 
 const Logo = ({ name, image }: { name: string; image: string }) => {
   return (
@@ -35,8 +35,8 @@ const Logo = ({ name, image }: { name: string; image: string }) => {
         </div>
       </motion.span>
     </Link>
-  );
-};
+  )
+}
 
 const LogoIcon = ({ image }: { image: string }) => {
   return (
@@ -52,30 +52,30 @@ const LogoIcon = ({ image }: { image: string }) => {
         alt="Avatar"
       />
     </Link>
-  );
-};
+  )
+}
 
 export default function SideNavbarConfigure() {
   const items = [
     {
-      label: "Logout",
+      label: 'Logout',
 
       icon: (
         <IconLogout className="h-25 w-25 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
-  ];
+  ]
   const links = [
     {
-      label: "Prizes",
-      href: "#",
+      label: 'Prizes',
+      href: '#',
       icon: (
         <IconTrophy className="h-25 w-25 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
-      label: "Fundraisers",
-      href: "#",
+      label: 'Fundraisers',
+      href: '#',
       icon: (
         <svg
           width="25"
@@ -95,43 +95,43 @@ export default function SideNavbarConfigure() {
       ),
     },
     {
-      label: "Notifications",
-      href: "#",
+      label: 'Notifications',
+      href: '#',
       icon: (
         <IconBell className="h-25 w-25 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
     {
-      label: "Dashboard",
-      href: "#",
+      label: 'Dashboard',
+      href: '#',
       icon: (
         <IconUser className="h-25 w-25 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
       ),
     },
-  ];
-  const [open, setOpen] = useState(false);
+  ]
+  const [open, setOpen] = useState(false)
 
-  const { data, status } = useSession();
+  const { data, status } = useSession()
 
-  if (status === "unauthenticated") {
-    return null;
+  if (status === 'unauthenticated') {
+    return null
   }
   return (
     <Sidebar open={open} setOpen={setOpen}>
       <SidebarBody>
         <div
           className={`flex flex-col overflow-y-auto overflow-x-hidden ${
-            !open ? "items-center" : ""
+            !open ? 'items-center' : ''
           }`}
         >
           {open ? (
             <Logo
-              name={data?.user.name ?? "John Doe"}
-              image={data?.user.image ?? "https://github.com/shadcn.png"}
+              name={data?.user.name ?? 'John Doe'}
+              image={data?.user.image ?? 'https://github.com/shadcn.png'}
             />
           ) : (
             <LogoIcon
-              image={data?.user.image ?? "https://github.com/shadcn.png"}
+              image={data?.user.image ?? 'https://github.com/shadcn.png'}
             />
           )}
           <div className="mt-4 space-y-2">
@@ -144,8 +144,8 @@ export default function SideNavbarConfigure() {
                 key={item.label}
                 item={item}
                 onClick={async () => {
-                  console.log("signing out");
-                  await signOut();
+                  console.log('signing out')
+                  await signOut()
                 }}
               />
             ))}
@@ -165,5 +165,5 @@ export default function SideNavbarConfigure() {
         </div>
       </SidebarBody>
     </Sidebar>
-  );
+  )
 }
