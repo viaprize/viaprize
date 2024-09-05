@@ -1,10 +1,10 @@
-"use client";
-import { wagmiConfig } from "@/lib/wagmi";
-import { TRPCReactProvider } from "@/trpc/react";
+'use client'
+import { wagmiConfig } from '@/lib/wagmi'
+import { TRPCReactProvider } from '@/trpc/react'
 import {
   RainbowKitAuthenticationProvider,
   RainbowKitProvider,
-} from "@rainbow-me/rainbowkit";
+} from '@rainbow-me/rainbowkit'
 
 import {
   SessionProvider,
@@ -12,18 +12,18 @@ import {
   signIn,
   signOut,
   useSession,
-} from "next-auth/react";
-import { State, WagmiProvider } from "wagmi";
-import { optimism } from "wagmi/chains";
+} from 'next-auth/react'
+import { type State, WagmiProvider } from 'wagmi'
+import { optimism } from 'wagmi/chains'
 
-import { SIWE_PUBLIC_MESSAGE } from "@/lib/constant";
-import { createAuthenticationAdapter } from "@rainbow-me/rainbowkit";
-import { SiweMessage } from "siwe-viem";
+import { SIWE_PUBLIC_MESSAGE } from '@/lib/constant'
+import { createAuthenticationAdapter } from '@rainbow-me/rainbowkit'
+import { SiweMessage } from 'siwe-viem'
 
 const authenticationAdapter = createAuthenticationAdapter({
   getNonce: async () => {
-    const csrfToken = await getCsrfToken();
-    return csrfToken;
+    const csrfToken = await getCsrfToken()
+    return csrfToken
   },
 
   createMessage: ({ nonce, address, chainId }) => {
@@ -32,33 +32,33 @@ const authenticationAdapter = createAuthenticationAdapter({
       address,
       statement: SIWE_PUBLIC_MESSAGE,
       uri: window.location.origin,
-      version: "1",
+      version: '1',
       chainId,
       nonce,
-    });
+    })
   },
 
   getMessageBody: ({ message }) => {
-    return message.prepareMessage();
+    return message.prepareMessage()
   },
 
   verify: async ({ message, signature }) => {
-    await signIn("credentials", {
+    await signIn('credentials', {
       message: JSON.stringify(message),
       signedMessage: signature,
-      callbackUrl: "/prize",
-    });
+      callbackUrl: '/prize',
+    })
 
-    return true;
+    return true
   },
 
   signOut: async () => {
-    await signOut();
+    await signOut()
   },
-});
+})
 
 function WalletProvider({ children }: { children: React.ReactNode }) {
-  const { status } = useSession();
+  const { status } = useSession()
   return (
     <RainbowKitAuthenticationProvider
       adapter={authenticationAdapter}
@@ -68,14 +68,14 @@ function WalletProvider({ children }: { children: React.ReactNode }) {
         {children}
       </RainbowKitProvider>
     </RainbowKitAuthenticationProvider>
-  );
+  )
 }
 export function Providers({
   children,
   initialState,
 }: {
-  children: React.ReactNode;
-  initialState: State | undefined;
+  children: React.ReactNode
+  initialState: State | undefined
 }) {
   return (
     <WagmiProvider config={wagmiConfig} initialState={initialState}>
@@ -85,5 +85,5 @@ export function Providers({
         </SessionProvider>
       </TRPCReactProvider>
     </WagmiProvider>
-  );
+  )
 }

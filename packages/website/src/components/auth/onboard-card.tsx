@@ -1,9 +1,9 @@
-"use client";
-import { useAuth } from "@/hooks/useAuth";
-import { api } from "@/trpc/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@viaprize/ui/button";
-import { Checkbox } from "@viaprize/ui/checkbox";
+'use client'
+import { useAuth } from '@/hooks/useAuth'
+import { api } from '@/trpc/react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from '@viaprize/ui/button'
+import { Checkbox } from '@viaprize/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -12,82 +12,82 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@viaprize/ui/form";
-import { Input } from "@viaprize/ui/input";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+} from '@viaprize/ui/form'
+import { Input } from '@viaprize/ui/input'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const formSchema = z.object({
   username: z
     .string()
     .min(4, {
-      message: "Username must be at least 5 characters",
+      message: 'Username must be at least 5 characters',
     })
     .max(40, {
-      message: "Username must be at most 40 characters",
+      message: 'Username must be at most 40 characters',
     })
-    .refine((s) => !s.includes(" "), "No Spaces!")
-    .refine((s) => !s.includes("@"), "No @!")
+    .refine((s) => !s.includes(' '), 'No Spaces!')
+    .refine((s) => !s.includes('@'), 'No @!')
     .refine(
       (s) => /^[a-z0-9_]+$/.test(s),
-      "Username must contain only lowercase letters, numbers, or underscores"
+      'Username must contain only lowercase letters, numbers, or underscores',
     ),
-  email: z.string().email().min(1, "Email is required"),
-  name: z.string().max(255).min(2, "Name must be at least 2 characters"),
+  email: z.string().email().min(1, 'Email is required'),
+  name: z.string().max(255).min(2, 'Name must be at least 2 characters'),
   shouldGenerateWallet: z.boolean().default(false),
   walletAddress: z.string().optional(),
-});
+})
 
 interface OnBoardCardProps {
-  name?: string | null;
-  email?: string | null;
-  walletAddress?: string | null;
+  name?: string | null
+  email?: string | null
+  walletAddress?: string | null
 }
 
 export default function OnboardCard(props: OnBoardCardProps) {
-  const { push } = useRouter();
+  const { push } = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      email: props.email || "",
-      name: props.name || "",
+      username: '',
+      email: props.email || '',
+      name: props.name || '',
       shouldGenerateWallet: !props.walletAddress,
       walletAddress: props.walletAddress || undefined,
     },
-  });
+  })
 
-  const { logOut } = useAuth();
+  const { logOut } = useAuth()
 
   const mutation = api.users.onboardUser.useMutation({
     onSuccess: async () => {
-      alert("Login again");
-      await logOut();
-      push("/login");
+      alert('Login again')
+      await logOut()
+      push('/login')
     },
 
     onError: (error) => {
-      if (error.data?.code === "UNPROCESSABLE_CONTENT") {
-        form.setError("username", {
-          type: "manual",
+      if (error.data?.code === 'UNPROCESSABLE_CONTENT') {
+        form.setError('username', {
+          type: 'manual',
           message: error.message,
-        });
+        })
       }
     },
-  });
+  })
 
-  const watchShouldGenerateWallet = form.watch("shouldGenerateWallet");
+  const watchShouldGenerateWallet = form.watch('shouldGenerateWallet')
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    console.log(values)
     await mutation.mutateAsync({
       email: values.email,
       name: values.name,
       username: values.username,
       walletAddress: values.walletAddress,
-    });
+    })
   }
 
   return (
@@ -216,9 +216,9 @@ export default function OnboardCard(props: OnBoardCardProps) {
           <div className="mt-4 text-center text-sm">
             Change your mind ? Click here to log out
             <Button
-              variant={"link"}
+              variant={'link'}
               onClick={async () => {
-                await logOut();
+                await logOut()
               }}
               className="underline"
             >
@@ -228,5 +228,5 @@ export default function OnboardCard(props: OnBoardCardProps) {
         </div>
       </div>
     </>
-  );
+  )
 }

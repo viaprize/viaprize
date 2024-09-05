@@ -1,4 +1,4 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 export const WalletLogin = () => {
-  return <ConnectButton label="Log in with Wallet" />;
-};
+  return <ConnectButton label="Log in with Wallet" />
+}

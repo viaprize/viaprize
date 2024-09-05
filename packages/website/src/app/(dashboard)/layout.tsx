@@ -1,16 +1,16 @@
-import Header from "@/components/layout/header";
-import SideNavbarConfigure from "@/components/layout/sidenavbar-configure";
-import { auth } from "@/server/auth";
-import { redirect } from "next/navigation";
-import type React from "react";
+import Header from '@/components/layout/header'
+import SideNavbarConfigure from '@/components/layout/sidenavbar-configure'
+import { auth } from '@/server/auth'
+import { redirect } from 'next/navigation'
+import type React from 'react'
 export default async function DashBoardlayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const session = await auth();
+  const session = await auth()
   if (session?.user && (!session.user.username || !session.user.email)) {
-    return redirect("/onboard");
+    return redirect('/onboard')
   }
   return (
     <div className=" h-dvh w-full overflow-hidden bg-slate-100 dark:bg-zinc-900">
@@ -29,5 +29,5 @@ export default async function DashBoardlayout({
         </div>
       </div>
     </div>
-  );
+  )
 }

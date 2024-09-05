@@ -1,14 +1,14 @@
-import Image from "next/image";
+import Image from 'next/image'
 
-import OnboardCard from "@/components/auth/onboard-card";
-import { auth } from "@/server/auth";
-import { redirect } from "next/navigation";
+import OnboardCard from '@/components/auth/onboard-card'
+import { auth } from '@/server/auth'
+import { redirect } from 'next/navigation'
 
 export default async function Dashboard() {
-  const session = await auth();
-  console.log("session", session);
+  const session = await auth()
+  console.log('session', session)
   if (!session) {
-    return redirect("/login");
+    return redirect('/login')
   }
   return (
     <>
@@ -30,5 +30,5 @@ export default async function Dashboard() {
         </div>
       </div>
     </>
-  );
+  )
 }

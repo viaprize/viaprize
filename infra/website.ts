@@ -9,10 +9,10 @@ import {
   DATABASE_URL,
   NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
   WALLET_PAYMENT_INFRA_API,
-} from "./secrets";
+} from './secrets'
 
-export const website = new sst.aws.Nextjs("website", {
-  path: "./packages/website",
+export const website = new sst.aws.Nextjs('website', {
+  path: './packages/website',
   link: [
     AUTH_SECRET,
     DATABASE_URL,
@@ -38,4 +38,4 @@ export const website = new sst.aws.Nextjs("website", {
     NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
       NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID.value,
   },
-});
+})
