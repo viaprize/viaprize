@@ -1,7 +1,8 @@
-import { REDIRECT_TO_AFTER_AUTH } from '@/lib/constant'
-import { EmailAuthButton } from './email-auth-button'
-import GithubAuthButton from './github-auth-button'
-import GoogleAuthButton from './google-auth-button'
+import { REDIRECT_TO_AFTER_AUTH } from "@/lib/constant";
+import { EmailAuthButton } from "./email-auth-button";
+import GithubAuthButton from "./github-auth-button";
+import GoogleAuthButton from "./google-auth-button";
+import { WalletLogin } from "./wallet-login";
 export default function LoginCard() {
   return (
     <>
@@ -24,9 +25,12 @@ export default function LoginCard() {
             <div className="grid gap-2">
               <GoogleAuthButton redirectTo={REDIRECT_TO_AFTER_AUTH} />
             </div>
+            <div className="grid gap-2">
+              <WalletLogin />
+            </div>
           </div>
         </div>
       </div>
     </>
-  )
+  );
 }

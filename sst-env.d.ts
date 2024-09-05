@@ -27,7 +27,15 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "AuthTrustHost": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "DatabaseUrl": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "NextPublicWalletConnectProjectId": {
       "type": "sst.sst.Secret"
       "value": string
     }
