@@ -43,12 +43,13 @@ const authenticationAdapter = createAuthenticationAdapter({
   },
 
   verify: async ({ message, signature }) => {
-    const res = await signIn("credentials", {
+    await signIn("credentials", {
       message: JSON.stringify(message),
       signedMessage: signature,
+      callbackUrl: "/prize",
     });
 
-    return !!res && res.ok;
+    return true;
   },
 
   signOut: async () => {

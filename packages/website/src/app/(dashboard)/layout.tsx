@@ -9,7 +9,7 @@ export default async function DashBoardlayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (session?.user && !session.user.username) {
+  if (session?.user && (!session.user.username || !session.user.email)) {
     return redirect("/onboard");
   }
   return (

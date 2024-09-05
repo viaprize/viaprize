@@ -1,4 +1,5 @@
 "use client";
+import { useAuth } from "@/hooks/useAuth";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@viaprize/ui/button";
@@ -13,10 +14,10 @@ import {
   FormMessage,
 } from "@viaprize/ui/form";
 import { Input } from "@viaprize/ui/input";
-import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 const formSchema = z.object({
   username: z
     .string()
@@ -56,15 +57,14 @@ export default function OnboardCard(props: OnBoardCardProps) {
       walletAddress: props.walletAddress || undefined,
     },
   });
-  const { update } = useSession();
+
+  const { logOut } = useAuth();
+
   const mutation = api.users.onboardUser.useMutation({
-    onSuccess: async (_, variables) => {
-      await update({
-        name: variables.name,
-        email: variables.email,
-        username: variables.username,
-      });
-      push("/prize");
+    onSuccess: async () => {
+      alert("Login again");
+      await logOut();
+      push("/login");
     },
 
     onError: (error) => {
@@ -218,7 +218,7 @@ export default function OnboardCard(props: OnBoardCardProps) {
             <Button
               variant={"link"}
               onClick={async () => {
-                await signOut();
+                await logOut();
               }}
               className="underline"
             >

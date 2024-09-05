@@ -4,9 +4,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM"],
     "allowJs": true,
     "resolveJsonModule": true,
+
     "moduleDetection": "force",
     "isolatedModules": true,
     "jsx": "preserve", // Use the new JSX runtime

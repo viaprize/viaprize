@@ -1,5 +1,4 @@
 import { env } from "@/env";
-import { SIWE_PUBLIC_MESSAGE } from "@/lib/constant";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
@@ -56,9 +55,6 @@ const SiweProvider = Credentials({
 
     if (!result.success) throw new CredentialsSignin("Invalid Signature");
 
-    if (result.data.statement !== SIWE_PUBLIC_MESSAGE) {
-      throw new CredentialsSignin("Statement Mismatch");
-    }
     const user = await viaprize.users.getUserByWalletAddress(
       result.data.address
     );
@@ -73,6 +69,7 @@ const SiweProvider = Credentials({
       network: "optimism",
       walletAddress: result.data.address.toLowerCase(),
     });
+
     return {
       id: userId,
     };
