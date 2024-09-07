@@ -17,6 +17,7 @@ export const env = createEnv({
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
     AUTH_RESEND_KEY: z.string(),
+    WALLET_PAYMENT_INFRA_API: z.string(),
   },
 
   /**
@@ -26,6 +27,7 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: z.string(),
   },
 
   /**
@@ -41,6 +43,9 @@ export const env = createEnv({
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
     AUTH_RESEND_KEY: process.env.AUTH_RESEND_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
+    WALLET_PAYMENT_INFRA_API: process.env.WALLET_PAYMENT_INFRA_API,
+    NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
+      process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

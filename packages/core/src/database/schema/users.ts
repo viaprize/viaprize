@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm'
 import { boolean, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+import { createInsertSchema } from 'drizzle-zod'
 import { nanoid } from 'nanoid'
 import { prizeProposals } from './prize-proposals'
 import { prizes } from './prizes'
@@ -13,7 +14,10 @@ export const users = pgTable('user', {
   email: text('email').unique(),
   authId: varchar('authId').unique(),
   username: varchar('username').unique(),
-  fullName: varchar('fullName'),
+  provider: varchar('provider'),
+  name: varchar('name'),
+  emailVerified: timestamp('emailVerified', { mode: 'date' }),
+  image: text('image'),
   isAdmin: boolean('isAdmin').default(false),
   bio: text('bio').default(''),
   avatar: text('avatar'),
@@ -36,3 +40,5 @@ export const usersRelations = relations(users, ({ many }) => ({
   prizeComments: many(users),
   submission: many(submissions),
 }))
+
+export const insertUserSchema = createInsertSchema(users)

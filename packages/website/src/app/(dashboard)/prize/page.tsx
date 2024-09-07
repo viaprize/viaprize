@@ -1,6 +1,6 @@
 import FetchExploreCard from '@/components/prize/explore/fetch-explore-card'
 
-export default function ExplorePage() {
+export default async function ExplorePage() {
   return (
     <div className="flex h-full">
       <div className="w-full md:w-[75%] h-full border-r-2">

@@ -10,10 +10,12 @@ import type React from 'react'
 import { type ReactNode, createContext, useContext, useState } from 'react'
 import { MdArrowRightAlt } from 'react-icons/md'
 
-interface Links {
+interface SideBarItem {
   label: string
-  href: string
   icon: React.JSX.Element | React.ReactNode
+}
+interface Links extends SideBarItem {
+  href: string
 }
 
 interface SidebarContextProps {
@@ -167,6 +169,44 @@ export const MobileSidebar = ({
         </AnimatePresence>
       </div>
     </>
+  )
+}
+
+export const SidebarButton = ({
+  item,
+  className,
+  onClick,
+}: {
+  item: SideBarItem
+  className?: string
+  onClick: React.MouseEventHandler<HTMLButtonElement> | undefined
+}) => {
+  const { open, animate } = useSidebar()
+  return (
+    <Button
+      className={cn(
+        'group/sidebar flex items-center justify-start gap-3 p-3 rounded-md hover:bg-primary/30',
+        className,
+      )}
+      onClick={onClick}
+    >
+      {!open ? (
+        <ToolTipSimple position="right" content={item.label}>
+          {item.icon}
+        </ToolTipSimple>
+      ) : (
+        item.icon
+      )}
+      <motion.span
+        animate={{
+          display: animate ? (open ? 'inline-block' : 'none') : 'inline-block',
+          opacity: animate ? (open ? 1 : 0) : 1,
+        }}
+        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+      >
+        {item.label}
+      </motion.span>
+    </Button>
   )
 }
 

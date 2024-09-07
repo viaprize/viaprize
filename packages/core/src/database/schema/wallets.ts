@@ -10,6 +10,7 @@ export const wallets = pgTable('wallets', {
   metadata: json('metadata'),
   username: varchar('username').references(() => users.username, {
     onDelete: 'cascade',
+    onUpdate: 'cascade',
   }),
   prizeId: varchar('prizeId').references(() => prizes.id, {
     onDelete: 'cascade',

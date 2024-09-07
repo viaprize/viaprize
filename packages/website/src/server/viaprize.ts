@@ -5,5 +5,6 @@ export const viaprize = new Viaprize({
     databaseUrl: env.DATABASE_URL,
     inMemoryDb: false,
     mode: 'development',
+    walletPaymentInfraUrl: env.WALLET_PAYMENT_INFRA_API,
   },
 })
