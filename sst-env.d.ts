@@ -42,7 +42,7 @@ declare module 'sst' {
       type: 'sst.sst.Secret'
       value: string
     }
-    
+
     NextPublicWalletConnectProjectId: {
       type: 'sst.sst.Secret'
       value: string
