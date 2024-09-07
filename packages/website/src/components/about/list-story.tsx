@@ -1,5 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
 import Image from 'next/image'
 
 const list = [
@@ -26,9 +24,9 @@ const list = [
 export default function ListStory() {
   return (
     <div className="space-y-6">
-      {list.map((item, index) => (
+      {list.map((item) => (
         <div
-          key={index}
+          key={item.title}
           className="lg:flex items-center justify-between space-y-4 lg:space-y-0"
         >
           <div className="w-full lg:w-[40%] space-y-2 text-center lg:text-left">

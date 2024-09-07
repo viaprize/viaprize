@@ -1,5 +1,3 @@
-/* tslint:disable */
-/* eslint-disable */
 import {
   IconBrandGithub,
   IconBrandInstagram,
@@ -9,7 +7,6 @@ import {
 } from '@tabler/icons-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Card } from '@viaprize/ui/card'
-import Image from 'next/image'
 import Link from 'next/link'
 const team = [
   {
@@ -74,9 +71,9 @@ export default function TeamContent() {
         and Aryan. We formed a full-time team at the start of 2024.
       </div>
       <div className="w-[90%] justify-center lg:flex items-center space-x-0  lg:space-x-4  space-y-5 lg:space-y-0 mt-7">
-        {team.map((member, index) => (
+        {team.map((member) => (
           <Card
-            key={index}
+            key={member.name}
             className="w-full flex flex-col items-center rounded-md py-4 bg-background shadow-md border"
           >
             <Avatar className=" w-20 h-20 rounded-full">
