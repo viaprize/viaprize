@@ -27,6 +27,17 @@ declare module 'sst' {
       type: 'sst.sst.Secret'
       value: string
     }
+
+    DatabaseUrl: {
+      type: 'sst.sst.Secret'
+      value: string
+    }
+    MyApi: {
+      name: string
+      type: 'sst.aws.Function'
+      url: string
+    }
+
     AuthTrustHost: {
       type: 'sst.sst.Secret'
       value: string
@@ -43,6 +54,7 @@ declare module 'sst' {
       type: 'sst.sst.Secret'
       value: string
     }
+
     website: {
       type: 'sst.aws.Nextjs'
       url: string
