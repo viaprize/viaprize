@@ -18,12 +18,12 @@ export default async function DashBoardlayout({
       <div className="flex md:flex-row flex-col h-full">
         <SideNavbarConfigure />
 
-        <div className="w-full h-full">
+        <div className="w-full h-full flex-col flex">
           <header className="sticky top-0 z-50 md:mt-2 mx-2">
             <Header />
           </header>
           {/* Children content on the right */}
-          <main className="h-full w-full flex-1 overflow-auto bg-background rounded-md md:mr-2 md:my-2">
+          <main className=" flex-1 overflow-auto bg-background rounded-md md:mx-2 md:my-2">
             {children}
           </main>
         </div>

@@ -10,7 +10,7 @@ export default function Dashboard() {
 
         <div className="hidden bg-muted lg:block">
           <Image
-            src="https://picsum.photos/200"
+            src="https://images.unsplash.com/photo-1568819317551-31051b37f69f?q=80&w=3083"
             alt="Image"
             width="1920"
             height="1080"

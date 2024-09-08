@@ -1,4 +1,9 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 export const WalletLogin = () => {
-  return <ConnectButton label="Log in with Wallet" />
+  return (
+    <ConnectButton
+      chainStatus={{ largeScreen: 'full', smallScreen: 'icon' }}
+      label="Log in with Wallet"
+    />
+  )
 }
