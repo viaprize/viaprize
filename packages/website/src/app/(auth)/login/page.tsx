@@ -5,16 +5,15 @@ import LoginCard from '@/components/auth/login-card'
 export default function Dashboard() {
   return (
     <>
-      <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+      <div className="w-full md:grid  max-h-dvh h-dvh md:grid-cols-2">
         <LoginCard />
-
         <div className="hidden bg-muted lg:block">
           <Image
-            src="https://images.unsplash.com/photo-1568819317551-31051b37f69f?q=80&w=3083"
+            src="https://images.unsplash.com/photo-1507919909716-c8262e491cde?q=80&w=3432"
             alt="Image"
             width="1920"
             height="1080"
-            className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+            className="h-dvh w-full object-cover dark:brightness-[0.2] dark:grayscale"
           />
         </div>
       </div>
