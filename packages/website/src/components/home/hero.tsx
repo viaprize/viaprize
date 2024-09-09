@@ -1,7 +1,7 @@
-import { Button } from "@viaprize/ui/button";
-import { Card, CardFooter, CardHeader } from "@viaprize/ui/card";
-import { ArrowRight } from "lucide-react";
-import Image from "next/image";
+import { Button } from '@viaprize/ui/button'
+import { Card, CardFooter, CardHeader } from '@viaprize/ui/card'
+import { ArrowRight } from 'lucide-react'
+import Image from 'next/image'
 
 export default function HeroSection() {
   return (
@@ -78,5 +78,5 @@ export default function HeroSection() {
         </Card>
       </div>
     </section>
-  );
+  )
 }
