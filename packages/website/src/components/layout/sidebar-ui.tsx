@@ -94,7 +94,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          'relative m-2 hidden rounded-md h-[calc(100vh-60px)] w-[300px] flex-shrink-0  bg-background px-4 py-4 md:flex md:flex-col',
+          'relative my-2 ml-2 mr-1 hidden rounded-md h-[calc(100vh-16px)] w-[300px] flex-shrink-0  bg-background px-4 py-4 md:flex md:flex-col',
           className,
         )}
         animate={{
@@ -185,7 +185,7 @@ export const SidebarButton = ({
   return (
     <Button
       className={cn(
-        'group/sidebar flex items-center justify-start gap-3 p-3 rounded-md hover:bg-primary/30',
+        'group/sidebar flex items-center justify-start gap-3 p-3 rounded-md text-primary-foreground ',
         className,
       )}
       onClick={onClick}
@@ -202,7 +202,7 @@ export const SidebarButton = ({
           display: animate ? (open ? 'inline-block' : 'none') : 'inline-block',
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        className="text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >
         {item.label}
       </motion.span>

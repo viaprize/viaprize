@@ -2,7 +2,7 @@
 . "$(dirname "$0")/_/husky.sh"
 
 # Run Biome for both linting and formatting
-pnpm biome check
+pnpm format-and-lint
 
 # Check the exit status of the last command
 if [ $? -eq 0 ]; then

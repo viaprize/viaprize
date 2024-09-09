@@ -61,7 +61,7 @@ export default function SideNavbarConfigure() {
       label: 'Logout',
 
       icon: (
-        <IconLogout className="h-25 w-25 flex-shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <IconLogout className="h-25 w-25 flex-shrink-0 text-primary-foreground" />
       ),
     },
   ]
@@ -111,11 +111,8 @@ export default function SideNavbarConfigure() {
   ]
   const [open, setOpen] = useState(false)
 
-  const { logOut, status, session } = useAuth()
+  const { logOut, session } = useAuth()
 
-  if (status === 'unauthenticated') {
-    return null
-  }
   return (
     <Sidebar open={open} setOpen={setOpen}>
       <SidebarBody>
