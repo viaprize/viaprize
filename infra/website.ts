@@ -27,9 +27,6 @@ export const website = new sst.aws.Nextjs("website", {
     NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
     imageBucket,
   ],
-  dev: {
-    command: "pnpm dev",
-  },
   environment: {
     AUTH_SECRET: AUTH_SECRET.value,
     DATABASE_URL: DATABASE_URL.value,
