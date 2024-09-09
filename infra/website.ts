@@ -28,7 +28,7 @@ export const website = new sst.aws.Nextjs("website", {
     imageBucket,
   ],
   dev: {
-    command: "pnpm run dev",
+    command: "pnpm dev",
   },
   environment: {
     AUTH_SECRET: AUTH_SECRET.value,
