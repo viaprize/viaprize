@@ -43,6 +43,13 @@
       "when": 1725533187594,
       "tag": "0005_wealthy_gorgon",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1725613694643,
+      "tag": "0006_mature_cobalt_man",
+      "breakpoints": true
     }
   ]
 }

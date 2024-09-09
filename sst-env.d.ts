@@ -35,6 +35,10 @@ declare module "sst" {
       type: "sst.sst.Secret";
       value: string;
     };
+    ImageUploads: {
+      name: string;
+      type: "sst.aws.Bucket";
+    };
     NextPublicWalletConnectProjectId: {
       type: "sst.sst.Secret";
       value: string;
