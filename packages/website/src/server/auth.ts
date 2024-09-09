@@ -9,7 +9,7 @@ import { cookies } from "next/headers";
 import { SiweMessage } from "siwe-viem";
 import { viaprize } from "./viaprize";
 
-import type { DefaultSession, Session } from "next-auth";
+import type { DefaultSession } from "next-auth";
 
 declare module "next-auth" {
   /**
@@ -31,9 +31,6 @@ declare module "next-auth" {
   }
 }
 
-const updateSession = async (session: Partial<Session>) => {
-  const newToken = await auth();
-};
 const SiweProvider = Credentials({
   name: "siwe",
   credentials: {

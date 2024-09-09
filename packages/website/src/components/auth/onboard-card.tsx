@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { useAuth } from "@/hooks/useAuth";
-import { api } from "@/trpc/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@viaPrize/ui/button";
+import { useAuth } from '@/hooks/useAuth'
+import { api } from '@/trpc/react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from '@viaPrize/ui/button'
 import {
   Card,
   CardContent,
@@ -11,8 +11,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@viaPrize/ui/card";
-import { Checkbox } from "@viaPrize/ui/checkbox";
+} from '@viaPrize/ui/card'
+import { Checkbox } from '@viaPrize/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -21,41 +21,41 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@viaPrize/ui/form";
-import { Input } from "@viaPrize/ui/input";
+} from '@viaPrize/ui/form'
+import { Input } from '@viaPrize/ui/input'
 // import { Icons } from "@viaPrize/ui/icons";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@viaPrize/ui/tooltip";
-import { LoaderIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+} from '@viaPrize/ui/tooltip'
+import { LoaderIcon } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const formSchema = z.object({
   username: z
     .string()
-    .min(4, { message: "Username must be at least 4 characters" })
-    .max(40, { message: "Username must be at most 40 characters" })
-    .refine((s) => !s.includes(" "), "No spaces allowed")
-    .refine((s) => !s.includes("@"), "No @ symbol allowed")
+    .min(4, { message: 'Username must be at least 4 characters' })
+    .max(40, { message: 'Username must be at most 40 characters' })
+    .refine((s) => !s.includes(' '), 'No spaces allowed')
+    .refine((s) => !s.includes('@'), 'No @ symbol allowed')
     .refine(
       (s) => /^[a-z0-9_]+$/.test(s),
-      "Username must contain only lowercase letters, numbers, or underscores"
+      'Username must contain only lowercase letters, numbers, or underscores',
     ),
-  email: z.string().email("Invalid email address").min(1, "Email is required"),
-  name: z.string().max(255).min(2, "Name must be at least 2 characters"),
+  email: z.string().email('Invalid email address').min(1, 'Email is required'),
+  name: z.string().max(255).min(2, 'Name must be at least 2 characters'),
   shouldGenerateWallet: z.boolean().default(false),
   walletAddress: z.string().optional(),
-});
+})
 
 interface OnBoardCardProps {
-  name?: string | null;
-  email?: string | null;
-  walletAddress?: string | null;
+  name?: string | null
+  email?: string | null
+  walletAddress?: string | null
 }
 
 export default function OnboardCard({
@@ -63,37 +63,37 @@ export default function OnboardCard({
   email,
   walletAddress,
 }: OnBoardCardProps) {
-  const { push } = useRouter();
-  const { logOut } = useAuth();
+  const { push } = useRouter()
+  const { logOut } = useAuth()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      email: email || "",
-      name: name || "",
+      username: '',
+      email: email || '',
+      name: name || '',
       shouldGenerateWallet: !walletAddress,
       walletAddress: walletAddress || undefined,
     },
-  });
+  })
 
   const mutation = api.users.onboardUser.useMutation({
     onSuccess: async () => {
-      alert("Login again");
-      await logOut();
-      push("/login");
+      alert('Login again')
+      await logOut()
+      push('/login')
     },
     onError: (error) => {
-      if (error.data?.code === "UNPROCESSABLE_CONTENT") {
-        form.setError("username", {
-          type: "manual",
+      if (error.data?.code === 'UNPROCESSABLE_CONTENT') {
+        form.setError('username', {
+          type: 'manual',
           message: error.message,
-        });
+        })
       }
     },
-  });
+  })
 
-  const watchShouldGenerateWallet = form.watch("shouldGenerateWallet");
+  const watchShouldGenerateWallet = form.watch('shouldGenerateWallet')
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await mutation.mutateAsync({
@@ -101,7 +101,7 @@ export default function OnboardCard({
       name: values.name,
       username: values.username,
       walletAddress: values.walletAddress,
-    });
+    })
   }
 
   return (
@@ -226,7 +226,7 @@ export default function OnboardCard({
                     Please wait
                   </>
                 ) : (
-                  "Complete Setup"
+                  'Complete Setup'
                 )}
               </Button>
             </form>
@@ -248,5 +248,5 @@ export default function OnboardCard({
         </CardFooter>
       </Card>
     </div>
-  );
+  )
 }
