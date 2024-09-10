@@ -134,7 +134,7 @@ function FundUsdcCard({
           'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
           {
             headers: {
-              'x-chain-id': CHAIN_ID.toString,
+              'x-chain-id': CHAIN_ID.toString(),
             },
           },
         )
