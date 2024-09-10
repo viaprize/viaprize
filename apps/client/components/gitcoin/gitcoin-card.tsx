@@ -101,7 +101,7 @@ export default function GitcoinCard({
           <Image
             alt="Image"
             className="rounded-md relative h-40 w-full"
-            loading='lazy'
+            loading="lazy"
             height={500}
             width="100%"
             fallbackSrc="https://placehold.jp/24/3d4070/ffffff/600x300.jpg?text=Image%20not%20Found"
@@ -123,7 +123,7 @@ export default function GitcoinCard({
         </div>
         <Image
           alt="Logo"
-          fallbackSrc='https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
+          fallbackSrc="https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image"
           src={
             logoURL ||
             'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'

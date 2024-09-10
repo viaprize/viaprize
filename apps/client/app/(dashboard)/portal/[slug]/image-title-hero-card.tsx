@@ -24,9 +24,9 @@ export default function ImageTitleHero({
       {/* <Image src={img} alt="Portal Image" className="h-full w-full object-cover" /> */}
       <Image
         src={img}
-          // prize.images[0] ||
-          // 'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
-        
+        // prize.images[0] ||
+        // 'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
+
         radius="md"
         alt="prize info tumbnail"
       />
