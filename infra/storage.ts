@@ -1,6 +1,3 @@
-export const imageBucket =
-  $app.stage === "production"
-    ? new sst.aws.Bucket("ImageUploads", {
-        public: true,
-      })
-    : sst.aws.Bucket.get("ImageUploads", "viaprize-dev-imageuploads-brehvnec");
+export const imageBucket = new sst.aws.Bucket("ImageUploads", {
+  public: true,
+});
