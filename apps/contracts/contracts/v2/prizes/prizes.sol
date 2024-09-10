@@ -20,23 +20,23 @@ contract PrizeV2 is ReentrancyGuard {
     /// @notice This variable tracks the total amount of rewards available after deducting visionary and platform fees.
     uint256 public totalRewards;
     /// @notice This variable represents the time when the voting period ends.
-    uint256 private votingTime;
+    uint256 public votingTime;
     /// @notice This variable represents the time when the submission period ends.
-    uint256 private submissionTime;
+    uint256 public submissionTime;
     /// @notice This variable tracks the total votes gained by all submissions.
-    uint256 private totalVotes;
+    uint256 public totalVotes;
     /// @notice This variable is a nonce tracker used for creating unique vote hashes.
-    uint256 private nonce;
+    uint256 public nonce;
     /// @notice This variable represents the time when the dispute period ends.
     uint256 public disputePeriod;
     /// @notice This variable represents the time when the disputeSubmissionEnds.
     uint256 public disputeSubmission;
     /// @notice This variable represents the fee percentage of total funds paid to the visionary who proposed the idea.
-    uint8 private visionaryFee;
+    uint8 public visionaryFee;
     /// @notice This variable represents the fee percentage of total funds paid to the platform as a fee.
-    uint8 private platformFee;
+    uint8 public platformFee;
     /// @notice This constant represents the version of the contract.
-    uint8 public constant VERSION = 201;
+    uint8 public constant VERSION = 202;
     /// @notice This variable represents the max slippage fee percentage for the minimum output in swaps.
     uint8 public maximumSlipageFeePercentage = 2;
 
@@ -98,17 +98,17 @@ contract PrizeV2 is ReentrancyGuard {
     IERC20Permit private immutable _usdcBridged;
 
     /// @notice Initializes the SwapRouter interface.
-    ISwapRouter public immutable swapRouter;
+    ISwapRouter private  immutable swapRouter;
     /// @notice Initializes the Uniswap V3 pool interface for bridged USDC and USDC.e.
-    IUniswapV3Pool public immutable bridgedUsdcPool;
+    IUniswapV3Pool private  immutable bridgedUsdcPool;
     /// @notice Initializes the Uniswap V3 pool interface for ETH and USDC.
-    IUniswapV3Pool public immutable ethUsdcPool;
+    IUniswapV3Pool private  immutable ethUsdcPool;
 
     /// @notice Initializes the Chainlink or Oracle price aggregator interface for ETH prices.
-    AggregatorV3Interface public immutable ethPriceAggregator;
+    AggregatorV3Interface private  immutable ethPriceAggregator;
 
     /// @notice This variable represents the platform's address.
-    address private immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
+    address public immutable platformAddress = 0x1f00DD750aD3A6463F174eD7d63ebE1a7a930d0c;
 
     /// @notice This variable represents the contract instance of the SubmissionAVLTree.
     SubmissionAVLTree private _submissionTree;
@@ -200,11 +200,7 @@ contract PrizeV2 is ReentrancyGuard {
         emit ErrorAndEventsLibrary.SubmissionStarted(block.timestamp, submissionTime);
     }
 
-    /// @notice function to retrieve the current submission time.
-    /// @return The timestamp when the submission period is set to end.
-    function getSubmissionTime() public view returns (uint256) {
-        return submissionTime;
-    }
+    
 
     /// @notice Allows platform admins to change the submission period duration, provided the voting period is not active and the submission period is active.
     /// @param _submissionTime The new duration (in minutes) for the submission period.
@@ -244,13 +240,6 @@ contract PrizeV2 is ReentrancyGuard {
         votingPeriod = true;
         emit ErrorAndEventsLibrary.VotingStarted(block.timestamp, votingTime);
     }
-
-    /// @notice function to retrieve the current voting time.
-    /// @return The timestamp when the voting period is set to end.
-    function getVotingTime() public view returns (uint256) {
-        return votingTime;
-    }
-
     /// @notice Allows platform admins to change the voting period duration, provided the voting period is active and rewards haven't been distributed.
     /// @param _votingTime The new duration (in minutes) for the voting period.
     function changeVotingPeriod(uint256 _votingTime) public onlyPlatformAdmin onlyActive {
