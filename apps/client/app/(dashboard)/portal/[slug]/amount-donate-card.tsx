@@ -4,7 +4,7 @@
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import useAppUser from '@/components/hooks/useAppUser';
 import { backendApi } from '@/lib/backend';
-import { EXTRA_FUNDRAISERS_IDS, USDC } from '@/lib/constants';
+import { CHAIN_ID, EXTRA_FUNDRAISERS_IDS, USDC } from '@/lib/constants';
 import { prepareWritePortal, writePortal } from '@/lib/smartContract';
 import type { ConvertUSD } from '@/lib/types';
 import { formatDate, usdcSignType } from '@/lib/utils';
@@ -134,7 +134,7 @@ function FundUsdcCard({
           'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
           {
             headers: {
-              'x-chain-id': '8453',
+              'x-chain-id': CHAIN_ID.toString,
             },
           },
         )
@@ -212,7 +212,7 @@ function FundUsdcCard({
               v: parseInt(v.toString()),
               r: r,
               s: s,
-              chainId: 8453,
+              chainId: 10,
               payWihtoutLogin: 0,
               type: 'portal',
             },

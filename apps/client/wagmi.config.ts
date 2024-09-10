@@ -24,10 +24,10 @@ export default defineConfig({
         // },
         passThroughV2Factory: {
           // 80001: '0xAe37824e718488787D1bbD87E35985ED107a0C7E',
-          8453: '0xdCcF514720AABBfFF6bed7a7Db4b498677EfD3D3',
+          10: '0x0c32dA33f13cbC16101029c9C6d7c2998101cdBF',
         },
         PrizeFactoryV2: {
-          8453: '0x3248830b677B43D18E2907e9a8267D47e0C98856',
+          10: '0xaDa6E22f72bb21Cb9d67779E5451949b4655F8F1',
         },
       },
     }),

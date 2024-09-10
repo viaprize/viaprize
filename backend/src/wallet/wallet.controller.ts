@@ -105,7 +105,7 @@ export class WalletController {
     const [[submissionPeriod]] =
       (await this.blockchainService.getPrizesV2PublicVariables(
         [contractAddress],
-        ['submissionPeriod', 'getSubmissionTime'],
+        ['submissionPeriod', 'submissionTime'],
       )) as [[boolean, number]];
     if (submissionPeriod) {
       throw new HttpException(
@@ -704,10 +704,10 @@ export class WalletController {
           'gasless',
         );
       } else {
+        console.log({ version }, 'versioninnnnns');
         hash = await this.walletService.simulateAndWriteSmartContractPrizeV2(
           'addUsdcFunds',
           [
-            contractAddress as `0x${string}`,
             BigInt(body.amount),
             BigInt(body.deadline),
             body.v,

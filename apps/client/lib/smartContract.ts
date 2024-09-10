@@ -1,21 +1,21 @@
 import {
-  prepareWriteContract,
   PrepareWriteContractConfig,
-  writeContract,
   WriteContractArgs,
   WriteContractMode,
   WriteContractPreparedArgs,
   WriteContractUnpreparedArgs,
+  prepareWriteContract,
+  writeContract,
 } from 'wagmi/actions';
 
 import {
   Address,
-  useContractRead,
   UseContractReadConfig,
-  useContractWrite,
   UseContractWriteConfig,
-  usePrepareContractWrite,
   UsePrepareContractWriteConfig,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
 } from 'wagmi';
 import { PrepareWriteContractResult, ReadContractResult } from 'wagmi/actions';
 
@@ -279,32 +279,97 @@ export const portalABI = [
  */
 export const prizeFactoryV2ABI = [
   {
-    type: 'event',
     anonymous: false,
     inputs: [
-      { name: 'id', internalType: 'uint256', type: 'uint256', indexed: true },
       {
-        name: 'viaPrizeAddress',
-        internalType: 'address',
-        type: 'address',
         indexed: true,
+        internalType: 'string',
+        name: 'id',
+        type: 'string',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'viaPrizeAddress',
+        type: 'address',
       },
     ],
     name: 'NewViaPrizeCreated',
+    type: 'event',
   },
   {
-    stateMutability: 'nonpayable',
-    type: 'function',
     inputs: [
-      { name: '_id', internalType: 'uint256', type: 'uint256' },
-      { name: '_proposer', internalType: 'address', type: 'address' },
-      { name: '_platformAdmins', internalType: 'address[]', type: 'address[]' },
-      { name: '_platFormFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_proposerFee', internalType: 'uint256', type: 'uint256' },
-      { name: '_usdcAddress', internalType: 'address', type: 'address' },
+      {
+        internalType: 'string',
+        name: '_id',
+        type: 'string',
+      },
+      {
+        internalType: 'address',
+        name: '_proposer',
+        type: 'address',
+      },
+      {
+        internalType: 'address[]',
+        name: '_platformAdmins',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint8',
+        name: '_platFormFee',
+        type: 'uint8',
+      },
+      {
+        internalType: 'uint8',
+        name: '_proposerFee',
+        type: 'uint8',
+      },
+      {
+        internalType: 'address',
+        name: '_usdcAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_usdcBridgedAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_swapRouter',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_usdcToUsdcePool',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_usdcToEthPool',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_ethPriceAggregator',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_wethToken',
+        type: 'address',
+      },
     ],
     name: 'createViaPrize',
-    outputs: [{ name: '', internalType: 'address', type: 'address' }],
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
 ] as const;
 
@@ -312,7 +377,7 @@ export const prizeFactoryV2ABI = [
  * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export const prizeFactoryV2Address = {
-  8453: '0x3248830b677B43D18E2907e9a8267D47e0C98856',
+  10: '0xaDa6E22f72bb21Cb9d67779E5451949b4655F8F1',
 } as const;
 
 /**
@@ -1023,7 +1088,7 @@ export function writePrizeFactoryV2<
 ) {
   return writeContract({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[8453],
+    address: prizeFactoryV2Address[10],
     ...config,
   } as unknown as WriteContractArgs<typeof prizeFactoryV2ABI, TFunctionName>);
 }
@@ -1043,7 +1108,7 @@ export function prepareWritePrizeFactoryV2<
 ) {
   return prepareWriteContract({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[8453],
+    address: prizeFactoryV2Address[10],
     ...config,
   } as unknown as PrepareWriteContractConfig<TAbi, TFunctionName>);
 }
@@ -1746,7 +1811,7 @@ export function usePrizeFactoryV2Write<
 ) {
   return useContractWrite<typeof prizeFactoryV2ABI, TFunctionName, TMode>({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[8453],
+    address: prizeFactoryV2Address[10],
     ...config,
   } as any);
 }
@@ -1778,7 +1843,7 @@ export function usePrizeFactoryV2CreateViaPrize<
 ) {
   return useContractWrite<typeof prizeFactoryV2ABI, 'createViaPrize', TMode>({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[8453],
+    address: prizeFactoryV2Address[10],
     functionName: 'createViaPrize',
     ...config,
   } as any);
@@ -1797,7 +1862,7 @@ export function usePreparePrizeFactoryV2Write<TFunctionName extends string>(
 ) {
   return usePrepareContractWrite({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[8453],
+    address: prizeFactoryV2Address[10],
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeFactoryV2ABI, TFunctionName>);
 }
@@ -1815,7 +1880,7 @@ export function usePreparePrizeFactoryV2CreateViaPrize(
 ) {
   return usePrepareContractWrite({
     abi: prizeFactoryV2ABI,
-    address: prizeFactoryV2Address[8453],
+    address: prizeFactoryV2Address[10],
     functionName: 'createViaPrize',
     ...config,
   } as UsePrepareContractWriteConfig<typeof prizeFactoryV2ABI, 'createViaPrize'>);

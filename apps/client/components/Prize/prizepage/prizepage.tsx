@@ -14,7 +14,7 @@ import { usdcSignType } from '@/lib/utils';
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import useMounted from '@/components/hooks/useMounted';
 import { backendApi } from '@/lib/backend';
-import { EXTRA_PRIZES, USDC } from '@/lib/constants';
+import { CHAIN_ID, EXTRA_PRIZES, USDC } from '@/lib/constants';
 import {
   Badge,
   Button,
@@ -114,7 +114,7 @@ function DonatingWithoutLoginModal({
               v: 0,
               r: '',
               s: '',
-              chainId: 8453,
+              chainId: CHAIN_ID,
               payWihtoutLogin: 1,
               type: 'prize',
             },
@@ -311,7 +311,7 @@ function FundUsdcCard({
           'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
           {
             headers: {
-              'x-chain-id': '8453',
+              'x-chain-id': CHAIN_ID.toString(),
             },
           },
         )
@@ -348,7 +348,7 @@ function FundUsdcCard({
               v: parseInt(v.toString()),
               r: r,
               s: s,
-              chainId: 8453,
+              chainId: CHAIN_ID,
               payWihtoutLogin: 0,
               type: 'prize',
             },

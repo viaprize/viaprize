@@ -274,8 +274,8 @@ export class PrizesController {
       [
         'totalFunds',
         'distributed',
-        'getSubmissionTime',
-        'getVotingTime',
+        'submissionTime',
+        'votingTime',
         'isActive',
         'totalVotes',
         'submissionPeriod',
@@ -335,7 +335,10 @@ export class PrizesController {
             ...prize,
             contributors: [...allFunders, ...extraContributors],
           };
-        } else if (version.toString() === '201') {
+        } else if (
+          version.toString() === '201' ||
+          version.toString() === '202'
+        ) {
           const [[allCryptoFunders, allFiatFunders]] =
             (await this.blockchainService.getPrizesV2PublicVariables(
               [prize.contract_address],
@@ -387,8 +390,8 @@ export class PrizesController {
         [
           'totalFunds',
           'distributed',
-          'getSubmissionTime',
-          'getVotingTime',
+          'submissionTime',
+          'votingTime',
           'disputePeriod',
           'totalVotes',
           'isActive',
@@ -410,6 +413,7 @@ export class PrizesController {
       string[],
       bigint,
     ];
+    console.log({ totalVotes }, 'totalVotes');
     if (version.toString() === '2') {
       const [[allFunders]] =
         (await this.blockchainService.getPrizesV2PublicVariables(
@@ -417,7 +421,7 @@ export class PrizesController {
           ['getAllFunders'],
         )) as [[string[]]];
       contributors = allFunders;
-    } else if (version.toString() === '201') {
+    } else if (version.toString() === '201' || version.toString() === '202') {
       const [[allCryptoFunders, allFiatFunders]] =
         (await this.blockchainService.getPrizesV2PublicVariables(
           [prize.contract_address],
@@ -444,6 +448,8 @@ export class PrizesController {
     const resultsWithContributors = {
       data: await Promise.all(ContributorsWithUser),
     };
+
+    console.log({ totalVotes }, 'total votes');
 
     console.log(contributors, 'contributors');
     return {
@@ -565,7 +571,7 @@ export class PrizesController {
     const [[submissionTime]] =
       (await this.blockchainService.getPrizesV2PublicVariables(
         [sub.prize.contract_address],
-        ['getSubmissionTime'],
+        ['submissionTime'],
       )) as [[bigint]];
 
     return {
@@ -1084,7 +1090,7 @@ export class PrizesController {
     const startingPeriod =
       await this.blockchainService.getPrizesV2PublicVariables(
         [id],
-        ['submissionPeriod', 'getSubmissionTime', 'votingPeriod'],
+        ['submissionPeriod', 'submissionTime', 'votingPeriod'],
       );
 
     console.log(startingPeriod);

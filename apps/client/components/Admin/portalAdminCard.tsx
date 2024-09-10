@@ -132,7 +132,7 @@ function PortalAdminCard({
           <Link
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://basescan.org/address/${portalAddress}`}
+            href={`https://optimistic.etherscan.io/address/${portalAddress}`}
           >
             <Button variant="transparent" className="text-blue-400 underline">
               See here

@@ -1,4 +1,5 @@
 'use client';
+import { CHAIN_ID } from '@/lib/constants';
 import {
   ActionIcon,
   AppShell,
@@ -18,8 +19,7 @@ import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import { switchNetwork } from '@wagmi/core';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, type ReactNode } from 'react';
-import { base } from 'viem/chains';
+import { type ReactNode, useEffect } from 'react';
 import { useNetwork, useWalletClient } from 'wagmi';
 import useAppUser from '../hooks/useAppUser';
 import useIsMounted from '../hooks/useIsMounted';
@@ -41,7 +41,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   const { ready } = usePrivy();
   const { appUser, logoutUser, loginUser } = useAppUser();
   useEffect(() => {
-    if (currentChain && currentChain?.id !== base.id && ready && appUser) {
+    if (currentChain && currentChain?.id !== CHAIN_ID && ready && appUser) {
       openChainModal();
     }
   }, [currentChain, isMounted, ready, appUser]);
@@ -50,7 +50,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
   const switchToBase = async () => {
     console.log('hsjlflsjflsdklfjsdlkfjlsdj');
     await switchNetwork({
-      chainId: base.id,
+      chainId: CHAIN_ID,
     }).then(() => {
       closeChainModal();
     });
@@ -91,7 +91,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         closeOnClickOutside={false}
         title="Wrong Network"
       >
-        <Button onClick={() => switchToBase()}> Switch To Base</Button>
+        <Button onClick={() => switchToBase()}> Switch To Optimism</Button>
       </Modal>
       <AppShell.Header
         p="md"

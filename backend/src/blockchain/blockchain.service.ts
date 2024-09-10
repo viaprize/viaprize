@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ExtractAbiFunctionNames } from 'abitype';
 import { AllConfigType } from 'src/config/config.type';
-import { PASS_THROUGH_ABI, PRIZE_V2_ABI } from 'src/utils/constants';
+import { PASS_THROUGH_ABI, PRIZE_V2_ABI, USDC } from 'src/utils/constants';
 import {
-  MulticallReturnType,
-  PublicClient,
   createPublicClient,
   encodeFunctionData,
   http,
+  MulticallReturnType,
   parseAbi,
+  PublicClient,
 } from 'viem';
-import { base } from 'viem/chains';
+import { optimism } from 'viem/chains';
 import {
   Contribution,
   Contributions,
@@ -41,7 +41,7 @@ export class BlockchainService {
     });
     // const privateKey = this.configService.getOrThrow<AllConfigType>('PRIVATE_KEY', { infer: true });
     this.provider = createPublicClient({
-      chain: base,
+      chain: optimism,
       transport: http(key),
     });
     // this.wallet = new ethers.Wallet(privateKey, this.provider);
@@ -255,7 +255,7 @@ export class BlockchainService {
       },
     );
     // const fetchUrl = `https://api-optimistic.etherscan.io/api?module=account&action=txlist&address=${portalContractAddress}&startblock=0&endblock=99999999&page=1&offset=10&sort=asc&apikey=${process.env.ETHERSCAN_API_KEY}`;
-    const fetchUrl = `https://api.basescan.org/api?module=account&action=tokentx&contractaddress=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&address=${portalContractAddress}&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=${etherscanApiKey}`;
+    const fetchUrl = `https://api-optimistic.etherscan.io/api?module=account&action=tokentx&contractaddress=${USDC}&address=${portalContractAddress}&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=${etherscanApiKey}`;
 
     console.log({ fetchUrl });
     const res = await fetch(fetchUrl, {

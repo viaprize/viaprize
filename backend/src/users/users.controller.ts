@@ -150,7 +150,7 @@ export class UsersController {
     const prizes = await this.usersService.findUserPrizesByUsername(username);
     const results = (await this.blockchainService.getPrizesV2PublicVariables(
       prizes.map((prize) => prize.contract_address),
-      ['totalFunds', 'distributed', 'getSubmissionTime', 'getVotingTime'],
+      ['totalFunds', 'distributed', 'submissionTime', 'votingTime'],
     )) as [[bigint, boolean, bigint, bigint]];
     const prizeWithBalanceData = prizes.map((prize, index) => {
       return {

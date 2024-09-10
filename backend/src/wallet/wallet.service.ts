@@ -13,8 +13,9 @@ import {
 } from 'viem';
 
 import { JobService } from 'src/jobs/jobs.service';
-import { base } from 'viem/chains';
+import { optimism } from 'viem/chains';
 import {
+  CHAIN_ID,
   PASS_THROUGH_ABI,
   PRIZE_V2_ABI,
   SEND_USDC_ABI,
@@ -41,7 +42,7 @@ export class WalletService {
       },
     );
     this.provider = createPublicClient({
-      chain: base,
+      chain: optimism,
       transport: http(
         this.configService.getOrThrow<AllConfigType>('RPC_URL', {
           infer: true,
@@ -248,7 +249,7 @@ export class WalletService {
       {
         'Content-Type': 'application/json',
         'x-api-key': this.apiKey,
-        'x-chain-id': '8453',
+        'x-chain-id': CHAIN_ID.toString(),
       },
       scheduleInSeconds,
     );
@@ -267,7 +268,7 @@ export class WalletService {
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': this.apiKey,
-          'x-chain-id': '8453',
+          'x-chain-id': CHAIN_ID.toString(),
         },
         method: 'POST',
       })

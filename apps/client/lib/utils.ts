@@ -8,21 +8,21 @@ import { env } from '@env';
 import { TToken } from '@gitcoin/gitcoin-chain-data';
 import { getAccessToken } from '@privy-io/react-auth';
 import { createClient } from '@supabase/supabase-js';
-import { clsx, type ClassValue } from 'clsx';
+import { type ClassValue, clsx } from 'clsx';
 import { format } from 'date-fns';
 import { Parser } from 'htmlparser2';
 import { toast } from 'sonner';
 import { twMerge } from 'tailwind-merge';
 import {
+  Hex,
   encodeAbiParameters,
   encodePacked,
   getAddress,
-  Hex,
   keccak256,
   parseAbiParameters,
   parseUnits,
 } from 'viem';
-import { USDC } from './constants';
+import { CHAIN_ID, USDC } from './constants';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
@@ -173,11 +173,11 @@ export const getCorrectStage = (
     return PrizeStages.VotingStarted;
   }
 
-  if (blockchainSubmissionTime > 0 && blockchianVoteTime == 0) {
+  if (blockchainSubmissionTime > 0 && blockchianVoteTime === 0) {
     return calculateDeadline(new Date(), new Date(blockchainSubmissionTime * 1000));
   }
 
-  if (blockchainSubmissionTime == 0 && blockchianVoteTime == 0) {
+  if (blockchainSubmissionTime === 0 && blockchianVoteTime === 0) {
     return stage;
   }
 };
@@ -275,7 +275,7 @@ export const storeFiles = async (files: File[]) => {
   console.log(data.path, 'image path');
   return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaigns/${data.path}`;
 };
-export const parseUsdc = (value: bigint) => parseFloat(value.toString()) / 10 ** 6;
+export const parseUsdc = (value: bigint) => Number.parseFloat(value.toString()) / 10 ** 6;
 export const formatUsdc = (value: number) => BigInt(value * 10 ** 6);
 export const usdcSignType = ({
   owner,
@@ -324,7 +324,7 @@ export const usdcSignType = ({
     },
     primaryType: 'Permit',
     domain: {
-      chainId: 8453,
+      chainId: CHAIN_ID,
       verifyingContract: USDC,
       name: 'USD Coin',
       version: '2',
