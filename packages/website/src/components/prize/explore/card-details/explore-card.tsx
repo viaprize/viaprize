@@ -37,10 +37,6 @@ export default function ExploreCard() {
         <div className="text-primary text-sm font-semibold my-1 ">
           <span className="text-slate-400">by</span> Harsh rajendra sharma
         </div>
-        {/* <div className="text-gray-500 text-sm">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum
-          officiis, quos officia quasi....
-        </div> */}
         <div className="flex items-center text-sm mt-2 ">
           {" "}
           <IconCalendarTime size={20} className="mr-1" /> Due in: 1w 2d 8h
@@ -61,11 +57,11 @@ export default function ExploreCard() {
             <IconUsersGroup size={20} className="mr-1" />
             10 Pursuers
           </div>
-          <Separator orientation="vertical" />
+          <Separator orientation="vertical" className='w-[2px]' />
           <div className="flex items-center">
             <IconCoins className="mr-1" />3 Funders
           </div>
-          <Separator orientation="vertical" />
+          <Separator orientation="vertical" className='w-[2px]' />
           <div className="flex items-center">
             <IconMessageCircle size={20} className="mr-1" />3
           </div>

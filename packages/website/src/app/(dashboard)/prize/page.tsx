@@ -7,7 +7,7 @@ export default async function ExplorePage() {
       <div className="w-full md:w-[75%] h-full border-r-2">
         <FetchExploreCard />
       </div>
-      <div className="w-[25%] mt-5 mx-2 md:block hidden">
+      <div className="w-[25%] mt-5 mx-3 md:block hidden">
         <FetchActivities />
       </div>
     </div>
