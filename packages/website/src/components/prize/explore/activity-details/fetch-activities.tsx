@@ -1,24 +1,56 @@
 import OverallPrizeStatus from "@/components/common/overall-prize-status";
 import RecentActivities from "./recent-activities";
 import Leaderboard from "./leaderboard";
+const activities = [
+  {
+    name: "Alice",
+    avatar: "https://github.com/shadcn.png",
+    time: "5m ago",
+    activity: "Completed a task",
+  },
+  {
+    name: "Bob",
+    avatar: "https://github.com/shadcn.png",
+    time: "10m ago",
+    activity: "Won a prize",
+  },
+  {
+    name: "Charlie",
+    avatar: "https://github.com/shadcn.png",
+    time: "15m ago",
+    activity: "Joined the platform",
+  },
+];
 
+const leaderboardEntries = [
+  {
+    name: "John Doe",
+    avatar:"https://github.com/shadcn.png",
+    project: "Project Name 1",
+    earned: 300,
+    rank:1
+  },
+  {
+    name: "Jane Smith",
+    avatar:"https://github.com/shadcn.png",
+    project: "Project Name 2",
+    earned: 250,
+    rank:2
+  },
+  {
+    name: "Michael Lee",
+    avatar:"https://github.com/shadcn.png",
+    project: "Project Name 3",
+    earned: 400,
+    rank:3
+  },
+];
 export default function FetchActivities() {
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       <OverallPrizeStatus />
-      <RecentActivities
-        name="John Doe"
-        avatar="https://github.com/shadcn.png"
-        time="2h ago"
-        activity="Submitted an idea"
-      />
-      <RecentActivities
-        name="Jane Smith"
-        avatar="https://example.com/jane-avatar.png"
-        time="1h ago"
-        activity="Commented on a post"
-      />
-      <Leaderboard />
+      <RecentActivities activities={activities} />
+      <Leaderboard leaderboardEntries={leaderboardEntries} />
     </div>
   );
 }
