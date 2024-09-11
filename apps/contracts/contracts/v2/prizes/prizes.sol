@@ -216,16 +216,14 @@ contract PrizeV2 is ReentrancyGuard {
     function endSubmissionPeriod() public onlyPlatformAdmin onlyActive{
         if(submissionTime == 0) revert ErrorAndEventsLibrary.SubmissionPeriodNotActive();
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
-        if(allSubmissions.length == 1 && disputeSubmission == 0) {
-            submissionTime = block.timestamp + 2 days;
-        } else if(allSubmissions.length == 1 && disputeSubmission != 0 && disputeSubmission <= block.timestamp) {
+        if(allSubmissions.length == 1) {
             submissionPeriod = false;
             submissionTime = 0;
             refundLogic();
             refunded = true;
             distributed = true;
             isActive = false;
-        } else if(allSubmissions.length > 1) {
+        } else {
             submissionPeriod = false;
             submissionTime = 0;
         }
@@ -672,13 +670,14 @@ contract PrizeV2 is ReentrancyGuard {
    /// @param _to receiver address
    /// @param _amount amount to withdraw
    function withdrawTokens(address _tokenAddress, address _to, uint256 _amount) public onlyPlatformAdmin nonReentrant {
-        IERC20Permit token = IERC20Permit(_tokenAddress);
-        uint256 balance = token.balanceOf(address(this));
-        if(balance == 0) revert("TNE"); //TNE -> Tokens Not Exists
-        require(_amount <= balance, "AEB"); //AEB -> Amount Exceeds Balance
-        totalFunds = totalFunds.sub(_amount);
-        totalRewards = totalRewards.sub(_amount);
-        token.transfer(_to, _amount); 
+        if(_tokenAddress == 0x0000000000000000000000000000000000000000){
+            payable(_to).transfer(_amount);
+        }
+        else{
+            IERC20Permit token = IERC20Permit(_tokenAddress);
+            token.transfer(_to, _amount); 
+        }
+        
    }
 
    /// @notice logic to refund amount back to funders, in case of no submissions or 0 totalVotes
