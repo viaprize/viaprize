@@ -1,28 +1,28 @@
-import { eq } from "drizzle-orm";
-import { nanoid } from "nanoid";
-import type { ViaprizeDatabase } from "../database";
-import { prizes } from "../database/schema";
-import { stringToSlug } from "./utils";
+import { eq } from 'drizzle-orm'
+import { nanoid } from 'nanoid'
+import type { ViaprizeDatabase } from '../database'
+import { prizes } from '../database/schema'
+import { stringToSlug } from './utils'
 
 export class Prizes {
-  db;
+  db
   constructor(viaprizeDb: ViaprizeDatabase) {
-    this.db = viaprizeDb.database;
+    this.db = viaprizeDb.database
   }
 
   async addPrizeProposal(data: {
-    title: string;
-    description: string;
-    submissionStartDate: Date;
-    submissionDuration: number;
-    votingStartDate: Date;
-    votingDuration: number;
-    imageUrl: string;
-    username: string;
-    proposerAddress: string;
+    title: string
+    description: string
+    submissionStartDate: Date
+    submissionDuration: number
+    votingStartDate: Date
+    votingDuration: number
+    imageUrl: string
+    username: string
+    proposerAddress: string
   }) {
-    const slug = stringToSlug(data.title);
-    const randomId = nanoid(3);
+    const slug = stringToSlug(data.title)
+    const randomId = nanoid(3)
     const prizeId = await this.db.transaction(async (trx) => {
       const [slugExists] = await trx
         .select({
@@ -30,7 +30,7 @@ export class Prizes {
         })
         .from(prizes)
         .where(eq(prizes.slug, slug))
-        .limit(1);
+        .limit(1)
       const [prize] = await trx
         .insert(prizes)
         .values({
@@ -48,10 +48,10 @@ export class Prizes {
 
         .returning({
           id: prizes.id,
-        });
-      return prize?.id;
-    });
+        })
+      return prize?.id
+    })
 
-    return prizeId;
+    return prizeId
   }
 }
