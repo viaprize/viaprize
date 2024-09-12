@@ -47,7 +47,8 @@ export default function Submissions({
 
   return (
     <div className="w-full flex flex-col gap-3 dont-break-out">
-      {loggedIn && allowSubmission &&
+      {loggedIn &&
+        allowSubmission &&
         (isContestants ? (
           <Button
             component="a"

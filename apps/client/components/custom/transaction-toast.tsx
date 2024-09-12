@@ -5,7 +5,7 @@ import Link from 'next/link';
 export function TransactionToast({
   title,
   hash,
-  scanner = `https://basescan.org/tx/`,
+  scanner = `https://optimistic.etherscan.io/tx/`,
 }: {
   title: string;
   hash: string;

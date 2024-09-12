@@ -17,7 +17,7 @@ export const PRIZE_V2_ABI = [
     inputs: [
       {
         internalType: 'address',
-        name: '_proposer',
+        name: '_visionary',
         type: 'address',
       },
       {
@@ -26,23 +26,93 @@ export const PRIZE_V2_ABI = [
         type: 'address[]',
       },
       {
-        internalType: 'uint256',
+        internalType: 'uint8',
         name: '_platFormFee',
-        type: 'uint256',
+        type: 'uint8',
       },
       {
-        internalType: 'uint256',
-        name: '_proposerFee',
-        type: 'uint256',
+        internalType: 'uint8',
+        name: '_visionaryFee',
+        type: 'uint8',
       },
       {
         internalType: 'address',
         name: '_usdcAddress',
         type: 'address',
       },
+      {
+        internalType: 'address',
+        name: '_usdcBridgedAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_swapRouter',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_usdcToUsdcePool',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_usdcToEthPool',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_ethPriceAggregator',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: '_wethToken',
+        type: 'address',
+      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
+  },
+  {
+    inputs: [],
+    name: 'CAE',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'DPNA',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'LM',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NAC',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NAF',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NP',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NPP',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'NotActive',
+    type: 'error',
   },
   {
     inputs: [],
@@ -56,7 +126,17 @@ export const PRIZE_V2_ABI = [
   },
   {
     inputs: [],
+    name: 'ReentrancyGuardReentrantCall',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'RewardsAlreadyDistributed',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'SS',
     type: 'error',
   },
   {
@@ -72,6 +152,11 @@ export const PRIZE_V2_ABI = [
   {
     inputs: [],
     name: 'SubmissionPeriodNotActive',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'VMPPEIL',
     type: 'error',
   },
   {
@@ -101,6 +186,44 @@ export const PRIZE_V2_ABI = [
       },
     ],
     name: 'CampaignCreated',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: '_address',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: 'refunded',
+        type: 'bool',
+      },
+    ],
+    name: 'CryptoFunderRefunded',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'endedAt',
+        type: 'uint256',
+      },
+    ],
+    name: 'DisputeEnded',
     type: 'event',
   },
   {
@@ -139,13 +262,13 @@ export const PRIZE_V2_ABI = [
       },
       {
         indexed: true,
-        internalType: 'enum PrizeV2.DonationType',
+        internalType: 'enum ErrorAndEventsLibrary.DonationType',
         name: '_donationType',
         type: 'uint8',
       },
       {
         indexed: false,
-        internalType: 'enum PrizeV2.TokenType',
+        internalType: 'enum ErrorAndEventsLibrary.TokenType',
         name: '_tokenType',
         type: 'uint8',
       },
@@ -180,6 +303,12 @@ export const PRIZE_V2_ABI = [
         name: '_amount',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: 'refunded',
+        type: 'bool',
+      },
     ],
     name: 'FiatFunderRefund',
     type: 'event',
@@ -208,6 +337,63 @@ export const PRIZE_V2_ABI = [
     inputs: [
       {
         indexed: true,
+        internalType: 'uint256',
+        name: 'endedAt',
+        type: 'uint256',
+      },
+    ],
+    name: 'SubmissionEnded',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'changedAt',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'increasedBy',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'Deadline',
+        type: 'uint256',
+      },
+    ],
+    name: 'SubmissionPeriodChanged',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'startedAt',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'Deadline',
+        type: 'uint256',
+      },
+    ],
+    name: 'SubmissionStarted',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: 'bytes32',
         name: 'votedTo',
         type: 'bytes32',
@@ -229,75 +415,61 @@ export const PRIZE_V2_ABI = [
     type: 'event',
   },
   {
+    anonymous: false,
     inputs: [
       {
+        indexed: true,
         internalType: 'uint256',
-        name: '_nonce',
+        name: 'endedAt',
         type: 'uint256',
       },
-      {
-        internalType: 'bytes32',
-        name: '_old_submission',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes32',
-        name: '_new_submission',
-        type: 'bytes32',
-      },
     ],
-    name: 'CHANGE_VOTE_HASH',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
+    name: 'VotingEnded',
+    type: 'event',
   },
   {
+    anonymous: false,
     inputs: [
       {
+        indexed: true,
         internalType: 'uint256',
-        name: '_nonce',
+        name: 'changedAt',
         type: 'uint256',
       },
       {
-        internalType: 'bytes32',
-        name: '_submission',
-        type: 'bytes32',
+        indexed: false,
+        internalType: 'uint256',
+        name: 'increasedBy',
+        type: 'uint256',
       },
-    ],
-    name: 'DISPUTE_HASH',
-    outputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        indexed: true,
+        internalType: 'uint256',
+        name: 'Deadline',
+        type: 'uint256',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    name: 'VotingPeriodChanged',
+    type: 'event',
   },
   {
-    inputs: [],
-    name: 'PRECISION',
-    outputs: [
+    anonymous: false,
+    inputs: [
       {
+        indexed: true,
         internalType: 'uint256',
-        name: '',
+        name: 'startedAt',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'Deadline',
         type: 'uint256',
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    name: 'VotingStarted',
+    type: 'event',
   },
   {
     inputs: [],
@@ -329,29 +501,26 @@ export const PRIZE_V2_ABI = [
     inputs: [
       {
         internalType: 'uint256',
-        name: '_nonce',
+        name: '_amountUsdc',
         type: 'uint256',
       },
-      {
-        internalType: 'bytes32',
-        name: '_submission',
-        type: 'bytes32',
-      },
+    ],
+    name: 'addBridgedUsdcFunds',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
       {
         internalType: 'uint256',
-        name: '_amount',
+        name: '_amountOutMinimum',
         type: 'uint256',
       },
     ],
-    name: 'VOTE_HASH',
-    outputs: [
-      {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
-      },
-    ],
-    stateMutability: 'view',
+    name: 'addEthFunds',
+    outputs: [],
+    stateMutability: 'payable',
     type: 'function',
   },
   {
@@ -382,9 +551,52 @@ export const PRIZE_V2_ABI = [
     inputs: [
       {
         internalType: 'address',
-        name: 'spender',
+        name: '_voter',
         type: 'address',
       },
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_deadline',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint8',
+        name: 'v',
+        type: 'uint8',
+      },
+      {
+        internalType: 'bytes32',
+        name: 's',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'r',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_ethSignedMessageHash',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bool',
+        name: '_fiatPayment',
+        type: 'bool',
+      },
+    ],
+    name: 'addTokenFunds',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
       {
         internalType: 'uint256',
         name: '_amountUsdc',
@@ -424,6 +636,19 @@ export const PRIZE_V2_ABI = [
     name: 'addUsdcFunds',
     outputs: [],
     stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint8',
+        name: '_maximumSlipageFeePercentage',
+        type: 'uint8',
+      },
+    ],
+    name: 'changeMinimumSlipageFeePercentage',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -512,25 +737,6 @@ export const PRIZE_V2_ABI = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'cryptoFunders',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
         internalType: 'bytes32',
         name: '_previousSubmissionHash',
         type: 'bytes32',
@@ -559,6 +765,19 @@ export const PRIZE_V2_ABI = [
   {
     inputs: [],
     name: 'disputePeriod',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'disputeSubmission',
     outputs: [
       {
         internalType: 'uint256',
@@ -632,25 +851,6 @@ export const PRIZE_V2_ABI = [
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'fiatFunders',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
         internalType: 'address',
         name: '',
         type: 'address',
@@ -687,7 +887,7 @@ export const PRIZE_V2_ABI = [
   },
   {
     inputs: [],
-    name: 'getAllFiatFunders',
+    name: 'getAllFunders',
     outputs: [
       {
         internalType: 'address[]',
@@ -700,7 +900,7 @@ export const PRIZE_V2_ABI = [
   },
   {
     inputs: [],
-    name: 'getAllFunders',
+    name: 'getAllFiatFunders',
     outputs: [
       {
         internalType: 'address[]',
@@ -841,32 +1041,6 @@ export const PRIZE_V2_ABI = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'getSubmissionTime',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'getVotingTime',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
       {
         internalType: 'address',
@@ -1001,7 +1175,7 @@ export const PRIZE_V2_ABI = [
         type: 'address',
       },
     ],
-    name: 'isProposer',
+    name: 'isRefundRequestedAddress',
     outputs: [
       {
         internalType: 'bool',
@@ -1020,12 +1194,25 @@ export const PRIZE_V2_ABI = [
         type: 'address',
       },
     ],
-    name: 'isRefundRequestedAddress',
+    name: 'isVisionary',
     outputs: [
       {
         internalType: 'bool',
         name: '',
         type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'maximumSlipageFeePercentage',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
       },
     ],
     stateMutability: 'view',
@@ -1058,58 +1245,13 @@ export const PRIZE_V2_ABI = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'platformAdmins',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [],
     name: 'platformFee',
     outputs: [
       {
-        internalType: 'uint256',
+        internalType: 'uint8',
         name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'proposer',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'proposerFee',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
+        type: 'uint8',
       },
     ],
     stateMutability: 'view',
@@ -1141,38 +1283,6 @@ export const PRIZE_V2_ABI = [
     name: 'raiseDispute',
     outputs: [],
     stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'refundAddress',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: 'refundRequestedFunders',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -1222,6 +1332,19 @@ export const PRIZE_V2_ABI = [
         internalType: 'bool',
         name: '',
         type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'submissionTime',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -1286,6 +1409,32 @@ export const PRIZE_V2_ABI = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'visionary',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'visionaryFee',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'bytes32',
@@ -1332,6 +1481,19 @@ export const PRIZE_V2_ABI = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'votingTime',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'address',
@@ -1353,6 +1515,10 @@ export const PRIZE_V2_ABI = [
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
+  },
+  {
+    stateMutability: 'payable',
+    type: 'receive',
   },
 ] as const;
 export const PASS_THROUGH_ABI = [
@@ -2194,7 +2360,8 @@ export const SEND_USDC_ABI = [
 ] as const;
 
 export const SEND_USDC = '0xC0842e4f312bd2Ea9E052Faf74b8C8A5002D7912';
-
+export const CHAIN_ID = 10;
+export const USDC = '0x0b2c639c533813f4aa9d7837caf62653d097ff85';
 export const EXTRA_PRIZES = [
   '1c5a8b62-ae43-4dde-b550-95848c7f9729',
   'ea2121a8-5801-4bc5-a74c-eb05068f4c36',

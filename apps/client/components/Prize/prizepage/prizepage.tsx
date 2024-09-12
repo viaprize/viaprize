@@ -14,13 +14,14 @@ import { usdcSignType } from '@/lib/utils';
 import { TransactionToast } from '@/components/custom/transaction-toast';
 import useMounted from '@/components/hooks/useMounted';
 import { backendApi } from '@/lib/backend';
-import { EXTRA_PRIZES, USDC } from '@/lib/constants';
+import { CHAIN_ID, EXTRA_PRIZES, USDC } from '@/lib/constants';
 import {
   Badge,
   Button,
   Center,
   Group,
   Image,
+  Input,
   Modal,
   NumberInput,
   Stack,
@@ -61,6 +62,162 @@ interface DonatingWithoutLoginProps {
   cancelUrl: string;
   slug: string;
   close: () => void;
+}
+
+function AllocateDonation({
+  contractAddress,
+  slug,
+}: {
+  contractAddress: string;
+  slug: string;
+}) {
+  const { logoutUser, appUser, loginUser } = useAppUser();
+  const [sendLoading, setSendLoading] = useState(false);
+  const { data: walletClient } = useWalletClient();
+  const [value, setValue] = useState('');
+  const router = useRouter();
+  const [voter, setVoter] = useState<string>('');
+
+  const getUsdcSignatureData = async () => {
+    // if (parseFloat(value) <= 0) {
+    //   throw new Error('Donation must be at least 1$');
+    // }
+    const walletAddress = walletClient?.account.address;
+    if (!walletAddress) {
+      throw new Error('Please login to donate');
+    }
+    const amount = BigInt(parseFloat(value) * 1000000);
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000);
+    const nonce = await readContract({
+      abi: [
+        {
+          constant: true,
+          inputs: [
+            {
+              name: 'owner',
+              type: 'address',
+            },
+          ],
+          name: 'nonces',
+          outputs: [
+            {
+              name: '',
+              type: 'uint256',
+            },
+          ],
+          payable: false,
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ] as const,
+      address: USDC,
+      functionName: 'nonces',
+      args: [walletAddress],
+    });
+
+    const signData = {
+      owner: walletClient?.account.address,
+      spender: contractAddress,
+      value: amount,
+      nonce: BigInt(nonce),
+      deadline: deadline,
+    };
+
+    return signData;
+  };
+
+  const allocateUsingUsdc = async () => {
+    try {
+      setSendLoading(true);
+      if (!walletClient) {
+        throw new Error('Please login to donate');
+      }
+      const signData = await getUsdcSignatureData();
+
+      const hash = hashTypedData(usdcSignType(signData) as any);
+
+      const signature = await walletClient.signTypedData(usdcSignType(signData) as any);
+      const rsv = hexToSignature(signature);
+
+      const trxHash = await (
+        await backendApi()
+      ).wallet
+        .prizeAllocateUsdcFundsCreate(contractAddress, {
+          isFiat: true,
+          voter: voter,
+          amount: parseInt(signData.value.toString()),
+          deadline: parseInt(signData.deadline.toString()),
+          r: rsv.r,
+          hash: hash,
+          s: rsv.s,
+          v: parseInt(rsv.v.toString()),
+        })
+        .then((res) => res.data.hash);
+
+      toast.success(<TransactionToast hash={trxHash} title="Transaction Successful" />, {
+        duration: 6000,
+      });
+      await revalidate({ tag: slug });
+      router.refresh();
+      window.location.reload();
+    } catch (e: unknown) {
+      console.log(e, 'sklfjlsdfjlkjljlksdjflksjl');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access -- it will log message
+      toast.error((e as any)?.message);
+      if ((e as any).data == null) {
+        toast.error((e as any).error.message);
+      }
+    } finally {
+      setSendLoading(false);
+    }
+  };
+
+  return (
+    <Stack>
+      <Group>
+        <Text fw="sm">Your donation needs to be at least $1</Text>
+        {appUser ? null : (
+          <Button
+            color="primary"
+            onClick={() => {
+              void loginUser();
+            }}
+          >
+            Connect Wallet
+          </Button>
+        )}
+      </Group>
+      <Input
+        placeholder="Enter Voter Address"
+        value={voter}
+        onChange={(e) => setVoter(e.currentTarget.value)}
+      />
+      <NumberInput
+        placeholder="Enter Value  in $ To Donate"
+        allowDecimal
+        defaultValue={1}
+        allowNegative={false}
+        value={value}
+        onChange={(v) => {
+          if (!v) {
+            // console.log({ v }, 'inner v');
+            setValue('0');
+          }
+          setValue(v.toString());
+        }}
+      />
+
+      <Button
+        disabled={!value}
+        loading={sendLoading}
+        onClick={async () => {
+          await allocateUsingUsdc();
+        }}
+      >
+        Allocate with Votes
+      </Button>
+    </Stack>
+  );
 }
 
 function DonatingWithoutLoginModal({
@@ -114,7 +271,7 @@ function DonatingWithoutLoginModal({
               v: 0,
               r: '',
               s: '',
-              chainId: 8453,
+              chainId: CHAIN_ID,
               payWihtoutLogin: 1,
               type: 'prize',
             },
@@ -311,7 +468,7 @@ function FundUsdcCard({
           'https://fxk2d1d3nf.execute-api.us-west-1.amazonaws.com/reserve/balance',
           {
             headers: {
-              'x-chain-id': '8453',
+              'x-chain-id': CHAIN_ID.toString(),
             },
           },
         )
@@ -348,7 +505,7 @@ function FundUsdcCard({
               v: parseInt(v.toString()),
               r: r,
               s: s,
-              chainId: 8453,
+              chainId: CHAIN_ID,
               payWihtoutLogin: 0,
               type: 'prize',
             },
@@ -525,6 +682,10 @@ export default function PrizePageComponent({
           successUrl={`${window.location.href}#success`}
           slug={prize.slug}
         />
+      ) : null}
+
+      {appUser && appUser.isAdmin ? (
+        <AllocateDonation contractAddress={prize.contract_address} slug={prize.slug} />
       ) : null}
 
       {!appUser && prize.is_active_blockchain ? (

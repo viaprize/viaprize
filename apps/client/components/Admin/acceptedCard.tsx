@@ -1,6 +1,15 @@
 'use client';
 import type { User } from '@/lib/api';
-import { ADMINS, USDC } from '@/lib/constants';
+import {
+  ADMINS,
+  ETH_PRICE,
+  SWAP_ROUTER,
+  USDC,
+  USDC_BRIDGE,
+  USDC_TO_ETH_POOL,
+  USDC_TO_USDCE_POOL,
+  WETH,
+} from '@/lib/constants';
 import { prepareWritePrizeFactoryV2, writePrizeFactoryV2 } from '@/lib/smartContract';
 import { Badge, Button, Card, Group, Image, Modal, Text } from '@mantine/core';
 import { waitForTransaction } from '@wagmi/core';
@@ -102,12 +111,18 @@ function AdminAcceptedCard({
         const requestJudges = await prepareWritePrizeFactoryV2({
           functionName: 'createViaPrize',
           args: [
-            BigInt(currentTimestamp.current),
+            '0x',
             admins[0] as `0x${string}`,
             ADMINS,
-            BigInt(platfromFeePercentage),
-            BigInt(proposerFeePercentage),
+            platfromFeePercentage,
+            proposerFeePercentage,
             USDC,
+            USDC_BRIDGE,
+            SWAP_ROUTER,
+            USDC_TO_USDCE_POOL,
+            USDC_TO_ETH_POOL,
+            ETH_PRICE,
+            WETH,
           ],
         });
         console.log(requestJudges, 'requestJudges');
@@ -121,6 +136,7 @@ function AdminAcceptedCard({
           confirmations: 1,
         });
         toast.dismiss(firstLoadingToast);
+        console.log(waitForTransactionOut, 'waitForTransactionOut');
         console.log(waitForTransactionOut.logs[0].topics[2]);
         const prizeAddress = `0x${waitForTransactionOut.logs[0].topics[2]?.slice(-40)}`;
         console.log(prizeAddress, 'prizeAddress');

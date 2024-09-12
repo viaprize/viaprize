@@ -95,7 +95,7 @@
     "eslint-config-turbo": "^1.10.16",
     "eslint-import-resolver-typescript": "^3.6.0",
     "eslint-plugin-prettier": "^5.0.0",
-    "hardhat": "^2.19.4",
+    "hardhat": "^2.22.6",
     "htmlparser2": "^9.0.0",
     "image-size": "^1.0.2",
     "input-otp": "^1.2.4",

@@ -24,7 +24,6 @@ import { useMutation } from 'react-query';
 import { toast } from 'sonner';
 import { IconLock } from '@tabler/icons-react';
 
-
 export default function Details() {
   const timeoutRef = useRef<number>(-1);
   const { user } = usePrivy();
@@ -37,7 +36,7 @@ export default function Details() {
   const [emailLocked, setEmailLocked] = useState(Boolean(user?.email?.address));
   const [emailExists, setEmailExists] = useState(false);
   const [emailLoading, setEmailLoading] = useState(false);
-const [walletAddress, setWalletAddress] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
   const { createNewUser, getLastVisitedPage } = useAppUser();
 
   const uploadUserMutation = useMutation(createNewUser, {
@@ -106,30 +105,30 @@ const [walletAddress, setWalletAddress] = useState('');
     [debouncedUsername],
   );
 
-const checkEmail = useCallback(async () => {
-  try {
-    console.log('checking newEmail', debouncedEmail);
-    const response = await new Api().users.existsEmailDetail(debouncedEmail);
-    setEmailExists(response.data.exists);
+  const checkEmail = useCallback(async () => {
+    try {
+      console.log('checking newEmail', debouncedEmail);
+      const response = await new Api().users.existsEmailDetail(debouncedEmail);
+      setEmailExists(response.data.exists);
 
-    if (response.data.exists && response.data.walletAddress) {
-      // setEmailLocked(true); // Optionally lock the email field if it's already associated with a user
-      setWalletAddress(response.data.walletAddress);
-    } else {
-      setWalletAddress(''); // Clear if no wallet is found
+      if (response.data.exists && response.data.walletAddress) {
+        // setEmailLocked(true); // Optionally lock the email field if it's already associated with a user
+        setWalletAddress(response.data.walletAddress);
+      } else {
+        setWalletAddress(''); // Clear if no wallet is found
+      }
+
+      console.log('response', response.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setEmailLoading(false);
     }
+  }, [debouncedEmail]);
 
-    console.log('response', response.data);
-  } catch (error) {
-    console.error(error);
-  } finally {
-    setEmailLoading(false);
-  }
-}, [debouncedEmail]);
-
-   useEffect(() => {
-     checkEmail().catch(console.error);
-   }, [debouncedEmail]);
+  useEffect(() => {
+    checkEmail().catch(console.error);
+  }, [debouncedEmail]);
 
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value.toLowerCase().replace(/\s/g, '');

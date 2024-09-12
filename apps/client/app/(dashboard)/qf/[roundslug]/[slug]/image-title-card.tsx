@@ -69,7 +69,7 @@ export default function ImageTitleCard({
 
   return (
     <div className="max-h-fit  h-full p-0 space-y-3 relative">
-      <Group >
+      <Group>
         <Button
           component="a"
           href={exploreUrl}
