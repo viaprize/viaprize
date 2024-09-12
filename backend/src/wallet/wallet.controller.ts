@@ -13,13 +13,14 @@ import { BlockchainService } from 'src/blockchain/blockchain.service';
 import { PrizeStages } from 'src/prizes/entities/prize.entity';
 import { PrizesService } from 'src/prizes/services/prizes.service';
 import { UsersService } from 'src/users/users.service';
-import { SEND_USDC } from 'src/utils/constants';
+import { PRIZE_V2_ABI, SEND_USDC } from 'src/utils/constants';
 import {
   BaseError,
   ContractFunctionRevertedError,
   encodeFunctionData,
 } from 'viem';
 import { AddUsdcFundsDto } from './dto/add-usdc-funds.dto';
+import { AllocateUsdcFunds } from './dto/allocate-usdc-funds.dto';
 import { ChangeSubmissionDto } from './dto/change-submission.dto';
 import { ChangeVotingDto } from './dto/change-voting.dto';
 import { SendUsdcTransactionDto } from './dto/send-usdc-transaction.dto';
@@ -721,6 +722,77 @@ export class WalletController {
           '0',
         );
       }
+      console.log({ hash });
+      return { hash };
+    } catch (err) {
+      console.log({ err });
+      if (err instanceof BaseError) {
+        const revertError = err.walk(
+          (err) => err instanceof ContractFunctionRevertedError,
+        );
+        if (revertError instanceof ContractFunctionRevertedError) {
+          console.log({ err });
+          const errorName = revertError.data?.errorName ?? '';
+          throw new HttpException(
+            'Error: ' + errorName,
+            HttpStatus.BAD_REQUEST,
+          );
+        } else {
+          throw new HttpException(
+            'Error: ' + err.message,
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          'Error: ' + err.message,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    }
+  }
+
+  /**
+   * @security bearer
+   **/
+
+  @UseGuards(AuthGuard)
+  @Post('/prize/:contract_address/allocate_usdc_funds')
+  async allocateUsdc(
+    @TypedParam('contract_address') contractAddress: string,
+    @Body()
+    body: AllocateUsdcFunds,
+    @Request() req,
+  ): Promise<WalletResponse | undefined> {
+    console.log('userssssss');
+
+    const user = this.userService.findOneByAuthId(req.user.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      const encodedData = encodeFunctionData({
+        abi: PRIZE_V2_ABI,
+        args: [
+          body.voter as `0x${string}`,
+          BigInt(body.amount),
+          BigInt(body.deadline),
+          body.v,
+          body.s as `0x${string}`,
+          body.r as `0x${string}`,
+          body.hash as `0x${string}`,
+          body.isFiat,
+        ],
+        functionName: 'addTokenFunds',
+      });
+      let hash = await this.walletService.sendTransaction(
+        {
+          data: encodedData,
+          to: contractAddress,
+          value: '0',
+        },
+        'gasless',
+      );
       console.log({ hash });
       return { hash };
     } catch (err) {

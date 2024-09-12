@@ -377,7 +377,7 @@ export const prizeFactoryV2ABI = [
  * [__View Contract on Base Basescan__](https://basescan.org/address/0x3248830b677B43D18E2907e9a8267D47e0C98856)
  */
 export const prizeFactoryV2Address = {
-  10: '0xaDa6E22f72bb21Cb9d67779E5451949b4655F8F1',
+  10: '0xd89Fa4119be5A73b00f51D625e28f130FF0263E7',
 } as const;
 
 /**

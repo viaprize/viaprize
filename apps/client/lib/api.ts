@@ -676,6 +676,17 @@ export interface AddUsdcFundsDto {
   hash: string;
 }
 
+export interface AllocateUsdcFunds {
+  amount: number;
+  deadline: number;
+  v: number;
+  s: string;
+  r: string;
+  hash: string;
+  voter: string;
+  isFiat: boolean;
+}
+
 export interface SendUsdcTransactionDto {
   amount: number;
   receiver: string;
@@ -1924,6 +1935,22 @@ export namespace Wallet {
     };
     export type RequestQuery = {};
     export type RequestBody = AddUsdcFundsDto;
+    export type RequestHeaders = {};
+    export type ResponseBody = WalletResponse;
+  }
+
+  /**
+   * No description
+   * @name PrizeAllocateUsdcFundsCreate
+   * @request POST:/wallet/prize/{contract_address}/allocate_usdc_funds
+   * @secure
+   */
+  export namespace PrizeAllocateUsdcFundsCreate {
+    export type RequestParams = {
+      contractAddress: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = AllocateUsdcFunds;
     export type RequestHeaders = {};
     export type ResponseBody = WalletResponse;
   }
@@ -3559,6 +3586,28 @@ the ``setPlatformFee method of the `portalProposalsService` with the given `id`
     ) =>
       this.request<WalletResponse, any>({
         path: `/wallet/prize/${contractAddress}/add_usdc_funds`,
+        method: 'POST',
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name PrizeAllocateUsdcFundsCreate
+     * @request POST:/wallet/prize/{contract_address}/allocate_usdc_funds
+     * @secure
+     */
+    prizeAllocateUsdcFundsCreate: (
+      contractAddress: string,
+      data: AllocateUsdcFunds,
+      params: RequestParams = {},
+    ) =>
+      this.request<WalletResponse, any>({
+        path: `/wallet/prize/${contractAddress}/allocate_usdc_funds`,
         method: 'POST',
         body: data,
         secure: true,
