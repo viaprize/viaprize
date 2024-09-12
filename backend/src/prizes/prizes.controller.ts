@@ -1026,7 +1026,8 @@ export class PrizesController {
       .usd;
     const ethToUsd = (await this.priceService.getPrice('ethereum'))['ethereum']
       .usd;
-    const solToUsd = (await this.priceService.getPrice('solana'))['solana'].usd;
+    const solToUsd =
+      (await this.priceService.getPrice('solana'))['solana']?.usd ?? 0;
 
     const totalFunds =
       parseFloat(extraPrize.fundsUsd.toString()) +
