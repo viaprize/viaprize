@@ -102,7 +102,7 @@ function PortalAdminCard({
           USDC_TO_ETH_POOL,
           ETH_PRICE,
         ],
-        address: '0xdCcF514720AABBfFF6bed7a7Db4b498677EfD3D3',
+        address: '0x0c32dA33f13cbC16101029c9C6d7c2998101cdBF',
       });
       const transaction = await writePassThroughV2Factory(request);
       toast.dismiss(firstLoadingToast);
