@@ -27,6 +27,7 @@ export default function WrapperLayout({
 }: {
   children: React.ReactNode;
 }) {
+  console.log(configureChainsConfig.chains[0], 'chains');
   return (
     <div>
       <SpeedInsights />

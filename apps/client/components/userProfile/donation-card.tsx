@@ -325,7 +325,7 @@ export default function SendCard() {
           />
         </Flex>
       </Modal>
-      {appUser && balance ? (
+      {appUser ? (
         <Stack>
           <Badge variant="light" radius="md">
             Address : {wallet?.address}

@@ -43,6 +43,8 @@ export default function Profile({ params }: { params: { id: string } }) {
     return notFound();
   }
 
+  console.log({ isProfileOwner }, 'is profile owner');
+
   return (
     <Card
       shadow="md"
