@@ -75,6 +75,7 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
     console.log(values.image)
     console.log(values.image.size)
     console.log(values.image)
+
     console.log(imageUploadUrl, 'imageUploadUrl')
     const image = await fetch(imageUploadUrl, {
       body: values.image,
@@ -104,6 +105,7 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
       votingStartDate: values.votingStartDate.toDateString(),
       votingDuration: values.votingDuration,
       imageUrl: extractedUrl,
+
     })
 
     // Here you would typically send the form data to your backend
