@@ -11,15 +11,11 @@ export const prizeRouter = createTRPCRouter({
         description: z.string().min(10, {
           message: 'Description must be at least 10 characters.',
         }),
-        submissionStartDate: z.date({
-          required_error: 'Submission start date is required.',
-        }),
+        submissionStartDate: z.string(),
         submissionDuration: z.number().min(1, {
           message: 'Submission duration must be at least 1 minute.',
         }),
-        votingStartDate: z.date({
-          required_error: 'Voting start date is required.',
-        }),
+        votingStartDate: z.string(),
         votingDuration: z.number().min(1, {
           message: 'Voting duration must be at least 1 minute.',
         }),

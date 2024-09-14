@@ -75,6 +75,8 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
     console.log(values.image)
     console.log(values.image.size)
     console.log(values.image)
+
+    console.log(imageUploadUrl, 'imageUploadUrl')
     const image = await fetch(imageUploadUrl, {
       body: values.image,
       method: 'PUT',
@@ -86,21 +88,24 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
         'Access-Control-Allow-Origin': '*',
       },
     })
-
     if (!image.ok) {
       form.setError('image', {
         message: 'Failed to upload image',
       })
       return
     }
+    const extractedUrl = `${new URL(imageUploadUrl).origin}${
+      new URL(imageUploadUrl).pathname
+    }`
     await mutation.mutateAsync({
       title: values.title,
       description: values.description,
-      submissionStartDate: values.submissionStartDate,
+      submissionStartDate: values.submissionStartDate.toDateString(),
       submissionDuration: values.submissionDuration,
-      votingStartDate: values.votingStartDate,
+      votingStartDate: values.votingStartDate.toDateString(),
       votingDuration: values.votingDuration,
-      imageUrl: imageUploadUrl,
+      imageUrl: extractedUrl,
+
     })
 
     // Here you would typically send the form data to your backend

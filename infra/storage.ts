@@ -1,5 +1,7 @@
 export const imageBucket =
-  $app.stage === 'production'
+
+  $app.stage === 'prod'
+
     ? new sst.aws.Bucket('ImageUploads', {
         public: true,
       })
