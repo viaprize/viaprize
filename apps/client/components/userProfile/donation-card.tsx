@@ -336,7 +336,8 @@ export default function SendCard() {
             Address : {wallet?.address}
           </Badge>
           <Badge size="lg" color="green" radius="md">
-            Balance : {(parseInt(balance.toString()) / 1_000_000).toFixed(3)} USDC
+            Balance :{' '}
+            {balance ? (parseInt(balance.toString()) / 1_000_000).toFixed(3) : 0} USDC
           </Badge>
           {/* Total Amount Raised */}
           <Text>Network : {chain.name.toUpperCase()}</Text>
@@ -354,7 +355,7 @@ export default function SendCard() {
             allowNegative={false}
             defaultValue={0}
             value={amount}
-            max={parseInt(balance.toString()) / 1_000_000}
+            max={balance ? parseInt(balance.toString()) / 1_000_000 : 0}
             onChange={(value) => {
               setAmount(value.toString());
             }}
