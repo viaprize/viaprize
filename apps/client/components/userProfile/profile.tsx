@@ -24,6 +24,7 @@ import EditProfileModal from './edit-profile-modal';
 export default function Profile({ params }: { params: { id: string } }) {
   const [opened, { open, close }] = useDisclosure(false);
   const { getUserByUserName } = useUser();
+
   // const params = useParams<{ id: string }>();
   const isProfileOwner = useAuthPerson();
 

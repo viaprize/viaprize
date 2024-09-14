@@ -19,6 +19,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useClipboard, useDisclosure } from '@mantine/hooks';
+import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { erc20ABI, readContract } from '@wagmi/core';
@@ -100,6 +101,7 @@ export default function SendCard() {
   const [recieverAddress, setRecieverAddress] = useState<string>('');
   const [amount, setAmount] = useState<string>('0');
   const { wallet } = usePrivyWagmi();
+  const { user, exportWallet } = usePrivy();
 
   const [loading, setLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
@@ -209,6 +211,9 @@ export default function SendCard() {
     openChangeNow();
   };
 
+  const hasEmbeddedWallet = !!user?.linkedAccounts.find(
+    (account) => account.type === 'wallet' && account.walletClient === 'privy',
+  );
   return (
     <Group mt="sm" p="sm">
       <Modal
@@ -383,6 +388,12 @@ export default function SendCard() {
           >
             Buy Crypto Using Change Now
           </Button>
+
+          {hasEmbeddedWallet && (
+            <Button onClick={exportWallet} disabled={!hasEmbeddedWallet}>
+              Export my wallet
+            </Button>
+          )}
         </Stack>
       ) : null}
     </Group>
