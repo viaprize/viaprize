@@ -19,6 +19,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useClipboard, useDisclosure } from '@mantine/hooks';
+import { usePrivy } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { erc20ABI, readContract } from '@wagmi/core';
@@ -100,6 +101,7 @@ export default function SendCard() {
   const [recieverAddress, setRecieverAddress] = useState<string>('');
   const [amount, setAmount] = useState<string>('0');
   const { wallet } = usePrivyWagmi();
+  const { user, exportWallet } = usePrivy();
 
   const [loading, setLoading] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
@@ -209,6 +211,9 @@ export default function SendCard() {
     openChangeNow();
   };
 
+  const hasEmbeddedWallet = !!user?.linkedAccounts.find(
+    (account) => account.type === 'wallet' && account.walletClient === 'privy',
+  );
   return (
     <Group mt="sm" p="sm">
       <Modal
@@ -325,13 +330,14 @@ export default function SendCard() {
           />
         </Flex>
       </Modal>
-      {appUser && balance ? (
+      {appUser ? (
         <Stack>
           <Badge variant="light" radius="md">
             Address : {wallet?.address}
           </Badge>
           <Badge size="lg" color="green" radius="md">
-            Balance : {(parseInt(balance.toString()) / 1_000_000).toFixed(3)} USDC
+            Balance :{' '}
+            {balance ? (parseInt(balance.toString()) / 1_000_000).toFixed(3) : 0} USDC
           </Badge>
           {/* Total Amount Raised */}
           <Text>Network : {chain.name.toUpperCase()}</Text>
@@ -349,7 +355,7 @@ export default function SendCard() {
             allowNegative={false}
             defaultValue={0}
             value={amount}
-            max={parseInt(balance.toString()) / 1_000_000}
+            max={balance ? parseInt(balance.toString()) / 1_000_000 : 0}
             onChange={(value) => {
               setAmount(value.toString());
             }}
@@ -383,6 +389,12 @@ export default function SendCard() {
           >
             Buy Crypto Using Change Now
           </Button>
+
+          {hasEmbeddedWallet && (
+            <Button onClick={exportWallet} disabled={!hasEmbeddedWallet}>
+              Export my wallet
+            </Button>
+          )}
         </Stack>
       ) : null}
     </Group>
