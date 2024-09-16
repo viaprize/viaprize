@@ -553,7 +553,10 @@ export default function AmountDonateCard({
         </Text> */}
       </div>
       <div>
-        {id !== 'bacb6584-7e45-465b-b4af-a3ed24a84233' && (
+        {![
+          'bacb6584-7e45-465b-b4af-a3ed24a84233',
+          '40257733-e1bb-4f52-b7d6-e393b086b44b',
+        ].includes(id) && (
           <>
             <Text>Project Donation Address </Text>
             <Flex align="center">
@@ -677,6 +680,26 @@ export default function AmountDonateCard({
             <NavLink
               href="https://donate.stripe.com/14k00A0Jt8QcfDibII"
               label="One time donation with card"
+              rightSection={
+                <IconChevronRight
+                  size="0.8rem"
+                  stroke={1.5}
+                  className="mantine-rotate-rtl"
+                />
+              }
+              variant="filled"
+              active
+            />
+          </>
+        ) : id === '40257733-e1bb-4f52-b7d6-e393b086b44b' ? (
+          <>
+            <Link
+              href="https://donate.stripe.com/4gwfZy1Nx0jG9eUdQT"
+              className="hover:text-blue-400"
+            />
+            <NavLink
+              href="https://donate.stripe.com/4gwfZy1Nx0jG9eUdQT"
+              label="Donate"
               rightSection={
                 <IconChevronRight
                   size="0.8rem"

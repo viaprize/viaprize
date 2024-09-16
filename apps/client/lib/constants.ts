@@ -209,6 +209,7 @@ export const EXTRA_FUNDRAISERS_IDS = [
   'bacb6584-7e45-465b-b4af-a3ed24a84233',
   'a4dac4dc-e5e7-4840-84a9-f00587eac3ec',
   '97a24692-9762-4384-8bf5-837cd3aaaa3b',
+  '40257733-e1bb-4f52-b7d6-e393b086b44b',
 ];
 
 export const EXTRA_PRIZES = [
