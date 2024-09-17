@@ -1,6 +1,5 @@
 import { IconBulb, IconCoin } from '@tabler/icons-react'
 import { Card } from '@viaprize/ui/card'
-import { Separator } from '@viaprize/ui/separator'
 
 export default function OverallPrizeStatus() {
   return (

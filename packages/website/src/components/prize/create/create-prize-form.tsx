@@ -105,7 +105,6 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
       votingStartDate: values.votingStartDate.toDateString(),
       votingDuration: values.votingDuration,
       imageUrl: extractedUrl,
-
     })
 
     // Here you would typically send the form data to your backend
