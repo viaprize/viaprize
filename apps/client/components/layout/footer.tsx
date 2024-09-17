@@ -20,7 +20,7 @@ export default function Footer() {
               height={32}
             />
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              viaPrize
+              VPRZ
             </span>
           </Link>
           <div className="lg:w-1/3 ">
@@ -64,7 +64,7 @@ export default function Footer() {
             </Link>
           </div>
           <ul className="flex flex-wrap items-center mb-6 text-md font-bold text-gray-500  sm:mb-0 dark:text-gray-400">
-            <li>
+            {/* <li>
               <Link
                 href="/terms-of-service"
                 target="_blank"
@@ -83,7 +83,7 @@ export default function Footer() {
               >
                 Privacy Policy
               </Link>
-            </li>
+            </li> */}
             {/* <li>
               <Link href="#" className="mr-4 hover:underline md:mr-6 ">
                 Licensing
@@ -101,7 +101,7 @@ export default function Footer() {
         <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
           © 2023{' '}
           <a href="/" className="hover:underline">
-            ViaPrize™
+            VPRZ™
           </a>
           . All Rights Reserved.
         </span>

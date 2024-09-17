@@ -25,7 +25,7 @@ export default async function FetchPrizes() {
 
   return (
     <>
-      {prizes.map((prize) => {
+      {/* {prizes.map((prize) => {
         return (
           <ExploreCard
             refund={prize.refunded}
@@ -51,7 +51,7 @@ export default async function FetchPrizes() {
             stage={prize.stage}
           />
         );
-      })}
+      })} */}
 
       {data.reverse().map((prize) => {
         // Reverse the data array

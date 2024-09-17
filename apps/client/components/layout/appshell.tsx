@@ -121,7 +121,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
                 <IconMoonStars size="1.1rem" />
               )}
             </ActionIcon>
-            <ProfileMenu />
+            {/* <ProfileMenu /> */}
           </div>
         </Flex>
       </AppShell.Header>

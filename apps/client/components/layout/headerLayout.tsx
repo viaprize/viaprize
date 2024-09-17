@@ -56,7 +56,7 @@ export default function HeaderLayout() {
           </Menu.Target>
           <Menu.Dropdown>
             <Stack gap="md" p="md">
-              <Menu.Item>
+              {/* <Menu.Item>
                 <Link href="/prize/about" className="flex items-center">
                   <IconInfoCircleFilled />
 
@@ -64,7 +64,7 @@ export default function HeaderLayout() {
                     About
                   </Text>
                 </Link>
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item>
                 <Link href="/prize/explore" className="flex items-center">
                   <IconSearch />
@@ -82,7 +82,7 @@ export default function HeaderLayout() {
           </Menu.Dropdown>
         </Menu>
 
-        <Menu withArrow shadow="md" position="bottom" trigger="hover">
+        {/* <Menu withArrow shadow="md" position="bottom" trigger="hover">
           <Menu.Target>
             <Center>
               <Box
@@ -119,7 +119,7 @@ export default function HeaderLayout() {
               </Button>
             </Stack>
           </Menu.Dropdown>
-        </Menu>
+        </Menu> */}
 
         {/* <Menu withArrow shadow="md" position="bottom" trigger="hover">
           <Menu.Target>
@@ -149,7 +149,7 @@ export default function HeaderLayout() {
         </Menu> */}
       </Flex>
 
-      <Flex gap="sm" align="center">
+      {/* <Flex gap="sm" align="center">
         <Card className="hidden sm:block py-1 my-2">
           {user?.wallet ? displayAddress(user.wallet.address) : 'No Wallet'}
           {user?.wallet ? (
@@ -170,7 +170,7 @@ export default function HeaderLayout() {
             </CopyButton>
           ) : null}
         </Card>
-      </Flex>
+      </Flex> */}
     </Flex>
   );
 }

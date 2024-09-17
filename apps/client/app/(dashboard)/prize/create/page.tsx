@@ -165,9 +165,9 @@ function Prize() {
       return [...arr];
     });
   };
-  if (!appUser) {
-    return <ShouldLogin text="Please login to create a prize" />;
-  }
+  // if (!appUser) {
+  //   return <ShouldLogin text="Please login to create a prize" />;
+  // }
 
   return (
     <Card shadow="md" withBorder className="w-full p-8 m-6">

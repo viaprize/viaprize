@@ -82,7 +82,7 @@ export default function Home() {
         <section className="md:flex justify-betweem items-center min-h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
             <h1 className="font-bold text-4xl sm:text-5xl my-6">
-              The home for all your crowdfunding needs
+              The ultimate destination for all your prize
             </h1>
             <Flex gap="md" wrap="wrap" className="sm:w-[60%] lg:w-[70%]">
               <Link href="/prize/explore">
@@ -93,17 +93,17 @@ export default function Home() {
                   Explore Prizes
                 </Button>
               </Link>
-              <Link href="/portal/explore">
+              {/* <Link href="/portal/explore">
                 <Button
                   className="bg-gradient-to-r from-[#005A6D] to-[#147EA3] w-full"
                   color="primary"
                 >
                   Explore Fundraisers
                 </Button>
-              </Link>
+              </Link> */}
             </Flex>
             <Flex
-              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[60%] lg:w-[70%]"
+              className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[50%] lg:w-[50%] "
               style={{
                 background: `rgba(125, 185, 206, 0.15)`,
               }}
@@ -112,11 +112,11 @@ export default function Home() {
             >
               <div className="text-center">
                 <h3 className="my-0"> $50,000+</h3>
-                <h3 className="my-0">Total contributions</h3>
+                <h3 className="my-0">Total Won</h3>
               </div>
               <div className="text-center">
                 <h3 className="my-0 ">100+</h3>
-                <h3 className="my-0">Total campaigns</h3>
+                <h3 className="my-0">Total Prizes</h3>
               </div>
             </Flex>
             <div className="flex justify-center w-full lg:w-[70%] my-2">
@@ -150,39 +150,39 @@ export default function Home() {
         </div> */}
         {/* How it works */}
         <div className="flex flex-col items-center my-4">
-          <h1>Why viaPrize?</h1>
+          <h1>Why VPRZ?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             <ReasonCard
               Title="Simplicity"
-              Description="Easy global transactions without needing a bank account or credit card"
+              Description="Easy global transactions"
               image="/home/piggy-bank-was-thrown-broke-gold-coins-flowed-out.jpg"
             />
             <ReasonCard
               Title="Sovereignty"
-              Description="With viaPrize either the campaign delivers or you receive a refund"
+              Description="With VPRZ either the prizes delivers or you receive a refund"
               image="/home/3d-cryptocurrency-rendering-design.jpg"
             />
             <ReasonCard
               Title="Stability"
-              Description="Consistent process for anyone around the world with smart contract security"
+              Description="Consistent process for anyone around the world "
               image="/home/team-working-animation-project.jpg"
             />
           </div>
         </div>
         <section className="my-24 flex items-center flex-col gap-3 w-full">
-          <h1 className="text-3xl font-bold">viaPrize&apos;s Core Functions</h1>
+          <h1 className="text-3xl font-bold">VPRZ&apos;s Core Functions</h1>
           <FunctionCard
             Title="Prizes"
             Description="Create, Fund, and Win prizes"
             know="prize/about"
             explore="prize/explore"
           />
-          <FunctionCard
+          {/* <FunctionCard
             Title="Portals"
             Description="Create pass-through campaigns or all-or-nothing campaigns"
             know="portal/about"
             explore="portal/explore"
-          />
+          /> */}
         </section>
         {/* Our story */}
         <section className="flex flex-col items-center my-14 gap-5">
@@ -190,10 +190,9 @@ export default function Home() {
           <StoryCard
             Title="Beginning of something new"
             Description="During a pop-up village called Zuzalu, we witnessed 
-            firsthand how the right economic mechanisms may gather a community to build public goods. 
+            firsthand how the right economic mechanisms may gather a community to build prize. 
             Inspired by conversations with Vitalik Buterin and others, Noah Chon Lee launched a 
-            crowdfunded prize to build an AI voice for a river and various people at Zuzalu 
-            tossed in $20 each. "
+            prize to build an AI voice."
             image="/home/story/zuzalu.jpeg"
             side="left"
           />
@@ -207,11 +206,11 @@ export default function Home() {
           />
           <StoryCard
             Title="The Impact"
-            Description="Crowdfunded prizes clearly incentivized collective action,
+            Description="Prizes clearly incentivized collective action,
              but Noah needed to know if this could make a radical difference in peoples’ lives. 
               Next, he watched a kamikaze drone diving towards 
             him get shot down while driving into the frontline of Ukraine to complete 
-            a crowdfunded prize for delivering medical supplies. The volunteer medics 
+            a prize for delivering medical supplies. The volunteer medics 
             received the supplies they were missing and because of this they were able 
             to treat 45 injured and said this undoubtedly saved at least one life. "
             image="/home/story/medics.png"
@@ -220,7 +219,7 @@ export default function Home() {
           <StoryCard
             Title="The Impact Continues"
             Description="Half a year later thanks to contributions of 
-            over 500 people on Gitcoin donating to viaPrize, 
+            over 500 people on Gitcoin ecosystem supporting to VPRZ, 
             over 30 developers adding to our open source code, 
             and our core team of developers Dipanshu, Nithin, Swaraj, 
             and Aryan we now have this fully open source platform 
@@ -231,19 +230,19 @@ export default function Home() {
         </section>
         {/* Community */}
         <section className="my-12 gap-3 ">
-          <div className=" flex flex-col items-center mb-8">
+          {/* <div className=" flex flex-col items-center mb-8"> */}
             {/* <h1 className="w-96 text-3xl text-center font-bold text-black">
               Tons of love who are building and working with viaPrize
             </h1> */}
 
-            <Button
+            {/* <Button
               rightSection={<FaTelegramPlane size={20} />}
               color="primary"
               className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]  h-[30%] py-3 text-lg"
             >
               <Link href="https://t.me/viaPrize">Join the Community</Link>
             </Button>
-          </div>
+          </div> */}
           <div className="my-4" />
           <PhotoAlbum
             layout="masonry"
@@ -342,14 +341,14 @@ function FunctionCard({
         {Description}
       </p>
       <div className="flex gap-4 max-sm:flex-col">
-        <Button
+        {/* <Button
           className="bg-[#E5F1F5] text-black font-bold gap-5 items-center"
           rightSection={<BiSolidRightArrowCircle size={14} />}
           component="a"
           href={know}
         >
           Know More
-        </Button>
+        </Button> */}
         <Button
           className="bg-[#E5F1F5] text-black font-bold gap-5 items-center"
           rightSection={<BiSolidRightArrowCircle size={14} />}

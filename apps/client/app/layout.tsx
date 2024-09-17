@@ -30,7 +30,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
+      {/* <head>
         <Script
           defer
           data-domain="viaprize.org"
@@ -47,7 +47,7 @@ export default function RootLayout({
           src="https://retune.so/api/script/chat.js?id=11ef511c-e77f-eef0-80e0-75ef9fd91023"
           defer
         />
-      </head>
+      </head> */}
       <body>
         <WrapperLayout>{children}</WrapperLayout>
       </body>

@@ -17,9 +17,9 @@ function ExplorePage() {
             you can explore prizes and work on them
           </Text>
           <Group m="md" className="max-sm:ml-7">
-            <Link href="/prize/about">
+            {/* <Link href="/prize/about">
               <Button component="a">About Prizes</Button>
-            </Link>
+            </Link> */}
             <Link href="/prize/create">
               <Button component="a">Create Prizes</Button>
             </Link>
