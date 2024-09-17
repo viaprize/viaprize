@@ -1,17 +1,17 @@
-import { schedulerRole } from "./scheduler";
+import { schedulerRole } from './scheduler'
 
-export const eventBus = new sst.aws.Bus("EventBus");
+export const eventBus = new sst.aws.Bus('EventBus')
 eventBus.subscribe({
-  handler: "packages/functions/src/events.handler",
+  handler: 'packages/functions/src/events.handler',
   permissions: [
     {
-      actions: ["scheduler:CreateSchedule"],
-      resources: ["*"],
+      actions: ['scheduler:CreateSchedule'],
+      resources: ['*'],
     },
     {
-      actions: ["iam:PassRole"],
-      resources: ["*"],
+      actions: ['iam:PassRole'],
+      resources: ['*'],
     },
   ],
   link: [schedulerRole],
-});
+})
