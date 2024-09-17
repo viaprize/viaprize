@@ -243,7 +243,7 @@ export default function Home() {
               <Link href="https://t.me/viaPrize">Join the Community</Link>
             </Button>
           </div> */}
-          <div className="my-4" />
+          {/* <div className="my-4" />
           <PhotoAlbum
             layout="masonry"
             photos={photos}
@@ -253,7 +253,7 @@ export default function Home() {
               if (containerWidth < 800) return 2;
               return 3;
             }}
-          />
+          /> */}
         </section>
         {/* Footer */}
       </div>
