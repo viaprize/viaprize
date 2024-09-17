@@ -231,11 +231,11 @@ export default function Home() {
         {/* Community */}
         <section className="my-12 gap-3 ">
           {/* <div className=" flex flex-col items-center mb-8"> */}
-            {/* <h1 className="w-96 text-3xl text-center font-bold text-black">
+          {/* <h1 className="w-96 text-3xl text-center font-bold text-black">
               Tons of love who are building and working with viaPrize
             </h1> */}
 
-            {/* <Button
+          {/* <Button
               rightSection={<FaTelegramPlane size={20} />}
               color="primary"
               className="bg-gradient-to-r from-[#005A6D] to-[#147EA3]  h-[30%] py-3 text-lg"

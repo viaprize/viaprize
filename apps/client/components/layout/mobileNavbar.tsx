@@ -13,7 +13,6 @@ const navbnarItems = [
     description:
       'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
   },
-
 ];
 
 export default function MobileNavbar({

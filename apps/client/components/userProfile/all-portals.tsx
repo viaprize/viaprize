@@ -6,7 +6,6 @@ import { useQuery } from 'react-query';
 import Shell from '../custom/shell';
 import SkeletonLoad from '../custom/skeleton-load-explore';
 import useAuthPerson from '../hooks/useAuthPerson';
-import PortalCard from '../portals/portal-card';
 
 export default function AllPortals({ params }: { params: { id: string } }) {
   const { isLoading, data } = useQuery(['getPortalsOfUser', undefined], async () => {
@@ -49,29 +48,5 @@ export default function AllPortals({ params }: { params: { id: string } }) {
         ) : null}
       </Shell>
     );
-  return (
-    <div className="grid md:grid-cols-2 grid-cols-1 gap-3">
-      {data.data.map((portal) => {
-        return (
-          <PortalCard
-            description={portal.description}
-            imageUrl={portal.images[0]}
-            amountRaised={((portal.totalFunds ?? 0) / 1_000_000).toString()}
-            authorName=""
-            totalContributors="0"
-            isActive={portal.isActive ?? false}
-            title={portal.title}
-            key={portal.id}
-            typeOfPortal={portal.sendImmediately ? 'Pass-through' : 'All-or-nothing'}
-            id={portal.id}
-            fundingGoalWithPlatformFee={parseFloat(portal.fundingGoal ?? '0')}
-            deadline={portal.deadline}
-            tags={portal.tags}
-            isIframe={false}
-            slug={portal.slug}
-          />
-        );
-      })}
-    </div>
-  );
+  return <div className="grid md:grid-cols-2 grid-cols-1 gap-3">jkl</div>;
 }
