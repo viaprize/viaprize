@@ -2,7 +2,10 @@
   "name": "@viaprize/functions",
   "version": "0.0.0",
   "dependencies": {
-    "sst": "*"
+    "@aws-sdk/client-scheduler": "^3.651.1",
+    "sst": "*",
+    "zod": "^3.23.8",
+    "@viaprize/core": "workspace:*"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.137"
