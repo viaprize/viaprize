@@ -1,6 +1,5 @@
 import { Events } from '@viaprize/core/viaprize'
 import { bus } from 'sst/aws/bus'
-
 export const handler = bus.subscriber(
   [Events.Wallet.ScheduleTransaction],
   async (event) => {
