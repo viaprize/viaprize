@@ -1,4 +1,4 @@
-import OverallPrizeStatus from '@/components/common/overall-prize-status'
+import OverallPrizeStatus from '@/components/stats-cards/overall-prize-status'
 import Leaderboard from './leaderboard'
 import RecentActivities from './recent-activities'
 const activities = [
