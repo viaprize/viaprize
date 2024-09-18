@@ -508,19 +508,30 @@ export default function AmountDonateCard({
             <>
               {cryptoToUsd ? (
                 <>
-                  $
-                  {(
-                    parseFloat(amountRaised) * cryptoToUsd.ethereum.usd +
-                    parseInt(extraData?.data.funds.toString() ?? '0')
-                  ).toFixed(2)}{' '}
-                  USD
+                  {id === '40257733-e1bb-4f52-b7d6-e393b086b44b' ? (
+                    <>
+                      
+                      {(
+                        parseFloat(amountRaised) * cryptoToUsd.ethereum.usd +
+                        parseInt(extraData?.data.funds.toString() ?? '0')
+                      ).toFixed(2)}{' '}
+                     USD / 50,000 USD 
+                    </>
+                  ) : (
+                    <>
+                      $
+                      {(
+                        parseFloat(amountRaised) * cryptoToUsd.ethereum.usd +
+                        parseInt(extraData?.data.funds.toString() ?? '0')
+                      ).toFixed(2)}{' '}
+                      USD
+                    </>
+                  )}
                 </>
               ) : null}
             </>
           ) : (
-            <>
-              <>${parseFloat(amountRaised).toFixed(2)} USD</>
-            </>
+            <>${parseFloat(amountRaised).toFixed(2)} USD</>
           )}
         </Text>
         <Text c="blue" className="lg:text-3xl md:text-2xl text-sm"></Text>
@@ -699,7 +710,7 @@ export default function AmountDonateCard({
             />
             <NavLink
               href="https://donate.stripe.com/4gwfZy1Nx0jG9eUdQT"
-              label="Donate"
+              label="Fund"
               rightSection={
                 <IconChevronRight
                   size="0.8rem"
