@@ -73,6 +73,9 @@ importers:
       sst:
         specifier: '*'
         version: 3.0.83
+      viem:
+        specifier: ~2.21.2
+        version: 2.21.2(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
       vite:
         specifier: ^5.4.2
         version: 5.4.2(@types/node@20.16.3)(terser@5.31.6)

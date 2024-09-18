@@ -53,8 +53,8 @@ export const prizes = pgTable("prizes", {
   imageUrl: varchar("imageUrl"),
 
   // smart contract values here
-  authorFeePercentage: integer("proposerFeePercentage").default(5),
-  platformFeePercentage: integer("platformFeePercentage").default(5),
+  authorFeePercentage: integer("proposerFeePercentage").default(5).notNull(),
+  platformFeePercentage: integer("platformFeePercentage").default(5).notNull(),
   contractVersion: integer("contractVersion").default(201),
   funds: integer("totalFunds").default(0),
   totalRefunded: integer("totalRefunded").default(0),

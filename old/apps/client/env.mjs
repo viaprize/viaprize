@@ -34,6 +34,9 @@ export const env = createEnv({
     NEXT_PUBLIC_BREVO_NEWSLETTER_URL: z.string().url(),
     NEXT_PUBLIC_GITCOIN_GRAPHQL: z.string().url(),
   },
+  server:{
+    CHAIN_ID: z.number().default(10),
+  },
   /*
    * Due to how Next.js bundles enironment variables on Edge and Client,
    * we need to manually destructure them to make sure all are included in bundle.
@@ -50,5 +53,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_API_KEY: process.env.NEXT_PUBLIC_SUPABASE_API_KEY,
     NEXT_PUBLIC_RPC_URL: process.env.NEXT_PUBLIC_RPC_URL,
     NEXT_PUBLIC_BREVO_NEWSLETTER_URL: process.env.NEXT_PUBLIC_BREVO_NEWSLETTER_URL,
+
+    CHAIN_ID: process.env.CHAIN_ID,
   },
 });

@@ -31,6 +31,10 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "ChainId": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "DatabaseUrl": {
       "type": "sst.sst.Secret"
       "value": string
@@ -45,6 +49,14 @@ declare module "sst" {
       "type": "sst.aws.Bucket"
     }
     "NextPublicWalletConnectProjectId": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "RpcUrl": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "WalletApiKey": {
       "type": "sst.sst.Secret"
       "value": string
     }

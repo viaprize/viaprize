@@ -6,14 +6,17 @@ import {
   AUTH_RESEND_KEY,
   AUTH_SECRET,
   AUTH_TRUST_HOST,
+  CHAIN_ID,
   DATABASE_URL,
   NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
+  RPC_URL,
+  WALLET_API_KEY,
   WALLET_PAYMENT_INFRA_API,
-} from './secrets'
-import { imageBucket } from './storage'
+} from "./secrets";
+import { imageBucket } from "./storage";
 
-export const website = new sst.aws.Nextjs('website', {
-  path: './packages/website',
+export const website = new sst.aws.Nextjs("website", {
+  path: "./packages/website",
   link: [
     AUTH_SECRET,
     DATABASE_URL,
@@ -25,6 +28,9 @@ export const website = new sst.aws.Nextjs('website', {
     WALLET_PAYMENT_INFRA_API,
     AUTH_TRUST_HOST,
     NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
+    CHAIN_ID,
+    RPC_URL,
+    WALLET_API_KEY,
     imageBucket,
   ],
   environment: {
@@ -39,5 +45,8 @@ export const website = new sst.aws.Nextjs('website', {
     AUTH_TRUST_HOST: AUTH_TRUST_HOST.value,
     NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
       NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID.value,
+    CHAIN_ID: CHAIN_ID.value,
+    RPC_URL: RPC_URL.value,
+    WALLET_API_KEY: WALLET_API_KEY.value,
   },
-})
+});

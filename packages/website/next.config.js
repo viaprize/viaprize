@@ -32,6 +32,12 @@ const config = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "*.s3.us-east-2.amazonaws.com",
+        pathname: "/**",
+        port: "",
+      },
     ],
   },
 };

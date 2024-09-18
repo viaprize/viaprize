@@ -1,13 +1,18 @@
 import { desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { encodeFunctionData } from "viem";
 import type { ViaprizeDatabase } from "../database";
 import { prizes } from "../database/schema";
+import { PRIZE_FACTORY_ABI } from "../lib/abi";
+import { CONTRACT_CONSTANTS_PER_CHAIN } from "./constants";
 import { stringToSlug } from "./utils";
 
 export class Prizes {
   db;
-  constructor(viaprizeDb: ViaprizeDatabase) {
+  chainId: number;
+  constructor(viaprizeDb: ViaprizeDatabase, chainId: number) {
     this.db = viaprizeDb.database;
+    this.chainId = chainId;
   }
 
   async getPendingPrizes() {
@@ -31,6 +36,36 @@ export class Prizes {
     return proposals;
   }
 
+  async getPrizeById(prizeId: string) {
+    const [prize] = await this.db
+      .select({
+        id: prizes.id,
+        title: prizes.title,
+        description: prizes.description,
+        imageUrl: prizes.imageUrl,
+        submissionStartDate: prizes.startSubmissionDate,
+        submissionDuration: prizes.submissionDurationInMinutes,
+        votingStartDate: prizes.startVotingDate,
+        votingDuration: prizes.votingDurationInMinutes,
+        proposerAddress: prizes.proposerAddress,
+        authorUsername: prizes.authorUsername,
+        authorFeePercentage: prizes.authorFeePercentage,
+        platformFeePercentage: prizes.platformFeePercentage,
+      })
+      .from(prizes)
+      .where(eq(prizes.id, prizeId));
+
+    return prize;
+  }
+
+  getPrizeFactoryV2Address() {
+    const constants =
+      CONTRACT_CONSTANTS_PER_CHAIN[
+        this.chainId as keyof typeof CONTRACT_CONSTANTS_PER_CHAIN
+      ];
+    return constants.PRIZE_FACTORY_V2_ADDRESS;
+  }
+
   async approvePrizeProposal(prizeId: string, contractAddress: string) {
     await this.db
       .update(prizes)
@@ -39,6 +74,38 @@ export class Prizes {
         proposalStage: "APPROVED",
       })
       .where(eq(prizes.id, prizeId));
+  }
+
+  async getEncodedDeployPrizeData(prizeId: string) {
+    const prize = await this.getPrizeById(prizeId);
+    if (!prize) {
+      throw new Error("Prize not found");
+    }
+    const constants =
+      CONTRACT_CONSTANTS_PER_CHAIN[
+        this.chainId as keyof typeof CONTRACT_CONSTANTS_PER_CHAIN
+      ];
+
+    const data = encodeFunctionData({
+      abi: PRIZE_FACTORY_ABI,
+      functionName: "createViaPrize",
+      args: [
+        prizeId,
+        prize.proposerAddress as `0x${string}`,
+        constants.ADMINS,
+        prize.platformFeePercentage,
+        prize.authorFeePercentage,
+        constants.USDC,
+        constants.USDC_BRIDGE,
+        constants.SWAP_ROUTER,
+        constants.USDC_TO_USDCE_POOL,
+        constants.USDC_TO_ETH_POOL,
+        constants.ETH_PRICE,
+        constants.WETH,
+      ],
+    });
+
+    return data;
   }
 
   async addPrizeProposal(data: {

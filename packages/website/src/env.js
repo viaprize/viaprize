@@ -1,5 +1,5 @@
-import { createEnv } from '@t3-oss/env-nextjs'
-import { z } from 'zod'
+import { createEnv } from "@t3-oss/env-nextjs";
+import { z } from "zod";
 
 export const env = createEnv({
   /**
@@ -10,14 +10,17 @@ export const env = createEnv({
     AUTH_SECRET: z.string().optional(),
     DATABASE_URL: z.string(),
     NODE_ENV: z
-      .enum(['development', 'test', 'production'])
-      .default('development'),
+      .enum(["development", "test", "production"])
+      .default("development"),
     AUTH_GITHUB_ID: z.string(),
     AUTH_GITHUB_SECRET: z.string(),
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
     AUTH_RESEND_KEY: z.string(),
     WALLET_PAYMENT_INFRA_API: z.string(),
+    CHAIN_ID: z.string().default("10"),
+    WALLET_API_KEY: z.string(),
+    RPC_URL: z.string(),
   },
 
   /**
@@ -46,6 +49,9 @@ export const env = createEnv({
     WALLET_PAYMENT_INFRA_API: process.env.WALLET_PAYMENT_INFRA_API,
     NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
       process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
+    CHAIN_ID: process.env.CHAIN_ID,
+    WALLET_API_KEY: process.env.WALLET_API_KEY,
+    RPC_URL: process.env.RPC_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
@@ -57,4 +63,4 @@ export const env = createEnv({
    * `SOME_VAR=''` will throw an error.
    */
   emptyStringAsUndefined: true,
-})
+});
