@@ -1,7 +1,5 @@
 import { Events, Viaprize } from "@viaprize/core/viaprize";
 import { bus } from "sst/aws/bus";
-console.log(process.env.DATABASE_URL, "db url");
-console.log(process.env.CHAIN_ID, "chain id");
 
 const viaprize = new Viaprize({
   config: {
@@ -25,10 +23,11 @@ export const handler = bus.subscriber(
         break;
       case "prize.approve":
         console.log("Processing prize approve event");
-        viaprize.prizes.approveDeployedPrize(
+        await viaprize.prizes.approveDeployedPrize(
           event.properties.prizeId,
           event.properties.contractAddress
         );
+
         break;
     }
   }

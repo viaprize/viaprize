@@ -3,13 +3,13 @@ export const PRIZE_FACTORY_ABI = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
+        indexed: false,
         internalType: "string",
         name: "id",
         type: "string",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
         name: "viaPrizeAddress",
         type: "address",

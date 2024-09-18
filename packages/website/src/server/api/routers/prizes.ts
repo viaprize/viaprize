@@ -44,7 +44,9 @@ export const prizeRouter = createTRPCRouter({
         },
         "gasless"
       );
-
+      if (txHash) {
+        await ctx.viaprize.prizes.approvePrizeProposal(input.prizeId);
+      }
       return txHash;
     }),
   createPrize: protectedProcedure

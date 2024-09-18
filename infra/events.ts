@@ -15,6 +15,7 @@ eventBus.subscribe({
       resources: ["*"],
     },
   ],
+
   environment: {
     DATABASE_URL: DATABASE_URL.value,
     CHAIN_ID: CHAIN_ID.value,

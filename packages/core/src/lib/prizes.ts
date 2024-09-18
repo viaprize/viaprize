@@ -70,7 +70,7 @@ export class Prizes {
     await this.db.transaction(async (trx) => {
       const [prize] = await trx
         .select({
-          prizeProposalStage: prizes.proposalStage,
+          proposalStage: prizes.proposalStage,
         })
         .from(prizes)
         .where(eq(prizes.id, prizeId))
@@ -78,7 +78,8 @@ export class Prizes {
       if (!prize) {
         throw new Error("Prize not found");
       }
-      if (prize.prizeProposalStage !== "APPROVED_BUT_NOT_DEPLOYED") {
+      console.log(prize);
+      if (prize.proposalStage !== "APPROVED_BUT_NOT_DEPLOYED") {
         throw new Error("Prize not in correct stage");
       }
       await trx
@@ -91,11 +92,10 @@ export class Prizes {
     });
   }
 
-  async approvePrizeProposal(prizeId: string, contractAddress: string) {
+  async approvePrizeProposal(prizeId: string) {
     await this.db
       .update(prizes)
       .set({
-        primaryContractAddress: contractAddress,
         proposalStage: "APPROVED_BUT_NOT_DEPLOYED",
       })
       .where(eq(prizes.id, prizeId));
