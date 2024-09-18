@@ -42,4 +42,13 @@ export const Events = {
   Wallet: {
     ScheduleTransaction: defineEvent("wallet.transaction", z.object({})),
   },
+  Prize: {
+    Approve: defineEvent(
+      "prize.approve",
+      z.object({
+        prizeId: z.string(),
+        contractAddress: z.string(),
+      })
+    ),
+  },
 };

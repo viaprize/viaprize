@@ -52,3 +52,8 @@ export const WALLET_API_KEY = new sst.Secret(
   "WalletApiKey",
   process.env.WALLET_API_KEY
 );
+
+export const INDEXER_RPC_URL = new sst.Secret(
+  "IndexerRpcUrl",
+  process.env.INDEXER_RPC_URL
+);

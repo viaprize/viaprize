@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "dependencies": {
     "@aws-sdk/client-scheduler": "^3.651.1",
+    "@viaprize/core": "workspace:*",
     "sst": "*",
-    "zod": "^3.23.8",
-    "@viaprize/core": "workspace:*"
+    "valibot": "^0.42.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.137"

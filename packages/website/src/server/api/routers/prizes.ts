@@ -4,6 +4,7 @@ import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
 export const prizeRouter = createTRPCRouter({
   getPendingPrizes: adminProcedure.query(async ({ ctx }) => {
     const prizes = await ctx.viaprize.prizes.getPendingPrizes();
+
     return prizes;
   }),
   deployPrize: adminProcedure

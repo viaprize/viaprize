@@ -1,17 +1,23 @@
-import { schedulerRole } from './scheduler'
+import { schedulerRole } from "./scheduler";
+import { CHAIN_ID, DATABASE_URL } from "./secrets";
 
-export const eventBus = new sst.aws.Bus('EventBus')
+export const eventBus = new sst.aws.Bus("EventBus");
+
 eventBus.subscribe({
-  handler: 'packages/functions/src/events.handler',
+  handler: "packages/functions/src/events.handler",
   permissions: [
     {
-      actions: ['scheduler:CreateSchedule'],
-      resources: ['*'],
+      actions: ["scheduler:CreateSchedule"],
+      resources: ["*"],
     },
     {
-      actions: ['iam:PassRole'],
-      resources: ['*'],
+      actions: ["iam:PassRole"],
+      resources: ["*"],
     },
   ],
-  link: [schedulerRole],
-})
+  environment: {
+    DATABASE_URL: DATABASE_URL.value,
+    CHAIN_ID: CHAIN_ID.value,
+  },
+  link: [schedulerRole, DATABASE_URL, CHAIN_ID],
+});

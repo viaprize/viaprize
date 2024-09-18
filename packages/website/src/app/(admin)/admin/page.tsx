@@ -1,11 +1,7 @@
 import { ProposalCard } from "@/components/admin/proposal-card";
 import { auth } from "@/server/auth";
 import { api } from "@/trpc/server";
-export default async function DashBoardlayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function DashBoardlayout() {
   const session = await auth();
   if (!session) {
     return "You need to be logged in to access this page";

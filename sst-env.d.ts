@@ -48,6 +48,14 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Bucket"
     }
+    "IndexerRpcUrl": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "IndexerService": {
+      "type": "sst.aws.Service"
+      "url": string
+    }
     "NextPublicWalletConnectProjectId": {
       "type": "sst.sst.Secret"
       "value": string

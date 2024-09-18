@@ -32,7 +32,7 @@ importers:
         version: 16.4.5
       sst:
         specifier: ^3
-        version: 3.0.83(hono@4.6.2)
+        version: 3.0.83(hono@4.6.2)(valibot@0.42.0(typescript@5.5.4))
     devDependencies:
       '@biomejs/biome':
         specifier: 1.8.3
@@ -72,7 +72,7 @@ importers:
         version: 1.6.6
       sst:
         specifier: '*'
-        version: 3.0.83(hono@4.6.2)
+        version: 3.0.83(hono@4.6.2)(valibot@0.42.0(typescript@5.5.4))
       viem:
         specifier: ~2.21.2
         version: 2.21.2(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
@@ -100,7 +100,10 @@ importers:
         version: link:../core
       sst:
         specifier: '*'
-        version: 3.0.83(hono@4.6.2)
+        version: 3.0.83(hono@4.6.2)(valibot@0.42.0(typescript@5.5.4))
+      valibot:
+        specifier: ^0.42.0
+        version: 0.42.0(typescript@5.5.4)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -8842,6 +8845,14 @@ packages:
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
+
+  valibot@0.42.0:
+    resolution: {integrity: sha512-igMdmHXxDiQY714ssh9bGisMqJ2yg7sko1KOmv/omnrIacGtP6mGrbvVT1IuV1bDrHyG9ybgpHwG1UElDiDCLg==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   valid-url@1.0.9:
     resolution: {integrity: sha512-QQDsV8OnSf5Uc30CKSwG9lnhMPe6exHtTXLRYX8uMwKENy640pU+2BgBL0LRbDh/eYRahNCS7aewCx0wf3NYVA==}
@@ -19816,7 +19827,7 @@ snapshots:
   sst-linux-x86@3.0.83:
     optional: true
 
-  sst@3.0.83(hono@4.6.2):
+  sst@3.0.83(hono@4.6.2)(valibot@0.42.0(typescript@5.5.4)):
     dependencies:
       '@aws-sdk/client-lambda': 3.478.0
       aws4fetch: 1.0.20
@@ -19829,6 +19840,7 @@ snapshots:
       sst-linux-arm64: 3.0.83
       sst-linux-x64: 3.0.83
       sst-linux-x86: 3.0.83
+      valibot: 0.42.0(typescript@5.5.4)
     transitivePeerDependencies:
       - aws-crt
 
@@ -20210,6 +20222,10 @@ snapshots:
   uuid@8.3.2: {}
 
   uuid@9.0.1: {}
+
+  valibot@0.42.0(typescript@5.5.4):
+    optionalDependencies:
+      typescript: 5.5.4
 
   valid-url@1.0.9: {}
 

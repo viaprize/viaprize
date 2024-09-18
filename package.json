@@ -11,6 +11,8 @@
     "clean:all": "rm -rf node_modules pnpm-lock.yaml && pnpm store prune",
     "build": "sst build",
     "dev": "sst dev",
+    "dev:indexer": "cd packages/indexer && pnpm dev",
+    "start:indexer": "cd packages/indexer && pnpm start",
     "deploy": "sst deploy",
     "remove": "sst remove",
     "console": "sst console",

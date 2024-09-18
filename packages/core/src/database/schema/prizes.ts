@@ -27,6 +27,7 @@ export const prizeProposalStage = pgEnum("prizeProposalStage", [
   "PENDING",
   "APPROVED",
   "REJECTED",
+  "APPROVED_BUT_NOT_DEPLOYED",
 ]);
 
 export const prizes = pgTable("prizes", {

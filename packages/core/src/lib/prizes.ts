@@ -66,12 +66,37 @@ export class Prizes {
     return constants.PRIZE_FACTORY_V2_ADDRESS;
   }
 
+  async approveDeployedPrize(prizeId: string, contractAddress: string) {
+    await this.db.transaction(async (trx) => {
+      const [prize] = await trx
+        .select({
+          prizeProposalStage: prizes.proposalStage,
+        })
+        .from(prizes)
+        .where(eq(prizes.id, prizeId))
+        .limit(1);
+      if (!prize) {
+        throw new Error("Prize not found");
+      }
+      if (prize.prizeProposalStage !== "APPROVED_BUT_NOT_DEPLOYED") {
+        throw new Error("Prize not in correct stage");
+      }
+      await trx
+        .update(prizes)
+        .set({
+          primaryContractAddress: contractAddress,
+          proposalStage: "APPROVED",
+        })
+        .where(eq(prizes.id, prizeId));
+    });
+  }
+
   async approvePrizeProposal(prizeId: string, contractAddress: string) {
     await this.db
       .update(prizes)
       .set({
         primaryContractAddress: contractAddress,
-        proposalStage: "APPROVED",
+        proposalStage: "APPROVED_BUT_NOT_DEPLOYED",
       })
       .where(eq(prizes.id, prizeId));
   }
@@ -111,9 +136,9 @@ export class Prizes {
   async addPrizeProposal(data: {
     title: string;
     description: string;
-    submissionStartDate: Date;
+    submissionStartDate: string;
     submissionDuration: number;
-    votingStartDate: Date;
+    votingStartDate: string;
     votingDuration: number;
     imageUrl: string;
     username: string;

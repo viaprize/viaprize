@@ -57,6 +57,13 @@
       "when": 1726591201007,
       "tag": "0007_flowery_warstar",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1726680723335,
+      "tag": "0008_skinny_edwin_jarvis",
+      "breakpoints": true
     }
   ]
 }
