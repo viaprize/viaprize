@@ -2,21 +2,21 @@ import {
   IconCoins,
   IconMessageCircle,
   IconUsersGroup,
-} from "@tabler/icons-react";
-import { Badge } from "@viaprize/ui/badge";
-import { Card } from "@viaprize/ui/card";
-import { Separator } from "@viaprize/ui/separator";
+} from '@tabler/icons-react'
+import { Badge } from '@viaprize/ui/badge'
+import { Card } from '@viaprize/ui/card'
+import { Separator } from '@viaprize/ui/separator'
 
-import Image from "next/image";
+import Image from 'next/image'
 
 interface ExploreCardProps {
-  imageUrl: string;
-  title: string;
-  funds: number;
-  prizeStage: string;
-  numberOfContestants: number;
-  numberOfFunders: number;
-  numberOfComments: number;
+  imageUrl: string
+  title: string
+  funds: number
+  prizeStage: string
+  numberOfContestants: number
+  numberOfFunders: number
+  numberOfComments: number
 }
 export default function ExploreCard(props: ExploreCardProps) {
   return (
@@ -48,10 +48,10 @@ export default function ExploreCard(props: ExploreCardProps) {
         <div className="mt-1 lg:mt-3">
           <Badge variant="outline" color="gray" className="text-gray-400">
             Technology
-          </Badge>{" "}
+          </Badge>{' '}
           <Badge variant="outline" color="gray" className="text-gray-400">
             Content
-          </Badge>{" "}
+          </Badge>{' '}
           <Badge variant="outline" color="gray" className="text-gray-400">
             webdev
           </Badge>
@@ -77,5 +77,5 @@ export default function ExploreCard(props: ExploreCardProps) {
         </div>
       </div>
     </Card>
-  );
+  )
 }

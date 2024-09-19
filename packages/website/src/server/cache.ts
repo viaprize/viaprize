@@ -1,36 +1,36 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import {
   DeleteCommand,
   DynamoDBDocumentClient,
   QueryCommand,
   UpdateCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Resource } from "sst";
+} from '@aws-sdk/lib-dynamodb'
+import { Resource } from 'sst'
 export class Cache {
-  client;
+  client
   constructor() {
-    this.client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+    this.client = DynamoDBDocumentClient.from(new DynamoDBClient({}))
   }
 
   async get(key: string) {
     const res = await this.client.send(
       new QueryCommand({
         TableName: Resource.CacheTable.name,
-        KeyConditionExpression: "#K = :key",
+        KeyConditionExpression: '#K = :key',
         ExpressionAttributeNames: {
-          "#K": "key",
+          '#K': 'key',
         },
         ExpressionAttributeValues: {
-          ":key": key,
+          ':key': key,
         },
         Limit: 1,
-      })
-    );
-    return res.Items?.[0] ? (res.Items[0].value as string) : undefined;
+      }),
+    )
+    return res.Items?.[0] ? (res.Items[0].value as string) : undefined
   }
 
   async delete(key: string) {
-    console.log("Deleting cache for key", key);
+    console.log('Deleting cache for key', key)
 
     await this.client.send(
       new DeleteCommand({
@@ -39,16 +39,16 @@ export class Cache {
         Key: {
           key, // Primary key to identify the item to delete
         },
-      })
-    );
+      }),
+    )
 
-    console.log(`Cache for key ${key} deleted successfully.`);
+    console.log(`Cache for key ${key} deleted successfully.`)
   }
 
   async set(key: string, value: string, expireAt: number) {
-    console.log("Setting cache", key, value, expireAt);
-    console.log("Value", value, "Valuee", value.toString());
-    const expireAtUnixEpoch = Math.floor((Date.now() + expireAt * 1000) / 1000);
+    console.log('Setting cache', key, value, expireAt)
+    console.log('Value', value, 'Valuee', value.toString())
+    const expireAtUnixEpoch = Math.floor((Date.now() + expireAt * 1000) / 1000)
     await this.client.send(
       new UpdateCommand({
         TableName: Resource.CacheTable.name,
@@ -57,14 +57,14 @@ export class Cache {
           key,
         },
         ExpressionAttributeNames: {
-          "#v": "value", // Use #k as a placeholder for the reserved word 'key'
+          '#v': 'value', // Use #k as a placeholder for the reserved word 'key'
         },
-        UpdateExpression: "SET #v = :c, expireAt = :e",
+        UpdateExpression: 'SET #v = :c, expireAt = :e',
         ExpressionAttributeValues: {
-          ":c": value,
-          ":e": expireAtUnixEpoch,
+          ':c': value,
+          ':e': expireAtUnixEpoch,
         },
-      })
-    );
+      }),
+    )
   }
 }
