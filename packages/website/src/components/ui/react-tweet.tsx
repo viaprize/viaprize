@@ -149,7 +149,7 @@ export const TweetHeader = ({ tweet }: { tweet: EnrichedTweet }) => (
 
 export const TweetBody = ({ tweet }: { tweet: EnrichedTweet }) => (
   <div className="break-words leading-normal tracking-tighter">
-    {tweet.entities.map((entity, idx) => {
+    {tweet.entities.map((entity) => {
       switch (entity.type) {
         case 'url':
         case 'symbol':
