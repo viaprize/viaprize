@@ -1,13 +1,13 @@
-import AboutContent from "@/components/prize/details/about-content";
-import DetailHeader from "@/components/prize/details/details-header";
-import Submissions from "@/components/prize/details/submissions/submissions";
-import ContestantsCard from "@/components/prize/details/vfc-details/contestants-card";
-import VisionaryFunderCard from "@/components/prize/details/vfc-details/visionary-funder-card";
-import Winners from "@/components/prize/details/vfc-details/winners";
-import VotingSection from "@/components/prize/details/voting/voting-section";
+import AboutContent from '@/components/prize/details/about-content'
+import DetailHeader from '@/components/prize/details/details-header'
+import Submissions from '@/components/prize/details/submissions/submissions'
+import ContestantsCard from '@/components/prize/details/vfc-details/contestants-card'
+import VisionaryFunderCard from '@/components/prize/details/vfc-details/visionary-funder-card'
+import Winners from '@/components/prize/details/vfc-details/winners'
+import VotingSection from '@/components/prize/details/voting/voting-section'
 
-import { IconArrowLeft } from "@tabler/icons-react";
-import { Separator } from "@viaprize/ui/separator";
+import { IconArrowLeft } from '@tabler/icons-react'
+import { Separator } from '@viaprize/ui/separator'
 
 export default function PrizeDetails() {
   return (
@@ -31,5 +31,5 @@ export default function PrizeDetails() {
         <ContestantsCard />
       </div>
     </div>
-  );
+  )
 }

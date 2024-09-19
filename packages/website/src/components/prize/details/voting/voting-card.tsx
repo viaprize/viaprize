@@ -1,22 +1,22 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@viaprize/ui/avatar";
-import { Card } from "@viaprize/ui/card";
-import { Input } from "@viaprize/ui/input";
-import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Card } from '@viaprize/ui/card'
+import { Input } from '@viaprize/ui/input'
+import React from 'react'
 
 // Define the User type
 type User = {
-  id: number;
-  name: string;
-  avatar: string;
-  submitted: string;
-  votes: number | string; // Allow string for easier input handling
-};
+  id: number
+  name: string
+  avatar: string
+  submitted: string
+  votes: number | string // Allow string for easier input handling
+}
 
 // Define the props type for the VotingCard component
 type VotingCardProps = {
-  user: User;
-  onVoteChange: (id: number, newVotes: number | string) => void;
-};
+  user: User
+  onVoteChange: (id: number, newVotes: number | string) => void
+}
 
 export default function VotingCard({ user, onVoteChange }: VotingCardProps) {
   return (
@@ -27,9 +27,9 @@ export default function VotingCard({ user, onVoteChange }: VotingCardProps) {
             <AvatarImage src={user.avatar} alt={user.name} />
             <AvatarFallback>
               {user.name
-                .split(" ")
+                .split(' ')
                 .map((word) => word[0])
-                .join("")}
+                .join('')}
             </AvatarFallback>
           </Avatar>
           <div>
@@ -50,5 +50,5 @@ export default function VotingCard({ user, onVoteChange }: VotingCardProps) {
         </div>
       </div>
     </Card>
-  );
+  )
 }

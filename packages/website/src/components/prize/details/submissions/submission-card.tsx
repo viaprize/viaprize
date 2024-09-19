@@ -1,6 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Card } from "@viaprize/ui/card";
-
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Card } from '@viaprize/ui/card'
 
 export default function SubmissionCard() {
   return (
@@ -12,13 +11,15 @@ export default function SubmissionCard() {
         </Avatar>
         <div>
           <h3 className="text-primary">John Doe</h3>
-          <div className="text-muted-foreground text-sm">Submitted 2 days ago</div>
+          <div className="text-muted-foreground text-sm">
+            Submitted 2 days ago
           </div>
+        </div>
       </div>
       <p>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed in
         vestibulum purus. Nullam nec sapien et turpis tincidunt tempus
       </p>
     </Card>
-  );
+  )
 }

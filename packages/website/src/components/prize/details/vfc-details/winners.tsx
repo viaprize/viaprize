@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage, AvatarFallback } from '@viaprize/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Card } from '@viaprize/ui/card'
 import React from 'react'
 
@@ -17,9 +17,9 @@ export default function Winners() {
           <div>John Doe</div>
         </div>
         <div className="text-primary">
-          $1000 <span className='text-black'>Won</span>
+          $1000 <span className="text-black">Won</span>
         </div>
       </div>
     </Card>
-  );
+  )
 }
