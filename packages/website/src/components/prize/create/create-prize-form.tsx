@@ -1,15 +1,15 @@
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { format } from 'date-fns'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
 
-import { api } from "@/trpc/react";
-import { cn } from "@viaprize/ui";
-import { Button } from "@viaprize/ui/button";
-import { Calendar } from "@viaprize/ui/calendar";
+import { api } from '@/trpc/react'
+import { cn } from '@viaprize/ui'
+import { Button } from '@viaprize/ui/button'
+import { Calendar } from '@viaprize/ui/calendar'
 import {
   Form,
   FormControl,
@@ -17,86 +17,86 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@viaprize/ui/form";
-import { Input } from "@viaprize/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@viaprize/ui/popover";
-import { Textarea } from "@viaprize/ui/textarea";
+} from '@viaprize/ui/form'
+import { Input } from '@viaprize/ui/input'
+import { Popover, PopoverContent, PopoverTrigger } from '@viaprize/ui/popover'
+import { Textarea } from '@viaprize/ui/textarea'
 
 const formSchema = z.object({
   image: z.instanceof(File).refine((file) => file.size <= 5000000, {
-    message: "Image must be less than 5MB",
+    message: 'Image must be less than 5MB',
   }),
   title: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
+    message: 'Title must be at least 2 characters.',
   }),
   description: z.string().min(10, {
-    message: "Description must be at least 10 characters.",
+    message: 'Description must be at least 10 characters.',
   }),
   submissionStartDate: z.date({
-    required_error: "Submission start date is required.",
+    required_error: 'Submission start date is required.',
   }),
   submissionDuration: z.number().min(1, {
-    message: "Submission duration must be at least 1 minute.",
+    message: 'Submission duration must be at least 1 minute.',
   }),
   votingStartDate: z.date({
-    required_error: "Voting start date is required.",
+    required_error: 'Voting start date is required.',
   }),
   votingDuration: z.number().min(1, {
-    message: "Voting duration must be at least 1 minute.",
+    message: 'Voting duration must be at least 1 minute.',
   }),
-});
+})
 interface CreatePrizeFormProps {
-  imageUploadUrl: string;
+  imageUploadUrl: string
 }
 
 export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
   imageUploadUrl,
 }) => {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      title: '',
+      description: '',
       submissionDuration: 60,
       votingDuration: 60,
     },
-  });
+  })
 
   const mutation = api.prizes.createPrize.useMutation({
     onSuccess() {
       // Show success message
-      console.log("Success");
+      console.log('Success')
     },
-  });
+  })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values.image);
-    console.log(values.image.size);
-    console.log(values.image);
+    console.log(values.image)
+    console.log(values.image.size)
+    console.log(values.image)
 
-    console.log(imageUploadUrl, "imageUploadUrl");
+    console.log(imageUploadUrl, 'imageUploadUrl')
     const image = await fetch(imageUploadUrl, {
       body: values.image,
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": values.image.type,
-        "Content-Disposition": `attachment; filename="${encodeURIComponent(
-          values.image.name
+        'Content-Type': values.image.type,
+        'Content-Disposition': `attachment; filename="${encodeURIComponent(
+          values.image.name,
         )}"`,
-        "Access-Control-Allow-Origin": "*",
+        'Access-Control-Allow-Origin': '*',
       },
-    });
+    })
     if (!image.ok) {
-      form.setError("image", {
-        message: "Failed to upload image",
-      });
-      return;
+      form.setError('image', {
+        message: 'Failed to upload image',
+      })
+      return
     }
     const extractedUrl = `${new URL(imageUploadUrl).origin}${
       new URL(imageUploadUrl).pathname
-    }`;
+    }`
     await mutation.mutateAsync({
       title: values.title,
       description: values.description,
@@ -105,7 +105,7 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
       votingStartDate: values.votingStartDate.toISOString(),
       votingDuration: values.votingDuration,
       imageUrl: extractedUrl,
-    });
+    })
 
     // Here you would typically send the form data to your backend
   }
@@ -124,14 +124,14 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
                   type="file"
                   accept="image/*"
                   onChange={(e) => {
-                    const file = e.target.files?.[0];
+                    const file = e.target.files?.[0]
                     if (file) {
-                      field.onChange(file);
-                      const reader = new FileReader();
+                      field.onChange(file)
+                      const reader = new FileReader()
                       reader.onloadend = () => {
-                        setImagePreview(reader.result as string);
-                      };
-                      reader.readAsDataURL(file);
+                        setImagePreview(reader.result as string)
+                      }
+                      reader.readAsDataURL(file)
                     }
                   }}
                 />
@@ -183,14 +183,14 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      variant={"outline"}
+                      variant={'outline'}
                       className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
+                        'w-[240px] pl-3 text-left font-normal',
+                        !field.value && 'text-muted-foreground',
                       )}
                     >
                       {field.value ? (
-                        format(field.value, "PPP")
+                        format(field.value, 'PPP')
                       ) : (
                         <span>Pick a date</span>
                       )}
@@ -203,7 +203,7 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
                     selected={field.value}
                     onSelect={field.onChange}
                     disabled={(date) =>
-                      date < new Date() || date < new Date("1900-01-01")
+                      date < new Date() || date < new Date('1900-01-01')
                     }
                     initialFocus
                   />
@@ -240,14 +240,14 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      variant={"outline"}
+                      variant={'outline'}
                       className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
+                        'w-[240px] pl-3 text-left font-normal',
+                        !field.value && 'text-muted-foreground',
                       )}
                     >
                       {field.value ? (
-                        format(field.value, "PPP")
+                        format(field.value, 'PPP')
                       ) : (
                         <span>Pick a date</span>
                       )}
@@ -260,7 +260,7 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
                     selected={field.value}
                     onSelect={field.onChange}
                     disabled={(date) =>
-                      date < new Date() || date < new Date("1900-01-01")
+                      date < new Date() || date < new Date('1900-01-01')
                     }
                     initialFocus
                   />
@@ -289,5 +289,5 @@ export const CreatePrizeForm: React.FC<CreatePrizeFormProps> = ({
         />
       </form>
     </Form>
-  );
-};
+  )
+}

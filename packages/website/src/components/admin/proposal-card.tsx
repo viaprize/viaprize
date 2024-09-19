@@ -1,26 +1,26 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Button } from "@viaprize/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Button } from '@viaprize/ui/button'
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@viaprize/ui/card";
-import Image from "next/image";
-import { DeployPrizeButton } from "./deploy-prize-button";
+} from '@viaprize/ui/card'
+import Image from 'next/image'
+import { DeployPrizeButton } from './deploy-prize-button'
 
 interface Proposal {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string | null;
-  submissionStartDate: string;
-  submissionDuration: number;
-  votingStartDate: string;
-  votingDuration: number;
-  proposerAddress: string;
-  authorUsername: string;
+  id: string
+  title: string
+  description: string
+  imageUrl: string | null
+  submissionStartDate: string
+  submissionDuration: number
+  votingStartDate: string
+  votingDuration: number
+  proposerAddress: string
+  authorUsername: string
 }
 
 export function ProposalCard({
@@ -31,7 +31,7 @@ export function ProposalCard({
       <Card className="w-full max-w-2xl p-6">
         <p>No proposal data available.</p>
       </Card>
-    );
+    )
   }
 
   return (
@@ -59,7 +59,7 @@ export function ProposalCard({
         {proposal.imageUrl && (
           <div
             className="relative w-full"
-            style={{ height: "0", paddingBottom: "30%" }}
+            style={{ height: '0', paddingBottom: '30%' }}
           >
             <Image
               src={proposal.imageUrl}
@@ -97,5 +97,5 @@ export function ProposalCard({
         <DeployPrizeButton prizeId={proposal.id} />
       </CardFooter>
     </Card>
-  );
+  )
 }

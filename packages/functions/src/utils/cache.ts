@@ -1,36 +1,36 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import {
   DynamoDBDocumentClient,
   QueryCommand,
   UpdateCommand,
-} from "@aws-sdk/lib-dynamodb";
-import { Resource } from "sst";
+} from '@aws-sdk/lib-dynamodb'
+import { Resource } from 'sst'
 export class Cache {
-  client;
+  client
   constructor() {
-    this.client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
+    this.client = DynamoDBDocumentClient.from(new DynamoDBClient({}))
   }
 
   async get(key: string) {
     const res = await this.client.send(
       new QueryCommand({
         TableName: Resource.CacheTable.name,
-        KeyConditionExpression: "#K = :key",
+        KeyConditionExpression: '#K = :key',
         ExpressionAttributeNames: {
-          "#K": "key",
+          '#K': 'key',
         },
         ExpressionAttributeValues: {
-          ":key": key,
+          ':key': key,
         },
         Limit: 1,
-      })
-    );
-    return res.Items?.[0] ? (res.Items[0].value as string) : undefined;
+      }),
+    )
+    return res.Items?.[0] ? (res.Items[0].value as string) : undefined
   }
 
   async set(key: string, value: string, expireAt: number) {
-    const expireAtUnixEpoch = Math.floor((Date.now() + expireAt * 1000) / 1000);
-    const res = await this.client.send(
+    const expireAtUnixEpoch = Math.floor((Date.now() + expireAt * 1000) / 1000)
+    await this.client.send(
       new UpdateCommand({
         TableName: Resource.CacheTable.name,
 
@@ -38,14 +38,14 @@ export class Cache {
           key,
         },
         ExpressionAttributeNames: {
-          "#v": "value", // Use #k as a placeholder for the reserved word 'key'
+          '#v': 'value', // Use #k as a placeholder for the reserved word 'key'
         },
-        UpdateExpression: "SET #v = :c, expireAt = :e",
+        UpdateExpression: 'SET #v = :c, expireAt = :e',
         ExpressionAttributeValues: {
-          ":c": value,
-          ":e": expireAtUnixEpoch,
+          ':c': value,
+          ':e': expireAtUnixEpoch,
         },
-      })
-    );
+      }),
+    )
   }
 }

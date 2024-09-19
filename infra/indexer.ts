@@ -1,28 +1,28 @@
-import { eventBus } from "./events";
+import { eventBus } from './events'
 import {
   CHAIN_ID,
   INDEXER_PRIZE_FACTORY_STARTBLOCK,
   INDEXER_PRIZE_STARTBLOCK,
   INDEXER_RPC_URL,
-} from "./secrets";
-import { vpc } from "./vpc";
+} from './secrets'
+import { vpc } from './vpc'
 
 export const indexerCluster = new sst.aws.Cluster(
-  "IndexerSmartContractsCluster",
+  'IndexerSmartContractsCluster',
   {
     vpc: vpc,
-  }
-);
+  },
+)
 
-indexerCluster.addService("IndexerService", {
+indexerCluster.addService('IndexerService', {
   image: {
-    dockerfile: "Dockerfile.indexer",
+    dockerfile: 'Dockerfile.indexer',
   },
   public: {
-    ports: [{ listen: "80/http" }],
+    ports: [{ listen: '80/http' }],
   },
   dev: {
-    command: "pnpm dev:indexer",
+    command: 'pnpm dev:indexer',
   },
   environment: {
     PONDER_RPC_URL: INDEXER_RPC_URL.value,
@@ -37,4 +37,4 @@ indexerCluster.addService("IndexerService", {
     INDEXER_PRIZE_FACTORY_STARTBLOCK,
     INDEXER_PRIZE_STARTBLOCK,
   ],
-});
+})

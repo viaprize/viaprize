@@ -1,15 +1,15 @@
-import { ProposalCard } from "@/components/admin/proposal-card";
-import { auth } from "@/server/auth";
-import { api } from "@/trpc/server";
+import { ProposalCard } from '@/components/admin/proposal-card'
+import { auth } from '@/server/auth'
+import { api } from '@/trpc/server'
 export default async function DashBoardlayout() {
-  const session = await auth();
+  const session = await auth()
   if (!session) {
-    return "You need to be logged in to access this page";
+    return 'You need to be logged in to access this page'
   }
   if (!session.user.isAdmin) {
-    return "You need to be an admin to access this page";
+    return 'You need to be an admin to access this page'
   }
-  const proposals = await api.prizes.getPendingPrizes();
+  const proposals = await api.prizes.getPendingPrizes()
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
@@ -19,5 +19,5 @@ export default async function DashBoardlayout() {
         ))}
       </div>
     </div>
-  );
+  )
 }
