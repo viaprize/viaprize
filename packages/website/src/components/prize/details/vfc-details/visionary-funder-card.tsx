@@ -15,7 +15,7 @@ export default function VisionaryFunderCard() {
       </div>
 
       <div className="text-muted-foreground text-lg font-normal mt-5 mb-2">
-        Funders
+        Funders (1)
       </div>
 
       <div className="flex items-center justify-between mb-2">
@@ -26,7 +26,7 @@ export default function VisionaryFunderCard() {
           </Avatar>
           <div>John Doe</div>
         </div>
-        <div className="text-primary font-semibold">$1000</div>
+        <div className="text-primary">$1000</div>
       </div>
     </Card>
   )
