@@ -1,5 +1,5 @@
-import FetchActivities from '@/components/prize/explore/activity-details/fetch-activities'
-import FetchExploreCard from '@/components/prize/explore/card-details/fetch-explore-card'
+import FetchActivities from "@/components/prize/explore/activity-details/fetch-activities";
+import FetchExploreCard from "@/components/prize/explore/card-details/fetch-explore-card";
 
 export default async function ExplorePage() {
   return (
@@ -11,5 +11,5 @@ export default async function ExplorePage() {
         <FetchActivities />
       </div>
     </div>
-  )
+  );
 }
