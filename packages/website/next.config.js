@@ -38,6 +38,11 @@ const config = {
         pathname: "/**",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "images.placeholders.dev",
+        port: "",
+      },
     ],
   },
 };
