@@ -1,4 +1,4 @@
-import { Badge } from '@viaprize/ui/badge';
+import { Badge } from '@viaprize/ui/badge'
 import React from 'react'
 
 export default function AboutContent() {
@@ -19,5 +19,5 @@ export default function AboutContent() {
         </div>
       </div>
     </div>
-  );
+  )
 }

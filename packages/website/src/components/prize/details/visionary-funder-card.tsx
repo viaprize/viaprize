@@ -1,7 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Card, CardContent, CardHeader, CardTitle } from '@viaprize/ui/card'
 
-
 export default function VisionaryFunderCard() {
   return (
     <Card className="px-3 py-4">
@@ -30,5 +29,5 @@ export default function VisionaryFunderCard() {
         <div className="text-primary font-semibold">$1000</div>
       </div>
     </Card>
-  );
+  )
 }

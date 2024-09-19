@@ -13,7 +13,7 @@ export default function PrizeDetails() {
             <IconArrowLeft className="mr-1" size={20} /> Back
           </div>
           <DetailHeader />
-          <Separator className='my-2'/>
+          <Separator className="my-2" />
           <AboutContent />
         </div>
       </div>

@@ -1,32 +1,32 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@viaprize/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Badge } from "@viaprize/ui/badge";
-import { Card } from "@viaprize/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Badge } from '@viaprize/ui/badge'
+import { Button } from '@viaprize/ui/button'
+import { Card } from '@viaprize/ui/card'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from 'next/image'
+import { useState } from 'react'
 
 const images = [
-  "https://picsum.photos/500/300?random=1",
-  "https://picsum.photos/500/300?random=2",
-  "https://picsum.photos/500/300?random=3",
-  "https://picsum.photos/500/300?random=4",
-];
+  'https://picsum.photos/500/300?random=1',
+  'https://picsum.photos/500/300?random=2',
+  'https://picsum.photos/500/300?random=3',
+  'https://picsum.photos/500/300?random=4',
+]
 
 export default function DetailsHeader() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   const nextImage = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length)
+  }
 
   const prevImage = () => {
     setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + images.length) % images.length
-    );
-  };
+      (prevIndex) => (prevIndex - 1 + images.length) % images.length,
+    )
+  }
 
   return (
     <div className="p-3 w-full flex space-x-5">
@@ -34,7 +34,7 @@ export default function DetailsHeader() {
         <Image
           src={
             images[currentIndex] ||
-            "https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image"
+            'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
           }
           width={500}
           height={500}
@@ -58,11 +58,11 @@ export default function DetailsHeader() {
           <ChevronRight className="h-4 w-4" />
         </Button>
         <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2">
-          {images.map((_, index) => (
+          {images.map((image, index) => (
             <div
-              key={index}
+              key={image} // Use image URL as the key
               className={`h-2 w-2 rounded-full ${
-                index === currentIndex ? "bg-white" : "bg-white/50"
+                index === currentIndex ? 'bg-white' : 'bg-white/50'
               }`}
             />
           ))}
@@ -72,27 +72,23 @@ export default function DetailsHeader() {
         <h1 className="text-3xl">
           Building a new Construction Site Construction Website All
         </h1>
-            <h3 className="text-lg text-primary flex items-center mt-1">
-              <Avatar className="mr-2">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              John Doe
-            </h3>
-            <Badge
-              variant="secondary"
-              className="mt-3 px-2 py-1 text-md text-primary"
-            >
-              Submission Open
-            </Badge>
+        <h3 className="text-lg text-primary flex items-center mt-1">
+          <Avatar className="mr-2">
+            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          John Doe
+        </h3>
+        <Badge
+          variant="secondary"
+          className="mt-3 px-2 py-1 text-md text-primary"
+        >
+          Submission Open
+        </Badge>
 
-            <div className="text-3xl text-primary font-medium mt-5">$1000</div>
-            <div className="text-xl">Total Raised</div>
-         
+        <div className="text-3xl text-primary font-medium mt-5">$1000</div>
+        <div className="text-xl">Total Raised</div>
       </div>
     </div>
-  );
+  )
 }
