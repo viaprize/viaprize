@@ -5,7 +5,7 @@ import React from 'react'
 
 export default function About() {
   return (
-    <div className="px-7 py-9 space-y-20 bg-background">
+    <div className="px-7 py-20 space-y-20 bg-background">
       <ListStory />
       <TeamContent />
       <StayTuned />

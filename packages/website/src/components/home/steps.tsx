@@ -2,6 +2,7 @@
 
 import { cn } from '@viaprize/ui'
 import { Card } from '@viaprize/ui/card'
+import { CheckCircle2, Circle } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 const steps = [
@@ -17,6 +18,7 @@ const steps = [
     ),
     image:
       'https://images.placeholders.dev/?width=350&height=100&text=create_prize',
+    icon: <Circle className="w-6 h-6" />,
   },
   {
     title: 'Crowdfund a Prize',
@@ -80,41 +82,66 @@ export default function StepsForFunders() {
 
       {/* Steps */}
       <div className="w-full grid md:grid-cols-3 gap-4">
-        {steps.map((step, index) => (
-          <Card
-            key={step.title}
-            className={cn(
-              'flex flex-col w-full border rounded-lg p-4 cursor-pointer',
-              index === currentStep ? 'border-primary' : 'border-none',
-            )}
-            onClick={() => handleStepClick(index)}
-          >
-            {/* Progress Bar */}
-            <div className="w-full h-2 relative bg-gray-300 rounded-full overflow-hidden mb-2">
-              <div
-                key={currentStep === index ? currentStep : undefined}
-                className={`absolute h-full inset-0 rounded-full bg-primary ${
-                  index === currentStep ? 'progress-bar' : ''
-                }`}
-                style={{
-                  width: index < currentStep ? '100%' : '0%',
-                }}
-              />
-            </div>
-
-            {/* Step Title */}
-            <h3
-              className={`text-lg font-semibold ${
-                index === currentStep ? 'text-primary' : 'text-gray-700'
-              }`}
+        {steps.map((step, index) => {
+          const isActive = index === currentStep
+          const isCompleted = index < currentStep
+          return (
+            <Card
+              key={step.title}
+              className={cn(
+                'flex flex-col w-full p-4 cursor-pointer transition-all duration-300 hover:shadow-md',
+                isActive ? 'border-primary shadow-lg' : 'border-muted',
+                isCompleted ? 'bg-primary/5' : 'bg-background',
+              )}
+              onClick={() => handleStepClick(index)}
             >
-              {step.title}
-            </h3>
+              <div className="w-full h-2 relative bg-gray-300 rounded-full overflow-hidden mb-2">
+                <div
+                  key={currentStep === index ? currentStep : undefined}
+                  className={`absolute h-full inset-0 rounded-full bg-primary ${
+                    index === currentStep ? 'progress-bar' : ''
+                  }`}
+                  style={{
+                    width: index < currentStep ? '100%' : '0%',
+                  }}
+                />
+              </div>
+              <div className="flex items-center space-x-4">
+                {/* Icon */}
+                {/* <div
+                  className={cn(
+                    "w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300",
+                    isActive
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted",
+                    isCompleted ? "bg-primary text-primary-foreground" : ""
+                  )}
+                >
+                  {isCompleted ? (
+                    <CheckCircle2 className="w-6 h-6" />
+                  ) : (
+                    step.icon || <Circle className="w-6 h-6" />
+                  )}
+                </div> */}
 
-            {/* Step Description */}
-            <div className="mt-2 text-sm text-gray-600">{step.description}</div>
-          </Card>
-        ))}
+                {/* Title and Description */}
+                <div className="flex-grow">
+                  <h3
+                    className={cn(
+                      'text-lg font-semibold transition-colors duration-300',
+                      isActive ? 'text-primary' : 'text-foreground',
+                    )}
+                  >
+                    {step.title}
+                  </h3>
+                  <div className="mt-1 text-sm text-muted-foreground">
+                    {step.description}
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )
+        })}
       </div>
 
       {/* Image */}
