@@ -118,9 +118,16 @@ export class Prizes {
         .from(prizes)
         .where(eq(prizes.id, prizeId))
         .limit(1)
+
       if (!prize) {
-        throw new Error('Prize not found')
+        console.error('Prize not found')
+        return
       }
+      if (prize.proposalStage === 'APPROVED') {
+        console.error(new Error('Prize already approved'))
+        return
+      }
+
       console.log(prize)
       if (prize.proposalStage !== 'APPROVED_BUT_NOT_DEPLOYED') {
         throw new Error('Prize not in correct stage')

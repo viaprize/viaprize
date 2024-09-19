@@ -1,5 +1,6 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb'
 import {
+  DeleteCommand,
   DynamoDBDocumentClient,
   QueryCommand,
   UpdateCommand,
@@ -28,7 +29,25 @@ export class Cache {
     return res.Items?.[0] ? (res.Items[0].value as string) : undefined
   }
 
+  async delete(key: string) {
+    console.log('Deleting cache for key', key)
+
+    await this.client.send(
+      new DeleteCommand({
+        TableName: Resource.CacheTable.name, // Ensure this is your table name
+
+        Key: {
+          key, // Primary key to identify the item to delete
+        },
+      }),
+    )
+
+    console.log(`Cache for key ${key} deleted successfully.`)
+  }
+
   async set(key: string, value: string, expireAt: number) {
+    console.log('Setting cache', key, value, expireAt)
+    console.log('Value', value, 'Valuee', value.toString())
     const expireAtUnixEpoch = Math.floor((Date.now() + expireAt * 1000) / 1000)
     await this.client.send(
       new UpdateCommand({

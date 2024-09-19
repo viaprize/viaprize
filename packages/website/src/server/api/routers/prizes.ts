@@ -75,10 +75,8 @@ export const prizeRouter = createTRPCRouter({
       if (txHash) {
         await ctx.viaprize.prizes.approvePrizeProposal(input.prizeId)
       }
-      await bus.publish(Resource.EventBus.name, Events.Cache.Set, {
+      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
-        value: '',
-        type: 'dynamodb',
       })
       return txHash
     }),
@@ -131,10 +129,8 @@ export const prizeRouter = createTRPCRouter({
         proposerAddress: ctx.session.user.walletAddress,
       })
 
-      await bus.publish(Resource.EventBus.name, Events.Cache.Set, {
+      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
-        value: '',
-        type: 'dynamodb',
       })
 
       return prizeId

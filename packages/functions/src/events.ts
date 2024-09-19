@@ -17,8 +17,15 @@ const viaprize = new Viaprize({
   },
 })
 
+const cache = new Cache()
+
 export const handler = bus.subscriber(
-  [Events.Wallet.ScheduleTransaction, Events.Prize.Approve, Events.Cache.Set],
+  [
+    Events.Wallet.ScheduleTransaction,
+    Events.Prize.Approve,
+    Events.Cache.Set,
+    Events.Cache.Delete,
+  ],
   async (event) => {
     switch (event.type) {
       case 'wallet.transaction':
@@ -30,30 +37,20 @@ export const handler = bus.subscriber(
           event.properties.prizeId,
           event.properties.contractAddress,
         )
-        await bus.publish(Resource.EventBus.name, Events.Cache.Set, {
+        await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
           key: viaprize.prizes.getCacheTag('PENDING_PRIZES'),
-          value: '',
-          type: 'dynamodb',
         })
-        await bus.publish(Resource.EventBus.name, Events.Cache.Set, {
+        await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
           key: viaprize.prizes.getCacheTag('DEPLOYED_PRIZES'),
-          value: '',
-          type: 'dynamodb',
         })
-        await bus.publish(Resource.EventBus.name, Events.Cache.Set, {
-          key: viaprize.prizes.getCacheTag(
-            'ACTIVE_PRIZES_COUNT',
-            event.properties.prizeId,
-          ),
-          value: '',
-          type: 'dynamodb',
+        await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+          key: viaprize.prizes.getCacheTag('ACTIVE_PRIZES_COUNT'),
         })
         break
       case 'cache.set':
         console.log('Processing cache set event')
         switch (event.properties.type) {
           case 'dynamodb': {
-            const cache = new Cache()
             await cache.set(
               event.properties.key,
               event.properties.value,
@@ -62,6 +59,10 @@ export const handler = bus.subscriber(
             break
           }
         }
+        break
+      case 'cache.delete':
+        console.log('Processing cache delete event')
+        await cache.delete(event.properties.key)
         break
     }
   },
