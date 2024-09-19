@@ -1,10 +1,10 @@
-import FilterSort from "@/components/common/filter-sort";
-import { api } from "@/trpc/server";
-import ExploreCard from "./explore-card";
+import FilterSort from '@/components/common/filter-sort'
+import { api } from '@/trpc/server'
+import ExploreCard from './explore-card'
 
 export default async function FetchExploreCard() {
-  const activePrizes = await api.prizes.getActivePrizes();
-  const deployedPrizes = await api.prizes.getDeployedPrizes();
+  const activePrizes = await api.prizes.getActivePrizes()
+  const deployedPrizes = await api.prizes.getDeployedPrizes()
   return (
     <section>
       <div className="flex w-full justify-between items-center p-6">
@@ -15,9 +15,9 @@ export default async function FetchExploreCard() {
         {deployedPrizes?.map((prize) => (
           <ExploreCard
             funds={prize.funds ?? 0}
-            imageUrl={prize.imageUrl ?? ""}
+            imageUrl={prize.imageUrl ?? ''}
             title={prize.title}
-            prizeStage={prize.stage ?? "NOT_STARTED"}
+            prizeStage={prize.stage ?? 'NOT_STARTED'}
             numberOfContestants={prize.numberOfContestants ?? 0}
             numberOfFunders={prize.numberOfFunders ?? 0}
             numberOfComments={prize.numberOfComments ?? 0}
@@ -26,5 +26,5 @@ export default async function FetchExploreCard() {
         ))}
       </section>
     </section>
-  );
+  )
 }
