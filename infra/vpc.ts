@@ -1,6 +1,4 @@
 export const vpc =
-  $app.stage === "prod"
-    ? new sst.aws.Vpc("ViaprizeVPC", {
-        nat: "managed",
-      })
-    : sst.aws.Vpc.get("ViaprizeVPC", "vpc-0d3be7f08ac4bc049");
+  $app.stage === "production"
+    ? new sst.aws.Vpc("ViaprizeVpcV2")
+    : sst.aws.Vpc.get("ViaprizeVpcV2", "vpc-0ee4b214bcf13a942");

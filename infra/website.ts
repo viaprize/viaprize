@@ -1,3 +1,5 @@
+import { cacheTable } from "./cache";
+import { eventBus } from "./events";
 import {
   AUTH_GITHUB_ID,
   AUTH_GITHUB_SECRET,
@@ -32,6 +34,8 @@ export const website = new sst.aws.Nextjs("website", {
     RPC_URL,
     WALLET_API_KEY,
     imageBucket,
+    eventBus,
+    cacheTable,
   ],
   environment: {
     AUTH_SECRET: AUTH_SECRET.value,

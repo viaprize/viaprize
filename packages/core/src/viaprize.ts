@@ -51,4 +51,16 @@ export const Events = {
       })
     ),
   },
+  Cache: {
+    Set: defineEvent(
+      "cache.set",
+      z.object({
+        key: z.string(),
+        value: z.string(),
+        ttl: z.number().optional(),
+        type: z.enum(["next", "dynamodb"]).default("dynamodb"),
+      })
+    ),
+    Delete: defineEvent("cache.delete", z.object({ key: z.string() })),
+  },
 };

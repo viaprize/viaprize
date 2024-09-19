@@ -14,6 +14,13 @@ export class Prizes {
     this.db = viaprizeDb.database;
     this.chainId = chainId;
   }
+  CACHE_TAGS = {
+    PENDING_PRIZES: "pending-prizes",
+  };
+
+  getCacheTag(tag: keyof typeof Prizes.prototype.CACHE_TAGS, suffix?: string) {
+    return `${this.CACHE_TAGS[tag]}${suffix ? `:${suffix}` : ""}`;
+  }
 
   async getPendingPrizes() {
     const proposals = await this.db

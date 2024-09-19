@@ -1,15 +1,17 @@
 packages:
   # all packages in subdirs of packages/ and components/
-  - 'packages/**'
+  - "packages/**"
   # exclude packages that are inside test directories
-  - '!**/test/**'
-  - '!**/__tests__/**'
-
+  - "!**/test/**"
+  - "!**/__tests__/**"
 
 catalog:
   typescript: ^5.5.3
   zod: ^3.23.8
   "framer-motion": "^11.3.27"
+  ioredis: ^5.4.1
+  "@aws-sdk/lib-dynamodb": ^3.654.0
+  "@aws-sdk/client-dynamodb": ^3.654.0
 
 catalogs:
   react18:

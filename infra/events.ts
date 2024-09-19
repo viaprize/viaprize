@@ -1,3 +1,4 @@
+import { cacheTable } from "./cache";
 import { schedulerRole } from "./scheduler";
 import { CHAIN_ID, DATABASE_URL } from "./secrets";
 
@@ -20,5 +21,5 @@ eventBus.subscribe({
     DATABASE_URL: DATABASE_URL.value,
     CHAIN_ID: CHAIN_ID.value,
   },
-  link: [schedulerRole, DATABASE_URL, CHAIN_ID],
+  link: [schedulerRole, DATABASE_URL, CHAIN_ID, eventBus, cacheTable],
 });

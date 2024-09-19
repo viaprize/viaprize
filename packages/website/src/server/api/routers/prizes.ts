@@ -1,10 +1,22 @@
 import { TRPCError } from "@trpc/server";
+import { Events } from "@viaprize/core/viaprize";
+import { Resource } from "sst";
+import { bus } from "sst/aws/bus";
 import { z } from "zod";
-import { adminProcedure, createTRPCRouter, protectedProcedure } from "../trpc";
+
+import {
+  adminProcedure,
+  createTRPCRouter,
+  protectedProcedure,
+  withCache,
+} from "../trpc";
 export const prizeRouter = createTRPCRouter({
   getPendingPrizes: adminProcedure.query(async ({ ctx }) => {
-    const prizes = await ctx.viaprize.prizes.getPendingPrizes();
-
+    const prizes = await withCache(
+      ctx,
+      ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
+      async () => await ctx.viaprize.prizes.getPendingPrizes()
+    );
     return prizes;
   }),
   deployPrize: adminProcedure
@@ -47,6 +59,11 @@ export const prizeRouter = createTRPCRouter({
       if (txHash) {
         await ctx.viaprize.prizes.approvePrizeProposal(input.prizeId);
       }
+      await bus.publish(Resource.EventBus.name, Events.Cache.Set, {
+        key: ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
+        value: "",
+        type: "dynamodb",
+      });
       return txHash;
     }),
   createPrize: protectedProcedure
@@ -96,6 +113,12 @@ export const prizeRouter = createTRPCRouter({
         votingDuration: input.votingDuration,
         votingStartDate: input.votingStartDate,
         proposerAddress: ctx.session.user.walletAddress,
+      });
+
+      await bus.publish(Resource.EventBus.name, Events.Cache.Set, {
+        key: ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
+        value: "",
+        type: "dynamodb",
       });
 
       return prizeId;

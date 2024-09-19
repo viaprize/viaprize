@@ -7,11 +7,14 @@
  * need to use are documented accordingly near the end.
  */
 import { TRPCError, initTRPC } from "@trpc/server";
+import { Events } from "@viaprize/core/viaprize";
+import { Resource } from "sst";
+import { bus } from "sst/aws/bus";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { auth } from "../auth";
+import { Cache } from "../cache";
 import { viaprize } from "../viaprize";
-
 /**
  * 1. CONTEXT
  *
@@ -24,15 +27,56 @@ import { viaprize } from "../viaprize";
  *
  * @see https://trpc.io/docs/server/context
  */
+
+type CacheReturn = {
+  key: string | undefined;
+  value: string | undefined | any;
+};
+
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const session = await auth();
+  const cache: CacheReturn = {
+    key: undefined,
+    value: undefined,
+  };
+  const cacheClient = new Cache();
 
   return {
     ...opts,
     session,
     viaprize,
+    cache,
+    cacheClient,
   };
 };
+
+type CacheableFunction<T> = () => Promise<T>;
+
+export async function withCache<T>(
+  ctx: Awaited<ReturnType<typeof createTRPCContext>>,
+  tag: string,
+  cacheableFunction: CacheableFunction<T>,
+  expireAt = 3600
+): Promise<T | null> {
+  // Try to get the value from the cache
+  const value = await ctx.cacheClient.get(tag);
+
+  if (value) {
+    // If value exists in cache, parse and return it
+    return JSON.parse(value) as T;
+  }
+
+  // No cache hit, call the provided function
+  const result = await cacheableFunction();
+
+  await bus.publish(Resource.EventBus.name, Events.Cache.Set, {
+    key: tag,
+    value: JSON.stringify(result),
+    ttl: expireAt,
+    type: "dynamodb",
+  });
+  return result;
+}
 
 /**
  * 2. INITIALIZATION
@@ -98,6 +142,29 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 
   return result;
 });
+
+export const generalCacheMiddleware = t.middleware(
+  async ({ ctx, getRawInput, input, meta, next, path, type }) => {
+    if (type !== "query") {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Cache middleware only works with queries",
+      });
+    }
+
+    const key = `${path}`;
+    const value = await ctx.cacheClient.get(key);
+
+    return next({
+      ctx: {
+        cache: {
+          key,
+          value: value,
+        },
+      },
+    });
+  }
+);
 
 /**
  * Public (unauthenticated) procedure

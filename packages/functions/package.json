@@ -4,9 +4,11 @@
   "dependencies": {
     "@aws-sdk/client-scheduler": "^3.651.1",
     "@viaprize/core": "workspace:*",
-    "sst": "*",
+    "sst": "3.1.18",
     "valibot": "^0.42.0",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "@aws-sdk/lib-dynamodb": "catalog:",
+    "@aws-sdk/client-dynamodb": "catalog:"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.137"

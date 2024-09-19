@@ -21,7 +21,9 @@ export default createConfig({
         CONTRACT_CONSTANTS_PER_CHAIN[
           Number.parseInt(process.env.CHAIN_ID ?? "10") as ValidChainIDs
         ].PRIZE_FACTORY_V2_ADDRESS,
-      startBlock: 125542128,
+      startBlock: Number.parseInt(
+        process.env.INDEXER_PRIZE_FACTORY_STARTBLOCK ?? "125566697"
+      ),
     },
     PrizeV2: {
       network: "main",
@@ -36,7 +38,9 @@ export default createConfig({
         ),
         parameter: "viaPrizeAddress",
       },
-      startBlock: 125542128,
+      startBlock: Number.parseInt(
+        process.env.INDEXER_PRIZE_STARTBLOCK ?? "125566697"
+      ),
     },
   },
 });
