@@ -1,4 +1,4 @@
-import { CreatePrizeForm } from '@/components/prize/create/create-prize-form'
+import CreatePrizeForm from '@/components/prize/create/create-prize-form'
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Resource } from 'sst'
@@ -16,5 +16,9 @@ export default async function ContestForm() {
     command,
   )
 
-  return <CreatePrizeForm imageUploadUrl={imageUrl} />
+  return (
+    <section className="container gird place-content-center w-full h-full">
+      <CreatePrizeForm imageUploadUrl={imageUrl} />
+    </section>
+  )
 }

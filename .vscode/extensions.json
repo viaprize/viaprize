@@ -1,6 +1,8 @@
 {
   "recommendations": [
     "yzhang.markdown-all-in-one",
-    "DavidAnson.vscode-markdownlint"
+    "DavidAnson.vscode-markdownlint",
+    "biomejs.biome",
+    "bradlc.vscode-tailwindcss"
   ]
 }

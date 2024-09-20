@@ -2,7 +2,6 @@ import { IconPresentation } from '@tabler/icons-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Badge } from '@viaprize/ui/badge'
 import { Button } from '@viaprize/ui/button'
-import { Card } from '@viaprize/ui/card'
 import Image from 'next/image'
 import DonateCard from './donate-card'
 

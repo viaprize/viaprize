@@ -25,22 +25,10 @@ export class Prizes {
   }
 
   async getPendingPrizes() {
-    const proposals = await this.db
-      .select({
-        id: prizes.id,
-        title: prizes.title,
-        description: prizes.description,
-        imageUrl: prizes.imageUrl,
-        submissionStartDate: prizes.startSubmissionDate,
-        submissionDuration: prizes.submissionDurationInMinutes,
-        votingStartDate: prizes.startVotingDate,
-        votingDuration: prizes.votingDurationInMinutes,
-        proposerAddress: prizes.proposerAddress,
-        authorUsername: prizes.authorUsername,
-      })
-      .from(prizes)
-      .where(eq(prizes.proposalStage, 'PENDING'))
-      .orderBy(desc(prizes.createdAt))
+    const proposals = await this.db.query.prizes.findMany({
+      where: eq(prizes.proposalStage, 'PENDING'),
+      orderBy: desc(prizes.createdAt),
+    })
 
     return proposals
   }
@@ -54,50 +42,17 @@ export class Prizes {
   }
 
   async getDeployedPrizes() {
-    const deployedPrizes = await this.db
-      .select({
-        id: prizes.id,
-        title: prizes.title,
-        description: prizes.description,
-        imageUrl: prizes.imageUrl,
-        funds: prizes.funds,
-        submissionStartDate: prizes.startSubmissionDate,
-        submissionDuration: prizes.submissionDurationInMinutes,
-        votingStartDate: prizes.startVotingDate,
-        votingDuration: prizes.votingDurationInMinutes,
-        proposerAddress: prizes.proposerAddress,
-        numberOfContestants: prizes.numberOfContestants,
-        numberOfFunders: prizes.numberOfFunders,
-        numberOfComments: prizes.numberOfComments,
-        numberOfSubmissions: prizes.numberOfSubmissions,
-        stage: prizes.stage,
-      })
-      .from(prizes)
-      .where(eq(prizes.proposalStage, 'APPROVED'))
-      .orderBy(desc(prizes.createdAt))
-
+    const deployedPrizes = await this.db.query.prizes.findMany({
+      where: eq(prizes.proposalStage, 'APPROVED'),
+      orderBy: desc(prizes.createdAt),
+    })
     return deployedPrizes
   }
 
   async getPrizeById(prizeId: string) {
-    const [prize] = await this.db
-      .select({
-        id: prizes.id,
-        title: prizes.title,
-        description: prizes.description,
-        imageUrl: prizes.imageUrl,
-        submissionStartDate: prizes.startSubmissionDate,
-        submissionDuration: prizes.submissionDurationInMinutes,
-        votingStartDate: prizes.startVotingDate,
-        votingDuration: prizes.votingDurationInMinutes,
-        proposerAddress: prizes.proposerAddress,
-        authorUsername: prizes.authorUsername,
-        authorFeePercentage: prizes.authorFeePercentage,
-        platformFeePercentage: prizes.platformFeePercentage,
-      })
-      .from(prizes)
-      .where(eq(prizes.id, prizeId))
-
+    const prize = await this.db.query.prizes.findFirst({
+      where: eq(prizes.id, prizeId),
+    })
     return prize
   }
 
@@ -111,13 +66,9 @@ export class Prizes {
 
   async approveDeployedPrize(prizeId: string, contractAddress: string) {
     await this.db.transaction(async (trx) => {
-      const [prize] = await trx
-        .select({
-          proposalStage: prizes.proposalStage,
-        })
-        .from(prizes)
-        .where(eq(prizes.id, prizeId))
-        .limit(1)
+      const prize = await trx.query.prizes.findFirst({
+        where: eq(prizes.id, prizeId),
+      })
 
       if (!prize) {
         console.error('Prize not found')
@@ -197,13 +148,19 @@ export class Prizes {
     const slug = stringToSlug(data.title)
     const randomId = nanoid(3)
     const prizeId = await this.db.transaction(async (trx) => {
-      const [slugExists] = await trx
-        .select({
-          slug: prizes.slug,
-        })
-        .from(prizes)
-        .where(eq(prizes.slug, slug))
-        .limit(1)
+      // const [slugExists] = await trx
+      //   .select({
+      //     slug: prizes.slug,
+      //   })
+      //   .from(prizes)
+      //   .where(eq(prizes.slug, slug))
+      //   .limit(1);
+      const slugExists = await trx.query.prizes.findFirst({
+        where: eq(prizes.slug, slug),
+        columns: {
+          slug: true,
+        },
+      })
       const [prize] = await trx
         .insert(prizes)
         .values({
@@ -217,12 +174,14 @@ export class Prizes {
           votingDurationInMinutes: data.votingDuration,
           proposerAddress: data.proposerAddress,
           startSubmissionDate: data.submissionStartDate,
-        } as any)
-
+        })
         .returning({
           id: prizes.id,
         })
-      return prize?.id
+      if (!prize) {
+        throw new Error('Prize not created in database')
+      }
+      return prize.id
     })
 
     return prizeId

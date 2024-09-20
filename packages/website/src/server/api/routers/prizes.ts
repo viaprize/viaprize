@@ -20,6 +20,16 @@ export const prizeRouter = createTRPCRouter({
     )
     return count ?? 0
   }),
+  getPrizeById: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const prize = await withCache(
+        ctx,
+        `PRIZE_BY_ID_${input}`,
+        async () => await ctx.viaprize.prizes.getPrizeById(input),
+      )
+      return prize
+    }),
   getDeployedPrizes: publicProcedure.query(async ({ ctx }) => {
     const prizes = await withCache(
       ctx,
