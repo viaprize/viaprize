@@ -61,6 +61,9 @@ importers:
       '@electric-sql/pglite':
         specifier: ^0.2.4
         version: 0.2.4
+      add:
+        specifier: ^2.0.6
+        version: 2.0.6
       drizzle-orm:
         specifier: ^0.33.0
         version: 0.33.0(@electric-sql/pglite@0.2.4)(@opentelemetry/api@1.9.0)(@types/react@18.3.5)(better-sqlite3@11.3.0)(kysely@0.26.3)(pg@8.13.0)(postgres@3.4.4)(react@18.3.1)
@@ -73,6 +76,9 @@ importers:
       next-auth:
         specifier: ^4.24.7
         version: 4.24.7(next@14.2.7(@opentelemetry/api@1.9.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      pnpm:
+        specifier: ^9.10.0
+        version: 9.10.0
       postgres:
         specifier: ^3.4.4
         version: 3.4.4
