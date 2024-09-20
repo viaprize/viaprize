@@ -1,25 +1,12 @@
 {
   "markdown.extension.toc.levels": "2..6",
   "cSpell.words": ["viaprize"],
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
+  "editor.defaultFormatter": "biomejs.biome",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "explicit"
-  },
-
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
   },
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml"
