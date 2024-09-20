@@ -1,34 +1,42 @@
-import { eventBus } from './events'
+import { eventBus } from "./events";
 import {
   CHAIN_ID,
+  DATABASE_URL,
   INDEXER_PRIZE_FACTORY_STARTBLOCK,
   INDEXER_PRIZE_STARTBLOCK,
   INDEXER_RPC_URL,
-} from './secrets'
-import { vpc } from './vpc'
+  RPC_URL,
+  WALLET_API_KEY,
+  WALLET_PAYMENT_INFRA_API,
+} from "./secrets";
+import { vpc } from "./vpc";
 
 export const indexerCluster = new sst.aws.Cluster(
-  'IndexerSmartContractsCluster',
+  "IndexerSmartContractsCluster",
   {
     vpc: vpc,
-  },
-)
+  }
+);
 
-indexerCluster.addService('IndexerService', {
+indexerCluster.addService("IndexerService", {
   image: {
-    dockerfile: 'Dockerfile.indexer',
+    dockerfile: "Dockerfile.indexer",
   },
   public: {
-    ports: [{ listen: '80/http' }],
+    ports: [{ listen: "80/http" }],
   },
   dev: {
-    command: 'pnpm dev:indexer',
+    command: "pnpm dev:indexer",
   },
   environment: {
     PONDER_RPC_URL: INDEXER_RPC_URL.value,
     CHAIN_ID: CHAIN_ID.value,
     INDEXER_PRIZE_FACTORY_STARTBLOCK: INDEXER_PRIZE_FACTORY_STARTBLOCK.value,
     INDEXER_PRIZE_STARTBLOCK: INDEXER_PRIZE_STARTBLOCK.value,
+    DATABASE_URL: DATABASE_URL.value,
+    WALLET_PAYMENT_INFRA_API: WALLET_PAYMENT_INFRA_API.value,
+    WALLET_API_KEY: WALLET_API_KEY.value,
+    RPC_URL: RPC_URL.value,
   },
   link: [
     eventBus,
@@ -36,5 +44,9 @@ indexerCluster.addService('IndexerService', {
     CHAIN_ID,
     INDEXER_PRIZE_FACTORY_STARTBLOCK,
     INDEXER_PRIZE_STARTBLOCK,
+    DATABASE_URL,
+    WALLET_PAYMENT_INFRA_API,
+    WALLET_API_KEY,
+    RPC_URL,
   ],
-})
+});

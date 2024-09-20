@@ -71,6 +71,13 @@
       "when": 1726734554103,
       "tag": "0009_conscious_random",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1726824225342,
+      "tag": "0010_friendly_dreadnoughts",
+      "breakpoints": true
     }
   ]
 }

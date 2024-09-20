@@ -138,12 +138,18 @@ importers:
       '@ponder/core':
         specifier: ^0.5.24
         version: 0.5.24(@electric-sql/pglite@0.2.4)(@opentelemetry/api@1.9.0)(@types/node@20.16.3)(@types/react@18.3.5)(bufferutil@4.0.8)(hono@4.6.2)(postgres@3.4.4)(terser@5.31.6)(typescript@5.3.3)(utf-8-validate@5.0.10)(viem@1.21.4(bufferutil@4.0.8)(typescript@5.3.3)(utf-8-validate@5.0.10)(zod@3.23.8))(zod@3.23.8)
+      '@t3-oss/env-core':
+        specifier: ^0.11.1
+        version: 0.11.1(typescript@5.3.3)(zod@3.23.8)
       hono:
         specifier: ^4.5.0
         version: 4.6.2
       viem:
         specifier: ^1.19.3
         version: 1.21.4(bufferutil@4.0.8)(typescript@5.3.3)(utf-8-validate@5.0.10)(zod@3.23.8)
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@types/node':
         specifier: ^20.9.0
@@ -4681,6 +4687,15 @@ packages:
 
   '@t3-oss/env-core@0.10.1':
     resolution: {integrity: sha512-GcKZiCfWks5CTxhezn9k5zWX3sMDIYf6Kaxy2Gx9YEQftFcz8hDRN56hcbylyAO3t4jQnQ5ifLawINsNgCDpOg==}
+    peerDependencies:
+      typescript: '>=5.0.0'
+      zod: ^3.0.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
+  '@t3-oss/env-core@0.11.1':
+    resolution: {integrity: sha512-MaxOwEoG1ntCFoKJsS7nqwgcxLW1SJw238AJwfJeaz3P/8GtkxXZsPPolsz1AdYvUTbe3XvqZ/VCdfjt+3zmKw==}
     peerDependencies:
       typescript: '>=5.0.0'
       zod: ^3.0.0
@@ -15468,6 +15483,12 @@ snapshots:
       zod: 3.23.8
     optionalDependencies:
       typescript: 5.5.4
+
+  '@t3-oss/env-core@0.11.1(typescript@5.3.3)(zod@3.23.8)':
+    dependencies:
+      zod: 3.23.8
+    optionalDependencies:
+      typescript: 5.3.3
 
   '@t3-oss/env-nextjs@0.10.1(typescript@5.5.4)(zod@3.23.8)':
     dependencies:
