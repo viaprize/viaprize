@@ -1,21 +1,21 @@
-import { IconPresentation } from "@tabler/icons-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Badge } from "@viaprize/ui/badge";
-import { Button } from "@viaprize/ui/button";
-import Image from "next/image";
-import DonateCard from "./donate-card";
+import { IconPresentation } from '@tabler/icons-react'
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Badge } from '@viaprize/ui/badge'
+import { Button } from '@viaprize/ui/button'
+import Image from 'next/image'
+import DonateCard from './donate-card'
 
-const image = "https://picsum.photos/500/300?random=2";
+const image = 'https://picsum.photos/500/300?random=2'
 
 export default function DetailsHeader() {
-  const projectName = "New Hope Construction Company kugdiugwqi diweiw ie";
+  const projectName = 'New Hope Construction Company kugdiugwqi diweiw ie'
 
   return (
     <div className="p-3 w-full lg:flex space-x-0 space-y-3 lg:space-y-0 lg:space-x-5">
       <Image
         src={
           image ||
-          "https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image"
+          'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
         }
         width={150}
         height={100}
@@ -48,5 +48,5 @@ export default function DetailsHeader() {
         <DonateCard projectName={projectName} />
       </div>
     </div>
-  );
+  )
 }
