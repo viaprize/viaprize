@@ -1,7 +1,7 @@
 import { signIn } from '@/server/auth'
-import { Button } from '@viaPrize/ui/button'
-import { Input } from '@viaPrize/ui/input'
-import { Label } from '@viaPrize/ui/label'
+import { Button } from '@viaprize/ui/button'
+import { Input } from '@viaprize/ui/input'
+import { Label } from '@viaprize/ui/label'
 import { Mail } from 'lucide-react'
 
 export function EmailAuthButton({ redirectTo }: { redirectTo: string }) {

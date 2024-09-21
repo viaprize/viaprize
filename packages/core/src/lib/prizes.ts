@@ -2,8 +2,8 @@ import { count, desc, eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import { encodeFunctionData } from 'viem'
 import type { ViaprizeDatabase } from '../database'
-import { prizes } from '../database/schema'
-import { PRIZE_FACTORY_ABI } from '../lib/abi'
+import { prizes, submissions } from '../database/schema'
+import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../lib/abi'
 import { CacheTag } from './cache-tag'
 import { CONTRACT_CONSTANTS_PER_CHAIN } from './constants'
 import { stringToSlug } from './utils'
@@ -192,4 +192,48 @@ export class Prizes extends CacheTag {
 
     return prizeId
   }
+
+  async getEncodedAddSubmissionData(contestant: `0x${string}`, submissionText: string) {
+
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'addSubmission',
+      args: [
+        contestant,
+        submissionText,
+      ],
+    })
+    return data
+  }
+
+  async addSubmission(data:{
+    submissionHash: string,
+    prizeId: string,
+    contestant: string,
+    submissionText: string,
+    username: string,
+
+  }) {
+    const submissionId = await this.db.transaction(async (trx) => {
+    const [submission] = await trx
+      .insert(submissions)
+      .values({
+        submissionHash: data.submissionHash,
+        description: data.submissionText,
+        submitterAddress: data.contestant,
+        prizeId: data.prizeId,
+        username: data.username,
+      })
+      .returning({
+        submissionHash: submissions.submissionHash,
+      })
+    if (!submission) {
+      throw new Error('Submission not created in database')
+    }
+    return submissions.submissionHash
+  })
+
+  return submissionId
+  }
+
 }

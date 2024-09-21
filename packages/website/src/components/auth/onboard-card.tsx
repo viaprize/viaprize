@@ -3,7 +3,7 @@
 import { useAuth } from '@/hooks/useAuth'
 import { api } from '@/trpc/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button } from '@viaPrize/ui/button'
+import { Button } from '@viaprize/ui/button'
 import {
   Card,
   CardContent,
@@ -11,8 +11,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@viaPrize/ui/card'
-import { Checkbox } from '@viaPrize/ui/checkbox'
+} from '@viaprize/ui/card'
+import { Checkbox } from '@viaprize/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -21,15 +21,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@viaPrize/ui/form'
-import { Input } from '@viaPrize/ui/input'
-// import { Icons } from "@viaPrize/ui/icons";
+} from '@viaprize/ui/form'
+import { Input } from '@viaprize/ui/input'
+// import { Icons } from "@viaprize/ui/icons";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@viaPrize/ui/tooltip'
+} from '@viaprize/ui/tooltip'
 import { LoaderIcon } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'

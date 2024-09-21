@@ -145,4 +145,75 @@ export const prizeRouter = createTRPCRouter({
 
       return prizeId
     }),
+
+    addSubmission: adminProcedure
+    .input(
+      z.object({
+        prizeId: z.string(),
+        contestant: z.string(),
+        submissionText: z.string().min(10, {
+          message: 'Submission must be at least 10 characters.',
+        }),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
+      if (!prize) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Prize not found',
+          cause: 'Prize not found',
+        })
+      }
+
+      if (!ctx.session.user.walletAddress) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must have a wallet address to create a prize',
+          cause: 'User does not have a wallet address',
+        })
+      }
+
+      const txData = await ctx.viaprize.prizes.getEncodedAddSubmissionData(
+        input.contestant as `0x${string}`,
+        input.submissionText,
+      )
+
+      const simulated = await ctx.viaprize.wallet.simulateTransaction(
+        {
+          data: txData,
+          to: prize.primaryContractAddress as `0x${string}`,
+          value: '0',
+        },
+        'gasless',
+        'signer'
+      )
+      if (!simulated) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Transaction failed',
+          cause: 'Transaction failed',
+          })
+      }
+      const txHash = await ctx.viaprize.wallet.sendTransaction(
+        {
+          data: txData,
+          to: prize.primaryContractAddress as `0x${string}`,
+          value: '0',
+        },
+        'gasless',
+      )
+
+      if(txHash) {
+        await ctx.viaprize.prizes.addSubmission({
+           submissionHash: txHash,
+           contestant: input.contestant, 
+           submissionText: input.submissionText,
+           prizeId: input.prizeId,
+           username: ctx.session.user.username as string,
+        })
+      }
+      return txHash
+})
+
 })
