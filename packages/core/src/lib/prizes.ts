@@ -4,6 +4,7 @@ import { encodeFunctionData } from "viem";
 import type { ViaprizeDatabase } from "../database";
 import { prizes } from "../database/schema";
 import { PRIZE_FACTORY_ABI } from "../lib/abi";
+import { CacheTag } from "./cache-tag";
 import { CONTRACT_CONSTANTS_PER_CHAIN } from "./constants";
 import { stringToSlug } from "./utils";
 const CACHE_TAGS = {
@@ -12,38 +13,14 @@ const CACHE_TAGS = {
   DEPLOYED_PRIZES: { value: "deployed-prizes", requiresSuffix: false },
   SLUG_PRIZE: { value: "slug-prize-in-", requiresSuffix: true },
 } as const;
-
-type CacheTagKey = keyof typeof CACHE_TAGS;
-type CacheTagWithSuffix = {
-  [K in CacheTagKey]: (typeof CACHE_TAGS)[K]["requiresSuffix"] extends true
-    ? K
-    : never;
-}[CacheTagKey];
-export class Prizes {
+export class Prizes extends CacheTag {
   db;
   chainId: number;
+
   constructor(viaprizeDb: ViaprizeDatabase, chainId: number) {
+    super(CACHE_TAGS);
     this.db = viaprizeDb.database;
     this.chainId = chainId;
-  }
-
-  static CACHE_TAGS = CACHE_TAGS;
-
-  getCacheTag(tag: CacheTagWithSuffix, suffix: string): string;
-  // Overload: If the tag doesn't require a suffix, the suffix is optional.
-  getCacheTag(
-    tag: Exclude<CacheTagKey, CacheTagWithSuffix>,
-    suffix?: string
-  ): string;
-
-  getCacheTag(tag: CacheTagKey, suffix?: string): string {
-    const cacheTag = CACHE_TAGS[tag];
-
-    if (cacheTag.requiresSuffix && !suffix) {
-      throw new Error(`Suffix is required for '${tag}' tag`);
-    }
-
-    return `${cacheTag.value}${suffix ? `:${suffix}` : ""}`;
   }
 
   async getPendingPrizes() {

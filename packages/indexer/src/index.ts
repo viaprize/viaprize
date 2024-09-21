@@ -32,3 +32,11 @@ ponder.on("PrizeV2Factory:NewViaPrizeCreated", async ({ event }) => {
     });
   }
 });
+
+ponder.on("PrizeV2:CampaignCreated", async ({ event }) => {
+  console.log("CampaignCreated", event);
+  const eventId = `${event.transaction.hash}-${event.name}-${event.log.id}`;
+  console.log("Event ID", eventId);
+  const hasIndexed = await viaprize.indexerEvents.getEventById(eventId);
+  console.log("Has indexed", hasIndexed);
+});

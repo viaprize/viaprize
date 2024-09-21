@@ -14,10 +14,6 @@ export default createConfig({
       transport: http(env.PONDER_RPC_URL),
     },
   },
-  database: {
-    kind: "postgres",
-    connectionString: env.DATABASE_URL,
-  },
 
   contracts: {
     PrizeV2Factory: {
@@ -38,7 +34,7 @@ export default createConfig({
             Number.parseInt(env.CHAIN_ID ?? "10") as ValidChainIDs
           ].PRIZE_FACTORY_V2_ADDRESS,
         event: parseAbiItem(
-          "event NewViaPrizeCreated(string indexed id, address indexed viaPrizeAddress)"
+          "event NewViaPrizeCreated(string id, address viaPrizeAddress)"
         ),
         parameter: "viaPrizeAddress",
       },
