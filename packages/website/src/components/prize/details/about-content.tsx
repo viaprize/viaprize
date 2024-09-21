@@ -1,7 +1,13 @@
-import { Badge } from '@viaprize/ui/badge'
-import React from 'react'
+import { Badge } from "@viaprize/ui/badge";
+import React from "react";
 
-export default function AboutContent() {
+export default function AboutContent({
+  badges,
+  description,
+}: {
+  badges: string[];
+  description: string;
+}) {
   return (
     <div className="px-3 w-full">
       <div className="w-full lg:flex lg:items-center lg:justify-between  space-y-2 lg:space-y-0">
@@ -18,10 +24,7 @@ export default function AboutContent() {
           </Badge>
         </div>
       </div>
-      <p className="border p-2 mt-3 rounded-md">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed in
-        vestibulum purus. Nullam nec sapien et turpis tincidunt tempus. Nulla
-      </p>
+      <p className="border p-2 mt-3 rounded-md">{description}</p>
     </div>
-  )
+  );
 }

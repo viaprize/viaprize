@@ -6,15 +6,15 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { TRPCError, initTRPC } from '@trpc/server'
-import { Events } from '@viaprize/core/viaprize'
-import { Resource } from 'sst'
-import { bus } from 'sst/aws/bus'
-import superjson from 'superjson'
-import { ZodError } from 'zod'
-import { auth } from '../auth'
-import { Cache } from '../cache'
-import { viaprize } from '../viaprize'
+import { TRPCError, initTRPC } from "@trpc/server";
+import { Events } from "@viaprize/core/viaprize";
+import { Resource } from "sst";
+import { bus } from "sst/aws/bus";
+import superjson from "superjson";
+import { ZodError } from "zod";
+import { auth } from "../auth";
+import { Cache } from "../cache";
+import { viaprize } from "../viaprize";
 /**
  * 1. CONTEXT
  *
@@ -29,17 +29,17 @@ import { viaprize } from '../viaprize'
  */
 
 type CacheReturn = {
-  key: string | undefined
-  value: string | undefined | any
-}
+  key: string | undefined;
+  value: string | undefined | any;
+};
 
 export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const session = await auth()
+  const session = await auth();
   const cache: CacheReturn = {
     key: undefined,
     value: undefined,
-  }
-  const cacheClient = new Cache()
+  };
+  const cacheClient = new Cache();
 
   return {
     ...opts,
@@ -47,35 +47,35 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
     viaprize,
     cache,
     cacheClient,
-  }
-}
+  };
+};
 
-type CacheableFunction<T> = () => Promise<T>
+type CacheableFunction<T> = () => Promise<T>;
 
 export async function withCache<T>(
   ctx: Awaited<ReturnType<typeof createTRPCContext>>,
   tag: string,
   cacheableFunction: CacheableFunction<T>,
-  expireAt = 3600,
+  expireAt = 3600
 ): Promise<T | null> {
   // Try to get the value from the cache
-  const value = await ctx.cacheClient.get(tag)
+  const value = await ctx.cacheClient.get(tag);
 
   if (value) {
     // If value exists in cache, parse and return it
-    return JSON.parse(value) as T
+    return JSON.parse(value) as T;
   }
 
   // No cache hit, call the provided function
-  const result = await cacheableFunction()
+  const result = await cacheableFunction();
 
   await bus.publish(Resource.EventBus.name, Events.Cache.Set, {
     key: tag,
     value: JSON.stringify(result),
     ttl: expireAt,
-    type: 'dynamodb',
-  })
-  return result
+    type: "dynamodb",
+  });
+  return result;
 }
 
 /**
@@ -95,16 +95,16 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
-    }
+    };
   },
-})
+});
 
 /**
  * Create a server-side caller.
  *
  * @see https://trpc.io/docs/server/server-side-calls
  */
-export const createCallerFactory = t.createCallerFactory
+export const createCallerFactory = t.createCallerFactory;
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
@@ -118,7 +118,7 @@ export const createCallerFactory = t.createCallerFactory
  *
  * @see https://trpc.io/docs/router
  */
-export const createTRPCRouter = t.router
+export const createTRPCRouter = t.router;
 
 /**
  * Middleware for timing procedure execution and adding an artificial delay in development.
@@ -127,36 +127,37 @@ export const createTRPCRouter = t.router
  * network latency that would occur in production but not in local development.
  */
 const timingMiddleware = t.middleware(async ({ next, path }) => {
-  const start = Date.now()
+  const start = Date.now();
 
   if (t._config.isDev) {
     // artificial delay in dev
-    const waitMs = Math.floor(Math.random() * 400) + 100
-    await new Promise((resolve) => setTimeout(resolve, waitMs))
+    const waitMs = Math.floor(Math.random() * 400) + 100;
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
   }
 
-  const result = await next()
+  const result = await next();
 
-  const end = Date.now()
-  console.log(`[TRPC] ${path} took ${end - start}ms to execute`)
+  const end = Date.now();
+  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
 
-  return result
-})
+  return result;
+});
 
 /**
  * Public (unauthenticated) procedure
+ *
  *
  * This is the base piece you use to build new queries and mutations on your tRPC API. It does not
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure.use(timingMiddleware)
+export const publicProcedure = t.procedure;
 export const adminProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user || !ctx.session.user.isAdmin) {
     throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'You need to be admin to access this function',
-    })
+      code: "UNAUTHORIZED",
+      message: "You need to be admin to access this function",
+    });
   }
 
   return next({
@@ -171,11 +172,11 @@ export const adminProcedure = t.procedure.use(({ ctx, next }) => {
         },
       },
     },
-  })
-})
+  });
+});
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' })
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
@@ -190,5 +191,5 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
         },
       },
     },
-  })
-})
+  });
+});
