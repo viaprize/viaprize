@@ -81,12 +81,8 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -94,10 +90,7 @@
       "compositePrimaryKeys": {
         "account_provider_providerAccountId_pk": {
           "name": "account_provider_providerAccountId_pk",
-          "columns": [
-            "provider",
-            "providerAccountId"
-          ]
+          "columns": ["provider", "providerAccountId"]
         }
       },
       "uniqueConstraints": {}
@@ -161,12 +154,8 @@
           "name": "authenticator_userId_user_id_fk",
           "tableFrom": "authenticator",
           "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -174,19 +163,14 @@
       "compositePrimaryKeys": {
         "authenticator_userId_credentialID_pk": {
           "name": "authenticator_userId_credentialID_pk",
-          "columns": [
-            "userId",
-            "credentialID"
-          ]
+          "columns": ["userId", "credentialID"]
         }
       },
       "uniqueConstraints": {
         "authenticator_credentialID_unique": {
           "name": "authenticator_credentialID_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "credentialID"
-          ]
+          "columns": ["credentialID"]
         }
       }
     },
@@ -321,12 +305,8 @@
           "name": "donations_username_user_username_fk",
           "tableFrom": "donations",
           "tableTo": "user",
-          "columnsFrom": [
-            "username"
-          ],
-          "columnsTo": [
-            "username"
-          ],
+          "columnsFrom": ["username"],
+          "columnsTo": ["username"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -336,9 +316,7 @@
         "donations_paymentId_unique": {
           "name": "donations_paymentId_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "paymentId"
-          ]
+          "columns": ["paymentId"]
         }
       }
     },
@@ -389,12 +367,8 @@
           "name": "prize_comments_prizeId_prizes_id_fk",
           "tableFrom": "prize_comments",
           "tableTo": "prizes",
-          "columnsFrom": [
-            "prizeId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["prizeId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -402,12 +376,8 @@
           "name": "prize_comments_username_user_username_fk",
           "tableFrom": "prize_comments",
           "tableTo": "user",
-          "columnsFrom": [
-            "username"
-          ],
-          "columnsTo": [
-            "username"
-          ],
+          "columnsFrom": ["username"],
+          "columnsTo": ["username"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -614,12 +584,8 @@
           "name": "prizes_author_user_username_fk",
           "tableFrom": "prizes",
           "tableTo": "user",
-          "columnsFrom": [
-            "author"
-          ],
-          "columnsTo": [
-            "username"
-          ],
+          "columnsFrom": ["author"],
+          "columnsTo": ["username"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -629,9 +595,7 @@
         "prizes_slug_unique": {
           "name": "prizes_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       }
     },
@@ -658,12 +622,8 @@
           "name": "prizes_to_contestants_username_user_username_fk",
           "tableFrom": "prizes_to_contestants",
           "tableTo": "user",
-          "columnsFrom": [
-            "username"
-          ],
-          "columnsTo": [
-            "username"
-          ],
+          "columnsFrom": ["username"],
+          "columnsTo": ["username"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -671,12 +631,8 @@
           "name": "prizes_to_contestants_prizeId_prizes_id_fk",
           "tableFrom": "prizes_to_contestants",
           "tableTo": "prizes",
-          "columnsFrom": [
-            "prizeId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["prizeId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -684,10 +640,7 @@
       "compositePrimaryKeys": {
         "prizes_to_contestants_username_prizeId_pk": {
           "name": "prizes_to_contestants_username_prizeId_pk",
-          "columns": [
-            "username",
-            "prizeId"
-          ]
+          "columns": ["username", "prizeId"]
         }
       },
       "uniqueConstraints": {}
@@ -745,12 +698,8 @@
           "name": "submissions_prizeId_prizes_id_fk",
           "tableFrom": "submissions",
           "tableTo": "prizes",
-          "columnsFrom": [
-            "prizeId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["prizeId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -758,12 +707,8 @@
           "name": "submissions_username_user_username_fk",
           "tableFrom": "submissions",
           "tableTo": "user",
-          "columnsFrom": [
-            "username"
-          ],
-          "columnsTo": [
-            "username"
-          ],
+          "columnsFrom": ["username"],
+          "columnsTo": ["username"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -875,23 +820,17 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         },
         "user_authId_unique": {
           "name": "user_authId_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "authId"
-          ]
+          "columns": ["authId"]
         },
         "user_username_unique": {
           "name": "user_username_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
+          "columns": ["username"]
         }
       }
     },
@@ -923,10 +862,7 @@
       "compositePrimaryKeys": {
         "verificationToken_identifier_token_pk": {
           "name": "verificationToken_identifier_token_pk",
-          "columns": [
-            "identifier",
-            "token"
-          ]
+          "columns": ["identifier", "token"]
         }
       },
       "uniqueConstraints": {}
@@ -990,12 +926,8 @@
           "name": "wallets_username_user_username_fk",
           "tableFrom": "wallets",
           "tableTo": "user",
-          "columnsFrom": [
-            "username"
-          ],
-          "columnsTo": [
-            "username"
-          ],
+          "columnsFrom": ["username"],
+          "columnsTo": ["username"],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
@@ -1003,12 +935,8 @@
           "name": "wallets_prizeId_prizes_id_fk",
           "tableFrom": "wallets",
           "tableTo": "prizes",
-          "columnsFrom": [
-            "prizeId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["prizeId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1037,38 +965,22 @@
     "public.donationTokenTypeEnum": {
       "name": "donationTokenTypeEnum",
       "schema": "public",
-      "values": [
-        "TOKEN",
-        "NFT"
-      ]
+      "values": ["TOKEN", "NFT"]
     },
     "public.donationTypeEnum": {
       "name": "donationTypeEnum",
       "schema": "public",
-      "values": [
-        "PAYMENT",
-        "GIFT"
-      ]
+      "values": ["PAYMENT", "GIFT"]
     },
     "public.recipientTypeEnum": {
       "name": "recipientTypeEnum",
       "schema": "public",
-      "values": [
-        "PRIZE",
-        "FUNDRAISER",
-        "GITCOIN",
-        "UNKNOWN"
-      ]
+      "values": ["PRIZE", "FUNDRAISER", "GITCOIN", "UNKNOWN"]
     },
     "public.prizeProposalStage": {
       "name": "prizeProposalStage",
       "schema": "public",
-      "values": [
-        "PENDING",
-        "APPROVED",
-        "REJECTED",
-        "APPROVED_BUT_NOT_DEPLOYED"
-      ]
+      "values": ["PENDING", "APPROVED", "REJECTED", "APPROVED_BUT_NOT_DEPLOYED"]
     },
     "public.prizeStage": {
       "name": "prizeStage",

@@ -1,3 +1,3 @@
-import { createSchema } from "@ponder/core";
+import { createSchema } from '@ponder/core'
 
-export default createSchema((_) => ({}));
+export default createSchema((_) => ({}))
