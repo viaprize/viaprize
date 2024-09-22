@@ -2,7 +2,7 @@ import { count, desc, eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import { encodeFunctionData } from 'viem'
 import type { ViaprizeDatabase } from '../database'
-import { prizes, submissions } from '../database/schema'
+import { prizes, submissions, votes } from '../database/schema'
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../lib/abi'
 import { CacheTag } from './cache-tag'
 import { CONTRACT_CONSTANTS_PER_CHAIN } from './constants'
@@ -250,4 +250,51 @@ export class Prizes extends CacheTag {
 
     return submissionId
   }
+
+  async getEncodedAddVoteData(
+    // funder: `0x${string}`,
+    submissionHash: `0x${string}`,
+    voteAmount: bigint,
+    v: number,
+    s: `0x${string}`,
+    r: `0x${string}`,
+  ) {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'vote',
+      args: [submissionHash, voteAmount, v, s, r],
+    })
+    return data
+  }
+
+  async addVote(data: {
+    submissionHash: string
+    prizeId: string
+    funderAddress: string
+    voteAmount: number
+    username: string
+  }) {
+    const voteId = await this.db.transaction(async (trx) => {
+      const [vote] = await trx
+        .insert(votes)
+        .values({
+          submissionHash: data.submissionHash,
+          prizeId: data.prizeId,
+          funderAddress: data.funderAddress,
+          voteAmount: data.voteAmount,
+          username: data.username,
+        })
+        .returning({
+          voteId: votes.voteId,
+        })
+      if (!vote) {
+        throw new Error('Vote not casted, please try again')
+      }
+      return votes.voteId
+    })
+
+    return voteId
+  }
+
+
 }

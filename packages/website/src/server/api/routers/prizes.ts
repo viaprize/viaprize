@@ -215,4 +215,78 @@ export const prizeRouter = createTRPCRouter({
       }
       return txHash
     }),
+
+  addVote: adminProcedure
+    .input(
+      z.object({
+        prizeId : z.string(),
+        submissionHash: z.string(),
+        voteAmount: z.number(),
+        v: z.number(),
+        s: z.string(),
+        r: z.string(),
+      }),
+    )
+
+    .mutation(async ({ input, ctx }) => {
+      const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
+      if (!prize) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Prize not found',
+          cause: 'Prize not found',
+        })
+      }
+      if (!(ctx.session.user.walletAddress && ctx.session.user.username)) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must have a wallet address and username to cast a vote',
+          cause: 'User does not have a wallet address or username',
+        })
+      }
+
+      const txData = await ctx.viaprize.prizes.getEncodedAddVoteData(
+        input.submissionHash as `0x${string}`,
+        BigInt(input.voteAmount),
+        input.v,
+        input.s as `0x${string}`,
+        input.r as `0x${string}`,
+      )
+
+      const simulated = await ctx.viaprize.wallet.simulateTransaction(
+        {
+          data: txData,
+          to: prize.primaryContractAddress as `0x${string}`,
+          value: '0',
+        },
+        'gasless',
+        'signer',
+      )
+      if (!simulated) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Transaction failed',
+          cause: 'Transaction failed',
+        })
+      }
+      const txHash = await ctx.viaprize.wallet.sendTransaction(
+        {
+          data: txData,
+          to: prize.primaryContractAddress as `0x${string}`,
+          value: '0',
+        },
+        'gasless',
+      )
+
+      if(txHash) {
+        await ctx.viaprize.prizes.addVote({
+          funderAddress: ctx.session.user.walletAddress,
+          prizeId: input.prizeId,
+          submissionHash: input.submissionHash,
+          username: ctx.session.user.username,
+          voteAmount: input.voteAmount,
+        })
+      }
+      return txHash
+    })
 })
