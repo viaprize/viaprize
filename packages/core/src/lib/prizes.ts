@@ -2,8 +2,8 @@ import { count, desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { encodeFunctionData } from "viem";
 import type { ViaprizeDatabase } from "../database";
-import { prizes } from "../database/schema";
-import { PRIZE_FACTORY_ABI } from "../lib/abi";
+import { prizes, submissions } from "../database/schema";
+import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from "../lib/abi";
 import { CacheTag } from "./cache-tag";
 import { CONTRACT_CONSTANTS_PER_CHAIN } from "./constants";
 import { stringToSlug } from "./utils";
@@ -38,6 +38,21 @@ export class Prizes extends CacheTag {
       .from(prizes)
       .where(eq(prizes.proposalStage, "APPROVED"));
     return countPrize[0]?.count;
+  }
+
+  async getEncodedStartSubmission(contractAddress: string) {
+    const prize = await this.db.query.prizes.findFirst({
+      where: eq(prizes.primaryContractAddress, contractAddress),
+    });
+    if (!prize) {
+      throw new Error("Prize not found");
+    }
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: "startSubmissionPeriod",
+      args: [BigInt(prize.submissionDurationInMinutes)],
+    });
+    return data;
   }
 
   async getDeployedPrizes() {
@@ -163,13 +178,6 @@ export class Prizes extends CacheTag {
     const slug = stringToSlug(data.title);
     const randomId = nanoid(3);
     const prizeId = await this.db.transaction(async (trx) => {
-      // const [slugExists] = await trx
-      //   .select({
-      //     slug: prizes.slug,
-      //   })
-      //   .from(prizes)
-      //   .where(eq(prizes.slug, slug))
-      //   .limit(1);
       const slugExists = await trx.query.prizes.findFirst({
         where: eq(prizes.slug, slug),
         columns: {

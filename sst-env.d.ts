@@ -90,6 +90,10 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "scheduleReceivingFunction": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
     "schedulerRole": {
       "arn": string
       "type": "aws.iam/role.Role"
