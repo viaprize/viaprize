@@ -1,7 +1,13 @@
+import {
+  CONTRACT_CONSTANTS_PER_CHAIN,
+  type ValidChainIDs,
+} from "@viaprize/core/lib/constants";
 import { Events, Viaprize } from "@viaprize/core/viaprize";
+import { addDays, addMinutes } from "date-fns";
 import { Resource } from "sst";
 import { bus } from "sst/aws/bus";
 import { Cache } from "./utils/cache";
+import { schedule } from "./utils/schedule";
 
 const viaprize = new Viaprize({
   config: {
@@ -9,19 +15,21 @@ const viaprize = new Viaprize({
     inMemoryDb: false,
     mode: "development",
     wallet: {
-      walletPaymentInfraUrl: "https://null.com",
-      walletApiKey: "some-key",
-      rpcUrl: "https://null.com",
+      walletPaymentInfraUrl: process.env.WALLET_PAYMENT_INFRA_API ?? "",
+      walletApiKey: process.env.WALLET_API_KEY ?? "",
+      rpcUrl: process.env.RPC_URL ?? "",
     },
     chainId: Number.parseInt(process.env.CHAIN_ID ?? "10"),
   },
 });
+const viaprizeConstants =
+  CONTRACT_CONSTANTS_PER_CHAIN[viaprize.config.chainId as ValidChainIDs];
 
 const cache = new Cache();
 
 export const handler = bus.subscriber(
   [
-    Events.Wallet.ScheduleTransaction,
+    Events.Wallet.Transaction,
     Events.Prize.Approve,
     Events.Cache.Set,
     Events.Cache.Delete,
@@ -35,6 +43,14 @@ export const handler = bus.subscriber(
     switch (event.type) {
       case "wallet.transaction":
         console.log("Processing wallet transaction event");
+        await viaprize.wallet.sendTransaction(
+          {
+            data: event.properties.data,
+            to: event.properties.to,
+            value: event.properties.value,
+          },
+          event.properties.walletType
+        );
         break;
       case "prize.approve":
         console.log("Processing prize approve event");
@@ -51,6 +67,28 @@ export const handler = bus.subscriber(
         await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
           key: viaprize.prizes.getCacheTag("ACTIVE_PRIZES_COUNT"),
         });
+        await bus.publish(
+          Resource.EventBus.name,
+          Events.Prize.ScheduleStartSubmission,
+          {
+            contractAddress: event.properties.contractAddress,
+          }
+        );
+        await bus.publish(
+          Resource.EventBus.name,
+          Events.Prize.ScheduleEndSubmissionAndStartVoting,
+          {
+            contractAddress: event.properties.contractAddress,
+          }
+        );
+        await bus.publish(
+          Resource.EventBus.name,
+          Events.Prize.ScheduleEndVoting,
+          {
+            contractAddress: event.properties.contractAddress,
+          }
+        );
+
         break;
       case "cache.set":
         console.log("Processing cache set event");
@@ -75,10 +113,91 @@ export const handler = bus.subscriber(
         break;
       case "prize.scheduleStartSubmission": {
         console.log("Processing prize scheduleStartSubmission event");
-        const _data = await viaprize.prizes.getEncodedDeployPrizeData(
+        const prize = await viaprize.prizes.getPrizeByContractAddress(
           event.properties.contractAddress
         );
+        const data = await viaprize.prizes.getEncodedStartSubmission(
+          event.properties.contractAddress,
+          prize
+        );
 
+        await schedule({
+          functionArn: Resource.ScheduleReceivingLambda.arn,
+          name: `StartSubmission-${prize.id}`,
+          payload: JSON.stringify({
+            data,
+            to: prize.primaryContractAddress,
+            value: "0",
+            walletType: "gasless",
+          } as typeof Events.Wallet.Transaction.$input),
+          triggerDate: new Date(prize.startSubmissionDate),
+        });
+        break;
+      }
+      case "prize.scheduleEndSubmissionAndStartVoting": {
+        const prize = await viaprize.prizes.getPrizeByContractAddress(
+          event.properties.contractAddress
+        );
+        const data =
+          await viaprize.prizes.getEncodedEndSubmissionAndStartVoting(
+            event.properties.contractAddress,
+            prize
+          );
+
+        await schedule({
+          functionArn: Resource.ScheduleReceivingLambda.arn,
+          name: `ScheduleEndSubmissionAndStartVoting-${prize.id}`,
+          payload: JSON.stringify({
+            data,
+            to: viaprizeConstants.TRANSACTION_BATCH,
+            value: "0",
+            walletType: "gasless",
+          } as typeof Events.Wallet.Transaction.$input),
+          triggerDate: addMinutes(
+            prize.startSubmissionDate,
+            prize.submissionDurationInMinutes
+          ),
+        });
+        break;
+      }
+      case "prize.scheduleEndVoting": {
+        const prize = await viaprize.prizes.getPrizeByContractAddress(
+          event.properties.contractAddress
+        );
+        const data = await viaprize.prizes.getEncodedEndSubmission();
+
+        await schedule({
+          functionArn: Resource.ScheduleReceivingLambda.arn,
+          name: `EndVoting-${prize.id}`,
+          payload: JSON.stringify({
+            data,
+            to: event.properties.contractAddress,
+            value: "0",
+            walletType: "gasless",
+          } as typeof Events.Wallet.Transaction.$input),
+          triggerDate: addMinutes(
+            prize.startVotingDate,
+            prize.votingDurationInMinutes
+          ),
+        });
+        break;
+      }
+      case "prize.scheduleEndDispute": {
+        const prize = await viaprize.prizes.getPrizeByContractAddress(
+          event.properties.contractAddress
+        );
+        const data = await viaprize.prizes.getEncodedEndDispute();
+        await schedule({
+          functionArn: Resource.ScheduleReceivingLambda.arn,
+          name: `EndDispute-${prize.id}`,
+          payload: JSON.stringify({
+            data,
+            to: event.properties.contractAddress,
+            value: "0",
+            walletType: "gasless",
+          } as typeof Events.Wallet.Transaction.$input),
+          triggerDate: addDays(new Date(), 2),
+        });
         break;
       }
     }

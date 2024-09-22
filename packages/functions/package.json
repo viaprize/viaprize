@@ -2,13 +2,14 @@
   "name": "@viaprize/functions",
   "version": "0.0.0",
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "catalog:",
     "@aws-sdk/client-scheduler": "^3.651.1",
+    "@aws-sdk/lib-dynamodb": "catalog:",
     "@viaprize/core": "workspace:*",
+    "date-fns": "^3.6.0",
     "sst": "3.1.18",
     "valibot": "^0.42.0",
-    "zod": "^3.23.8",
-    "@aws-sdk/lib-dynamodb": "catalog:",
-    "@aws-sdk/client-dynamodb": "catalog:"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.137"
