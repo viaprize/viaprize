@@ -296,21 +296,22 @@ contract PrizeV2 is ReentrancyGuard {
     /// @param reward The total reward amount to be distributed.
     function _distributeRewardsLogic(uint256 reward) private {
         for(uint256 j=0; j<refundRequestedFunders.length; j++) {
-            uint256 reward_amount = _submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,refundRequestedFunders[j]);
-            reward -= reward_amount;
-            if(reward_amount > 0) {
-                if (isFiatFunder[refundRequestedFunders[j]]) {
-                    uint256 fiatToSend = reward_amount;
-                    if (isCryptoFunder[refundRequestedFunders[j]]) {
-                        fiatToSend = (reward_amount.mul(individualFiatPercentage[refundRequestedFunders[j]])).div(100);
-                        uint256 cryptoToSend = reward_amount.sub(fiatToSend);
-                        _usdc.transfer(refundRequestedFunders[j], cryptoToSend);
-                    }
-                    _usdc.transfer(platformAddress, fiatToSend);
-                    emit ErrorAndEventsLibrary.FiatFunderRefund(refundRequestedFunders[j], fiatToSend, isCryptoFunder[refundRequestedFunders[j]]);
-                } else {
-                    _usdc.transfer(refundRequestedFunders[j], reward_amount);
-                }
+            uint256 rewardAmount = _submissionTree.submissionFunderBalances(REFUND_SUBMISSION_HASH,refundRequestedFunders[j]);
+            if (rewardAmount == 0) continue;
+            reward = reward.sub(rewardAmount);
+
+            bool isFiat = isFiatFunder[refundRequestedFunders[j]];
+            bool isCrypto = isCryptoFunder[refundRequestedFunders[j]];
+
+            uint256 fiatToSend = isFiat ? (rewardAmount.mul(individualFiatPercentage[refundRequestedFunders[j]])).div(100) : 0;
+            uint256 cryptoToSend = isCrypto ? rewardAmount.sub(fiatToSend) : 0;
+
+            if (cryptoToSend > 0) {
+                _usdc.transfer(refundRequestedFunders[j], cryptoToSend);
+            }
+            if (fiatToSend > 0) {
+                _usdc.transfer(platformAddress, fiatToSend);
+                emit ErrorAndEventsLibrary.FiatFunderRefund(refundRequestedFunders[j], fiatToSend, isCrypto);
             }
         }
     }
@@ -322,33 +323,35 @@ contract PrizeV2 is ReentrancyGuard {
         SubmissionAVLTree.SubmissionInfo[] memory allSubmissions = getAllSubmissions();
         uint256 usdcPlatformReward;
         uint256 usdcProposerReward;
-        if(allSubmissions.length > 0 && totalVotes > 0 ) {
-            for (uint256 i = 0; i < allSubmissions.length;) {
-                if(allSubmissions[i].funded && allSubmissions[i].usdcVotes > 0) {
-                    uint256 reward = allSubmissions[i].usdcVotes;
-                    if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH && reward > 0) {
-                        _distributeRewardsLogic(reward);
-                    } else {
-                        allSubmissions[i].usdcVotes = 0;
-                        _usdc.transfer(allSubmissions[i].contestant, reward);
-                    }
-                }
-                unchecked { ++i; }
-            }
-            totalRewards = 0;
-            if(totalFunds > 0) {
-                usdcPlatformReward = (totalFunds * platformFee) / 100;
-                usdcProposerReward = (totalFunds * visionaryFee) / 100;
-                totalFunds = totalFunds.sub(usdcPlatformReward.add(usdcProposerReward));
-                _usdc.transfer(platformAddress, usdcPlatformReward);
-                _usdc.transfer(visionary, usdcProposerReward);
-            }
-            distributed = true;
-        }
         if(totalVotes == 0) {
             refundLogic();
             distributed = true;
+            return;
         }
+        for (uint256 i = 0; i < allSubmissions.length;) {
+            if (!allSubmissions[i].funded || allSubmissions[i].usdcVotes == 0) {
+                unchecked { ++i; }
+                continue;
+            }
+            uint256 reward = allSubmissions[i].usdcVotes;
+
+            if(allSubmissions[i].submissionHash == REFUND_SUBMISSION_HASH && reward > 0) {
+                _distributeRewardsLogic(reward);
+            } else {
+                allSubmissions[i].usdcVotes = 0;  
+                _usdc.transfer(allSubmissions[i].contestant, reward);
+            }
+            unchecked { ++i; }
+        }
+        totalRewards = 0;
+        if(totalFunds > 0) {
+            usdcPlatformReward = (totalFunds * platformFee) / 100;
+            usdcProposerReward = (totalFunds * visionaryFee) / 100;
+            totalFunds = totalFunds.sub(usdcPlatformReward.add(usdcProposerReward));
+            _usdc.transfer(platformAddress, usdcPlatformReward);
+            _usdc.transfer(visionary, usdcProposerReward);
+        }
+        distributed = true;
     }
 
     /// @notice Adds a submission to the platform.
