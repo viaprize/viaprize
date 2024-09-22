@@ -373,27 +373,23 @@ contract PrizeV2 is ReentrancyGuard {
     /// @param _submissionHash The hash of the submission being voted on.
     /// @param sender The address of the funder voting.
     function _voteLogic(uint256 _amount, bytes32 _submissionHash, address sender) private {
-        if(cryptoFunderAmount[sender] > 0 && fiatFunderAmount[sender] > 0){
-            uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
-            uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
-            if(_amount != (cryptoAmountToVote + fiatAmountToVote)) revert ErrorAndEventsLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
-            cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
-            fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
-            totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote + fiatAmountToVote);
-            cryptoAmountToVote = 0;
-            fiatAmountToVote = 0;
-        } else if(cryptoFunderAmount[sender] > 0) {
-            uint256 cryptoAmountToVote = (_amount.mul(individualCryptoPercentage[sender])).div(100);
-            if(_amount != cryptoAmountToVote) revert ErrorAndEventsLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
-            cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
-            totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote);
-            cryptoAmountToVote = 0;
-        } else if(fiatFunderAmount[sender] > 0) {
-            uint256 fiatAmountToVote = (_amount.mul(individualFiatPercentage[sender])).div(100);
-            if(_amount != fiatAmountToVote) revert ErrorAndEventsLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
-            fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
-            totalFunderAmount[sender] = totalFunderAmount[sender].sub(fiatAmountToVote);
-            fiatAmountToVote = 0;
+        uint256 cryptoAmountToVote = (individualCryptoPercentage[sender] > 0) ? (_amount.mul(individualCryptoPercentage[sender])).div(100) : 0;
+        uint256 fiatAmountToVote = (individualFiatPercentage[sender] > 0) ? (_amount.mul(individualFiatPercentage[sender])).div(100) : 0;
+
+        if (cryptoFunderAmount[sender] > 0 || fiatFunderAmount[sender] > 0) {
+            uint256 totalAmountToVote = cryptoAmountToVote + fiatAmountToVote;
+
+            if (_amount != totalAmountToVote) revert ErrorAndEventsLibrary.VMPPEIL(); // VM,PPEIL -> votes mismatch, probably precise error in logic
+
+            if (cryptoFunderAmount[sender] > 0) {
+                cryptoFunderAmount[sender] = cryptoFunderAmount[sender].sub(cryptoAmountToVote);
+                totalFunderAmount[sender] = totalFunderAmount[sender].sub(cryptoAmountToVote);
+            }
+
+            if (fiatFunderAmount[sender] > 0) {
+                fiatFunderAmount[sender] = fiatFunderAmount[sender].sub(fiatAmountToVote);
+                totalFunderAmount[sender] = totalFunderAmount[sender].sub(fiatAmountToVote);
+            }
         }
         funderVotes[sender][_submissionHash] = funderVotes[sender][_submissionHash].add(_amount);
         uint256 amountToSubmission = (_amount * (100 - platformFee - visionaryFee)) / 100;
