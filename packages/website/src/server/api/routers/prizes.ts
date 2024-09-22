@@ -146,7 +146,7 @@ export const prizeRouter = createTRPCRouter({
       return prizeId
     }),
 
-    addSubmission: adminProcedure
+  addSubmission: adminProcedure
     .input(
       z.object({
         prizeId: z.string(),
@@ -186,14 +186,14 @@ export const prizeRouter = createTRPCRouter({
           value: '0',
         },
         'gasless',
-        'signer'
+        'signer',
       )
       if (!simulated) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Transaction failed',
           cause: 'Transaction failed',
-          })
+        })
       }
       const txHash = await ctx.viaprize.wallet.sendTransaction(
         {
@@ -204,16 +204,15 @@ export const prizeRouter = createTRPCRouter({
         'gasless',
       )
 
-      if(txHash) {
+      if (txHash) {
         await ctx.viaprize.prizes.addSubmission({
-           submissionHash: txHash,
-           contestant: input.contestant, 
-           submissionText: input.submissionText,
-           prizeId: input.prizeId,
-           username: ctx.session.user.username as string,
+          submissionHash: txHash,
+          contestant: input.contestant,
+          submissionText: input.submissionText,
+          prizeId: input.prizeId,
+          username: ctx.session.user.username as string,
         })
       }
       return txHash
-})
-
+    }),
 })

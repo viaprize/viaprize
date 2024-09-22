@@ -1,5 +1,5 @@
-import { Separator } from "@viaprize/ui/separator";
-import SubmissionCard from "./submission-card";
+import { Separator } from '@viaprize/ui/separator'
+import SubmissionCard from './submission-card'
 
 export default function Submissions() {
   return (
@@ -12,5 +12,5 @@ export default function Submissions() {
         submissionCreated={new Date().toDateString()}
       />
     </div>
-  );
+  )
 }

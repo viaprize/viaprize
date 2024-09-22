@@ -1,15 +1,15 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Button } from "@viaprize/ui/button";
-import { Card } from "@viaprize/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Button } from '@viaprize/ui/button'
+import { Card } from '@viaprize/ui/card'
 
 export default function ContestantsCard({
   name,
   avatar,
   numberOfContestants,
 }: {
-  avatar?: string;
-  name: string;
-  numberOfContestants: number;
+  avatar?: string
+  name: string
+  numberOfContestants: number
 }) {
   return (
     <Card className="px-3 py-4">
@@ -26,5 +26,5 @@ export default function ContestantsCard({
       </div>
       <Button className="mt-5 w-full">Join Contest</Button>
     </Card>
-  );
+  )
 }

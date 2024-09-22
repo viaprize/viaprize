@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@viaprize/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Card, CardContent, CardHeader, CardTitle } from '@viaprize/ui/card'
 
 export default function VisionaryFunderCard({
   name,
@@ -7,10 +7,10 @@ export default function VisionaryFunderCard({
   numberOfFunders,
   totalFunds,
 }: {
-  avatar?: string | null;
-  name: string;
-  numberOfFunders: number;
-  totalFunds: number;
+  avatar?: string | null
+  name: string
+  numberOfFunders: number
+  totalFunds: number
 }) {
   return (
     <Card className="px-3 py-4">
@@ -39,5 +39,5 @@ export default function VisionaryFunderCard({
         <div className="text-primary">{totalFunds}</div>
       </div>
     </Card>
-  );
+  )
 }

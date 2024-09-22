@@ -1,12 +1,12 @@
-import { Badge } from "@viaprize/ui/badge";
-import React from "react";
+import { Badge } from '@viaprize/ui/badge'
+import React from 'react'
 
 export default function AboutContent({
   badges,
   description,
 }: {
-  badges: string[];
-  description: string;
+  badges: string[]
+  description: string
 }) {
   return (
     <div className="px-3 w-full">
@@ -26,5 +26,5 @@ export default function AboutContent({
       </div>
       <p className="border p-2 mt-3 rounded-md">{description}</p>
     </div>
-  );
+  )
 }

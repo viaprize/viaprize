@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Card } from "@viaprize/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Card } from '@viaprize/ui/card'
 
 export default function SubmissionCard({
   name,
@@ -7,10 +7,10 @@ export default function SubmissionCard({
   submissionCreated,
   description,
 }: {
-  avatar?: string;
-  name: string;
-  submissionCreated: string;
-  description: string;
+  avatar?: string
+  name: string
+  submissionCreated: string
+  description: string
 }) {
   return (
     <Card className="p-3">
@@ -28,5 +28,5 @@ export default function SubmissionCard({
       </div>
       <p>{description}</p>
     </Card>
-  );
+  )
 }

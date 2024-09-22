@@ -3,31 +3,31 @@
 export default $config({
   app(input) {
     return {
-      name: "viaprize",
+      name: 'viaprize',
       removal:
-        input?.stage === "production" || input.stage === "dev"
-          ? "retain"
-          : "remove",
-      home: "aws",
+        input?.stage === 'production' || input.stage === 'dev'
+          ? 'retain'
+          : 'remove',
+      home: 'aws',
       providers: {
         aws: {
           profile:
-            input.stage === "production"
-              ? "viaprize-production"
-              : "viaprize-dev",
-          region: "us-east-2",
+            input.stage === 'production'
+              ? 'viaprize-production'
+              : 'viaprize-dev',
+          region: 'us-east-2',
         },
       },
-    };
+    }
   },
   async run() {
-    const website = await import("./infra/website");
-    const scheduler = await import("./infra/scheduler");
-    const eventBus = await import("./infra/events");
-    const storage = await import("./infra/storage");
-    const indexer = await import("./infra/indexer");
-    const vpc = await import("./infra/vpc");
-    const cache = await import("./infra/cache");
+    const website = await import('./infra/website')
+    const scheduler = await import('./infra/scheduler')
+    const eventBus = await import('./infra/events')
+    const storage = await import('./infra/storage')
+    const indexer = await import('./infra/indexer')
+    const vpc = await import('./infra/vpc')
+    const cache = await import('./infra/cache')
 
     return {
       website: website.website.url,
@@ -41,6 +41,6 @@ export default $config({
       cacheTable: cache.cacheTable.name,
       cacheTableArn: cache.cacheTable.arn,
       schedulerLambda: scheduler.scheduleReceivingFunction.arn,
-    };
+    }
   },
-});
+})
