@@ -9,8 +9,8 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
-import { z } from "zod";
 import { prizeComments } from "./prize-comments";
+import { prizesToContestants } from "./prizes-to-contestants";
 import { submissions } from "./submissions";
 import { users } from "./users";
 import { wallets } from "./wallets";
@@ -93,6 +93,7 @@ export const prizesRelations = relations(prizes, ({ one, many }) => ({
     fields: [prizes.authorUsername],
     references: [users.username],
   }),
+  contestants: many(prizesToContestants),
   submissions: many(submissions),
   secondaryContractAddresses: many(wallets),
   comments: many(prizeComments),

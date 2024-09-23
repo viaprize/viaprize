@@ -1,19 +1,17 @@
 import { count, desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import {
-  type TransactionReceipt,
-  encodeFunctionData,
-  parseEventLogs,
-} from "viem";
+import { encodeFunctionData } from "viem";
 import type { ViaprizeDatabase } from "../database";
-import { prizes, submissions } from "../database/schema";
 import {
-  PRIZE_FACTORY_ABI,
-  PRIZE_V2_ABI,
-  TRANSACTION_BATCH_ABI,
-} from "../lib/abi";
+  prizeComments,
+  prizes,
+  prizesToContestants,
+  submissions,
+  votes,
+} from "../database/schema";
+import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from "../lib/abi";
 import { CacheTag } from "./cache-tag";
-import { CONTRACT_CONSTANTS_PER_CHAIN, ValidChainIDs } from "./constants";
+import { CONTRACT_CONSTANTS_PER_CHAIN } from "./constants";
 import { stringToSlug } from "./utils";
 const CACHE_TAGS = {
   PENDING_PRIZES: { value: "pending-prizes", requiresSuffix: false },
@@ -165,11 +163,28 @@ export class Prizes extends CacheTag {
     const prize = await this.db.query.prizes.findFirst({
       where: eq(prizes.slug, slug),
       with: {
+        submissions: {
+          orderBy: desc(submissions.createdAt),
+        },
+        comments: {
+          orderBy: desc(prizeComments.createdAt),
+        },
+        contestants: {
+          with: {
+            user: {
+              columns: {
+                name: true,
+                avatar: true,
+                username: true,
+              },
+            },
+          },
+        },
         author: {
           columns: {
             name: true,
-
             avatar: true,
+            username: true,
           },
         },
       },
@@ -343,5 +358,50 @@ export class Prizes extends CacheTag {
     });
 
     return submissionId;
+  }
+
+  async getEncodedAddVoteData(
+    // funder: `0x${string}`,
+    submissionHash: `0x${string}`,
+    voteAmount: bigint,
+    v: number,
+    s: `0x${string}`,
+    r: `0x${string}`
+  ) {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: "vote",
+      args: [submissionHash, voteAmount, v, s, r],
+    });
+    return data;
+  }
+
+  async addVote(data: {
+    submissionHash: string;
+    prizeId: string;
+    funderAddress: string;
+    voteAmount: number;
+    username: string;
+  }) {
+    const voteId = await this.db.transaction(async (trx) => {
+      const [vote] = await trx
+        .insert(votes)
+        .values({
+          submissionHash: data.submissionHash,
+          prizeId: data.prizeId,
+          funderAddress: data.funderAddress,
+          voteAmount: data.voteAmount,
+          username: data.username,
+        })
+        .returning({
+          voteId: votes.voteId,
+        });
+      if (!vote) {
+        throw new Error("Vote not casted, please try again");
+      }
+      return votes.voteId;
+    });
+
+    return voteId;
   }
 }
