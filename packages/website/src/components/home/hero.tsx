@@ -1,3 +1,4 @@
+import { AnimatedGroup } from '@/components/common/animated-group'
 import { Button } from '@viaprize/ui/button'
 import { Card, CardFooter, CardHeader } from '@viaprize/ui/card'
 import { ArrowRight } from 'lucide-react'
@@ -5,7 +6,7 @@ import Image from 'next/image'
 
 export default function HeroSection() {
   return (
-    <section className="relative min-h-screen max-w-screen-2xl mx-auto flex flex-col justify-center gap-5 items-center">
+    <section className="relative w-full  min-h-screen max-w-screen-2xl mx-auto flex flex-col justify-center gap-5 items-center">
       <Image
         src="/hero/test.svg"
         alt="Hero"
@@ -13,24 +14,31 @@ export default function HeroSection() {
         height="1080"
         className="h-screen absolute inset-0 w-screen z-10 dark:brightness-[0.2] dark:grayscale"
       />
-      <div className="z-20 max-w-2xl gap-2 text-center">
-        <h2 className="text-4xl font-bold">Build the Future</h2>
-        <h1 className="text-7xl font-bold">
+      <AnimatedGroup
+        preset="blur-slide"
+        className="z-20 max-w-2xl gap-2 text-center"
+      >
+        <h2 className="text-2xl md:text-4xl font-bold">Build the Future</h2>
+        <h1 className="text-5xl md:text-7xl font-bold">
           via <span className="text-primary text">Prizes</span>
         </h1>
-        <p className="text-xl mt-4">
+        <p className="text-lg md:text-xl mt-4">
           List and build the world’s most needed product ideas
         </p>
-        <div className="mt-8 flex  gap-1 justify-center">
-          <Button type="button" className="px-7 py-6">
+        <div className="mt-8 flex flex-col md:flex-row gap-1 justify-center">
+          <Button type="button" className="px-5 py-4 md:px-7 md:py-6">
             Explore Prizes
           </Button>
-          <Button type="button" variant="outline" className="px-7 py-6">
+          <Button
+            type="button"
+            variant="outline"
+            className="px-5 py-4 md:px-7 md:py-6"
+          >
             Create Prize
           </Button>
         </div>
-      </div>
-      <div className="grid grid-cols-5 grid-rows-9  gap-3 ">
+      </AnimatedGroup>
+      {/* <div className="grid grid-cols-5 grid-rows-9  gap-3 ">
         <Card className="relative justify-between flex flex-col overflow-hidden col-start-1 col-span-1 row-start-1 row-end-6">
           <div className="absolute h-full top-0 inset-x-0 bg-gradient-to-b from-black/80 via-black/10 to-black z-10 pointer-events-none" />
           <Image
@@ -67,7 +75,7 @@ export default function HeroSection() {
         <Card className="col-start-5 row-start-6 col-span-1 row-end-9 ">
           test
         </Card>
-      </div>
+      </div> */}
     </section>
   )
 }
