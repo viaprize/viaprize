@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { api } from '@/trpc/react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { cn } from '@viaprize/ui'
-import { Button } from '@viaprize/ui/button'
-import { Calendar } from '@viaprize/ui/calendar'
-import { Card, CardContent, CardHeader, CardTitle } from '@viaprize/ui/card'
+import { api } from "@/trpc/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { cn } from "@viaprize/ui";
+import { Button } from "@viaprize/ui/button";
+import { Calendar } from "@viaprize/ui/calendar";
+import { Card, CardContent, CardHeader, CardTitle } from "@viaprize/ui/card";
 import {
   Form,
   FormControl,
@@ -13,104 +13,106 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@viaprize/ui/form'
-import { Input } from '@viaprize/ui/input'
-import { Popover, PopoverContent, PopoverTrigger } from '@viaprize/ui/popover'
-import { Textarea } from '@viaprize/ui/textarea'
-import { differenceInMinutes, format } from 'date-fns'
-import { CalendarIcon } from 'lucide-react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
+} from "@viaprize/ui/form";
+import { Input } from "@viaprize/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@viaprize/ui/popover";
+import { Textarea } from "@viaprize/ui/textarea";
+import { TimePicker } from "@viaprize/ui/time-picker";
+import { differenceInMinutes, format, subDays } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 const formSchema = z
   .object({
     image: z.instanceof(File).refine((file) => file.size <= 5000000, {
-      message: 'Image must be less than 5MB',
+      message: "Image must be less than 5MB",
     }),
     title: z.string().min(2, {
-      message: 'Title must be at least 2 characters.',
+      message: "Title must be at least 2 characters.",
     }),
     description: z.string().min(10, {
-      message: 'Description must be at least 10 characters.',
+      message: "Description must be at least 10 characters.",
     }),
     submissionStartDate: z.date({
-      required_error: 'Submission start date is required.',
+      required_error: "Submission start date is required.",
     }),
     submissionEndDate: z.date({
-      required_error: 'Submission end date is required.',
+      required_error: "Submission end date is required.",
     }),
     votingStartDate: z.date({
-      required_error: 'Voting start date is required.',
+      required_error: "Voting start date is required.",
     }),
     votingEndDate: z.date({
-      required_error: 'Voting end date is required.',
+      required_error: "Voting end date is required.",
     }),
   })
   .refine((data) => data.submissionEndDate > data.submissionStartDate, {
-    message: 'Submission end date must be after start date',
-    path: ['submissionEndDate'],
+    message: "Submission end date must be after start date",
+    path: ["submissionEndDate"],
   })
   .refine((data) => data.votingEndDate > data.votingStartDate, {
-    message: 'Voting end date must be after start date',
-    path: ['votingEndDate'],
-  })
+    message: "Voting end date must be after start date",
+    path: ["votingEndDate"],
+  });
 
 interface CreatePrizeFormProps {
-  imageUploadUrl: string
+  imageUploadUrl: string;
 }
 
 export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: "",
+      description: "",
     },
-  })
+  });
 
   const mutation = api.prizes.createPrize.useMutation({
     onSuccess() {
-      console.log('Success')
+      console.log("Success");
     },
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("hiiiiiiiiiii");
     const image = await fetch(imageUploadUrl, {
       body: values.image,
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': values.image.type,
-        'Content-Disposition': `attachment; filename="${encodeURIComponent(
-          values.image.name,
+        "Content-Type": values.image.type,
+        "Content-Disposition": `attachment; filename="${encodeURIComponent(
+          values.image.name
         )}"`,
-        'Access-Control-Allow-Origin': '*',
+        "Access-Control-Allow-Origin": "*",
       },
-    })
+    });
     if (!image.ok) {
-      form.setError('image', { message: 'Failed to upload image' })
-      return
+      form.setError("image", { message: "Failed to upload image" });
+      return;
     }
     const extractedUrl = `${new URL(imageUploadUrl).origin}${
       new URL(imageUploadUrl).pathname
-    }`
+    }`;
     await mutation.mutateAsync({
       title: values.title,
       description: values.description,
       submissionStartDate: values.submissionStartDate.toISOString(),
       submissionDuration: differenceInMinutes(
         values.submissionEndDate,
-        values.submissionStartDate,
+        values.submissionStartDate
       ),
       votingStartDate: values.votingStartDate.toISOString(),
       votingDuration: differenceInMinutes(
         values.votingEndDate,
-        values.votingStartDate,
+        values.votingStartDate
       ),
       imageUrl: extractedUrl,
-    })
+    });
   }
 
   return (
@@ -134,14 +136,14 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                       type="file"
                       accept="image/*"
                       onChange={(e) => {
-                        const file = e.target.files?.[0]
+                        const file = e.target.files?.[0];
                         if (file) {
-                          field.onChange(file)
-                          const reader = new FileReader()
+                          field.onChange(file);
+                          const reader = new FileReader();
                           reader.onloadend = () => {
-                            setImagePreview(reader.result as string)
-                          }
-                          reader.readAsDataURL(file)
+                            setImagePreview(reader.result as string);
+                          };
+                          reader.readAsDataURL(file);
                         }
                       }}
                     />
@@ -197,18 +199,18 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={'outline'}
+                            variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground',
+                              "w-[280px] justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
-                              format(field.value, 'PPP')
+                              format(field.value, "PPP HH:mm")
                             ) : (
                               <span>Pick a date</span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -217,12 +219,21 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          fromDate={new Date()}
+                          hidden={{
+                            before: new Date(),
+                            from: new Date(),
+                          }}
                           disabled={(date) =>
-                            date < new Date() || date < new Date('1900-01-01')
+                            date < subDays(new Date(), 1) ||
+                            date < new Date("1900-01-01")
                           }
-                          initialFocus
                         />
+                        <div className="p-3 border-t border-border">
+                          <TimePicker
+                            setDate={field.onChange}
+                            date={field.value}
+                          />
+                        </div>
                       </PopoverContent>
                     </Popover>
                     <FormMessage />
@@ -234,19 +245,22 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                 name="submissionEndDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Submission End Date</FormLabel>
+                    <FormLabel>
+                      Submission End Date And Voting Start date
+                    </FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={'outline'}
+                            variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground',
+                              "w-[280px] justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
-                              format(field.value, 'PPP')
+                              format(field.value, "PPP HH:mm:ss")
                             ) : (
                               <span>Pick a date</span>
                             )}
@@ -258,56 +272,30 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onSelect={field.onChange}
+                          onSelect={(e) => {
+                            console.log(e);
+                            form.setValue("votingStartDate", e as Date);
+                            field.onChange(e);
+                          }}
+                          hidden={{
+                            before: new Date(),
+                          }}
                           disabled={(date) =>
-                            date < new Date() ||
-                            date <
-                              new Date(form.getValues('submissionStartDate'))
+                            date < subDays(new Date(), 1) ||
+                            date <=
+                              subDays(form.getValues("submissionStartDate"), 1)
                           }
-                          initialFocus
                         />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="votingStartDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Voting Start Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground',
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date() ||
-                            date < new Date(form.getValues('submissionEndDate'))
-                          }
-                          initialFocus
-                        />
+                        <div className="p-3 border-t border-border">
+                          <TimePicker
+                            setDate={(e) => {
+                              console.log(e);
+                              form.setValue("votingStartDate", e as Date);
+                              field.onChange(e);
+                            }}
+                            date={field.value}
+                          />
+                        </div>
                       </PopoverContent>
                     </Popover>
                     <FormMessage />
@@ -324,14 +312,15 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={'outline'}
+                            variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground',
+                              "w-[280px] justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
                             )}
                           >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
-                              format(field.value, 'PPP')
+                              format(field.value, "PPP HH:mm:ss")
                             ) : (
                               <span>Pick a date</span>
                             )}
@@ -346,11 +335,16 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                           onSelect={field.onChange}
                           disabled={(date) =>
                             date < new Date() ||
-                            date < new Date('1900-01-01') ||
-                            date < new Date(form.getValues('votingStartDate'))
+                            date < new Date("1900-01-01") ||
+                            date < new Date(form.getValues("submissionEndDate"))
                           }
-                          initialFocus
                         />
+                        <div className="p-3 border-t border-border">
+                          <TimePicker
+                            setDate={field.onChange}
+                            date={field.value}
+                          />
+                        </div>
                       </PopoverContent>
                     </Popover>
                     <FormMessage />
@@ -369,5 +363,5 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }

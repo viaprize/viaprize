@@ -46,9 +46,13 @@ export const Events = {
     Transaction: defineEvent(
       "wallet.transaction",
       z.object({
-        data: z.string(),
-        to: z.string(),
-        value: z.string(),
+        transactions: z.array(
+          z.object({
+            data: z.string(),
+            to: z.string(),
+            value: z.string(),
+          })
+        ),
         walletType: z.enum(["reserve", "gasless"]).default("gasless"),
       })
     ),
@@ -61,17 +65,46 @@ export const Events = {
         contractAddress: z.string(),
       })
     ),
+    StartSubmission: defineEvent(
+      "prize.startSubmission",
+      z.object({ contractAddress: z.string() })
+    ),
+    EndSubmission: defineEvent(
+      "prize.endSubmission",
+      z.object({ contractAddress: z.string() })
+    ),
+    StartVoting: defineEvent(
+      "prize.startVoting",
+      z.object({ contractAddress: z.string() })
+    ),
+    EndVoting: defineEvent(
+      "prize.endVoting",
+      z.object({ contractAddress: z.string() })
+    ),
     ScheduleStartSubmission: defineEvent(
       "prize.scheduleStartSubmission",
-      z.object({ contractAddress: z.string() })
+      z.object({
+        contractAddress: z.string(),
+        submissionDurationInMinutes: z.number(),
+        startSubmissionDate: z.string(),
+      })
     ),
     ScheduleEndSubmissionAndStartVoting: defineEvent(
       "prize.scheduleEndSubmissionAndStartVoting",
-      z.object({ contractAddress: z.string() })
+      z.object({
+        contractAddress: z.string(),
+        submissionDurationInMinutes: z.number(),
+        startSubmissionDate: z.string(),
+        votingDurationInMinutes: z.number(),
+      })
     ),
     ScheduleEndVoting: defineEvent(
       "prize.scheduleEndVoting",
-      z.object({ contractAddress: z.string() })
+      z.object({
+        contractAddress: z.string(),
+        startVotingDate: z.string(),
+        votingDurationInMinutes: z.number(),
+      })
     ),
     ScheduleEndDispute: defineEvent(
       "prize.scheduleEndDispute",

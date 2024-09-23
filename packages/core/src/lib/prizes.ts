@@ -54,9 +54,11 @@ export class Prizes extends CacheTag {
   }
 
   async getPrizeByContractAddress(contractAddress: string) {
+    console.log(contractAddress);
     const prize = await this.db.query.prizes.findFirst({
       where: eq(prizes.primaryContractAddress, contractAddress),
     });
+    console.log(prize);
     if (!prize) {
       throw new Error("Prize not found");
     }
@@ -65,7 +67,10 @@ export class Prizes extends CacheTag {
 
   async getEncodedStartSubmission(
     contractAddress: string,
-    customPrize?: typeof prizes.$inferInsert
+    customPrize?: Pick<
+      typeof prizes.$inferInsert,
+      "submissionDurationInMinutes"
+    >
   ) {
     const prize =
       customPrize || (await this.getPrizeByContractAddress(contractAddress));
@@ -79,7 +84,7 @@ export class Prizes extends CacheTag {
     });
     return data;
   }
-  async getEncodedEndVoting(contractAddress: string) {
+  async getEncodedEndVoting() {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
       functionName: "endVotingPeriod",
@@ -90,23 +95,18 @@ export class Prizes extends CacheTag {
 
   async getEncodedEndSubmissionAndStartVoting(
     contractAddress: string,
-    customPrize?: typeof prizes.$inferInsert
+    customPrize?: Pick<typeof prizes.$inferInsert, "votingDurationInMinutes">
   ) {
     const endSubmissionPeriodData = await this.getEncodedEndSubmission();
     const startVotingPeriodData = await this.getEncodedStartVoting(
       contractAddress,
       customPrize
     );
-    const batchedData = encodeFunctionData({
-      abi: TRANSACTION_BATCH_ABI,
-      functionName: "batchSend",
-      args: [
-        [contractAddress as `0x${string}`, contractAddress as `0x${string}`],
-        [BigInt(0), BigInt(0)],
-        [endSubmissionPeriodData, startVotingPeriodData],
-      ],
-    });
-    return batchedData;
+
+    return {
+      endSubmissionPeriodData,
+      startVotingPeriodData,
+    };
   }
 
   async getEncodedEndSubmission() {
@@ -120,7 +120,7 @@ export class Prizes extends CacheTag {
 
   async getEncodedStartVoting(
     contractAddress: string,
-    customPrize?: typeof prizes.$inferInsert
+    customPrize?: Pick<typeof prizes.$inferInsert, "votingDurationInMinutes">
   ) {
     const prize =
       customPrize || (await this.getPrizeByContractAddress(contractAddress));
@@ -175,32 +175,35 @@ export class Prizes extends CacheTag {
   }
 
   async approveDeployedPrize(prizeId: string, contractAddress: string) {
-    await this.db.transaction(async (trx) => {
-      const prize = await trx.query.prizes.findFirst({
-        where: eq(prizes.id, prizeId),
-      });
+    const prize = (
+      await this.db
+        .select()
+        .from(prizes)
+        .where(eq(prizes.id, prizeId))
+        .limit(1)
+        .execute()
+    )[0];
+    if (!prize) {
+      console.error("Prize not found");
+      return;
+    }
+    if (prize.proposalStage === "APPROVED") {
+      console.error(new Error("Prize already approved"));
+      return;
+    }
+    if (prize.proposalStage !== "APPROVED_BUT_NOT_DEPLOYED") {
+      throw new Error("Prize not in correct stage");
+    }
 
-      if (!prize) {
-        console.error("Prize not found");
-        return;
-      }
-      if (prize.proposalStage === "APPROVED") {
-        console.error(new Error("Prize already approved"));
-        return;
-      }
+    const [res] = await this.db
+      .update(prizes)
+      .set({
+        primaryContractAddress: contractAddress.toLowerCase(),
+        proposalStage: "APPROVED",
+      })
+      .returning({ contractAddress: prizes.primaryContractAddress });
 
-      console.log(prize);
-      if (prize.proposalStage !== "APPROVED_BUT_NOT_DEPLOYED") {
-        throw new Error("Prize not in correct stage");
-      }
-      await trx
-        .update(prizes)
-        .set({
-          primaryContractAddress: contractAddress,
-          proposalStage: "APPROVED",
-        })
-        .where(eq(prizes.id, prizeId));
-    });
+    return res;
   }
 
   async approvePrizeProposal(prizeId: string) {

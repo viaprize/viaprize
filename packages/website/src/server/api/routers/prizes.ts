@@ -34,7 +34,11 @@ export const prizeRouter = createTRPCRouter({
     const prizes = await withCache(
       ctx,
       ctx.viaprize.prizes.getCacheTag("DEPLOYED_PRIZES"),
-      async () => await ctx.viaprize.prizes.getDeployedPrizes()
+      async () => {
+        const a = await ctx.viaprize.prizes.getDeployedPrizes();
+        console.log(a);
+        return a;
+      }
     );
     return prizes;
   }),
@@ -56,48 +60,43 @@ export const prizeRouter = createTRPCRouter({
       const txData = await ctx.viaprize.prizes.getEncodedDeployPrizeData(
         input.prizeId
       );
-      await bus.publish(
-        Resource.EventBus.name,
-        Events.Prize.ScheduleStartSubmission,
-        {
-          contractAddress: "hi",
-        }
-      );
       console.log({ txData });
-      // const prizeFactoryAddress =
-      //   ctx.viaprize.prizes.getPrizeFactoryV2Address();
-      // const simulated = await ctx.viaprize.wallet.simulateTransaction(
-      //   {
-      //     data: txData,
-      //     to: prizeFactoryAddress,
-      //     value: "0",
-      //   },
-      //   "gasless",
-      //   "signer"
-      // );
+      const prizeFactoryAddress =
+        ctx.viaprize.prizes.getPrizeFactoryV2Address();
+      const simulated = await ctx.viaprize.wallet.simulateTransaction(
+        {
+          data: txData,
+          to: prizeFactoryAddress,
+          value: "0",
+        },
+        "gasless",
+        "signer"
+      );
 
-      // if (!simulated) {
-      //   throw new TRPCError({
-      //     code: "INTERNAL_SERVER_ERROR",
-      //     message: "Transaction failed",
-      //     cause: "Transaction failed",
-      //   });
-      // }
-      // const txHash = await ctx.viaprize.wallet.sendTransaction(
-      //   {
-      //     data: txData,
-      //     to: prizeFactoryAddress,
-      //     value: "0",
-      //   },
-      //   "gasless"
-      // );
-      // if (txHash) {
-      //   await ctx.viaprize.prizes.approvePrizeProposal(input.prizeId);
-      // }
-      // await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-      //   key: ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
-      // });
-      return "hi";
+      if (!simulated) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Transaction failed",
+          cause: "Transaction failed",
+        });
+      }
+      const txHash = await ctx.viaprize.wallet.sendTransaction(
+        [
+          {
+            data: txData,
+            to: prizeFactoryAddress,
+            value: "0",
+          },
+        ],
+        "gasless"
+      );
+      if (txHash) {
+        await ctx.viaprize.prizes.approvePrizeProposal(input.prizeId);
+      }
+      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+        key: ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
+      });
+      return txHash;
     }),
   createPrize: protectedProcedure
     .input(
@@ -135,6 +134,7 @@ export const prizeRouter = createTRPCRouter({
           cause: "User does not have a wallet address",
         });
       }
+      console.log("hiiiiiii");
 
       const prizeId = await ctx.viaprize.prizes.addPrizeProposal({
         description: input.description,
@@ -205,11 +205,13 @@ export const prizeRouter = createTRPCRouter({
         });
       }
       const txHash = await ctx.viaprize.wallet.sendTransaction(
-        {
-          data: txData,
-          to: prize.primaryContractAddress as `0x${string}`,
-          value: "0",
-        },
+        [
+          {
+            data: txData,
+            to: prize.primaryContractAddress as `0x${string}`,
+            value: "0",
+          },
+        ],
         "gasless"
       );
 
