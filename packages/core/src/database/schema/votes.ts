@@ -1,11 +1,11 @@
-import {pgTable, text, timestamp, varchar} from 'drizzle-orm/pg-core'
+import {pgTable, integer, text, timestamp, varchar} from 'drizzle-orm/pg-core'
 import { submissions } from './submissions'
 import { users } from './users'
 import { prizes } from './prizes'
 import { relations } from 'drizzle-orm'
 
 export const votes = pgTable('votes', {
-    voteId: varchar('id', { length: 255 }).primaryKey(),
+    voteHash: varchar('id', { length: 255 }).primaryKey(),
     submissionHash: varchar('submissionHash').references(() => submissions.submissionHash, {
         onDelete: 'cascade',
     }).notNull(),
@@ -13,7 +13,7 @@ export const votes = pgTable('votes', {
         onDelete: 'cascade',
     }).notNull(),
     funderAddress: text('funderAddress').notNull(),
-    voteAmount: text('voteAmount').notNull(),
+    voteAmount: integer('voteAmount').notNull(),
     username: varchar('username').references(() => users.username, {
         onDelete: 'cascade',
     }).notNull(),
