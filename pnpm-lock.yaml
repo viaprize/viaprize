@@ -21,6 +21,9 @@ catalogs:
     typescript:
       specifier: ^5.5.3
       version: 5.5.4
+    viem:
+      specifier: ~2.21.2
+      version: 2.21.2
     zod:
       specifier: ^3.23.8
       version: 3.23.8
@@ -89,7 +92,7 @@ importers:
         specifier: 3.1.18
         version: 3.1.18(hono@4.6.2)(valibot@0.42.0(typescript@5.5.4))
       viem:
-        specifier: ~2.21.2
+        specifier: 'catalog:'
         version: 2.21.2(bufferutil@4.0.8)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.23.8)
       vite:
         specifier: ^5.4.2

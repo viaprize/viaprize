@@ -2,7 +2,10 @@ import { Events } from "@viaprize/core/viaprize";
 import type { ScheduledHandler } from "aws-lambda";
 import { Resource } from "sst";
 import { bus } from "sst/aws/bus";
-export type ScheduleType = "wallet.transaction";
+import { viaprize } from "./utils/viaprize";
+export type ScheduleType =
+  | "wallet.transaction"
+  | "prize.endSubmissionAndStartVoting";
 export const handler: ScheduledHandler<{
   type: ScheduleType;
   body: any;
@@ -28,5 +31,29 @@ export const handler: ScheduledHandler<{
         payload.body as typeof Events.Wallet.Transaction.$input
       );
       break;
+    case "prize.endSubmissionAndStartVoting": {
+      const body = payload.body as typeof Events.Wallet.Transaction.$input;
+      const prize = await viaprize.prizes.getPrizeByContractAddress(
+        body.transactions[0].to
+      );
+      if (prize.numberOfSubmissions > 0) {
+        await bus.publish(
+          Resource.EventBus.name,
+          Events.Wallet.Transaction,
+          payload.body as typeof Events.Wallet.Transaction.$input
+        );
+      } else {
+        await bus.publish(Resource.EventBus.name, Events.Wallet.Transaction, {
+          transactions: [
+            {
+              data: body.transactions[0].data,
+              to: body.transactions[0].to,
+              value: body.transactions[0].value,
+            },
+          ],
+          walletType: "gasless",
+        });
+      }
+    }
   }
 };

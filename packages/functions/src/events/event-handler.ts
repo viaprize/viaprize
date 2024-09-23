@@ -6,22 +6,10 @@ import { Events, Viaprize } from "@viaprize/core/viaprize";
 import { addDays, addMinutes, subMinutes } from "date-fns";
 import { Resource } from "sst";
 import { bus } from "sst/aws/bus";
-import { Cache } from "./utils/cache";
-import { schedule } from "./utils/schedule";
-
-const viaprize = new Viaprize({
-  config: {
-    databaseUrl: process.env.DATABASE_URL ?? "",
-    inMemoryDb: false,
-    mode: "development",
-    wallet: {
-      walletPaymentInfraUrl: process.env.WALLET_PAYMENT_INFRA_API ?? "",
-      walletApiKey: process.env.WALLET_API_KEY ?? "",
-      rpcUrl: process.env.RPC_URL ?? "",
-    },
-    chainId: Number.parseInt(process.env.CHAIN_ID ?? "10"),
-  },
-});
+import { Cache } from "../utils/cache";
+import { schedule } from "../utils/schedule";
+import { viaprize } from "../utils/viaprize";
+import { publishPrizeCacheDeletes } from "./cache-functions";
 
 const cache = new Cache();
 
@@ -38,9 +26,12 @@ export const handler = bus.subscriber(
     Events.Prize.ScheduleEndDispute,
   ],
   async (event) => {
+    console.log(
+      `================================================ Processing ${event.type} event =========================================`
+    );
     switch (event.type) {
       case "wallet.transaction": {
-        console.log("Processing wallet transaction event");
+        console.log(event.properties.transactions);
         const hash = await viaprize.wallet.sendTransaction(
           event.properties.transactions,
           event.properties.walletType
@@ -49,13 +40,10 @@ export const handler = bus.subscriber(
         break;
       }
       case "prize.approve": {
-        console.log("Processing prize approve event");
         const contract = await viaprize.prizes.approveDeployedPrize(
           event.properties.prizeId,
           event.properties.contractAddress
         );
-
-        console.log("Contract", contract);
         if (contract) {
           const prize = await viaprize.prizes.getPrizeById(
             event.properties.prizeId
@@ -93,17 +81,7 @@ export const handler = bus.subscriber(
             );
           }
         }
-
-        await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-          key: viaprize.prizes.getCacheTag("PENDING_PRIZES"),
-        });
-        await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-          key: viaprize.prizes.getCacheTag("DEPLOYED_PRIZES"),
-        });
-        await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-          key: viaprize.prizes.getCacheTag("ACTIVE_PRIZES_COUNT"),
-        });
-
+        await publishPrizeCacheDeletes(viaprize);
         break;
       }
       case "cache.set":
@@ -120,15 +98,12 @@ export const handler = bus.subscriber(
         }
         break;
       case "cache.delete":
-        console.log("Processing cache delete event");
         await cache.delete(event.properties.key);
         break;
       case "indexer.confirmEvent":
-        console.log("Processing indexer confirm event");
         await viaprize.indexerEvents.createEvent(event.properties.eventId);
         break;
       case "prize.scheduleStartSubmission": {
-        console.log("Processing prize scheduleStartSubmission event");
         const data = await viaprize.prizes.getEncodedStartSubmission(
           event.properties.contractAddress,
           {
@@ -169,7 +144,7 @@ export const handler = bus.subscriber(
           functionArn: Resource.ScheduleReceivingLambda.arn,
           name: `EndSubStartVoting-${event.properties.contractAddress}`,
           payload: JSON.stringify({
-            type: "wallet.transaction",
+            type: "prize.endSubmissionAndStartVoting",
             body: {
               transactions: [
                 {

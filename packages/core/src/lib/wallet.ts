@@ -1,4 +1,5 @@
 import { http, createPublicClient } from "viem";
+import { waitForTransactionReceipt } from "viem/actions";
 import { getChain } from "./utils";
 
 export type WalletType = "reserve" | "gasless";
@@ -71,7 +72,11 @@ export class Wallet {
         console.log({ res });
         return (res as any).hash as string;
       });
-    return transactionHash;
+    const receipt = await this.blockchainClient.waitForTransactionReceipt({
+      hash: transactionHash as `0x${string}`,
+    });
+
+    return receipt;
   }
 
   async getAddress(type: WalletType, addressType: AddressType) {

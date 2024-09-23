@@ -1,6 +1,10 @@
 import { count, desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { encodeFunctionData } from "viem";
+import {
+  type TransactionReceipt,
+  encodeFunctionData,
+  parseEventLogs,
+} from "viem";
 import type { ViaprizeDatabase } from "../database";
 import { prizes, submissions } from "../database/schema";
 import {
@@ -9,7 +13,7 @@ import {
   TRANSACTION_BATCH_ABI,
 } from "../lib/abi";
 import { CacheTag } from "./cache-tag";
-import { CONTRACT_CONSTANTS_PER_CHAIN } from "./constants";
+import { CONTRACT_CONSTANTS_PER_CHAIN, ValidChainIDs } from "./constants";
 import { stringToSlug } from "./utils";
 const CACHE_TAGS = {
   PENDING_PRIZES: { value: "pending-prizes", requiresSuffix: false },
@@ -44,6 +48,14 @@ export class Prizes extends CacheTag {
     });
     return data;
   }
+  async getContractAddressFromTransactionReceipt(receipt: TransactionReceipt) {
+    const contractAddress = parseEventLogs({
+      logs: receipt.logs,
+      abi: PRIZE_FACTORY_ABI,
+      eventName: "NewViaPrizeCreated",
+    });
+    return contractAddress[0]?.args.viaPrizeAddress;
+  }
 
   async getDeployedPrizesCount() {
     const countPrize = await this.db
@@ -52,7 +64,6 @@ export class Prizes extends CacheTag {
       .where(eq(prizes.proposalStage, "APPROVED"));
     return countPrize[0]?.count;
   }
-
   async getPrizeByContractAddress(contractAddress: string) {
     console.log(contractAddress);
     const prize = await this.db.query.prizes.findFirst({

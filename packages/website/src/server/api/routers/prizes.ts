@@ -90,9 +90,25 @@ export const prizeRouter = createTRPCRouter({
         ],
         "gasless"
       );
+
       if (txHash) {
         await ctx.viaprize.prizes.approvePrizeProposal(input.prizeId);
       }
+      const contractAddress =
+        await ctx.viaprize.prizes.getContractAddressFromTransactionReceipt(
+          txHash
+        );
+      if (!contractAddress) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Contract address not found",
+          cause: "Contract address not found",
+        });
+      }
+      await bus.publish(Resource.EventBus.name, Events.Prize.Approve, {
+        contractAddress,
+        prizeId: input.prizeId,
+      });
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
       });

@@ -57,12 +57,28 @@ export const scheduleReceivingFunction = new sst.aws.Function(
   "ScheduleReceivingLambda",
   {
     handler: "packages/functions/src/schedule-receiver.handler",
-    link: [eventBus],
+    link: [
+      eventBus,
+      DATABASE_URL,
+      CHAIN_ID,
+      eventBus,
+      cacheTable,
+      WALLET_PAYMENT_INFRA_API,
+      RPC_URL,
+      WALLET_API_KEY,
+    ],
+    environment: {
+      DATABASE_URL: DATABASE_URL.value,
+      CHAIN_ID: CHAIN_ID.value,
+      WALLET_PAYMENT_INFRA_API: WALLET_PAYMENT_INFRA_API.value,
+      RPC_URL: RPC_URL.value,
+      WALLET_API_KEY: WALLET_API_KEY.value,
+    },
   }
 );
 
 eventBus.subscribe({
-  handler: "packages/functions/src/events.handler",
+  handler: "packages/functions/src/events/event-handler.handler",
   permissions: [
     {
       actions: ["scheduler:CreateSchedule"],
