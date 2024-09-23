@@ -2,7 +2,13 @@ import { count, desc, eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import { encodeFunctionData } from 'viem'
 import type { ViaprizeDatabase } from '../database'
-import { prizes, submissions, votes } from '../database/schema'
+import {
+  prizeComments,
+  prizes,
+  prizesToContestants,
+  submissions,
+  votes,
+} from '../database/schema'
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../lib/abi'
 import { CacheTag } from './cache-tag'
 import { CONTRACT_CONSTANTS_PER_CHAIN } from './constants'
@@ -76,6 +82,20 @@ export class Prizes extends CacheTag {
       with: {
         submissions: {
           orderBy: desc(submissions.createdAt),
+        },
+        comments: {
+          orderBy: desc(prizeComments.createdAt),
+        },
+        contestants: {
+          with: {
+            user: {
+              columns: {
+                name: true,
+                avatar: true,
+                username: true,
+              },
+            },
+          },
         },
         author: {
           columns: {
