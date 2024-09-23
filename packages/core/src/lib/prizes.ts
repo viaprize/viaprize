@@ -74,11 +74,14 @@ export class Prizes extends CacheTag {
     const prize = await this.db.query.prizes.findFirst({
       where: eq(prizes.slug, slug),
       with: {
+        submissions: {
+          orderBy: desc(submissions.createdAt),
+        },
         author: {
           columns: {
             name: true,
-
             avatar: true,
+            username: true,
           },
         },
       },
@@ -295,6 +298,4 @@ export class Prizes extends CacheTag {
 
     return voteId
   }
-
-
 }

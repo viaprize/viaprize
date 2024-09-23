@@ -219,7 +219,7 @@ export const prizeRouter = createTRPCRouter({
   addVote: adminProcedure
     .input(
       z.object({
-        prizeId : z.string(),
+        prizeId: z.string(),
         submissionHash: z.string(),
         voteAmount: z.number(),
         v: z.number(),
@@ -278,7 +278,7 @@ export const prizeRouter = createTRPCRouter({
         'gasless',
       )
 
-      if(txHash) {
+      if (txHash) {
         await ctx.viaprize.prizes.addVote({
           funderAddress: ctx.session.user.walletAddress,
           prizeId: input.prizeId,
@@ -288,5 +288,5 @@ export const prizeRouter = createTRPCRouter({
         })
       }
       return txHash
-    })
+    }),
 })
