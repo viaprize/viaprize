@@ -44,6 +44,7 @@ export class Prizes extends CacheTag {
 
     return proposals;
   }
+
   async startSubmissionPeriodByContractAddress(contractAddress: string) {
     await this.db
       .update(prizes)
@@ -58,7 +59,7 @@ export class Prizes extends CacheTag {
       .set({
         stage: "WON",
       })
-      .where(eq(prizes.primaryContractAddress, contractAddress
+      .where(eq(prizes.primaryContractAddress, contractAddress));
   }
   async endVotingPeriodByContractAddress(contractAddress: string) {
     await this.db

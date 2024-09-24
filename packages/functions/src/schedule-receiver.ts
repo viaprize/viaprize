@@ -37,6 +37,7 @@ export const handler: ScheduledHandler<{
         txBody.walletType ?? "gasless",
         "DisputeEnded",
         async (event) => {
+          console.log(`${event} event received`);
           await viaprize.prizes.endDisputePeriodByContractAddress(
             event[0].address
           );
@@ -54,6 +55,7 @@ export const handler: ScheduledHandler<{
         txBody.walletType ?? "gasless",
         "SubmissionStarted",
         async (event) => {
+          console.log(`${event} event received`);
           await viaprize.prizes.startSubmissionPeriodByContractAddress(
             event[0].address
           );
@@ -69,6 +71,7 @@ export const handler: ScheduledHandler<{
         txBody.walletType ?? "gasless",
         "VotingEnded",
         async (event) => {
+          console.log(`${event} event received`);
           await viaprize.prizes.endVotingPeriodByContractAddress(
             event[0].address
           );
@@ -78,9 +81,17 @@ export const handler: ScheduledHandler<{
     }
     case "wallet.endSubmissionAndStartVoting": {
       const txBody = payload.body as typeof Events.Wallet.Transaction.$input;
+      console.log({ txBody });
+
+      const prize = await viaprize.prizes.getPrizeByContractAddress(
+        txBody.transactions[0].to
+      );
+
       await viaprize.wallet.withTransactionEvents(
         PRIZE_V2_ABI,
-        txBody.transactions,
+        prize.numberOfSubmissions > 0
+          ? txBody.transactions
+          : [txBody.transactions[0]],
         "gasless",
         [
           "SubmissionEnded",
@@ -89,6 +100,7 @@ export const handler: ScheduledHandler<{
           "FiatFunderRefund",
         ],
         async (event) => {
+          console.log(`${event} event received`);
           const submissionEndedEvents = event.filter(
             (e) => e.eventName === "SubmissionEnded"
           );
@@ -101,10 +113,15 @@ export const handler: ScheduledHandler<{
           const fiatFunderRefundEvents = event.filter(
             (e) => e.eventName === "FiatFunderRefund"
           );
+
           if (submissionEndedEvents && votingEndedEvents) {
-            await viaprize.prizes.startSubmissionPeriodByContractAddress(
+            await viaprize.prizes.startVotingPeriodByContractAddress(
               event[0].address
             );
+          }
+          if (submissionEndedEvents) {
+            await viaprize.prizes.refundByContractAddress(event[0].address, 0);
+            await deleteSchedule(`EndVoting-${event[0].address}`);
           }
           if (cryptoFunderRefundedEvents || fiatFunderRefundEvents) {
             const totalCryptoFunderRefunded = cryptoFunderRefundedEvents.reduce(
