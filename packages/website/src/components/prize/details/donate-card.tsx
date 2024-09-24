@@ -11,13 +11,15 @@ import {
 } from '@viaprize/ui/dialog'
 import { Input } from '@viaprize/ui/input'
 import { useState } from 'react'
-
+import Image from 'next/image'
 // Define the props type
 interface DonateCardProps {
   projectName: string
+  funds: number
+  projectImage: string
 }
 
-export default function DonateCard({ projectName }: DonateCardProps) {
+export default function DonateCard({ projectName,funds,projectImage }: DonateCardProps) {
   const [amount, setAmount] = useState('')
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,7 +37,7 @@ export default function DonateCard({ projectName }: DonateCardProps) {
     <>
       <Card className="w-full p-4 lg:flex items-center space-y-3 lg:space-y-0">
         <div className="w-full lg:w-[60%]">
-          <div className="text-2xl text-primary font-medium">$1000</div>
+          <div className="text-2xl text-primary font-medium">{funds}</div>
           <div>Total Raised</div>
         </div>
         <div className="w-full space-y-2">
@@ -63,26 +65,20 @@ export default function DonateCard({ projectName }: DonateCardProps) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>
-                  Donate ${amount} to {projectName}
+                <DialogTitle className='font-normal text-xl'>
+                 {projectName}
                 </DialogTitle>
               </DialogHeader>
+           <div className="">
+               <Image alt={projectName} src={projectImage} quality={100} width={100} height={100} className='w-full max-h-[200px] '  />
+           </div>
               <div className="grid gap-4 py-4">
                 <Button
-                  onClick={() => {
-                    console.log('Donating with card:', amount)
-                    // Handle donation logic here
-                  }}
                 >
-                  Donate with Card
+                  Donate  ${amount}  with Card
                 </Button>
-                <Button
-                  onClick={() => {
-                    console.log('Donating with crypto:', amount)
-                    // Handle donation logic here
-                  }}
-                >
-                  Donate with Crypto
+                <Button>
+                  Donate  ${amount}  with Crypto
                 </Button>
               </div>
             </DialogContent>

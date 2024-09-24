@@ -4,7 +4,7 @@ import { Input } from '@viaprize/ui/input'
 import React from 'react'
 
 // Define the User type
-type User = {
+interface User {
   id: number
   name: string
   avatar: string
