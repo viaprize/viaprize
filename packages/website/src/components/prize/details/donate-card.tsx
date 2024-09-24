@@ -1,35 +1,35 @@
-"use client";
+'use client'
 
-import { Button } from "@viaprize/ui/button";
-import { Card } from "@viaprize/ui/card";
+import { Button } from '@viaprize/ui/button'
+import { Card } from '@viaprize/ui/card'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@viaprize/ui/dialog";
-import { Input } from "@viaprize/ui/input";
-import { useState } from "react";
+} from '@viaprize/ui/dialog'
+import { Input } from '@viaprize/ui/input'
+import { useState } from 'react'
 
 // Define the props type
 interface DonateCardProps {
-  title: string;
+  title: string
 }
 
 export default function DonateCard({ title }: DonateCardProps) {
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState('')
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+    const value = e.target.value
     // Allow empty string, non-negative numbers, and decimals
     if (
-      value === "" ||
+      value === '' ||
       (/^\d*\.?\d*$/.test(value) && !Number.isNaN(Number.parseFloat(value)))
     ) {
-      setAmount(value);
+      setAmount(value)
     }
-  };
+  }
 
   return (
     <>
@@ -70,7 +70,7 @@ export default function DonateCard({ title }: DonateCardProps) {
               <div className="grid gap-4 py-4">
                 <Button
                   onClick={() => {
-                    console.log("Donating with card:", amount);
+                    console.log('Donating with card:', amount)
                     // Handle donation logic here
                   }}
                 >
@@ -78,7 +78,7 @@ export default function DonateCard({ title }: DonateCardProps) {
                 </Button>
                 <Button
                   onClick={() => {
-                    console.log("Donating with crypto:", amount);
+                    console.log('Donating with crypto:', amount)
                     // Handle donation logic here
                   }}
                 >
@@ -90,5 +90,5 @@ export default function DonateCard({ title }: DonateCardProps) {
         </div>
       </Card>
     </>
-  );
+  )
 }

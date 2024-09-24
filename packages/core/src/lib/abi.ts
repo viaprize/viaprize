@@ -1590,7 +1590,6 @@ export const PRIZE_V2_ABI = [
     type: 'receive',
   },
 ] as const
-
 ;[
   {
     inputs: [
