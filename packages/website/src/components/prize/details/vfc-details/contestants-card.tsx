@@ -1,33 +1,33 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Button } from "@viaprize/ui/button";
-import { Card } from "@viaprize/ui/card";
-import SubmitWorkButton from "../submissions/submit-work-button";
-import JoinContestantButton from "./join-contestant-button";
-export type ContestantStage = "NOT_JOINED" | "JOINED" | "SUBMITTED";
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Button } from '@viaprize/ui/button'
+import { Card } from '@viaprize/ui/card'
+import SubmitWorkButton from '../submissions/submit-work-button'
+import JoinContestantButton from './join-contestant-button'
+export type ContestantStage = 'NOT_JOINED' | 'JOINED' | 'SUBMITTED'
 
 function ContestantCardButton({
   stage,
   prizeId,
   slug,
 }: {
-  stage: ContestantStage;
-  prizeId: string;
-  slug: string;
+  stage: ContestantStage
+  prizeId: string
+  slug: string
 }) {
   return (
     <>
       {(() => {
         switch (stage) {
-          case "NOT_JOINED":
-            return <JoinContestantButton prizeId={prizeId} slug={slug} />;
-          case "JOINED":
-            return <SubmitWorkButton prizeId={prizeId} />;
-          case "SUBMITTED":
-            return null;
+          case 'NOT_JOINED':
+            return <JoinContestantButton prizeId={prizeId} slug={slug} />
+          case 'JOINED':
+            return <SubmitWorkButton prizeId={prizeId} />
+          case 'SUBMITTED':
+            return null
         }
       })()}
     </>
-  );
+  )
 }
 export default function ContestantsCard({
   contestants,
@@ -36,12 +36,12 @@ export default function ContestantsCard({
   slug,
 }: {
   contestants?: {
-    username: string;
-    avatar: string | null;
-  }[];
-  contestantStage: ContestantStage;
-  prizeId: string;
-  slug: string;
+    username: string
+    avatar: string | null
+  }[]
+  contestantStage: ContestantStage
+  prizeId: string
+  slug: string
 }) {
   return (
     <Card className="px-3 py-4">
@@ -69,5 +69,5 @@ export default function ContestantsCard({
         slug={slug}
       />
     </Card>
-  );
+  )
 }
