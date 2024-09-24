@@ -17,7 +17,8 @@ import {
 import { Input } from '@viaprize/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@viaprize/ui/popover'
 import { Textarea } from '@viaprize/ui/textarea'
-import { differenceInMinutes, format } from 'date-fns'
+import { TimePicker } from '@viaprize/ui/time-picker'
+import { differenceInMinutes, format, subDays } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -78,6 +79,7 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log('hiiiiiiiiiii')
     const image = await fetch(imageUploadUrl, {
       body: values.image,
       method: 'PUT',
@@ -197,18 +199,18 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={'outline'}
+                            variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
+                              'w-[280px] justify-start text-left font-normal',
                               !field.value && 'text-muted-foreground',
                             )}
                           >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
-                              format(field.value, 'PPP')
+                              format(field.value, 'PPP HH:mm')
                             ) : (
                               <span>Pick a date</span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
@@ -217,12 +219,21 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
-                          fromDate={new Date()}
+                          hidden={{
+                            before: new Date(),
+                            from: new Date(),
+                          }}
                           disabled={(date) =>
-                            date < new Date() || date < new Date('1900-01-01')
+                            date < subDays(new Date(), 1) ||
+                            date < new Date('1900-01-01')
                           }
-                          initialFocus
                         />
+                        <div className="p-3 border-t border-border">
+                          <TimePicker
+                            setDate={field.onChange}
+                            date={field.value}
+                          />
+                        </div>
                       </PopoverContent>
                     </Popover>
                     <FormMessage />
@@ -234,19 +245,22 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                 name="submissionEndDate"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Submission End Date</FormLabel>
+                    <FormLabel>
+                      Submission End Date And Voting Start date
+                    </FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={'outline'}
+                            variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
+                              'w-[280px] justify-start text-left font-normal',
                               !field.value && 'text-muted-foreground',
                             )}
                           >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
-                              format(field.value, 'PPP')
+                              format(field.value, 'PPP HH:mm:ss')
                             ) : (
                               <span>Pick a date</span>
                             )}
@@ -258,56 +272,30 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                         <Calendar
                           mode="single"
                           selected={field.value}
-                          onSelect={field.onChange}
+                          onSelect={(e) => {
+                            console.log(e)
+                            form.setValue('votingStartDate', e as Date)
+                            field.onChange(e)
+                          }}
+                          hidden={{
+                            before: new Date(),
+                          }}
                           disabled={(date) =>
-                            date < new Date() ||
-                            date <
-                              new Date(form.getValues('submissionStartDate'))
+                            date < subDays(new Date(), 1) ||
+                            date <=
+                              subDays(form.getValues('submissionStartDate'), 1)
                           }
-                          initialFocus
                         />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="votingStartDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Voting Start Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground',
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date < new Date() ||
-                            date < new Date(form.getValues('submissionEndDate'))
-                          }
-                          initialFocus
-                        />
+                        <div className="p-3 border-t border-border">
+                          <TimePicker
+                            setDate={(e) => {
+                              console.log(e)
+                              form.setValue('votingStartDate', e as Date)
+                              field.onChange(e)
+                            }}
+                            date={field.value}
+                          />
+                        </div>
                       </PopoverContent>
                     </Popover>
                     <FormMessage />
@@ -324,14 +312,15 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                       <PopoverTrigger asChild>
                         <FormControl>
                           <Button
-                            variant={'outline'}
+                            variant="outline"
                             className={cn(
-                              'w-full pl-3 text-left font-normal',
+                              'w-[280px] justify-start text-left font-normal',
                               !field.value && 'text-muted-foreground',
                             )}
                           >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
                             {field.value ? (
-                              format(field.value, 'PPP')
+                              format(field.value, 'PPP HH:mm:ss')
                             ) : (
                               <span>Pick a date</span>
                             )}
@@ -347,10 +336,15 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
                           disabled={(date) =>
                             date < new Date() ||
                             date < new Date('1900-01-01') ||
-                            date < new Date(form.getValues('votingStartDate'))
+                            date < new Date(form.getValues('submissionEndDate'))
                           }
-                          initialFocus
                         />
+                        <div className="p-3 border-t border-border">
+                          <TimePicker
+                            setDate={field.onChange}
+                            date={field.value}
+                          />
+                        </div>
                       </PopoverContent>
                     </Popover>
                     <FormMessage />

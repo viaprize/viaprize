@@ -14,6 +14,7 @@ import Image from 'next/image'
 import { useState } from 'react'
 // Define the props type
 interface DonateCardProps {
+
   projectName: string
   funds: number
   projectImage: string
@@ -24,6 +25,7 @@ export default function DonateCard({
   funds,
   projectImage,
 }: DonateCardProps) {
+
   const [amount, setAmount] = useState('')
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,8 +71,10 @@ export default function DonateCard({
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
+
                 <DialogTitle className="font-normal text-xl">
                   {projectName}
+
                 </DialogTitle>
               </DialogHeader>
               <div className="">

@@ -1590,3 +1590,54 @@ export const PRIZE_V2_ABI = [
     type: 'receive',
   },
 ] as const
+;[
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: 'targets',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: 'values',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes[]',
+        name: 'datas',
+        type: 'bytes[]',
+      },
+    ],
+    name: 'batchSend',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const
+
+export const TRANSACTION_BATCH_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: 'targets',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: 'values',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes[]',
+        name: 'datas',
+        type: 'bytes[]',
+      },
+    ],
+    name: 'batchSend',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const

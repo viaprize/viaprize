@@ -6,6 +6,7 @@ import { Button } from '@viaprize/ui/button'
 import Image from 'next/image'
 import DonateCard from './donate-card'
 
+
 export default function DetailsHeader({
   funds,
   projectName,
@@ -36,11 +37,11 @@ export default function DetailsHeader({
       />
 
       <div className="w-full">
-        <h1 className="text-2xl">{projectName}</h1>
+        <h1 className="text-2xl">{title}</h1>
 
         <h3 className="text-lg text-primary flex items-center mt-1">
           <Avatar className="mr-2">
-            <AvatarImage src={avatar} alt="@shadcn" />
+            <AvatarImage src={avatar ?? undefined} alt="@shadcn" />
             <AvatarFallback>{name.substring(0, 2)}</AvatarFallback>
           </Avatar>
           {name}
@@ -62,7 +63,8 @@ export default function DetailsHeader({
           funds={funds}
           projectName={projectName}
         />
-      </div>
+
+    </div>
     </div>
   )
 }
