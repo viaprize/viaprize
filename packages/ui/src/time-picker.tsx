@@ -1,19 +1,19 @@
-"use client";
+'use client'
 
-import { Label } from "@viaprize/ui/label";
-import { TimePickerInput } from "@viaprize/ui/time-picker-input";
-import { Clock } from "lucide-react";
-import * as React from "react";
+import { Label } from '@viaprize/ui/label'
+import { TimePickerInput } from '@viaprize/ui/time-picker-input'
+import { Clock } from 'lucide-react'
+import * as React from 'react'
 
 interface TimePickerDemoProps {
-  date: Date | undefined;
-  setDate: (date: Date | undefined) => void;
+  date: Date | undefined
+  setDate: (date: Date | undefined) => void
 }
 
 export function TimePicker({ date, setDate }: TimePickerDemoProps) {
-  const minuteRef = React.useRef<HTMLInputElement>(null);
-  const hourRef = React.useRef<HTMLInputElement>(null);
-  const secondRef = React.useRef<HTMLInputElement>(null);
+  const minuteRef = React.useRef<HTMLInputElement>(null)
+  const hourRef = React.useRef<HTMLInputElement>(null)
+  const secondRef = React.useRef<HTMLInputElement>(null)
 
   return (
     <div className="flex items-end gap-2">
@@ -46,5 +46,5 @@ export function TimePicker({ date, setDate }: TimePickerDemoProps) {
         <Clock className="ml-2 h-4 w-4" />
       </div>
     </div>
-  );
+  )
 }

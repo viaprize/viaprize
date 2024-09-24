@@ -1,4 +1,4 @@
-import { cacheTable } from "./cache";
+import { cacheTable } from './cache'
 
 // import { scheduleReceivingFunction, schedulerRole } from "./scheduler";
 import {
@@ -7,56 +7,56 @@ import {
   RPC_URL,
   WALLET_API_KEY,
   WALLET_PAYMENT_INFRA_API,
-} from "./secrets";
+} from './secrets'
 sst.Linkable.wrap(aws.iam.Role, (fn) => ({
   properties: {
     arn: fn.arn,
   },
-}));
+}))
 
-export const schedulerRole = new aws.iam.Role("schedulerRole", {
+export const schedulerRole = new aws.iam.Role('schedulerRole', {
   assumeRolePolicy: {
-    Version: "2012-10-17",
+    Version: '2012-10-17',
     Statement: [
       {
-        Action: "sts:AssumeRole",
-        Effect: "Allow",
-        Sid: "",
+        Action: 'sts:AssumeRole',
+        Effect: 'Allow',
+        Sid: '',
         Principal: {
-          Service: "scheduler.amazonaws.com",
+          Service: 'scheduler.amazonaws.com',
         },
       },
     ],
   },
   inlinePolicies: [
     {
-      name: "schedulerLambdaPolicy",
+      name: 'schedulerLambdaPolicy',
       policy: JSON.stringify({
-        Version: "2012-10-17",
+        Version: '2012-10-17',
         Statement: [
           {
-            Effect: "Allow",
-            Action: "lambda:InvokeFunction",
-            Resource: "*",
+            Effect: 'Allow',
+            Action: 'lambda:InvokeFunction',
+            Resource: '*',
           },
         ],
       }),
     },
   ],
-});
+})
 
 sst.Linkable.wrap(sst.aws.Function, (fn) => ({
   properties: {
     arn: fn.arn,
   },
-}));
+}))
 
-export const eventBus = new sst.aws.Bus("EventBus");
+export const eventBus = new sst.aws.Bus('EventBus')
 
 export const scheduleReceivingFunction = new sst.aws.Function(
-  "ScheduleReceivingLambda",
+  'ScheduleReceivingLambda',
   {
-    handler: "packages/functions/src/schedule-receiver.handler",
+    handler: 'packages/functions/src/schedule-receiver.handler',
     link: [
       eventBus,
       DATABASE_URL,
@@ -74,19 +74,19 @@ export const scheduleReceivingFunction = new sst.aws.Function(
       RPC_URL: RPC_URL.value,
       WALLET_API_KEY: WALLET_API_KEY.value,
     },
-  }
-);
+  },
+)
 
 eventBus.subscribe({
-  handler: "packages/functions/src/events/event-handler.handler",
+  handler: 'packages/functions/src/events/event-handler.handler',
   permissions: [
     {
-      actions: ["scheduler:CreateSchedule"],
-      resources: ["*"],
+      actions: ['scheduler:CreateSchedule'],
+      resources: ['*'],
     },
     {
-      actions: ["iam:PassRole"],
-      resources: ["*"],
+      actions: ['iam:PassRole'],
+      resources: ['*'],
     },
   ],
 
@@ -108,4 +108,4 @@ eventBus.subscribe({
     scheduleReceivingFunction,
     schedulerRole,
   ],
-});
+})

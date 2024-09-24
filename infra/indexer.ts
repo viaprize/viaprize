@@ -1,4 +1,4 @@
-import { eventBus } from "./events";
+import { eventBus } from './events'
 import {
   CHAIN_ID,
   DATABASE_URL,
@@ -8,25 +8,25 @@ import {
   RPC_URL,
   WALLET_API_KEY,
   WALLET_PAYMENT_INFRA_API,
-} from "./secrets";
-import { vpc } from "./vpc";
+} from './secrets'
+import { vpc } from './vpc'
 
 export const indexerCluster = new sst.aws.Cluster(
-  "IndexerSmartContractsCluster",
+  'IndexerSmartContractsCluster',
   {
     vpc: vpc,
-  }
-);
+  },
+)
 
-indexerCluster.addService("IndexerService", {
+indexerCluster.addService('IndexerService', {
   image: {
-    dockerfile: "Dockerfile.indexer",
+    dockerfile: 'Dockerfile.indexer',
   },
   public: {
-    ports: [{ listen: "80/http" }],
+    ports: [{ listen: '80/http' }],
   },
   dev: {
-    command: "pnpm dev:indexer",
+    command: 'pnpm dev:indexer',
   },
   environment: {
     PONDER_RPC_URL: INDEXER_RPC_URL.value,
@@ -49,4 +49,4 @@ indexerCluster.addService("IndexerService", {
     WALLET_API_KEY,
     RPC_URL,
   ],
-});
+})

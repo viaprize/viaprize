@@ -1,5 +1,5 @@
-import { cacheTable } from "./cache";
-import { eventBus } from "./events";
+import { cacheTable } from './cache'
+import { eventBus } from './events'
 import {
   AUTH_GITHUB_ID,
   AUTH_GITHUB_SECRET,
@@ -14,11 +14,11 @@ import {
   RPC_URL,
   WALLET_API_KEY,
   WALLET_PAYMENT_INFRA_API,
-} from "./secrets";
-import { imageBucket } from "./storage";
+} from './secrets'
+import { imageBucket } from './storage'
 
-export const website = new sst.aws.Nextjs("website", {
-  path: "./packages/website",
+export const website = new sst.aws.Nextjs('website', {
+  path: './packages/website',
   link: [
     AUTH_SECRET,
     DATABASE_URL,
@@ -53,4 +53,4 @@ export const website = new sst.aws.Nextjs("website", {
     RPC_URL: RPC_URL.value,
     WALLET_API_KEY: WALLET_API_KEY.value,
   },
-});
+})
