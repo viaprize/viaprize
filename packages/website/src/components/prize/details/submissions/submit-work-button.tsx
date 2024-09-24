@@ -1,37 +1,37 @@
-"use client";
+'use client'
 
-import { useAuth } from "@/hooks/useAuth";
-import { api } from "@/trpc/react";
-import { IconPresentation } from "@tabler/icons-react";
-import { Badge } from "@viaprize/ui/badge";
-import { Button } from "@viaprize/ui/button";
-import { LoaderIcon } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useAuth } from '@/hooks/useAuth'
+import { api } from '@/trpc/react'
+import { IconPresentation } from '@tabler/icons-react'
+import { Badge } from '@viaprize/ui/badge'
+import { Button } from '@viaprize/ui/button'
+import { LoaderIcon } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 
 export default function SubmitWorkButton({ prizeId }: { prizeId: string }) {
-  const mutation = api.prizes.addSubmission.useMutation();
-  const { session } = useAuth();
+  const mutation = api.prizes.addSubmission.useMutation()
+  const { session } = useAuth()
   if (!session?.user) {
-    return <Badge>Please sign in to submit your work</Badge>;
+    return <Badge>Please sign in to submit your work</Badge>
   }
   if (!session.user.username) {
-    return <Badge>Please complete your profile to submit your work</Badge>;
+    return <Badge>Please complete your profile to submit your work</Badge>
   }
   const handleSubmit = async () => {
     if (!session) {
-      throw new Error("Login required");
+      throw new Error('Login required')
     }
 
     if (!session.user.walletAddress) {
-      throw new Error("Wallet address is not set");
+      throw new Error('Wallet address is not set')
     }
 
     await mutation.mutateAsync({
       prizeId: prizeId,
       contestant: session.user.walletAddress,
-      submissionText: "Submission text",
-    });
-  };
+      submissionText: 'Submission text',
+    })
+  }
   return (
     <>
       <Button size="sm" onClick={handleSubmit}>
@@ -42,9 +42,9 @@ export default function SubmitWorkButton({ prizeId }: { prizeId: string }) {
             Please wait
           </>
         ) : (
-          "Submit your work"
+          'Submit your work'
         )}
       </Button>
     </>
-  );
+  )
 }

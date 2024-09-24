@@ -1,23 +1,23 @@
-import AboutContent from "@/components/prize/details/about-content";
-import DetailHeader from "@/components/prize/details/details-header";
-import Submissions from "@/components/prize/details/submissions/submissions";
-import ContestantsCard from "@/components/prize/details/vfc-details/contestants-card";
-import VisionaryFunderCard from "@/components/prize/details/vfc-details/visionary-funder-card";
-import Winners from "@/components/prize/details/vfc-details/winners";
-import VotingSection from "@/components/prize/details/voting/voting-section";
-import { api } from "@/trpc/server";
+import AboutContent from '@/components/prize/details/about-content'
+import DetailHeader from '@/components/prize/details/details-header'
+import Submissions from '@/components/prize/details/submissions/submissions'
+import ContestantsCard from '@/components/prize/details/vfc-details/contestants-card'
+import VisionaryFunderCard from '@/components/prize/details/vfc-details/visionary-funder-card'
+import Winners from '@/components/prize/details/vfc-details/winners'
+import VotingSection from '@/components/prize/details/voting/voting-section'
+import { api } from '@/trpc/server'
 
-import { IconArrowLeft } from "@tabler/icons-react";
-import { Separator } from "@viaprize/ui/separator";
+import { IconArrowLeft } from '@tabler/icons-react'
+import { Separator } from '@viaprize/ui/separator'
 
 export default async function FetchPrize({
   params: { slug },
 }: {
-  params: { slug: string };
+  params: { slug: string }
 }) {
-  const prize = await api.prizes.getPrizeBySlug(slug);
+  const prize = await api.prizes.getPrizeBySlug(slug)
   if (!prize) {
-    return <div>Prize not found</div>;
+    return <div>Prize not found</div>
   }
 
   return (
@@ -30,14 +30,14 @@ export default async function FetchPrize({
           funds={prize.funds}
           projectName={prize.title}
           name={prize.author.name ?? prize.authorUsername}
-          stage={prize.stage ?? ""}
+          stage={prize.stage ?? ''}
           image={prize.imageUrl}
-          avatar={prize.author.avatar || ""}
+          avatar={prize.author.avatar || ''}
           title={prize.title}
           prizeId={prize.id}
         />
         <Separator className="my-2" />
-        <AboutContent badges={["Technology"]} description={prize.description} />
+        <AboutContent badges={['Technology']} description={prize.description} />
         <Submissions submissions={prize.submissions} />
         <VotingSection users={[]} />
       </div>
@@ -49,8 +49,8 @@ export default async function FetchPrize({
           totalFunds={prize.funds}
           avatar={prize.author.avatar}
         />
-        <ContestantsCard name={"Contestant 1"} numberOfContestants={1} />
+        <ContestantsCard name={'Contestant 1'} numberOfContestants={1} />
       </div>
     </div>
-  );
+  )
 }
