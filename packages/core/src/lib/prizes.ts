@@ -1,17 +1,21 @@
 import { count, desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { encodeFunctionData } from "viem";
+import {
+  type TransactionReceipt,
+  encodeFunctionData,
+  parseEventLogs,
+} from "viem";
 import type { ViaprizeDatabase } from "../database";
 import {
   prizeComments,
   prizes,
   prizesToContestants,
   submissions,
-  votes,
 } from "../database/schema";
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from "../lib/abi";
 import { CacheTag } from "./cache-tag";
 import { CONTRACT_CONSTANTS_PER_CHAIN } from "./constants";
+import { PrizesBlockchain } from "./smart-contracts/prizes";
 import { stringToSlug } from "./utils";
 const CACHE_TAGS = {
   PENDING_PRIZES: { value: "pending-prizes", requiresSuffix: false },
@@ -23,11 +27,13 @@ const CACHE_TAGS = {
 export class Prizes extends CacheTag {
   db;
   chainId: number;
+  blockchain: PrizesBlockchain;
 
-  constructor(viaprizeDb: ViaprizeDatabase, chainId: number) {
+  constructor(viaprizeDb: ViaprizeDatabase, chainId: number, rpcUrl: string) {
     super(CACHE_TAGS);
     this.db = viaprizeDb.database;
     this.chainId = chainId;
+    this.blockchain = new PrizesBlockchain(rpcUrl, chainId);
   }
 
   async getPendingPrizes() {
@@ -37,14 +43,6 @@ export class Prizes extends CacheTag {
     });
 
     return proposals;
-  }
-  async getEncodedEndDispute() {
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: "endDispute",
-      args: [],
-    });
-    return data;
   }
   async getContractAddressFromTransactionReceipt(receipt: TransactionReceipt) {
     const contractAddress = parseEventLogs({
@@ -72,76 +70,6 @@ export class Prizes extends CacheTag {
       throw new Error("Prize not found");
     }
     return prize;
-  }
-
-  async getEncodedStartSubmission(
-    contractAddress: string,
-    customPrize?: Pick<
-      typeof prizes.$inferInsert,
-      "submissionDurationInMinutes"
-    >
-  ) {
-    const prize =
-      customPrize || (await this.getPrizeByContractAddress(contractAddress));
-    if (!prize) {
-      throw new Error("Prize not found");
-    }
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: "startSubmissionPeriod",
-      args: [BigInt(prize.submissionDurationInMinutes)],
-    });
-    return data;
-  }
-  async getEncodedEndVoting() {
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: "endVotingPeriod",
-      args: [],
-    });
-    return data;
-  }
-
-  async getEncodedEndSubmissionAndStartVoting(
-    contractAddress: string,
-    customPrize?: Pick<typeof prizes.$inferInsert, "votingDurationInMinutes">
-  ) {
-    const endSubmissionPeriodData = await this.getEncodedEndSubmission();
-    const startVotingPeriodData = await this.getEncodedStartVoting(
-      contractAddress,
-      customPrize
-    );
-
-    return {
-      endSubmissionPeriodData,
-      startVotingPeriodData,
-    };
-  }
-
-  async getEncodedEndSubmission() {
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: "endSubmissionPeriod",
-      args: [],
-    });
-    return data;
-  }
-
-  async getEncodedStartVoting(
-    contractAddress: string,
-    customPrize?: Pick<typeof prizes.$inferInsert, "votingDurationInMinutes">
-  ) {
-    const prize =
-      customPrize || (await this.getPrizeByContractAddress(contractAddress));
-    if (!prize) {
-      throw new Error("Prize not found");
-    }
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: "startVotingPeriod",
-      args: [BigInt(prize.votingDurationInMinutes)],
-    });
-    return data;
   }
 
   async getDeployedPrizes() {
@@ -319,18 +247,6 @@ export class Prizes extends CacheTag {
     return prizeId;
   }
 
-  async getEncodedAddSubmissionData(
-    contestant: `0x${string}`,
-    submissionText: string
-  ) {
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: "addSubmission",
-      args: [contestant, submissionText],
-    });
-    return data;
-  }
-
   async addSubmission(data: {
     submissionHash: string;
     prizeId: string;
@@ -361,7 +277,6 @@ export class Prizes extends CacheTag {
   }
 
   async getEncodedAddVoteData(
-    // funder: `0x${string}`,
     submissionHash: `0x${string}`,
     voteAmount: bigint,
     v: number,

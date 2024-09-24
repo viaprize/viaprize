@@ -32,7 +32,11 @@ export class Viaprize {
     );
     this.donations = new Donations(this.database);
     this.users = new Users(this.database, this.wallet);
-    this.prizes = new Prizes(this.database, this.config.chainId);
+    this.prizes = new Prizes(
+      this.database,
+      this.config.chainId,
+      this.config.wallet.rpcUrl
+    );
     this.indexerEvents = new IndexerEvents(this.database);
   }
 }

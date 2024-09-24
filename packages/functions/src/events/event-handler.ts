@@ -104,12 +104,8 @@ export const handler = bus.subscriber(
         await viaprize.indexerEvents.createEvent(event.properties.eventId);
         break;
       case "prize.scheduleStartSubmission": {
-        const data = await viaprize.prizes.getEncodedStartSubmission(
-          event.properties.contractAddress,
-          {
-            submissionDurationInMinutes:
-              event.properties.submissionDurationInMinutes,
-          }
+        const data = await viaprize.prizes.blockchain.getEncodedStartSubmission(
+          event.properties.submissionDurationInMinutes
         );
         await schedule({
           functionArn: Resource.ScheduleReceivingLambda.arn,
@@ -133,8 +129,7 @@ export const handler = bus.subscriber(
       }
       case "prize.scheduleEndSubmissionAndStartVoting": {
         const data =
-          await viaprize.prizes.getEncodedEndSubmissionAndStartVoting(
-            event.properties.contractAddress,
+          await viaprize.prizes.blockchain.getEncodedEndSubmissionAndStartVoting(
             {
               votingDurationInMinutes: event.properties.votingDurationInMinutes,
             }
@@ -169,7 +164,7 @@ export const handler = bus.subscriber(
         break;
       }
       case "prize.scheduleEndVoting": {
-        const data = await viaprize.prizes.getEncodedEndVoting();
+        const data = await viaprize.prizes.blockchain.getEncodedEndVoting();
         await schedule({
           functionArn: Resource.ScheduleReceivingLambda.arn,
           name: `EndVoting-${event.properties.contractAddress}`,
@@ -197,7 +192,7 @@ export const handler = bus.subscriber(
         const prize = await viaprize.prizes.getPrizeByContractAddress(
           event.properties.contractAddress
         );
-        const data = await viaprize.prizes.getEncodedEndDispute();
+        const data = await viaprize.prizes.blockchain.getEncodedEndSubmission();
         await schedule({
           functionArn: Resource.ScheduleReceivingLambda.arn,
           name: `EndDispute-${prize.id}`,

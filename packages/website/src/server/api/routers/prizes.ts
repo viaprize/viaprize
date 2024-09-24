@@ -4,6 +4,7 @@ import { Resource } from "sst";
 import { bus } from "sst/aws/bus";
 import { z } from "zod";
 
+import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from "@viaprize/core/lib/abi";
 import {
   adminProcedure,
   createTRPCRouter,
@@ -50,6 +51,81 @@ export const prizeRouter = createTRPCRouter({
     );
     return prizes;
   }),
+  deployPrize: adminProcedure
+    .input(
+      z.object({
+        prizeId: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId);
+      if (!prize) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Prize not found",
+          cause: "Prize not found",
+        });
+      }
+      const txData =
+        await ctx.viaprize.prizes.blockchain.getEncodedDeployPrizeData({
+          authorFeePercentage: prize.authorFeePercentage,
+          id: prize.id,
+          platformFeePercentage: prize.platformFeePercentage,
+          proposerAddress: prize.proposerAddress,
+        });
+      const prizeFactoryAddress =
+        ctx.viaprize.prizes.getPrizeFactoryV2Address();
+      const simulated = await ctx.viaprize.wallet.simulateTransaction(
+        {
+          data: txData,
+          to: prizeFactoryAddress,
+          value: "0",
+        },
+        "gasless",
+        "signer"
+      );
+
+      if (!simulated) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Transaction failed",
+          cause: "Transaction failed",
+        });
+      }
+      const txHash = await ctx.viaprize.wallet.withTransactionEvents(
+        PRIZE_FACTORY_ABI,
+        [
+          {
+            data: txData,
+            to: prizeFactoryAddress,
+            value: "0",
+          },
+        ],
+        "gasless",
+        ["NewViaPrizeCreated"],
+        async (events) => {
+          await ctx.viaprize.prizes.approvePrizeProposal(input.prizeId);
+          if (!events[0]?.args.viaPrizeAddress) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Contract address not found",
+              cause: "Contract address not found",
+            });
+          }
+          if (events[0]?.args.viaPrizeAddress) {
+            await bus.publish(Resource.EventBus.name, Events.Prize.Approve, {
+              contractAddress: events[0].args.viaPrizeAddress,
+              prizeId: input.prizeId,
+            });
+          }
+        }
+      );
+      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+        key: ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
+      });
+      return txHash;
+    }),
+
   createPrize: protectedProcedure
     .input(
       z.object({
@@ -135,10 +211,11 @@ export const prizeRouter = createTRPCRouter({
         });
       }
 
-      const txData = await ctx.viaprize.prizes.getEncodedAddSubmissionData(
-        input.contestant as `0x${string}`,
-        input.submissionText
-      );
+      const txData =
+        await ctx.viaprize.prizes.blockchain.getEncodedAddSubmissionData(
+          input.contestant as `0x${string}`,
+          input.submissionText
+        );
 
       const simulated = await ctx.viaprize.wallet.simulateTransaction(
         {
@@ -169,7 +246,7 @@ export const prizeRouter = createTRPCRouter({
 
       if (txHash) {
         await ctx.viaprize.prizes.addSubmission({
-          submissionHash: txHash,
+          submissionHash: txHash.blockHash,
           contestant: input.contestant,
           submissionText: input.submissionText,
           prizeId: input.prizeId,
@@ -233,11 +310,13 @@ export const prizeRouter = createTRPCRouter({
         });
       }
       const txHash = await ctx.viaprize.wallet.sendTransaction(
-        {
-          data: txData,
-          to: prize.primaryContractAddress as `0x${string}`,
-          value: "0",
-        },
+        [
+          {
+            data: txData,
+            to: prize.primaryContractAddress as `0x${string}`,
+            value: "0",
+          },
+        ],
         "gasless"
       );
 
