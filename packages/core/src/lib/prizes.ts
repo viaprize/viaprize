@@ -24,7 +24,7 @@ const CACHE_TAGS = {
   SLUG_PRIZE: { value: "slug-prize-in-", requiresSuffix: true },
 } as const;
 
-export class Prizes extends CacheTag {
+export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   db;
   chainId: number;
   blockchain: PrizesBlockchain;

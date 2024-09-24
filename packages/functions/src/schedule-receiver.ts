@@ -43,6 +43,12 @@ export const handler: ScheduledHandler<{
           );
         }
       );
+      const prize = await viaprize.prizes.getPrizeByContractAddress(
+        txBody.transactions[0].to
+      );
+      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+        key: viaprize.prizes.getCacheTag("SLUG_PRIZE", prize.slug ?? ""),
+      });
 
       break;
     }
@@ -61,6 +67,12 @@ export const handler: ScheduledHandler<{
           );
         }
       );
+      const prize = await viaprize.prizes.getPrizeByContractAddress(
+        txBody.transactions[0].to
+      );
+      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+        key: viaprize.prizes.getCacheTag("SLUG_PRIZE", prize.slug ?? ""),
+      });
       break;
     }
     case "wallet.endVoting": {
@@ -77,6 +89,12 @@ export const handler: ScheduledHandler<{
           );
         }
       );
+      const prize = await viaprize.prizes.getPrizeByContractAddress(
+        txBody.transactions[0].to
+      );
+      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+        key: viaprize.prizes.getCacheTag("SLUG_PRIZE", prize.slug ?? ""),
+      });
       break;
     }
     case "wallet.endSubmissionAndStartVoting": {
@@ -142,33 +160,10 @@ export const handler: ScheduledHandler<{
           }
         }
       );
+      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+        key: viaprize.prizes.getCacheTag("SLUG_PRIZE", prize.slug ?? ""),
+      });
       break;
-    }
-
-    case "prize.endSubmissionAndStartVoting": {
-      const body = payload.body as typeof Events.Wallet.Transaction.$input;
-      const prize = await viaprize.prizes.getPrizeByContractAddress(
-        body.transactions[0].to
-      );
-      if (prize.numberOfSubmissions > 0) {
-        await bus.publish(
-          Resource.EventBus.name,
-          Events.Wallet.Transaction,
-          payload.body as typeof Events.Wallet.Transaction.$input
-        );
-        await deleteSchedule(`EndVoting-${body.transactions[0].to}`);
-      } else {
-        await bus.publish(Resource.EventBus.name, Events.Wallet.Transaction, {
-          transactions: [
-            {
-              data: body.transactions[0].data,
-              to: body.transactions[0].to,
-              value: body.transactions[0].value,
-            },
-          ],
-          walletType: "gasless",
-        });
-      }
     }
   }
 };

@@ -1,29 +1,29 @@
-import { IconPresentation } from '@tabler/icons-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
-import { Badge } from '@viaprize/ui/badge'
-import { Button } from '@viaprize/ui/button'
-import Image from 'next/image'
-import DonateCard from './donate-card'
+import { IconPresentation } from "@tabler/icons-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
+import { Badge } from "@viaprize/ui/badge";
+import { Button } from "@viaprize/ui/button";
+import Image from "next/image";
+import DonateCard from "./donate-card";
 
-export default function DetailsHeader({
+export default function DetailHeader({
   image,
   avatar,
   name,
   stage,
+  title,
 }: {
-  image?: string | null
-  avatar?: string | null
-  name: string
-  stage: string
+  image?: string | null;
+  avatar?: string | null;
+  name: string;
+  stage: string;
+  title: string;
 }) {
-  const projectName = 'New Hope Construction Company kugdiugwqi diweiw ie'
-
   return (
     <div className="p-3 w-full lg:flex space-x-0 space-y-3 lg:space-y-0 lg:space-x-5">
       <Image
         src={
           image ||
-          'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
+          "https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image"
         }
         width={150}
         height={100}
@@ -32,11 +32,11 @@ export default function DetailsHeader({
       />
 
       <div className="w-full">
-        <h1 className="text-2xl">{projectName}</h1>
+        <h1 className="text-2xl">{title}</h1>
 
         <h3 className="text-lg text-primary flex items-center mt-1">
           <Avatar className="mr-2">
-            <AvatarImage src={avatar} alt="@shadcn" />
+            <AvatarImage src={avatar ?? undefined} alt="@shadcn" />
             <AvatarFallback>{name.substring(0, 2)}</AvatarFallback>
           </Avatar>
           {name}
@@ -53,8 +53,8 @@ export default function DetailsHeader({
       </div>
 
       <div className="w-full">
-        <DonateCard projectName={projectName} />
+        <DonateCard title={title} />
       </div>
     </div>
-  )
+  );
 }
