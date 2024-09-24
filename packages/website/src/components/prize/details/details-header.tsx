@@ -1,22 +1,26 @@
 import { IconPresentation } from '@tabler/icons-react'
+import { AspectRatio } from '@viaprize/ui/aspect-ratio'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Badge } from '@viaprize/ui/badge'
 import { Button } from '@viaprize/ui/button'
 import Image from 'next/image'
 import DonateCard from './donate-card'
 
-export default function DetailHeader({
+
+export default function DetailsHeader({
+  funds,
+  projectName,
   image,
   avatar,
   name,
   stage,
-  title,
 }: {
+  projectName: string
   image?: string | null
-  avatar?: string | null
+  avatar?: string | undefined
   name: string
   stage: string
-  title: string
+  funds: number
 }) {
   return (
     <div className="p-3 w-full lg:flex space-x-0 space-y-3 lg:space-y-0 lg:space-x-5">
@@ -25,9 +29,10 @@ export default function DetailHeader({
           image ||
           'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
         }
+        quality={100}
         width={150}
         height={100}
-        className="rounded-md w-full lg:w-auto"
+        className="w-full lg:w-auto rounded-md object-cover"
         alt="Image"
       />
 
@@ -53,8 +58,13 @@ export default function DetailHeader({
       </div>
 
       <div className="w-full">
-        <DonateCard title={title} />
-      </div>
+        <DonateCard
+          projectImage={image ?? ''}
+          funds={funds}
+          projectName={projectName}
+        />
+
+    </div>
     </div>
   )
 }
