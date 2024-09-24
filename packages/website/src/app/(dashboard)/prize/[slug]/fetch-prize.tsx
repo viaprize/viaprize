@@ -15,7 +15,6 @@ export default async function FetchPrize({
 }: {
   params: { slug: string }
 }) {
-
   const prize = await api.prizes.getPrizeBySlug(slug)
   if (!prize) {
     return <div>Prize not found</div>
@@ -24,25 +23,21 @@ export default async function FetchPrize({
   return (
     <div className="lg:flex h-full">
       <div className="w-full space-y-3 md:w-[75%] h-full lg:max-h-screen overflow-auto border-r-2">
-        
-          <div className="flex items-center text-sm font-semibold ml-3 mt-3">
-            <IconArrowLeft className="mr-1" size={20} /> Back
-          </div>
-          <DetailHeader
+        <div className="flex items-center text-sm font-semibold ml-3 mt-3">
+          <IconArrowLeft className="mr-1" size={20} /> Back
+        </div>
+        <DetailHeader
           funds={prize.funds}
           projectName={prize.title}
           name={prize.author.name ?? prize.authorUsername}
           stage={prize.stage ?? ''}
-            image={prize.imageUrl}
-            avatar={prize.author.avatar || ''}
-          />
-          <Separator className="my-2" />
-          <AboutContent
-            badges={['Technology']}
-            description={prize.description}
-          />
-          <Submissions submissions={prize.submissions} /> 
-         <VotingSection users={[]}  />
+          image={prize.imageUrl}
+          avatar={prize.author.avatar || ''}
+        />
+        <Separator className="my-2" />
+        <AboutContent badges={['Technology']} description={prize.description} />
+        <Submissions submissions={prize.submissions} />
+        <VotingSection users={[]} />
       </div>
       <div className="w-full lg:w-[25%] mt-5 mx-3 space-y-5 lg:max-h-screen lg:overflow-auto">
         <Winners />

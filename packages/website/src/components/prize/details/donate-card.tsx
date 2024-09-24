@@ -10,8 +10,8 @@ import {
   DialogTrigger,
 } from '@viaprize/ui/dialog'
 import { Input } from '@viaprize/ui/input'
-import { useState } from 'react'
 import Image from 'next/image'
+import { useState } from 'react'
 // Define the props type
 interface DonateCardProps {
   projectName: string
@@ -19,7 +19,11 @@ interface DonateCardProps {
   projectImage: string
 }
 
-export default function DonateCard({ projectName,funds,projectImage }: DonateCardProps) {
+export default function DonateCard({
+  projectName,
+  funds,
+  projectImage,
+}: DonateCardProps) {
   const [amount, setAmount] = useState('')
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,21 +69,23 @@ export default function DonateCard({ projectName,funds,projectImage }: DonateCar
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle className='font-normal text-xl'>
-                 {projectName}
+                <DialogTitle className="font-normal text-xl">
+                  {projectName}
                 </DialogTitle>
               </DialogHeader>
-           <div className="">
-               <Image alt={projectName} src={projectImage} quality={100} width={100} height={100} className='w-full max-h-[200px] '  />
-           </div>
+              <div className="">
+                <Image
+                  alt={projectName}
+                  src={projectImage}
+                  quality={100}
+                  width={100}
+                  height={100}
+                  className="w-full max-h-[200px] "
+                />
+              </div>
               <div className="grid gap-4 py-4">
-                <Button
-                >
-                  Donate  ${amount}  with Card
-                </Button>
-                <Button>
-                  Donate  ${amount}  with Crypto
-                </Button>
+                <Button>Donate ${amount} with Card</Button>
+                <Button>Donate ${amount} with Crypto</Button>
               </div>
             </DialogContent>
           </Dialog>

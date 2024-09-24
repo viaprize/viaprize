@@ -1,49 +1,49 @@
-'use client';
-import { Button } from '@viaprize/ui/button';
-import { Separator } from '@viaprize/ui/separator';
-import { useState } from 'react';
-import VotingCard from './voting-card';
+'use client'
+import { Button } from '@viaprize/ui/button'
+import { Separator } from '@viaprize/ui/separator'
+import { useState } from 'react'
+import VotingCard from './voting-card'
 
 // Define the type for a user
 type User = {
-  id: number;
-  name: string;
-  avatar: string;
-  submitted: string;
-  votes: number | string; // Allow string for easier handling with inputs
-};
+  id: number
+  name: string
+  avatar: string
+  submitted: string
+  votes: number | string // Allow string for easier handling with inputs
+}
 
 interface VotingSectionProps {
-  users: User[];
+  users: User[]
 }
 
 export default function VotingSection({ users }: VotingSectionProps) {
-  const [userVotes, setUserVotes] = useState<User[]>(users); // Initialize state with users prop
-  const [totalVotesLeft, setTotalVotesLeft] = useState<number>(100); // Total votes left
+  const [userVotes, setUserVotes] = useState<User[]>(users) // Initialize state with users prop
+  const [totalVotesLeft, setTotalVotesLeft] = useState<number>(100) // Total votes left
 
   // Function to handle vote input changes
   const handleVoteChange = (id: number, newVotes: number | string) => {
     const updatedUsers = userVotes.map((user) =>
       user.id === id ? { ...user, votes: newVotes } : user,
-    );
-    setUserVotes(updatedUsers);
-  };
+    )
+    setUserVotes(updatedUsers)
+  }
 
   // Function to handle the final vote submission
   const handleFinalVoteSubmit = () => {
-    let totalVotes = 0;
+    let totalVotes = 0
     userVotes.forEach(
       (user) => (totalVotes += Number.parseInt(user.votes as string) || 0),
-    );
+    )
 
     // Check if votes are within allowed total votes
     if (totalVotes <= 100) {
-      console.log('Submitted votes for all users:', userVotes);
-      setTotalVotesLeft(100 - totalVotes); // Update the total votes left
+      console.log('Submitted votes for all users:', userVotes)
+      setTotalVotesLeft(100 - totalVotes) // Update the total votes left
     } else {
-      alert('Total votes exceed the allowed limit of 100.');
+      alert('Total votes exceed the allowed limit of 100.')
     }
-  };
+  }
 
   return (
     <div className="p-3">
@@ -63,5 +63,5 @@ export default function VotingSection({ users }: VotingSectionProps) {
         Submit All Votes
       </Button>
     </div>
-  );
+  )
 }

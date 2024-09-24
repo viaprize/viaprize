@@ -1,18 +1,18 @@
-import { Separator } from '@viaprize/ui/separator';
-import SubmissionCard from './submission-card';
+import { Separator } from '@viaprize/ui/separator'
+import SubmissionCard from './submission-card'
 
 interface Submission {
-  description: string;
-  username: string | null;
-  prizeId: string | null;
-  submissionHash: string;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  submitterAddress: string;
+  description: string
+  username: string | null
+  prizeId: string | null
+  submissionHash: string
+  createdAt: Date | null
+  updatedAt: Date | null
+  submitterAddress: string
 }
 
 interface SubmissionsProps {
-  submissions: Submission[];
+  submissions: Submission[]
 }
 
 export default function Submissions({ submissions }: SubmissionsProps) {
@@ -21,11 +21,13 @@ export default function Submissions({ submissions }: SubmissionsProps) {
       <div className="text-xl">Submissions ({submissions.length})</div>
       <Separator className="my-2" />
       {submissions.map((submission) => {
-        const formattedDate = (submission.createdAt ?? new Date()).toLocaleDateString('en-US', {
+        const formattedDate = (
+          submission.createdAt ?? new Date()
+        ).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
-        });
+        })
         return (
           <SubmissionCard
             key={submission.username}
@@ -33,8 +35,8 @@ export default function Submissions({ submissions }: SubmissionsProps) {
             name={submission.username ?? ''}
             submissionCreated={formattedDate}
           />
-        );
+        )
       })}
     </div>
-  );
+  )
 }
