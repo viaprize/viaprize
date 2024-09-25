@@ -4,15 +4,12 @@ import useAppUser from '@/components/hooks/useAppUser';
 import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 import { Button, Card, Flex } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
-import { IconTags } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { BiSolidRightArrowCircle } from 'react-icons/bi';
-import { FaTelegramPlane } from 'react-icons/fa';
 import type { RenderPhotoProps } from 'react-photo-album';
-import { PhotoAlbum } from 'react-photo-album';
 
 const photoSizes: number[][] = [
   [2160, 2160],
@@ -82,7 +79,7 @@ export default function Home() {
         <section className="md:flex justify-betweem items-center min-h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
             <h1 className="font-bold text-4xl sm:text-5xl my-6">
-              The ultimate destination for all your prize
+              The ultimate destination for all your prizes
             </h1>
             <Flex gap="md" wrap="wrap" className="sm:w-[60%] lg:w-[70%]">
               <Link href="/prize/explore">
