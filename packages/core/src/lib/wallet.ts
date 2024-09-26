@@ -1,4 +1,16 @@
-import { http, createPublicClient } from 'viem'
+import {
+  http,
+  type Abi,
+  type ContractEventName,
+  ParseEventLogsParameters,
+  type ParseEventLogsReturnType,
+  type TransactionReceipt,
+  createPublicClient,
+  parseEventLogs,
+} from 'viem'
+import { call, waitForTransactionReceipt } from 'viem/actions'
+import { PRIZE_FACTORY_ABI } from './abi'
+import { Blockchain } from './smart-contracts/blockchain'
 import { getChain } from './utils'
 
 export type WalletType = 'reserve' | 'gasless'
@@ -10,26 +22,18 @@ type TransactionData = {
   data: string
 }
 
-export class Wallet {
+export class Wallet extends Blockchain {
   url: string
-  rpcUrl: string
-  chainId: number
   walletApiKey: string
-  blockchainClient
   constructor(
     url: string,
     rpcUrl: string,
     chainId: number,
     walletApiKey: string,
   ) {
+    super(rpcUrl, chainId)
     this.walletApiKey = walletApiKey
     this.url = url
-    this.rpcUrl = rpcUrl
-    this.chainId = chainId
-    this.blockchainClient = createPublicClient({
-      chain: getChain(this.chainId as 10),
-      transport: http(this.rpcUrl),
-    })
   }
   async generateWallet() {
     // Generate a wallet
@@ -37,6 +41,33 @@ export class Wallet {
       await fetch(this.url + '/wallet/generate')
     ).json()) as any
     return res
+  }
+  async withTransactionEvents<
+    abi extends Abi | readonly unknown[],
+    eventName extends
+      | ContractEventName<abi>
+      | ContractEventName<abi>[]
+      | undefined = undefined,
+  >(
+    abi: abi,
+    tx: TransactionData[],
+    type: WalletType,
+    events:
+      | eventName
+      | ContractEventName<abi>
+      | ContractEventName<abi>[]
+      | undefined,
+    callback: (
+      event: ParseEventLogsReturnType<abi, eventName>,
+      tx: TransactionReceipt,
+    ) => Awaited<void>,
+  ) {
+    const transaction = await this.sendTransaction(tx, type)
+    await callback(
+      parseEventLogs({ logs: transaction.logs, abi, eventName: events }),
+      transaction,
+    )
+    return transaction
   }
 
   async simulateTransaction(
@@ -54,7 +85,7 @@ export class Wallet {
     return res.data
   }
 
-  async sendTransaction(tx: TransactionData, type: WalletType) {
+  async sendTransaction(tx: TransactionData[], type: WalletType) {
     const transactionHash = await (
       await fetch(`${this.url}/${type}`, {
         body: JSON.stringify(tx),
@@ -71,7 +102,11 @@ export class Wallet {
         console.log({ res })
         return (res as any).hash as string
       })
-    return transactionHash
+    const receipt = await this.blockchainClient.waitForTransactionReceipt({
+      hash: transactionHash as `0x${string}`,
+    })
+
+    return receipt
   }
 
   async getAddress(type: WalletType, addressType: AddressType) {

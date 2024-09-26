@@ -1,17 +1,21 @@
-import { count, desc, eq } from 'drizzle-orm'
+import { and, count, desc, eq, sql } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import { encodeFunctionData } from 'viem'
+import {
+  type TransactionReceipt,
+  encodeFunctionData,
+  parseEventLogs,
+} from 'viem'
 import type { ViaprizeDatabase } from '../database'
 import {
   prizeComments,
   prizes,
   prizesToContestants,
   submissions,
-  votes,
 } from '../database/schema'
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../lib/abi'
 import { CacheTag } from './cache-tag'
 import { CONTRACT_CONSTANTS_PER_CHAIN } from './constants'
+import { PrizesBlockchain } from './smart-contracts/prizes'
 import { stringToSlug } from './utils'
 const CACHE_TAGS = {
   PENDING_PRIZES: { value: 'pending-prizes', requiresSuffix: false },
@@ -19,14 +23,18 @@ const CACHE_TAGS = {
   DEPLOYED_PRIZES: { value: 'deployed-prizes', requiresSuffix: false },
   SLUG_PRIZE: { value: 'slug-prize-in-', requiresSuffix: true },
 } as const
-export class Prizes extends CacheTag {
+
+export type PrizeStages = typeof prizes.stage._.data | null
+export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   db
   chainId: number
+  blockchain: PrizesBlockchain
 
-  constructor(viaprizeDb: ViaprizeDatabase, chainId: number) {
+  constructor(viaprizeDb: ViaprizeDatabase, chainId: number, rpcUrl: string) {
     super(CACHE_TAGS)
     this.db = viaprizeDb.database
     this.chainId = chainId
+    this.blockchain = new PrizesBlockchain(rpcUrl, chainId)
   }
 
   async getPendingPrizes() {
@@ -38,6 +46,61 @@ export class Prizes extends CacheTag {
     return proposals
   }
 
+  async startSubmissionPeriodByContractAddress(contractAddress: string) {
+    await this.db
+      .update(prizes)
+      .set({
+        stage: 'SUBMISSIONS_OPEN',
+      })
+      .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
+  }
+  async endDisputePeriodByContractAddress(contractAddress: string) {
+    await this.db
+      .update(prizes)
+      .set({
+        stage: 'WON',
+      })
+      .where(eq(prizes.primaryContractAddress, contractAddress))
+  }
+  async endVotingPeriodByContractAddress(contractAddress: string) {
+    await this.db
+      .update(prizes)
+      .set({
+        stage: 'DISPUTE_AVAILABLE',
+      })
+      .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
+  }
+
+  async startVotingPeriodByContractAddress(contractAddress: string) {
+    await this.db
+      .update(prizes)
+      .set({
+        stage: 'VOTING_OPEN',
+      })
+      .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
+  }
+
+  async refundByContractAddress(
+    contractAddress: string,
+    totalRefunded: number,
+  ) {
+    await this.db
+      .update(prizes)
+      .set({
+        stage: 'REFUNDED',
+        totalRefunded: totalRefunded,
+      })
+      .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
+  }
+  async getContractAddressFromTransactionReceipt(receipt: TransactionReceipt) {
+    const contractAddress = parseEventLogs({
+      logs: receipt.logs,
+      abi: PRIZE_FACTORY_ABI,
+      eventName: 'NewViaPrizeCreated',
+    })
+    return contractAddress[0]?.args.viaPrizeAddress
+  }
+
   async getDeployedPrizesCount() {
     const countPrize = await this.db
       .select({ count: count() })
@@ -45,20 +108,16 @@ export class Prizes extends CacheTag {
       .where(eq(prizes.proposalStage, 'APPROVED'))
     return countPrize[0]?.count
   }
-
-  async getEncodedStartSubmission(contractAddress: string) {
+  async getPrizeByContractAddress(contractAddress: string) {
+    console.log(contractAddress)
     const prize = await this.db.query.prizes.findFirst({
       where: eq(prizes.primaryContractAddress, contractAddress),
     })
+    console.log(prize)
     if (!prize) {
       throw new Error('Prize not found')
     }
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: 'startSubmissionPeriod',
-      args: [BigInt(prize.submissionDurationInMinutes)],
-    })
-    return data
+    return prize
   }
 
   async getDeployedPrizes() {
@@ -90,7 +149,6 @@ export class Prizes extends CacheTag {
           with: {
             user: {
               columns: {
-                name: true,
                 avatar: true,
                 username: true,
               },
@@ -118,32 +176,35 @@ export class Prizes extends CacheTag {
   }
 
   async approveDeployedPrize(prizeId: string, contractAddress: string) {
-    await this.db.transaction(async (trx) => {
-      const prize = await trx.query.prizes.findFirst({
-        where: eq(prizes.id, prizeId),
-      })
-
-      if (!prize) {
-        console.error('Prize not found')
-        return
-      }
-      if (prize.proposalStage === 'APPROVED') {
-        console.error(new Error('Prize already approved'))
-        return
-      }
-
-      console.log(prize)
-      if (prize.proposalStage !== 'APPROVED_BUT_NOT_DEPLOYED') {
-        throw new Error('Prize not in correct stage')
-      }
-      await trx
-        .update(prizes)
-        .set({
-          primaryContractAddress: contractAddress,
-          proposalStage: 'APPROVED',
-        })
+    const prize = (
+      await this.db
+        .select()
+        .from(prizes)
         .where(eq(prizes.id, prizeId))
-    })
+        .limit(1)
+        .execute()
+    )[0]
+    if (!prize) {
+      console.error('Prize not found')
+      return
+    }
+    if (prize.proposalStage === 'APPROVED') {
+      console.error(new Error('Prize already approved'))
+      return
+    }
+    if (prize.proposalStage !== 'APPROVED_BUT_NOT_DEPLOYED') {
+      throw new Error('Prize not in correct stage')
+    }
+
+    const [res] = await this.db
+      .update(prizes)
+      .set({
+        primaryContractAddress: contractAddress.toLowerCase(),
+        proposalStage: 'APPROVED',
+      })
+      .returning({ contractAddress: prizes.primaryContractAddress })
+
+    return res
   }
 
   async approvePrizeProposal(prizeId: string) {
@@ -233,18 +294,6 @@ export class Prizes extends CacheTag {
     return prizeId
   }
 
-  async getEncodedAddSubmissionData(
-    contestant: `0x${string}`,
-    submissionText: string,
-  ) {
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: 'addSubmission',
-      args: [contestant, submissionText],
-    })
-    return data
-  }
-
   async addSubmission(data: {
     submissionHash: string
     prizeId: string
@@ -275,7 +324,6 @@ export class Prizes extends CacheTag {
   }
 
   async getEncodedAddVoteData(
-    // funder: `0x${string}`,
     submissionHash: `0x${string}`,
     voteAmount: bigint,
     v: number,
@@ -288,6 +336,22 @@ export class Prizes extends CacheTag {
       args: [submissionHash, voteAmount, v, s, r],
     })
     return data
+  }
+
+  async addContestant(prizeId: string, contestantUsername: string) {
+    await this.db.transaction(async (trx) => {
+      await trx.insert(prizesToContestants).values({
+        username: contestantUsername,
+        prizeId: prizeId,
+      })
+
+      await trx
+        .update(prizes)
+        .set({
+          numberOfComments: sql`${prizes.numberOfComments} + 1`,
+        })
+        .where(eq(prizes.id, prizeId))
+    })
   }
 
   async addVote(data: {

@@ -25,9 +25,6 @@ indexerCluster.addService('IndexerService', {
   public: {
     ports: [{ listen: '80/http' }],
   },
-  dev: {
-    command: 'pnpm dev:indexer',
-  },
   environment: {
     PONDER_RPC_URL: INDEXER_RPC_URL.value,
     CHAIN_ID: CHAIN_ID.value,
