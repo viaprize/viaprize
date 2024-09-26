@@ -12,6 +12,7 @@ catalog:
   ioredis: ^5.4.1
   "@aws-sdk/lib-dynamodb": ^3.654.0
   "@aws-sdk/client-dynamodb": ^3.654.0
+  viem: ~2.21.2
 
 catalogs:
   react18:

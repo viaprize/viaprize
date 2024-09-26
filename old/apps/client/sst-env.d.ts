@@ -79,6 +79,10 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "ScheduleReceivingLambda": {
+      "arn": string
+      "type": "sst.aws.Function"
+    }
     "ViaprizeVpcV2": {
       "type": "sst.aws.Vpc"
     }
@@ -89,10 +93,6 @@ declare module "sst" {
     "WalletPaymentInfraApi": {
       "type": "sst.sst.Secret"
       "value": string
-    }
-    "scheduleReceivingFunction": {
-      "name": string
-      "type": "sst.aws.Function"
     }
     "schedulerRole": {
       "arn": string

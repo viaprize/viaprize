@@ -18,11 +18,11 @@ export const NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID = new sst.Secret(
 
 export const INDEXER_PRIZE_FACTORY_STARTBLOCK = new sst.Secret(
   'IndexerPrizeFactoryStartBlock',
-  '125677269',
+  '125710469',
 )
 export const INDEXER_PRIZE_STARTBLOCK = new sst.Secret(
   'IndexerPrizeStartBlock',
-  '125677269',
+  '125710469',
 )
 
 export const CHAIN_ID = new sst.Secret('ChainId')

@@ -13,9 +13,9 @@ export default function Testimonials() {
       <h2 className="text-4xl font-medium text-center mb-8">
         Here is what our users are saying
       </h2>
-      <div className="columns-[400px]  w-full">
+      <div className="columns-[400px]  w-full px-4">
         {tweetids.map((tweetid) => (
-          <ClientTweetCard key={tweetid} id={tweetid} className="mb-2" />
+          <ClientTweetCard key={tweetid} id={tweetid} className="mb-2 w-full" />
         ))}
       </div>
     </section>

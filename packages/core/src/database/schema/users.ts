@@ -3,6 +3,7 @@ import { boolean, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { createInsertSchema } from 'drizzle-zod'
 import { nanoid } from 'nanoid'
 import { prizes } from './prizes'
+import { prizesToContestants } from './prizes-to-contestants'
 import { submissions } from './submissions'
 import { wallets } from './wallets'
 
@@ -37,6 +38,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   prizes: many(prizes),
   prizeComments: many(users),
   submission: many(submissions),
+  contestants: many(prizesToContestants),
 }))
 
 export const insertUserSchema = createInsertSchema(users)

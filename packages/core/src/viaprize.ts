@@ -32,7 +32,11 @@ export class Viaprize {
     )
     this.donations = new Donations(this.database)
     this.users = new Users(this.database, this.wallet)
-    this.prizes = new Prizes(this.database, this.config.chainId)
+    this.prizes = new Prizes(
+      this.database,
+      this.config.chainId,
+      this.config.wallet.rpcUrl,
+    )
     this.indexerEvents = new IndexerEvents(this.database)
   }
 }
@@ -40,10 +44,39 @@ export class Viaprize {
 const defineEvent = event.builder({
   validator: ZodValidator,
 })
-
+const TransactionData = z.object({
+  transactions: z.array(
+    z.object({
+      data: z.string(),
+      to: z.string(),
+      value: z.string(),
+    }),
+  ),
+  walletType: z.enum(['reserve', 'gasless']).default('gasless'),
+})
 export const Events = {
   Wallet: {
-    ScheduleTransaction: defineEvent('wallet.transaction', z.object({})),
+    Transaction: defineEvent('wallet.transaction', TransactionData),
+    StartSubmission: defineEvent(
+      'wallet.startSubmission',
+      z.object({
+        wallet: TransactionData,
+        submissionDurationInMinutes: z.number(),
+      }),
+    ),
+    EndVoting: defineEvent(
+      'wallet.endVoting',
+      z.object({
+        wallet: TransactionData,
+      }),
+    ),
+    EndSubmissionAndStartVoting: defineEvent(
+      'wallet.endSubmissionAndStartVoting',
+      z.object({
+        wallet: TransactionData,
+        votingDurationInMinutes: z.number(),
+      }),
+    ),
   },
   Prize: {
     Approve: defineEvent(
@@ -53,17 +86,46 @@ export const Events = {
         contractAddress: z.string(),
       }),
     ),
+    StartSubmission: defineEvent(
+      'prize.startSubmission',
+      z.object({ contractAddress: z.string() }),
+    ),
+    EndSubmission: defineEvent(
+      'prize.endSubmission',
+      z.object({ contractAddress: z.string() }),
+    ),
+    StartVoting: defineEvent(
+      'prize.startVoting',
+      z.object({ contractAddress: z.string() }),
+    ),
+    EndVoting: defineEvent(
+      'prize.endVoting',
+      z.object({ contractAddress: z.string() }),
+    ),
     ScheduleStartSubmission: defineEvent(
       'prize.scheduleStartSubmission',
-      z.object({ contractAddress: z.string() }),
+      z.object({
+        contractAddress: z.string(),
+        submissionDurationInMinutes: z.number(),
+        startSubmissionDate: z.string(),
+      }),
     ),
     ScheduleEndSubmissionAndStartVoting: defineEvent(
       'prize.scheduleEndSubmissionAndStartVoting',
-      z.object({ contractAddress: z.string() }),
+      z.object({
+        contractAddress: z.string(),
+        submissionDurationInMinutes: z.number(),
+        startSubmissionDate: z.string(),
+        votingDurationInMinutes: z.number(),
+      }),
     ),
     ScheduleEndVoting: defineEvent(
       'prize.scheduleEndVoting',
-      z.object({ contractAddress: z.string() }),
+      z.object({
+        contractAddress: z.string(),
+        startVotingDate: z.string(),
+        votingDurationInMinutes: z.number(),
+      }),
     ),
     ScheduleEndDispute: defineEvent(
       'prize.scheduleEndDispute',

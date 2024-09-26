@@ -25,7 +25,7 @@ export const prizesToContestants = pgTable(
 export const prizeToContestantsRelations = relations(
   prizesToContestants,
   ({ one }) => ({
-    group: one(prizes, {
+    prize: one(prizes, {
       fields: [prizesToContestants.prizeId],
       references: [prizes.id],
     }),
