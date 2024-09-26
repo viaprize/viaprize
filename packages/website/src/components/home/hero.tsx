@@ -38,7 +38,7 @@ export default function HeroSection() {
           </Button>
         </div>
       </AnimatedGroup>
-      {/* <div className="grid grid-cols-5 grid-rows-9  gap-3 ">
+      <div className="grid grid-cols-5 grid-rows-9  gap-3 ">
         <Card className="relative justify-between flex flex-col overflow-hidden col-start-1 col-span-1 row-start-1 row-end-6">
           <div className="absolute h-full top-0 inset-x-0 bg-gradient-to-b from-black/80 via-black/10 to-black z-10 pointer-events-none" />
           <Image
@@ -75,7 +75,7 @@ export default function HeroSection() {
         <Card className="col-start-5 row-start-6 col-span-1 row-end-9 ">
           test
         </Card>
-      </div> */}
+      </div>
     </section>
   )
 }
