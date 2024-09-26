@@ -1,3 +1,4 @@
+import SubmissionDialog from '@/components/submission/trigger'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Button } from '@viaprize/ui/button'
 import { Card } from '@viaprize/ui/card'
@@ -25,6 +26,7 @@ export default function ContestantsCard({
         <div>{name}</div>
       </div>
       <Button className="mt-5 w-full">Join Contest</Button>
+      <SubmissionDialog />
     </Card>
   )
 }
