@@ -375,4 +375,80 @@ export const prizeRouter = createTRPCRouter({
         key: ctx.viaprize.prizes.getCacheTag('SLUG_PRIZE', input.slug),
       })
     }),
+
+  addUsdcFunds: adminProcedure
+    .input(
+      z.object({
+        prizeId: z.string(),
+        amount: z.number(),
+        deadline: z.number(),
+        v: z.number(),
+        s: z.string(),
+        r: z.string(),
+        ethSignedHash: z.string(),
+        fiatPayment: z.boolean(),
+        token: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
+      if (!prize) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Prize not found',
+          cause: 'Prize not found',
+        })
+      }
+      if (!(ctx.session.user.walletAddress && ctx.session.user.username)) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must have a wallet address and username to cast a vote',
+          cause: 'User does not have a wallet address or username',
+        })
+      }
+      const txData = await ctx.viaprize.prizes.getEncodedAddUsdcFunds(
+        BigInt(input.amount),
+        BigInt(input.deadline),
+        input.v,
+        input.s as `0x${string}`,
+        input.r as `0x${string}`,
+        input.ethSignedHash as `0x${string}`,
+        input.fiatPayment,
+      )
+
+      const simulated = await ctx.viaprize.wallet.simulateTransaction(
+        {
+          data: txData,
+          to: prize.primaryContractAddress as `0x${string}`,
+          value: '0',
+        },
+        'gasless',
+        'signer',
+      )
+      if (!simulated) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Transaction failed',
+          cause: 'Transaction failed',
+        })
+      }
+      const txHash = await ctx.viaprize.wallet.sendTransaction(
+        [
+          {
+            data: txData,
+            to: prize.primaryContractAddress as `0x${string}`,
+            value: '0',
+          },
+        ],
+        'gasless',
+      )
+      if (txHash) {
+        await ctx.viaprize.prizes.addUsdcFunds({
+          donor: ctx.session.user.username,
+          recipientAddress: prize.primaryContractAddress as `0x${string}`,
+          token: input.token,
+        })
+      }
+      return txHash
+    }),
 })
