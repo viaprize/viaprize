@@ -12,6 +12,7 @@ import {
   prizesToContestants,
   submissions,
 } from '../database/schema'
+import { votes } from '../database/schema/votes'
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../lib/abi'
 import { CacheTag } from './cache-tag'
 import { CONTRACT_CONSTANTS_PER_CHAIN } from './constants'
@@ -323,21 +324,6 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     return submissionId
   }
 
-  async getEncodedAddVoteData(
-    submissionHash: `0x${string}`,
-    voteAmount: bigint,
-    v: number,
-    s: `0x${string}`,
-    r: `0x${string}`,
-  ) {
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: 'vote',
-      args: [submissionHash, voteAmount, v, s, r],
-    })
-    return data
-  }
-
   async addContestant(prizeId: string, contestantUsername: string) {
     await this.db.transaction(async (trx) => {
       await trx.insert(prizesToContestants).values({
@@ -352,6 +338,21 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         })
         .where(eq(prizes.id, prizeId))
     })
+  }
+
+  async getEncodedAddVoteData(
+    submissionHash: `0x${string}`,
+    voteAmount: bigint,
+    v: number,
+    s: `0x${string}`,
+    r: `0x${string}`,
+  ) {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'vote',
+      args: [submissionHash, voteAmount, v, s, r],
+    })
+    return data
   }
 
   async addVote(data: {

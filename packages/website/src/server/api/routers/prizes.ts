@@ -337,12 +337,12 @@ export const prizeRouter = createTRPCRouter({
 
       if (txHash) {
         await ctx.viaprize.prizes.addVote({
-          voteHash: txHash,
-          funderAddress: ctx.session.user.walletAddress,
-          prizeId: input.prizeId,
+          voteHash: txHash.contractAddress as `0x${string}`,
           submissionHash: input.submissionHash,
-          username: ctx.session.user.username,
+          prizeId: input.prizeId,
+          funderAddress: ctx.session.user.walletAddress,
           voteAmount: input.voteAmount,
+          username: ctx.session.user.username,
         })
       }
       return txHash
