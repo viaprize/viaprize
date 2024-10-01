@@ -1,5 +1,5 @@
 {
-  "id": "87c18144-1f66-4bf6-a14f-b912aacf629d",
+  "id": "4399b0e5-ae87-4f1a-9e45-a225e35254b5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -81,8 +81,12 @@
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -90,7 +94,10 @@
       "compositePrimaryKeys": {
         "account_provider_providerAccountId_pk": {
           "name": "account_provider_providerAccountId_pk",
-          "columns": ["provider", "providerAccountId"]
+          "columns": [
+            "provider",
+            "providerAccountId"
+          ]
         }
       },
       "uniqueConstraints": {}
@@ -154,8 +161,12 @@
           "name": "authenticator_userId_user_id_fk",
           "tableFrom": "authenticator",
           "tableTo": "user",
-          "columnsFrom": ["userId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -163,14 +174,19 @@
       "compositePrimaryKeys": {
         "authenticator_userId_credentialID_pk": {
           "name": "authenticator_userId_credentialID_pk",
-          "columns": ["userId", "credentialID"]
+          "columns": [
+            "userId",
+            "credentialID"
+          ]
         }
       },
       "uniqueConstraints": {
         "authenticator_credentialID_unique": {
           "name": "authenticator_credentialID_unique",
           "nullsNotDistinct": false,
-          "columns": ["credentialID"]
+          "columns": [
+            "credentialID"
+          ]
         }
       }
     },
@@ -305,8 +321,12 @@
           "name": "donations_username_user_username_fk",
           "tableFrom": "donations",
           "tableTo": "user",
-          "columnsFrom": ["username"],
-          "columnsTo": ["username"],
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -316,7 +336,9 @@
         "donations_paymentId_unique": {
           "name": "donations_paymentId_unique",
           "nullsNotDistinct": false,
-          "columns": ["paymentId"]
+          "columns": [
+            "paymentId"
+          ]
         }
       }
     },
@@ -367,8 +389,12 @@
           "name": "prize_comments_prizeId_prizes_id_fk",
           "tableFrom": "prize_comments",
           "tableTo": "prizes",
-          "columnsFrom": ["prizeId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -376,8 +402,12 @@
           "name": "prize_comments_username_user_username_fk",
           "tableFrom": "prize_comments",
           "tableTo": "user",
-          "columnsFrom": ["username"],
-          "columnsTo": ["username"],
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -385,8 +415,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "public.prize_proposals": {
-      "name": "prize_proposals",
+    "public.prizes": {
+      "name": "prizes",
       "schema": "",
       "columns": {
         "id": {
@@ -407,100 +437,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "startVotingDate": {
-          "name": "startVotingDate",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "startSubmissionDate": {
-          "name": "startSubmissionDate",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "submissionDurationInMinutes": {
-          "name": "submissionDurationInMinutes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "votingDurationInMinutes": {
-          "name": "votingDurationInMinutes",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "judgesAddresses": {
-          "name": "judgesAddresses",
-          "type": "text[]",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "skillSets": {
-          "name": "skillSets",
-          "type": "text[]",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "priorities": {
-          "name": "priorities",
-          "type": "text[]",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "imageUrl": {
-          "name": "imageUrl",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "author": {
-          "name": "author",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "prize_proposals_author_user_username_fk": {
-          "name": "prize_proposals_author_user_username_fk",
-          "tableFrom": "prize_proposals",
-          "tableTo": "user",
-          "columnsFrom": ["author"],
-          "columnsTo": ["username"],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "prize_proposals_slug_unique": {
-          "name": "prize_proposals_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": ["slug"]
-        }
-      }
-    },
-    "public.prizes": {
-      "name": "prizes",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "slug": {
-          "name": "slug",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "description": {
-          "name": "description",
+        "title": {
+          "name": "title",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -533,7 +471,7 @@
           "name": "primaryContractAddress",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "judgesAddresses": {
           "name": "judgesAddresses",
@@ -563,14 +501,14 @@
           "name": "proposerFeePercentage",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": 5
         },
         "platformFeePercentage": {
           "name": "platformFeePercentage",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": 5
         },
         "contractVersion": {
@@ -584,7 +522,7 @@
           "name": "totalFunds",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": 0
         },
         "totalRefunded": {
@@ -635,6 +573,34 @@
           "primaryKey": false,
           "notNull": false
         },
+        "numberOfContestants": {
+          "name": "numberOfContestants",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "numberOfFunders": {
+          "name": "numberOfFunders",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "numberOfComments": {
+          "name": "numberOfComments",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "numberOfSubmissions": {
+          "name": "numberOfSubmissions",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
         "author": {
           "name": "author",
           "type": "varchar",
@@ -648,10 +614,14 @@
           "name": "prizes_author_user_username_fk",
           "tableFrom": "prizes",
           "tableTo": "user",
-          "columnsFrom": ["author"],
-          "columnsTo": ["username"],
+          "columnsFrom": [
+            "author"
+          ],
+          "columnsTo": [
+            "username"
+          ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -659,7 +629,9 @@
         "prizes_slug_unique": {
           "name": "prizes_slug_unique",
           "nullsNotDistinct": false,
-          "columns": ["slug"]
+          "columns": [
+            "slug"
+          ]
         }
       }
     },
@@ -686,8 +658,12 @@
           "name": "prizes_to_contestants_username_user_username_fk",
           "tableFrom": "prizes_to_contestants",
           "tableTo": "user",
-          "columnsFrom": ["username"],
-          "columnsTo": ["username"],
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -695,8 +671,12 @@
           "name": "prizes_to_contestants_prizeId_prizes_id_fk",
           "tableFrom": "prizes_to_contestants",
           "tableTo": "prizes",
-          "columnsFrom": ["prizeId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -704,7 +684,10 @@
       "compositePrimaryKeys": {
         "prizes_to_contestants_username_prizeId_pk": {
           "name": "prizes_to_contestants_username_prizeId_pk",
-          "columns": ["username", "prizeId"]
+          "columns": [
+            "username",
+            "prizeId"
+          ]
         }
       },
       "uniqueConstraints": {}
@@ -762,8 +745,12 @@
           "name": "submissions_prizeId_prizes_id_fk",
           "tableFrom": "submissions",
           "tableTo": "prizes",
-          "columnsFrom": ["prizeId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -771,8 +758,12 @@
           "name": "submissions_username_user_username_fk",
           "tableFrom": "submissions",
           "tableTo": "user",
-          "columnsFrom": ["username"],
-          "columnsTo": ["username"],
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -808,9 +799,27 @@
           "primaryKey": false,
           "notNull": false
         },
-        "fullName": {
-          "name": "fullName",
+        "provider": {
+          "name": "provider",
           "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "emailVerified": {
+          "name": "emailVerified",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image": {
+          "name": "image",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -827,12 +836,6 @@
           "primaryKey": false,
           "notNull": false,
           "default": "''"
-        },
-        "avatar": {
-          "name": "avatar",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         },
         "skillSets": {
           "name": "skillSets",
@@ -866,19 +869,61 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         },
         "user_authId_unique": {
           "name": "user_authId_unique",
           "nullsNotDistinct": false,
-          "columns": ["authId"]
+          "columns": [
+            "authId"
+          ]
         },
         "user_username_unique": {
           "name": "user_username_unique",
           "nullsNotDistinct": false,
-          "columns": ["username"]
+          "columns": [
+            "username"
+          ]
         }
       }
+    },
+    "public.verificationToken": {
+      "name": "verificationToken",
+      "schema": "",
+      "columns": {
+        "identifier": {
+          "name": "identifier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires": {
+          "name": "expires",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "verificationToken_identifier_token_pk": {
+          "name": "verificationToken_identifier_token_pk",
+          "columns": [
+            "identifier",
+            "token"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
     },
     "public.wallets": {
       "name": "wallets",
@@ -939,17 +984,139 @@
           "name": "wallets_username_user_username_fk",
           "tableFrom": "wallets",
           "tableTo": "user",
-          "columnsFrom": ["username"],
-          "columnsTo": ["username"],
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "cascade"
         },
         "wallets_prizeId_prizes_id_fk": {
           "name": "wallets_prizeId_prizes_id_fk",
           "tableFrom": "wallets",
           "tableTo": "prizes",
-          "columnsFrom": ["prizeId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.indexer-events": {
+      "name": "indexer-events",
+      "schema": "",
+      "columns": {
+        "eventId": {
+          "name": "eventId",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.votes": {
+      "name": "votes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(255)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "submissionHash": {
+          "name": "submissionHash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "prizeId": {
+          "name": "prizeId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "funderAddress": {
+          "name": "funderAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "voteAmount": {
+          "name": "voteAmount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "votes_submissionHash_submissions_id_fk": {
+          "name": "votes_submissionHash_submissions_id_fk",
+          "tableFrom": "votes",
+          "tableTo": "submissions",
+          "columnsFrom": [
+            "submissionHash"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "votes_prizeId_prizes_id_fk": {
+          "name": "votes_prizeId_prizes_id_fk",
+          "tableFrom": "votes",
+          "tableTo": "prizes",
+          "columnsFrom": [
+            "prizeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "votes_username_user_username_fk": {
+          "name": "votes_username_user_username_fk",
+          "tableFrom": "votes",
+          "tableTo": "user",
+          "columnsFrom": [
+            "username"
+          ],
+          "columnsTo": [
+            "username"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -962,22 +1129,38 @@
     "public.donationTokenTypeEnum": {
       "name": "donationTokenTypeEnum",
       "schema": "public",
-      "values": ["TOKEN", "NFT"]
+      "values": [
+        "TOKEN",
+        "NFT"
+      ]
     },
     "public.donationTypeEnum": {
       "name": "donationTypeEnum",
       "schema": "public",
-      "values": ["PAYMENT", "GIFT"]
+      "values": [
+        "PAYMENT",
+        "GIFT"
+      ]
     },
     "public.recipientTypeEnum": {
       "name": "recipientTypeEnum",
       "schema": "public",
-      "values": ["PRIZE", "FUNDRAISER", "GITCOIN", "UNKNOWN"]
+      "values": [
+        "PRIZE",
+        "FUNDRAISER",
+        "GITCOIN",
+        "UNKNOWN"
+      ]
     },
     "public.prizeProposalStage": {
       "name": "prizeProposalStage",
       "schema": "public",
-      "values": ["PENDING", "APPROVED", "REJECTED"]
+      "values": [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "APPROVED_BUT_NOT_DEPLOYED"
+      ]
     },
     "public.prizeStage": {
       "name": "prizeStage",
