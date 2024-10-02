@@ -5,11 +5,11 @@ import { cn } from '@viaprize/ui'
 import { Button } from '@viaprize/ui/button'
 import ToolTipSimple from '@viaprize/ui/tooltip-simple'
 import { AnimatePresence, motion } from 'framer-motion'
+import Image from 'next/image'
 import Link, { type LinkProps } from 'next/link'
 import type React from 'react'
 import { type ReactNode, createContext, useContext, useState } from 'react'
 import { MdArrowRightAlt } from 'react-icons/md'
-
 interface SideBarItem {
   label: string
   icon: React.JSX.Element | React.ReactNode
@@ -139,7 +139,14 @@ export const MobileSidebar = ({
         )}
         {...props}
       >
-        <div className="z-20 flex w-full justify-end backdrop-blur-lg bg-opacity-10 md:bg-opacity-100 ">
+        <div className="z-20 flex items-center w-full justify-between backdrop-blur-lg bg-opacity-10 md:bg-opacity-100 ">
+          <Image
+            src="/viaprizeBg.png"
+            alt="viaprize logo"
+            className="h-10 w-10 flex-shrink-0 p-1"
+            width={50}
+            height={50}
+          />
           <IconMenu2 className="" onClick={() => setOpen(!open)} />
         </div>
         <AnimatePresence>
@@ -153,7 +160,7 @@ export const MobileSidebar = ({
                 ease: 'easeInOut',
               }}
               className={cn(
-                'fixed inset-0 z-[100] flex h-full w-full flex-col justify-between bg-white px-4 pt-10 dark:bg-neutral-900',
+                'fixed inset-0 z-[100] flex h-full w-[60%] flex-col justify-between bg-white px-4 pt-10 dark:bg-neutral-900',
                 className,
               )}
             >

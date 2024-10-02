@@ -69,3 +69,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .container-query-wrapper {
+    container-type: inline-size;
+  }
+}

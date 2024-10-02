@@ -23,7 +23,7 @@ export default async function DashBoardlayout({
             <Header />
           </header>
           {/* Children content on the right */}
-          <main className=" flex-1 overflow-auto bg-background rounded-md md:mx-2 md:my-2">
+          <main className=" flex-1 overflow-auto bg-background rounded-md md:mx-2 md:my-2 ">
             {children}
           </main>
         </div>

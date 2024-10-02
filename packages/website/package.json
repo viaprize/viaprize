@@ -18,7 +18,6 @@
     "@rainbow-me/rainbowkit": "2",
     "@rainbow-me/rainbowkit-siwe-next-auth": "^0.4.1",
     "@t3-oss/env-nextjs": "^0.10.1",
-
     "@tabler/icons-react": "^3.14.0",
     "@tanstack/react-query": "^5.50.0",
     "@trpc/client": "^11.0.0-rc.446",
@@ -35,6 +34,7 @@
     "lucide-react": "^0.427.0",
     "next": "^14.2.4",
     "next-auth": "5.0.0-beta.20",
+    "nuqs": "^1.19.3",
     "pnpm": "^9.10.0",
     "postgres": "^3.4.4",
     "react": "^18.3.1",
