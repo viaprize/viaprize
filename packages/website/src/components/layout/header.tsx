@@ -30,7 +30,7 @@ export default function Header() {
         height={50}
       />
       {/* <div className="flex items-center justify-between space-x-7 font-semibold"></div> */}
-      <div className="flex items-center">
+      {/* <div className="flex items-center">
         <Button variant="ghost" size="icon" className="size-7">
           <BiSolidMessageSquare className="text-lg" />
         </Button>
@@ -38,7 +38,7 @@ export default function Header() {
           <IoNotifications className="text-lg" />
         </Button>
         <Search />
-      </div>
+      </div> */}
     </div>
   )
 }
