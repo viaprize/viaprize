@@ -3,6 +3,7 @@ import { Button } from '@viaprize/ui/button'
 import { Card, CardFooter, CardHeader } from '@viaprize/ui/card'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function HeroSection() {
   return (
@@ -26,15 +27,15 @@ export default function HeroSection() {
           List and build the world’s most needed product ideas
         </p>
         <div className="mt-8 flex flex-col md:flex-row gap-1 justify-center">
-          <Button type="button" className="px-5 py-4 md:px-7 md:py-6">
-            Explore Prizes
+          <Button asChild className="px-5 py-4 md:px-7 md:py-6">
+            <Link href="/prize">Explore Prizes</Link>
           </Button>
           <Button
-            type="button"
+            asChild
             variant="outline"
             className="px-5 py-4 md:px-7 md:py-6"
           >
-            Create Prize
+            <Link href="/prize/create">Create Prize</Link>
           </Button>
         </div>
       </AnimatedGroup>

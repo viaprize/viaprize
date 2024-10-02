@@ -1,5 +1,6 @@
 'use client'
 
+import SubmissionDialog from '@/components/submission/trigger'
 import { useAuth } from '@/hooks/useAuth'
 import { api } from '@/trpc/react'
 import { IconPresentation } from '@tabler/icons-react'
@@ -34,7 +35,7 @@ export default function SubmitWorkButton({ prizeId }: { prizeId: string }) {
   }
   return (
     <>
-      <Button size="sm" onClick={handleSubmit}>
+      {/* <Button size="sm" onClick={handleSubmit}>
         <IconPresentation className="mr-2" size={20} />
         {mutation.isPending ? (
           <>
@@ -44,7 +45,8 @@ export default function SubmitWorkButton({ prizeId }: { prizeId: string }) {
         ) : (
           'Submit your work'
         )}
-      </Button>
+      </Button> */}
+      <SubmissionDialog />
     </>
   )
 }

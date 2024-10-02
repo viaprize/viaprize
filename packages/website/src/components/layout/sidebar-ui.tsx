@@ -98,7 +98,7 @@ export const DesktopSidebar = ({
           className,
         )}
         animate={{
-          width: animate ? (open ? '260px' : '80px') : '300px',
+          width: open ? '260px' : '80px',
         }}
         {...props}
       >
@@ -109,7 +109,7 @@ export const DesktopSidebar = ({
         >
           <motion.span
             animate={{
-              rotate: animate ? (open ? 180 : 0) : 0,
+              rotate: open ? 180 : 0,
               transition: {
                 duration: 0.3,
                 ease: 'easeInOut',
@@ -176,18 +176,23 @@ export const SidebarButton = ({
   item,
   className,
   onClick,
+  variant = 'default',
+  href,
 }: {
   item: SideBarItem
   className?: string
   onClick: React.MouseEventHandler<HTMLButtonElement> | undefined
+  variant?: 'default' | 'secondary' | 'outline'
+  href?: string
 }) => {
   const { open, animate } = useSidebar()
   return (
     <Button
       className={cn(
-        'group/sidebar flex items-center justify-start gap-3 p-3 rounded-md text-primary-foreground ',
+        'group/sidebar flex items-center w-full  justify-start gap-3 p-3 py-3 rounded-md text-primary-foreground ',
         className,
       )}
+      variant={variant}
       onClick={onClick}
     >
       {!open ? (
@@ -199,8 +204,8 @@ export const SidebarButton = ({
       )}
       <motion.span
         animate={{
-          display: animate ? (open ? 'inline-block' : 'none') : 'inline-block',
-          opacity: animate ? (open ? 1 : 0) : 1,
+          display: open ? 'inline-block' : 'none',
+          opacity: open ? 1 : 0,
         }}
         className="text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >

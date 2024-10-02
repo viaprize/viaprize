@@ -182,7 +182,7 @@ export const prizeRouter = createTRPCRouter({
       return prizeId
     }),
 
-  addSubmission: adminProcedure
+  addSubmission: protectedProcedure
     .input(
       z.object({
         prizeId: z.string(),
