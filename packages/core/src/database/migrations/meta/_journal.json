@@ -5,85 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1725263612449,
-      "tag": "0000_brainy_sinister_six",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1725281647096,
-      "tag": "0001_supreme_killraven",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1725441910592,
-      "tag": "0002_rainy_shockwave",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1725442218590,
-      "tag": "0003_hesitant_the_santerians",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1725447012190,
-      "tag": "0004_bright_beyonder",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1725533187594,
-      "tag": "0005_wealthy_gorgon",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1725613694643,
-      "tag": "0006_mature_cobalt_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1726591201007,
-      "tag": "0007_flowery_warstar",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1726680723335,
-      "tag": "0008_skinny_edwin_jarvis",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1726734554103,
-      "tag": "0009_conscious_random",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1726824225342,
-      "tag": "0010_friendly_dreadnoughts",
-      "breakpoints": true
-    },
-    {
-      "idx": 11,
-      "version": "7",
-      "when": 1727024685053,
-      "tag": "0011_daffy_bishop",
+      "when": 1727791159649,
+      "tag": "0000_brown_the_order",
       "breakpoints": true
     }
   ]

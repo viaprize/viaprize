@@ -5,12 +5,16 @@ import {
   encodeFunctionData,
   parseEventLogs,
 } from 'viem'
+import type { z } from 'zod'
 import type { ViaprizeDatabase } from '../database'
 import {
+  donations,
+  type insertDonationSchema,
   prizeComments,
   prizes,
   prizesToContestants,
   submissions,
+  votes,
 } from '../database/schema'
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../lib/abi'
 import { CacheTag } from './cache-tag'
@@ -323,21 +327,6 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     return submissionId
   }
 
-  async getEncodedAddVoteData(
-    submissionHash: `0x${string}`,
-    voteAmount: bigint,
-    v: number,
-    s: `0x${string}`,
-    r: `0x${string}`,
-  ) {
-    const data = encodeFunctionData({
-      abi: PRIZE_V2_ABI,
-      functionName: 'vote',
-      args: [submissionHash, voteAmount, v, s, r],
-    })
-    return data
-  }
-
   async addContestant(prizeId: string, contestantUsername: string) {
     await this.db.transaction(async (trx) => {
       await trx.insert(prizesToContestants).values({
@@ -354,7 +343,23 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     })
   }
 
+  async getEncodedAddVoteData(
+    submissionHash: `0x${string}`,
+    voteAmount: bigint,
+    v: number,
+    s: `0x${string}`,
+    r: `0x${string}`,
+  ) {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'vote',
+      args: [submissionHash, voteAmount, v, s, r],
+    })
+    return data
+  }
+
   async addVote(data: {
+    voteHash: string
     submissionHash: string
     prizeId: string
     funderAddress: string
@@ -365,6 +370,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       const [vote] = await trx
         .insert(votes)
         .values({
+          voteHash: data.voteHash,
           submissionHash: data.submissionHash,
           prizeId: data.prizeId,
           funderAddress: data.funderAddress,
@@ -372,14 +378,85 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
           username: data.username,
         })
         .returning({
-          voteId: votes.voteId,
+          voteId: votes.voteHash,
         })
       if (!vote) {
         throw new Error('Vote not casted, please try again')
       }
-      return votes.voteId
+      return votes.voteHash
     })
 
     return voteId
+  }
+
+  async getEncodedAddUsdcFunds(
+    amount: bigint,
+    deadline: bigint,
+    v: number,
+    s: `0x${string}`,
+    r: `0x${string}`,
+    ethSignedHash: `0x${string}`,
+    fiatPayment: boolean,
+  ) {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'addUsdcFunds',
+      args: [amount, deadline, v, s, r, ethSignedHash, fiatPayment],
+    })
+    return data
+  }
+
+  // async addUsdcFunds(data: {
+  //   id: number,
+  //   valueInToken: number,
+  //   token: string,
+  //   decimals: number,
+  //   donor: string,
+  //   recipientAddress: string,
+  //   recipientType: string,
+  //   transactionId: string,
+  //   paymentId: string,
+  //   isFiat: boolean,
+  //   isFullyRefunded: boolean,
+  //   isPartiallyRefunded: boolean,
+  //   totalRedunded: number,
+  //   username: string,
+  // }) {
+  //   const donationid = await this.db.transaction(async(trx) => {
+  //     const [donation] = await trx
+  //       .insert(donations)
+  //       .values({
+  //         id: data.id,
+  //         valueInToken: data.valueInToken,
+  //         token: data.token,
+  //         decimals: data.decimals,
+  //         donor: data.donor,
+  //         recipientAddress: data.recipientAddress,
+  //         recipientType: data.recipientType,
+  //         transactionId: data.transactionId,
+  //         paymentId: data.paymentId,
+  //         isFiat: data.isFiat,
+  //         isFullyRefunded: data.isFullyRefunded,
+  //         isPartiallyRefunded: data.isFullyRefunded,
+  //         totalRefunded: data.totalRedunded,
+  //         username: data.username,
+  //       })
+  //       .returning({
+  //         id: donations.id,
+  //       })
+  //       if (!donation) {
+  //         throw new Error('Donation not created in database')
+  //       }
+  //       return donations.id
+  //   })
+  // }
+
+  async addUsdcFunds(insertDonation: z.infer<typeof insertDonationSchema>) {
+    const donation = await this.db
+      .insert(donations)
+      .values(insertDonation)
+      .execute()
+
+    return donation
   }
 }

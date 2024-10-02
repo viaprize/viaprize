@@ -4,12 +4,12 @@ import FetchExploreCard from '@/components/prize/explore/card-details/fetch-expl
 export default async function ExplorePage() {
   return (
     <div className="flex h-full">
-      <div className="w-full md:w-[75%] h-full border-r-2">
+      <div className="w-full  h-full border-r-2">
         <FetchExploreCard />
       </div>
-      <div className="w-[25%] mt-5 mx-3 md:block hidden">
+      {/* <div className="w-[25%] mt-5 mx-3 md:block hidden">
         <FetchActivities />
-      </div>
+      </div> */}
     </div>
   )
 }

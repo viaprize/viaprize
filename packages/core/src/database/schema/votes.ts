@@ -1,23 +1,24 @@
 import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
+import { integer, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { prizes } from './prizes'
 import { submissions } from './submissions'
 import { users } from './users'
 
 export const votes = pgTable('votes', {
-  voteId: varchar('id', { length: 255 }).primaryKey(),
+  voteHash: varchar('id', { length: 255 }).primaryKey(),
   submissionHash: varchar('submissionHash')
     .references(() => submissions.submissionHash, {
       onDelete: 'cascade',
+      onUpdate: 'cascade',
     })
     .notNull(),
   prizeId: varchar('prizeId')
-    .references(() => submissions.prizeId, {
+    .references(() => prizes.id, {
       onDelete: 'cascade',
     })
     .notNull(),
   funderAddress: text('funderAddress').notNull(),
-  voteAmount: text('voteAmount').notNull(),
+  voteAmount: integer('voteAmount').notNull(),
   username: varchar('username')
     .references(() => users.username, {
       onDelete: 'cascade',
