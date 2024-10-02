@@ -1,3 +1,4 @@
+import SubmissionDialog from '@/components/submission/trigger'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Button } from '@viaprize/ui/button'
 import { Card } from '@viaprize/ui/card'
