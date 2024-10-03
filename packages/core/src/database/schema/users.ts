@@ -1,3 +1,4 @@
+
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -17,10 +18,12 @@ import { prizesToContestants } from "./prizes-to-contestants";
 import { submissions } from "./submissions";
 import { wallets } from "./wallets";
 
-export const users = pgTable("user", {
-  id: text("id")
+
+export const users = pgTable('user', {
+  id: text('id')
     .primaryKey()
     .$default(() => nanoid(12)),
+
   email: text("email").unique(),
   authId: varchar("authId").unique(),
   username: varchar("username").unique(),
@@ -35,14 +38,15 @@ export const users = pgTable("user", {
   priorities: text("priorities").array(),
   updatedAt: timestamp("updatedAt", {
     mode: "date",
+
     withTimezone: true,
   }).$onUpdate(() => new Date()),
 
-  createdAt: timestamp("createdAt", {
-    mode: "date",
+  createdAt: timestamp('createdAt', {
+    mode: 'date',
     withTimezone: true,
   }).$default(() => new Date()),
-});
+})
 
 export const usersRelations = relations(users, ({ many }) => ({
   wallets: many(wallets),
@@ -57,3 +61,4 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
 export type selectUserType = z.input<typeof selectUserSchema>;
+

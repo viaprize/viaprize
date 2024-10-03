@@ -1,5 +1,6 @@
-import FilterSort from '@/components/common/filter-sort'
+import type { SearchParams } from '@/lib/utils'
 import { api } from '@/trpc/server'
+import { prizeFilterParamsSchema } from '@/validators/params'
 import { IconArrowsSort, IconFilter } from '@tabler/icons-react'
 import { Button } from '@viaprize/ui/button'
 import {
@@ -12,7 +13,26 @@ import {
 import ExploreCard from './explore-card'
 import PrizeFilterComponent from './prize-filter-component'
 
-export default async function FetchExploreCard() {
+const parseCategories = (value: string | undefined): string[] | undefined => {
+  if (value) {
+    return value.split(',').map((item) => item.replace(/\+/g, ' '))
+  }
+  return undefined
+}
+
+export default async function FetchExploreCard({
+  searchParams,
+}: {
+  searchParams: SearchParams
+}) {
+  if (searchParams.categories) {
+    searchParams.categories = parseCategories(searchParams.categories as string)
+  }
+
+  const { search, sort, categories } =
+    prizeFilterParamsSchema.parse(searchParams)
+
+  console.log(categories, 'categories')
   const activePrizes = await api.prizes.getActivePrizes()
   const deployedPrizes = await api.prizes.getDeployedPrizes()
 

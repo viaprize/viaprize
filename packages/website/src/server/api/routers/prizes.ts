@@ -64,6 +64,7 @@ export const prizeRouter = createTRPCRouter({
     );
     return count ?? 0;
   }),
+
   getPrizeBySlug: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {

@@ -1,4 +1,5 @@
 'use client'
+import { categories } from '@/lib/constant'
 import { Badge } from '@viaprize/ui/badge'
 import { Button } from '@viaprize/ui/button'
 import { DualRangeSlider } from '@viaprize/ui/dualrange-slider'
@@ -60,20 +61,6 @@ export default function PrizeFilterComponent() {
       setPrizeStatus('active')
     }
   }, [prizeStatus, setPrizeStatus])
-  const categories = [
-    'Technology',
-    'Science',
-    'Art',
-    'Literature',
-    'Sports',
-    'Music',
-    'Climate Change',
-    'Network Civilizations',
-    'Open-Source',
-    'Community Coordination',
-    'Health',
-    'Education',
-  ]
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategoriesState((prev: string[]) =>
@@ -97,21 +84,16 @@ export default function PrizeFilterComponent() {
 
   return (
     <div className="w-full max-w-sm space-y-10 py-5">
-      <div>
-        <RadioGroup
-          value={prizeStatusState}
-          onValueChange={setPrizeStatusState}
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="active" id="active" />
-            <Label htmlFor="active">Active Prizes</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="ended" id="ended" />
-            <Label htmlFor="ended">Ended Prizes</Label>
-          </div>
-        </RadioGroup>
-      </div>
+      <RadioGroup value={prizeStatusState} onValueChange={setPrizeStatusState}>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="active" id="active" />
+          <Label htmlFor="active">Active Prizes</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="ended" id="ended" />
+          <Label htmlFor="ended">Ended Prizes</Label>
+        </div>
+      </RadioGroup>
 
       <div>
         <div className="flex justify-between text-sm text-muted-foreground mb-2">
@@ -134,8 +116,8 @@ export default function PrizeFilterComponent() {
           </SelectTrigger>
           <SelectContent>
             {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
+              <SelectItem key={category.value} value={category.value}>
+                {category.label}
               </SelectItem>
             ))}
           </SelectContent>

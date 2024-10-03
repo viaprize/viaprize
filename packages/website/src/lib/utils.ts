@@ -8,6 +8,11 @@ export function containsUppercase(str: string) {
   return /^[A-Z]+$/.test(str);
 }
 
+
+export interface SearchParams {
+  [key: string]: string | string[] | undefined
+}
+
 export function timeAgo(givenDate: Date): string {
   const now = new Date();
 
@@ -37,3 +42,4 @@ export function timeAgo(givenDate: Date): string {
 // Example usage:
 const pastDate = new Date("2023-09-15T14:00:00"); // Use your given date
 console.log(timeDifference(pastDate));
+
