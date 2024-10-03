@@ -17,7 +17,7 @@ export default function VisionaryFunderCard({
       <div className="text-muted-foreground text-lg font-normal">Visionary</div>
 
       <div className="flex items-center space-x-2 mt-2">
-        <Avatar>
+        <Avatar className="border">
           <AvatarImage src={avatar ?? undefined} alt="@shadcn" />
           <AvatarFallback>{name.substring(0, 2)}</AvatarFallback>
         </Avatar>

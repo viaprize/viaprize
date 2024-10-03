@@ -16,8 +16,7 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
-
-    "module": "Preserve",
+    "module": "ES6",
     "moduleResolution": "Bundler",
     "noEmit": false
   },
