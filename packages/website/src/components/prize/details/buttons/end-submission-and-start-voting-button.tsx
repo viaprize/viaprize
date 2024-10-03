@@ -8,9 +8,6 @@ export default function EndSubmissionAndStartVotingButton({
 }: {
   prizeContractAddress: string;
 }) {
-  const { session } = useAuth();
-  if (!session) return null;
-  if (!session.user.isAdmin) return null;
   const { mutateAsync: endSubmissionAndStartVoting, isPending } =
     api.prizes.endSubmissionAndStartVoting.useMutation();
 

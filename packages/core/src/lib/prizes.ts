@@ -180,6 +180,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
             user: {
               columns: {
                 username: true,
+                image: true,
               },
             },
           },
@@ -188,6 +189,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
           columns: {
             name: true,
             username: true,
+            image: true,
           },
         },
       },

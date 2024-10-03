@@ -1,4 +1,7 @@
 import AboutContent from "@/components/prize/details/about-content";
+import EndSubmissionAndStartVotingButton from "@/components/prize/details/buttons/end-submission-and-start-voting-button";
+import EndVotingButton from "@/components/prize/details/buttons/end-voting-button";
+import StartSubmissionButton from "@/components/prize/details/buttons/start-submission-button";
 import DetailHeader from "@/components/prize/details/details-header";
 import Submissions from "@/components/prize/details/submissions/submissions";
 import ContestantsCard, {
@@ -12,6 +15,7 @@ import { api } from "@/trpc/server";
 
 import { IconArrowLeft } from "@tabler/icons-react";
 import { Separator } from "@viaprize/ui/separator";
+import { redirect } from "next/navigation";
 
 const getContestantStage = (
   contestants:
@@ -44,13 +48,12 @@ export default async function FetchPrize({
       }
     })
     .filter((c) => !!c);
-  console.log(contestants);
   if (!prize) {
     return <div>Prize not found</div>;
   }
   const session = await auth();
   if (session && !session.user.username) {
-    return <div>Complete Sign Up </div>;
+    return redirect("/onboard");
   }
   const contestantStage = getContestantStage(
     contestants,
@@ -68,7 +71,7 @@ export default async function FetchPrize({
           name={prize.author.name ?? prize.authorUsername}
           stage={prize.stage}
           image={prize.imageUrl}
-          avatar={prize.author.avatar || ""}
+          avatar={prize.author.image || ""}
           title={prize.title}
           prizeId={prize.id}
         />
@@ -76,7 +79,19 @@ export default async function FetchPrize({
         <AboutContent badges={["Technology"]} description={prize.description} />
         <Submissions submissions={prize.submissions} />
         <VotingSection users={[]} />
-        <StartSubmissionButton />
+        {prize.primaryContractAddress && session && session.user.isAdmin ? (
+          <>
+            <StartSubmissionButton
+              prizeContractAddress={prize.primaryContractAddress}
+            />
+            <EndSubmissionAndStartVotingButton
+              prizeContractAddress={prize.primaryContractAddress}
+            />
+            <EndVotingButton
+              prizeContractAddress={prize.primaryContractAddress}
+            />
+          </>
+        ) : null}
       </div>
       <div className="w-full lg:w-[25%] mt-5 mx-3 space-y-5 lg:max-h-screen lg:overflow-auto">
         <Winners />
@@ -84,7 +99,7 @@ export default async function FetchPrize({
           name={prize.author.name ?? prize.authorUsername}
           numberOfFunders={prize.numberOfFunders}
           totalFunds={prize.funds}
-          avatar={prize.author.avatar}
+          avatar={prize.author.image}
         />
         <ContestantsCard
           contestantStage={contestantStage}
