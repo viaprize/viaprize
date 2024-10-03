@@ -1,16 +1,15 @@
 import {
-  differenceInSeconds,
-  differenceInMinutes,
-  differenceInHours,
   differenceInDays,
+  differenceInHours,
+  differenceInMinutes,
+  differenceInSeconds,
 } from "date-fns";
 export function containsUppercase(str: string) {
   return /^[A-Z]+$/.test(str);
 }
 
-
 export interface SearchParams {
-  [key: string]: string | string[] | undefined
+  [key: string]: string | string[] | undefined;
 }
 
 export function timeAgo(givenDate: Date): string {
@@ -38,8 +37,3 @@ export function timeAgo(givenDate: Date): string {
   const secondsDiff = differenceInSeconds(now, givenDate);
   return `${secondsDiff} seconds ago`;
 }
-
-// Example usage:
-const pastDate = new Date("2023-09-15T14:00:00"); // Use your given date
-console.log(timeDifference(pastDate));
-
