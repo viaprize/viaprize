@@ -1,20 +1,17 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
-import { Card } from '@viaprize/ui/card'
+import { timeAgo } from "@/lib/utils";
+import { api } from "@/trpc/server";
+import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
+import { Card } from "@viaprize/ui/card";
 
-interface Activity {
-  name: string
-  avatar: string
-  time: string
-  activity: string
-}
-
-interface RecentActivitiesProps {
-  activities: Activity[]
-}
-
+export type Activity = Pick<
+  Awaited<ReturnType<typeof api.prizes.getPrizeActivites>>,
+  "recentActivites"
+>["recentActivites"];
 export default function RecentActivities({
   activities,
-}: RecentActivitiesProps) {
+}: {
+  activities: Activity;
+}) {
   return (
     <Card className="p-3 text-sm text-muted-foreground">
       <div className="text-card-foreground/60 text-lg ">Recent Activities</div>
@@ -22,31 +19,31 @@ export default function RecentActivities({
         {activities.map((activityItem) => (
           <div
             className="flex items-center justify-between py-1"
-            key={activityItem.name}
+            key={`${activityItem.activity}-${activityItem.user.username}-${activityItem.createdAt}`}
           >
             <div className="flex items-center space-x-2">
               <Avatar>
                 <AvatarImage
-                  src={activityItem.avatar}
-                  alt={activityItem.name}
+                  src={activityItem.user.image ?? undefined}
+                  alt={activityItem.user.username ?? undefined}
                 />
                 <AvatarFallback>
-                  {activityItem.name
-                    ? activityItem.name.charAt(0).toUpperCase()
-                    : '?'}
+                  {activityItem.user.username
+                    ? activityItem.user.username.charAt(0).toUpperCase()
+                    : "?"}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <div className="font-semibold text-black">
-                  {activityItem.name}
+                  {activityItem.user.username}
                 </div>
                 <div>{activityItem.activity}</div>
               </div>
             </div>
-            <div>{activityItem.time}</div>
+            <div>{timeAgo(activityItem.createdAt)}</div>
           </div>
         ))}
       </div>
     </Card>
-  )
+  );
 }
