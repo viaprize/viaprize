@@ -5,9 +5,11 @@ import {
   encodeFunctionData,
   parseEventLogs,
 } from "viem";
+import { fraxtalTestnet } from "viem/chains";
 import type { z } from "zod";
 import type { ViaprizeDatabase } from "../database";
 import {
+  activities,
   donations,
   type insertDonationSchema,
   prizeComments,
@@ -15,14 +17,12 @@ import {
   prizesToContestants,
   submissions,
   votes,
-  activities,
 } from "../database/schema";
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from "../lib/abi";
 import { CacheTag } from "./cache-tag";
 import { CONTRACT_CONSTANTS_PER_CHAIN } from "./constants";
 import { PrizesBlockchain } from "./smart-contracts/prizes";
 import { stringToSlug } from "./utils";
-import { fraxtalTestnet } from "viem/chains";
 const CACHE_TAGS = {
   PENDING_PRIZES: { value: "pending-prizes", requiresSuffix: false },
   ACTIVE_PRIZES_COUNT: { value: "active-prizes-count", requiresSuffix: false },
@@ -134,7 +134,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         totalRefunded: totalRefunded,
       })
       .where(
-        eq(prizes.primaryContractAddress, primaryContractAddress.toLowerCase()),
+        eq(prizes.primaryContractAddress, primaryContractAddress.toLowerCase())
       );
   }
 
@@ -347,7 +347,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       | "funderAddress"
       | "voteAmount"
       | "username"
-    >,
+    >
   ) {
     const voteId = await this.db.transaction(async (trx) => {
       const [vote] = await trx

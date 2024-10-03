@@ -1,12 +1,12 @@
+import { viaprize } from "@/server/viaprize";
 import { TRPCError } from "@trpc/server";
+import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from "@viaprize/core/lib/abi";
 import { Events } from "@viaprize/core/viaprize";
+import { ViaprizeUtils } from "@viaprize/core/viaprize-utils";
+import { revalidatePath } from "next/cache";
 import { Resource } from "sst";
 import { bus } from "sst/aws/bus";
 import { z } from "zod";
-
-import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from "@viaprize/core/lib/abi";
-import { ViaprizeUtils } from "@viaprize/core/viaprize-utils";
-import { revalidatePath } from "next/cache";
 import {
   adminProcedure,
   createTRPCRouter,
@@ -408,10 +408,10 @@ export const prizeRouter = createTRPCRouter({
           cause: "User is not logged in",
         });
       }
-      await ctx.viaprize.prizes.addContestant(
-        input.prizeId,
-        ctx.session.user.username
-      );
+      await ctx.viaprize.prizes.addContestant({
+        prizeId: input.prizeId,
+        username: ctx.session.user.username,
+      });
 
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag("DEPLOYED_PRIZES"),
@@ -497,6 +497,67 @@ export const prizeRouter = createTRPCRouter({
       }
       return txHash;
     }),
+  endVoting: adminProcedure
+    .input(z.object({ contractAddress: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
+        input.contractAddress
+      );
+      const data = await ctx.viaprize.prizes.blockchain.getEncodedEndVoting();
+      await viaprize.wallet.withTransactionEvents(
+        PRIZE_V2_ABI,
+        [
+          {
+            data,
+            to: input.contractAddress,
+            value: "0",
+          },
+        ],
+        "gasless",
+        "VotingEnded",
+        async (events) => {
+          await ctx.viaprize.prizes.endVotingPeriodByContractAddress(
+            input.contractAddress
+          );
+        }
+      );
+      await ViaprizeUtils.publishDeployedPrizeCacheDelete(
+        ctx.viaprize,
+        prize.slug
+      );
+    }),
+  endSubmissionAndStartVoting: adminProcedure
+    .input(z.object({ contractAddress: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
+        input.contractAddress
+      );
+      const data =
+        await ctx.viaprize.prizes.blockchain.getEncodedEndSubmissionAndStartVoting(
+          {
+            votingDurationInMinutes: prize.votingDurationInMinutes,
+          }
+        );
+      await ViaprizeUtils.handleEndSubmissionTransaction(
+        viaprize,
+        {
+          transactions: [
+            {
+              data: data.endSubmissionPeriodData,
+              to: input.contractAddress,
+              value: "0",
+            },
+            {
+              data: data.startVotingPeriodData,
+              to: input.contractAddress,
+              value: "0",
+            },
+          ],
+          walletType: "gasless",
+        },
+        input.contractAddress
+      );
+    }),
   startSubmission: adminProcedure
     .input(
       z.object({
@@ -504,6 +565,34 @@ export const prizeRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return ViaprizeUtils.startSubmission(ctx.viaprize, input.contractAddress);
+      const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
+        input.contractAddress
+      );
+      const txData =
+        await ctx.viaprize.prizes.blockchain.getEncodedStartSubmission(
+          prize.submissionDurationInMinutes
+        );
+      const txReceipt = await ctx.viaprize.wallet.withTransactionEvents(
+        PRIZE_V2_ABI,
+        [
+          {
+            data: txData,
+            to: input.contractAddress,
+            value: "0",
+          },
+        ],
+        "gasless",
+        "SubmissionStarted",
+        async (events) => {
+          await ctx.viaprize.prizes.startSubmissionPeriodByContractAddress(
+            input.contractAddress
+          );
+        }
+      );
+      await ViaprizeUtils.publishDeployedPrizeCacheDelete(
+        ctx.viaprize,
+        prize.slug
+      );
+      return txReceipt;
     }),
 });

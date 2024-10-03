@@ -56,8 +56,22 @@ export const handler: ScheduledHandler<{
     case "wallet.startSubmission": {
       console.log("Processing wallet start submission event");
       const txBody = payload.body as typeof Events.Wallet.Transaction.$input;
-      const contractAddress = txBody.transactions[0].to;
-      await ViaprizeUtils.startSubmission(viaprize, contractAddress);
+      await viaprize.wallet.withTransactionEvents(
+        PRIZE_V2_ABI,
+        txBody.transactions,
+        txBody.walletType ?? "gasless",
+        "SubmissionStarted",
+        async (event) => {
+          console.log(`${event} event received`);
+          await viaprize.prizes.startSubmissionPeriodByContractAddress(
+            event[0].address
+          );
+        }
+      );
+      const prize = await viaprize.prizes.getPrizeByContractAddress(
+        txBody.transactions[0].to
+      );
+      await ViaprizeUtils.publishDeployedPrizeCacheDelete(viaprize, prize.slug);
       break;
     }
     case "wallet.endVoting": {
@@ -77,81 +91,19 @@ export const handler: ScheduledHandler<{
       const prize = await viaprize.prizes.getPrizeByContractAddress(
         txBody.transactions[0].to
       );
-      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-        key: viaprize.prizes.getCacheTag("SLUG_PRIZE", prize.slug ?? ""),
-      });
+      await ViaprizeUtils.publishDeployedPrizeCacheDelete(viaprize, prize.slug);
+
       break;
     }
     case "wallet.endSubmissionAndStartVoting": {
       const txBody = payload.body as typeof Events.Wallet.Transaction.$input;
       console.log({ txBody });
 
-      const prize = await viaprize.prizes.getPrizeByContractAddress(
+      await ViaprizeUtils.handleEndSubmissionTransaction(
+        viaprize,
+        txBody,
         txBody.transactions[0].to
       );
-
-      await viaprize.wallet.withTransactionEvents(
-        PRIZE_V2_ABI,
-        prize.numberOfSubmissions > 0
-          ? txBody.transactions
-          : [txBody.transactions[0]],
-        "gasless",
-        [
-          "SubmissionEnded",
-          "VotingEnded",
-          "CryptoFunderRefunded",
-          "FiatFunderRefund",
-        ],
-        async (event) => {
-          console.log(`${event} event received`);
-          const submissionEndedEvents = event.filter(
-            (e) => e.eventName === "SubmissionEnded"
-          );
-          const votingEndedEvents = event.filter(
-            (e) => e.eventName === "VotingEnded"
-          );
-          const cryptoFunderRefundedEvents = event.filter(
-            (e) => e.eventName === "CryptoFunderRefunded"
-          );
-          const fiatFunderRefundEvents = event.filter(
-            (e) => e.eventName === "FiatFunderRefund"
-          );
-
-          if (submissionEndedEvents && votingEndedEvents) {
-            await viaprize.prizes.startVotingPeriodByContractAddress(
-              event[0].address
-            );
-          }
-          if (submissionEndedEvents) {
-            await viaprize.prizes.refundByContractAddress({
-              primaryContractAddress: event[0].address,
-              totalRefunded: 0,
-            });
-            await deleteSchedule(`EndVoting-${event[0].address}`);
-          }
-          if (cryptoFunderRefundedEvents || fiatFunderRefundEvents) {
-            const totalCryptoFunderRefunded = cryptoFunderRefundedEvents.reduce(
-              (acc, e) =>
-                acc + Number.parseInt(e.args._amount?.toString() ?? "0"),
-              0
-            );
-            const totalFiatFunderRefunded = fiatFunderRefundEvents.reduce(
-              (acc, e) =>
-                acc + Number.parseInt(e.args._amount?.toString() ?? "0"),
-              0
-            );
-
-            await viaprize.prizes.refundByContractAddress({
-              primaryContractAddress: event[0].address,
-              totalRefunded:
-                totalCryptoFunderRefunded + totalFiatFunderRefunded,
-            });
-          }
-        }
-      );
-      await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-        key: viaprize.prizes.getCacheTag("SLUG_PRIZE", prize.slug ?? ""),
-      });
       break;
     }
   }
