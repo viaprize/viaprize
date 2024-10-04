@@ -17,48 +17,19 @@ import { IconArrowLeft } from "@tabler/icons-react";
 import { Separator } from "@viaprize/ui/separator";
 import { redirect } from "next/navigation";
 
-const getContestantStage = (
-  contestants:
-    | {
-        username: string;
-        avatar: string | null;
-      }[]
-    | undefined,
-  username: string
-): ContestantStage => {
-  if (!contestants) {
-    return "NOT_JOINED";
-  }
-  if (contestants.some((c) => c.username === username)) {
-    return "JOINED";
-  }
-  return "NOT_JOINED";
-};
 export default async function FetchPrize({
   params: { slug },
 }: {
   params: { slug: string };
 }) {
   const prize = await api.prizes.getPrizeBySlug(slug);
-  console.log(prize?.contestants, "contestants");
-  const contestants = prize?.contestants
-    .map((c) => {
-      if (c.user.username) {
-        return { username: c.user.username, avatar: c.user.image };
-      }
-    })
-    .filter((c) => !!c);
+  const session = await auth();
   if (!prize) {
     return <div>Prize not found</div>;
   }
-  const session = await auth();
   if (session && !session.user.username) {
     return redirect("/onboard");
   }
-  const contestantStage = getContestantStage(
-    contestants,
-    session?.user.username ?? ""
-  );
   return (
     <div className="lg:flex h-full">
       <div className="w-full space-y-3 md:w-[75%] h-full lg:max-h-screen overflow-auto border-r-2">
@@ -102,10 +73,10 @@ export default async function FetchPrize({
           avatar={prize.author.image}
         />
         <ContestantsCard
-          contestantStage={contestantStage}
-          contestants={contestants}
+          prizeStage={prize.stage}
           prizeId={prize.id}
           slug={slug}
+          totalFunds={prize.funds}
         />
       </div>
     </div>

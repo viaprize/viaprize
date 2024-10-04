@@ -1,3 +1,7 @@
+import type {
+  ContestantStage,
+  Contestants,
+} from "@/components/prize/details/vfc-details/contestants-card";
 import {
   differenceInDays,
   differenceInHours,
@@ -37,3 +41,19 @@ export function timeAgo(givenDate: Date): string {
   const secondsDiff = differenceInSeconds(now, givenDate);
   return `${secondsDiff} seconds ago`;
 }
+
+export const getContestantStage = (
+  contestants: Contestants,
+  username?: string
+): ContestantStage => {
+  if (!username) {
+    return "LOGIN";
+  }
+  if (!contestants) {
+    return "NOT_JOINED";
+  }
+  if (contestants.some((c) => c.username === username)) {
+    return "JOINED";
+  }
+  return "NOT_JOINED";
+};

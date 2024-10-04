@@ -1,74 +1,97 @@
-import SubmissionDialog from '@/components/submission/trigger'
-import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
-import { Button } from '@viaprize/ui/button'
-import { Card } from '@viaprize/ui/card'
-import SubmitWorkButton from '../submissions/submit-work-button'
-import JoinContestantButton from './join-contestant-button'
-export type ContestantStage = 'NOT_JOINED' | 'JOINED' | 'SUBMITTED'
+"use client";
+import { useAuth } from "@/hooks/useAuth";
+import { getContestantStage } from "@/lib/utils";
+import { api } from "@/trpc/react";
+import type { PrizeStages } from "@viaprize/core/lib/prizes";
+import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
+import { Card } from "@viaprize/ui/card";
+import { Suspense } from "react";
+import SubmitWorkButton from "../submissions/submit-work-button";
+import JoinContestantButton from "./join-contestant-button";
+export type ContestantStage = "NOT_JOINED" | "JOINED" | "SUBMITTED" | "LOGIN";
 
 function ContestantCardButton({
   stage,
   prizeId,
+  prizeStage,
   slug,
+  totalFunds,
 }: {
-  stage: ContestantStage
-  prizeId: string
-  slug: string
+  stage: ContestantStage;
+  prizeId: string;
+  slug: string;
+  prizeStage: PrizeStages;
+  totalFunds: number;
 }) {
   return (
     <>
       {(() => {
         switch (stage) {
-          case 'NOT_JOINED':
-            return <JoinContestantButton prizeId={prizeId} slug={slug} />
-          case 'JOINED':
-            return <SubmitWorkButton prizeId={prizeId} />
-          case 'SUBMITTED':
-            return null
+          case "NOT_JOINED":
+            return <JoinContestantButton prizeId={prizeId} slug={slug} />;
+          case "JOINED":
+            return (
+              <SubmitWorkButton
+                totalFunds={totalFunds}
+                prizeStage={prizeStage}
+                prizeId={prizeId}
+              />
+            );
+          case "SUBMITTED":
+            return null;
         }
       })()}
     </>
-  )
+  );
 }
 export default function ContestantsCard({
-  contestants,
-  contestantStage,
   prizeId,
   slug,
+  prizeStage,
+  totalFunds,
 }: {
-  contestants?: {
-    username: string
-    avatar: string | null
-  }[]
-  contestantStage: ContestantStage
-  prizeId: string
-  slug: string
+  prizeId: string;
+  slug: string;
+  prizeStage: PrizeStages;
+  totalFunds: number;
 }) {
+  const [contestants] = api.prizes.getContestants.useSuspenseQuery(prizeId);
+  const { session } = useAuth();
+  const contestantStage = getContestantStage(
+    contestants,
+    session?.user.username
+  );
   return (
-    <Card className="px-3 py-4">
-      <div className="text-muted-foreground text-lg font-normal">
-        Contestants ({contestants?.length})
-      </div>
-      {contestants?.map((contestant) => (
-        <div
-          className="flex items-center space-x-2 mt-2"
-          key={contestant.username}
-        >
-          <Avatar>
-            <AvatarImage
-              src={contestant.avatar ?? undefined}
-              alt={contestant.username.substring(0, 2)}
-            />
-            <AvatarFallback>{contestant.username.substring(2)}</AvatarFallback>
-          </Avatar>
-          <div>{contestant.username}</div>
+    <Suspense fallback={<Card className="px-3 py-4">Loading...</Card>}>
+      <Card className="px-3 py-4">
+        <div className="text-muted-foreground text-lg font-normal">
+          Contestants ({contestants?.length})
         </div>
-      ))}
-      <ContestantCardButton
-        stage={contestantStage}
-        prizeId={prizeId}
-        slug={slug}
-      />
-    </Card>
-  )
+        {contestants?.map((contestant) => (
+          <div
+            className="flex items-center space-x-2 my-4"
+            key={contestant.username}
+          >
+            <Avatar>
+              <AvatarImage
+                src={contestant.user.image ?? undefined}
+                alt={contestant.username.substring(0, 2)}
+              />
+              <AvatarFallback>
+                {contestant.username.substring(0, 2)}
+              </AvatarFallback>
+            </Avatar>
+            <div>{contestant.username}</div>
+          </div>
+        ))}
+        <ContestantCardButton
+          totalFunds={totalFunds}
+          prizeStage={prizeStage}
+          stage={contestantStage}
+          prizeId={prizeId}
+          slug={slug}
+        />
+      </Card>
+    </Suspense>
+  );
 }

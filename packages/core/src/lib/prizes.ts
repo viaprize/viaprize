@@ -48,6 +48,21 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     this.blockchain = new PrizesBlockchain(rpcUrl, chainId);
   }
 
+  async getContestants(prizeId: string) {
+    const contestants = await this.db.query.prizesToContestants.findMany({
+      where: eq(prizesToContestants.prizeId, prizeId),
+      with: {
+        user: {
+          columns: {
+            username: true,
+            image: true,
+          },
+        },
+      },
+    });
+    return contestants;
+  }
+
   async getLatestActivitiesInPrizes(limit = 5) {
     const latestActivities = await this.db.query.activities.findMany({
       orderBy: desc(activities.createdAt),
@@ -175,16 +190,6 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         comments: {
           orderBy: desc(prizeComments.createdAt),
         },
-        contestants: {
-          with: {
-            user: {
-              columns: {
-                username: true,
-                image: true,
-              },
-            },
-          },
-        },
         author: {
           columns: {
             name: true,
@@ -292,26 +297,26 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     return prizeId;
   }
 
-  async addSubmission(data: {
-    submissionHash: string;
-    prizeId: string;
-    contestant: string;
-    submissionText: string;
-    username: string;
-  }) {
+  async addSubmission(data: typeof submissions.$inferInsert) {
     const submissionId = await this.db.transaction(async (trx) => {
       const [submission] = await trx
         .insert(submissions)
         .values({
           submissionHash: data.submissionHash,
-          description: data.submissionText,
-          submitterAddress: data.contestant,
+          description: data.description,
+          submitterAddress: data.submitterAddress,
           prizeId: data.prizeId,
           username: data.username,
         })
         .returning({
           submissionHash: submissions.submissionHash,
         });
+      await trx
+        .update(prizes)
+        .set({
+          numberOfSubmissions: sql`${prizes.numberOfSubmissions} + 1`,
+        })
+        .where(eq(prizes.id, data.prizeId));
       if (!submission) {
         throw new Error("Submission not created in database");
       }

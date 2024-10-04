@@ -24,6 +24,12 @@ const activities = [
 ];
 
 export const prizeRouter = createTRPCRouter({
+  getContestants: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const contestants = await ctx.viaprize.prizes.getContestants(input);
+      return contestants;
+    }),
   getPrizeActivities: publicProcedure.query(async ({ ctx }) => {
     const totalPrizePool =
       Number.parseInt(
@@ -231,19 +237,27 @@ export const prizeRouter = createTRPCRouter({
     .input(
       z.object({
         prizeId: z.string(),
-        contestant: z.string(),
         submissionText: z.string().min(10, {
           message: "Submission must be at least 10 characters.",
         }),
+        projectLink: z.string().optional(),
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const submitterAddress = ctx.session.user.walletAddress;
       const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId);
       if (!prize) {
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Prize not found",
           cause: "Prize not found",
+        });
+      }
+      if (!submitterAddress) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You must have a wallet address to create a prize",
+          cause: "User does not have a wallet address",
         });
       }
 
@@ -257,7 +271,7 @@ export const prizeRouter = createTRPCRouter({
 
       const txData =
         await ctx.viaprize.prizes.blockchain.getEncodedAddSubmissionData(
-          input.contestant as `0x${string}`,
+          submitterAddress as `0x${string}`,
           input.submissionText
         );
 
@@ -268,7 +282,7 @@ export const prizeRouter = createTRPCRouter({
           value: "0",
         },
         "gasless",
-        "signer"
+        "vault"
       );
       if (!simulated) {
         throw new TRPCError({
@@ -301,17 +315,18 @@ export const prizeRouter = createTRPCRouter({
           }
           await ctx.viaprize.prizes.addSubmission({
             submissionHash: submissionCreatedEvents[0].args.submissionHash,
-            contestant: input.contestant,
-            submissionText: input.submissionText,
+            submitterAddress: submitterAddress,
+            description: input.submissionText,
             prizeId: input.prizeId,
             username: ctx.session.user.username as string,
           });
         }
       );
       if (txHash) {
-        await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-          key: ctx.viaprize.prizes.getCacheTag("SLUG_PRIZE", prize.slug ?? ""),
-        });
+        await ViaprizeUtils.publishDeployedPrizeCacheDelete(
+          viaprize,
+          prize.slug
+        );
       }
       return txHash;
     }),
