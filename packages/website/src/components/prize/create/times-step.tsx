@@ -18,29 +18,6 @@ import type { FormValues } from './form-schema'
 export function TimingStep({ form }: { form: UseFormReturn<FormValues> }) {
   return (
     <div className="flex flex-col justify-between gap-5">
-      <Popover>
-        <PopoverTrigger asChild>
-          <FormControl>
-            <Button
-              variant="outline"
-              className={cn('w-[280px] justify-start text-left font-normal')}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-            </Button>
-          </FormControl>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            mode="single"
-            // selected={dateTime}
-            // onSelect={setDateTime}
-            initialFocus
-            className="self-center"
-            fromDate={new Date()}
-            disabled={(date) => date < new Date()}
-          />
-        </PopoverContent>
-      </Popover>
       <FormField
         control={form.control}
         name="submissionStartDate"
@@ -65,9 +42,7 @@ export function TimingStep({ form }: { form: UseFormReturn<FormValues> }) {
             <DateTimePicker
               dateTime={field.value}
               setDateTime={field.onChange}
-              // disabled={(date) =>
-              //   date < new Date() || date < new Date("1900-01-01")
-              // }
+              minDate={form.getValues('submissionStartDate')}
             />
             <FormMessage />
           </FormItem>
@@ -82,9 +57,7 @@ export function TimingStep({ form }: { form: UseFormReturn<FormValues> }) {
             <DateTimePicker
               dateTime={field.value}
               setDateTime={field.onChange}
-              // disabled={(date) =>
-              //   date < new Date() || date < new Date("1900-01-01")
-              // }
+              minDate={form.getValues('submissionEndDate')}
             />
             <FormMessage />
           </FormItem>

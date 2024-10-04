@@ -14,6 +14,7 @@ import { cn } from '@viaprize/ui'
 import { Button } from '@viaprize/ui/button'
 import { Input } from '@viaprize/ui/input'
 
+import { addDays, min } from 'date-fns'
 import {
   generateDate,
   generateDateString,
@@ -32,6 +33,7 @@ const defaultSuggestions = [
 function generateSuggestions(
   inputValue: string,
   suggestion: Suggestion | null,
+  minDate?: Date,
 ): Suggestion[] {
   if (!inputValue.length) {
     return defaultSuggestions.map((suggestion) => ({
@@ -48,6 +50,12 @@ function generateSuggestions(
       date: generateDate(suggestion),
       inputString: suggestion,
     })) as Suggestion[]
+  }
+
+  const date = generateDate(inputValue)
+
+  if (date && date < new Date(minDate ?? new Date())) {
+    return []
   }
 
   return [suggestion].filter((suggestion) => suggestion !== null)
@@ -167,7 +175,7 @@ export const DateTimePicker = forwardRef<HTMLInputElement, DateTimePickerProps>(
             dateTime={dateTime}
             setDateTime={setDateTime}
             setInputValue={setInputValue}
-            disabled={(date) => date < new Date(minDate ?? new Date())}
+            disabled={(date) => date < addDays(minDate ?? new Date(), 1)}
           >
             <Button
               size="icon"

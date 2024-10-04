@@ -69,8 +69,7 @@ export function DateTimePickerPopover({
               onSelect={setDateTime}
               initialFocus
               className="self-center"
-              fromDate={new Date()}
-              disabled={(date) => date < new Date()}
+              disabled={disabled}
             />
             <div className="border-t border-border p-3">
               <TimePicker date={dateTime} setDate={setDateTime} />
@@ -96,6 +95,7 @@ export function DateTimePickerPopover({
           selected={dateTime}
           onSelect={setDateTime}
           initialFocus
+          fromDate={minDate ?? new Date()}
           disabled={disabled}
         />
         <div className="border-t border-border p-3">
