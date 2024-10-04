@@ -35,19 +35,19 @@
 //   )
 // }
 
-import { REDIRECT_TO_AFTER_AUTH } from "@/lib/constant";
+import { REDIRECT_TO_AFTER_AUTH } from '@/lib/constant'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@viaprize/ui/card";
-import { Separator } from "@viaprize/ui/separator";
-import { EmailAuthButton } from "./email-auth-button";
-import GithubAuthButton from "./github-auth-button";
-import GoogleAuthButton from "./google-auth-button";
-import { WalletLogin } from "./wallet-login";
+} from '@viaprize/ui/card'
+import { Separator } from '@viaprize/ui/separator'
+import { EmailAuthButton } from './email-auth-button'
+import GithubAuthButton from './github-auth-button'
+import GoogleAuthButton from './google-auth-button'
+import { WalletLogin } from './wallet-login'
 
 // Define an arbitrary redirect URL
 // const REDIRECT_TO_AFTER_AUTH = "/dashboard";
@@ -84,5 +84,5 @@ export default function LoginCard() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
