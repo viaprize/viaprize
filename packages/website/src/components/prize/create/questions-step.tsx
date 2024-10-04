@@ -85,7 +85,7 @@ export function QuestionsStep({ form, initialQuestion }: QuestionsStepProps) {
 type QuestionProps = {
   question: Question
   onAnswerSelected: (answer: string | string[]) => void
-  form: UseFormReturn<any>
+  form: UseFormReturn<FormValues>
   index: number
   length: number
 }
@@ -109,7 +109,7 @@ function SingleChoiceQuestion({
                 field.onChange(value)
                 onAnswerSelected(value)
               }}
-              value={field.value}
+              value={field.value as string}
               className="space-y-1"
             >
               {question.options.map((option, optionIndex) => (
@@ -148,6 +148,8 @@ function MultipleChoiceQuestion({
     icon: '📌',
   }))
 
+  console.log(form, 'topics')
+
   return (
     <FormField
       control={form.control}
@@ -158,12 +160,13 @@ function MultipleChoiceQuestion({
           <FormControl>
             <TopicsSelector
               topics={topics}
+              topicClassName="rounded-md w-full sm:w-[70%]"
               setSelectedTopics={(selected) => {
                 const answer = selected.map((s) => s.value)
                 field.onChange(answer)
               }}
               selectedTopics={
-                field.value
+                typeof field.value !== 'string'
                   ? field.value.map((v: string) => ({
                       value: v,
                       label: v,
@@ -175,15 +178,11 @@ function MultipleChoiceQuestion({
             />
           </FormControl>
           <FormMessage />
-          {index !== 4 ||
-            (length > index + 1 && (
-              <Button
-                type="button"
-                onClick={() => onAnswerSelected(field.value)}
-              >
-                Next Question
-              </Button>
-            ))}
+          {index !== 4 && length === index + 1 && (
+            <Button type="button" onClick={() => onAnswerSelected(field.value)}>
+              Next Question
+            </Button>
+          )}
         </FormItem>
       )}
     />

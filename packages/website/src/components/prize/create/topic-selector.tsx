@@ -62,15 +62,18 @@ export default function TopicsSelector({
   }
 
   return (
-    <div className="flex w-full items-center justify-center px-4">
+    <div className="flex w-full items-center justify-center">
       <div className="w-full">
         <motion.div
           initial={{ height: 'auto' }}
           animate={{ height: height > 0 ? height : 'auto' }}
         >
-          <motion.ul ref={ref} className="mt-4 flex w-full flex-wrap gap-2">
+          <motion.ul
+            ref={ref}
+            className="mt-4 flex flex-col w-full columns-1 gap-2"
+          >
             <LayoutGroup>
-              <AnimatePresence initial={false} mode="popLayout">
+              <AnimatePresence initial={false}>
                 {localTopics
                   .filter(
                     (topic) =>
@@ -105,7 +108,7 @@ export default function TopicsSelector({
               onKeyDown={handleKeyDown}
               onChange={(e) => setNewSubTopic(e.target.value)}
               placeholder="Add new topic"
-              className="border px-2 py-1"
+              className="border px-2 py-1 w-full sm:w-[70%]"
             />
             <Button variant="secondary" onClick={handleAddSubTopic}>
               Add
@@ -159,14 +162,17 @@ function SingleTopic({
       <motion.button
         layout
         className={cn(
-          'rounded-full bg-lime-300/60 px-4 py-2 font-medium text-lime-800 dark:bg-lime-400/10 dark:text-lime-300',
+          'rounded-full bg-green-300/60 px-4 py-2 font-medium text-green-800 dark:bg-green-400/10 dark:text-green-300',
           isSelected &&
-            'border-[#2c2845] bg-lime-950 text-lime-200 dark:bg-lime-950/60 dark:text-lime-300',
+            'border-[#2c2845] bg-green-950 text-green-200 dark:bg-green-950/60 dark:text-green-300',
           topicClassName,
         )}
         onClick={onClickHandler}
       >
-        <motion.div layout className="my-0 flex items-center gap-2 py-0">
+        <motion.div
+          layout
+          className="my-0 flex items-center justify-between gap-2 py-0"
+        >
           <motion.span layout className="inline-block">
             {topic.icon} {topic.label}
           </motion.span>
