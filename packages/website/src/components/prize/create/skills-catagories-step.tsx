@@ -7,20 +7,14 @@ import {
 } from '@viaprize/ui/form'
 import { Input } from '@viaprize/ui/input'
 import type { UseFormReturn } from 'react-hook-form'
+import type { FormValues } from './form-schema'
 import TopicsSelector from './topic-selector'
 
 type SkillsCategoryStepProps = {
-  form: UseFormReturn<any>
+  form: UseFormReturn<FormValues>
 }
 
 export function SkillsCategoryStep({ form }: SkillsCategoryStepProps) {
-  const suggestedSkills = [
-    { value: 'JavaScript', label: 'JavaScript', icon: '🟨' },
-    { value: 'React', label: 'React', icon: '⚛️' },
-    { value: 'Node.js', label: 'Node.js', icon: '🟩' },
-    { value: 'UI/UX Design', label: 'UI/UX Design', icon: '🎨' },
-  ]
-
   return (
     <>
       <FormField
@@ -31,7 +25,7 @@ export function SkillsCategoryStep({ form }: SkillsCategoryStepProps) {
             <FormLabel>Required Skills</FormLabel>
             <FormControl>
               <TopicsSelector
-                topics={suggestedSkills}
+                topics={form.getValues('skills')}
                 setSelectedTopics={field.onChange}
                 selectedTopics={field.value}
                 allowAddOptions={true}
@@ -41,7 +35,7 @@ export function SkillsCategoryStep({ form }: SkillsCategoryStepProps) {
           </FormItem>
         )}
       />
-      <FormField
+      {/* <FormField
         control={form.control}
         name="category"
         render={({ field }) => (
@@ -53,7 +47,7 @@ export function SkillsCategoryStep({ form }: SkillsCategoryStepProps) {
             <FormMessage />
           </FormItem>
         )}
-      />
+      /> */}
     </>
   )
 }

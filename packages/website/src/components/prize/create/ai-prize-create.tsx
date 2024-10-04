@@ -17,7 +17,7 @@ import { TimingStep } from './times-step'
 import { TitleDescriptionStep } from './title-description-step'
 
 export default function BountyCreationForm() {
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(5)
   const [initialQuestion, setInitialQuestion] = useState<Question | null>(null)
 
   const form = useForm<FormValues>({
@@ -29,9 +29,9 @@ export default function BountyCreationForm() {
       fullDescription: '',
       skills: [],
       category: '',
-      submissionStartDate: new Date(),
-      submissionEndDate: new Date(),
-      votingEndDate: new Date(),
+      // submissionStartDate: new Date(),
+      // submissionEndDate: new Date(),
+      // votingEndDate: new Date(),
     },
   })
 
@@ -42,6 +42,11 @@ export default function BountyCreationForm() {
     isPending: generatingTitleAndDescription,
   } = api.prizes.ai.generateTitleAndDescription.useMutation()
 
+  const {
+    mutateAsync: generateSkillsAndCatagories,
+    isPending: generatingSkills,
+  } = api.prizes.ai.generateSkillsCategory.useMutation()
+
   const onSubmit = (values: FormValues) => {
     console.log(values)
     // Handle form submission
@@ -50,19 +55,35 @@ export default function BountyCreationForm() {
   const handleNextStep = async () => {
     if (step === 1) {
       const description = form.getValues('description')
+      setStep(2)
       const questions = await generateQuestion({ description })
       setInitialQuestion(questions)
-      setStep(2)
     } else if (step === 2) {
       const answers = form.getValues('aiQuestions')
       console.log(answers, 'answers')
+      setStep(3)
       const suggestions = await generateTitleAndDescription({
         userChoices: answers,
         description: form.getValues('description'),
       })
       form.setValue('title', suggestions.title)
       form.setValue('fullDescription', suggestions.description)
-      setStep(3)
+    } else if (step === 3) {
+      setStep(4)
+      const skillsAndCatagories = await generateSkillsAndCatagories({
+        title: form.getValues('title'),
+        fullDescription: form.getValues('fullDescription'),
+      })
+      form.setValue(
+        'skills',
+        skillsAndCatagories.skills.map((s) => {
+          return {
+            label: s.skill,
+            value: s.skill.toLowerCase().replace(' ', '_'),
+          }
+        }),
+      )
+      form.setValue('category', skillsAndCatagories.category)
     } else {
       setStep(step + 1)
     }
@@ -87,7 +108,11 @@ export default function BountyCreationForm() {
           <TitleDescriptionStep form={form} />
         )
       case 4:
-        return <SkillsCategoryStep form={form} />
+        return generatingSkills ? (
+          <SkillsStepSkeleton />
+        ) : (
+          <SkillsCategoryStep form={form} />
+        )
       case 5:
         return <TimingStep form={form} />
       default:
@@ -143,6 +168,17 @@ function QuestionsStepSkeleton() {
 }
 
 function TitleDescriptionStepSkeleton() {
+  return (
+    <div className="space-y-4">
+      <Skeleton className="h-4 w-1/2" />
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-4 w-1/2" />
+      <Skeleton className="h-32 w-full" />
+    </div>
+  )
+}
+
+function SkillsStepSkeleton() {
   return (
     <div className="space-y-4">
       <Skeleton className="h-4 w-1/2" />

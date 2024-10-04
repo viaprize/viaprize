@@ -23,14 +23,16 @@ export const prizesAiRouter = createTRPCRouter({
             multipleChoice: z.boolean(),
           }),
         }),
-        prompt: `The user is looking to create a bounty or a prize, and here are his basic needs,
-         now we need to understand his request much more better way, so ask question to get more information, 
-        dont ask rubbish questions, ask questions which freelancers would need, dont ask business questions
-         like vision etc, ask questions which freelancer or employees would need to complete the project,
-          here is a short description of the user's request: ${input.description}, questions can be single
-           option or multiple choice
-          dont ask questions about budget and time, we will ask them later
-          make sure to give minimum 4 options
+        prompt: `You are an AI assistant tasked with generating relevant technical questions
+         to help freelancers understand a project's requirements. Based on the following project 
+         description, create a set of questions that will help clarify the technical aspects and 
+         functionality of the project.
+          Project Description: ${input.description}
+          Guidelines for generating questions:
+          Focus on technical details and functionality requirements.
+          Avoid business-related questions about vision, budget, or timelines.
+          Ask questions that freelancers or technical employees would need to complete the project.
+          give 4 options
           `,
       })
       return result.object.questions
@@ -62,21 +64,19 @@ export const prizesAiRouter = createTRPCRouter({
             multipleChoice: z.boolean(),
           }),
         }),
-        prompt: `The user is looking to create a bounty and here are his basic needs, 
-        now we need to understand his request, so ask question to get more information, 
-        dont ask rubbish questions, ask questions which freelancers would need, dont ask business questions
-         like vision etc, ask questions which freelancer or employees would need to complete the project,
-          I already asked him few questions
-         <previousQuestionsAndAnswer>
-        ${previouslyAnsweredQuestionString}
-        <previousQuestionsAndAnswer>
-        and here is a small description about user need 
-        <description>
-        ${input.description}
-        <description>
-        make sure to give minimum 4 options
-
-        now ask one question that will be the most important question, to know what is his purpose
+        prompt: `You are an AI assistant tasked with generating a crucial follow-up
+         question to further clarify a project's technical requirements. 
+         Based on the initial project description and previously answered questions,
+          create one final question that will provide the most important information about 
+          the project's purpose and technical goals.
+          Project Description: ${input.description}
+          Previously Answered Questions and Responses:
+          <previousQuestionsAndAnswers>${previouslyAnsweredQuestionString}</previousQuestionsAndAnswers>
+          Guidelines for generating the follow-up question:
+          Focus on the core technical purpose or primary functionality of the project.
+          Avoid business-related aspects like vision, budget, or timelines.
+          The question should help freelancers or technical employees understand the most critical aspect of the project.
+          Provide at least 4 multiple-choice options for the answer.
           `,
       })
       return result.object.questions
@@ -99,23 +99,39 @@ export const prizesAiRouter = createTRPCRouter({
         .join(', ')
       console.log('userChoicesString', userChoicesString, input)
       const result = await generateObject({
-        model: openai('gpt-4o-mini-2024-07-18', {
-          structuredOutputs: true,
-        }),
+        model: openai(
+          'ft:gpt-4o-mini-2024-07-18:aperturs:linked-exp-1:A2tb5FuW',
+          {
+            structuredOutputs: true,
+          },
+        ),
         schemaName: 'titleAndDescription',
         schemaDescription: 'generate title and description',
         schema: z.object({
           title: z.string(),
           description: z.string(),
         }),
-        prompt: `The user is looking to create a bounty or a prize, and here are his basic needs, now we need to create a proper title and description
-        based on the answer he gave to our questions and also he made gave us a short description about what he wants
-        few things to remeber before creating
-        1. title should be short and catchy
-        2. description should be detailed and clear, use bullet points, for breaking lines use '\n'
-        3. its already clear that our platform is a bounty platform, so no need to explicitely mention that 
+        prompt: `You are an AI assistant tasked with creating a comprehensive project brief based on 
+        user-provided information. Your goal is to generate a title, short description, 
+        and detailed description that clearly communicates the project requirements to 
+        potential freelancers or team members.
+        Given the following information about a project:
         choices: ${userChoicesString}
-        \n\nDescription: ${input.description}`,
+        \n\nDescription: ${input.description}
+        Please generate:
+        A concise, attention-grabbing title (max 10 words) that summarizes the core purpose of the project.
+        A detailed description (200-300 words) that covers:
+        The project's background and context Specific goals and objectives
+        Key features or functionalities required
+        Technical requirements or preferences, if any
+        Any unique challenges or constraints
+         Expected deliverables
+
+         some rules
+         1. use bullet points to make it much more readable
+         2. dont have sentence more than 10 words
+         3. dont write in paragraphs instead write in bullet points
+        `,
       })
       return result.object
     }),

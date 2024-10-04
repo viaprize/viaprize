@@ -37,7 +37,7 @@ export function TitleDescriptionStep({
           <FormItem>
             <FormLabel>Full Description</FormLabel>
             <FormControl>
-              <Textarea {...field} />
+              <Textarea {...field} className="min-h-[400px]" />
             </FormControl>
             <FormMessage />
           </FormItem>

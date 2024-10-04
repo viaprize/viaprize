@@ -166,7 +166,7 @@ function MultipleChoiceQuestion({
                 field.onChange(answer)
               }}
               selectedTopics={
-                typeof field.value !== 'string'
+                typeof field.value !== 'string' && field.value
                   ? field.value.map((v: string) => ({
                       value: v,
                       label: v,

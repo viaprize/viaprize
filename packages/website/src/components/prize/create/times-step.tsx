@@ -12,48 +12,46 @@ import { Popover, PopoverContent, PopoverTrigger } from '@viaprize/ui/popover'
 import { format } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import type { UseFormReturn } from 'react-hook-form'
+import { DateTimePicker } from './ai-date-time-picker/date-picker/date-time-picker'
 import type { FormValues } from './form-schema'
 
 export function TimingStep({ form }: { form: UseFormReturn<FormValues> }) {
   return (
-    <>
+    <div className="flex flex-col justify-between gap-5">
+      <Popover>
+        <PopoverTrigger asChild>
+          <FormControl>
+            <Button
+              variant="outline"
+              className={cn('w-[280px] justify-start text-left font-normal')}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+            </Button>
+          </FormControl>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            // selected={dateTime}
+            // onSelect={setDateTime}
+            initialFocus
+            className="self-center"
+            fromDate={new Date()}
+            disabled={(date) => date < new Date()}
+          />
+        </PopoverContent>
+      </Popover>
       <FormField
         control={form.control}
         name="submissionStartDate"
         render={({ field }) => (
           <FormItem className="flex flex-col">
             <FormLabel>Submission Start Date</FormLabel>
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      'w-[240px] pl-3 text-left font-normal',
-                      !field.value && 'text-muted-foreground',
-                    )}
-                  >
-                    {field.value ? (
-                      format(field.value, 'PPP')
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={field.value}
-                  onSelect={field.onChange}
-                  disabled={(date) =>
-                    date < new Date() || date < new Date('1900-01-01')
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <DateTimePicker
+              dateTime={field.value}
+              setDateTime={field.onChange}
+              minDate={new Date()}
+            />
             <FormMessage />
           </FormItem>
         )}
@@ -64,38 +62,13 @@ export function TimingStep({ form }: { form: UseFormReturn<FormValues> }) {
         render={({ field }) => (
           <FormItem className="flex flex-col">
             <FormLabel>Submission End Date</FormLabel>
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      'w-[240px] pl-3 text-left font-normal',
-                      !field.value && 'text-muted-foreground',
-                    )}
-                  >
-                    {field.value ? (
-                      format(field.value, 'PPP')
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={field.value}
-                  onSelect={field.onChange}
-                  disabled={(date) =>
-                    date <= form.getValues('submissionStartDate') ||
-                    date < new Date('1900-01-01')
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <DateTimePicker
+              dateTime={field.value}
+              setDateTime={field.onChange}
+              // disabled={(date) =>
+              //   date < new Date() || date < new Date("1900-01-01")
+              // }
+            />
             <FormMessage />
           </FormItem>
         )}
@@ -106,42 +79,17 @@ export function TimingStep({ form }: { form: UseFormReturn<FormValues> }) {
         render={({ field }) => (
           <FormItem className="flex flex-col">
             <FormLabel>Voting End Date</FormLabel>
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      'w-[240px] pl-3 text-left font-normal',
-                      !field.value && 'text-muted-foreground',
-                    )}
-                  >
-                    {field.value ? (
-                      format(field.value, 'PPP')
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={field.value}
-                  onSelect={field.onChange}
-                  disabled={(date) =>
-                    date <= form.getValues('submissionEndDate') ||
-                    date < new Date('1900-01-01')
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <DateTimePicker
+              dateTime={field.value}
+              setDateTime={field.onChange}
+              // disabled={(date) =>
+              //   date < new Date() || date < new Date("1900-01-01")
+              // }
+            />
             <FormMessage />
           </FormItem>
         )}
       />
-    </>
+    </div>
   )
 }

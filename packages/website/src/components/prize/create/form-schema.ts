@@ -26,7 +26,7 @@ export const formSchema = z.object({
       label: z.string(),
     }),
   ),
-  category: z.string().min(1, 'Category is required'),
+  category: z.string().min(1, 'Category is required').optional(),
   submissionStartDate: z.date(),
   submissionEndDate: z.date(),
   votingEndDate: z.date(),
