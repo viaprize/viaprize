@@ -1,20 +1,22 @@
-'use client'
-import { api } from '@/trpc/react'
-import { Button } from '@viaprize/ui/button'
+"use client";
+import { api } from "@/trpc/react";
+import { Button } from "@viaprize/ui/button";
 export default function JoinContestantButton({
   prizeId,
   slug,
 }: {
-  prizeId: string
-  slug: string
+  prizeId: string;
+  slug: string;
 }) {
-  const addContestant = api.prizes.addContestant.useMutation()
+  const utils = api.useUtils();
+  const addContestant = api.prizes.addContestant.useMutation();
   const handleSubmit = async () => {
     await addContestant.mutateAsync({
       prizeId: prizeId,
       slug: slug,
-    })
-  }
+    });
+    await utils.prizes.getContestants.invalidate(prizeId);
+  };
   return (
     <Button
       disabled={addContestant.isPending}
@@ -23,5 +25,5 @@ export default function JoinContestantButton({
     >
       Join Contest
     </Button>
-  )
+  );
 }

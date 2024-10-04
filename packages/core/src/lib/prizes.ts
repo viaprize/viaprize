@@ -15,6 +15,7 @@ import {
   type TransactionReceipt,
   encodeFunctionData,
   parseEventLogs,
+
 } from 'viem'
 import { fraxtalTestnet } from 'viem/chains'
 import type { z } from 'zod'
@@ -34,6 +35,7 @@ import { CacheTag } from './cache-tag'
 import { CONTRACT_CONSTANTS_PER_CHAIN } from './constants'
 import { PrizesBlockchain } from './smart-contracts/prizes'
 import { stringToSlug } from './utils'
+
 const CACHE_TAGS = {
   PENDING_PRIZES: { value: 'pending-prizes', requiresSuffix: false },
   ACTIVE_PRIZES_COUNT: { value: 'active-prizes-count', requiresSuffix: false },
@@ -65,6 +67,21 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     this.db = viaprizeDb.database
     this.chainId = chainId
     this.blockchain = new PrizesBlockchain(rpcUrl, chainId)
+  }
+
+  async getContestants(prizeId: string) {
+    const contestants = await this.db.query.prizesToContestants.findMany({
+      where: eq(prizesToContestants.prizeId, prizeId),
+      with: {
+        user: {
+          columns: {
+            username: true,
+            image: true,
+          },
+        },
+      },
+    });
+    return contestants;
   }
 
   async getLatestActivitiesInPrizes(limit = 5) {
@@ -198,8 +215,10 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         totalRefunded: totalRefunded,
       })
       .where(
-        eq(prizes.primaryContractAddress, primaryContractAddress.toLowerCase()),
-      )
+
+        eq(prizes.primaryContractAddress, primaryContractAddress.toLowerCase())
+      );
+
   }
 
   async getPrizeByContractAddress(contractAddress: string) {
@@ -239,19 +258,11 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         comments: {
           orderBy: desc(prizeComments.createdAt),
         },
-        contestants: {
-          with: {
-            user: {
-              columns: {
-                username: true,
-              },
-            },
-          },
-        },
         author: {
           columns: {
             name: true,
             username: true,
+            image: true,
           },
         },
       },
@@ -354,26 +365,30 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     return prizeId
   }
 
-  async addSubmission(data: {
-    submissionHash: string
-    prizeId: string
-    contestant: string
-    submissionText: string
-    username: string
-  }) {
+
+  async addSubmission(data: typeof submissions.$inferInsert) {
+
     const submissionId = await this.db.transaction(async (trx) => {
       const [submission] = await trx
         .insert(submissions)
         .values({
           submissionHash: data.submissionHash,
-          description: data.submissionText,
-          submitterAddress: data.contestant,
+          description: data.description,
+          submitterAddress: data.submitterAddress,
           prizeId: data.prizeId,
           username: data.username,
         })
         .returning({
           submissionHash: submissions.submissionHash,
+
+        });
+      await trx
+        .update(prizes)
+        .set({
+          numberOfSubmissions: sql`${prizes.numberOfSubmissions} + 1`,
         })
+        .where(eq(prizes.id, data.prizeId));
+
       if (!submission) {
         throw new Error('Submission not created in database')
       }
@@ -405,13 +420,15 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   async addVote(
     data: Pick<
       typeof votes.$inferSelect,
-      | 'voteHash'
-      | 'submissionHash'
-      | 'prizeId'
-      | 'funderAddress'
-      | 'voteAmount'
-      | 'username'
-    >,
+
+      | "voteHash"
+      | "submissionHash"
+      | "prizeId"
+      | "funderAddress"
+      | "voteAmount"
+      | "username"
+    >
+
   ) {
     const voteId = await this.db.transaction(async (trx) => {
       const [vote] = await trx

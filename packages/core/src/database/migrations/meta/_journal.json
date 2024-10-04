@@ -15,6 +15,13 @@
       "when": 1727885357775,
       "tag": "0001_happy_tattoo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1728019971817,
+      "tag": "0002_living_gorgon",
+      "breakpoints": true
     }
   ]
 }

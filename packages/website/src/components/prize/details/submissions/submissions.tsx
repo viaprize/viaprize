@@ -1,42 +1,33 @@
-import { Separator } from '@viaprize/ui/separator'
-import SubmissionCard from './submission-card'
+import type { api } from "@/trpc/server";
+import { Separator } from "@viaprize/ui/separator";
+import { format } from "date-fns";
+import SubmissionCard from "./submission-card";
 
-interface Submission {
-  description: string
-  username: string | null
-  prizeId: string | null
-  submissionHash: string
-  createdAt: Date | null
-  updatedAt: Date | null
-  submitterAddress: string
-}
-
-interface SubmissionsProps {
-  submissions: Submission[]
-}
-
-export default function Submissions({ submissions }: SubmissionsProps) {
+export default function Submissions({
+  submissions,
+}: {
+  submissions: NonNullable<
+    Awaited<ReturnType<typeof api.prizes.getPrizeBySlug>>
+  >["submissions"];
+}) {
   return (
     <div className="p-3">
       <div className="text-xl">Submissions ({submissions.length})</div>
       <Separator className="my-2" />
       {submissions.map((submission) => {
-        const formattedDate = (
-          submission.createdAt ?? new Date()
-        ).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })
+        const formattedDate = format(
+          new Date(submission.createdAt),
+          "MMMM dd, yyyy"
+        );
         return (
           <SubmissionCard
             key={submission.username}
             description={submission.description}
-            name={submission.username ?? ''}
+            name={submission.username ?? ""}
             submissionCreated={formattedDate}
           />
-        )
+        );
       })}
     </div>
-  )
+  );
 }

@@ -1,15 +1,20 @@
+import type {
+  ContestantStage,
+  Contestants,
+} from "@/components/prize/details/vfc-details/contestants-card";
 import {
   differenceInDays,
   differenceInHours,
   differenceInMinutes,
   differenceInSeconds,
-} from 'date-fns'
+} from "date-fns";
+
 export function containsUppercase(str: string) {
   return /^[A-Z]+$/.test(str)
 }
 
 export interface SearchParams {
-  [key: string]: string | string[] | undefined
+  [key: string]: string | string[] | undefined;
 }
 
 export function timeAgo(givenDate: Date): string {
@@ -41,3 +46,20 @@ export function timeAgo(givenDate: Date): string {
 // Example usage:
 const pastDate = new Date('2023-09-15T14:00:00') // Use your given date
 console.log(timeDifference(pastDate))
+
+export const getContestantStage = (
+  contestants: Contestants,
+  username?: string
+): ContestantStage => {
+  if (!username) {
+    return "LOGIN";
+  }
+  if (!contestants) {
+    return "NOT_JOINED";
+  }
+  if (contestants.some((c) => c.username === username)) {
+    return "JOINED";
+  }
+  return "NOT_JOINED";
+};
+
