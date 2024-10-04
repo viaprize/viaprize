@@ -1,3 +1,5 @@
+// src/components/fetch-explore-prize.tsx
+
 import type { SearchParams } from '@/lib/utils'
 import { api } from '@/trpc/server'
 import { prizeFilterParamsSchema } from '@/validators/params'
@@ -13,29 +15,38 @@ import {
 import ExploreCard from './explore-card'
 import PrizeFilterComponent from './prize-filter-component'
 
-const parseCategories = (value: string | undefined): string[] | undefined => {
-  if (value) {
-    return value.split(',').map((item) => item.replace(/\+/g, ' '))
-  }
-  return undefined
-}
-
-export default async function FetchExploreCard({
+export default async function FetchExplorePrize({
   searchParams,
 }: {
   searchParams: SearchParams
 }) {
-  if (searchParams.categories) {
-    searchParams.categories = parseCategories(searchParams.categories as string)
+  // Parse the search parameters using Zod schema
+  const params = prizeFilterParamsSchema.parse(searchParams)
+
+  // Parse categories into an array
+  const categoriesArray = params.categories
+    ? params.categories.split(',').map((item) => item.trim())
+    : undefined
+
+  // Parse prizeAmount into min and max values
+  let minAmount: number | undefined
+  let maxAmount: number | undefined
+  if (params.prizeAmount) {
+    const [min, max] = params.prizeAmount.split('-').map(Number)
+    minAmount = min
+    maxAmount = max
   }
 
-  const { search, sort, categories } =
-    prizeFilterParamsSchema.parse(searchParams)
-
-  console.log(categories, 'categories')
+  // Fetch filtered prizes from the backend
+  const filteredPrizes = await api.prizes.getFilteredPrizes({
+    categories: categoriesArray,
+    prizeStatus: params.prizeStatus,
+    minAmount,
+    maxAmount,
+    sort: params.sort,
+  })
   const activePrizes = await api.prizes.getActivePrizes()
   const deployedPrizes = await api.prizes.getDeployedPrizes()
-
   return (
     <section>
       <div className="flex w-full justify-between items-center p-6">
@@ -59,9 +70,11 @@ export default async function FetchExploreCard({
           </Button>
         </div>
       </div>
+
       <section className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3 pb-3 px-7">
         {deployedPrizes?.map((prize) => (
           <ExploreCard
+            key={prize.id}
             funds={prize.funds ?? 0}
             imageUrl={prize.imageUrl ?? ''}
             title={prize.title}
@@ -69,7 +82,6 @@ export default async function FetchExploreCard({
             numberOfContestants={prize.numberOfContestants ?? 0}
             numberOfFunders={prize.numberOfFunders ?? 0}
             numberOfComments={prize.numberOfComments ?? 0}
-            key={prize.id}
             href={`/prize/${prize.slug}`}
           />
         ))}

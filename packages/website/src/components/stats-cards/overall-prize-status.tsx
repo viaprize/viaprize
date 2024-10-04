@@ -1,13 +1,13 @@
-import { api } from "@/trpc/server";
-import { IconBulb, IconCoin } from "@tabler/icons-react";
-import { Card } from "@viaprize/ui/card";
+import { api } from '@/trpc/server'
+import { IconBulb, IconCoin } from '@tabler/icons-react'
+import { Card } from '@viaprize/ui/card'
 
 export default function OverallPrizeStatus({
   totalPrizePool,
   totalIdeas,
 }: {
-  totalPrizePool: number;
-  totalIdeas: number;
+  totalPrizePool: number
+  totalIdeas: number
 }) {
   return (
     <Card className="divide-x-2 flex items-center space-x-2  divide-gray-300 rounded-lg py-3 w-full">
@@ -26,5 +26,5 @@ export default function OverallPrizeStatus({
         </div>
       </div>
     </Card>
-  );
+  )
 }
