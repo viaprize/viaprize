@@ -1,41 +1,116 @@
-'use client'
+"use client";
 
-import { Button } from '@viaprize/ui/button'
-import { Card } from '@viaprize/ui/card'
+import { env } from "@/env";
+import { useAuth } from "@/hooks/useAuth";
+import { wagmiConfig } from "@/lib/wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import {
+  ERC20_PERMIT_SIGN_TYPE,
+  NONCE_TOKEN_ABI,
+} from "@viaprize/core/lib/abi";
+import {
+  CONTRACT_CONSTANTS_PER_CHAIN,
+  type ValidChainIDs,
+} from "@viaprize/core/lib/constants";
+import { ViaprizeUtils } from "@viaprize/core/viaprize-utils";
+import { Badge } from "@viaprize/ui/badge";
+import { Button } from "@viaprize/ui/button";
+import { Card } from "@viaprize/ui/card";
+import { parseSignature } from "viem";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@viaprize/ui/dialog'
-import { Input } from '@viaprize/ui/input'
-import Image from 'next/image'
-import { useState } from 'react'
+} from "@viaprize/ui/dialog";
+
+import { Input } from "@viaprize/ui/input";
+import Image from "next/image";
+import { useState } from "react";
+import { useAccount, useSignTypedData } from "wagmi";
+import { readContract } from "wagmi/actions";
 // Define the props type
 interface DonateCardProps {
-  projectName: string
-  funds: number
-  projectImage: string
+  projectName: string;
+  funds: number;
+  projectImage: string;
+  contractAddress: string;
 }
 
 export default function DonateCard({
   projectName,
   funds,
+  contractAddress,
   projectImage,
 }: DonateCardProps) {
-  const [amount, setAmount] = useState('')
+  const [amount, setAmount] = useState("");
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
+    const value = e.target.value;
     // Allow empty string, non-negative numbers, and decimals
     if (
-      value === '' ||
+      value === "" ||
       (/^\d*\.?\d*$/.test(value) && !Number.isNaN(Number.parseFloat(value)))
     ) {
-      setAmount(value)
+      setAmount(value);
     }
-  }
+  };
+  const { openConnectModal } = useConnectModal();
+  const { address, isReconnecting, isConnected, isConnecting } = useAccount();
+  console.log(address, "addressss");
+  console.log(isReconnecting, "isReconnecting");
+  console.log(isConnected, "isConnected");
+  console.log(isConnecting, "isConnecting");
+  const { hasUserOnBoarded, session } = useAuth();
+  const { signTypedDataAsync } = useSignTypedData();
+  const handleCryptoDonation = async () => {
+    console.log("Donation with wallet");
+    try {
+      if (!address) {
+        throw new Error("No wallet connected found");
+      }
+      const chainId = Number.parseInt(
+        env.NEXT_PUBLIC_CHAIN_ID
+      ) as ValidChainIDs;
+      const constants = CONTRACT_CONSTANTS_PER_CHAIN[chainId];
+
+      const amountInUSDC = BigInt(Number.parseFloat(amount) * 1000000);
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000);
+      const nonce = await readContract(wagmiConfig, {
+        abi: NONCE_TOKEN_ABI,
+        address: constants.USDC,
+        functionName: "nonces",
+        args: [address],
+      });
+      const signData = {
+        owner: address,
+        spender: contractAddress,
+        value: amount,
+        nonce: BigInt(nonce),
+        deadline: deadline,
+      };
+      const { hash, usdcSign } = ViaprizeUtils.usdcSignTypeHash({
+        chainId,
+        deadline,
+        nonce: BigInt(nonce),
+        owner: address,
+        spender: contractAddress,
+        value: amountInUSDC,
+        usdcContract: constants.USDC,
+      });
+      const signature = await signTypedDataAsync({
+        types: ERC20_PERMIT_SIGN_TYPE,
+        primaryType: "Permit",
+        domain: usdcSign.domain,
+        message: usdcSign.message,
+      });
+      const rsv = parseSignature(signature);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <>
@@ -84,13 +159,41 @@ export default function DonateCard({
                 />
               </div>
               <div className="grid gap-4 py-4">
-                <Button>Donate ${amount} with Card</Button>
-                <Button>Donate ${amount} with Crypto</Button>
+                {session?.user ? (
+                  <>
+                    <Button>Donate ${amount} with Card</Button>
+
+                    {session?.user?.wallet?.key ? (
+                      <Button>Donate ${amount} with custodial wallet</Button>
+                    ) : null}
+
+                    {address ? (
+                      <Button>Donate ${amount}</Button>
+                    ) : (
+                      <Button onClick={openConnectModal}>Connect Wallet</Button>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Badge className="text-sm">
+                      Anonymous Donation without voting rights
+                    </Badge>
+                    <Button>Donate ${amount} with Card Anonymously</Button>
+
+                    {address ? (
+                      <Button onClick={handleCryptoDonation}>
+                        Donate ${amount} with Wallet Anonymously
+                      </Button>
+                    ) : (
+                      <Button onClick={openConnectModal}>Connect Wallet</Button>
+                    )}
+                  </>
+                )}
               </div>
             </DialogContent>
           </Dialog>
         </div>
       </Card>
     </>
-  )
+  );
 }

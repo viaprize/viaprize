@@ -1,14 +1,14 @@
-'use client'
-import { useAuth } from '@/hooks/useAuth'
-import { getContestantStage } from '@/lib/utils'
-import { api } from '@/trpc/react'
-import type { PrizeStages } from '@viaprize/core/lib/prizes'
-import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
-import { Card } from '@viaprize/ui/card'
-import { Suspense } from 'react'
-import SubmitWorkButton from '../submissions-voting/submit-work-button'
-import JoinContestantButton from './join-contestant-button'
-export type ContestantStage = 'NOT_JOINED' | 'JOINED' | 'SUBMITTED' | 'LOGIN'
+"use client";
+import { useAuth } from "@/hooks/useAuth";
+import { getContestantStage } from "@/lib/utils";
+import { api } from "@/trpc/react";
+import type { PrizeStages } from "@viaprize/core/lib/prizes";
+import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
+import { Card } from "@viaprize/ui/card";
+import { Suspense } from "react";
+import SubmitWorkButton from "../submissions-voting/submit-work-button";
+import JoinContestantButton from "./join-contestant-button";
+export type ContestantStage = "NOT_JOINED" | "JOINED" | "SUBMITTED" | "LOGIN";
 
 function ContestantCardButton({
   stage,
@@ -17,32 +17,32 @@ function ContestantCardButton({
   slug,
   totalFunds,
 }: {
-  stage: ContestantStage
-  prizeId: string
-  slug: string
-  prizeStage: PrizeStages
-  totalFunds: number
+  stage: ContestantStage;
+  prizeId: string;
+  slug: string;
+  prizeStage: PrizeStages;
+  totalFunds: number;
 }) {
   return (
     <>
       {(() => {
         switch (stage) {
-          case 'NOT_JOINED':
-            return <JoinContestantButton prizeId={prizeId} slug={slug} />
-          case 'JOINED':
+          case "NOT_JOINED":
+            return <JoinContestantButton prizeId={prizeId} slug={slug} />;
+          case "JOINED":
             return (
               <SubmitWorkButton
                 totalFunds={totalFunds}
                 prizeStage={prizeStage}
                 prizeId={prizeId}
               />
-            )
-          case 'SUBMITTED':
-            return null
+            );
+          case "SUBMITTED":
+            return null;
         }
       })()}
     </>
-  )
+  );
 }
 export default function ContestantsCard({
   prizeId,
@@ -50,17 +50,17 @@ export default function ContestantsCard({
   prizeStage,
   totalFunds,
 }: {
-  prizeId: string
-  slug: string
-  prizeStage: PrizeStages
-  totalFunds: number
+  prizeId: string;
+  slug: string;
+  prizeStage: PrizeStages;
+  totalFunds: number;
 }) {
-  const [contestants] = api.prizes.getContestants.useSuspenseQuery(prizeId)
-  const { session } = useAuth()
+  const [contestants] = api.prizes.getContestants.useSuspenseQuery(prizeId);
+  const { session } = useAuth();
   const contestantStage = getContestantStage(
     contestants,
-    session?.user.username,
-  )
+    session?.user.username
+  );
   return (
     <Suspense fallback={<Card className="px-3 py-4">Loading...</Card>}>
       <Card className="px-3 py-4">
@@ -93,5 +93,5 @@ export default function ContestantsCard({
         />
       </Card>
     </Suspense>
-  )
+  );
 }

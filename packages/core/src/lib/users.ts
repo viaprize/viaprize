@@ -1,34 +1,34 @@
-import { and, desc, eq } from 'drizzle-orm'
-import { nanoid } from 'nanoid'
-import type { z } from 'zod'
-import type { ViaprizeDatabase } from '../database'
-import { type insertUserSchema, users, wallets } from '../database/schema'
-import { CacheTag } from './cache-tag'
-import type { Wallet } from './wallet'
+import { and, desc, eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
+import type { z } from "zod";
+import type { ViaprizeDatabase } from "../database";
+import { type insertUserSchema, users, wallets } from "../database/schema";
+import { CacheTag } from "./cache-tag";
+import type { Wallet } from "./wallet";
 
 const CACHE_TAGS = {
-  LASTEST_LEADERBOARD: { value: 'latest-leaderboard', requiresSuffix: false },
-} as const
+  LASTEST_LEADERBOARD: { value: "latest-leaderboard", requiresSuffix: false },
+} as const;
 
 export class Users extends CacheTag<typeof CACHE_TAGS> {
-  db
-  wallet
+  db;
+  wallet;
   constructor(viaprizeDb: ViaprizeDatabase, wallet: Wallet) {
-    super(CACHE_TAGS)
-    this.db = viaprizeDb.database
-    this.wallet = wallet
+    super(CACHE_TAGS);
+    this.db = viaprizeDb.database;
+    this.wallet = wallet;
   }
   async getLatestUsersByTotalFundsWon(limit = 3) {
     return await this.db.query.users.findMany({
       orderBy: desc(users.totalFundsWon),
       limit,
-    })
+    });
   }
   async updateUserById(id: string, data: z.infer<typeof insertUserSchema>) {
     await this.db
       .update(users)
       .set(data as any)
-      .where(eq(users.id, id))
+      .where(eq(users.id, id));
   }
   async getUserById(id: string) {
     return await this.db.query.users.findFirst({
@@ -43,11 +43,12 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
         wallets: {
           columns: {
             address: true,
+            key: true,
           },
         },
       },
       where: eq(users.id, id),
-    })
+    });
   }
 
   async usernameExists(username: string) {
@@ -57,12 +58,12 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
       })
       .from(users)
       .where(eq(users.username, username))
-      .limit(1)
-    return result.length > 0
+      .limit(1);
+    return result.length > 0;
   }
 
   async getUserByWalletAddress(walletAddress: string) {
-    const address = walletAddress.toLowerCase()
+    const address = walletAddress.toLowerCase();
     const result = await this.db.query.wallets.findFirst({
       with: {
         user: {
@@ -76,32 +77,32 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
       },
       where: and(
         eq(wallets.address, address),
-        eq(wallets.username, users.username),
+        eq(wallets.username, users.username)
       ),
-    })
+    });
 
-    return result?.user
+    return result?.user;
   }
 
   async onboardUser(data: {
-    name: string
-    email: string
-    walletAddress?: string
-    network: string
-    username: string
-    userId: string
+    name: string;
+    email: string;
+    walletAddress?: string;
+    network: string;
+    username: string;
+    userId: string;
   }) {
     let address = data.walletAddress
       ? data.walletAddress.toLowerCase()
-      : undefined
-    let key: string
+      : undefined;
+    let key: string;
     if (!address) {
-      const wallet = await this.wallet.generateWallet()
-      address = wallet.address.toLowerCase()
-      key = wallet.key
+      const wallet = await this.wallet.generateWallet();
+      address = wallet.address.toLowerCase();
+      key = wallet.key;
     }
     if (!address) {
-      throw new Error('Address is required either not generated')
+      throw new Error("Address is required either not generated");
     }
     if (!data.walletAddress) {
       await this.db.transaction(async (tx) => {
@@ -112,15 +113,15 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
             email: data.email,
             username: data.username,
           })
-          .where(eq(users.id, data.userId))
+          .where(eq(users.id, data.userId));
         await tx.insert(wallets).values({
           address: address,
           network: data.network,
           key: key,
           username: data.username,
-        })
-      })
-      return true
+        });
+      });
+      return true;
     }
     await this.db
       .update(users)
@@ -129,28 +130,28 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
         email: data.email,
         username: data.username,
       })
-      .where(eq(users.id, data.userId))
+      .where(eq(users.id, data.userId));
 
-    return true
+    return true;
   }
 
   async createUserFromWalletAddress(data: {
-    walletAddress: string
-    network: string
+    walletAddress: string;
+    network: string;
   }) {
-    const userId = nanoid(12)
+    const userId = nanoid(12);
     await this.db.transaction(async (tx) => {
       await tx.insert(users).values({
         username: data.walletAddress,
         id: userId,
-      })
+      });
       await tx.insert(wallets).values({
         address: data.walletAddress.toLowerCase(),
         network: data.network,
         username: data.walletAddress,
-      })
-    })
+      });
+    });
 
-    return userId
+    return userId;
   }
 }
