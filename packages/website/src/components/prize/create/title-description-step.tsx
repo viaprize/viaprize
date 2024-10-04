@@ -9,6 +9,7 @@ import { Input } from '@viaprize/ui/input'
 import { Textarea } from '@viaprize/ui/textarea'
 import type { UseFormReturn } from 'react-hook-form'
 import type { FormValues } from './form-schema'
+import ImageCropperUpload from './image-ui/image-picker'
 
 export function TitleDescriptionStep({
   form,
@@ -43,6 +44,8 @@ export function TitleDescriptionStep({
           </FormItem>
         )}
       />
+      <h1>Upload Image</h1>
+      <ImageCropperUpload />
     </>
   )
 }

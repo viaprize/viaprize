@@ -24,6 +24,7 @@ interface TopicsSelectorProps {
   maxAllowed?: number
   topicClassName?: string
   showDescription?: boolean
+  wrapperClassName?: string
 }
 
 export default function TopicsSelector({
@@ -34,6 +35,7 @@ export default function TopicsSelector({
   showOnlySelected = false,
   maxAllowed,
   topicClassName,
+  wrapperClassName,
   showDescription = false,
 }: TopicsSelectorProps) {
   const [newSubTopic, setNewSubTopic] = useState('')
@@ -70,7 +72,7 @@ export default function TopicsSelector({
         >
           <motion.ul
             ref={ref}
-            className="mt-4 flex flex-col w-full columns-1 gap-2"
+            className={cn('mt-4 flex flex-col w-full gap-2', wrapperClassName)}
           >
             <LayoutGroup>
               <AnimatePresence initial={false}>

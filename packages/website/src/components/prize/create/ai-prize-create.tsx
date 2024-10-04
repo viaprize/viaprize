@@ -17,7 +17,7 @@ import { TimingStep } from './times-step'
 import { TitleDescriptionStep } from './title-description-step'
 
 export default function BountyCreationForm() {
-  const [step, setStep] = useState(5)
+  const [step, setStep] = useState(1)
   const [initialQuestion, setInitialQuestion] = useState<Question | null>(null)
 
   const form = useForm<FormValues>({

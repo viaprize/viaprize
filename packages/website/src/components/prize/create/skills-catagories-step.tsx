@@ -29,6 +29,7 @@ export function SkillsCategoryStep({ form }: SkillsCategoryStepProps) {
                 setSelectedTopics={field.onChange}
                 selectedTopics={field.value}
                 allowAddOptions={true}
+                wrapperClassName="flex-row flex-wrap"
               />
             </FormControl>
             <FormMessage />
