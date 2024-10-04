@@ -55,6 +55,7 @@ export default function BountyCreationForm() {
       setStep(2)
     } else if (step === 2) {
       const answers = form.getValues('aiQuestions')
+      console.log(answers, 'answers')
       const suggestions = await generateTitleAndDescription({
         userChoices: answers,
         description: form.getValues('description'),

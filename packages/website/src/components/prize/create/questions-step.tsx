@@ -37,12 +37,17 @@ export function QuestionsStep({ form, initialQuestion }: QuestionsStepProps) {
       question: questions[index]?.question ?? '',
       answer: selectedAnswer,
     })
+    console.log(questions, 'questions')
 
     if (index === questions.length - 1 && questions.length < 5) {
       console.log(form.getValues('aiQuestions'))
       const nextQuestion = await generateFollowUpQuestions({
         description: form.getValues('description'),
         previousQuestionsAndAnswer: form.getValues('aiQuestions'),
+      })
+      form.setValue(`aiQuestions.${index + 1}`, {
+        question: nextQuestion.question,
+        answer: 'not answered',
       })
       setQuestions((prevQuestions) => [...prevQuestions, nextQuestion])
     }
@@ -58,6 +63,7 @@ export function QuestionsStep({ form, initialQuestion }: QuestionsStepProps) {
               question={question}
               onAnswerSelected={(answer) => handleAnswerSelected(index, answer)}
               form={form}
+              length={questions.length}
               index={index}
             />
           ) : (
@@ -66,6 +72,7 @@ export function QuestionsStep({ form, initialQuestion }: QuestionsStepProps) {
               onAnswerSelected={(answer) => handleAnswerSelected(index, answer)}
               form={form}
               index={index}
+              length={questions.length}
             />
           )}
         </div>
@@ -80,6 +87,7 @@ type QuestionProps = {
   onAnswerSelected: (answer: string | string[]) => void
   form: UseFormReturn<any>
   index: number
+  length: number
 }
 
 function SingleChoiceQuestion({
@@ -132,6 +140,7 @@ function MultipleChoiceQuestion({
   onAnswerSelected,
   form,
   index,
+  length,
 }: QuestionProps) {
   const topics: Topic[] = question.options.map((option) => ({
     value: option,
@@ -166,9 +175,15 @@ function MultipleChoiceQuestion({
             />
           </FormControl>
           <FormMessage />
-          <Button type="button" onClick={() => onAnswerSelected(field.value)}>
-            Next Question
-          </Button>
+          {index !== 4 ||
+            (length > index + 1 && (
+              <Button
+                type="button"
+                onClick={() => onAnswerSelected(field.value)}
+              >
+                Next Question
+              </Button>
+            ))}
         </FormItem>
       )}
     />

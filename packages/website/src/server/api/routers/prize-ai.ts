@@ -91,6 +91,7 @@ export const prizesAiRouter = createTRPCRouter({
       const userChoicesString = input.userChoices
         .map((choice) => `${choice.question}: ${choice.answer}`)
         .join(', ')
+      console.log('userChoicesString', userChoicesString, input)
       const result = await generateObject({
         model: openai('gpt-4o-mini-2024-07-18', {
           structuredOutputs: true,
