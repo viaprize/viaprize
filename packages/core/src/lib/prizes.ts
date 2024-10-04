@@ -15,7 +15,6 @@ import {
   type TransactionReceipt,
   encodeFunctionData,
   parseEventLogs,
-
 } from 'viem'
 import { fraxtalTestnet } from 'viem/chains'
 import type { z } from 'zod'
@@ -80,8 +79,8 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
           },
         },
       },
-    });
-    return contestants;
+    })
+    return contestants
   }
 
   async getLatestActivitiesInPrizes(limit = 5) {
@@ -215,10 +214,8 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         totalRefunded: totalRefunded,
       })
       .where(
-
-        eq(prizes.primaryContractAddress, primaryContractAddress.toLowerCase())
-      );
-
+        eq(prizes.primaryContractAddress, primaryContractAddress.toLowerCase()),
+      )
   }
 
   async getPrizeByContractAddress(contractAddress: string) {
@@ -365,9 +362,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     return prizeId
   }
 
-
   async addSubmission(data: typeof submissions.$inferInsert) {
-
     const submissionId = await this.db.transaction(async (trx) => {
       const [submission] = await trx
         .insert(submissions)
@@ -380,14 +375,13 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         })
         .returning({
           submissionHash: submissions.submissionHash,
-
-        });
+        })
       await trx
         .update(prizes)
         .set({
           numberOfSubmissions: sql`${prizes.numberOfSubmissions} + 1`,
         })
-        .where(eq(prizes.id, data.prizeId));
+        .where(eq(prizes.id, data.prizeId))
 
       if (!submission) {
         throw new Error('Submission not created in database')
@@ -420,15 +414,13 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   async addVote(
     data: Pick<
       typeof votes.$inferSelect,
-
-      | "voteHash"
-      | "submissionHash"
-      | "prizeId"
-      | "funderAddress"
-      | "voteAmount"
-      | "username"
-    >
-
+      | 'voteHash'
+      | 'submissionHash'
+      | 'prizeId'
+      | 'funderAddress'
+      | 'voteAmount'
+      | 'username'
+    >,
   ) {
     const voteId = await this.db.transaction(async (trx) => {
       const [vote] = await trx

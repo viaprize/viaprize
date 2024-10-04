@@ -1,15 +1,15 @@
-"use client";
-import { useAuth } from "@/hooks/useAuth";
-import { api } from "@/trpc/react";
-import { Button } from "@viaprize/ui/button";
-import React from "react";
+'use client'
+import { useAuth } from '@/hooks/useAuth'
+import { api } from '@/trpc/react'
+import { Button } from '@viaprize/ui/button'
+import React from 'react'
 export default function EndVotingButton({
   prizeContractAddress,
 }: {
-  prizeContractAddress: string;
+  prizeContractAddress: string
 }) {
   const { mutateAsync: endVoting, isPending } =
-    api.prizes.endVoting.useMutation();
+    api.prizes.endVoting.useMutation()
 
   return (
     <Button
@@ -22,5 +22,5 @@ export default function EndVotingButton({
     >
       End Voting
     </Button>
-  );
+  )
 }
