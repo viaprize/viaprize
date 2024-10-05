@@ -106,6 +106,10 @@ export const insertPrizeSchema = createInsertSchema(prizes, {
   skillSets: z.array(z.string()),
   priorities: z.array(z.string()).optional(),
 })
-export const selectPrizeSchema = createSelectSchema(prizes)
+export const selectPrizeSchema = createSelectSchema(prizes, {
+  judgesAddresses: z.array(z.string()).optional(),
+  skillSets: z.array(z.string()),
+  priorities: z.array(z.string()).optional(),
+})
 export type selectPrizeType = z.infer<typeof selectPrizeSchema>
 export type insertPrizeType = z.infer<typeof insertPrizeSchema>
