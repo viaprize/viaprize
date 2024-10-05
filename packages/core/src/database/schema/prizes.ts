@@ -8,7 +8,9 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core'
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { nanoid } from 'nanoid'
+import type { z } from 'zod'
 import { prizeComments } from './prize-comments'
 import { prizesToContestants } from './prizes-to-contestants'
 import { submissions } from './submissions'
@@ -98,3 +100,7 @@ export const prizesRelations = relations(prizes, ({ one, many }) => ({
   secondaryContractAddresses: many(wallets),
   comments: many(prizeComments),
 }))
+
+export const insertPrizeSchema = createInsertSchema(prizes)
+export const selectPrizeSchema = createSelectSchema(prizes)
+export type selectPrizeType = z.input<typeof selectPrizeSchema>

@@ -5,12 +5,8 @@ export const searchParamsSchema = z.object({
 })
 
 export const prizeFilterParamsSchema = searchParamsSchema.extend({
-  categories: z.string().array().optional(),
-  subcategory: z.string().optional(),
-  subcategories: z.string().optional(),
-  price_range: z.string().optional(),
-  userids: z.string().optional(),
-  active: z.string().optional(),
-  search: z.string().optional(),
+  categories: z.string().optional(), // Comma-separated string
+  prizeAmount: z.string().optional(), // Format: 'min-max'
+  prizeStatus: z.enum(['active', 'ended']).optional().default('active'),
   sort: z.enum(['DESC', 'ASC']).optional().default('DESC'),
 })

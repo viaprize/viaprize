@@ -4,7 +4,7 @@ import {
   type ValidChainIDs,
 } from '@viaprize/core/lib/constants'
 import { Events, Viaprize } from '@viaprize/core/viaprize'
-import { addDays, addMinutes, subMinutes } from 'date-fns'
+import { addDays, addMinutes, addSeconds, isBefore, subMinutes } from 'date-fns'
 import { Resource } from 'sst'
 import { bus } from 'sst/aws/bus'
 import { Cache } from '../utils/cache'
@@ -115,6 +115,14 @@ export const handler = bus.subscriber(
         const data = await viaprize.prizes.blockchain.getEncodedStartSubmission(
           event.properties.submissionDurationInMinutes,
         )
+
+        const triggerDate = isBefore(
+          event.properties.startSubmissionDate,
+          new Date(),
+        )
+          ? addSeconds(new Date(), 20)
+          : new Date(event.properties.startSubmissionDate)
+
         await schedule({
           functionArn: Resource.ScheduleReceivingLambda.arn,
           name: `StartSubmission-${event.properties.contractAddress}`,
@@ -131,7 +139,7 @@ export const handler = bus.subscriber(
               walletType: 'gasless',
             } as typeof Events.Wallet.Transaction.$input,
           },
-          triggerDate: new Date(event.properties.startSubmissionDate),
+          triggerDate: triggerDate,
         })
         break
       }

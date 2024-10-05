@@ -4,9 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Card } from '@viaprize/ui/card'
 
 export type Activity = Pick<
-  Awaited<ReturnType<typeof api.prizes.getPrizeActivites>>,
-  'recentActivites'
->['recentActivites']
+  Awaited<ReturnType<typeof api.prizes.getPrizeActivities>>,
+  'recentActivities'
+>['recentActivities']
+
 export default function RecentActivities({
   activities,
 }: {

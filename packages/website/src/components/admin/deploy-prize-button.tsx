@@ -13,7 +13,11 @@ export const DeployPrizeButton = ({ prizeId }: { prizeId: string }) => {
   }
 
   return (
-    <Button className="w-full" onClick={handleDeploy}>
+    <Button
+      className="w-full"
+      onClick={handleDeploy}
+      disabled={mutation.isPending}
+    >
       <Rocket className="mr-2 h-4 w-4" /> Deploy
     </Button>
   )

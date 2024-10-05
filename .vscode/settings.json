@@ -1,6 +1,6 @@
 {
   "markdown.extension.toc.levels": "2..6",
-  "cSpell.words": ["viaprize"],
+  "cSpell.words": ["leaderboard", "viaprize"],
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "editor.defaultFormatter": "biomejs.biome",

@@ -81,7 +81,6 @@ export default function LoginCard() {
           </div>
           <EmailAuthButton redirectTo={REDIRECT_TO_AFTER_AUTH} />
           <Separator />
-          <WalletLogin />
         </CardContent>
       </Card>
     </div>

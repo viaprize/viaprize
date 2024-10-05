@@ -8,16 +8,24 @@ export const submissions = pgTable('submissions', {
   submissionHash: varchar('id', { length: 255 }).primaryKey(),
   description: text('description').notNull(),
   submitterAddress: text('submitterAddress').notNull(),
-  prizeId: varchar('prizeId').references(() => prizes.id, {
-    onDelete: 'cascade',
-  }),
-  username: varchar('username').references(() => users.username, {
-    onDelete: 'cascade',
-  }),
+  projectLink: text('projectLink'),
+
+  prizeId: varchar('prizeId')
+    .references(() => prizes.id, {
+      onDelete: 'cascade',
+    })
+    .notNull(),
+  username: varchar('username')
+    .references(() => users.username, {
+      onDelete: 'cascade',
+    })
+    .notNull(),
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
-  }).$default(() => new Date()),
+  })
+    .$default(() => new Date())
+    .notNull(),
   updatedAt: timestamp('updatedAt', {
     mode: 'date',
     withTimezone: true,

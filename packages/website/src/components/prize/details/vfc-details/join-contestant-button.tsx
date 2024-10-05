@@ -8,12 +8,14 @@ export default function JoinContestantButton({
   prizeId: string
   slug: string
 }) {
+  const utils = api.useUtils()
   const addContestant = api.prizes.addContestant.useMutation()
   const handleSubmit = async () => {
     await addContestant.mutateAsync({
       prizeId: prizeId,
       slug: slug,
     })
+    await utils.prizes.getContestants.invalidate(prizeId)
   }
   return (
     <Button

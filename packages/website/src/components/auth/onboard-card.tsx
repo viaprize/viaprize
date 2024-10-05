@@ -79,9 +79,7 @@ export default function OnboardCard({
 
   const mutation = api.users.onboardUser.useMutation({
     onSuccess: async () => {
-      alert('Login again')
-      await logOut()
-      push('/login')
+      push('/prize')
     },
     onError: (error) => {
       if (error.data?.code === 'UNPROCESSABLE_CONTENT') {

@@ -7,32 +7,7 @@ import { Badge } from '@viaprize/ui/badge'
 import { Button } from '@viaprize/ui/button'
 import Image from 'next/image'
 import DonateCard from './donate-card'
-import SubmitWorkButton from './submissions/submit-work-button'
 
-async function SubmitButton({
-  stage,
-  prizeId,
-}: {
-  stage: PrizeStages
-  prizeId: string
-}) {
-  const session = await auth()
-  if (!session?.user) {
-    return <Badge>Please sign in to submit your work</Badge>
-  }
-  if (!session.user.username) {
-    return <Badge>Please complete your profile to submit your work</Badge>
-  }
-  const handleSubmitView = () => {
-    switch (stage) {
-      case 'SUBMISSIONS_OPEN':
-        return <SubmitWorkButton prizeId={prizeId} />
-      default:
-        return <Badge>Submission Closed</Badge>
-    }
-  }
-  return <>{handleSubmitView()}</>
-}
 export default async function DetailsHeader({
   funds,
   projectName,
@@ -80,8 +55,6 @@ export default async function DetailsHeader({
           <Badge variant="secondary" className="text-sm text-primary ">
             {stage}
           </Badge>
-
-          <SubmitButton stage={stage as PrizeStages} prizeId={prizeId} />
         </div>
       </div>
 
