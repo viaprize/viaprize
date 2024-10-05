@@ -53,7 +53,7 @@ export const prizes = pgTable('prizes', {
   primaryContractAddress: text('primaryContractAddress'),
   judgesAddresses: json('judgesAddresses').$type<string[]>().default([]),
   skillSets: json('skillSets').$type<string[]>().default([]),
-  priorities: json('priorities').$type<string[]>().default([]),
+  priorities: text('priorities').array(),
   imageUrl: varchar('imageUrl'),
 
   // smart contract values here

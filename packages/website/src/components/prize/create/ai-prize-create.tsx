@@ -22,6 +22,7 @@ import { TitleDescriptionStep } from './title-description-step'
 export default function BountyCreationForm() {
   const [step, setStep] = useState(1)
   const [initialQuestion, setInitialQuestion] = useState<Question | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -55,35 +56,50 @@ export default function BountyCreationForm() {
 
   const onSubmit = async (values: FormValues) => {
     console.log(values, 'values')
-    const imageUploadUrl = await getImageUploadUrl()
-    console.log(imageUploadUrl, 'imageUploadUrl')
-    const image = await fetch(imageUploadUrl, {
-      body: values.imageSrc,
-      method: 'PUT',
-      headers: {
-        'Content-Type': values.imageSrc.type,
-        'Content-Disposition': `attachment; filename="${encodeURIComponent(
-          values.imageSrc.name,
-        )}"`,
-        'Access-Control-Allow-Origin': '*',
-      },
-    })
 
-    if (!image.ok) {
-      form.setError('imageSrc', { message: 'Failed to upload image' })
-      return
-    }
+    setUploadingImage(true)
+    const ImageToUpload = await convertBlobUrlToFile(
+      values.imageSrc.preview,
+      values.imageSrc.path ?? 'image',
+    )
+    const imageUploadUrl = await getImageUploadUrl()
+    toast.promise(
+      async () => {
+        const image = await fetch(imageUploadUrl, {
+          body: ImageToUpload,
+          method: 'PUT',
+          headers: {
+            'Content-Type': ImageToUpload.type,
+            'Content-Disposition': `attachment; filename="${encodeURIComponent(
+              ImageToUpload.name,
+            )}"`,
+            'Access-Control-Allow-Origin': '*',
+          },
+        })
+
+        if (!image.ok) {
+          form.setError('imageSrc', { message: 'Failed to upload image' })
+          throw new Error('Failed to upload image')
+        }
+        console.log(imageUploadUrl, 'imageUploadUrl')
+
+        return extractedUrl
+      },
+      {
+        loading: 'Uploading Image...',
+        success: 'Image Uploaded',
+        error: 'Failed to upload Image',
+      },
+    )
     const extractedUrl = `${new URL(imageUploadUrl).origin}${
       new URL(imageUploadUrl).pathname
     }`
-    console.log(extractedUrl, 'extractedUrl')
-
     toast.promise(
       createPrize({
         title: values.title,
         description: values.fullDescription,
         skillSets: values.skills.map((s) => s.value),
-        priorities: values.category ? [values.category] : [],
+        // priorities: values.category ? [values.category] : [],
         startSubmissionDate: values.submissionStartDate.toISOString(),
         submissionDurationInMinutes: differenceInMinutes(
           values.submissionEndDate,
@@ -187,7 +203,7 @@ export default function BountyCreationForm() {
               },
               (errors) => {
                 console.error('Form validation failed', errors)
-                toast.error('Please fill in all required fields correctly.')
+                // toast.error('Please fill in all required fields correctly.')
               },
             )}
             className="space-y-6"
@@ -257,4 +273,25 @@ function SkillsStepSkeleton() {
       <Skeleton className="h-32 w-full" />
     </div>
   )
+}
+
+function convertBlobUrlToFile(
+  blobUrl: string,
+  fileName: string,
+): Promise<File> {
+  return fetch(blobUrl)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      return response.blob()
+    })
+    .then((blob) => {
+      // Create a File from the Blob
+      return new File([blob], fileName, { type: blob.type })
+    })
+    .catch((error) => {
+      console.error('Error fetching the Blob:', error)
+      throw error // Re-throw the error for further handling if needed
+    })
 }
