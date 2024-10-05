@@ -1,3 +1,4 @@
+import type { selectPrizeType } from '@viaprize/core/database/schema/prizes'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Button } from '@viaprize/ui/button'
 import {
@@ -10,22 +11,9 @@ import {
 import Image from 'next/image'
 import { DeployPrizeButton } from './deploy-prize-button'
 
-interface Proposal {
-  id: string
-  title: string
-  description: string
-  imageUrl: string | null
-  submissionStartDate: string
-  submissionDuration: number
-  votingStartDate: string
-  votingDuration: number
-  proposerAddress: string
-  authorUsername: string
-}
-
 export function ProposalCard({
   proposal,
-}: { proposal?: Proposal; onDeploy?: (id: string) => void } = {}) {
+}: { proposal?: selectPrizeType; onDeploy?: (id: string) => void } = {}) {
   if (!proposal) {
     return (
       <Card className="w-full max-w-2xl p-6">
@@ -77,15 +65,15 @@ export function ProposalCard({
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p className="font-semibold">Submission Duration:</p>
-            <p>{proposal.submissionDuration} days</p>
+            <p>{proposal.startSubmissionDate} days</p>
           </div>
           <div>
             <p className="font-semibold">Voting Start Date:</p>
-            <p>{new Date(proposal.votingStartDate).toLocaleDateString()}</p>
+            <p>{new Date(proposal.startVotingDate).toLocaleDateString()}</p>
           </div>
           <div>
             <p className="font-semibold">Voting Duration:</p>
-            <p>{proposal.votingDuration} days</p>
+            <p>{proposal.votingDurationInMinutes} days</p>
           </div>
           <div>
             <p className="font-semibold">Proposer Address:</p>

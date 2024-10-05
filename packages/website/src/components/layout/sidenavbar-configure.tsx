@@ -3,11 +3,11 @@ import { useAuth } from '@/hooks/useAuth'
 import {
   IconBell,
   IconCirclePlus,
+  IconLogin,
   IconLogout,
   IconTrophy,
   IconUser,
 } from '@tabler/icons-react'
-import { Button } from '@viaprize/ui/button'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -66,7 +66,6 @@ export default function SideNavbarConfigure() {
     // },
     {
       label: 'Logout',
-
       icon: (
         <IconLogout className="h-25 w-25 flex-shrink-0 text-primary-foreground" />
       ),
@@ -131,31 +130,39 @@ export default function SideNavbarConfigure() {
             !open ? 'items-center' : ''
           }`}
         >
-          {open ? (
-            <Logo
-              name={session?.user.name ?? 'John Doe'}
-              image={session?.user.image ?? 'https://github.com/shadcn.png'}
-            />
-          ) : (
-            <LogoIcon
-              image={session?.user.image ?? 'https://github.com/shadcn.png'}
-            />
-          )}
+          {session?.user &&
+            (open ? (
+              <Logo
+                name={session?.user.name ?? 'John Doe'}
+                image={session?.user.image ?? 'https://github.com/shadcn.png'}
+              />
+            ) : (
+              <LogoIcon
+                image={session?.user.image ?? 'https://github.com/shadcn.png'}
+              />
+            ))}
           <div className="mt-4 space-y-2">
             {links.map((link) => (
               <SidebarLink key={link.label} link={link} />
             ))}
 
-            {items.map((item) => (
-              <SidebarButton
-                key={item.label}
-                item={item}
-                onClick={async () => {
-                  console.log('signing out')
-                  await logOut()
-                }}
-              />
-            ))}
+            <SidebarButton
+              item={{
+                icon: session?.user ? (
+                  <IconLogout className="h-25 w-25 flex-shrink-0 text-primary-foreground" />
+                ) : (
+                  <IconLogin className="h-25 w-25 flex-shrink-0 text-primary-foreground" />
+                ),
+                label: session?.user ? 'Logout' : 'Login',
+              }}
+              onClick={async () => {
+                if (!session?.user) {
+                  window.location.href = '/login'
+                  return
+                }
+                await logOut()
+              }}
+            />
           </div>
 
           {/* Conditionally render buttons only when the sidebar is open */}

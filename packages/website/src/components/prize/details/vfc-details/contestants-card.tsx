@@ -1,4 +1,5 @@
 "use client";
+import SubmitWorkButton from "@/components/prize/details/submissions-voting/submit-work-button";
 import { useAuth } from "@/hooks/useAuth";
 import { getContestantStage } from "@/lib/utils";
 import { api } from "@/trpc/react";
@@ -6,7 +7,6 @@ import type { PrizeStages } from "@viaprize/core/lib/prizes";
 import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
 import { Card } from "@viaprize/ui/card";
 import { Suspense } from "react";
-import SubmitWorkButton from "@/components/prize/details/submissions-voting/submit-work-button";
 import JoinContestantButton from "./join-contestant-button";
 export type ContestantStage = "NOT_JOINED" | "JOINED" | "SUBMITTED" | "LOGIN";
 export type Contestants = typeof api.prizes.getContestants.useQuery;

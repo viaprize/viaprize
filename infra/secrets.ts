@@ -8,6 +8,8 @@ export const AUTH_GOOGLE_ID = new sst.Secret('AuthGoogleId')
 export const AUTH_GOOGLE_SECRET = new sst.Secret('AuthGoogleSecret')
 export const AUTH_RESEND_KEY = new sst.Secret('AuthResendKey')
 
+export const OPENAI_API_KEY = new sst.Secret('OpenAiApiKey')
+
 export const WALLET_PAYMENT_INFRA_API = new sst.Secret('WalletPaymentInfraApi')
 
 export const AUTH_TRUST_HOST = new sst.Secret('AuthTrustHost')
