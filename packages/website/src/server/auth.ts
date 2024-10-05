@@ -10,7 +10,17 @@ import { SiweMessage } from "siwe-viem";
 import { viaprize } from "./viaprize";
 
 import type { DefaultSession } from "next-auth";
+import { z } from "zod";
 
+export const userSessionSchema = z.object({
+  username: z.string(),
+  id: z.string(),
+  wallet: z.object({
+    address: z.string(),
+    key: z.string().nullable(),
+  }),
+  isAdmin: z.boolean(),
+});
 declare module "next-auth" {
   /**
    * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context

@@ -566,7 +566,8 @@ contract PrizeV2 is ReentrancyGuard {
     /// @param v The `v, r, s` component of the ECDSA signature.
     /// @param _ethSignedMessageHash The Ethereum signed message hash.
     /// @param _fiatPayment A boolean indicating whether the payment is in fiat.
-    function addUsdcFunds(uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _ethSignedMessageHash, bool _fiatPayment) public onlyActive nonReentrant payable {
+    function addUsdcFunds(uint256 _amountUsdc, uint256 _deadline, uint8 v, bytes32 s, bytes32 r, bytes32 _
+    , bool _fiatPayment) public onlyActive nonReentrant payable {
         if(_amountUsdc <= 0) revert ErrorAndEventsLibrary.NotEnoughFunds();
         address sender = ecrecover(_ethSignedMessageHash, v, r, s);
         _usdc.permit(sender, address(this), _amountUsdc, _deadline,v,r,s);
