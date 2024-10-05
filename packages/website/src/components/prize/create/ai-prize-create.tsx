@@ -1,98 +1,150 @@
-'use client'
+"use client";
 
-import { api } from '@/trpc/react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Button } from '@viaprize/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@viaprize/ui/card'
-import { Form } from '@viaprize/ui/form'
-import { Skeleton } from '@viaprize/ui/skeleton'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
-import { DescriptionStep } from './description-step'
-import { type FormValues, type Question, formSchema } from './form-schema'
-import { QuestionsStep } from './questions-step'
-import { SkillsCategoryStep } from './skills-catagories-step'
-import { TimingStep } from './times-step'
-import { TitleDescriptionStep } from './title-description-step'
+import { api } from "@/trpc/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@viaprize/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@viaprize/ui/card";
+import { Form } from "@viaprize/ui/form";
+import { Skeleton } from "@viaprize/ui/skeleton";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { DescriptionStep } from "./description-step";
+import { type FormValues, type Question, formSchema } from "./form-schema";
+import { QuestionsStep } from "./questions-step";
+import { SkillsCategoryStep } from "./skills-catagories-step";
+import { TimingStep } from "./times-step";
+import { TitleDescriptionStep } from "./title-description-step";
+import { toast } from "sonner";
+import { differenceInMinutes } from "date-fns";
+import { getImageUploadUrl } from "@/actions/image-get";
 
 export default function BountyCreationForm() {
-  const [step, setStep] = useState(1)
-  const [initialQuestion, setInitialQuestion] = useState<Question | null>(null)
+  const [step, setStep] = useState(1);
+  const [initialQuestion, setInitialQuestion] = useState<Question | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      description: '',
+      description: "",
       aiQuestions: [],
-      title: '',
-      fullDescription: '',
+      title: "",
+      fullDescription: "",
       skills: [],
-      category: '',
+      category: "",
       // submissionStartDate: new Date(),
       // submissionEndDate: new Date(),
       // votingEndDate: new Date(),
     },
-  })
+  });
 
   const { mutateAsync: generateQuestion, isPending: generatingQuestions } =
-    api.prizes.ai.generateInitialQuestion.useMutation()
+    api.prizes.ai.generateInitialQuestion.useMutation();
   const {
     mutateAsync: generateTitleAndDescription,
     isPending: generatingTitleAndDescription,
-  } = api.prizes.ai.generateTitleAndDescription.useMutation()
+  } = api.prizes.ai.generateTitleAndDescription.useMutation();
 
   const {
     mutateAsync: generateSkillsAndCatagories,
     isPending: generatingSkills,
-  } = api.prizes.ai.generateSkillsCategory.useMutation()
+  } = api.prizes.ai.generateSkillsCategory.useMutation();
 
-  const onSubmit = (values: FormValues) => {
-    console.log(values)
-    // Handle form submission
-  }
+  const { mutateAsync: createPrize, isPending: creatingPrize } =
+    api.prizes.createPrize.useMutation();
+
+  const onSubmit = async (values: FormValues) => {
+    console.log(values, "values");
+    const imageUploadUrl = await getImageUploadUrl();
+    console.log(imageUploadUrl, "imageUploadUrl");
+    const image = await fetch(imageUploadUrl, {
+      body: values.imageSrc,
+      method: "PUT",
+      headers: {
+        "Content-Type": values.imageSrc.type,
+        "Content-Disposition": `attachment; filename="${encodeURIComponent(
+          values.imageSrc.name
+        )}"`,
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+
+    if (!image.ok) {
+      form.setError("imageSrc", { message: "Failed to upload image" });
+      return;
+    }
+    const extractedUrl = `${new URL(imageUploadUrl).origin}${
+      new URL(imageUploadUrl).pathname
+    }`;
+    console.log(extractedUrl, "extractedUrl");
+
+    toast.promise(
+      createPrize({
+        title: values.title,
+        description: values.fullDescription,
+        skillSets: values.skills.map((s) => s.value),
+        priorities: values.category ? [values.category] : [],
+        startSubmissionDate: values.submissionStartDate.toISOString(),
+        submissionDurationInMinutes: differenceInMinutes(
+          values.submissionEndDate,
+          values.submissionStartDate
+        ),
+        imageUrl: extractedUrl,
+        startVotingDate: values.submissionEndDate.toISOString(),
+        votingDurationInMinutes: differenceInMinutes(
+          values.votingEndDate,
+          values.submissionEndDate
+        ),
+      }),
+      {
+        loading: "Creating Bounty...",
+        success: "Bounty Created",
+        error: "Failed to create Bounty",
+      }
+    );
+  };
 
   const handleNextStep = async () => {
     if (step === 1) {
-      const description = form.getValues('description')
-      setStep(2)
-      const questions = await generateQuestion({ description })
-      setInitialQuestion(questions)
+      const description = form.getValues("description");
+      setStep(2);
+      const questions = await generateQuestion({ description });
+      setInitialQuestion(questions);
     } else if (step === 2) {
-      const answers = form.getValues('aiQuestions')
-      console.log(answers, 'answers')
-      setStep(3)
+      const answers = form.getValues("aiQuestions");
+      console.log(answers, "answers");
+      setStep(3);
       const suggestions = await generateTitleAndDescription({
         userChoices: answers,
-        description: form.getValues('description'),
-      })
-      form.setValue('title', suggestions.title)
-      form.setValue('fullDescription', suggestions.description)
+        description: form.getValues("description"),
+      });
+      form.setValue("title", suggestions.title);
+      form.setValue("fullDescription", suggestions.description);
     } else if (step === 3) {
-      setStep(4)
+      setStep(4);
       const skillsAndCatagories = await generateSkillsAndCatagories({
-        title: form.getValues('title'),
-        fullDescription: form.getValues('fullDescription'),
-      })
+        title: form.getValues("title"),
+        fullDescription: form.getValues("fullDescription"),
+      });
       form.setValue(
-        'skills',
+        "skills",
         skillsAndCatagories.skills.map((s) => {
           return {
             label: s.skill,
-            value: s.skill.toLowerCase().replace(' ', '_'),
-          }
-        }),
-      )
-      form.setValue('category', skillsAndCatagories.category)
+            value: s.skill.toLowerCase().replace(" ", "_"),
+          };
+        })
+      );
+      form.setValue("category", skillsAndCatagories.category);
     } else {
-      setStep(step + 1)
+      setStep(step + 1);
     }
-  }
+  };
 
   const renderStep = () => {
     switch (step) {
       case 1:
-        return <DescriptionStep form={form} />
+        return <DescriptionStep form={form} />;
       case 2:
         return generatingQuestions ? (
           <QuestionsStepSkeleton />
@@ -100,25 +152,25 @@ export default function BountyCreationForm() {
           initialQuestion && (
             <QuestionsStep form={form} initialQuestion={initialQuestion} />
           )
-        )
+        );
       case 3:
         return generatingTitleAndDescription ? (
           <TitleDescriptionStepSkeleton />
         ) : (
           <TitleDescriptionStep form={form} />
-        )
+        );
       case 4:
         return generatingSkills ? (
           <SkillsStepSkeleton />
         ) : (
           <SkillsCategoryStep form={form} />
-        )
+        );
       case 5:
-        return <TimingStep form={form} />
+        return <TimingStep form={form} />;
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -127,7 +179,19 @@ export default function BountyCreationForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(
+              (data) => {
+                console.log("Form submitted successfully", data);
+                onSubmit(data);
+              },
+              (errors) => {
+                console.error("Form validation failed", errors);
+                toast.error("Please fill in all required fields correctly.");
+              }
+            )}
+            className="space-y-6"
+          >
             {renderStep()}
             <div className="flex justify-between">
               {step > 1 && (
@@ -140,20 +204,26 @@ export default function BountyCreationForm() {
                   type="button"
                   onClick={handleNextStep}
                   disabled={
-                    generatingQuestions || generatingTitleAndDescription
+                    generatingQuestions ||
+                    generatingTitleAndDescription ||
+                    generatingSkills ||
+                    creatingPrize ||
+                    (form.getValues("aiQuestions").length < 5 && step === 2)
                   }
                 >
                   Next
                 </Button>
               ) : (
-                <Button type="submit">Create Bounty</Button>
+                <Button type="submit" disabled={creatingPrize}>
+                  Create Bounty
+                </Button>
               )}
             </div>
           </form>
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function QuestionsStepSkeleton() {
@@ -164,7 +234,7 @@ function QuestionsStepSkeleton() {
       <Skeleton className="h-10 w-full" />
       <Skeleton className="h-10 w-full" />
     </div>
-  )
+  );
 }
 
 function TitleDescriptionStepSkeleton() {
@@ -175,7 +245,7 @@ function TitleDescriptionStepSkeleton() {
       <Skeleton className="h-4 w-1/2" />
       <Skeleton className="h-32 w-full" />
     </div>
-  )
+  );
 }
 
 function SkillsStepSkeleton() {
@@ -186,5 +256,5 @@ function SkillsStepSkeleton() {
       <Skeleton className="h-4 w-1/2" />
       <Skeleton className="h-32 w-full" />
     </div>
-  )
+  );
 }

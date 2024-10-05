@@ -1,20 +1,23 @@
+import type { FileWithPreview } from "@/components/ui/image-cropper";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@viaprize/ui/form'
-import { Input } from '@viaprize/ui/input'
-import { Textarea } from '@viaprize/ui/textarea'
-import type { UseFormReturn } from 'react-hook-form'
-import type { FormValues } from './form-schema'
-import ImageCropperUpload from './image-ui/image-picker'
+} from "@viaprize/ui/form";
+import { Input } from "@viaprize/ui/input";
+import { Textarea } from "@viaprize/ui/textarea";
+import React, { useEffect } from "react";
+import type { FileWithPath } from "react-dropzone";
+import type { UseFormReturn } from "react-hook-form";
+import type { FormValues } from "./form-schema";
+import ImageCropperUpload from "./image-ui/image-picker";
 
 export function TitleDescriptionStep({
   form,
 }: {
-  form: UseFormReturn<FormValues>
+  form: UseFormReturn<FormValues>;
 }) {
   return (
     <>
@@ -44,8 +47,27 @@ export function TitleDescriptionStep({
           </FormItem>
         )}
       />
-      <h1>Upload Image</h1>
-      <ImageCropperUpload />
+      <FormField
+        control={form.control}
+        name="imageSrc"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Upload An Image</FormLabel>
+            <FormControl>
+              <ImageCropperUpload
+                onImageChange={(file) => {
+                  if (!file) {
+                    return;
+                  }
+                  form.setValue("imageSrc", file);
+                }}
+                image={field.value}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </>
-  )
+  );
 }

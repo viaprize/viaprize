@@ -1,43 +1,55 @@
-'use client'
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
-import { Card, CardContent } from '@viaprize/ui/card'
-import React from 'react'
-import { type FileWithPath, useDropzone } from 'react-dropzone'
-import { type FileWithPreview, ImageCropper } from './image-cropper'
+import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
+import { Card, CardContent } from "@viaprize/ui/card";
+import React, { useEffect } from "react";
+import { type FileWithPath, useDropzone } from "react-dropzone";
+import { type FileWithPreview, ImageCropper } from "./image-cropper";
 
 const accept = {
-  'image/*': [],
+  "image/*": [],
+};
+
+interface ImageCropProps {
+  onImageChange: (file: FileWithPreview | null) => void;
+  image: FileWithPath | null;
 }
 
-export default function ImageCrop() {
+export default function ImageCrop({ onImageChange, image }: ImageCropProps) {
   const [selectedFile, setSelectedFile] =
-    React.useState<FileWithPreview | null>(null)
-  const [isDialogOpen, setDialogOpen] = React.useState(false)
+    React.useState<FileWithPreview | null>(null);
+  const [isDialogOpen, setDialogOpen] = React.useState(false);
 
   const onDrop = React.useCallback(
     (acceptedFiles: FileWithPath[]) => {
-      const file = acceptedFiles[0]
+      const file = acceptedFiles[0];
       if (!file) {
-        alert('Selected image is too large!')
-        return
+        alert("Selected image is too large!");
+        return;
       }
 
       const fileWithPreview = Object.assign(file, {
         preview: URL.createObjectURL(file),
-      })
+      });
 
-      setSelectedFile(fileWithPreview)
-      setDialogOpen(true)
+      setSelectedFile(fileWithPreview);
+      setDialogOpen(true);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  )
+    []
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept,
-  })
+  });
+
+  useEffect(() => {
+    if (!selectedFile) {
+      return;
+    }
+    onImageChange(selectedFile);
+  }, [selectedFile, image]);
 
   return (
     <div className="relative ">
@@ -63,5 +75,5 @@ export default function ImageCrop() {
         </Avatar>
       )}
     </div>
-  )
+  );
 }
