@@ -29,10 +29,10 @@ export const FileWithPreviewSchema = z.instanceof(File).and(
   z.object({
     path: z.string().optional(),
     preview: z.string(),
-  })
-);
+  }),
+)
 
-export type FileWithPreview = z.infer<typeof FileWithPreviewSchema>;
+export type FileWithPreview = z.infer<typeof FileWithPreviewSchema>
 
 // export type FileWithPreview = FileWithPath & {
 //   preview: string

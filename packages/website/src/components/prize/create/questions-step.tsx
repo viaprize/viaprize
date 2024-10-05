@@ -39,7 +39,11 @@ export function QuestionsStep({ form, initialQuestion }: QuestionsStepProps) {
     })
     console.log(questions, 'questions')
 
-    if (index === questions.length - 1 && questions.length < 5 && !generatingQuestions) {
+    if (
+      index === questions.length - 1 &&
+      questions.length < 5 &&
+      !generatingQuestions
+    ) {
       console.log(form.getValues('aiQuestions'))
       const nextQuestion = await generateFollowUpQuestions({
         description: form.getValues('description'),

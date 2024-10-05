@@ -19,9 +19,9 @@ export const prizesAiRouter = createTRPCRouter({
 
       // Return dummy data
       return {
-        question: "What is the primary programming language for this project?",
-        options: ["JavaScript", "Python", "Java", "C++"],
-        multipleChoice: true
+        question: 'What is the primary programming language for this project?',
+        options: ['JavaScript', 'Python', 'Java', 'C++'],
+        multipleChoice: true,
       }
     }),
 
@@ -51,9 +51,9 @@ export const prizesAiRouter = createTRPCRouter({
 
       // Return dummy data
       return {
-        question: "What is the expected project timeline?",
-        options: ["1-2 weeks", "1-2 months", "3-6 months", "6+ months"],
-        multipleChoice: true
+        question: 'What is the expected project timeline?',
+        options: ['1-2 weeks', '1-2 months', '3-6 months', '6+ months'],
+        multipleChoice: true,
       }
     }),
 
@@ -84,8 +84,9 @@ export const prizesAiRouter = createTRPCRouter({
 
       // Return dummy data
       return {
-        title: "Develop a React-based E-commerce Platform",
-        description: "• Create responsive online store\n• Implement secure payment gateway\n• Design user-friendly product catalog\n• Integrate inventory management system"
+        title: 'Develop a React-based E-commerce Platform',
+        description:
+          '• Create responsive online store\n• Implement secure payment gateway\n• Design user-friendly product catalog\n• Integrate inventory management system',
       }
     }),
 
@@ -108,12 +109,12 @@ export const prizesAiRouter = createTRPCRouter({
       // Return dummy data
       return {
         skills: [
-          { icon: "react", skill: "React" },
-          { icon: "js", skill: "JavaScript" },
-          { icon: "node", skill: "Node.js" },
-          { icon: "database", skill: "MongoDB" }
+          { icon: 'react', skill: 'React' },
+          { icon: 'js', skill: 'JavaScript' },
+          { icon: 'node', skill: 'Node.js' },
+          { icon: 'database', skill: 'MongoDB' },
         ],
-        category: "Web Development"
+        category: 'Web Development',
       }
     }),
 })

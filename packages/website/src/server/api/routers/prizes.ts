@@ -1,5 +1,6 @@
 import { viaprize } from '@/server/viaprize'
 import { TRPCError } from '@trpc/server'
+import { insertPrizeSchema } from '@viaprize/core/database/schema/prizes'
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '@viaprize/core/lib/abi'
 import { Events } from '@viaprize/core/viaprize'
 import { ViaprizeUtils } from '@viaprize/core/viaprize-utils'
@@ -13,37 +14,36 @@ import {
   protectedProcedure,
   publicProcedure,
   withCache,
-} from "../trpc";
-import { prizesAiRouter } from "./prize-ai";
-import { insertPrizeSchema } from "@viaprize/core/database/schema/prizes";
+} from '../trpc'
+import { prizesAiRouter } from './prize-ai'
 
 export const prizeRouter = createTRPCRouter({
   ai: prizesAiRouter,
   getContestants: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
-      const contestants = await ctx.viaprize.prizes.getContestants(input);
-      return contestants;
+      const contestants = await ctx.viaprize.prizes.getContestants(input)
+      return contestants
     }),
   getPrizeActivities: publicProcedure.query(async ({ ctx }) => {
     const totalPrizePool =
       Number.parseInt(
         (await ctx.cacheClient.get(
-          ctx.viaprize.prizes.getCacheTag("TOTAL_PRIZE_POOL")
-        )) ?? "0"
-      ) ?? 0;
+          ctx.viaprize.prizes.getCacheTag('TOTAL_PRIZE_POOL'),
+        )) ?? '0',
+      ) ?? 0
     const totalIdeas =
       (await withCache(
         ctx,
-        ctx.viaprize.prizes.getCacheTag("ACTIVE_PRIZES_COUNT"),
-        async () => await ctx.viaprize.prizes.getDeployedPrizesCount()
-      )) ?? 0;
+        ctx.viaprize.prizes.getCacheTag('ACTIVE_PRIZES_COUNT'),
+        async () => await ctx.viaprize.prizes.getDeployedPrizesCount(),
+      )) ?? 0
     const recentActivities =
       (await withCache(
         ctx,
-        ctx.viaprize.prizes.getCacheTag("LATEST_PRIZE_ACTIVITES"),
-        async () => await ctx.viaprize.prizes.getLatestActivitiesInPrizes()
-      )) ?? [];
+        ctx.viaprize.prizes.getCacheTag('LATEST_PRIZE_ACTIVITES'),
+        async () => await ctx.viaprize.prizes.getLatestActivitiesInPrizes(),
+      )) ?? []
     const leaderboards =
       (await withCache(
         ctx,
@@ -95,14 +95,14 @@ export const prizeRouter = createTRPCRouter({
   getDeployedPrizes: publicProcedure.query(async ({ ctx }) => {
     const prizes = await withCache(
       ctx,
-      ctx.viaprize.prizes.getCacheTag("DEPLOYED_PRIZES"),
+      ctx.viaprize.prizes.getCacheTag('DEPLOYED_PRIZES'),
       async () => {
-        const a = await ctx.viaprize.prizes.getDeployedPrizes();
-        console.log(a);
-        return a;
-      }
-    );
-    return prizes;
+        const a = await ctx.viaprize.prizes.getDeployedPrizes()
+        console.log(a)
+        return a
+      },
+    )
+    return prizes
   }),
   getPendingPrizes: adminProcedure.query(async ({ ctx }) => {
     const prizes = await withCache(
@@ -116,7 +116,7 @@ export const prizeRouter = createTRPCRouter({
     .input(
       z.object({
         prizeId: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
@@ -135,32 +135,32 @@ export const prizeRouter = createTRPCRouter({
           {
             data: txData,
             to: prizeFactoryAddress,
-            value: "0",
+            value: '0',
           },
         ],
-        "gasless",
-        ["NewViaPrizeCreated"],
+        'gasless',
+        ['NewViaPrizeCreated'],
         async (events) => {
-          await ctx.viaprize.prizes.approvePrizeProposal(input.prizeId);
+          await ctx.viaprize.prizes.approvePrizeProposal(input.prizeId)
           if (!events[0]?.args.viaPrizeAddress) {
             throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Contract address not found",
-              cause: "Contract address not found",
-            });
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'Contract address not found',
+              cause: 'Contract address not found',
+            })
           }
           if (events[0]?.args.viaPrizeAddress) {
             await bus.publish(Resource.EventBus.name, Events.Prize.Approve, {
               contractAddress: events[0].args.viaPrizeAddress,
               prizeId: input.prizeId,
-            });
+            })
           }
         },
       )
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-        key: ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
-      });
-      return txHash;
+        key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
+      })
+      return txHash
     }),
 
   createPrize: protectedProcedure
@@ -168,36 +168,36 @@ export const prizeRouter = createTRPCRouter({
       insertPrizeSchema.omit({
         authorUsername: true,
         proposerAddress: true,
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.session.user.username) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You must be logged in to create a prize",
-          cause: "User is not logged in",
-        });
+          code: 'UNAUTHORIZED',
+          message: 'You must be logged in to create a prize',
+          cause: 'User is not logged in',
+        })
       }
 
       if (!ctx.session.user.wallet) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You must have a wallet address to create a prize",
-          cause: "User does not have a wallet address",
-        });
+          code: 'UNAUTHORIZED',
+          message: 'You must have a wallet address to create a prize',
+          cause: 'User does not have a wallet address',
+        })
       }
 
       const prizeId = await ctx.viaprize.prizes.addPrizeProposal({
         ...input,
         authorUsername: ctx.session.user.username,
         proposerAddress: ctx.session.user.wallet.address,
-      });
+      })
 
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-        key: ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
-      });
+        key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
+      })
 
-      return prizeId;
+      return prizeId
     }),
 
   addSubmission: protectedProcedure
@@ -205,58 +205,58 @@ export const prizeRouter = createTRPCRouter({
       z.object({
         prizeId: z.string(),
         submissionText: z.string().min(10, {
-          message: "Submission must be at least 10 characters.",
+          message: 'Submission must be at least 10 characters.',
         }),
         projectLink: z.string().optional(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       const submitterAddress = ctx.session.user.wallet?.address
       const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
       if (!prize) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Prize not found",
-          cause: "Prize not found",
-        });
+          code: 'NOT_FOUND',
+          message: 'Prize not found',
+          cause: 'Prize not found',
+        })
       }
       if (!submitterAddress) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You must have a wallet address to create a prize",
-          cause: "User does not have a wallet address",
-        });
+          code: 'UNAUTHORIZED',
+          message: 'You must have a wallet address to create a prize',
+          cause: 'User does not have a wallet address',
+        })
       }
 
       if (!ctx.session.user.wallet?.address) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You must have a wallet address to create a prize",
-          cause: "User does not have a wallet address",
-        });
+          code: 'UNAUTHORIZED',
+          message: 'You must have a wallet address to create a prize',
+          cause: 'User does not have a wallet address',
+        })
       }
 
       const txData =
         await ctx.viaprize.prizes.blockchain.getEncodedAddSubmissionData(
           submitterAddress as `0x${string}`,
-          input.submissionText
-        );
+          input.submissionText,
+        )
 
       const simulated = await ctx.viaprize.wallet.simulateTransaction(
         {
           data: txData,
           to: prize.primaryContractAddress as `0x${string}`,
-          value: "0",
+          value: '0',
         },
         'gasless',
         'vault',
       )
       if (!simulated) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Transaction failed",
-          cause: "Transaction failed",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Transaction failed',
+          cause: 'Transaction failed',
+        })
       }
       const txHash = await ctx.viaprize.wallet.withTransactionEvents(
         PRIZE_V2_ABI,
@@ -264,21 +264,21 @@ export const prizeRouter = createTRPCRouter({
           {
             data: txData,
             to: prize.primaryContractAddress as `0x${string}`,
-            value: "0",
+            value: '0',
           },
         ],
-        "gasless",
-        "SubmissionCreated",
+        'gasless',
+        'SubmissionCreated',
         async (events) => {
           const submissionCreatedEvents = events.filter(
             (e) => e.eventName === 'SubmissionCreated',
           )
           if (!submissionCreatedEvents[0]?.args.submissionHash) {
             throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Submission hash not found",
-              cause: "Submission hash not found",
-            });
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'Submission hash not found',
+              cause: 'Submission hash not found',
+            })
           }
           await ctx.viaprize.prizes.addSubmission({
             submissionHash: submissionCreatedEvents[0].args.submissionHash,
@@ -286,16 +286,16 @@ export const prizeRouter = createTRPCRouter({
             description: input.submissionText,
             prizeId: input.prizeId,
             username: ctx.session.user.username as string,
-          });
-        }
-      );
+          })
+        },
+      )
       if (txHash) {
         await ViaprizeUtils.publishDeployedPrizeCacheDelete(
           viaprize,
-          prize.slug
-        );
+          prize.slug,
+        )
       }
-      return txHash;
+      return txHash
     }),
 
   addVote: adminProcedure
@@ -307,24 +307,24 @@ export const prizeRouter = createTRPCRouter({
         v: z.number(),
         s: z.string(),
         r: z.string(),
-      })
+      }),
     )
 
     .mutation(async ({ input, ctx }) => {
-      const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId);
+      const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
       if (!prize) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Prize not found",
-          cause: "Prize not found",
-        });
+          code: 'NOT_FOUND',
+          message: 'Prize not found',
+          cause: 'Prize not found',
+        })
       }
       if (!(ctx.session.user.wallet?.address && ctx.session.user.username)) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You must have a wallet address and username to cast a vote",
-          cause: "User does not have a wallet address or username",
-        });
+          code: 'UNAUTHORIZED',
+          message: 'You must have a wallet address and username to cast a vote',
+          cause: 'User does not have a wallet address or username',
+        })
       }
 
       const txData = await ctx.viaprize.prizes.blockchain.getEncodedAddVoteData(
@@ -339,24 +339,24 @@ export const prizeRouter = createTRPCRouter({
         {
           data: txData,
           to: prize.primaryContractAddress as `0x${string}`,
-          value: "0",
+          value: '0',
         },
         'gasless',
         'signer',
       )
       if (!simulated) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Transaction failed",
-          cause: "Transaction failed",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Transaction failed',
+          cause: 'Transaction failed',
+        })
       }
       const txHash = await ctx.viaprize.wallet.sendTransaction(
         [
           {
             data: txData,
             to: prize.primaryContractAddress as `0x${string}`,
-            value: "0",
+            value: '0',
           },
         ],
         'gasless',
@@ -370,9 +370,9 @@ export const prizeRouter = createTRPCRouter({
           funderAddress: ctx.session.user.wallet?.address,
           voteAmount: input.voteAmount,
           username: ctx.session.user.username,
-        });
+        })
       }
-      return txHash;
+      return txHash
     }),
 
   addContestant: protectedProcedure
@@ -380,28 +380,28 @@ export const prizeRouter = createTRPCRouter({
       z.object({
         prizeId: z.string(),
         slug: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       if (!ctx.session.user.username) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You must be logged in to enter a prize",
-          cause: "User is not logged in",
-        });
+          code: 'UNAUTHORIZED',
+          message: 'You must be logged in to enter a prize',
+          cause: 'User is not logged in',
+        })
       }
 
       await ctx.viaprize.prizes.addContestant({
         prizeId: input.prizeId,
         username: ctx.session.user.username,
-      });
+      })
 
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-        key: ctx.viaprize.prizes.getCacheTag("DEPLOYED_PRIZES"),
-      });
+        key: ctx.viaprize.prizes.getCacheTag('DEPLOYED_PRIZES'),
+      })
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
-        key: ctx.viaprize.prizes.getCacheTag("SLUG_PRIZE", input.slug),
-      });
+        key: ctx.viaprize.prizes.getCacheTag('SLUG_PRIZE', input.slug),
+      })
     }),
 
   addUsdcFundsForUser: protectedProcedure
@@ -415,16 +415,16 @@ export const prizeRouter = createTRPCRouter({
         r: z.string(),
         ethSignedHash: z.string(),
         token: z.string(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
-      const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId);
+      const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
       if (!prize) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Prize not found",
-          cause: "Prize not found",
-        });
+          code: 'NOT_FOUND',
+          message: 'Prize not found',
+          cause: 'Prize not found',
+        })
       }
       if (
         !(
@@ -434,10 +434,10 @@ export const prizeRouter = createTRPCRouter({
         )
       ) {
         throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You must have a wallet address and username to cast a vote",
-          cause: "User does not have a wallet address or username",
-        });
+          code: 'UNAUTHORIZED',
+          message: 'You must have a wallet address and username to cast a vote',
+          cause: 'User does not have a wallet address or username',
+        })
       }
 
       const txData =
@@ -455,17 +455,17 @@ export const prizeRouter = createTRPCRouter({
         {
           data: txData,
           to: prize.primaryContractAddress as `0x${string}`,
-          value: "0",
+          value: '0',
         },
         'gasless',
         'vault',
       )
       if (!simulated) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Transaction failed",
-          cause: "Transaction failed",
-        });
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Transaction failed',
+          cause: 'Transaction failed',
+        })
       }
 
       const txHash = await ctx.viaprize.wallet.withTransactionEvents(
@@ -474,7 +474,7 @@ export const prizeRouter = createTRPCRouter({
           {
             data: txData,
             to: prize.primaryContractAddress as `0x${string}`,
-            value: "0",
+            value: '0',
           },
         ],
         'gasless',
@@ -511,43 +511,43 @@ export const prizeRouter = createTRPCRouter({
     .input(z.object({ contractAddress: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
-        input.contractAddress
-      );
-      const data = await ctx.viaprize.prizes.blockchain.getEncodedEndVoting();
+        input.contractAddress,
+      )
+      const data = await ctx.viaprize.prizes.blockchain.getEncodedEndVoting()
       await viaprize.wallet.withTransactionEvents(
         PRIZE_V2_ABI,
         [
           {
             data,
             to: input.contractAddress,
-            value: "0",
+            value: '0',
           },
         ],
-        "gasless",
-        "VotingEnded",
+        'gasless',
+        'VotingEnded',
         async (events) => {
           await ctx.viaprize.prizes.endVotingPeriodByContractAddress(
-            input.contractAddress
-          );
-        }
-      );
+            input.contractAddress,
+          )
+        },
+      )
       await ViaprizeUtils.publishDeployedPrizeCacheDelete(
         ctx.viaprize,
-        prize.slug
-      );
+        prize.slug,
+      )
     }),
   endSubmissionAndStartVoting: adminProcedure
     .input(z.object({ contractAddress: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
-        input.contractAddress
-      );
+        input.contractAddress,
+      )
       const data =
         await ctx.viaprize.prizes.blockchain.getEncodedEndSubmissionAndStartVoting(
           {
             votingDurationInMinutes: prize.votingDurationInMinutes,
-          }
-        );
+          },
+        )
       await ViaprizeUtils.handleEndSubmissionTransaction(
         viaprize,
         {
@@ -555,54 +555,54 @@ export const prizeRouter = createTRPCRouter({
             {
               data: data.endSubmissionPeriodData,
               to: input.contractAddress,
-              value: "0",
+              value: '0',
             },
             {
               data: data.startVotingPeriodData,
               to: input.contractAddress,
-              value: "0",
+              value: '0',
             },
           ],
-          walletType: "gasless",
+          walletType: 'gasless',
         },
-        input.contractAddress
-      );
+        input.contractAddress,
+      )
     }),
   startSubmission: adminProcedure
     .input(
       z.object({
         contractAddress: z.string(),
-      })
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
-        input.contractAddress
-      );
+        input.contractAddress,
+      )
       const txData =
         await ctx.viaprize.prizes.blockchain.getEncodedStartSubmission(
-          prize.submissionDurationInMinutes
-        );
+          prize.submissionDurationInMinutes,
+        )
       const txReceipt = await ctx.viaprize.wallet.withTransactionEvents(
         PRIZE_V2_ABI,
         [
           {
             data: txData,
             to: input.contractAddress,
-            value: "0",
+            value: '0',
           },
         ],
-        "gasless",
-        "SubmissionStarted",
+        'gasless',
+        'SubmissionStarted',
         async (events) => {
           await ctx.viaprize.prizes.startSubmissionPeriodByContractAddress(
-            input.contractAddress
-          );
-        }
-      );
+            input.contractAddress,
+          )
+        },
+      )
       await ViaprizeUtils.publishDeployedPrizeCacheDelete(
         ctx.viaprize,
-        prize.slug
-      );
-      return txReceipt;
+        prize.slug,
+      )
+      return txReceipt
     }),
-});
+})
