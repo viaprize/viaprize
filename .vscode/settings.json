@@ -10,5 +10,8 @@
   },
   "[xml]": {
     "editor.defaultFormatter": "redhat.vscode-xml"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
   }
 }

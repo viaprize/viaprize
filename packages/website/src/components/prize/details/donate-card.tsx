@@ -25,10 +25,13 @@ import {
 
 import { usdcSignTypeHash } from '@/lib/utils'
 import { Input } from '@viaprize/ui/input'
+import { Label } from '@viaprize/ui/label'
+import { RadioGroup, RadioGroupItem } from '@viaprize/ui/radio-group'
 import Image from 'next/image'
 import { useState } from 'react'
 import { useAccount, useSignTypedData } from 'wagmi'
 import { readContract } from 'wagmi/actions'
+
 // Define the props type
 interface DonateCardProps {
   projectName: string
@@ -44,10 +47,10 @@ export default function DonateCard({
   projectImage,
 }: DonateCardProps) {
   const [amount, setAmount] = useState('')
+  const [selectedOption, setSelectedOption] = useState<string | null>(null)
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
-    // Allow empty string, non-negative numbers, and decimals
     if (
       value === '' ||
       (/^\d*\.?\d*$/.test(value) && !Number.isNaN(Number.parseFloat(value)))
@@ -55,14 +58,12 @@ export default function DonateCard({
       setAmount(value)
     }
   }
+
   const { openConnectModal } = useConnectModal()
-  const { address, isReconnecting, isConnected, isConnecting } = useAccount()
-  console.log(address, 'addressss')
-  console.log(isReconnecting, 'isReconnecting')
-  console.log(isConnected, 'isConnected')
-  console.log(isConnecting, 'isConnecting')
-  const { hasUserOnBoarded, session } = useAuth()
+  const { address, isConnected } = useAccount()
+  const { session } = useAuth()
   const { signTypedDataAsync } = useSignTypedData()
+
   const handleCryptoDonation = async () => {
     console.log('Donation with wallet')
     try {
@@ -80,14 +81,7 @@ export default function DonateCard({
         functionName: 'nonces',
         args: [address],
       })
-      const signData = {
-        owner: address,
-        spender: contractAddress,
-        value: amount,
-        nonce: BigInt(nonce),
-        deadline: deadline,
-      }
-      const { hash, usdcSign } = usdcSignTypeHash({
+      const { usdcSign } = usdcSignTypeHash({
         chainId,
         deadline,
         nonce: BigInt(nonce),
@@ -103,8 +97,80 @@ export default function DonateCard({
         message: usdcSign.message,
       })
       const rsv = parseSignature(signature)
+      console.log(rsv)
+      // Handle the donation with the signature
     } catch (e) {
       console.log(e)
+    }
+  }
+
+  const renderDonationOptions = () => {
+    if (!session?.user) {
+      return (
+        <RadioGroup
+          onValueChange={setSelectedOption}
+          className="flex flex-col space-y-2"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="card" id="card" />
+            <Label htmlFor="card">Donate with Card Anonymously</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="crypto" id="crypto" />
+            <Label htmlFor="crypto">Donate with Wallet Anonymously</Label>
+          </div>
+        </RadioGroup>
+      )
+    }
+    console.log(session.user.wallet?.key, 'keyyy')
+
+    return (
+      <RadioGroup
+        onValueChange={setSelectedOption}
+        className="flex flex-col space-y-2"
+      >
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="card" id="card" />
+          <Label htmlFor="card">Donate with Card</Label>
+        </div>
+        {session.user.wallet?.key && (
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="custodial" id="custodial" />
+            <Label htmlFor="custodial">Donate with Custodial Wallet</Label>
+          </div>
+        )}
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="crypto" id="crypto" />
+          <Label htmlFor="crypto">Donate with Crypto</Label>
+        </div>
+      </RadioGroup>
+    )
+  }
+
+  const renderDonateButton = () => {
+    if (!selectedOption) return null
+
+    switch (selectedOption) {
+      case 'card':
+        return (
+          <Button onClick={() => console.log('Donating with card')}>
+            Donate ${amount}
+          </Button>
+        )
+      case 'custodial':
+        return (
+          <Button onClick={() => console.log('Donating with custodial wallet')}>
+            Donate ${amount}
+          </Button>
+        )
+      case 'crypto':
+        return isConnected ? (
+          <Button onClick={handleCryptoDonation}>Donate ${amount}</Button>
+        ) : (
+          <Button onClick={openConnectModal}>Connect Wallet</Button>
+        )
+      default:
+        return null
     }
   }
 
@@ -155,36 +221,13 @@ export default function DonateCard({
                 />
               </div>
               <div className="grid gap-4 py-4">
-                {session?.user ? (
-                  <>
-                    <Button>Donate ${amount} with Card</Button>
-
-                    {session?.user?.wallet?.key ? (
-                      <Button>Donate ${amount} with custodial wallet</Button>
-                    ) : null}
-
-                    {address ? (
-                      <Button>Donate ${amount}</Button>
-                    ) : (
-                      <Button onClick={openConnectModal}>Connect Wallet</Button>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Badge className="text-sm">
-                      Anonymous Donation without voting rights
-                    </Badge>
-                    <Button>Donate ${amount} with Card Anonymously</Button>
-
-                    {address ? (
-                      <Button onClick={handleCryptoDonation}>
-                        Donate ${amount} with Wallet Anonymously
-                      </Button>
-                    ) : (
-                      <Button onClick={openConnectModal}>Connect Wallet</Button>
-                    )}
-                  </>
+                {!session?.user && (
+                  <Badge className="text-sm">
+                    Anonymous Donation without voting rights
+                  </Badge>
                 )}
+                {renderDonationOptions()}
+                {renderDonateButton()}
               </div>
             </DialogContent>
           </Dialog>

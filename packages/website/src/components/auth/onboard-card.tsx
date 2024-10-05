@@ -3,6 +3,7 @@
 import { useAuth } from '@/hooks/useAuth'
 import { api } from '@/trpc/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ConnectButton, useAccountModal } from '@rainbow-me/rainbowkit'
 import { Button } from '@viaprize/ui/button'
 import {
   Card,
@@ -23,17 +24,19 @@ import {
   FormMessage,
 } from '@viaprize/ui/form'
 import { Input } from '@viaprize/ui/input'
-// import { Icons } from "@viaprize/ui/icons";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@viaprize/ui/tooltip'
-import { LoaderIcon } from 'lucide-react'
+import { LoaderIcon, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { use, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+import { useAccount, useDisconnect } from 'wagmi'
 import { z } from 'zod'
+import { WalletConnectButton } from '../common/wallet-connect-button'
 
 const formSchema = z.object({
   username: z
@@ -65,6 +68,8 @@ export default function OnboardCard({
 }: OnBoardCardProps) {
   const { push } = useRouter()
   const { logOut } = useAuth()
+  const { address, isConnected } = useAccount()
+  const { disconnect } = useDisconnect()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -93,6 +98,12 @@ export default function OnboardCard({
 
   const watchShouldGenerateWallet = form.watch('shouldGenerateWallet')
 
+  useEffect(() => {
+    if (!watchShouldGenerateWallet) {
+      form.setValue('walletAddress', address)
+    }
+  }, [address, watchShouldGenerateWallet])
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await mutation.mutateAsync({
       email: values.email,
@@ -100,6 +111,11 @@ export default function OnboardCard({
       username: values.username,
       walletAddress: values.walletAddress,
     })
+  }
+
+  const handleRemoveWallet = () => {
+    form.setValue('walletAddress', undefined)
+    disconnect()
   }
 
   return (
@@ -203,11 +219,27 @@ export default function OnboardCard({
                     <FormItem>
                       <FormLabel>Wallet Address</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="0x..."
-                          disabled={!!walletAddress}
-                          {...field}
-                        />
+                        {isConnected ? (
+                          <div className="flex items-center">
+                            <Input
+                              value={field.value}
+                              disabled
+                              onChange={field.onChange}
+                              className="flex-grow"
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={handleRemoveWallet}
+                              className="ml-2"
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <WalletConnectButton />
+                        )}
                       </FormControl>
                       <FormDescription>
                         Your EVM-compatible wallet address

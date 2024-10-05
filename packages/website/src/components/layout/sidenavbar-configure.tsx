@@ -7,11 +7,13 @@ import {
   IconLogout,
   IconTrophy,
   IconUser,
+  IconWallet,
 } from '@tabler/icons-react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useAccount, useDisconnect } from 'wagmi'
 import { Sidebar, SidebarBody, SidebarButton, SidebarLink } from './sidebar-ui'
 
 const Logo = ({ name, image }: { name: string; image: string }) => {
@@ -121,6 +123,9 @@ export default function SideNavbarConfigure() {
   const [open, setOpen] = useState(false)
 
   const { logOut, session } = useAuth()
+  const { isConnected } = useAccount()
+
+  const { disconnectAsync } = useDisconnect()
 
   return (
     <Sidebar open={open} setOpen={setOpen}>
@@ -163,6 +168,19 @@ export default function SideNavbarConfigure() {
                 await logOut()
               }}
             />
+            {isConnected ? (
+              <SidebarButton
+                item={{
+                  icon: (
+                    <IconWallet className="h-25 w-25 flex-shrink-0 text-primary-foreground" />
+                  ),
+                  label: 'Disconnect Wallet',
+                }}
+                onClick={async () => {
+                  await disconnectAsync()
+                }}
+              />
+            ) : null}
           </div>
 
           {/* Conditionally render buttons only when the sidebar is open */}

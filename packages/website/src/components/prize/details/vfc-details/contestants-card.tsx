@@ -1,15 +1,15 @@
-'use client'
-import SubmitWorkButton from '@/components/prize/details/submissions-voting/submit-work-button'
-import { useAuth } from '@/hooks/useAuth'
-import { getContestantStage } from '@/lib/utils'
-import { api } from '@/trpc/react'
-import type { PrizeStages } from '@viaprize/core/lib/prizes'
-import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
-import { Card } from '@viaprize/ui/card'
-import { Suspense } from 'react'
-import JoinContestantButton from './join-contestant-button'
-export type ContestantStage = 'NOT_JOINED' | 'JOINED' | 'SUBMITTED' | 'LOGIN'
-export type Contestants = typeof api.prizes.getContestants.useQuery
+"use client";
+import SubmitWorkButton from "@/components/prize/details/submissions-voting/submit-work-button";
+import { useAuth } from "@/hooks/useAuth";
+import { getContestantStage } from "@/lib/utils";
+import { api } from "@/trpc/react";
+import type { PrizeStages } from "@viaprize/core/lib/prizes";
+import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
+import { Card } from "@viaprize/ui/card";
+import { Suspense } from "react";
+import JoinContestantButton from "./join-contestant-button";
+export type ContestantStage = "NOT_JOINED" | "JOINED" | "SUBMITTED" | "LOGIN";
+export type Contestants = typeof api.prizes.getContestants.useQuery;
 function ContestantCardButton({
   stage,
   prizeId,
@@ -17,32 +17,32 @@ function ContestantCardButton({
   slug,
   totalFunds,
 }: {
-  stage: ContestantStage
-  prizeId: string
-  slug: string
-  prizeStage: PrizeStages
-  totalFunds: number
+  stage: ContestantStage;
+  prizeId: string;
+  slug: string;
+  prizeStage: PrizeStages;
+  totalFunds: number;
 }) {
   return (
     <>
       {(() => {
         switch (stage) {
-          case 'NOT_JOINED':
-            return <JoinContestantButton prizeId={prizeId} slug={slug} />
-          case 'JOINED':
+          case "NOT_JOINED":
+            return <JoinContestantButton prizeId={prizeId} slug={slug} />;
+          case "JOINED":
             return (
               <SubmitWorkButton
                 totalFunds={totalFunds}
                 prizeStage={prizeStage}
                 prizeId={prizeId}
               />
-            )
-          case 'SUBMITTED':
-            return null
+            );
+          case "SUBMITTED":
+            return null;
         }
       })()}
     </>
-  )
+  );
 }
 export default function ContestantsCard({
   prizeId,
@@ -50,17 +50,18 @@ export default function ContestantsCard({
   prizeStage,
   totalFunds,
 }: {
-  prizeId: string
-  slug: string
-  prizeStage: PrizeStages
-  totalFunds: number
+  prizeId: string;
+  slug: string;
+  prizeStage: PrizeStages;
+  totalFunds: number;
 }) {
-  const [contestants] = api.prizes.getContestants.useSuspenseQuery(prizeId)
-  const { session } = useAuth()
+  const [contestants] = api.prizes.getContestants.useSuspenseQuery(prizeId);
+  const { session } = useAuth();
   const contestantStage = getContestantStage<(typeof contestants)[number]>(
     contestants,
-    session?.user.username,
-  )
+    session?.user.username
+  );
+  console.log({ contestants });
   return (
     <Suspense fallback={<Card className="px-3 py-4">Loading...</Card>}>
       <Card className="px-3 py-4">
@@ -75,13 +76,13 @@ export default function ContestantsCard({
             <Avatar>
               <AvatarImage
                 src={contestant.user.image ?? undefined}
-                alt={contestant.username.substring(0, 2)}
+                alt={contestant.user?.name?.substring(0, 2)}
               />
               <AvatarFallback>
-                {contestant.username.substring(0, 2)}
+                {contestant.user.name?.substring(0, 2)}
               </AvatarFallback>
             </Avatar>
-            <div>{contestant.username}</div>
+            <div>{contestant.user.name}</div>
           </div>
         ))}
         <ContestantCardButton
@@ -93,5 +94,5 @@ export default function ContestantsCard({
         />
       </Card>
     </Suspense>
-  )
+  );
 }
