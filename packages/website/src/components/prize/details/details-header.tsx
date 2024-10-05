@@ -1,12 +1,12 @@
-import { auth } from '@/server/auth'
-import { IconPresentation } from '@tabler/icons-react'
-import type { PrizeStages } from '@viaprize/core/lib/prizes'
-import { AspectRatio } from '@viaprize/ui/aspect-ratio'
-import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
-import { Badge } from '@viaprize/ui/badge'
-import { Button } from '@viaprize/ui/button'
-import Image from 'next/image'
-import DonateCard from './donate-card'
+import { auth } from "@/server/auth";
+import { IconPresentation } from "@tabler/icons-react";
+import type { PrizeStages } from "@viaprize/core/lib/prizes";
+import { AspectRatio } from "@viaprize/ui/aspect-ratio";
+import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
+import { Badge } from "@viaprize/ui/badge";
+import { Button } from "@viaprize/ui/button";
+import Image from "next/image";
+import DonateCard from "./donate-card";
 
 export default async function DetailsHeader({
   funds,
@@ -18,21 +18,21 @@ export default async function DetailsHeader({
   title,
   prizeId,
 }: {
-  projectName: string
-  image?: string | null
-  avatar?: string | undefined
-  name: string
-  stage: PrizeStages
-  funds: number
-  title: string
-  prizeId: string
+  projectName: string;
+  image?: string | null;
+  avatar?: string | undefined;
+  name: string;
+  stage: PrizeStages;
+  funds: number;
+  title: string;
+  prizeId: string;
 }) {
   return (
     <div className="p-3 w-full lg:flex space-x-0 space-y-3 lg:space-y-0 lg:space-x-5">
       <Image
         src={
           image ||
-          'https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image'
+          "https://placehold.jp/24/3d4070/ffffff/1280x720.png?text=No%20Image"
         }
         quality={100}
         width={150}
@@ -60,11 +60,12 @@ export default async function DetailsHeader({
 
       <div className="w-full">
         <DonateCard
-          projectImage={image ?? ''}
+          contractAddress="0x"
+          projectImage={image ?? ""}
           funds={funds}
           projectName={projectName}
         />
       </div>
     </div>
-  )
+  );
 }

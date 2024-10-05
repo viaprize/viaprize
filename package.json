@@ -30,7 +30,7 @@
     "typescript": "5.3.3"
   },
   "dependencies": {
-    "sst": "3.1.18",
+    "sst": "3.1.64",
     "dotenv": "16.4.5"
   }
 }

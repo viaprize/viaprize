@@ -1,58 +1,107 @@
-import type { ContestantStage } from '@/components/prize/details/vfc-details/contestants-card'
+import type { ContestantStage } from "@/components/prize/details/vfc-details/contestants-card";
+import { ERC20_PERMIT_SIGN_TYPE } from "@viaprize/core/lib/abi";
+import type { ValidChainIDs } from "@viaprize/core/lib/constants";
 import {
   differenceInDays,
   differenceInHours,
   differenceInMinutes,
   differenceInSeconds,
-} from 'date-fns'
+} from "date-fns";
+import { hashTypedData } from "viem";
 
 export function containsUppercase(str: string) {
-  return /^[A-Z]+$/.test(str)
+  return /^[A-Z]+$/.test(str);
 }
 
 export interface SearchParams {
-  [key: string]: string | string[] | undefined
+  [key: string]: string | string[] | undefined;
 }
 
 export function timeAgo(givenDate: Date): string {
-  const now = new Date()
+  const now = new Date();
 
   // Calculate the difference in days
-  const daysDiff = differenceInDays(now, givenDate)
+  const daysDiff = differenceInDays(now, givenDate);
   if (daysDiff >= 1) {
-    return 'a long time ago'
+    return "a long time ago";
   }
 
   // Calculate the difference in hours
-  const hoursDiff = differenceInHours(now, givenDate)
+  const hoursDiff = differenceInHours(now, givenDate);
   if (hoursDiff >= 1) {
-    return `${hoursDiff} hours ago`
+    return `${hoursDiff} hours ago`;
   }
 
   // Calculate the difference in minutes
-  const minutesDiff = differenceInMinutes(now, givenDate)
+  const minutesDiff = differenceInMinutes(now, givenDate);
   if (minutesDiff >= 1) {
-    return `${minutesDiff} minutes ago`
+    return `${minutesDiff} minutes ago`;
   }
 
   // Calculate the difference in seconds
-  const secondsDiff = differenceInSeconds(now, givenDate)
-  return `${secondsDiff} seconds ago`
+  const secondsDiff = differenceInSeconds(now, givenDate);
+  return `${secondsDiff} seconds ago`;
 }
 
 export function getContestantStage<T>(
   contestants: T[],
-  username?: string,
+  username?: string
 ): ContestantStage {
   if (!username) {
-    return 'LOGIN'
+    return "LOGIN";
   }
   if (!contestants) {
-    return 'NOT_JOINED'
+    return "NOT_JOINED";
   }
 
   if (contestants.some((c) => (c as any).username === username)) {
-    return 'JOINED'
+    return "JOINED";
   }
-  return 'NOT_JOINED'
+  return "NOT_JOINED";
 }
+
+export const usdcSignType = ({
+  owner,
+  spender,
+  value,
+  nonce,
+  chainId,
+  deadline,
+  usdcContract,
+}: {
+  owner: string;
+  spender: string;
+  value: bigint;
+  nonce: bigint;
+  deadline: bigint;
+  chainId: ValidChainIDs;
+  usdcContract: `0x${string}`;
+}) => {
+  return {
+    message: {
+      owner: owner as `0x${string}`,
+      spender: spender as `0x${string}`,
+      value,
+      nonce,
+      deadline,
+    },
+    types: ERC20_PERMIT_SIGN_TYPE,
+    primaryType: "Permit" as "Permit" | "EIP712Domain",
+    domain: {
+      chainId: chainId,
+      verifyingContract: usdcContract,
+      name: "USD Coin",
+      version: "2",
+    },
+  };
+};
+
+export const usdcSignTypeHash = (
+  data: Parameters<typeof usdcSignType>[number]
+) => {
+  const usdcSign = usdcSignType(data);
+  return {
+    usdcSign,
+    hash: hashTypedData(usdcSign as any),
+  };
+};
