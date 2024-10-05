@@ -1,6 +1,8 @@
 import { Resource } from 'sst'
 import { bus } from 'sst/aws/bus'
-import { PRIZE_V2_ABI } from './lib/abi'
+import { hashTypedData } from 'viem'
+import { ERC20_PERMIT_SIGN_TYPE, PRIZE_V2_ABI } from './lib/abi'
+import type { ValidChainIDs } from './lib/constants'
 import { Events, type Viaprize } from './viaprize'
 
 export * as ViaprizeUtils from './viaprize-utils'
@@ -88,4 +90,50 @@ export async function handleEndSubmissionTransaction(
     },
   )
   await publishDeployedPrizeCacheDelete(viaprize, prize.slug)
+}
+
+export const usdcSignType = ({
+  owner,
+  spender,
+  value,
+  nonce,
+  chainId,
+  deadline,
+  usdcContract,
+}: {
+  owner: string
+  spender: string
+  value: bigint
+  nonce: bigint
+  deadline: bigint
+  chainId: ValidChainIDs
+  usdcContract: `0x${string}`
+}) => {
+  return {
+    message: {
+      owner: owner as `0x${string}`,
+      spender: spender as `0x${string}`,
+      value,
+      nonce,
+      deadline,
+    },
+    types: ERC20_PERMIT_SIGN_TYPE,
+    primaryType: 'Permit' as 'Permit' | 'EIP712Domain',
+    domain: {
+      chainId: chainId,
+      verifyingContract: usdcContract,
+      name: 'USD Coin',
+      version: '2',
+    },
+  }
+}
+
+export const usdcSignTypeHash = (
+  data: Parameters<typeof usdcSignType>[number],
+) => {
+  const usdcSign = usdcSignType(data)
+  return {
+    usdcSign,
+    hash: hashTypedData(usdcSign as any),
+  }
 }

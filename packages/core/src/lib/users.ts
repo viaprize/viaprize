@@ -43,6 +43,7 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
         wallets: {
           columns: {
             address: true,
+            key: true,
           },
         },
       },

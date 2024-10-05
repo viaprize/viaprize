@@ -30,7 +30,7 @@ import { Input } from '@viaprize/ui/input'
 import { Label } from '@viaprize/ui/label'
 import { Textarea } from '@viaprize/ui/textarea'
 import { Trophy } from 'lucide-react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -63,7 +63,7 @@ export default function SubmissionDialog({
       prizeId,
       submissionText: values.description,
     })
-    router.reload()
+    router.refresh()
   }
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function SubmissionDialog({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <Label>
-            Your wallet Id for receiving is {session?.user.walletAddress}
+            Your wallet Id for receiving is {session?.user.wallet?.address}
           </Label>
           <FormField
             control={form.control}

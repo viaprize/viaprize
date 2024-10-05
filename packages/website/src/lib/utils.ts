@@ -1,7 +1,4 @@
-import {
-  type ContestantStage,
-  Contestants,
-} from "@/components/prize/details/vfc-details/contestants-card";
+import type { ContestantStage } from '@/components/prize/details/vfc-details/contestants-card'
 import {
   differenceInDays,
   differenceInHours,
@@ -43,21 +40,19 @@ export function timeAgo(givenDate: Date): string {
   return `${secondsDiff} seconds ago`;
 }
 
-// Example usage:
-const pastDate = new Date("2023-09-15T14:00:00"); // Use your given date
-
-export const getContestantStage = (
-  contestants: Contestants,
-  username?: string
-): ContestantStage => {
+export function getContestantStage<T>(
+  contestants: T[],
+  username?: string,
+): ContestantStage {
   if (!username) {
     return "LOGIN";
   }
   if (!contestants) {
     return "NOT_JOINED";
   }
-  if (contestants.some((c) => c.username === username)) {
-    return "JOINED";
+
+  if (contestants.some((c) => (c as any).username === username)) {
+    return 'JOINED'
   }
   return "NOT_JOINED";
 };

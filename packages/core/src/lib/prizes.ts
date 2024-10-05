@@ -242,8 +242,11 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   async getPrizeById(prizeId: string) {
     const prize = await this.db.query.prizes.findFirst({
       where: eq(prizes.id, prizeId),
-    });
-    return prize;
+    })
+    if (!prize) {
+      throw new Error('Prize not found')
+    }
+    return prize
   }
 
   async getPrizeBySlug(slug: string) {
@@ -266,14 +269,6 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       },
     });
     return prize;
-  }
-
-  getPrizeFactoryV2Address() {
-    const constants =
-      CONTRACT_CONSTANTS_PER_CHAIN[
-        this.chainId as keyof typeof CONTRACT_CONSTANTS_PER_CHAIN
-      ];
-    return constants.PRIZE_FACTORY_V2_ADDRESS;
   }
 
   async approveDeployedPrize(prizeId: string, contractAddress: string) {
@@ -427,8 +422,17 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
 
     return voteId;
   }
-  async addUsdcFunds(data: z.infer<typeof insertDonationSchema>) {
-    const donation = await this.db.insert(donations).values(data).execute();
+  async addUsdcFunds(
+    data: Omit<typeof donations.$inferInsert, 'token' | 'decimals'>,
+  ) {
+    const donation = await this.db
+      .insert(donations)
+      .values({
+        ...data,
+        token: 'USDC',
+        decimals: 6,
+      })
+      .execute()
 
     return donation;
   }

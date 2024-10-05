@@ -10,7 +10,17 @@ import { SiweMessage } from 'siwe-viem'
 import { viaprize } from './viaprize'
 
 import type { DefaultSession } from 'next-auth'
+import { z } from 'zod'
 
+export const userSessionSchema = z.object({
+  username: z.string(),
+  id: z.string(),
+  wallet: z.object({
+    address: z.string(),
+    key: z.string().nullable(),
+  }),
+  isAdmin: z.boolean(),
+})
 declare module 'next-auth' {
   /**
    * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
@@ -20,7 +30,10 @@ declare module 'next-auth' {
       /** The user's postal address. */
       username?: string
       id?: string
-      walletAddress?: string
+      wallet?: {
+        address: string
+        key?: string | null
+      }
       isAdmin?: boolean
       /**
        * By default, TypeScript merges new interface properties and overwrites existing ones.
@@ -58,6 +71,7 @@ const SiweProvider = Credentials({
     const user = await viaprize.users.getUserByWalletAddress(
       result.data.address,
     )
+
     if (user) {
       return {
         id: user.id,
@@ -91,12 +105,13 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
         throw new Error('No sub')
       }
       const user = await viaprize.users.getUserById(token.sub)
+
       return {
         ...token,
         name: user?.name,
         email: user?.email,
         username: user?.username,
-        walletAddress: user?.wallets[0]?.address,
+        wallet: user?.wallets[0],
         isAdmin: user?.isAdmin,
       }
     },
@@ -107,8 +122,8 @@ export const { auth, handlers, signIn, signOut, unstable_update } = NextAuth({
           ...session.user,
           username: token.username,
           id: token.sub,
-          walletAddress: token.walletAddress,
           isAdmin: token.isAdmin,
+          wallet: token.wallet,
         },
       }
     },

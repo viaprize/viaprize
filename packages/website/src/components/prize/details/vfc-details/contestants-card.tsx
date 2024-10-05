@@ -6,10 +6,10 @@ import type { PrizeStages } from '@viaprize/core/lib/prizes'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Card } from '@viaprize/ui/card'
 import { Suspense } from 'react'
-import SubmitWorkButton from '../submissions-voting/submit-work-button'
+import SubmitWorkButton from '../submissions/submit-work-button'
 import JoinContestantButton from './join-contestant-button'
 export type ContestantStage = 'NOT_JOINED' | 'JOINED' | 'SUBMITTED' | 'LOGIN'
-
+export type Contestants = typeof api.prizes.getContestants.useQuery
 function ContestantCardButton({
   stage,
   prizeId,
@@ -57,7 +57,7 @@ export default function ContestantsCard({
 }) {
   const [contestants] = api.prizes.getContestants.useSuspenseQuery(prizeId)
   const { session } = useAuth()
-  const contestantStage = getContestantStage(
+  const contestantStage = getContestantStage<(typeof contestants)[number]>(
     contestants,
     session?.user.username,
   )

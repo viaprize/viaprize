@@ -13,6 +13,13 @@ export class PrizesBlockchain extends Blockchain {
     })
     return data
   }
+  getPrizeFactoryV2Address() {
+    const constants =
+      CONTRACT_CONSTANTS_PER_CHAIN[
+        this.chainId as keyof typeof CONTRACT_CONSTANTS_PER_CHAIN
+      ]
+    return constants.PRIZE_FACTORY_V2_ADDRESS
+  }
   async getEncodedEndVoting() {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
@@ -26,6 +33,22 @@ export class PrizesBlockchain extends Blockchain {
       abi: PRIZE_V2_ABI,
       functionName: 'endDispute',
       args: [],
+    })
+    return data
+  }
+  async getEncodedAddUsdcFunds(
+    amount: bigint,
+    deadline: bigint,
+    v: number,
+    s: `0x${string}`,
+    r: `0x${string}`,
+    ethSignedMessageHash: `0x${string}`,
+    fiatPayment: boolean,
+  ) {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'addUsdcFunds',
+      args: [amount, deadline, v, s, r, ethSignedMessageHash, fiatPayment],
     })
     return data
   }

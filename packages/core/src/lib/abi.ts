@@ -1641,3 +1641,50 @@ export const TRANSACTION_BATCH_ABI = [
     type: 'function',
   },
 ] as const
+
+export const NONCE_TOKEN_ABI = [
+  {
+    constant: true,
+    inputs: [
+      {
+        name: 'owner',
+        type: 'address',
+      },
+    ],
+    name: 'nonces',
+    outputs: [
+      {
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    payable: false,
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const
+
+export const ERC20_PERMIT_SIGN_TYPE = {
+  Permit: [
+    {
+      name: 'owner',
+      type: 'address',
+    },
+    {
+      name: 'spender',
+      type: 'address',
+    },
+    {
+      name: 'value',
+      type: 'uint256',
+    },
+    {
+      name: 'nonce',
+      type: 'uint256',
+    },
+    {
+      name: 'deadline',
+      type: 'uint256',
+    },
+  ],
+} as const
