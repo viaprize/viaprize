@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import { useAuth } from "@/hooks/useAuth";
-import { api } from "@/trpc/react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@viaprize/ui/button";
+import { useAuth } from '@/hooks/useAuth'
+import { api } from '@/trpc/react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from '@viaprize/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@viaprize/ui/dialog";
+} from '@viaprize/ui/dialog'
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@viaprize/ui/drawer";
+} from '@viaprize/ui/drawer'
 import {
   Form,
   FormControl,
@@ -25,56 +25,56 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@viaprize/ui/form";
-import { Input } from "@viaprize/ui/input";
-import { Label } from "@viaprize/ui/label";
-import { Textarea } from "@viaprize/ui/textarea";
-import { Trophy } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+} from '@viaprize/ui/form'
+import { Input } from '@viaprize/ui/input'
+import { Label } from '@viaprize/ui/label'
+import { Textarea } from '@viaprize/ui/textarea'
+import { Trophy } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 const formSchema = z.object({
   description: z.string().min(1, {
-    message: "Description is required",
+    message: 'Description is required',
   }),
   link: z.string().optional(),
-});
+})
 export default function SubmissionDialog({
   totalFunds,
   prizeId,
 }: {
-  prizeId: string;
-  totalFunds: number;
+  prizeId: string
+  totalFunds: number
 }) {
-  const router = useRouter();
-  const [isMobile, setIsMobile] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter()
+  const [isMobile, setIsMobile] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      description: "",
+      description: '',
     },
-  });
-  const addSubmission = api.prizes.addSubmission.useMutation();
+  })
+  const addSubmission = api.prizes.addSubmission.useMutation()
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    console.log(values)
     await addSubmission.mutateAsync({
       prizeId,
       submissionText: values.description,
-    });
-    router.refresh();
-  };
+    })
+    router.refresh()
+  }
 
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkIfMobile();
-    window.addEventListener("resize", checkIfMobile);
-    return () => window.removeEventListener("resize", checkIfMobile);
-  }, []);
-  const { session } = useAuth();
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkIfMobile()
+    window.addEventListener('resize', checkIfMobile)
+    return () => window.removeEventListener('resize', checkIfMobile)
+  }, [])
+  const { session } = useAuth()
 
   const Content = () => (
     <div className="space-y-4">
@@ -128,7 +128,7 @@ export default function SubmissionDialog({
         </form>
       </Form>
     </div>
-  );
+  )
 
   if (isMobile) {
     return (
@@ -145,7 +145,7 @@ export default function SubmissionDialog({
           </div>
         </DrawerContent>
       </Drawer>
-    );
+    )
   }
 
   return (
@@ -160,5 +160,5 @@ export default function SubmissionDialog({
         <Content />
       </DialogContent>
     </Dialog>
-  );
+  )
 }

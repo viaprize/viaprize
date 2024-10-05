@@ -7,7 +7,6 @@ import { revalidatePath } from "next/cache";
 import { Resource } from "sst";
 import { bus } from "sst/aws/bus";
 import { z } from "zod";
-
 import {
   adminProcedure,
   createTRPCRouter,
@@ -48,7 +47,6 @@ export const prizeRouter = createTRPCRouter({
         ctx.viaprize.users.getCacheTag("LASTEST_LEADERBOARD"),
         async () => await ctx.viaprize.users.getLatestUsersByTotalFundsWon()
       )) ?? [];
-
     return {
       totalPrizePool,
       totalIdeas,
@@ -60,7 +58,6 @@ export const prizeRouter = createTRPCRouter({
   getActivePrizes: publicProcedure.query(async ({ ctx }) => {
     const count = await withCache(
       ctx,
-
       ctx.viaprize.prizes.getCacheTag("ACTIVE_PRIZES_COUNT"),
       async () => await ctx.viaprize.prizes.getDeployedPrizesCount()
     );
@@ -72,7 +69,6 @@ export const prizeRouter = createTRPCRouter({
     .query(async ({ input, ctx }) => {
       const prize = await withCache(
         ctx,
-
         ctx.viaprize.prizes.getCacheTag("SLUG_PRIZE", input),
         async () => await ctx.viaprize.prizes.getPrizeBySlug(input)
       );
@@ -90,26 +86,9 @@ export const prizeRouter = createTRPCRouter({
     );
     return prizes;
   }),
-
-  getFilteredPrizes: publicProcedure
-    .input(
-      z.object({
-        categories: z.array(z.string()).optional(),
-        prizeStatus: z.enum(["active", "ended"]).optional(),
-        minAmount: z.number().optional(),
-        maxAmount: z.number().optional(),
-        sort: z.enum(["ASC", "DESC"]).optional(),
-      })
-    )
-    .query(async ({ input, ctx }) => {
-      const prizes = await ctx.viaprize.prizes.getFilteredPrizes(input);
-      return prizes;
-    }),
-
   getPendingPrizes: adminProcedure.query(async ({ ctx }) => {
     const prizes = await withCache(
       ctx,
-
       ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
       async () => await ctx.viaprize.prizes.getPendingPrizes()
     );
@@ -160,7 +139,6 @@ export const prizeRouter = createTRPCRouter({
           }
         }
       );
-
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag("PENDING_PRIZES"),
       });
@@ -271,11 +249,9 @@ export const prizeRouter = createTRPCRouter({
           to: prize.primaryContractAddress as `0x${string}`,
           value: "0",
         },
-
         "gasless",
         "vault"
       );
-
       if (!simulated) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -298,7 +274,6 @@ export const prizeRouter = createTRPCRouter({
           const submissionCreatedEvents = events.filter(
             (e) => e.eventName === "SubmissionCreated"
           );
-
           if (!submissionCreatedEvents[0]?.args.submissionHash) {
             throw new TRPCError({
               code: "INTERNAL_SERVER_ERROR",
@@ -358,7 +333,6 @@ export const prizeRouter = createTRPCRouter({
         BigInt(input.voteAmount),
         input.v,
         input.s as `0x${string}`,
-
         input.r as `0x${string}`
       );
 
@@ -368,11 +342,9 @@ export const prizeRouter = createTRPCRouter({
           to: prize.primaryContractAddress as `0x${string}`,
           value: "0",
         },
-
         "gasless",
         "signer"
       );
-
       if (!simulated) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -388,7 +360,6 @@ export const prizeRouter = createTRPCRouter({
             value: "0",
           },
         ],
-
         "gasless"
       );
 

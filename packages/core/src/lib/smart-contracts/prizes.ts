@@ -1,40 +1,40 @@
-import { encodeFunctionData, hexToString, stringToHex } from "viem";
-import type { prizes } from "../../database/schema";
-import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from "../abi";
-import { CONTRACT_CONSTANTS_PER_CHAIN } from "../constants";
-import { Blockchain } from "./blockchain";
+import { encodeFunctionData, hexToString, stringToHex } from 'viem'
+import type { prizes } from '../../database/schema'
+import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../abi'
+import { CONTRACT_CONSTANTS_PER_CHAIN } from '../constants'
+import { Blockchain } from './blockchain'
 
 export class PrizesBlockchain extends Blockchain {
   async getEncodedStartSubmission(submissionDurationInMinutes: number) {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
-      functionName: "startSubmissionPeriod",
+      functionName: 'startSubmissionPeriod',
       args: [BigInt(submissionDurationInMinutes)],
-    });
-    return data;
+    })
+    return data
   }
   getPrizeFactoryV2Address() {
     const constants =
       CONTRACT_CONSTANTS_PER_CHAIN[
         this.chainId as keyof typeof CONTRACT_CONSTANTS_PER_CHAIN
-      ];
-    return constants.PRIZE_FACTORY_V2_ADDRESS;
+      ]
+    return constants.PRIZE_FACTORY_V2_ADDRESS
   }
   async getEncodedEndVoting() {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
-      functionName: "endVotingPeriod",
+      functionName: 'endVotingPeriod',
       args: [],
-    });
-    return data;
+    })
+    return data
   }
   async getEncodedEndDispute() {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
-      functionName: "endDispute",
+      functionName: 'endDispute',
       args: [],
-    });
-    return data;
+    })
+    return data
   }
   async getEncodedAddUsdcFunds(
     amount: bigint,
@@ -43,53 +43,53 @@ export class PrizesBlockchain extends Blockchain {
     s: `0x${string}`,
     r: `0x${string}`,
     ethSignedMessageHash: `0x${string}`,
-    fiatPayment: boolean
+    fiatPayment: boolean,
   ) {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
-      functionName: "addUsdcFunds",
+      functionName: 'addUsdcFunds',
       args: [amount, deadline, v, s, r, ethSignedMessageHash, fiatPayment],
-    });
-    return data;
+    })
+    return data
   }
   async getEncodedAddVoteData(
     submissionHash: `0x${string}`,
     voteAmount: bigint,
     v: number,
     s: `0x${string}`,
-    r: `0x${string}`
+    r: `0x${string}`,
   ) {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
-      functionName: "vote",
+      functionName: 'vote',
       args: [submissionHash, voteAmount, v, s, r],
-    });
-    return data;
+    })
+    return data
   }
   async getEncodedAddSubmissionData(
     contestant: `0x${string}`,
-    submissionText: string
+    submissionText: string,
   ) {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
-      functionName: "addSubmission",
+      functionName: 'addSubmission',
       args: [contestant, stringToHex(submissionText)],
-    });
-    return data;
+    })
+    return data
   }
   async getEncodedDeployPrizeData(
     customPrize: Pick<
       typeof prizes.$inferSelect,
-      "id" | "proposerAddress" | "platformFeePercentage" | "authorFeePercentage"
-    >
+      'id' | 'proposerAddress' | 'platformFeePercentage' | 'authorFeePercentage'
+    >,
   ) {
     const constants =
       CONTRACT_CONSTANTS_PER_CHAIN[
         this.chainId as keyof typeof CONTRACT_CONSTANTS_PER_CHAIN
-      ];
+      ]
     const data = encodeFunctionData({
       abi: PRIZE_FACTORY_ABI,
-      functionName: "createViaPrize",
+      functionName: 'createViaPrize',
       args: [
         customPrize.id,
         customPrize.proposerAddress as `0x${string}`,
@@ -104,39 +104,39 @@ export class PrizesBlockchain extends Blockchain {
         constants.ETH_PRICE,
         constants.WETH,
       ],
-    });
-    return data;
+    })
+    return data
   }
 
   async getEncodedEndSubmissionAndStartVoting(
-    customPrize: Pick<typeof prizes.$inferInsert, "votingDurationInMinutes">
+    customPrize: Pick<typeof prizes.$inferInsert, 'votingDurationInMinutes'>,
   ) {
-    const endSubmissionPeriodData = await this.getEncodedEndSubmission();
+    const endSubmissionPeriodData = await this.getEncodedEndSubmission()
     const startVotingPeriodData = await this.getEncodedStartVoting({
       votingDurationInMinutes: customPrize.votingDurationInMinutes,
-    });
+    })
 
     return {
       endSubmissionPeriodData,
       startVotingPeriodData,
-    };
+    }
   }
   async getEncodedEndSubmission() {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
-      functionName: "endSubmissionPeriod",
+      functionName: 'endSubmissionPeriod',
       args: [],
-    });
-    return data;
+    })
+    return data
   }
   async getEncodedStartVoting(
-    customPrize: Pick<typeof prizes.$inferInsert, "votingDurationInMinutes">
+    customPrize: Pick<typeof prizes.$inferInsert, 'votingDurationInMinutes'>,
   ) {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
-      functionName: "startVotingPeriod",
+      functionName: 'startVotingPeriod',
       args: [BigInt(customPrize.votingDurationInMinutes)],
-    });
-    return data;
+    })
+    return data
   }
 }

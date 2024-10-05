@@ -100,7 +100,6 @@ export const prizesRelations = relations(prizes, ({ one, many }) => ({
   secondaryContractAddresses: many(wallets),
   comments: many(prizeComments),
 }));
-
 export const insertPrizeSchema = createInsertSchema(prizes);
 export const selectPrizeSchema = createSelectSchema(prizes);
 export type selectPrizeType = z.input<typeof selectPrizeSchema>;
