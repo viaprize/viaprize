@@ -1,40 +1,40 @@
 // src/components/fetch-explore-prize.tsx
 
-import type { SearchParams } from '@/lib/utils'
-import { api } from '@/trpc/server'
-import { prizeFilterParamsSchema } from '@/validators/params'
-import { IconArrowsSort, IconFilter } from '@tabler/icons-react'
-import { Button } from '@viaprize/ui/button'
+import type { SearchParams } from "@/lib/utils";
+import { api } from "@/trpc/server";
+import { prizeFilterParamsSchema } from "@/validators/params";
+import { IconArrowsSort, IconFilter } from "@tabler/icons-react";
+import { Button } from "@viaprize/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@viaprize/ui/sheet'
-import ExploreCard from './explore-card'
-import PrizeFilterComponent from './prize-filter-component'
+} from "@viaprize/ui/sheet";
+import ExploreCard from "./explore-card";
+import PrizeFilterComponent from "./prize-filter-component";
 
 export default async function FetchExplorePrize({
   searchParams,
 }: {
-  searchParams: SearchParams
+  searchParams: SearchParams;
 }) {
   // Parse the search parameters using Zod schema
-  const params = prizeFilterParamsSchema.parse(searchParams)
+  const params = prizeFilterParamsSchema.parse(searchParams);
 
   // Parse categories into an array
   const categoriesArray = params.categories
-    ? params.categories.split(',').map((item) => item.trim())
-    : undefined
+    ? params.categories.split(",").map((item) => item.trim())
+    : undefined;
 
   // Parse prizeAmount into min and max values
-  let minAmount: number | undefined
-  let maxAmount: number | undefined
+  let minAmount: number | undefined;
+  let maxAmount: number | undefined;
   if (params.prizeAmount) {
-    const [min, max] = params.prizeAmount.split('-').map(Number)
-    minAmount = min
-    maxAmount = max
+    const [min, max] = params.prizeAmount.split("-").map(Number);
+    minAmount = min;
+    maxAmount = max;
   }
 
   // Fetch filtered prizes from the backend
@@ -44,9 +44,9 @@ export default async function FetchExplorePrize({
     minAmount,
     maxAmount,
     sort: params.sort,
-  })
-  const activePrizes = await api.prizes.getActivePrizes()
-  const deployedPrizes = await api.prizes.getDeployedPrizes()
+  });
+  const activePrizes = await api.prizes.getActivePrizes();
+  const deployedPrizes = await api.prizes.getDeployedPrizes();
   return (
     <section>
       <div className="flex w-full justify-between items-center p-6">
@@ -76,9 +76,9 @@ export default async function FetchExplorePrize({
           <ExploreCard
             key={prize.id}
             funds={prize.funds ?? 0}
-            imageUrl={prize.imageUrl ?? ''}
+            imageUrl={prize.imageUrl ?? ""}
             title={prize.title}
-            prizeStage={prize.stage ?? 'NOT_STARTED'}
+            prizeStage={prize.stage ?? "NOT_STARTED"}
             numberOfContestants={prize.numberOfContestants ?? 0}
             numberOfFunders={prize.numberOfFunders ?? 0}
             numberOfComments={prize.numberOfComments ?? 0}
@@ -87,5 +87,5 @@ export default async function FetchExplorePrize({
         ))}
       </section>
     </section>
-  )
+  );
 }
