@@ -1,33 +1,33 @@
-import AboutContent from "@/components/prize/details/about-content";
-import EndSubmissionAndStartVotingButton from "@/components/prize/details/buttons/end-submission-and-start-voting-button";
-import EndVotingButton from "@/components/prize/details/buttons/end-voting-button";
-import StartSubmissionButton from "@/components/prize/details/buttons/start-submission-button";
-import DetailHeader from "@/components/prize/details/details-header";
-import SubmissionVoting from "@/components/prize/details/submissions-voting/submission-voting";
+import AboutContent from '@/components/prize/details/about-content'
+import EndSubmissionAndStartVotingButton from '@/components/prize/details/buttons/end-submission-and-start-voting-button'
+import EndVotingButton from '@/components/prize/details/buttons/end-voting-button'
+import StartSubmissionButton from '@/components/prize/details/buttons/start-submission-button'
+import DetailHeader from '@/components/prize/details/details-header'
+import SubmissionVoting from '@/components/prize/details/submissions-voting/submission-voting'
 import ContestantsCard, {
   type ContestantStage,
-} from "@/components/prize/details/vfc-details/contestants-card";
-import VisionaryFunderCard from "@/components/prize/details/vfc-details/visionary-funder-card";
-import Winners from "@/components/prize/details/vfc-details/winners";
-import { auth } from "@/server/auth";
-import { api } from "@/trpc/server";
+} from '@/components/prize/details/vfc-details/contestants-card'
+import VisionaryFunderCard from '@/components/prize/details/vfc-details/visionary-funder-card'
+import Winners from '@/components/prize/details/vfc-details/winners'
+import { auth } from '@/server/auth'
+import { api } from '@/trpc/server'
 
-import { IconArrowLeft } from "@tabler/icons-react";
-import { Separator } from "@viaprize/ui/separator";
-import { redirect } from "next/navigation";
+import { IconArrowLeft } from '@tabler/icons-react'
+import { Separator } from '@viaprize/ui/separator'
+import { redirect } from 'next/navigation'
 
 export default async function FetchPrize({
   params: { slug },
 }: {
-  params: { slug: string };
+  params: { slug: string }
 }) {
-  const prize = await api.prizes.getPrizeBySlug(slug);
-  const session = await auth();
+  const prize = await api.prizes.getPrizeBySlug(slug)
+  const session = await auth()
   if (!prize) {
-    return <div>Prize not found</div>;
+    return <div>Prize not found</div>
   }
   if (session && !session.user.username) {
-    return redirect("/onboard");
+    return redirect('/onboard')
   }
   return (
     <div className="lg:flex h-full">
@@ -41,12 +41,12 @@ export default async function FetchPrize({
           name={prize.author.name ?? prize.authorUsername}
           stage={prize.stage}
           image={prize.imageUrl}
-          avatar={prize.author.image || ""}
+          avatar={prize.author.image || ''}
           title={prize.title}
           prizeId={prize.id}
         />
         <Separator className="my-2" />
-        <AboutContent badges={["Technology"]} description={prize.description} />
+        <AboutContent badges={['Technology']} description={prize.description} />
         <SubmissionVoting submissions={prize.submissions} />
 
         {prize.primaryContractAddress && session && session.user.isAdmin ? (
@@ -79,5 +79,5 @@ export default async function FetchPrize({
         />
       </div>
     </div>
-  );
+  )
 }

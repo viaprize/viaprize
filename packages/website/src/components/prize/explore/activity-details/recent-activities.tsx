@@ -1,17 +1,17 @@
-import { timeAgo } from "@/lib/utils";
-import type { api } from "@/trpc/server";
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Card } from "@viaprize/ui/card";
+import { timeAgo } from '@/lib/utils'
+import type { api } from '@/trpc/server'
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Card } from '@viaprize/ui/card'
 
 export type Activity = Pick<
   Awaited<ReturnType<typeof api.prizes.getPrizeActivities>>,
-  "recentActivities"
->["recentActivities"];
+  'recentActivities'
+>['recentActivities']
 
 export default function RecentActivities({
   activities,
 }: {
-  activities: Activity;
+  activities: Activity
 }) {
   return (
     <Card className="p-3 text-sm text-muted-foreground">
@@ -31,7 +31,7 @@ export default function RecentActivities({
                 <AvatarFallback>
                   {activityItem.user.username
                     ? activityItem.user.username.charAt(0).toUpperCase()
-                    : "?"}
+                    : '?'}
                 </AvatarFallback>
               </Avatar>
               <div>
@@ -46,5 +46,5 @@ export default function RecentActivities({
         ))}
       </div>
     </Card>
-  );
+  )
 }
