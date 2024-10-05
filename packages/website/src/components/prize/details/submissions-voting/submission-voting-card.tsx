@@ -1,15 +1,15 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@viaprize/ui/avatar";
-import { Card } from "@viaprize/ui/card";
-import { Input } from "@viaprize/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Card } from '@viaprize/ui/card'
+import { Input } from '@viaprize/ui/input'
 
 interface User {
-  id: number;
-  description: string;
-  name: string;
-  avatar: string;
-  submissionCreated: string;
-  votes: number | string;
-  onVoteChange: (id: number, newVotes: number | string) => void;
+  id: number
+  description: string
+  name: string
+  avatar: string
+  submissionCreated: string
+  votes: number | string
+  onVoteChange: (id: number, newVotes: number | string) => void
 }
 
 export default function SubmissionVotingCard({
@@ -29,9 +29,9 @@ export default function SubmissionVotingCard({
             <AvatarImage src={avatar} alt={name} />
             <AvatarFallback>
               {name
-                .split(" ")
+                .split(' ')
                 .map((word) => word[0])
-                .join("")}
+                .join('')}
             </AvatarFallback>
           </Avatar>
           <div>
@@ -52,5 +52,5 @@ export default function SubmissionVotingCard({
         />
       </div>
     </Card>
-  );
+  )
 }

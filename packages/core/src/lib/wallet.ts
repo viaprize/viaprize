@@ -85,6 +85,39 @@ export class Wallet extends Blockchain {
     return res.data
   }
 
+  async signUsdcTransactionForCustodial({
+    spender,
+    key,
+    value,
+    deadline,
+  }: { spender: `0x${string}`; key: string; value: number; deadline: number }) {
+    const res = await (
+      await fetch(`${this.url}/wallet/sign-usdc`, {
+        body: JSON.stringify({
+          spender,
+          value,
+          key,
+          deadline,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': this.walletApiKey,
+          'x-chain-id': this.chainId.toString(),
+        },
+        method: 'POST',
+      })
+    )
+      .json()
+      .then((res) => {
+        console.log({ res })
+        return {
+          hash: (res as any).hash as string,
+          signature: (res as any).signature as string,
+        }
+      })
+    return res
+  }
+
   async sendTransaction(tx: TransactionData[], type: WalletType) {
     const transactionHash = await (
       await fetch(`${this.url}/${type}`, {

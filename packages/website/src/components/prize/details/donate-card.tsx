@@ -24,6 +24,7 @@ import {
 } from '@viaprize/ui/dialog'
 
 import { usdcSignTypeHash } from '@/lib/utils'
+import { api } from '@/trpc/react'
 import { Input } from '@viaprize/ui/input'
 import { Label } from '@viaprize/ui/label'
 import { RadioGroup, RadioGroupItem } from '@viaprize/ui/radio-group'
@@ -63,42 +64,93 @@ export default function DonateCard({
   const { address, isConnected } = useAccount()
   const { session } = useAuth()
   const { signTypedDataAsync } = useSignTypedData()
+  const addUsdcFundsForUsers =
+    api.prizes.addUsdcFundsCryptoForUser.useMutation()
+  const addUsdcFundsForUsersAnonymously =
+    api.prizes.addUsdcFundsCryptoForAnonymousUser.useMutation()
+  const generateSignature = async (
+    address: `0x${string}`,
+    spender: `0x${string}`,
+  ) => {
+    const chainId = Number.parseInt(env.NEXT_PUBLIC_CHAIN_ID) as ValidChainIDs
+    const constants = CONTRACT_CONSTANTS_PER_CHAIN[chainId]
 
-  const handleCryptoDonation = async () => {
+    const amountInUSDC = BigInt(Number.parseFloat(amount) * 1000000)
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000)
+    const nonce = await readContract(wagmiConfig, {
+      abi: NONCE_TOKEN_ABI,
+      address: constants.USDC,
+      functionName: 'nonces',
+      args: [address],
+    })
+    const { usdcSign, hash } = usdcSignTypeHash({
+      chainId,
+      deadline,
+      nonce: BigInt(nonce),
+      owner: address,
+      spender: spender,
+      value: amountInUSDC,
+      usdcContract: constants.USDC,
+    })
+    const signature = await signTypedDataAsync({
+      types: ERC20_PERMIT_SIGN_TYPE,
+      primaryType: 'Permit',
+      domain: usdcSign.domain,
+      message: usdcSign.message,
+    })
+    const rsv = parseSignature(signature)
+    return { rsv, hash, deadline, amountInUSDC }
+  }
+  const handleCryptoDonationAnonymously = async () => {
     console.log('Donation with wallet')
     try {
       if (!address) {
         throw new Error('No wallet connected found')
       }
-      const chainId = Number.parseInt(env.NEXT_PUBLIC_CHAIN_ID) as ValidChainIDs
-      const constants = CONTRACT_CONSTANTS_PER_CHAIN[chainId]
+      const { amountInUSDC, deadline, hash, rsv } = await generateSignature(
+        address,
+        contractAddress as `0x${string}`,
+      )
 
-      const amountInUSDC = BigInt(Number.parseFloat(amount) * 1000000)
-      const deadline = BigInt(Math.floor(Date.now() / 1000) + 100_000)
-      const nonce = await readContract(wagmiConfig, {
-        abi: NONCE_TOKEN_ABI,
-        address: constants.USDC,
-        functionName: 'nonces',
-        args: [address],
+      await addUsdcFundsForUsersAnonymously.mutateAsync({
+        amount: Number.parseInt(amountInUSDC.toString()),
+        deadline: Number.parseInt(deadline.toString()),
+        ethSignedHash: hash,
+        r: rsv.r,
+        s: rsv.s,
+        v: Number.parseInt(rsv.v?.toString() ?? '0'),
+        contractAddress: contractAddress,
       })
-      const { usdcSign } = usdcSignTypeHash({
-        chainId,
-        deadline,
-        nonce: BigInt(nonce),
-        owner: address,
-        spender: contractAddress,
-        value: amountInUSDC,
-        usdcContract: constants.USDC,
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  const handleCryptoDonation = async () => {
+    console.log('Donation with wallet')
+
+    try {
+      if (!address) {
+        throw new Error('No wallet connected found')
+      }
+      if (!session?.user?.wallet) {
+        throw new Error('No user found')
+      }
+      const isCustodial = !session.user.wallet.key
+      const { amountInUSDC, deadline, hash, rsv } = await generateSignature(
+        address,
+        isCustodial ? address : (contractAddress as `0x${string}`),
+      )
+
+      await addUsdcFundsForUsers.mutateAsync({
+        amount: Number.parseInt(amountInUSDC.toString()),
+        deadline: Number.parseInt(deadline.toString()),
+        ethSignedHash: hash,
+        r: rsv.r,
+        s: rsv.s,
+        v: Number.parseInt(rsv.v?.toString() ?? '0'),
+        owner: session.user.wallet.address,
+        contractAddress: contractAddress,
       })
-      const signature = await signTypedDataAsync({
-        types: ERC20_PERMIT_SIGN_TYPE,
-        primaryType: 'Permit',
-        domain: usdcSign.domain,
-        message: usdcSign.message,
-      })
-      const rsv = parseSignature(signature)
-      console.log(rsv)
-      // Handle the donation with the signature
     } catch (e) {
       console.log(e)
     }
@@ -116,8 +168,13 @@ export default function DonateCard({
             <Label htmlFor="card">Donate with Card Anonymously</Label>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="crypto" id="crypto" />
-            <Label htmlFor="crypto">Donate with Wallet Anonymously</Label>
+            <RadioGroupItem
+              value="crypto-anonymously"
+              id="crypto-anonymously"
+            />
+            <Label htmlFor="crypto-anonymously">
+              Donate with Wallet Anonymously
+            </Label>
           </div>
         </RadioGroup>
       )
@@ -166,6 +223,14 @@ export default function DonateCard({
       case 'crypto':
         return isConnected ? (
           <Button onClick={handleCryptoDonation}>Donate ${amount}</Button>
+        ) : (
+          <Button onClick={openConnectModal}>Connect Wallet</Button>
+        )
+      case 'crypto-anonymously':
+        return isConnected ? (
+          <Button onClick={handleCryptoDonationAnonymously}>
+            Donate ${amount}
+          </Button>
         ) : (
           <Button onClick={openConnectModal}>Connect Wallet</Button>
         )

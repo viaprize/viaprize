@@ -36,7 +36,7 @@ export class PrizesBlockchain extends Blockchain {
     })
     return data
   }
-  async getEncodedAddUsdcFunds(
+  getEncodedAddUsdcFunds(
     amount: bigint,
     deadline: bigint,
     v: number,

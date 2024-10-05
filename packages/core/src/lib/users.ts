@@ -95,7 +95,7 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
     let address = data.walletAddress
       ? data.walletAddress.toLowerCase()
       : undefined
-    let key: string
+    let key: string | undefined = undefined
     if (!address) {
       const wallet = await this.wallet.generateWallet()
       address = wallet.address.toLowerCase()
@@ -104,34 +104,23 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
     if (!address) {
       throw new Error('Address is required either not generated')
     }
-    if (!data.walletAddress) {
-      await this.db.transaction(async (tx) => {
-        await tx
-          .update(users)
-          .set({
-            name: data.name,
-            email: data.email,
-            username: data.username,
-          })
-          .where(eq(users.id, data.userId))
-        await tx.insert(wallets).values({
-          address: address,
-          network: data.network,
-          key: key,
+
+    await this.db.transaction(async (tx) => {
+      await tx
+        .update(users)
+        .set({
+          name: data.name,
+          email: data.email,
           username: data.username,
         })
-      })
-      return true
-    }
-    await this.db
-      .update(users)
-      .set({
-        name: data.name,
-        email: data.email,
+        .where(eq(users.id, data.userId))
+      await tx.insert(wallets).values({
+        address: address,
+        network: data.network,
+        key: key,
         username: data.username,
       })
-      .where(eq(users.id, data.userId))
-
+    })
     return true
   }
 

@@ -42,16 +42,5 @@ export const userRouter = createTRPCRouter({
         username: input.username,
         userId: ctx.session.user.id,
       })
-      if (success) {
-        await unstable_update({
-          user: {
-            email: input.email,
-            name: input.name,
-            walletAddress: input.walletAddress?.toLowerCase(),
-            id: ctx.session.user.id,
-            username: input.username,
-          },
-        })
-      }
     }),
 })
