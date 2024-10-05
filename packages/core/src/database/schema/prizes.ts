@@ -10,7 +10,7 @@ import {
 } from 'drizzle-orm/pg-core'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 import { nanoid } from 'nanoid'
-import type { z } from 'zod'
+import { z } from 'zod'
 import { prizeComments } from './prize-comments'
 import { prizesToContestants } from './prizes-to-contestants'
 import { submissions } from './submissions'
@@ -51,8 +51,8 @@ export const prizes = pgTable('prizes', {
   submissionDurationInMinutes: integer('submissionDurationInMinutes').notNull(),
   votingDurationInMinutes: integer('votingDurationInMinutes').notNull(),
   primaryContractAddress: text('primaryContractAddress'),
-  judgesAddresses: json('judgesAddresses').$type<string[]>(),
-  skillSets: json('skillSets').$type<string[]>(),
+  judgesAddresses: json('judgesAddresses').$type<string[]>().default([]),
+  skillSets: json('skillSets').$type<string[]>().default([]),
   priorities: text('priorities').array(),
   imageUrl: varchar('imageUrl'),
 
@@ -100,6 +100,16 @@ export const prizesRelations = relations(prizes, ({ one, many }) => ({
   secondaryContractAddresses: many(wallets),
   comments: many(prizeComments),
 }))
-export const insertPrizeSchema = createInsertSchema(prizes)
-export const selectPrizeSchema = createSelectSchema(prizes)
-export type selectPrizeType = z.input<typeof selectPrizeSchema>
+
+export const insertPrizeSchema = createInsertSchema(prizes, {
+  judgesAddresses: z.array(z.string()).optional(),
+  skillSets: z.array(z.string()),
+  priorities: z.array(z.string()).optional(),
+})
+export const selectPrizeSchema = createSelectSchema(prizes, {
+  judgesAddresses: z.array(z.string()).optional(),
+  skillSets: z.array(z.string()),
+  priorities: z.array(z.string()).optional(),
+})
+export type selectPrizeType = z.infer<typeof selectPrizeSchema>
+export type insertPrizeType = z.infer<typeof insertPrizeSchema>

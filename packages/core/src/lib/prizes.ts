@@ -23,6 +23,7 @@ import {
   activities,
   donations,
   type insertDonationSchema,
+  type insertPrizeType,
   prizeComments,
   prizes,
   prizesToContestants,
@@ -311,17 +312,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       .where(eq(prizes.id, prizeId))
   }
 
-  async addPrizeProposal(data: {
-    title: string
-    description: string
-    submissionStartDate: string
-    submissionDuration: number
-    votingStartDate: string
-    votingDuration: number
-    imageUrl: string
-    username: string
-    proposerAddress: string
-  }) {
+  async addPrizeProposal(data: insertPrizeType) {
     const slug = stringToSlug(data.title)
     const randomId = nanoid(3)
     const prizeId = await this.db.transaction(async (trx) => {
@@ -334,16 +325,8 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       const [prize] = await trx
         .insert(prizes)
         .values({
-          authorUsername: data.username,
-          description: data.description,
-          imageUrl: data.imageUrl,
-          submissionDurationInMinutes: data.submissionDuration,
-          startVotingDate: data.votingStartDate,
-          title: data.title,
+          ...data,
           slug: slugExists ? `${slug}_${randomId}` : slug,
-          votingDurationInMinutes: data.votingDuration,
-          proposerAddress: data.proposerAddress,
-          startSubmissionDate: data.submissionStartDate,
         })
         .returning({
           id: prizes.id,

@@ -6,6 +6,7 @@ import { GeistSans } from 'geist/font/sans'
 import type { Metadata } from 'next'
 import getConfig from 'next/config'
 import { headers } from 'next/headers'
+import { Toaster } from 'sonner'
 import { cookieToInitialState } from 'wagmi'
 import { Providers } from './providers'
 
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
+        <Toaster />
         <Providers initialState={initialState}>{children}</Providers>
       </body>
     </html>

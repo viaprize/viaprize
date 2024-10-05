@@ -11,6 +11,7 @@ import {
   CHAIN_ID,
   DATABASE_URL,
   NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
+  OPENAI_API_KEY,
   RPC_URL,
   WALLET_API_KEY,
   WALLET_PAYMENT_INFRA_API,
@@ -33,6 +34,7 @@ export const website = new sst.aws.Nextjs('website', {
     CHAIN_ID,
     RPC_URL,
     WALLET_API_KEY,
+    OPENAI_API_KEY,
     imageBucket,
     eventBus,
     cacheTable,
@@ -52,5 +54,6 @@ export const website = new sst.aws.Nextjs('website', {
     CHAIN_ID: CHAIN_ID.value,
     RPC_URL: RPC_URL.value,
     WALLET_API_KEY: WALLET_API_KEY.value,
+    OPENAI_API_KEY: OPENAI_API_KEY.value,
   },
 })

@@ -98,21 +98,21 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
     const extractedUrl = `${new URL(imageUploadUrl).origin}${
       new URL(imageUploadUrl).pathname
     }`
-    await mutation.mutateAsync({
-      title: values.title,
-      description: values.description,
-      submissionStartDate: values.submissionStartDate.toISOString(),
-      submissionDuration: differenceInMinutes(
-        values.submissionEndDate,
-        values.submissionStartDate,
-      ),
-      votingStartDate: values.votingStartDate.toISOString(),
-      votingDuration: differenceInMinutes(
-        values.votingEndDate,
-        values.votingStartDate,
-      ),
-      imageUrl: extractedUrl,
-    })
+    // await mutation.mutateAsync({
+    //   title: values.title,
+    //   description: values.description,
+    //   submissionStartDate: values.submissionStartDate.toISOString(),
+    //   submissionDuration: differenceInMinutes(
+    //     values.submissionEndDate,
+    //     values.submissionStartDate,
+    //   ),
+    //   votingStartDate: values.votingStartDate.toISOString(),
+    //   votingDuration: differenceInMinutes(
+    //     values.votingEndDate,
+    //     values.votingStartDate,
+    //   ),
+    //   imageUrl: extractedUrl,
+    // })
   }
 
   return (

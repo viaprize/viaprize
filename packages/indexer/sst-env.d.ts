@@ -74,6 +74,10 @@ declare module 'sst' {
       type: 'sst.sst.Secret'
       value: string
     }
+    OpenAiApiKey: {
+      type: 'sst.sst.Secret'
+      value: string
+    }
     RpcUrl: {
       type: 'sst.sst.Secret'
       value: string

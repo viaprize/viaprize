@@ -1,5 +1,6 @@
 import { viaprize } from '@/server/viaprize'
 import { TRPCError } from '@trpc/server'
+import { insertPrizeSchema } from '@viaprize/core/database/schema/prizes'
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '@viaprize/core/lib/abi'
 import { Events } from '@viaprize/core/viaprize'
 import { ViaprizeUtils } from '@viaprize/core/viaprize-utils'
@@ -14,8 +15,10 @@ import {
   publicProcedure,
   withCache,
 } from '../trpc'
+import { prizesAiRouter } from './prize-ai'
 
 export const prizeRouter = createTRPCRouter({
+  ai: prizesAiRouter,
   getContestants: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
@@ -162,22 +165,9 @@ export const prizeRouter = createTRPCRouter({
 
   createPrize: protectedProcedure
     .input(
-      z.object({
-        title: z.string().min(2, {
-          message: 'Title must be at least 2 characters.',
-        }),
-        description: z.string().min(10, {
-          message: 'Description must be at least 10 characters.',
-        }),
-        submissionStartDate: z.string(),
-        submissionDuration: z.number().min(1, {
-          message: 'Submission duration must be at least 1 minute.',
-        }),
-        votingStartDate: z.string(),
-        votingDuration: z.number().min(1, {
-          message: 'Voting duration must be at least 1 minute.',
-        }),
-        imageUrl: z.string().url(),
+      insertPrizeSchema.omit({
+        authorUsername: true,
+        proposerAddress: true,
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -198,14 +188,8 @@ export const prizeRouter = createTRPCRouter({
       }
 
       const prizeId = await ctx.viaprize.prizes.addPrizeProposal({
-        description: input.description,
-        imageUrl: input.imageUrl,
-        submissionStartDate: input.submissionStartDate,
-        submissionDuration: input.submissionDuration,
-        title: input.title,
-        username: ctx.session.user.username,
-        votingDuration: input.votingDuration,
-        votingStartDate: input.votingStartDate,
+        ...input,
+        authorUsername: ctx.session.user.username,
         proposerAddress: ctx.session.user.wallet.address,
       })
 
