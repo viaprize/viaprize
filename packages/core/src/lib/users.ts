@@ -84,6 +84,22 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
     return result?.user
   }
 
+  async getUserBySlug(slug: string) {
+    const user = await this.db.query.users.findFirst({
+      where: eq(users.username, slug),
+      with: {
+        wallets: {
+          columns: {
+            address: true,
+            network: true,
+          },
+        },
+        prizes: true,
+      },
+    })
+    return user
+  }
+
   async onboardUser(data: {
     name: string
     email: string
