@@ -14,15 +14,15 @@ export default async function DashBoardlayout({
     redirect('/onboard')
   }
   return (
-    <div className=" h-dvh w-full overflow-hidden bg-slate-100 dark:bg-zinc-900">
+    <div className=" h-dvh w-full overflow-hidden bg-slate-100">
+      <header className="sticky top-0 z-50 md:mt-2 mx-2">
+        <Header />
+      </header>
       {/* Main content area with sidebar and children */}
       <div className="flex md:flex-row flex-col h-full">
         <SideNavbarConfigure />
 
         <div className="w-full h-full flex-col flex">
-          <header className="sticky top-0 z-50 md:mt-2 mx-2">
-            <Header />
-          </header>
           {/* Children content on the right */}
           <main className=" flex-1 overflow-auto bg-background rounded-md md:mx-2 md:my-2 ">
             {children}

@@ -1,5 +1,3 @@
-// src/components/fetch-explore-prize.tsx
-
 import type { SearchParams } from '@/lib/utils'
 import { api } from '@/trpc/server'
 import { prizeFilterParamsSchema } from '@/validators/params'
@@ -12,6 +10,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@viaprize/ui/sheet'
+import { FetchPrizesCsv } from '../../oldprizes/fetch-csv'
+import OldPrizeCard from '../../oldprizes/oldprize-card'
 import ExploreCard from './explore-card'
 import PrizeFilterComponent from './prize-filter-component'
 
@@ -20,15 +20,12 @@ export default async function FetchExplorePrize({
 }: {
   searchParams: SearchParams
 }) {
-  // Parse the search parameters using Zod schema
   const params = prizeFilterParamsSchema.parse(searchParams)
 
-  // Parse categories into an array
   const categoriesArray = params.categories
     ? params.categories.split(',').map((item) => item.trim())
     : undefined
 
-  // Parse prizeAmount into min and max values
   let minAmount: number | undefined
   let maxAmount: number | undefined
   if (params.prizeAmount) {
@@ -37,7 +34,6 @@ export default async function FetchExplorePrize({
     maxAmount = max
   }
 
-  // Fetch filtered prizes from the backend
   const filteredPrizes = await api.prizes.getFilteredPrizes({
     categories: categoriesArray,
     prizeStatus: params.prizeStatus,
@@ -47,6 +43,7 @@ export default async function FetchExplorePrize({
   })
   const activePrizes = await api.prizes.getActivePrizes()
   const deployedPrizes = await api.prizes.getDeployedPrizes()
+  const data = await FetchPrizesCsv()
   return (
     <section>
       <div className="flex w-full justify-between items-center p-6">
@@ -85,6 +82,31 @@ export default async function FetchExplorePrize({
             href={`/prize/${prize.slug}`}
           />
         ))}
+
+        {data.reverse().map((prize) => {
+          if (
+            (prize.Awarded && prize.PrizeName) ||
+            prize.DatePosted ||
+            prize.AwardedUSDe ||
+            prize.WinnersAmount
+          ) {
+            const status = prize.WinnersAmount ? 'Won' : 'Refunded'
+            return (
+              <OldPrizeCard
+                key={prize.Id}
+                imageUrl={prize.CardImage}
+                title={prize.PrizeName}
+                funds={`${prize.AwardedUSDe} USD`}
+                prizeStage={status}
+                numberOfContestants={prize.ContestantsCount}
+                datePosted={prize.DatePosted}
+                category={prize.Category}
+                href={`/prize/old/${prize.Id}`}
+              />
+            )
+          }
+          return null
+        })}
       </section>
     </section>
   )
