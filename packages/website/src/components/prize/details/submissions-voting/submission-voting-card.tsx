@@ -1,3 +1,4 @@
+import type { PrizeStages } from '@viaprize/core/lib/prizes'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Card } from '@viaprize/ui/card'
 import { Input } from '@viaprize/ui/input'
@@ -8,6 +9,7 @@ interface User {
   name: string
   avatar: string
   submissionCreated: string
+  prizeStage: PrizeStages
   votes: number | string
   onVoteChange: (id: number, newVotes: number | string) => void
 }
@@ -19,6 +21,7 @@ export default function SubmissionVotingCard({
   avatar,
   submissionCreated,
   votes,
+  prizeStage,
   onVoteChange,
 }: User) {
   return (
@@ -42,14 +45,16 @@ export default function SubmissionVotingCard({
             <p>{description}</p>
           </div>
         </div>
-        <Input
-          placeholder="Enter votes"
-          value={votes}
-          onChange={(e) => onVoteChange(id, e.target.value)}
-          type="number"
-          min="0"
-          className="w-1/4"
-        />
+        {prizeStage === 'VOTING_OPEN' ? (
+          <Input
+            placeholder="Enter votes"
+            value={votes}
+            onChange={(e) => onVoteChange(id, e.target.value)}
+            type="number"
+            min="0"
+            className="w-1/4"
+          />
+        ) : null}
       </div>
     </Card>
   )

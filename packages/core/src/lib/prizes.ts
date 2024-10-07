@@ -227,7 +227,9 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     })
     console.log(prize)
     if (!prize) {
-      throw new Error('Prize not found')
+      throw new Error(
+        `Prize not found with contract address ${contractAddress}`,
+      )
     }
     return prize
   }
@@ -426,15 +428,34 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   async addUsdcFunds(
     data: Omit<typeof donations.$inferInsert, 'token' | 'decimals'>,
   ) {
-    const donation = await this.db
-      .insert(donations)
-      .values({
+    await this.db.transaction(async (trx) => {
+      await trx.insert(donations).values({
         ...data,
         token: 'USDC',
         decimals: 6,
       })
-      .execute()
+      console.log('Donation added')
+      const prize = await trx.query.prizes.findFirst({
+        where: eq(prizes.primaryContractAddress, data.recipientAddress),
+        columns: {
+          funds: true,
+        },
+      })
 
-    return donation
+      if (!prize) {
+        throw new Error(
+          `Prize not found with contract address ${data.recipientAddress}`,
+        )
+      }
+      console.log('Prize found')
+
+      await trx.update(prizes).set({
+        funds:
+          Number.parseFloat(data.valueInToken?.toString() ?? '0') / 1_000_000 +
+          prize.funds,
+        numberOfFunders: sql`${prizes.numberOfFunders} + 1`,
+      })
+      console.log('Prize updated')
+    })
   }
 }

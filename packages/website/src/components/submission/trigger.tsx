@@ -63,6 +63,7 @@ export default function SubmissionDialog({
       prizeId,
       submissionText: values.description,
     })
+
     router.refresh()
   }
 

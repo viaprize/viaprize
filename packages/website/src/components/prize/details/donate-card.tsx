@@ -29,6 +29,7 @@ import { Input } from '@viaprize/ui/input'
 import { Label } from '@viaprize/ui/label'
 import { RadioGroup, RadioGroupItem } from '@viaprize/ui/radio-group'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useAccount, useSignTypedData } from 'wagmi'
 import { readContract } from 'wagmi/actions'
@@ -61,6 +62,7 @@ export default function DonateCard({
   }
 
   const { openConnectModal } = useConnectModal()
+  const router = useRouter()
   const { address, isConnected } = useAccount()
   const { session } = useAuth()
   const { signTypedDataAsync } = useSignTypedData()
@@ -98,9 +100,11 @@ export default function DonateCard({
       domain: usdcSign.domain,
       message: usdcSign.message,
     })
+    router.refresh()
     const rsv = parseSignature(signature)
     return { rsv, hash, deadline, amountInUSDC }
   }
+
   const handleCryptoDonationAnonymously = async () => {
     console.log('Donation with wallet')
     try {
@@ -121,6 +125,7 @@ export default function DonateCard({
         v: Number.parseInt(rsv.v?.toString() ?? '0'),
         contractAddress: contractAddress,
       })
+      router.refresh()
     } catch (e) {
       console.log(e)
     }
@@ -135,7 +140,8 @@ export default function DonateCard({
       if (!session?.user?.wallet) {
         throw new Error('No user found')
       }
-      const isCustodial = !session.user.wallet.key
+      const isCustodial = !!session.user.wallet.key
+      console.log(isCustodial, 'isCustodial')
       const { amountInUSDC, deadline, hash, rsv } = await generateSignature(
         address,
         isCustodial ? address : (contractAddress as `0x${string}`),
@@ -151,6 +157,7 @@ export default function DonateCard({
         owner: session.user.wallet.address,
         contractAddress: contractAddress,
       })
+      router.refresh()
     } catch (e) {
       console.log(e)
     }

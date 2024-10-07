@@ -23,19 +23,22 @@ export default async function FetchPrize({
 }) {
   const prize = await api.prizes.getPrizeBySlug(slug)
   const session = await auth()
-  if (!prize) {
+  if (!prize || !prize.primaryContractAddress) {
     return <div>Prize not found</div>
   }
   if (session && !session.user.username) {
     return redirect('/onboard')
   }
+
   return (
     <div className="lg:flex h-full">
       <div className="w-full space-y-3 md:w-[75%] h-full lg:max-h-screen overflow-auto border-r-2">
         <div className="flex items-center text-sm font-semibold ml-3 mt-3">
           <IconArrowLeft className="mr-1" size={20} /> Back
         </div>
+
         <DetailHeader
+          contractAddress={prize.primaryContractAddress}
           funds={prize.funds}
           projectName={prize.title}
           name={prize.author.name ?? prize.authorUsername}
@@ -47,7 +50,10 @@ export default async function FetchPrize({
         />
         <Separator className="my-2" />
         <AboutContent badges={['Technology']} description={prize.description} />
-        <SubmissionVoting submissions={prize.submissions} />
+        <SubmissionVoting
+          prizeStage={prize.stage}
+          submissions={prize.submissions}
+        />
 
         {prize.primaryContractAddress && session && session.user.isAdmin ? (
           <>

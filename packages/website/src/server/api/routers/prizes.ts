@@ -20,7 +20,6 @@ import { revalidatePath } from 'next/cache'
 import { Resource } from 'sst'
 import { bus } from 'sst/aws/bus'
 import { parseSignature } from 'viem'
-import { readContract } from 'wagmi/actions'
 import { z } from 'zod'
 import {
   adminProcedure,
@@ -226,14 +225,8 @@ export const prizeRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const submitterAddress = ctx.session.user.wallet?.address
+      console.log({ submitterAddress })
       const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
-      if (!prize) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Prize not found',
-          cause: 'Prize not found',
-        })
-      }
       if (!submitterAddress) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
@@ -256,22 +249,6 @@ export const prizeRouter = createTRPCRouter({
           input.submissionText,
         )
 
-      const simulated = await ctx.viaprize.wallet.simulateTransaction(
-        {
-          data: txData,
-          to: prize.primaryContractAddress as `0x${string}`,
-          value: '0',
-        },
-        'gasless',
-        'vault',
-      )
-      if (!simulated) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Transaction failed',
-          cause: 'Transaction failed',
-        })
-      }
       const txHash = await ctx.viaprize.wallet.withTransactionEvents(
         PRIZE_V2_ABI,
         [
@@ -500,26 +477,6 @@ export const prizeRouter = createTRPCRouter({
         input.contractAddress,
       )
       const user = userSessionSchema.parse(ctx.session.user)
-      if (!prize) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Prize not found',
-          cause: 'Prize not found',
-        })
-      }
-      if (
-        !(
-          ctx.session.user.wallet?.address &&
-          ctx.session.user.username &&
-          ctx.session.user.name
-        )
-      ) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You must have a wallet address and username to cast a vote',
-          cause: 'User does not have a wallet address or username',
-        })
-      }
       const chainId = Number.parseInt(env.CHAIN_ID) as ValidChainIDs
       const constants = CONTRACT_CONSTANTS_PER_CHAIN[chainId]
 
@@ -599,6 +556,7 @@ export const prizeRouter = createTRPCRouter({
           const fundsAddedEvents = events.filter(
             (e) => e.eventName === 'Donation',
           )
+          console.log({ fundsAddedEvents })
           if (!fundsAddedEvents[0]?.args.amount) {
             throw new TRPCError({
               code: 'INTERNAL_SERVER_ERROR',
@@ -606,6 +564,7 @@ export const prizeRouter = createTRPCRouter({
               cause: 'No donation found',
             })
           }
+
           await ctx.viaprize.prizes.addUsdcFunds({
             recipientAddress: prize.primaryContractAddress as `0x${string}`,
             username: ctx.session.user.username,

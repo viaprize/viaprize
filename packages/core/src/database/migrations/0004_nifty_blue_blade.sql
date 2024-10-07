@@ -1,0 +1,1 @@
+ALTER TABLE "prizes" ALTER COLUMN "totalFunds" SET DEFAULT '0';

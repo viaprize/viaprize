@@ -1,9 +1,12 @@
 import { relations } from 'drizzle-orm'
 import {
+  decimal,
   integer,
   json,
+  numeric,
   pgEnum,
   pgTable,
+  real,
   text,
   timestamp,
   varchar,
@@ -60,7 +63,7 @@ export const prizes = pgTable('prizes', {
   authorFeePercentage: integer('proposerFeePercentage').default(5).notNull(),
   platformFeePercentage: integer('platformFeePercentage').default(5).notNull(),
   contractVersion: integer('contractVersion').default(201),
-  funds: integer('totalFunds').default(0).notNull(),
+  funds: real('totalFunds').default(0).notNull(),
   totalRefunded: integer('totalRefunded').default(0).notNull(),
   totalVotes: integer('totalWithdrawn').default(0).notNull(),
   stage: prizeStagesEnum('prizeStage').default('NOT_STARTED'),

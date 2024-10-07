@@ -22,6 +22,27 @@
       "when": 1728019971817,
       "tag": "0002_living_gorgon",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1728163118951,
+      "tag": "0003_medical_moira_mactaggert",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1728163139914,
+      "tag": "0004_nifty_blue_blade",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1728211633620,
+      "tag": "0005_yellow_black_panther",
+      "breakpoints": true
     }
   ]
 }

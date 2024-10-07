@@ -1,17 +1,21 @@
 'use client'
 import type { api } from '@/trpc/server'
+import type { PrizeStages } from '@viaprize/core/lib/prizes'
 import { Button } from '@viaprize/ui/button'
 import { Separator } from '@viaprize/ui/separator'
 import { format } from 'date-fns'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import SubmissionVotingCard from './submission-voting-card'
 
 export default function SubmissionVoting({
+  prizeStage,
   submissions,
 }: {
   submissions: NonNullable<
     Awaited<ReturnType<typeof api.prizes.getPrizeBySlug>>
   >['submissions']
+  prizeStage: PrizeStages
 }) {
   const [userVotes, setUserVotes] = useState(
     submissions.map((submission) => ({
@@ -26,13 +30,17 @@ export default function SubmissionVoting({
     )
     setUserVotes(updatedUsers)
   }
+  const router = useRouter()
 
   return (
     <div className="p-3">
-      <div className="w-full flex items-center justify-between text-xl">
-        Submissions ({submissions.length})
-        <div>Total voting Points left: {100}</div>
-      </div>
+      {prizeStage === 'VOTING_OPEN' ? (
+        <div className="w-full flex items-center justify-between text-xl">
+          Submissions ({submissions.length})
+          <div>Total voting Points left: {100}</div>
+        </div>
+      ) : null}
+
       <Separator className="my-2" />
       {submissions.map((submission) => {
         const formattedDate = format(
@@ -44,6 +52,7 @@ export default function SubmissionVoting({
 
         return (
           <SubmissionVotingCard
+            prizeStage={prizeStage}
             id={1234}
             key={submission.username}
             description={submission.description}
@@ -55,7 +64,10 @@ export default function SubmissionVoting({
           />
         )
       })}
-      <Button className="mt-3 w-full">Submit All Votes</Button>
+
+      {prizeStage === 'VOTING_OPEN' && (
+        <Button className="mt-3 w-full">Submit All Votes</Button>
+      )}
     </div>
   )
 }

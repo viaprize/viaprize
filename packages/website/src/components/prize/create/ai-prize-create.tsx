@@ -54,6 +54,8 @@ export default function BountyCreationForm() {
   const { mutateAsync: createPrize, isPending: creatingPrize } =
     api.prizes.createPrize.useMutation()
 
+  console.log({ values: form.getValues() })
+
   const onSubmit = async (values: FormValues) => {
     console.log(values, 'values')
 
@@ -94,6 +96,7 @@ export default function BountyCreationForm() {
     const extractedUrl = `${new URL(imageUploadUrl).origin}${
       new URL(imageUploadUrl).pathname
     }`
+    console.log({ values })
     toast.promise(
       createPrize({
         title: values.title,

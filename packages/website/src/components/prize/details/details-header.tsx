@@ -17,6 +17,7 @@ export default async function DetailsHeader({
   stage,
   title,
   prizeId,
+  contractAddress,
 }: {
   projectName: string
   image?: string | null
@@ -25,6 +26,7 @@ export default async function DetailsHeader({
   stage: PrizeStages
   funds: number
   title: string
+  contractAddress: string
   prizeId: string
 }) {
   return (
@@ -60,7 +62,7 @@ export default async function DetailsHeader({
 
       <div className="w-full">
         <DonateCard
-          contractAddress="0x"
+          contractAddress={contractAddress}
           projectImage={image ?? ''}
           funds={funds}
           projectName={projectName}
