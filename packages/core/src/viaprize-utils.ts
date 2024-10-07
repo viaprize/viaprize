@@ -14,6 +14,7 @@ export async function publishDeployedPrizeCacheDelete(
   await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
     key: viaprize.prizes.getCacheTag('DEPLOYED_PRIZES'),
   })
+
   if (slug) {
     await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
       key: viaprize.prizes.getCacheTag('SLUG_PRIZE', slug ?? ''),
@@ -31,6 +32,7 @@ export async function handleEndSubmissionTransaction(
   if (!txBody.transactions[0]) {
     throw new Error('No transaction data found')
   }
+  console.log({ prize })
   const finalTxData =
     prize.numberOfSubmissions > 0
       ? txBody.transactions
@@ -47,7 +49,7 @@ export async function handleEndSubmissionTransaction(
       'FiatFunderRefund',
     ],
     async (event) => {
-      console.log(`${event} event received`)
+      console.log(`${JSON.stringify(event)} event received`)
       const submissionEndedEvents = event.filter(
         (e) => e.eventName === 'SubmissionEnded',
       )
@@ -61,16 +63,19 @@ export async function handleEndSubmissionTransaction(
         (e) => e.eventName === 'FiatFunderRefund',
       )
 
+      console.log({ votingEndedEvents })
+      console.log({ submissionEndedEvents })
+      console.log({ cryptoFunderRefundedEvents })
+
       if (submissionEndedEvents && votingEndedEvents) {
         await viaprize.prizes.startVotingPeriodByContractAddress(
           prizeContractAddress,
         )
       }
       if (submissionEndedEvents) {
-        await viaprize.prizes.refundByContractAddress({
-          primaryContractAddress: prizeContractAddress,
-          totalRefunded: 0,
-        })
+        await viaprize.prizes.startVotingPeriodByContractAddress(
+          prizeContractAddress,
+        )
       }
       if (cryptoFunderRefundedEvents || fiatFunderRefundEvents) {
         const totalCryptoFunderRefunded = cryptoFunderRefundedEvents.reduce(

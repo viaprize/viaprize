@@ -13,6 +13,39 @@ export class PrizesBlockchain extends Blockchain {
     })
     return data
   }
+  async isVoter(prizeAddress: `0x${string}`, voterAddress: `0x${string}`) {
+    const isCryptoVoter = await this.blockchainClient.readContract({
+      abi: PRIZE_V2_ABI,
+      address: prizeAddress,
+      functionName: 'isCryptoFunder',
+      args: [voterAddress],
+    })
+    const isFiatVoter = await this.blockchainClient.readContract({
+      abi: PRIZE_V2_ABI,
+      address: prizeAddress,
+      functionName: 'isFiatFunder',
+      args: [voterAddress],
+    })
+    return isCryptoVoter || isFiatVoter
+  }
+  async getTotalVotingLeft(
+    prizeAddress: `0x${string}`,
+    funderAddress: `0x${string}`,
+  ) {
+    const fiatFunderAmount = await this.blockchainClient.readContract({
+      abi: PRIZE_V2_ABI,
+      address: prizeAddress,
+      functionName: 'fiatFunderAmount',
+      args: [funderAddress],
+    })
+    const cryptoFunderAmount = await this.blockchainClient.readContract({
+      abi: PRIZE_V2_ABI,
+      address: prizeAddress,
+      functionName: 'cryptoFunderAmount',
+      args: [funderAddress],
+    })
+    return fiatFunderAmount + cryptoFunderAmount
+  }
   getPrizeFactoryV2Address() {
     const constants =
       CONTRACT_CONSTANTS_PER_CHAIN[

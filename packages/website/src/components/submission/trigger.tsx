@@ -47,7 +47,7 @@ export default function SubmissionDialog({
   prizeId: string
   totalFunds: number
 }) {
-  const router = useRouter()
+  const utils = api.useUtils()
   const [isMobile, setIsMobile] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const form = useForm<z.infer<typeof formSchema>>({
@@ -63,8 +63,7 @@ export default function SubmissionDialog({
       prizeId,
       submissionText: values.description,
     })
-
-    router.refresh()
+    await utils.prizes.getPrizeBySlug.invalidate()
   }
 
   useEffect(() => {

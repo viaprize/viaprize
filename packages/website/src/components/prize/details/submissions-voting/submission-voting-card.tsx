@@ -4,14 +4,15 @@ import { Card } from '@viaprize/ui/card'
 import { Input } from '@viaprize/ui/input'
 
 interface User {
-  id: number
+  id: string
   description: string
   name: string
   avatar: string
   submissionCreated: string
   prizeStage: PrizeStages
   votes: number | string
-  onVoteChange: (id: number, newVotes: number | string) => void
+  onVoteChange: (id: string, newVotes: number | string) => void
+  isVoter?: boolean
 }
 
 export default function SubmissionVotingCard({
@@ -23,6 +24,7 @@ export default function SubmissionVotingCard({
   votes,
   prizeStage,
   onVoteChange,
+  isVoter,
 }: User) {
   return (
     <Card className="p-3">
@@ -45,7 +47,7 @@ export default function SubmissionVotingCard({
             <p>{description}</p>
           </div>
         </div>
-        {prizeStage === 'VOTING_OPEN' ? (
+        {isVoter ? (
           <Input
             placeholder="Enter votes"
             value={votes}

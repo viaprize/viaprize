@@ -1,0 +1,1 @@
+ALTER TABLE "submissions" ADD COLUMN "votes" real DEFAULT 0 NOT NULL;

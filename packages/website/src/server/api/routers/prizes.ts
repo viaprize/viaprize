@@ -94,6 +94,27 @@ export const prizeRouter = createTRPCRouter({
     )
     return count ?? 0
   }),
+  getTotalVotingDetail: protectedProcedure
+    .input(
+      z.object({
+        contractAddress: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const user = userSessionSchema.parse(ctx.session.user)
+      const total = await ctx.viaprize.prizes.blockchain.getTotalVotingLeft(
+        input.contractAddress as `0x${string}`,
+        user.wallet.address as `0x${string}`,
+      )
+      const isVoter = await ctx.viaprize.prizes.blockchain.isVoter(
+        input.contractAddress as `0x${string}`,
+        user.wallet.address as `0x${string}`,
+      )
+      return {
+        total: Number.parseInt(total.toString()) / 1_000_000,
+        isVoter,
+      }
+    }),
 
   getPrizeBySlug: publicProcedure
     .input(z.string())
@@ -205,6 +226,7 @@ export const prizeRouter = createTRPCRouter({
         authorUsername: ctx.session.user.username,
         proposerAddress: ctx.session.user.wallet.address,
       })
+      console.log(Resource.EventBus.name, Events.Cache.Delete, 'nammme')
 
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),

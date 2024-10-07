@@ -100,10 +100,11 @@ export default function DonateCard({
       domain: usdcSign.domain,
       message: usdcSign.message,
     })
-    router.refresh()
+
     const rsv = parseSignature(signature)
     return { rsv, hash, deadline, amountInUSDC }
   }
+  const utils = api.useUtils()
 
   const handleCryptoDonationAnonymously = async () => {
     console.log('Donation with wallet')
@@ -157,9 +158,11 @@ export default function DonateCard({
         owner: session.user.wallet.address,
         contractAddress: contractAddress,
       })
-      router.refresh()
+      await utils.prizes.getPrizeBySlug.invalidate()
     } catch (e) {
       console.log(e)
+    } finally {
+      window.location.reload()
     }
   }
 
@@ -229,7 +232,12 @@ export default function DonateCard({
         )
       case 'crypto':
         return isConnected ? (
-          <Button onClick={handleCryptoDonation}>Donate ${amount}</Button>
+          <Button
+            onClick={handleCryptoDonation}
+            disabled={addUsdcFundsForUsers.isPending}
+          >
+            Donate ${amount}
+          </Button>
         ) : (
           <Button onClick={openConnectModal}>Connect Wallet</Button>
         )

@@ -43,6 +43,13 @@
       "when": 1728211633620,
       "tag": "0005_yellow_black_panther",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1728310013229,
+      "tag": "0006_shocking_nemesis",
+      "breakpoints": true
     }
   ]
 }

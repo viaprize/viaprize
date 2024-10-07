@@ -8,7 +8,7 @@ import { Button } from '@viaprize/ui/button'
 import Image from 'next/image'
 import DonateCard from './donate-card'
 
-export default async function DetailsHeader({
+export default function DetailsHeader({
   funds,
   projectName,
   image,

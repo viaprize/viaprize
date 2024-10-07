@@ -1,3 +1,4 @@
+'use client'
 import AboutContent from '@/components/prize/details/about-content'
 import EndSubmissionAndStartVotingButton from '@/components/prize/details/buttons/end-submission-and-start-voting-button'
 import EndVotingButton from '@/components/prize/details/buttons/end-voting-button'
@@ -9,25 +10,24 @@ import ContestantsCard, {
 } from '@/components/prize/details/vfc-details/contestants-card'
 import VisionaryFunderCard from '@/components/prize/details/vfc-details/visionary-funder-card'
 import Winners from '@/components/prize/details/vfc-details/winners'
+import { useAuth } from '@/hooks/useAuth'
 import { auth } from '@/server/auth'
-import { api } from '@/trpc/server'
+import { api } from '@/trpc/react'
 
 import { IconArrowLeft } from '@tabler/icons-react'
 import { Separator } from '@viaprize/ui/separator'
 import { redirect } from 'next/navigation'
+import { Suspense } from 'react'
 
-export default async function FetchPrize({
+export default function FetchPrize({
   params: { slug },
 }: {
   params: { slug: string }
 }) {
-  const prize = await api.prizes.getPrizeBySlug(slug)
-  const session = await auth()
+  const { data: prize } = api.prizes.getPrizeBySlug.useQuery(slug)
+  const { session } = useAuth()
   if (!prize || !prize.primaryContractAddress) {
-    return <div>Prize not found</div>
-  }
-  if (session && !session.user.username) {
-    return redirect('/onboard')
+    return null
   }
 
   return (
@@ -52,6 +52,7 @@ export default async function FetchPrize({
         <AboutContent badges={['Technology']} description={prize.description} />
         <SubmissionVoting
           prizeStage={prize.stage}
+          contractAddress={prize.primaryContractAddress}
           submissions={prize.submissions}
         />
 
