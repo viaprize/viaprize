@@ -1,7 +1,12 @@
 import { unstable_update } from '@/server/auth'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import { createTRPCRouter, protectedProcedure } from '../trpc'
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+  withCache,
+} from '../trpc'
 
 export const userRouter = createTRPCRouter({
   hello: protectedProcedure
@@ -11,6 +16,20 @@ export const userRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       }
     }),
+
+  getUserBySlug: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const user = await ctx.viaprize.users.getUserBySlug(input)
+      if (!user) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'User not found',
+        })
+      }
+      return user
+    }),
+
   onboardUser: protectedProcedure
     .input(
       z.object({

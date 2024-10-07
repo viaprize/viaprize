@@ -24,7 +24,7 @@ export default function PrizeProfileTabs() {
       <TabsContent value="prizes">
         {' '}
         <Tabs defaultValue="created" className="w-full mt-3">
-          <TabsList className="w-full flex justify-start bg-background items-center space-x-5 ml-2">
+          <TabsList className="w-full flex justify-start bg-background items-center space-x-5 ml-2 ">
             <TabsTrigger
               value="created"
               className="border data-[state=active]:border-primary data-[state=active]:bg-green-100 "
