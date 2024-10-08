@@ -50,6 +50,13 @@
       "when": 1728310013229,
       "tag": "0006_shocking_nemesis",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1728373949262,
+      "tag": "0007_past_firebird",
+      "breakpoints": true
     }
   ]
 }
