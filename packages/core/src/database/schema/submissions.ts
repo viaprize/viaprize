@@ -23,11 +23,9 @@ export const submissions = pgTable('submissions', {
       onDelete: 'cascade',
     })
     .notNull(),
-  username: varchar('username')
-    .references(() => users.username, {
-      onDelete: 'cascade',
-    })
-    .notNull(),
+  username: varchar('username').references(() => users.username, {
+    onDelete: 'cascade',
+  }),
   createdAt: timestamp('createdAt', {
     mode: 'date',
     withTimezone: true,
