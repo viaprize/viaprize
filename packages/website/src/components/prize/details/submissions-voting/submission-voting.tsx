@@ -2,10 +2,10 @@
 import { api } from '@/trpc/react'
 import type { Submissions } from '@/types/submissions'
 import type { PrizeStages } from '@viaprize/core/lib/prizes'
-import { Button } from '@viaprize/ui/button'
+
 import { Separator } from '@viaprize/ui/separator'
 import { format } from 'date-fns'
-import { useRouter } from 'next/navigation'
+
 import { useState } from 'react'
 import { toast } from 'sonner'
 import SubmissionVotingCard from './submission-voting-card'
@@ -68,13 +68,12 @@ export default function SubmissionVoting({
           new Date(submission.createdAt),
           'MMMM dd, yyyy',
         )
-        const userVote = userVotes.find(
-          (vote) => vote.id === submission.submissionHash,
-        )
-        const voteValue = userVote ? userVote.votes : 0
 
         return (
           <SubmissionVotingCard
+            contractAddress={contractAddress}
+            submissionHash={submission.submissionHash}
+            totalVotingAmount={totalVotingAmount?.total ?? 0}
             prizeStage={prizeStage}
             isVoter={isVotingOpen}
             id={submission.submissionHash}
@@ -83,15 +82,11 @@ export default function SubmissionVoting({
             name={submission.username ?? ''}
             submissionCreated={formattedDate}
             avatar={submission.username ?? ''}
-            votes={voteValue}
+            votes={submission.votes}
             onVoteChange={handleVoteChange}
           />
         )
       })}
-
-      {totalVotingAmount?.isVoter && (
-        <Button className="mt-3 w-full">Submit All Votes</Button>
-      )}
     </div>
   )
 }

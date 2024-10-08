@@ -7,7 +7,7 @@ import {
   differenceInMinutes,
   differenceInSeconds,
 } from 'date-fns'
-import { hashTypedData } from 'viem'
+import { encodePacked, hashTypedData, keccak256 } from 'viem'
 
 export function containsUppercase(str: string) {
   return /^[A-Z]+$/.test(str)
@@ -104,4 +104,36 @@ export const usdcSignTypeHash = (
     usdcSign,
     hash: hashTypedData(usdcSign as any),
   }
+}
+
+export function voteMessageHash(
+  submission: string,
+  amount: number,
+  nonce: number,
+  contractAddress: string,
+): string {
+  const encodedMessage = encodePacked(
+    [
+      'string',
+      'bytes32',
+      'string',
+      'uint256',
+      'string',
+      'uint256',
+      'string',
+      'address',
+    ],
+    [
+      'VOTE FOR ',
+      submission as `0x${string}`,
+      ' WITH AMOUNT ',
+      BigInt(amount),
+      ' AND NONCE ',
+      BigInt(nonce),
+      ' WITH PRIZE CONTRACT ',
+      contractAddress as `0x${string}`,
+    ],
+  )
+  const messageHash = keccak256(encodedMessage)
+  return messageHash
 }

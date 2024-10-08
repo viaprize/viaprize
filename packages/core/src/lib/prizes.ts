@@ -14,9 +14,12 @@ import { nanoid } from 'nanoid'
 import {
   type TransactionReceipt,
   encodeFunctionData,
+  encodePacked,
+  keccak256,
   parseEventLogs,
 } from 'viem'
 import { fraxtalTestnet } from 'viem/chains'
+import { createExpect } from 'vitest'
 import type { z } from 'zod'
 import type { ViaprizeDatabase } from '../database'
 import {
@@ -32,7 +35,7 @@ import {
 } from '../database/schema'
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../lib/abi'
 import { CacheTag } from './cache-tag'
-import { CONTRACT_CONSTANTS_PER_CHAIN } from './constants'
+import { CONTRACT_CONSTANTS_PER_CHAIN, type ValidChainIDs } from './constants'
 import { PrizesBlockchain } from './smart-contracts/prizes'
 import { stringToSlug } from './utils'
 
@@ -194,12 +197,31 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   }
 
   async startVotingPeriodByContractAddress(contractAddress: string) {
-    await this.db
-      .update(prizes)
-      .set({
-        stage: 'VOTING_OPEN',
+    const constants =
+      CONTRACT_CONSTANTS_PER_CHAIN[this.chainId as ValidChainIDs]
+    await this.db.transaction(async (trx) => {
+      const prize = await trx.query.prizes.findFirst({
+        where: eq(prizes.primaryContractAddress, contractAddress.toLowerCase()),
       })
-      .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
+      if (!prize) {
+        throw new Error(
+          `Prize not found with contract address ${contractAddress}`,
+        )
+      }
+      await trx
+        .update(prizes)
+        .set({
+          stage: 'VOTING_OPEN',
+        })
+        .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
+
+      await trx.insert(submissions).values({
+        description: 'Vote on this submission, for refund',
+        submitterAddress: constants.ADMINS[0] ?? '0x',
+        prizeId: prize.id,
+        submissionHash: this.blockchain.getRefundSubmissionHash(),
+      })
+    })
   }
 
   async refundByContractAddress({
@@ -393,37 +415,25 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   }
 
   async addVote(
-    data: Pick<
-      typeof votes.$inferSelect,
-      | 'voteHash'
-      | 'submissionHash'
-      | 'prizeId'
-      | 'funderAddress'
-      | 'voteAmount'
-      | 'username'
-    >,
+    data: Pick<typeof submissions.$inferSelect, 'submissionHash' | 'votes'>,
   ) {
-    const voteId = await this.db.transaction(async (trx) => {
-      const [vote] = await trx
-        .insert(votes)
-        .values({
-          voteHash: data.voteHash,
-          submissionHash: data.submissionHash,
-          prizeId: data.prizeId,
-          funderAddress: data.funderAddress,
-          voteAmount: data.voteAmount,
-          username: data.username,
-        })
-        .returning({
-          voteId: votes.voteHash,
-        })
-      if (!vote) {
-        throw new Error('Vote not casted, please try again')
+    await this.db.transaction(async (trx) => {
+      const submission = await trx.query.submissions.findFirst({
+        where: eq(submissions.submissionHash, data.submissionHash),
+        columns: {
+          votes: true,
+        },
+      })
+      if (!submission) {
+        throw new Error('Submission not found')
       }
-      return votes.voteHash
+      await trx
+        .update(submissions)
+        .set({
+          votes: submission.votes + data.votes,
+        })
+        .where(eq(submissions.submissionHash, data.submissionHash))
     })
-
-    return voteId
   }
   async addUsdcFunds(
     data: Omit<typeof donations.$inferInsert, 'token' | 'decimals'>,
