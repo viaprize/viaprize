@@ -3,6 +3,7 @@ import SubmitWorkButton from '@/components/prize/details/submissions-voting/subm
 import { useAuth } from '@/hooks/useAuth'
 import { getContestantStage } from '@/lib/utils'
 import { api } from '@/trpc/react'
+import type { Submissions } from '@/types/submissions'
 import type { PrizeStages } from '@viaprize/core/lib/prizes'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Card } from '@viaprize/ui/card'
@@ -49,16 +50,20 @@ export default function ContestantsCard({
   slug,
   prizeStage,
   totalFunds,
+  submissions,
 }: {
   prizeId: string
   slug: string
   prizeStage: PrizeStages
   totalFunds: number
+  submissions: Submissions
 }) {
   const [contestants] = api.prizes.getContestants.useSuspenseQuery(prizeId)
   const { session } = useAuth()
+  console.log({ submissions })
   const contestantStage = getContestantStage<(typeof contestants)[number]>(
     contestants,
+    submissions,
     session?.user.username,
   )
   console.log({ contestants })

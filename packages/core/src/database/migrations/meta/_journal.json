@@ -57,6 +57,13 @@
       "when": 1728373949262,
       "tag": "0007_past_firebird",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1728395048829,
+      "tag": "0008_lethal_union_jack",
+      "breakpoints": true
     }
   ]
 }

@@ -134,11 +134,11 @@ export default function SubmissionDialog({
     return (
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
-          <Button>Submit Bounty Entry</Button>
+          <Button>Submit Your Work</Button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Submit Your Entry</DrawerTitle>
+            <DrawerTitle>Submit Your Work</DrawerTitle>
           </DrawerHeader>
           <div className="p-4">
             <Content />
@@ -151,11 +151,11 @@ export default function SubmissionDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Submit Bounty Entry</Button>
+        <Button>Submit Your Work</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Submit Your Entry</DialogTitle>
+          <DialogTitle>Submit Your Work</DialogTitle>
         </DialogHeader>
         <Content />
       </DialogContent>

@@ -63,6 +63,7 @@ export class Wallet extends Blockchain {
     ) => Awaited<void>,
   ) {
     const transaction = await this.sendTransaction(tx, type)
+    console.log({ transaction })
     await callback(
       parseEventLogs({ logs: transaction.logs, abi, eventName: events }),
       transaction,
@@ -83,6 +84,43 @@ export class Wallet extends Blockchain {
       data: tx.data as `0x${string}`,
     })
     return res.data
+  }
+  async signVoteForCustodial({
+    amount,
+    contractAddress,
+    encryptedKey,
+    submissionHash,
+  }: {
+    amount: number
+    contractAddress: `0x${string}`
+    encryptedKey: `0x${string}`
+    submissionHash: `0x${string}`
+  }) {
+    const res = await (
+      await fetch(`${this.url}/wallet/sign-vote`, {
+        body: JSON.stringify({
+          amount,
+          spender: contractAddress,
+          key: encryptedKey,
+          submissionHash,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': this.walletApiKey,
+          'x-chain-id': this.chainId.toString(),
+        },
+        method: 'POST',
+      })
+    )
+      .json()
+      .then((res) => {
+        console.log({ res })
+        return {
+          hash: (res as any).hash as string,
+          signature: (res as any).signature as string,
+        }
+      })
+    return res
   }
 
   async signUsdcTransactionForCustodial({

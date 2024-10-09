@@ -84,11 +84,10 @@ export default function VoteDialog({
     })
     console.log('Vote added')
     await new Promise((r) => setTimeout(r, 2000))
-    console.log('Invalidating cache')
+
     await utils.prizes.getPrizeBySlug.invalidate()
-    console.log('Invalidated cache 2')
+
     await utils.prizes.getTotalVotingDetail.invalidate()
-    console.log('Invalidated cache 3')
   }
 
   return (

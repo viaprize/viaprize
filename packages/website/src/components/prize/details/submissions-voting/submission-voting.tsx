@@ -87,6 +87,23 @@ export default function SubmissionVoting({
           />
         )
       })}
+      {totalVotingAmount && prizeStage === 'VOTING_OPEN' && (
+        <SubmissionVotingCard
+          contractAddress={contractAddress}
+          submissionHash={totalVotingAmount.refundSubmissionHash}
+          totalVotingAmount={totalVotingAmount?.total ?? 0}
+          prizeStage={prizeStage}
+          isVoter={isVotingOpen}
+          id={totalVotingAmount.refundSubmissionHash}
+          key={totalVotingAmount.refundSubmissionHash}
+          description={'Vote on this submission to refund your funds'}
+          name={'Refund'}
+          submissionCreated={format(new Date(), 'MMMM dd, yyyy')}
+          avatar={''}
+          votes={totalVotingAmount.refundVotes}
+          onVoteChange={handleVoteChange}
+        />
+      )}
     </div>
   )
 }

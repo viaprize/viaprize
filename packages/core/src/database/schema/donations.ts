@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, relations, sql } from 'drizzle-orm'
 import {
   boolean,
   integer,
@@ -7,10 +7,12 @@ import {
   pgMaterializedView,
   pgTable,
   serial,
+  text,
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core'
 import { createInsertSchema } from 'drizzle-zod'
+import { prizes } from './prizes'
 import { users } from './users'
 export const donationTokenTypeEnum = pgEnum('donationTokenTypeEnum', [
   'TOKEN',
@@ -36,9 +38,11 @@ export const donations = pgTable('donations', {
   recipientType: recipientTypeEnum('recipientType')
     .notNull()
     .default('UNKNOWN'),
-  transactionId: varchar('transactionId'),
+  transactionId: varchar('transactionId').unique(),
   paymentId: varchar('paymentId').unique(),
-
+  prizeId: varchar('prizeId').references(() => prizes.id, {
+    onDelete: 'set null',
+  }),
   isFiat: boolean('isFiat').notNull().default(false),
   isFullyRefunded: boolean('isRefunded').notNull().default(false),
   isPartiallyRefunded: boolean('isPartiallyRefunded').notNull().default(false),
@@ -55,6 +59,17 @@ export const donations = pgTable('donations', {
     withTimezone: true,
   }).$onUpdate(() => new Date()),
 })
+
+export const donationsRelations = relations(donations, ({ one }) => ({
+  prize: one(prizes, {
+    fields: [donations.prizeId],
+    references: [prizes.id],
+  }),
+  user: one(users, {
+    fields: [donations.username],
+    references: [users.username],
+  }),
+}))
 
 export const prizeDonationsView = pgMaterializedView('prize_donations_view').as(
   (qb) =>
@@ -79,6 +94,6 @@ const donationViews = {
 
 // Schema for inserting a user - can be used to validate API requests
 export const insertDonationSchema = createInsertSchema(donations)
-
+export const selectDonationSchema = createInsertSchema(donations)
 // Create a union type of the variable names
 export type DonationViewNames = keyof typeof donationViews

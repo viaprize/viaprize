@@ -145,7 +145,7 @@ export default function DonateCard({
       console.log(isCustodial, 'isCustodial')
       const { amountInUSDC, deadline, hash, rsv } = await generateSignature(
         address,
-        isCustodial ? address : (contractAddress as `0x${string}`),
+        contractAddress as `0x${string}`,
       )
 
       await addUsdcFundsForUsers.mutateAsync({
@@ -155,7 +155,7 @@ export default function DonateCard({
         r: rsv.r,
         s: rsv.s,
         v: Number.parseInt(rsv.v?.toString() ?? '0'),
-        owner: session.user.wallet.address,
+        owner: address,
         contractAddress: contractAddress,
       })
       await utils.prizes.getPrizeBySlug.invalidate()

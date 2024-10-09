@@ -1,4 +1,5 @@
 import type { ContestantStage } from '@/components/prize/details/vfc-details/contestants-card'
+import type { Submissions } from '@/types/submissions'
 import { ERC20_PERMIT_SIGN_TYPE } from '@viaprize/core/lib/abi'
 import type { ValidChainIDs } from '@viaprize/core/lib/constants'
 import {
@@ -45,10 +46,14 @@ export function timeAgo(givenDate: Date): string {
 
 export function getContestantStage<T>(
   contestants: T[],
+  submissions: Submissions,
   username?: string,
 ): ContestantStage {
   if (!username) {
     return 'LOGIN'
+  }
+  if (submissions.some((s) => s.username === username)) {
+    return 'SUBMITTED'
   }
   if (!contestants) {
     return 'NOT_JOINED'

@@ -14,6 +14,7 @@ export class Blockchain {
       transport: http(this.rpcUrl),
     })
   }
+
   getEncodedERC20PermitFunction(
     owner: `0x${string}`,
     spender: `0x${string}`,

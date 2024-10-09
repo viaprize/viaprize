@@ -35,7 +35,7 @@ export default function SubmissionVotingCard({
   submissionHash,
 }: User) {
   return (
-    <Card className="p-3">
+    <Card className="p-3 my-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Avatar className="mr-2">
@@ -55,7 +55,9 @@ export default function SubmissionVotingCard({
             <p>{description}</p>
           </div>
         </div>
+
         <Badge>Current votes: ${votes}</Badge>
+
         {isVoter ? (
           <VoteDialog
             contractAddress={contractAddress}

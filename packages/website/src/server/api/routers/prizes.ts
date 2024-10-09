@@ -32,6 +32,17 @@ import { prizesAiRouter } from './prize-ai'
 
 export const prizeRouter = createTRPCRouter({
   ai: prizesAiRouter,
+  getFunders: publicProcedure
+    .input(z.object({ prizeId: z.string(), slug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const funders = withCache(
+        ctx,
+        ctx.viaprize.prizes.getCacheTag('FUNDERS_SLUG_PRIZE', input.slug),
+        async () =>
+          await ctx.viaprize.prizes.getFundersByPrizeId(input.prizeId),
+      )
+      return funders
+    }),
   getContestants: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
@@ -110,9 +121,16 @@ export const prizeRouter = createTRPCRouter({
         input.contractAddress as `0x${string}`,
         user.wallet.address as `0x${string}`,
       )
+      const refundVotes = await ctx.viaprize.prizes.blockchain.getRefundVotes(
+        input.contractAddress as `0x${string}`,
+      )
+
       return {
         total: Number.parseInt(total.toString()) / 1_000_000,
         isVoter,
+        refundVotes: Number.parseInt(refundVotes.toString()) / 1_000_000,
+        refundSubmissionHash:
+          ctx.viaprize.prizes.blockchain.getRefundSubmissionHash(),
       }
     }),
 
@@ -205,29 +223,13 @@ export const prizeRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.session.user.username) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You must be logged in to create a prize',
-          cause: 'User is not logged in',
-        })
-      }
-
-      if (!ctx.session.user.wallet) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You must have a wallet address to create a prize',
-          cause: 'User does not have a wallet address',
-        })
-      }
+      const user = userSessionSchema.parse(ctx.session.user)
 
       const prizeId = await ctx.viaprize.prizes.addPrizeProposal({
         ...input,
-        authorUsername: ctx.session.user.username,
-        proposerAddress: ctx.session.user.wallet.address,
+        authorUsername: user.username,
+        proposerAddress: user.wallet.address,
       })
-      console.log(Resource.EventBus.name, Events.Cache.Delete, 'nammme')
-
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
       })
@@ -354,10 +356,16 @@ export const prizeRouter = createTRPCRouter({
         input.contractAddress,
       )
       const isCustodial = !!user.wallet.key
+      console.log(isCustodial, 'isCustodial')
       let signature = isCustodial ? '' : input.signature
       if (isCustodial) {
-        signature = 'a'
-        console.log('custodial')
+        const res = await ctx.viaprize.wallet.signVoteForCustodial({
+          amount: input.amountInUSDC,
+          contractAddress: input.contractAddress as `0x${string}`,
+          encryptedKey: user.wallet.key as `0x${string}`,
+          submissionHash: input.submissionHash as `0x${string}`,
+        })
+        signature = res.signature
       }
       if (!signature) {
         throw new TRPCError({
@@ -493,76 +501,23 @@ export const prizeRouter = createTRPCRouter({
         input.contractAddress,
       )
       const user = userSessionSchema.parse(ctx.session.user)
-      const chainId = Number.parseInt(env.CHAIN_ID) as ValidChainIDs
-      const constants = CONTRACT_CONSTANTS_PER_CHAIN[chainId]
-
       const transactions = []
-      // if its is custodial or not
-      if (user.wallet.key) {
-        const { hash, signature } =
-          await ctx.viaprize.wallet.signUsdcTransactionForCustodial({
-            key: user.wallet.key,
-            spender: prize.primaryContractAddress as `0x${string}`,
-            value: input.amount,
-            deadline: input.deadline,
-          })
-        const rsv = parseSignature(signature as `0x${string}`)
-        const transferToContractData =
-          ctx.viaprize.prizes.blockchain.getEncodedAddUsdcFunds(
-            BigInt(input.amount),
-            BigInt(input.deadline),
-            Number.parseInt(rsv.v?.toString() ?? '0'),
-            rsv.s,
-            rsv.r,
-            hash as `0x${string}`,
-            false,
-          )
-        transactions.push(
-          {
-            to: constants.USDC,
-            value: '0',
-            data: ctx.viaprize.prizes.blockchain.getEncodedERC20PermitFunction(
-              input.owner as `0x${string}`,
-              user.wallet.address as `0x${string}`,
-              BigInt(input.amount),
-              BigInt(input.deadline),
-              input.v,
-              input.r as `0x${string}`,
-              input.s as `0x${string}`,
-            ),
-          },
-          {
-            to: constants.USDC,
-            value: '0',
-            data: ctx.viaprize.prizes.blockchain.getEncodedERC20TransferFromFunction(
-              input.owner as `0x${string}`,
-              user.wallet.address as `0x${string}`,
-              BigInt(input.amount),
-            ),
-          },
-          {
-            to: prize.primaryContractAddress as `0x${string}`,
-            value: '0',
-            data: transferToContractData,
-          },
+      const transferToContractData =
+        ctx.viaprize.prizes.blockchain.getEncodedAllocateFunds(
+          user.wallet.address as `0x${string}`,
+          BigInt(input.amount),
+          BigInt(input.deadline),
+          input.v,
+          input.s as `0x${string}`,
+          input.r as `0x${string}`,
+          input.ethSignedHash as `0x${string}`,
+          false,
         )
-      } else {
-        const transferToContractData =
-          ctx.viaprize.prizes.blockchain.getEncodedAddUsdcFunds(
-            BigInt(input.amount),
-            BigInt(input.deadline),
-            input.v,
-            input.s as `0x${string}`,
-            input.r as `0x${string}`,
-            input.ethSignedHash as `0x${string}`,
-            false,
-          )
-        transactions.push({
-          to: prize.primaryContractAddress as `0x${string}`,
-          value: '0',
-          data: transferToContractData,
-        })
-      }
+      transactions.push({
+        to: prize.primaryContractAddress as `0x${string}`,
+        value: '0',
+        data: transferToContractData,
+      })
       const txHash = await ctx.viaprize.wallet.withTransactionEvents(
         PRIZE_V2_ABI,
         transactions,
@@ -580,13 +535,13 @@ export const prizeRouter = createTRPCRouter({
               cause: 'No donation found',
             })
           }
-
           await ctx.viaprize.prizes.addUsdcFunds({
             recipientAddress: prize.primaryContractAddress as `0x${string}`,
             username: ctx.session.user.username,
             donor: ctx.session.user.name ?? 'Anonymous',
             valueInToken: fundsAddedEvents[0]?.args.amount.toString(),
             isFiat: false,
+            prizeId: prize.id,
           })
           await ViaprizeUtils.publishDeployedPrizeCacheDelete(
             viaprize,
@@ -594,7 +549,6 @@ export const prizeRouter = createTRPCRouter({
           )
         },
       )
-
       return txHash
     }),
 
@@ -626,6 +580,31 @@ export const prizeRouter = createTRPCRouter({
         ctx.viaprize,
         prize.slug,
       )
+    }),
+  endDisputeEarly: adminProcedure
+    .input(z.object({ contractAddress: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
+        input.contractAddress,
+      )
+      const res = ViaprizeUtils.handleEndDispute(
+        ctx.viaprize,
+        {
+          transactions: [
+            {
+              data: ctx.viaprize.prizes.blockchain.getEncodedEndDisputeEarly(),
+              to: input.contractAddress,
+              value: '0',
+            },
+          ],
+        },
+        input.contractAddress,
+      )
+      await ViaprizeUtils.publishDeployedPrizeCacheDelete(
+        ctx.viaprize,
+        prize.slug,
+      )
+      return res
     }),
   endSubmissionAndStartVoting: adminProcedure
     .input(z.object({ contractAddress: z.string() }))

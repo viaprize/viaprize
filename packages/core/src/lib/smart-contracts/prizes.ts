@@ -15,6 +15,15 @@ export class PrizesBlockchain extends Blockchain {
   getRefundSubmissionHash() {
     return keccak256(encodePacked(['string'], ['REFUND']))
   }
+  async getRefundVotes(prizeAddress: `0x${string}`) {
+    const refundVotes = await this.blockchainClient.readContract({
+      abi: PRIZE_V2_ABI,
+      functionName: 'getSubmissionByHash',
+      args: [this.getRefundSubmissionHash()],
+      address: prizeAddress,
+    })
+    return refundVotes.usdcVotes
+  }
 
   async getEncodedStartSubmission(submissionDurationInMinutes: number) {
     const data = encodeFunctionData({
@@ -68,6 +77,39 @@ export class PrizesBlockchain extends Blockchain {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
       functionName: 'endVotingPeriod',
+      args: [],
+    })
+    return data
+  }
+  getEncodedAllocateFunds(
+    voter: `0x${string}`,
+    amount: bigint,
+    deadline: bigint,
+    v: number,
+    s: `0x${string}`,
+    r: `0x${string}`,
+    ethSignedMessageHash: `0x${string}`,
+    fiatPayment: boolean,
+  ) {
+    return encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'addTokenFunds',
+      args: [
+        voter,
+        amount,
+        deadline,
+        v,
+        s,
+        r,
+        ethSignedMessageHash,
+        fiatPayment,
+      ],
+    })
+  }
+  getEncodedEndDisputeEarly() {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'endDisputePeriodEarly',
       args: [],
     })
     return data

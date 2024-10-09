@@ -17,7 +17,7 @@ export const submissions = pgTable('submissions', {
   submitterAddress: text('submitterAddress').notNull(),
   projectLink: text('projectLink'),
   votes: real('votes').default(0).notNull(),
-
+  won: real('won').default(0).notNull(),
   prizeId: varchar('prizeId')
     .references(() => prizes.id, {
       onDelete: 'cascade',
@@ -49,3 +49,5 @@ export const submissionRelations = relations(submissions, ({ one, many }) => ({
   }),
   votes: many(votes),
 }))
+
+export type SubmissionInsert = typeof submissions.$inferInsert
