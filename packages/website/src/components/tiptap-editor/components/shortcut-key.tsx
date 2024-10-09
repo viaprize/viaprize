@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from '@viaprize/ui'
 import * as React from 'react'
 import { getShortcutKey } from '../utils'
 

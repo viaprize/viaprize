@@ -16,7 +16,7 @@ export default async function Dashboard() {
         <OnboardCard
           email={session?.user.email}
           name={session?.user.name}
-          walletAddress={session.user.walletAddress}
+          walletAddress={session.user.wallet?.address}
         />
 
         <div className="hidden bg-muted lg:block">

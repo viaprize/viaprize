@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
 import type { Editor } from '@tiptap/react'
+import { cn } from '@viaprize/ui'
+import { Button } from '@viaprize/ui/button'
+import { Input } from '@viaprize/ui/input'
+import { Label } from '@viaprize/ui/label'
 import type React from 'react'
 import { useRef, useState } from 'react'
 
@@ -41,7 +41,9 @@ const ImageEditBlock = ({
       editor.chain().setImage({ src }).focus().run()
     }
 
-    reader.readAsDataURL(files[0])
+    if (files[0]) {
+      reader.readAsDataURL(files[0])
+    }
 
     close()
   }

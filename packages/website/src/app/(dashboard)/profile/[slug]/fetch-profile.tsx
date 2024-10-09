@@ -1,5 +1,4 @@
 import PrizeProfileTabs from '@/components/profile/prize-profile-tabs'
-import UserBioSocials from '@/components/profile/user-bio-socials'
 import UserPrizeStatus from '@/components/stats-cards/user-prize-status'
 import { api } from '@/trpc/server'
 import {
