@@ -25,13 +25,13 @@ interface OldCardProps {
 export default function OldPrizeCard(props: OldCardProps) {
   return (
     <Link href={props.href} className="block">
-      <Card className="p-3 flex flex-row md:flex-col space-x-3 lg:space-x-0 hover:bg-muted-foreground/10">
+      <Card className="p-3 flex flex-row h-full md:flex-col space-x-3 lg:space-x-0 hover:bg-muted-foreground/10">
         <Image
           src={props.imageUrl}
-          width={50}
-          height={50}
+          width={750}
+          height={750}
           alt=""
-          className="h-40 w-full rounded-md object-fill"
+          className="h-40 w-full rounded-md object-cover aspect-video"
         />
 
         <div className="">

@@ -23,7 +23,7 @@ export default function IdeaMarket() {
         'And also Validate your idea with the community',
       ],
       link: '/prize/create',
-      linkText: 'Create a Proposal',
+      linkText: 'Create a Prize',
     },
     {
       title: 'For Freelancers',

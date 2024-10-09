@@ -28,9 +28,8 @@ export default function ExploreCard(props: ExploreCardProps) {
         <div className="">
           <Image
             src={props.imageUrl}
-            width={50}
-            height={50}
-            quality={100}
+            width={1250}
+            height={1250}
             alt=""
             objectFit="cover"
             className="h-40 w-full rounded-md"
