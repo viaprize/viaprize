@@ -81,8 +81,7 @@ library ErrorAndEventsLibrary {
     event Voted(bytes32 indexed votedTo, address indexed votedBy, uint256 amountVoted);
     event VotingPeriodChanged(uint256 indexed changedAt, uint256 increasedBy, uint256 indexed Deadline);
     event VotingEnded(uint256 indexed endedAt);
-    event FiatFunderRefund(address indexed _address, uint256 _amount, bool refunded);
-    event CryptoFunderRefunded(address indexed _address, uint256 _amount, bool refunded);
+    event FunderRefund(address indexed _address, uint256 _amount, bool isFiat);
     event DisputeRaised(bytes32 indexed _submissionHash, address indexed _contestant);
     event DisputeEnded(uint256 indexed endedAt);
 }

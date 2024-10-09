@@ -44,6 +44,8 @@ export function timeAgo(givenDate: Date): string {
   return `${secondsDiff} seconds ago`
 }
 
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 export function getContestantStage<T>(
   contestants: T[],
   submissions: Submissions,

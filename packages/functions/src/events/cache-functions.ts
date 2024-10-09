@@ -11,6 +11,7 @@ export const publishPrizeCacheDeletes = async (viaprize: Viaprize) => {
     viaprize.prizes.getCacheTag('PENDING_PRIZES'),
     viaprize.prizes.getCacheTag('DEPLOYED_PRIZES'),
     viaprize.prizes.getCacheTag('ACTIVE_PRIZES_COUNT'),
+    viaprize.prizes.getCacheTag('LATEST_PRIZE_ACTIVITIES'),
   ]
   await Promise.all(keys.map((key) => publishCacheDelete(key)))
 }

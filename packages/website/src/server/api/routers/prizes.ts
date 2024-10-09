@@ -65,7 +65,7 @@ export const prizeRouter = createTRPCRouter({
     const recentActivities =
       (await withCache(
         ctx,
-        ctx.viaprize.prizes.getCacheTag('LATEST_PRIZE_ACTIVITES'),
+        ctx.viaprize.prizes.getCacheTag('LATEST_PRIZE_ACTIVITIES'),
         async () => await ctx.viaprize.prizes.getLatestActivitiesInPrizes(),
       )) ?? []
     const leaderboards =
@@ -172,6 +172,7 @@ export const prizeRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
+
       const txData =
         await ctx.viaprize.prizes.blockchain.getEncodedDeployPrizeData({
           authorFeePercentage: prize.authorFeePercentage,
@@ -212,6 +213,7 @@ export const prizeRouter = createTRPCRouter({
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
       })
+
       return txHash
     }),
 

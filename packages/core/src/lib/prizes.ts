@@ -25,7 +25,6 @@ import {
   users,
   votes,
 } from '../database/schema'
-import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../lib/abi'
 import { CacheTag } from './cache-tag'
 import { CONTRACT_CONSTANTS_PER_CHAIN, type ValidChainIDs } from './constants'
 import { PrizesBlockchain } from './smart-contracts/prizes'
@@ -37,7 +36,7 @@ const CACHE_TAGS = {
   DEPLOYED_PRIZES: { value: 'deployed-prizes', requiresSuffix: false },
   SLUG_PRIZE: { value: 'slug-prize-in-', requiresSuffix: true },
   TOTAL_PRIZE_POOL: { value: 'total-prize-pool', requiresSuffix: false },
-  LATEST_PRIZE_ACTIVITES: {
+  LATEST_PRIZE_ACTIVITIES: {
     value: 'latest-prize-activities',
     requiresSuffix: false,
   },
@@ -235,6 +234,14 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         stage: 'DISPUTE_AVAILABLE',
       })
       .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
+  }
+  async addPrizeActivity(
+    data: Pick<typeof activities.$inferInsert, 'activity' | 'username'>,
+  ) {
+    await this.db.insert(activities).values({
+      ...data,
+      tag: 'PRIZE',
+    })
   }
   async endDisputeByContractAddress({
     contractAddress,

@@ -55,6 +55,10 @@ export const handler = bus.subscriber(
           const prize = await viaprize.prizes.getPrizeById(
             event.properties.prizeId,
           )
+          await viaprize.prizes.addPrizeActivity({
+            activity: 'Created a prize',
+            username: prize.authorUsername,
+          })
           if (prize?.submissionDurationInMinutes) {
             await bus.publish(
               Resource.EventBus.name,

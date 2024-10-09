@@ -81,7 +81,7 @@ export default function SubmissionVoting({
             description={submission.description}
             name={submission.username ?? ''}
             submissionCreated={formattedDate}
-            avatar={submission.username ?? ''}
+            avatar={submission.user?.image ?? ''}
             votes={submission.votes}
             onVoteChange={handleVoteChange}
           />

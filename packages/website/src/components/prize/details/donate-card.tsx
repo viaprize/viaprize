@@ -200,12 +200,12 @@ export default function DonateCard({
           <RadioGroupItem value="card" id="card" />
           <Label htmlFor="card">Donate with Card</Label>
         </div>
-        {session.user.wallet?.key && (
+        {/* {session.user.wallet?.key && (
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="custodial" id="custodial" />
             <Label htmlFor="custodial">Donate with Custodial Wallet</Label>
           </div>
-        )}
+        )} */}
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="crypto" id="crypto" />
           <Label htmlFor="crypto">Donate with Crypto</Label>

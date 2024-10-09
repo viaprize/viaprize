@@ -1,7 +1,7 @@
 import { Resource } from 'sst'
 import { bus } from 'sst/aws/bus'
 import { erc20Abi, hashTypedData, parseEventLogs } from 'viem'
-import { ERC20_PERMIT_SIGN_TYPE, PRIZE_V2_ABI } from './lib/abi'
+import { PRIZE_V2_ABI } from './lib/abi'
 import type { ValidChainIDs } from './lib/constants'
 import { Events, type Viaprize } from './viaprize'
 
@@ -59,7 +59,7 @@ export async function handleEndDispute(
   const contractLogs = parseEventLogs({
     logs: receipt.logs,
     abi: PRIZE_V2_ABI,
-    eventName: ['FiatFunderRefund', 'CryptoFunderRefunded', 'DisputeEnded'],
+    eventName: ['FunderRefund', 'DisputeEnded'],
   })
   console.log({ contractLogs })
 
@@ -71,18 +71,10 @@ export async function handleEndDispute(
   const logs = [...contractLogs, ...transferLogs]
 
   const disputeEndedEvent = logs.filter((e) => e.eventName === 'DisputeEnded')
-  const fiatFunderRefundEvents = logs.filter(
-    (e) => e.eventName === 'FiatFunderRefund',
-  )
-  const cryptoFunderRefundedEvents = logs.filter(
-    (e) => e.eventName === 'CryptoFunderRefunded',
-  )
+  const funderRefundEvents = logs.filter((e) => e.eventName === 'FunderRefund')
+
   const transferEvents = logs.filter((e) => e.eventName === 'Transfer')
-  const totalCryptoFunderRefunded = cryptoFunderRefundedEvents.reduce(
-    (acc, e) => acc + Number.parseInt(e.args._amount?.toString() ?? '0'),
-    0,
-  )
-  const totalFiatFunderRefunded = fiatFunderRefundEvents.reduce(
+  const totalFunderRefunded = funderRefundEvents.reduce(
     (acc, e) => acc + Number.parseInt(e.args._amount?.toString() ?? '0'),
     0,
   )
@@ -115,7 +107,7 @@ export async function handleEndDispute(
   if (disputeEndedEvent.length > 0) {
     await viaprize.prizes.endDisputeByContractAddress({
       contractAddress: prizeContractAddress,
-      totalRefunded: totalCryptoFunderRefunded + totalFiatFunderRefunded,
+      totalRefunded: totalFunderRefunded,
       updatedSubmissions: submissionWon,
     })
   }
@@ -135,36 +127,32 @@ export async function handleEndSubmissionTransaction(
     prize.numberOfSubmissions > 0
       ? txBody.transactions
       : [txBody.transactions[0]]
-  await viaprize.prizes.startVotingPeriodByContractAddress(prizeContractAddress)
+  // await viaprize.prizes.startVotingPeriodByContractAddress(prizeContractAddress)
 
+  // const receipt = await viaprize.wallet.blockchainClient.getTransactionReceipt({
+  //   hash: '0x9b1aa2464e84fd4ac56f849386da83562e384b0fe5c48eb0f402f6e4b1f2a328',
+  // })
+  // console.log(receipt.logs, 'logs')
   await viaprize.wallet.withTransactionEvents(
     PRIZE_V2_ABI,
     finalTxData,
     'gasless',
-    [
-      'SubmissionEnded',
-      'VotingEnded',
-      'CryptoFunderRefunded',
-      'FiatFunderRefund',
-    ],
+    ['SubmissionEnded', 'VotingEnded', 'FunderRefund'],
     async (event) => {
-      console.log(`${JSON.stringify(event)} event received`)
       const submissionEndedEvents = event.filter(
         (e) => e.eventName === 'SubmissionEnded',
       )
       const votingEndedEvents = event.filter(
         (e) => e.eventName === 'VotingEnded',
       )
-      const cryptoFunderRefundedEvents = event.filter(
-        (e) => e.eventName === 'CryptoFunderRefunded',
-      )
-      const fiatFunderRefundEvents = event.filter(
-        (e) => e.eventName === 'FiatFunderRefund',
+
+      const funderRefundEvents = event.filter(
+        (e) => e.eventName === 'FunderRefund',
       )
 
       console.log({ votingEndedEvents })
       console.log({ submissionEndedEvents })
-      console.log({ cryptoFunderRefundedEvents })
+      console.log({ funderRefundEvents })
 
       if (submissionEndedEvents && votingEndedEvents) {
         await viaprize.prizes.startVotingPeriodByContractAddress(
@@ -176,19 +164,15 @@ export async function handleEndSubmissionTransaction(
           prizeContractAddress,
         )
       }
-      if (cryptoFunderRefundedEvents || fiatFunderRefundEvents) {
-        const totalCryptoFunderRefunded = cryptoFunderRefundedEvents.reduce(
-          (acc, e) => acc + Number.parseInt(e.args._amount?.toString() ?? '0'),
-          0,
-        )
-        const totalFiatFunderRefunded = fiatFunderRefundEvents.reduce(
+      if (funderRefundEvents) {
+        const totalFunderRefunded = funderRefundEvents.reduce(
           (acc, e) => acc + Number.parseInt(e.args._amount?.toString() ?? '0'),
           0,
         )
 
         await viaprize.prizes.refundByContractAddress({
           primaryContractAddress: prizeContractAddress,
-          totalRefunded: totalCryptoFunderRefunded + totalFiatFunderRefunded,
+          totalRefunded: totalFunderRefunded,
         })
       }
     },
