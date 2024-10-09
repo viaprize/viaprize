@@ -34,3 +34,5 @@ export const RPC_URL = new sst.Secret('RpcUrl')
 export const WALLET_API_KEY = new sst.Secret('WalletApiKey')
 
 export const INDEXER_RPC_URL = new sst.Secret('IndexerRpcUrl')
+
+export const LOOPS_API_KEY = new sst.Secret('LoopsApiKey')
