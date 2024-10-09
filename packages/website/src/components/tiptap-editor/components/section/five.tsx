@@ -1,4 +1,3 @@
-import type { toggleVariants } from '@/components/ui/toggle'
 import {
   CaretDownIcon,
   CodeIcon,
@@ -7,6 +6,7 @@ import {
   QuoteIcon,
 } from '@radix-ui/react-icons'
 import type { Editor } from '@tiptap/react'
+import type { toggleVariants } from '@viaprize/ui/toggle'
 import type { VariantProps } from 'class-variance-authority'
 import type * as React from 'react'
 import type { FormatAction } from '../../types'

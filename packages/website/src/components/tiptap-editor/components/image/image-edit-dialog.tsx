@@ -1,3 +1,5 @@
+import { ImageIcon } from '@radix-ui/react-icons'
+import type { Editor } from '@tiptap/react'
 import {
   Dialog,
   DialogContent,
@@ -5,10 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import type { toggleVariants } from '@/components/ui/toggle'
-import { ImageIcon } from '@radix-ui/react-icons'
-import type { Editor } from '@tiptap/react'
+} from '@viaprize/ui/dialog'
+import type { toggleVariants } from '@viaprize/ui/toggle'
 import type { VariantProps } from 'class-variance-authority'
 import { useState } from 'react'
 import { ToolbarButton } from '../toolbar-button'

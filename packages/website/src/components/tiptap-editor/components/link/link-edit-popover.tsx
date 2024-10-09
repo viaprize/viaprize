@@ -1,11 +1,7 @@
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import type { toggleVariants } from '@/components/ui/toggle'
 import { Link2Icon } from '@radix-ui/react-icons'
 import type { Editor } from '@tiptap/react'
+import { Popover, PopoverContent, PopoverTrigger } from '@viaprize/ui/popover'
+import type { toggleVariants } from '@viaprize/ui/toggle'
 import type { VariantProps } from 'class-variance-authority'
 import * as React from 'react'
 import { ToolbarButton } from '../toolbar-button'

@@ -3,4 +3,4 @@ export const imageBucket =
     ? new sst.aws.Bucket('ImageUploads', {
         public: true,
       })
-    : sst.aws.Bucket.get('ImageUploads', 'viaprize-dev-imageuploads-snaxtrfv')
+    : sst.aws.Bucket.get('ImageUploads', 'viaprize-dev-imageuploads-beusvvdk')

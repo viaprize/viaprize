@@ -1,14 +1,14 @@
+import { CaretDownIcon, LetterCaseCapitalizeIcon } from '@radix-ui/react-icons'
+import type { Level } from '@tiptap/extension-heading'
+import type { Editor } from '@tiptap/react'
+import { cn } from '@viaprize/ui'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import type { toggleVariants } from '@/components/ui/toggle'
-import { cn } from '@/lib/utils'
-import { CaretDownIcon, LetterCaseCapitalizeIcon } from '@radix-ui/react-icons'
-import type { Level } from '@tiptap/extension-heading'
-import type { Editor } from '@tiptap/react'
+} from '@viaprize/ui/dropdown-menu'
+import type { toggleVariants } from '@viaprize/ui/toggle'
 import type { VariantProps } from 'class-variance-authority'
 import React, { useCallback, useMemo } from 'react'
 import type { FormatAction } from '../../types'
