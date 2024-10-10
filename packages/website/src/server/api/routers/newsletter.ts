@@ -2,18 +2,19 @@ import { LoopsClient } from 'loops'
 import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '../trpc'
 
-const loops = new LoopsClient(process.env.LOOPS_API_KEY ?? '')
+const loops = new LoopsClient((process.env.LOOPS_API_KEY as string) ?? '')
 
 export const loopsRouter = createTRPCRouter({
   subscribe: publicProcedure
     .input(
       z.object({
         email: z.string().email(),
+        firstname: z.string(),
         subscribeToNewsletter: z.boolean().default(false),
       }),
     )
     .mutation(async ({ input }) => {
-      const { email, subscribeToNewsletter } = input
+      const { email, firstname, subscribeToNewsletter } = input
 
       if (!subscribeToNewsletter) {
         return { message: 'User did not opt-in for the newsletter.' }
@@ -22,7 +23,11 @@ export const loopsRouter = createTRPCRouter({
         const response: { success: boolean } = await loops.sendEvent({
           email: email,
           eventName: 'newsletter',
+          eventProperties: {
+            firstname: firstname,
+          },
         })
+        console.log(email, firstname, subscribeToNewsletter)
         console.log(response)
       } catch (error) {
         console.log(`failed to send an email ${error}`)

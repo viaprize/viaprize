@@ -51,6 +51,7 @@ export default function ContactSection() {
       subscribe.mutate({
         email: values.email,
         subscribeToNewsletter: values.newsletter,
+        firstname: values.name,
       })
     }
     console.log(values)
