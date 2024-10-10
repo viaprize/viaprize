@@ -2,8 +2,6 @@ type CacheTagType = {
   [key: string]: { value: string; requiresSuffix: boolean }
 }
 
-type CacheTagKey = keyof CacheTagType
-
 type CacheTagWithSuffix<T extends CacheTagType> = {
   [K in keyof T]: T[K]['requiresSuffix'] extends true ? K : never
 }[keyof T]

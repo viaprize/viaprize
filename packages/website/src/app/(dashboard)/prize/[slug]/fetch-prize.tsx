@@ -54,7 +54,7 @@ export default function FetchPrize({
           />
           <Separator className="my-2" />
           <AboutContent
-            badges={['Technology']}
+            badges={prize.skillSets}
             description={prize.description}
           />
           <SubmissionVoting

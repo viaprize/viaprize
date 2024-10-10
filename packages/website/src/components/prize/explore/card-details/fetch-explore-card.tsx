@@ -71,6 +71,7 @@ export default async function FetchExplorePrize({
       <section className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3 pb-3 px-7">
         {deployedPrizes?.map((prize) => (
           <ExploreCard
+            badges={prize.skillSets}
             key={prize.id}
             funds={prize.funds ?? 0}
             imageUrl={prize.imageUrl ?? ''}

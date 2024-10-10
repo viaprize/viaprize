@@ -18,6 +18,7 @@ interface ExploreCardProps {
   numberOfContestants: number
   numberOfFunders: number
   numberOfComments: number
+  badges?: string[] | null // Added badges property
   href: string // Added href property
 }
 
@@ -53,15 +54,16 @@ export default function ExploreCard(props: ExploreCardProps) {
           </h1>
 
           <div className="mt-1 lg:mt-3">
-            <Badge variant="outline" color="gray" className="text-gray-400">
-              Technology
-            </Badge>{' '}
-            <Badge variant="outline" color="gray" className="text-gray-400">
-              Content
-            </Badge>{' '}
-            <Badge variant="outline" color="gray" className="text-gray-400">
-              webdev
-            </Badge>
+            {props.badges?.map((badge) => (
+              <Badge
+                key={badge}
+                variant="outline"
+                color="gray"
+                className="text-gray-400"
+              >
+                {badge}
+              </Badge>
+            ))}
           </div>
 
           <div className="flex h-5 items-center justify-between text-sm text-muted-foreground mt-5 ">

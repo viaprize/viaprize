@@ -53,7 +53,7 @@ export const userRouter = createTRPCRouter({
       }
       console.log('onboardUser', ctx.session.user.id)
 
-      const success = await ctx.viaprize.users.onboardUser({
+      await ctx.viaprize.users.onboardUser({
         email: input.email,
         name: input.name,
         walletAddress: input.walletAddress,

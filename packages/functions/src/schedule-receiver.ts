@@ -5,13 +5,12 @@ import type { ScheduledHandler } from 'aws-lambda'
 import { Resource } from 'sst'
 import { bus } from 'sst/aws/bus'
 import type { ScheduleType } from './types'
-import { deleteSchedule } from './utils/schedule'
 import { viaprize } from './utils/viaprize'
 
 export const handler: ScheduledHandler<{
   type: ScheduleType
   body: any
-}> = async (event, context) => {
+}> = async (event) => {
   // Your code goes here
   const payload = JSON.parse(JSON.stringify(event)) as {
     type: ScheduleType

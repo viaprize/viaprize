@@ -575,6 +575,16 @@ export const prizeRouter = createTRPCRouter({
         'gasless',
         'VotingEnded',
         async (events) => {
+          const votingEndedEvents = events.filter(
+            (e) => e.eventName === 'VotingEnded',
+          )
+          if (!votingEndedEvents[0]?.args.endedAt) {
+            throw new TRPCError({
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'No voting found',
+              cause: 'No voting found',
+            })
+          }
           await ctx.viaprize.prizes.endVotingPeriodByContractAddress(
             input.contractAddress,
           )
@@ -668,6 +678,16 @@ export const prizeRouter = createTRPCRouter({
         'gasless',
         'SubmissionStarted',
         async (events) => {
+          const submissionStartedEvents = events.filter(
+            (e) => e.eventName === 'SubmissionStarted',
+          )
+          if (!submissionStartedEvents[0]?.args.startedAt) {
+            throw new TRPCError({
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'No submission found',
+              cause: 'No submission found',
+            })
+          }
           await ctx.viaprize.prizes.startSubmissionPeriodByContractAddress(
             input.contractAddress,
           )

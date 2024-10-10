@@ -78,8 +78,8 @@ export default function IdeaMarket() {
             <CardContent className="flex flex-col gap-3">
               <p>{card.description}</p>
               <ol className="list-none p-0 m-0">
-                {card.listItems.map((item, idx) => (
-                  <li key={item[0]} className="flex items-center gap-2">
+                {card.listItems.map((item) => (
+                  <li key={`${item}`} className="flex items-center gap-2">
                     <Check />
                     <span>{item}</span>
                   </li>
