@@ -16,9 +16,13 @@ import { useState } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
 import { Sidebar, SidebarBody, SidebarButton, SidebarLink } from './sidebar-ui'
 
-const Logo = ({ name, image ,username}: { name: string; image: string ,username:string}) => {
+const Logo = ({
+  name,
+  image,
+  username,
+}: { name: string; image: string; username: string }) => {
   return (
-    <div  className="relative z-20 flex items-center space-x-3 py-1">
+    <div className="relative z-20 flex items-center space-x-3 py-1">
       <Image
         src={image}
         className="h-25 w-25 flex-shrink-0 rounded-full"
@@ -33,8 +37,11 @@ const Logo = ({ name, image ,username}: { name: string; image: string ,username:
       >
         <div className="">
           <div className="text-lg">{name}</div>
-          <Link href={`/profile/${username}`} className='text-blue-400 hover:underline text-sm '>
-          View Profile
+          <Link
+            href={`/profile/${username}`}
+            className="text-blue-400 hover:underline text-sm "
+          >
+            View Profile
           </Link>
         </div>
       </motion.span>

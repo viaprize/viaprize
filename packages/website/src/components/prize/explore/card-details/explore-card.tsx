@@ -19,11 +19,9 @@ interface ExploreCardProps {
   numberOfContestants: number
   numberOfFunders: number
   numberOfComments: number
-  badges?: string[] | null 
-  href: string 
+  badges?: string[] | null
+  href: string
 }
-
-
 
 export default function ExploreCard(props: ExploreCardProps) {
   return (

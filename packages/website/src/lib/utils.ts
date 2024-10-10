@@ -15,11 +15,8 @@ export function containsUppercase(str: string) {
 }
 
 export function formatUnderscoreString(input: string): string {
-  return input
-    .replace(/_/g, ' ') 
-    .replace(/\b\w/g, (char) => char.toUpperCase()) 
+  return input.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 }
-
 
 export interface SearchParams {
   [key: string]: string | string[] | undefined

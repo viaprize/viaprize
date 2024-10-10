@@ -1,3 +1,4 @@
+import { formatUnderscoreString } from '@/lib/utils'
 import { auth } from '@/server/auth'
 import { IconPresentation } from '@tabler/icons-react'
 import type { PrizeStages } from '@viaprize/core/lib/prizes'
@@ -55,7 +56,7 @@ export default function DetailsHeader({
         </h3>
         <div className="mt-2 flex items-center space-x-3">
           <Badge variant="secondary" className="text-sm text-primary ">
-            {stage}
+            {formatUnderscoreString(stage || '')}
           </Badge>
         </div>
       </div>
