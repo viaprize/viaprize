@@ -16,11 +16,17 @@ export const userRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       }
     }),
+  getUserStatistics: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const stats = await ctx.viaprize.users.getStatisticsByUsername(input)
+      return stats
+    }),
 
-  getUserBySlug: publicProcedure
+  getUserByUsername: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
-      const user = await ctx.viaprize.users.getUserBySlug(input)
+      const user = await ctx.viaprize.users.getUserByUsername(input)
       if (!user) {
         throw new TRPCError({
           code: 'NOT_FOUND',
