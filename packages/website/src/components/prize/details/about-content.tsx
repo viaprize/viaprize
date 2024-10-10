@@ -1,3 +1,4 @@
+import { formatUnderscoreString } from '@/lib/utils'
 import { Badge } from '@viaprize/ui/badge'
 import React from 'react'
 
@@ -19,7 +20,7 @@ export default function AboutContent({
               variant="outline"
               className="text-muted-foreground"
             >
-              {badge}
+              {formatUnderscoreString(badge)}
             </Badge>
           ))}
         </div>
