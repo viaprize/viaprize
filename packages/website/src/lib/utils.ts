@@ -14,6 +14,13 @@ export function containsUppercase(str: string) {
   return /^[A-Z]+$/.test(str)
 }
 
+export function formatUnderscoreString(input: string): string {
+  return input
+    .replace(/_/g, ' ') 
+    .replace(/\b\w/g, (char) => char.toUpperCase()) 
+}
+
+
 export interface SearchParams {
   [key: string]: string | string[] | undefined
 }
