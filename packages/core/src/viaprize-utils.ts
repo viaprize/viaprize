@@ -139,13 +139,14 @@ export async function handleEndSubmissionTransaction(
     prize.numberOfSubmissions > 0
       ? txBody.transactions
       : [txBody.transactions[0]]
+  console.log({ finalTxData })
   // await viaprize.prizes.startVotingPeriodByContractAddress(prizeContractAddress)
 
   // const receipt = await viaprize.wallet.blockchainClient.getTransactionReceipt({
   //   hash: '0x9b1aa2464e84fd4ac56f849386da83562e384b0fe5c48eb0f402f6e4b1f2a328',
   // })
   // console.log(receipt.logs, 'logs')
-  await viaprize.wallet.withTransactionEvents(
+  const final = await viaprize.wallet.withTransactionEvents(
     PRIZE_V2_ABI,
     finalTxData,
     'gasless',
@@ -166,17 +167,17 @@ export async function handleEndSubmissionTransaction(
       console.log({ submissionEndedEvents })
       console.log({ funderRefundEvents })
 
-      if (submissionEndedEvents && votingEndedEvents) {
+      if (submissionEndedEvents.length && votingEndedEvents.length) {
         await viaprize.prizes.startVotingPeriodByContractAddress(
           prizeContractAddress,
         )
       }
-      if (submissionEndedEvents) {
+      if (submissionEndedEvents.length) {
         await viaprize.prizes.startVotingPeriodByContractAddress(
           prizeContractAddress,
         )
       }
-      if (funderRefundEvents) {
+      if (funderRefundEvents.length) {
         const totalFunderRefunded = funderRefundEvents.reduce(
           (acc, e) => acc + Number.parseInt(e.args._amount?.toString() ?? '0'),
           0,
@@ -189,5 +190,6 @@ export async function handleEndSubmissionTransaction(
       }
     },
   )
+  console.log({ final })
   await publishDeployedPrizeCacheDelete(viaprize, prize.slug)
 }
