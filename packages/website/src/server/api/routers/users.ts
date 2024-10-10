@@ -1,5 +1,6 @@
 import { unstable_update } from '@/server/auth'
 import { TRPCError } from '@trpc/server'
+import { LoopsClient } from 'loops'
 import { z } from 'zod'
 import {
   createTRPCRouter,
@@ -8,6 +9,7 @@ import {
   withCache,
 } from '../trpc'
 
+const loops = new LoopsClient((process.env.LOOPS_API_KEY as string) ?? '')
 export const userRouter = createTRPCRouter({
   hello: protectedProcedure
     .input(z.object({ text: z.string() }))
@@ -61,5 +63,20 @@ export const userRouter = createTRPCRouter({
         username: input.username,
         userId: ctx.session.user.id,
       })
+
+      try {
+        const onboardMail: { success: boolean } = await loops.sendEvent({
+          email: input.email,
+          eventName: 'onboardUser',
+          eventProperties: {
+            name: input.name,
+            wallet: input.walletAddress as string,
+            username: input.username,
+          },
+        })
+        console.log(onboardMail)
+      } catch (error) {
+        console.log('error', error)
+      }
     }),
 })
