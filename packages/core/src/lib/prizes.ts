@@ -276,10 +276,13 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         )
       }
       const shouldRefund = totalRefunded > prize?.funds / 2
-      await trx.update(prizes).set({
-        stage: shouldRefund ? 'REFUNDED' : 'WON',
-        totalRefunded: totalRefunded,
-      })
+      await trx
+        .update(prizes)
+        .set({
+          stage: shouldRefund ? 'REFUNDED' : 'WON',
+          totalRefunded: totalRefunded,
+        })
+        .where(eq(prizes.id, prize.id))
       for (const submission of updatedSubmissions) {
         const wonInUSDC = (submission.won ?? 0) / 1_000_000
         await trx
@@ -303,8 +306,6 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   }
 
   async startVotingPeriodByContractAddress(contractAddress: string) {
-    const constants =
-      CONTRACT_CONSTANTS_PER_CHAIN[this.chainId as ValidChainIDs]
     await this.db.transaction(async (trx) => {
       const prize = await trx.query.prizes.findFirst({
         where: eq(prizes.primaryContractAddress, contractAddress.toLowerCase()),
