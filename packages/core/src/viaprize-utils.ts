@@ -16,6 +16,18 @@ export async function publishDeployedPrizeCacheDelete(
     bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
       key: viaprize.prizes.getCacheTag('DEPLOYED_PRIZES'),
     }),
+    bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+      key: viaprize.prizes.getCacheTag('PENDING_PRIZES'),
+    }),
+    bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+      key: viaprize.prizes.getCacheTag('ACTIVE_PRIZES_COUNT'),
+    }),
+    bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+      key: viaprize.prizes.getCacheTag('LATEST_PRIZE_ACTIVITIES'),
+    }),
+    bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
+      key: viaprize.prizes.getCacheTag('TOTAL_PRIZE_POOL'),
+    }),
   )
 
   if (slug) {

@@ -9,6 +9,7 @@ import {
   lte,
   or,
   sql,
+  sum,
 } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import type { ViaprizeDatabase } from '../database'
@@ -62,6 +63,13 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     this.db = viaprizeDb.database
     this.chainId = chainId
     this.blockchain = new PrizesBlockchain(rpcUrl, chainId)
+  }
+  async getTotalFunds() {
+    const totalFunds = await this.db
+      .select({ total: sum(prizes.funds) })
+      .from(prizes)
+    console.log(totalFunds[0]?.total, 'total')
+    return totalFunds[0]?.total || 0
   }
   async getFundersByPrizeId(prizeId: string) {
     const funders = await this.db.query.donations.findMany({

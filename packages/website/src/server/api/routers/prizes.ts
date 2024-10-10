@@ -51,17 +51,19 @@ export const prizeRouter = createTRPCRouter({
     }),
   getPrizeActivities: publicProcedure.query(async ({ ctx }) => {
     const totalPrizePool =
-      Number.parseInt(
-        (await ctx.cacheClient.get(
+      (Number(
+        await withCache(
+          ctx,
           ctx.viaprize.prizes.getCacheTag('TOTAL_PRIZE_POOL'),
-        )) ?? '0',
-      ) ?? 0
+          async () => await ctx.viaprize.prizes.getTotalFunds(),
+        ),
+      ) ?? 0) + 65_000
     const totalIdeas =
-      (await withCache(
+      ((await withCache(
         ctx,
         ctx.viaprize.prizes.getCacheTag('ACTIVE_PRIZES_COUNT'),
         async () => await ctx.viaprize.prizes.getDeployedPrizesCount(),
-      )) ?? 0
+      )) ?? 0) + 36
     const recentActivities =
       (await withCache(
         ctx,
