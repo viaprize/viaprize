@@ -184,7 +184,7 @@ export default function Home() {
             Description="During a pop-up village called Zuzalu, we witnessed 
             firsthand how the right economic mechanisms may gather a community to build public goods. 
             Inspired by conversations with Vitalik Buterin and others, Noah Chon Lee launched a 
-            crowdfunded prize to build an AI voice for a river and various people at Zuzalu 
+            prize to build an AI voice for a river and various people at Zuzalu 
             tossed in $20 each. "
             image="/home/story/zuzalu.jpeg"
             side="left"
@@ -203,7 +203,7 @@ export default function Home() {
              but Noah needed to know if this could make a radical difference in peoples’ lives. 
               Next, he watched a kamikaze drone diving towards 
             him get shot down while driving into the frontline of Ukraine to complete 
-            a crowdfunded prize for delivering medical supplies. The volunteer medics 
+            a prize for delivering medical supplies. The volunteer medics 
             received the supplies they were missing and because of this they were able 
             to treat 45 injured and said this undoubtedly saved at least one life. "
             image="/home/story/medics.png"
