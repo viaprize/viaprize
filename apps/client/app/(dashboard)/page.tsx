@@ -4,7 +4,6 @@ import useAppUser from '@/components/hooks/useAppUser';
 import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 import { Button, Card, Flex } from '@mantine/core';
 import { usePrivy } from '@privy-io/react-auth';
-import { IconTags } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -82,7 +81,7 @@ export default function Home() {
         <section className="md:flex justify-betweem items-center min-h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
             <h1 className="font-bold text-4xl sm:text-5xl my-6">
-              The home for all your crowdfunding needs
+             The Home for Prizes 
             </h1>
             <Flex gap="md" wrap="wrap" className="sm:w-[60%] lg:w-[70%]">
               <Link href="/prize/explore">
@@ -93,14 +92,7 @@ export default function Home() {
                   Explore Prizes
                 </Button>
               </Link>
-              <Link href="/portal/explore">
-                <Button
-                  className="bg-gradient-to-r from-[#005A6D] to-[#147EA3] w-full"
-                  color="primary"
-                >
-                  Explore Fundraisers
-                </Button>
-              </Link>
+             
             </Flex>
             <Flex
               className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[60%] lg:w-[70%]"
@@ -112,11 +104,11 @@ export default function Home() {
             >
               <div className="text-center">
                 <h3 className="my-0"> $50,000+</h3>
-                <h3 className="my-0">Total contributions</h3>
+                <h3 className="my-0">Total funded</h3>
               </div>
               <div className="text-center">
                 <h3 className="my-0 ">100+</h3>
-                <h3 className="my-0">Total campaigns</h3>
+                <h3 className="my-0">Total prizes</h3>
               </div>
             </Flex>
             <div className="flex justify-center w-full lg:w-[70%] my-2">
