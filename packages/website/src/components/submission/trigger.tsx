@@ -29,17 +29,23 @@ import {
 import { Input } from '@viaprize/ui/input'
 import { Label } from '@viaprize/ui/label'
 import { Textarea } from '@viaprize/ui/textarea'
-import { Trophy } from 'lucide-react'
+import { LoaderIcon, Trophy } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+
 const formSchema = z.object({
-  description: z.string().min(1, {
-    message: 'Description is required',
+  description: z.string().min(10, {
+    message: 'Description must be at least 10 characters long',
   }),
-  link: z.string().optional(),
+  link: z
+    .string()
+    .url({ message: 'Please enter a valid URL' })
+    .optional()
+    .or(z.literal('')),
 })
+
 export default function SubmissionDialog({
   totalFunds,
   prizeId,
@@ -54,6 +60,7 @@ export default function SubmissionDialog({
     resolver: zodResolver(formSchema),
     defaultValues: {
       description: '',
+      link: '',
     },
   })
   const addSubmission = api.prizes.addSubmission.useMutation()
@@ -62,6 +69,7 @@ export default function SubmissionDialog({
     await addSubmission.mutateAsync({
       prizeId,
       submissionText: values.description,
+      projectLink: values.link || undefined,
     })
     await utils.prizes.getPrizeBySlug.invalidate()
   }
@@ -85,14 +93,14 @@ export default function SubmissionDialog({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <Label>
-            Your wallet Id for receiving is {session?.user.wallet?.address}
+            Your wallet ID for receiving is {session?.user.wallet?.address}
           </Label>
           <FormField
             control={form.control}
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Description (required)</FormLabel>
                 <FormControl>
                   <Textarea
                     id="description"
@@ -109,9 +117,9 @@ export default function SubmissionDialog({
             name="link"
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel>Project Link</FormLabel>
+                <FormLabel>Project Link (optional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter link" {...field} />
+                  <Input placeholder="Enter link" {...field} type="url" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -134,11 +142,11 @@ export default function SubmissionDialog({
     return (
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
-          <Button>Submit Bounty Entry</Button>
+          <Button>Submit Your Work</Button>
         </DrawerTrigger>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Submit Your Entry</DrawerTitle>
+            <DrawerTitle>Submit Your Work</DrawerTitle>
           </DrawerHeader>
           <div className="p-4">
             <Content />
@@ -151,11 +159,11 @@ export default function SubmissionDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Submit Bounty Entry</Button>
+        <Button>Submit Your Work</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Submit Your Entry</DialogTitle>
+          <DialogTitle>Submit Your Work</DialogTitle>
         </DialogHeader>
         <Content />
       </DialogContent>

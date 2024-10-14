@@ -15,6 +15,7 @@ import {
   RPC_URL,
   WALLET_API_KEY,
   WALLET_PAYMENT_INFRA_API,
+  LOOPS_API_KEY,
 } from './secrets'
 import { imageBucket } from './storage'
 
@@ -38,6 +39,7 @@ export const website = new sst.aws.Nextjs('website', {
     imageBucket,
     eventBus,
     cacheTable,
+    LOOPS_API_KEY,
   ],
   environment: {
     AUTH_SECRET: AUTH_SECRET.value,
@@ -55,5 +57,6 @@ export const website = new sst.aws.Nextjs('website', {
     RPC_URL: RPC_URL.value,
     WALLET_API_KEY: WALLET_API_KEY.value,
     OPENAI_API_KEY: OPENAI_API_KEY.value,
+    LOOPS_API_KEY: LOOPS_API_KEY.value,
   },
 })

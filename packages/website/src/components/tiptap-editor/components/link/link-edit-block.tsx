@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
-import { cn } from '@/lib/utils'
+import { cn } from '@viaprize/ui'
+import { Button } from '@viaprize/ui/button'
+import { Input } from '@viaprize/ui/input'
+import { Label } from '@viaprize/ui/label'
+import { Switch } from '@viaprize/ui/switch'
 import * as React from 'react'
 
 export interface LinkEditorProps extends React.HTMLAttributes<HTMLDivElement> {

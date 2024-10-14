@@ -1,8 +1,8 @@
 import { LoopsClient } from 'loops'
 import { z } from 'zod'
 import { createTRPCRouter, publicProcedure } from '../trpc'
-
-const loops = new LoopsClient((process.env.LOOPS_API_KEY as string) ?? '')
+import {env} from '@/env'
+const loops = new LoopsClient(( env.LOOPS_API_KEY as string) ?? '')
 
 export const loopsRouter = createTRPCRouter({
   subscribe: publicProcedure

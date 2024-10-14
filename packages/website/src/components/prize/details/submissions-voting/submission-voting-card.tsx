@@ -1,7 +1,9 @@
 import type { PrizeStages } from '@viaprize/core/lib/prizes'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Badge } from '@viaprize/ui/badge'
 import { Card } from '@viaprize/ui/card'
 import { Input } from '@viaprize/ui/input'
+import VoteDialog from './vote-dialog'
 
 interface User {
   id: string
@@ -10,9 +12,12 @@ interface User {
   avatar: string
   submissionCreated: string
   prizeStage: PrizeStages
+  contractAddress: string
   votes: number | string
   onVoteChange: (id: string, newVotes: number | string) => void
   isVoter?: boolean
+  totalVotingAmount: number
+  submissionHash: string
 }
 
 export default function SubmissionVotingCard({
@@ -20,14 +25,17 @@ export default function SubmissionVotingCard({
   description,
   name,
   avatar,
+  totalVotingAmount,
   submissionCreated,
   votes,
   prizeStage,
   onVoteChange,
   isVoter,
+  contractAddress,
+  submissionHash,
 }: User) {
   return (
-    <Card className="p-3">
+    <Card className="p-3 my-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Avatar className="mr-2">
@@ -47,14 +55,14 @@ export default function SubmissionVotingCard({
             <p>{description}</p>
           </div>
         </div>
+
+        <Badge>Current votes: ${votes}</Badge>
+
         {isVoter ? (
-          <Input
-            placeholder="Enter votes"
-            value={votes}
-            onChange={(e) => onVoteChange(id, e.target.value)}
-            type="number"
-            min="0"
-            className="w-1/4"
+          <VoteDialog
+            contractAddress={contractAddress}
+            submissionHash={submissionHash}
+            maxVotes={totalVotingAmount}
           />
         ) : null}
       </div>

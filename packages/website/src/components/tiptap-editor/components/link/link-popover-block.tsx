@@ -1,9 +1,9 @@
-import { Separator } from '@/components/ui/separator'
 import {
   CopyIcon,
   ExternalLinkIcon,
   LinkBreak2Icon,
 } from '@radix-ui/react-icons'
+import { Separator } from '@viaprize/ui/separator'
 import type React from 'react'
 import { useCallback, useState } from 'react'
 import { ToolbarButton } from '../toolbar-button'

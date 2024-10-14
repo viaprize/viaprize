@@ -13,7 +13,7 @@ export const env = createEnv({
       .enum(['development', 'test', 'production'])
       .default('development'),
     AUTH_GITHUB_ID: z.string(),
-    AUTH_GITHUB_SECRET: z.string(),
+    AUTH_GITHUB_SECRET: z.string(), 
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
     AUTH_RESEND_KEY: z.string(),
@@ -21,6 +21,7 @@ export const env = createEnv({
     CHAIN_ID: z.string().default('10'),
     WALLET_API_KEY: z.string(),
     RPC_URL: z.string(),
+    LOOPS_API_KEY: z.string(),
   },
 
   /**
@@ -54,6 +55,7 @@ export const env = createEnv({
     WALLET_API_KEY: process.env.WALLET_API_KEY,
     RPC_URL: process.env.RPC_URL,
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
+    LOOPS_API_KEY: process.env.LOOPS_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

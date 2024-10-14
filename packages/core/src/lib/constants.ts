@@ -1,3 +1,5 @@
+import { encodePacked, keccak256 } from 'viem'
+
 export type ValidChainIDs = keyof typeof CONTRACT_CONSTANTS_PER_CHAIN
 export const CONTRACT_CONSTANTS_PER_CHAIN = {
   10: {
@@ -17,8 +19,9 @@ export const CONTRACT_CONSTANTS_PER_CHAIN = {
     ETH_PRICE: '0x13e3Ee699D1909E989722E753853AE30b17e08c5' as `0x${string}`,
     WETH: '0x4200000000000000000000000000000000000006' as `0x${string}`,
     PRIZE_FACTORY_V2_ADDRESS:
-      '0x06CC63ef167A1bde2215b9AdE93525afc0BFa8e6' as `0x${string}`,
+      '0x03fC77fB9E8449cE1D9f822fBA406379b89b0FA5' as `0x${string}`,
     TRANSACTION_BATCH:
       '0x8c79858cAa48B17BfB1dd7B9335BCC4bDde82a3a' as `0x${string}`,
+    REFUND_HASH: keccak256(encodePacked(['string'], ['REFUND'])),
   },
 }

@@ -1,4 +1,5 @@
 import type { ContestantStage } from '@/components/prize/details/vfc-details/contestants-card'
+import type { Submissions } from '@/types/submissions'
 import { ERC20_PERMIT_SIGN_TYPE } from '@viaprize/core/lib/abi'
 import type { ValidChainIDs } from '@viaprize/core/lib/constants'
 import {
@@ -7,10 +8,14 @@ import {
   differenceInMinutes,
   differenceInSeconds,
 } from 'date-fns'
-import { hashTypedData } from 'viem'
+import { encodePacked, hashTypedData, keccak256 } from 'viem'
 
 export function containsUppercase(str: string) {
   return /^[A-Z]+$/.test(str)
+}
+
+export function formatUnderscoreString(input: string): string {
+  return input.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
 export interface SearchParams {
@@ -43,12 +48,18 @@ export function timeAgo(givenDate: Date): string {
   return `${secondsDiff} seconds ago`
 }
 
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 export function getContestantStage<T>(
   contestants: T[],
+  submissions: Submissions,
   username?: string,
 ): ContestantStage {
   if (!username) {
     return 'LOGIN'
+  }
+  if (submissions.some((s) => s.username === username)) {
+    return 'SUBMITTED'
   }
   if (!contestants) {
     return 'NOT_JOINED'
@@ -104,4 +115,36 @@ export const usdcSignTypeHash = (
     usdcSign,
     hash: hashTypedData(usdcSign as any),
   }
+}
+
+export function voteMessageHash(
+  submission: string,
+  amount: number,
+  nonce: number,
+  contractAddress: string,
+): string {
+  const encodedMessage = encodePacked(
+    [
+      'string',
+      'bytes32',
+      'string',
+      'uint256',
+      'string',
+      'uint256',
+      'string',
+      'address',
+    ],
+    [
+      'VOTE FOR ',
+      submission as `0x${string}`,
+      ' WITH AMOUNT ',
+      BigInt(amount),
+      ' AND NONCE ',
+      BigInt(nonce),
+      ' WITH PRIZE CONTRACT ',
+      contractAddress as `0x${string}`,
+    ],
+  )
+  const messageHash = keccak256(encodedMessage)
+  return messageHash
 }

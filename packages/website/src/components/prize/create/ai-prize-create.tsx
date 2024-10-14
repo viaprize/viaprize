@@ -20,7 +20,7 @@ import { TimingStep } from './times-step'
 import { TitleDescriptionStep } from './title-description-step'
 
 export default function BountyCreationForm() {
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(3)
   const [initialQuestion, setInitialQuestion] = useState<Question | null>(null)
   const [uploadingImage, setUploadingImage] = useState(false)
 
@@ -33,9 +33,6 @@ export default function BountyCreationForm() {
       fullDescription: '',
       skills: [],
       category: '',
-      // submissionStartDate: new Date(),
-      // submissionEndDate: new Date(),
-      // votingEndDate: new Date(),
     },
   })
 

@@ -2,8 +2,6 @@ type CacheTagType = {
   [key: string]: { value: string; requiresSuffix: boolean }
 }
 
-type CacheTagKey = keyof CacheTagType
-
 type CacheTagWithSuffix<T extends CacheTagType> = {
   [K in keyof T]: T[K]['requiresSuffix'] extends true ? K : never
 }[keyof T]
@@ -22,6 +20,7 @@ export class CacheTag<T extends CacheTagType> {
 
   getCacheTag(tag: keyof T, suffix?: string): string {
     const cacheTag = this.CACHE_TAGS[tag]
+    console.log('cacheTag', cacheTag)
     if (!cacheTag) {
       throw new Error(`Invalid cache tag: ${tag.toString()}`)
     }

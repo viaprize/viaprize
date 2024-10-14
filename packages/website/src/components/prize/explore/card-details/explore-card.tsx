@@ -1,3 +1,4 @@
+import { formatUnderscoreString } from '@/lib/utils'
 import {
   IconCoins,
   IconMessageCircle,
@@ -18,34 +19,34 @@ interface ExploreCardProps {
   numberOfContestants: number
   numberOfFunders: number
   numberOfComments: number
-  href: string // Added href property
+  badges?: string[] | null
+  href: string
 }
 
 export default function ExploreCard(props: ExploreCardProps) {
   return (
     <Link href={props.href} className="block">
-      <Card className="p-3 flex flex-row md:flex-col space-x-3 lg:space-x-0 hover:bg-muted-foreground/10">
+      <Card className="p-3 h-full flex flex-row md:flex-col space-x-3 lg:space-x-0 hover:bg-muted-foreground/10">
         <div className="">
           <Image
             src={props.imageUrl}
-            width={50}
-            height={50}
-            quality={100}
+            width={1250}
+            height={1250}
             alt=""
             objectFit="cover"
-            className="h-40 w-full rounded-md"
+            className="h-20 md:h-40 w-full rounded-md"
           />
         </div>
-        <div className="">
+        <div className="w-[60%] md:w-full">
           <div className="flex items-center justify-between lg:mt-5">
             <div className="text-lg  lg:text-xl text-primary/80 font-medium">
-              {props.funds}
+              {props.funds} USD
             </div>
             <Badge
               variant="secondary"
               className="text-green-600 px-2 py-1 font-normal"
             >
-              {props.prizeStage}
+              {formatUnderscoreString(props.prizeStage)}
             </Badge>
           </div>
           <Separator className="h-3px my-3 hidden md:block" />
@@ -54,15 +55,16 @@ export default function ExploreCard(props: ExploreCardProps) {
           </h1>
 
           <div className="mt-1 lg:mt-3">
-            <Badge variant="outline" color="gray" className="text-gray-400">
-              Technology
-            </Badge>{' '}
-            <Badge variant="outline" color="gray" className="text-gray-400">
-              Content
-            </Badge>{' '}
-            <Badge variant="outline" color="gray" className="text-gray-400">
-              webdev
-            </Badge>
+            {props.badges?.map((badge) => (
+              <Badge
+                key={badge}
+                variant="outline"
+                color="gray"
+                className="text-gray-400"
+              >
+                {formatUnderscoreString(badge)}
+              </Badge>
+            ))}
           </div>
 
           <div className="flex h-5 items-center justify-between text-sm text-muted-foreground mt-5 ">

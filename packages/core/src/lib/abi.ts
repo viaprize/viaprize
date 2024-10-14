@@ -275,31 +275,6 @@ export const PRIZE_V2_ABI = [
     inputs: [
       {
         indexed: true,
-        internalType: 'address',
-        name: '_address',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: '_amount',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'bool',
-        name: 'refunded',
-        type: 'bool',
-      },
-    ],
-    name: 'CryptoFunderRefunded',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
         internalType: 'uint256',
         name: 'endedAt',
         type: 'uint256',
@@ -388,11 +363,11 @@ export const PRIZE_V2_ABI = [
       {
         indexed: false,
         internalType: 'bool',
-        name: 'refunded',
+        name: 'isFiat',
         type: 'bool',
       },
     ],
-    name: 'FiatFunderRefund',
+    name: 'FunderRefund',
     type: 'event',
   },
   {
@@ -1590,32 +1565,6 @@ export const PRIZE_V2_ABI = [
     type: 'receive',
   },
 ] as const
-;[
-  {
-    inputs: [
-      {
-        internalType: 'address[]',
-        name: 'targets',
-        type: 'address[]',
-      },
-      {
-        internalType: 'uint256[]',
-        name: 'values',
-        type: 'uint256[]',
-      },
-      {
-        internalType: 'bytes[]',
-        name: 'datas',
-        type: 'bytes[]',
-      },
-    ],
-    name: 'batchSend',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-] as const
-
 export const TRANSACTION_BATCH_ABI = [
   {
     inputs: [

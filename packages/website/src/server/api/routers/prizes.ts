@@ -32,6 +32,17 @@ import { prizesAiRouter } from './prize-ai'
 
 export const prizeRouter = createTRPCRouter({
   ai: prizesAiRouter,
+  getFunders: publicProcedure
+    .input(z.object({ prizeId: z.string(), slug: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const funders = withCache(
+        ctx,
+        ctx.viaprize.prizes.getCacheTag('FUNDERS_SLUG_PRIZE', input.slug),
+        async () =>
+          await ctx.viaprize.prizes.getFundersByPrizeId(input.prizeId),
+      )
+      return funders
+    }),
   getContestants: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {
@@ -40,21 +51,23 @@ export const prizeRouter = createTRPCRouter({
     }),
   getPrizeActivities: publicProcedure.query(async ({ ctx }) => {
     const totalPrizePool =
-      Number.parseInt(
-        (await ctx.cacheClient.get(
+      (Number(
+        await withCache(
+          ctx,
           ctx.viaprize.prizes.getCacheTag('TOTAL_PRIZE_POOL'),
-        )) ?? '0',
-      ) ?? 0
+          async () => await ctx.viaprize.prizes.getTotalFunds(),
+        ),
+      ) ?? 0) + 65_000
     const totalIdeas =
-      (await withCache(
+      ((await withCache(
         ctx,
         ctx.viaprize.prizes.getCacheTag('ACTIVE_PRIZES_COUNT'),
         async () => await ctx.viaprize.prizes.getDeployedPrizesCount(),
-      )) ?? 0
+      )) ?? 0) + 36
     const recentActivities =
       (await withCache(
         ctx,
-        ctx.viaprize.prizes.getCacheTag('LATEST_PRIZE_ACTIVITES'),
+        ctx.viaprize.prizes.getCacheTag('LATEST_PRIZE_ACTIVITIES'),
         async () => await ctx.viaprize.prizes.getLatestActivitiesInPrizes(),
       )) ?? []
     const leaderboards =
@@ -110,9 +123,16 @@ export const prizeRouter = createTRPCRouter({
         input.contractAddress as `0x${string}`,
         user.wallet.address as `0x${string}`,
       )
+      const refundVotes = await ctx.viaprize.prizes.blockchain.getRefundVotes(
+        input.contractAddress as `0x${string}`,
+      )
+
       return {
         total: Number.parseInt(total.toString()) / 1_000_000,
         isVoter,
+        refundVotes: Number.parseInt(refundVotes.toString()) / 1_000_000,
+        refundSubmissionHash:
+          ctx.viaprize.prizes.blockchain.getRefundSubmissionHash(),
       }
     }),
 
@@ -154,6 +174,7 @@ export const prizeRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
+
       const txData =
         await ctx.viaprize.prizes.blockchain.getEncodedDeployPrizeData({
           authorFeePercentage: prize.authorFeePercentage,
@@ -194,6 +215,7 @@ export const prizeRouter = createTRPCRouter({
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
       })
+
       return txHash
     }),
 
@@ -205,29 +227,13 @@ export const prizeRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      if (!ctx.session.user.username) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You must be logged in to create a prize',
-          cause: 'User is not logged in',
-        })
-      }
-
-      if (!ctx.session.user.wallet) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You must have a wallet address to create a prize',
-          cause: 'User does not have a wallet address',
-        })
-      }
+      const user = userSessionSchema.parse(ctx.session.user)
 
       const prizeId = await ctx.viaprize.prizes.addPrizeProposal({
         ...input,
-        authorUsername: ctx.session.user.username,
-        proposerAddress: ctx.session.user.wallet.address,
+        authorUsername: user.username,
+        proposerAddress: user.wallet.address,
       })
-      console.log(Resource.EventBus.name, Events.Cache.Delete, 'nammme')
-
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
       })
@@ -311,83 +317,6 @@ export const prizeRouter = createTRPCRouter({
       return txHash
     }),
 
-  addVote: adminProcedure
-    .input(
-      z.object({
-        prizeId: z.string(),
-        submissionHash: z.string(),
-        voteAmount: z.number(),
-        v: z.number(),
-        s: z.string(),
-        r: z.string(),
-      }),
-    )
-
-    .mutation(async ({ input, ctx }) => {
-      const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
-      if (!prize) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Prize not found',
-          cause: 'Prize not found',
-        })
-      }
-      if (!(ctx.session.user.wallet?.address && ctx.session.user.username)) {
-        throw new TRPCError({
-          code: 'UNAUTHORIZED',
-          message: 'You must have a wallet address and username to cast a vote',
-          cause: 'User does not have a wallet address or username',
-        })
-      }
-
-      const txData = await ctx.viaprize.prizes.blockchain.getEncodedAddVoteData(
-        input.submissionHash as `0x${string}`,
-        BigInt(input.voteAmount),
-        input.v,
-        input.s as `0x${string}`,
-        input.r as `0x${string}`,
-      )
-
-      const simulated = await ctx.viaprize.wallet.simulateTransaction(
-        {
-          data: txData,
-          to: prize.primaryContractAddress as `0x${string}`,
-          value: '0',
-        },
-        'gasless',
-        'signer',
-      )
-      if (!simulated) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Transaction failed',
-          cause: 'Transaction failed',
-        })
-      }
-      const txHash = await ctx.viaprize.wallet.sendTransaction(
-        [
-          {
-            data: txData,
-            to: prize.primaryContractAddress as `0x${string}`,
-            value: '0',
-          },
-        ],
-        'gasless',
-      )
-
-      if (txHash) {
-        await ctx.viaprize.prizes.addVote({
-          voteHash: txHash.contractAddress as `0x${string}`,
-          submissionHash: input.submissionHash,
-          prizeId: input.prizeId,
-          funderAddress: ctx.session.user.wallet?.address,
-          voteAmount: input.voteAmount,
-          username: ctx.session.user.username,
-        })
-      }
-      return txHash
-    }),
-
   addContestant: protectedProcedure
     .input(
       z.object({
@@ -415,6 +344,83 @@ export const prizeRouter = createTRPCRouter({
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('SLUG_PRIZE', input.slug),
       })
+    }),
+  addVotes: protectedProcedure
+    .input(
+      z.object({
+        signature: z.string().optional(),
+        submissionHash: z.string(),
+        amountInUSDC: z.number(),
+        contractAddress: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = userSessionSchema.parse(ctx.session.user)
+      const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
+        input.contractAddress,
+      )
+      const isCustodial = !!user.wallet.key
+      console.log(isCustodial, 'isCustodial')
+      let signature = isCustodial ? '' : input.signature
+      if (isCustodial) {
+        const res = await ctx.viaprize.wallet.signVoteForCustodial({
+          amount: input.amountInUSDC,
+          contractAddress: input.contractAddress as `0x${string}`,
+          encryptedKey: user.wallet.key as `0x${string}`,
+          submissionHash: input.submissionHash as `0x${string}`,
+        })
+        signature = res.signature
+      }
+      if (!signature) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must sign the transaction to vote',
+          cause: 'User did not sign the transaction',
+        })
+      }
+
+      const txReceipt = await ctx.viaprize.wallet.withTransactionEvents(
+        PRIZE_V2_ABI,
+        [
+          {
+            to: input.contractAddress,
+            value: '0',
+            data: ctx.viaprize.prizes.blockchain.getEncodedAddVoteDataWithSignature(
+              input.submissionHash as `0x${string}`,
+              BigInt(input.amountInUSDC),
+              signature as `0x${string}`,
+            ),
+          },
+        ],
+        'gasless',
+        'Voted',
+        async (events) => {
+          const eventsFiltered = events.filter((e) => e.eventName === 'Voted')
+          if (!eventsFiltered[0]?.args.amountVoted) {
+            throw new TRPCError({
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'No vote found',
+              cause: 'No vote found',
+            })
+          }
+          console.log(
+            Number.parseInt(eventsFiltered[0]?.args.amountVoted.toString()) /
+              1_000_000,
+            'skjdkfjdl',
+          )
+          console.log({ eventsFiltered })
+          await ctx.viaprize.prizes.addVote({
+            submissionHash: input.submissionHash,
+            votes:
+              Number.parseInt(eventsFiltered[0]?.args.amountVoted.toString()) /
+              1_000_000,
+          })
+        },
+      )
+      console.log({ slug: prize.slug })
+
+      await ViaprizeUtils.publishDeployedPrizeCacheDelete(viaprize, prize.slug)
+      return txReceipt
     }),
   addUsdcFundsCryptoForAnonymousUser: publicProcedure
     .input(
@@ -499,76 +505,23 @@ export const prizeRouter = createTRPCRouter({
         input.contractAddress,
       )
       const user = userSessionSchema.parse(ctx.session.user)
-      const chainId = Number.parseInt(env.CHAIN_ID) as ValidChainIDs
-      const constants = CONTRACT_CONSTANTS_PER_CHAIN[chainId]
-
       const transactions = []
-      // if its is custodial or not
-      if (user.wallet.key) {
-        const { hash, signature } =
-          await ctx.viaprize.wallet.signUsdcTransactionForCustodial({
-            key: user.wallet.key,
-            spender: prize.primaryContractAddress as `0x${string}`,
-            value: input.amount,
-            deadline: input.deadline,
-          })
-        const rsv = parseSignature(signature as `0x${string}`)
-        const transferToContractData =
-          ctx.viaprize.prizes.blockchain.getEncodedAddUsdcFunds(
-            BigInt(input.amount),
-            BigInt(input.deadline),
-            Number.parseInt(rsv.v?.toString() ?? '0'),
-            rsv.s,
-            rsv.r,
-            hash as `0x${string}`,
-            false,
-          )
-        transactions.push(
-          {
-            to: constants.USDC,
-            value: '0',
-            data: ctx.viaprize.prizes.blockchain.getEncodedERC20PermitFunction(
-              input.owner as `0x${string}`,
-              user.wallet.address as `0x${string}`,
-              BigInt(input.amount),
-              BigInt(input.deadline),
-              input.v,
-              input.r as `0x${string}`,
-              input.s as `0x${string}`,
-            ),
-          },
-          {
-            to: constants.USDC,
-            value: '0',
-            data: ctx.viaprize.prizes.blockchain.getEncodedERC20TransferFromFunction(
-              input.owner as `0x${string}`,
-              user.wallet.address as `0x${string}`,
-              BigInt(input.amount),
-            ),
-          },
-          {
-            to: prize.primaryContractAddress as `0x${string}`,
-            value: '0',
-            data: transferToContractData,
-          },
+      const transferToContractData =
+        ctx.viaprize.prizes.blockchain.getEncodedAllocateFunds(
+          user.wallet.address as `0x${string}`,
+          BigInt(input.amount),
+          BigInt(input.deadline),
+          input.v,
+          input.s as `0x${string}`,
+          input.r as `0x${string}`,
+          input.ethSignedHash as `0x${string}`,
+          false,
         )
-      } else {
-        const transferToContractData =
-          ctx.viaprize.prizes.blockchain.getEncodedAddUsdcFunds(
-            BigInt(input.amount),
-            BigInt(input.deadline),
-            input.v,
-            input.s as `0x${string}`,
-            input.r as `0x${string}`,
-            input.ethSignedHash as `0x${string}`,
-            false,
-          )
-        transactions.push({
-          to: prize.primaryContractAddress as `0x${string}`,
-          value: '0',
-          data: transferToContractData,
-        })
-      }
+      transactions.push({
+        to: prize.primaryContractAddress as `0x${string}`,
+        value: '0',
+        data: transferToContractData,
+      })
       const txHash = await ctx.viaprize.wallet.withTransactionEvents(
         PRIZE_V2_ABI,
         transactions,
@@ -586,13 +539,13 @@ export const prizeRouter = createTRPCRouter({
               cause: 'No donation found',
             })
           }
-
           await ctx.viaprize.prizes.addUsdcFunds({
             recipientAddress: prize.primaryContractAddress as `0x${string}`,
             username: ctx.session.user.username,
             donor: ctx.session.user.name ?? 'Anonymous',
             valueInToken: fundsAddedEvents[0]?.args.amount.toString(),
             isFiat: false,
+            prizeId: prize.id,
           })
           await ViaprizeUtils.publishDeployedPrizeCacheDelete(
             viaprize,
@@ -600,7 +553,6 @@ export const prizeRouter = createTRPCRouter({
           )
         },
       )
-
       return txHash
     }),
 
@@ -623,6 +575,16 @@ export const prizeRouter = createTRPCRouter({
         'gasless',
         'VotingEnded',
         async (events) => {
+          const votingEndedEvents = events.filter(
+            (e) => e.eventName === 'VotingEnded',
+          )
+          if (!votingEndedEvents[0]?.args.endedAt) {
+            throw new TRPCError({
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'No voting found',
+              cause: 'No voting found',
+            })
+          }
           await ctx.viaprize.prizes.endVotingPeriodByContractAddress(
             input.contractAddress,
           )
@@ -632,6 +594,31 @@ export const prizeRouter = createTRPCRouter({
         ctx.viaprize,
         prize.slug,
       )
+    }),
+  endDisputeEarly: adminProcedure
+    .input(z.object({ contractAddress: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
+        input.contractAddress,
+      )
+      const res = ViaprizeUtils.handleEndDispute(
+        ctx.viaprize,
+        {
+          transactions: [
+            {
+              data: ctx.viaprize.prizes.blockchain.getEncodedEndDisputeEarly(),
+              to: input.contractAddress,
+              value: '0',
+            },
+          ],
+        },
+        input.contractAddress,
+      )
+      await ViaprizeUtils.publishDeployedPrizeCacheDelete(
+        ctx.viaprize,
+        prize.slug,
+      )
+      return res
     }),
   endSubmissionAndStartVoting: adminProcedure
     .input(z.object({ contractAddress: z.string() }))
@@ -691,6 +678,16 @@ export const prizeRouter = createTRPCRouter({
         'gasless',
         'SubmissionStarted',
         async (events) => {
+          const submissionStartedEvents = events.filter(
+            (e) => e.eventName === 'SubmissionStarted',
+          )
+          if (!submissionStartedEvents[0]?.args.startedAt) {
+            throw new TRPCError({
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'No submission found',
+              cause: 'No submission found',
+            })
+          }
           await ctx.viaprize.prizes.startSubmissionPeriodByContractAddress(
             input.contractAddress,
           )

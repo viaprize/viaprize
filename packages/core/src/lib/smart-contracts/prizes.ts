@@ -1,10 +1,30 @@
-import { encodeFunctionData, hexToString, stringToHex } from 'viem'
+import {
+  encodeFunctionData,
+  encodePacked,
+  hexToString,
+  keccak256,
+  parseSignature,
+  stringToHex,
+} from 'viem'
 import type { prizes } from '../../database/schema'
 import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../abi'
 import { CONTRACT_CONSTANTS_PER_CHAIN } from '../constants'
 import { Blockchain } from './blockchain'
 
 export class PrizesBlockchain extends Blockchain {
+  getRefundSubmissionHash() {
+    return keccak256(encodePacked(['string'], ['REFUND']))
+  }
+  async getRefundVotes(prizeAddress: `0x${string}`) {
+    const refundVotes = await this.blockchainClient.readContract({
+      abi: PRIZE_V2_ABI,
+      functionName: 'getSubmissionByHash',
+      args: [this.getRefundSubmissionHash()],
+      address: prizeAddress,
+    })
+    return refundVotes.usdcVotes
+  }
+
   async getEncodedStartSubmission(submissionDurationInMinutes: number) {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
@@ -61,6 +81,39 @@ export class PrizesBlockchain extends Blockchain {
     })
     return data
   }
+  getEncodedAllocateFunds(
+    voter: `0x${string}`,
+    amount: bigint,
+    deadline: bigint,
+    v: number,
+    s: `0x${string}`,
+    r: `0x${string}`,
+    ethSignedMessageHash: `0x${string}`,
+    fiatPayment: boolean,
+  ) {
+    return encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'addTokenFunds',
+      args: [
+        voter,
+        amount,
+        deadline,
+        v,
+        s,
+        r,
+        ethSignedMessageHash,
+        fiatPayment,
+      ],
+    })
+  }
+  getEncodedEndDisputeEarly() {
+    const data = encodeFunctionData({
+      abi: PRIZE_V2_ABI,
+      functionName: 'endDisputePeriodEarly',
+      args: [],
+    })
+    return data
+  }
   async getEncodedEndDispute() {
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
@@ -85,17 +138,25 @@ export class PrizesBlockchain extends Blockchain {
     })
     return data
   }
-  async getEncodedAddVoteData(
+  getEncodedAddVoteDataWithSignature(
     submissionHash: `0x${string}`,
     voteAmount: bigint,
-    v: number,
-    s: `0x${string}`,
-    r: `0x${string}`,
+    signature: `0x${string}`,
   ) {
+    const rsv = parseSignature(signature)
+    console.log({ submissionHash })
+    console.log({ voteAmount })
+    console.log({ rsv })
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
       functionName: 'vote',
-      args: [submissionHash, voteAmount, v, s, r],
+      args: [
+        submissionHash,
+        voteAmount,
+        Number.parseInt(rsv.v?.toString() ?? '0'),
+        rsv.s,
+        rsv.r,
+      ],
     })
     return data
   }

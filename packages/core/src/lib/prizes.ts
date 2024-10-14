@@ -9,17 +9,12 @@ import {
   lte,
   or,
   sql,
+  sum,
 } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
-import {
-  type TransactionReceipt,
-  encodeFunctionData,
-  parseEventLogs,
-} from 'viem'
-import { fraxtalTestnet } from 'viem/chains'
-import type { z } from 'zod'
 import type { ViaprizeDatabase } from '../database'
 import {
+  type SubmissionInsert,
   activities,
   donations,
   type insertDonationSchema,
@@ -28,13 +23,13 @@ import {
   prizes,
   prizesToContestants,
   submissions,
+  users,
   votes,
 } from '../database/schema'
-import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../lib/abi'
 import { CacheTag } from './cache-tag'
-import { CONTRACT_CONSTANTS_PER_CHAIN } from './constants'
+import { CONTRACT_CONSTANTS_PER_CHAIN, type ValidChainIDs } from './constants'
 import { PrizesBlockchain } from './smart-contracts/prizes'
-import { stringToSlug } from './utils'
+import { getTextFromDonation, stringToSlug } from './utils'
 
 const CACHE_TAGS = {
   PENDING_PRIZES: { value: 'pending-prizes', requiresSuffix: false },
@@ -42,10 +37,11 @@ const CACHE_TAGS = {
   DEPLOYED_PRIZES: { value: 'deployed-prizes', requiresSuffix: false },
   SLUG_PRIZE: { value: 'slug-prize-in-', requiresSuffix: true },
   TOTAL_PRIZE_POOL: { value: 'total-prize-pool', requiresSuffix: false },
-  LATEST_PRIZE_ACTIVITES: {
+  LATEST_PRIZE_ACTIVITIES: {
     value: 'latest-prize-activities',
     requiresSuffix: false,
   },
+  FUNDERS_SLUG_PRIZE: { value: 'funders-slug-prize-in-', requiresSuffix: true },
 } as const
 
 interface FilterOptions {
@@ -68,7 +64,62 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     this.chainId = chainId
     this.blockchain = new PrizesBlockchain(rpcUrl, chainId)
   }
+  async getTotalFunds() {
+    const totalFunds = await this.db
+      .select({ total: sum(prizes.funds) })
+      .from(prizes)
+    console.log(totalFunds[0]?.total, 'total')
+    return totalFunds[0]?.total || 0
+  }
+  async getFundersByPrizeId(prizeId: string) {
+    const funders = await this.db.query.donations.findMany({
+      where: eq(donations.prizeId, prizeId),
+      with: {
+        user: true,
+      },
+    })
+    const finalFunders = funders.map((funder) => {
+      return {
+        ...funder,
+        donationText: getTextFromDonation(funder),
+      }
+    })
+    return finalFunders
+  }
 
+  async getSubmittersByPrizeId(prizeId: string) {
+    const submitters = await this.db.query.submissions.findMany({
+      where: eq(submissions.prizeId, prizeId),
+      columns: {
+        submitterAddress: true,
+        submissionHash: true,
+        username: true,
+      },
+    })
+    return submitters
+  }
+
+  async getFundersByContractAddress(contractAddress: string) {
+    const funders = await this.db.query.donations.findMany({
+      where: eq(donations.recipientAddress, contractAddress),
+      with: {
+        user: {
+          with: {
+            wallets: {
+              columns: {
+                address: true,
+              },
+            },
+          },
+        },
+      },
+      columns: {
+        username: true,
+      },
+    })
+
+    return funders
+  }
   async getContestants(prizeId: string) {
     const contestants = await this.db.query.prizesToContestants.findMany({
       where: eq(prizesToContestants.prizeId, prizeId),
@@ -192,14 +243,85 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       })
       .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
   }
+  async addPrizeActivity(
+    data: Pick<typeof activities.$inferInsert, 'activity' | 'username'>,
+  ) {
+    await this.db.insert(activities).values({
+      ...data,
+      tag: 'PRIZE',
+    })
+  }
+  async endDisputeByContractAddress({
+    contractAddress,
+    totalRefunded,
+    updatedSubmissions,
+  }: {
+    contractAddress: string
+    totalRefunded: number
+    updatedSubmissions: Pick<
+      SubmissionInsert,
+      'submissionHash' | 'submitterAddress' | 'won' | 'username'
+    >[]
+  }) {
+    console.log('Ending dispute')
+    console.log({ contractAddress, totalRefunded, updatedSubmissions })
+    await this.db.transaction(async (trx) => {
+      const prize = await trx.query.prizes.findFirst({
+        where: eq(prizes.primaryContractAddress, contractAddress.toLowerCase()),
+      })
+
+      if (!prize) {
+        throw new Error(
+          `Prize not found with contract address ${contractAddress}`,
+        )
+      }
+      const shouldRefund = totalRefunded > prize?.funds / 2
+      await trx
+        .update(prizes)
+        .set({
+          stage: shouldRefund ? 'REFUNDED' : 'WON',
+          totalRefunded: totalRefunded,
+        })
+        .where(eq(prizes.id, prize.id))
+      for (const submission of updatedSubmissions) {
+        const wonInUSDC = (submission.won ?? 0) / 1_000_000
+        await trx
+          .update(submissions)
+          .set({
+            won: sql`${submissions.won} + ${wonInUSDC}`,
+          })
+          .where(eq(submissions.submissionHash, submission.submissionHash))
+        await trx.update(users).set({
+          totalFundsWon: sql`${users.totalFundsWon} + ${wonInUSDC}`,
+        })
+        if (submission.username) {
+          await trx.insert(activities).values({
+            activity: `Won ${wonInUSDC}`,
+            tag: 'PRIZE',
+            username: submission.username,
+          })
+        }
+      }
+    })
+  }
 
   async startVotingPeriodByContractAddress(contractAddress: string) {
-    await this.db
-      .update(prizes)
-      .set({
-        stage: 'VOTING_OPEN',
+    await this.db.transaction(async (trx) => {
+      const prize = await trx.query.prizes.findFirst({
+        where: eq(prizes.primaryContractAddress, contractAddress.toLowerCase()),
       })
-      .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
+      if (!prize) {
+        throw new Error(
+          `Prize not found with contract address ${contractAddress}`,
+        )
+      }
+      await trx
+        .update(prizes)
+        .set({
+          stage: 'VOTING_OPEN',
+        })
+        .where(eq(prizes.primaryContractAddress, contractAddress.toLowerCase()))
+    })
   }
 
   async refundByContractAddress({
@@ -257,11 +379,15 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       where: eq(prizes.slug, slug),
       with: {
         submissions: {
+          with: {
+            user: true,
+          },
           orderBy: desc(submissions.createdAt),
         },
         comments: {
           orderBy: desc(prizeComments.createdAt),
         },
+
         author: {
           columns: {
             name: true,
@@ -301,6 +427,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         primaryContractAddress: contractAddress.toLowerCase(),
         proposalStage: 'APPROVED',
       })
+      .where(eq(prizes.id, prizeId))
       .returning({ contractAddress: prizes.primaryContractAddress })
 
     return res
@@ -393,37 +520,25 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   }
 
   async addVote(
-    data: Pick<
-      typeof votes.$inferSelect,
-      | 'voteHash'
-      | 'submissionHash'
-      | 'prizeId'
-      | 'funderAddress'
-      | 'voteAmount'
-      | 'username'
-    >,
+    data: Pick<typeof submissions.$inferSelect, 'submissionHash' | 'votes'>,
   ) {
-    const voteId = await this.db.transaction(async (trx) => {
-      const [vote] = await trx
-        .insert(votes)
-        .values({
-          voteHash: data.voteHash,
-          submissionHash: data.submissionHash,
-          prizeId: data.prizeId,
-          funderAddress: data.funderAddress,
-          voteAmount: data.voteAmount,
-          username: data.username,
-        })
-        .returning({
-          voteId: votes.voteHash,
-        })
-      if (!vote) {
-        throw new Error('Vote not casted, please try again')
+    await this.db.transaction(async (trx) => {
+      const submission = await trx.query.submissions.findFirst({
+        where: eq(submissions.submissionHash, data.submissionHash),
+        columns: {
+          votes: true,
+        },
+      })
+      if (!submission) {
+        throw new Error('Submission not found')
       }
-      return votes.voteHash
+      await trx
+        .update(submissions)
+        .set({
+          votes: submission.votes + data.votes,
+        })
+        .where(eq(submissions.submissionHash, data.submissionHash))
     })
-
-    return voteId
   }
   async addUsdcFunds(
     data: Omit<typeof donations.$inferInsert, 'token' | 'decimals'>,
@@ -431,7 +546,9 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     await this.db.transaction(async (trx) => {
       await trx.insert(donations).values({
         ...data,
-        token: 'USDC',
+        token: 'USD',
+        recipientType: 'PRIZE',
+
         decimals: 6,
       })
       console.log('Donation added')

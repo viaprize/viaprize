@@ -19,7 +19,7 @@ const steps = [
     icon: <Award className="size-10" />,
   },
   {
-    title: 'Crowdfund a Prize',
+    title: 'Fund a Prize',
     description: (
       <p>
         Fund a prize to attract talents and invite more funders to increase the
