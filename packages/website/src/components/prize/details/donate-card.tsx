@@ -189,7 +189,6 @@ export default function DonateCard({
         </RadioGroup>
       )
     }
-    console.log(session.user.wallet?.key, 'keyyy')
 
     return (
       <RadioGroup

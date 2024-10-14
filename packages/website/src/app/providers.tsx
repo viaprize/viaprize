@@ -16,10 +16,6 @@ import {
 import { type State, WagmiProvider } from 'wagmi'
 import { optimism } from 'wagmi/chains'
 
-import { SIWE_PUBLIC_MESSAGE } from '@/lib/constant'
-import { createAuthenticationAdapter } from '@rainbow-me/rainbowkit'
-import { SiweMessage } from 'siwe-viem'
-
 function WalletProvider({ children }: { children: React.ReactNode }) {
   return (
     <RainbowKitProvider coolMode initialChain={optimism}>

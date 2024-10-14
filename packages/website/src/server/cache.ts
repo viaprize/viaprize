@@ -46,8 +46,6 @@ export class Cache {
   }
 
   async set(key: string, value: string, expireAt: number) {
-    console.log('Setting cache', key, value, expireAt)
-    console.log('Value', value, 'Valuee', value.toString())
     const expireAtUnixEpoch = Math.floor((Date.now() + expireAt * 1000) / 1000)
     await this.client.send(
       new UpdateCommand({
