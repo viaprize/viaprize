@@ -32,7 +32,11 @@ export default function SubmitWorkButton({
               <SubmissionDialog prizeId={prizeId} totalFunds={totalFunds} />
             )
           default:
-            return <Badge>Submissions are closed</Badge>
+            return (
+              <Badge variant="destructive" className="text-md">
+                Submissions are closed
+              </Badge>
+            )
         }
       })()}
     </>

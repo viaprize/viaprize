@@ -51,17 +51,19 @@ export const prizeRouter = createTRPCRouter({
     }),
   getPrizeActivities: publicProcedure.query(async ({ ctx }) => {
     const totalPrizePool =
-      Number.parseInt(
-        (await ctx.cacheClient.get(
+      (Number(
+        await withCache(
+          ctx,
           ctx.viaprize.prizes.getCacheTag('TOTAL_PRIZE_POOL'),
-        )) ?? '0',
-      ) ?? 0
+          async () => await ctx.viaprize.prizes.getTotalFunds(),
+        ),
+      ) ?? 0) + 65_000
     const totalIdeas =
-      (await withCache(
+      ((await withCache(
         ctx,
         ctx.viaprize.prizes.getCacheTag('ACTIVE_PRIZES_COUNT'),
         async () => await ctx.viaprize.prizes.getDeployedPrizesCount(),
-      )) ?? 0
+      )) ?? 0) + 36
     const recentActivities =
       (await withCache(
         ctx,
@@ -573,6 +575,16 @@ export const prizeRouter = createTRPCRouter({
         'gasless',
         'VotingEnded',
         async (events) => {
+          const votingEndedEvents = events.filter(
+            (e) => e.eventName === 'VotingEnded',
+          )
+          if (!votingEndedEvents[0]?.args.endedAt) {
+            throw new TRPCError({
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'No voting found',
+              cause: 'No voting found',
+            })
+          }
           await ctx.viaprize.prizes.endVotingPeriodByContractAddress(
             input.contractAddress,
           )
@@ -666,6 +678,16 @@ export const prizeRouter = createTRPCRouter({
         'gasless',
         'SubmissionStarted',
         async (events) => {
+          const submissionStartedEvents = events.filter(
+            (e) => e.eventName === 'SubmissionStarted',
+          )
+          if (!submissionStartedEvents[0]?.args.startedAt) {
+            throw new TRPCError({
+              code: 'INTERNAL_SERVER_ERROR',
+              message: 'No submission found',
+              cause: 'No submission found',
+            })
+          }
           await ctx.viaprize.prizes.startSubmissionPeriodByContractAddress(
             input.contractAddress,
           )

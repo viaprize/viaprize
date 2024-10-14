@@ -95,9 +95,7 @@ export default function Component({ imageUploadUrl }: CreatePrizeFormProps) {
       form.setError('image', { message: 'Failed to upload image' })
       return
     }
-    const extractedUrl = `${new URL(imageUploadUrl).origin}${
-      new URL(imageUploadUrl).pathname
-    }`
+
     // await mutation.mutateAsync({
     //   title: values.title,
     //   description: values.description,

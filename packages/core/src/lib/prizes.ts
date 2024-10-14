@@ -9,6 +9,7 @@ import {
   lte,
   or,
   sql,
+  sum,
 } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import type { ViaprizeDatabase } from '../database'
@@ -62,6 +63,13 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     this.db = viaprizeDb.database
     this.chainId = chainId
     this.blockchain = new PrizesBlockchain(rpcUrl, chainId)
+  }
+  async getTotalFunds() {
+    const totalFunds = await this.db
+      .select({ total: sum(prizes.funds) })
+      .from(prizes)
+    console.log(totalFunds[0]?.total, 'total')
+    return totalFunds[0]?.total || 0
   }
   async getFundersByPrizeId(prizeId: string) {
     const funders = await this.db.query.donations.findMany({
@@ -268,10 +276,13 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         )
       }
       const shouldRefund = totalRefunded > prize?.funds / 2
-      await trx.update(prizes).set({
-        stage: shouldRefund ? 'REFUNDED' : 'WON',
-        totalRefunded: totalRefunded,
-      })
+      await trx
+        .update(prizes)
+        .set({
+          stage: shouldRefund ? 'REFUNDED' : 'WON',
+          totalRefunded: totalRefunded,
+        })
+        .where(eq(prizes.id, prize.id))
       for (const submission of updatedSubmissions) {
         const wonInUSDC = (submission.won ?? 0) / 1_000_000
         await trx
@@ -295,8 +306,6 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   }
 
   async startVotingPeriodByContractAddress(contractAddress: string) {
-    const constants =
-      CONTRACT_CONSTANTS_PER_CHAIN[this.chainId as ValidChainIDs]
     await this.db.transaction(async (trx) => {
       const prize = await trx.query.prizes.findFirst({
         where: eq(prizes.primaryContractAddress, contractAddress.toLowerCase()),

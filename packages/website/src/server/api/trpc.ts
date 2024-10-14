@@ -151,45 +151,49 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure
-export const adminProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user || !ctx.session.user.isAdmin) {
-    throw new TRPCError({
-      code: 'UNAUTHORIZED',
-      message: 'You need to be admin to access this function',
+export const publicProcedure = t.procedure.use(timingMiddleware)
+export const adminProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user || !ctx.session.user.isAdmin) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You need to be admin to access this function',
+      })
+    }
+
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: {
+          ...ctx.session,
+          user: {
+            ...ctx.session.user,
+            // infers that `id` is non-nullable
+            id: ctx.session.user.id as string,
+          },
+        },
+      },
     })
-  }
+  })
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.session || !ctx.session.user) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' })
+    }
 
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: {
-        ...ctx.session,
-        user: {
-          ...ctx.session.user,
-          // infers that `id` is non-nullable
-          id: ctx.session.user.id as string,
+    return next({
+      ctx: {
+        // infers the `session` as non-nullable
+        session: {
+          ...ctx.session,
+          user: {
+            ...ctx.session.user,
+            // infers that `id` is non-nullable
+            id: ctx.session.user.id as string,
+          },
         },
       },
-    },
+    })
   })
-})
-export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.session || !ctx.session.user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' })
-  }
-
-  return next({
-    ctx: {
-      // infers the `session` as non-nullable
-      session: {
-        ...ctx.session,
-        user: {
-          ...ctx.session.user,
-          // infers that `id` is non-nullable
-          id: ctx.session.user.id as string,
-        },
-      },
-    },
-  })
-})

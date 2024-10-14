@@ -1,8 +1,17 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, isNotNull } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import type { z } from 'zod'
 import type { ViaprizeDatabase } from '../database'
-import { type insertUserSchema, users, wallets } from '../database/schema'
+import {
+  activities,
+  donations,
+  type insertUserSchema,
+  prizes,
+  prizesToContestants,
+  submissions,
+  users,
+  wallets,
+} from '../database/schema'
 import { CacheTag } from './cache-tag'
 import type { Wallet } from './wallet'
 
@@ -83,10 +92,103 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
 
     return result?.user
   }
+  async getStatisticsByUsername(username: string) {
+    const prizeWith = {
+      prize: {
+        with: {
+          author: {
+            columns: {
+              username: true,
+              image: true,
+              name: true,
+            },
+          },
+        },
+      },
+    }
+    const stats = await this.db.transaction(async (tx) => {
+      const userActivities = await tx.query.activities.findMany({
+        where: eq(activities.username, username),
+        with: {
+          user: {
+            columns: {
+              username: true,
+              image: true,
+              name: true,
+            },
+          },
+        },
+      })
+      const createdPrizes = await tx.query.prizes.findMany({
+        where: eq(prizes.authorUsername, username),
+        with: {
+          author: {
+            columns: {
+              username: true,
+              image: true,
+              name: true,
+            },
+          },
+        },
+      })
+      const wonPrizes = await tx.query.submissions.findMany({
+        columns: {
+          prizeId: true,
+        },
+        where: eq(submissions.username, username),
+        with: prizeWith,
+      })
+      const prizesFunded = await tx.query.donations.findMany({
+        where: and(
+          eq(donations.username, username),
+          isNotNull(donations.prizeId),
+        ),
+        columns: {
+          prizeId: true,
+        },
+        with: {
+          ...prizeWith,
+        },
+      })
+      const prizesContested = await tx.query.prizesToContestants.findMany({
+        where: eq(prizesToContestants.username, username),
+        with: prizeWith,
+      })
 
-  async getUserBySlug(slug: string) {
+      return {
+        userActivities,
+        createdPrizes,
+        wonPrizes,
+        prizesFunded,
+        prizesContested,
+      }
+    })
+    return stats
+  }
+
+  async getActivitiesByUsername(username: string) {
+    const userActivities = await this.db.query.activities.findMany({
+      orderBy: desc(activities.createdAt),
+      where: eq(activities.username, username),
+      columns: {
+        createdAt: true,
+        activity: true,
+      },
+      with: {
+        user: {
+          columns: {
+            username: true,
+            image: true,
+          },
+        },
+      },
+    })
+    return userActivities
+  }
+
+  async getUserByUsername(username: string) {
     const user = await this.db.query.users.findFirst({
-      where: eq(users.username, slug),
+      where: eq(users.username, username),
       with: {
         wallets: {
           columns: {

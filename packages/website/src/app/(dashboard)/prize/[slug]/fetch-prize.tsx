@@ -51,10 +51,14 @@ export default function FetchPrize({
             avatar={prize.author.image || ''}
             title={prize.title}
             prizeId={prize.id}
+            startSubmissionDate={prize.startSubmissionDate}
+            startVotingDate={prize.startVotingDate}
+            submissionDurationInMinutes={prize.submissionDurationInMinutes}
+            votingDurationInMinutes={prize.votingDurationInMinutes}
           />
           <Separator className="my-2" />
           <AboutContent
-            badges={['Technology']}
+            badges={prize.skillSets}
             description={prize.description}
           />
           <SubmissionVoting

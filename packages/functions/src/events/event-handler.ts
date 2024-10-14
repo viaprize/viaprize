@@ -1,17 +1,11 @@
-import { PRIZE_V2_ABI } from '@viaprize/core/lib/abi'
-import {
-  CONTRACT_CONSTANTS_PER_CHAIN,
-  type ValidChainIDs,
-} from '@viaprize/core/lib/constants'
-import { Events, Viaprize } from '@viaprize/core/viaprize'
+import { Events } from '@viaprize/core/viaprize'
+import { ViaprizeUtils } from '@viaprize/core/viaprize-utils'
 import { addDays, addMinutes, addSeconds, isBefore, subMinutes } from 'date-fns'
 import { Resource } from 'sst'
 import { bus } from 'sst/aws/bus'
 import { Cache } from '../utils/cache'
 import { schedule } from '../utils/schedule'
 import { viaprize } from '../utils/viaprize'
-import { publishPrizeCacheDeletes } from './cache-functions'
-
 const cache = new Cache()
 
 export const handler = bus.subscriber(
@@ -92,7 +86,7 @@ export const handler = bus.subscriber(
             )
           }
         }
-        await publishPrizeCacheDeletes(viaprize)
+        await ViaprizeUtils.publishDeployedPrizeCacheDelete(viaprize)
         break
       }
       case 'cache.set':

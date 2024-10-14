@@ -89,7 +89,7 @@ export const DesktopSidebar = ({
   children,
   ...props
 }: React.ComponentProps<typeof motion.div>) => {
-  const { open, setOpen, animate } = useSidebar()
+  const { open, setOpen } = useSidebar()
   return (
     <>
       <motion.div
@@ -192,7 +192,7 @@ export const SidebarButton = ({
   variant?: 'default' | 'secondary' | 'outline'
   href?: string
 }) => {
-  const { open, animate } = useSidebar()
+  const { open } = useSidebar()
   return (
     <Button
       className={cn(

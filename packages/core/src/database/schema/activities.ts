@@ -28,7 +28,7 @@ export const activities = pgTable('activities', {
     .notNull(),
 })
 
-export const activitiesRelations = relations(activities, ({ one, many }) => ({
+export const activitiesRelations = relations(activities, ({ one }) => ({
   user: one(users, {
     fields: [activities.username],
     references: [users.username],
