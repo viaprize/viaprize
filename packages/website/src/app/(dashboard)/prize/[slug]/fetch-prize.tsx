@@ -35,8 +35,8 @@ export default function FetchPrize({
 
   return (
     <Suspense fallback={<LoaderCircle />}>
-      <div className="lg:flex h-full">
-        <div className="w-full space-y-3 md:w-[75%] h-full lg:max-h-screen overflow-auto border-r-2">
+      <div className="lg:flex flex-1 ">
+        <div className="w-full space-y-3 md:w-[75%]  overflow-y-auto py-4 border-r-2">
           <div className="flex items-center text-sm font-semibold ml-3 mt-3">
             <IconArrowLeft className="mr-1" size={20} /> Back
           </div>
@@ -80,7 +80,7 @@ export default function FetchPrize({
             </>
           ) : null}
         </div>
-        <div className="w-full lg:w-[25%] mt-5 mx-3 space-y-5 lg:max-h-screen lg:overflow-auto">
+        <div className="w-full lg:w-[25%] py-5 px-3 space-y-5 ">
           <Winners
             submissions={prize.submissions as Submissions}
             prizeStage={prize.stage}

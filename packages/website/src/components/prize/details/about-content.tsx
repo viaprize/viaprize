@@ -24,7 +24,9 @@ export default function AboutContent({
           </Badge>
         </div>
       </div>
-      <p className="border p-2 mt-3 rounded-md">{description}</p>
+      <p className="border p-2 mt-3 rounded-md whitespace-pre-wrap">
+        {description}
+      </p>
     </div>
   )
 }
