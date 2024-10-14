@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation'
 
 export default async function ContestForm() {
   const session = await auth()
-  console.log({ session })
   if (!session) {
     return redirect('/login')
   }

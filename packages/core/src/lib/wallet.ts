@@ -63,7 +63,6 @@ export class Wallet extends Blockchain {
     ) => Awaited<void>,
   ) {
     const transaction = await this.sendTransaction(tx, type)
-    console.log({ transaction })
     await callback(
       parseEventLogs({ logs: transaction.logs, abi, eventName: events }),
       transaction,

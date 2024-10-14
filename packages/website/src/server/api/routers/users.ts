@@ -46,18 +46,15 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      console.log('onboardUser', input)
       const usernameExists = await ctx.viaprize.users.usernameExists(
         input.username,
       )
-      console.log('usernameExists', usernameExists)
       if (usernameExists) {
         throw new TRPCError({
           code: 'UNPROCESSABLE_CONTENT',
           message: 'Username already exists',
         })
       }
-      console.log('onboardUser', ctx.session.user.id)
 
       await ctx.viaprize.users.onboardUser({
         email: input.email,

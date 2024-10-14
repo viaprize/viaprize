@@ -16,9 +16,11 @@ export const handler: ScheduledHandler<{
     type: ScheduleType
     body: any
   }
-  console.log('Hello from Lambda!')
+  console.log(
+    '====================================================== RUNNING SCHEDULED HANDLER ======================================================',
+  )
 
-  console.log('Payload type: ', payload.type)
+  console.log('-------Payload type:-----------', payload.type)
 
   switch (payload.type) {
     case 'wallet.transaction': {
@@ -37,7 +39,6 @@ export const handler: ScheduledHandler<{
         txBody.walletType ?? 'gasless',
         'DisputeEnded',
         async (event) => {
-          console.log(`${event} event received`)
           await viaprize.prizes.endDisputePeriodByContractAddress(
             event[0].address,
           )
@@ -53,7 +54,6 @@ export const handler: ScheduledHandler<{
       break
     }
     case 'wallet.startSubmission': {
-      console.log('Processing wallet start submission event')
       const txBody = payload.body as typeof Events.Wallet.Transaction.$input
       await viaprize.wallet.withTransactionEvents(
         PRIZE_V2_ABI,
@@ -61,7 +61,6 @@ export const handler: ScheduledHandler<{
         txBody.walletType ?? 'gasless',
         'SubmissionStarted',
         async (event) => {
-          console.log(`${event} event received`)
           await viaprize.prizes.startSubmissionPeriodByContractAddress(
             event[0].address,
           )
@@ -81,7 +80,6 @@ export const handler: ScheduledHandler<{
         txBody.walletType ?? 'gasless',
         'VotingEnded',
         async (event) => {
-          console.log(`${event} event received`)
           await viaprize.prizes.endVotingPeriodByContractAddress(
             event[0].address,
           )
@@ -96,7 +94,6 @@ export const handler: ScheduledHandler<{
     }
     case 'wallet.endSubmissionAndStartVoting': {
       const txBody = payload.body as typeof Events.Wallet.Transaction.$input
-      console.log({ txBody })
 
       await ViaprizeUtils.handleEndSubmissionTransaction(
         viaprize,
@@ -106,4 +103,7 @@ export const handler: ScheduledHandler<{
       break
     }
   }
+  console.log(
+    '====================================================== RUNNING SCHEDULED HANDLER ENDEDs ======================================================',
+  )
 }

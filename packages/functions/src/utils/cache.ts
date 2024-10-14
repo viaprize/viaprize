@@ -30,8 +30,6 @@ export class Cache {
   }
 
   async delete(key: string) {
-    console.log('Deleting cache for key', key)
-
     await this.client.send(
       new DeleteCommand({
         TableName: Resource.CacheTable.name, // Ensure this is your table name

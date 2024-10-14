@@ -32,12 +32,10 @@ export const handler = bus.subscriber(
     )
     switch (event.type) {
       case 'wallet.transaction': {
-        console.log(event.properties.transactions)
         const hash = await viaprize.wallet.sendTransaction(
           event.properties.transactions,
           event.properties.walletType,
         )
-        console.log('Transaction hash', hash)
         break
       }
       case 'prize.approve': {
