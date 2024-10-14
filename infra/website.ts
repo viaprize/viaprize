@@ -10,12 +10,12 @@ import {
   AUTH_TRUST_HOST,
   CHAIN_ID,
   DATABASE_URL,
+  LOOPS_API_KEY,
   NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
   OPENAI_API_KEY,
   RPC_URL,
   WALLET_API_KEY,
   WALLET_PAYMENT_INFRA_API,
-  LOOPS_API_KEY,
 } from './secrets'
 import { imageBucket } from './storage'
 
