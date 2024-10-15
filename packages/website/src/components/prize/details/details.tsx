@@ -22,13 +22,13 @@ const DeadlineMessage: React.FC<{
   )
 }
 
-interface DetailsHeaderProps extends selectPrizeType {
+interface DetailsProps extends selectPrizeType {
   authorUsername: string
   authorImage: string
   authorName: string
 }
 
-export default function DetailsHeader({
+export default function Details({
   funds,
   stage,
   title,
@@ -43,7 +43,7 @@ export default function DetailsHeader({
   startVotingDate,
   submissionDurationInMinutes,
   votingDurationInMinutes,
-}: DetailsHeaderProps) {
+}: DetailsProps) {
   // Calculate end dates
   const submissionEndDate = startSubmissionDate
     ? addMinutes(
