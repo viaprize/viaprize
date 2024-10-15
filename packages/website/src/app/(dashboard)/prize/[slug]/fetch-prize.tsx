@@ -42,25 +42,17 @@ export default function FetchPrize({
           </div>
 
           <DetailHeader
-            contractAddress={prize.primaryContractAddress}
-            funds={prize.funds}
-            projectName={prize.title}
-            name={prize.author.name ?? prize.authorUsername}
-            stage={prize.stage}
-            image={prize.imageUrl}
-            avatar={prize.author.image || ''}
-            title={prize.title}
-            prizeId={prize.id}
-            startSubmissionDate={prize.startSubmissionDate}
-            startVotingDate={prize.startVotingDate}
-            submissionDurationInMinutes={prize.submissionDurationInMinutes}
-            votingDurationInMinutes={prize.votingDurationInMinutes}
+            {...prize}
+            authorUsername={prize.authorUsername}
+            imageUrl={prize.imageUrl}
+            authorName={prize.author.name ?? prize.authorUsername}
+            authorImage={prize.author.image ?? ''}
           />
-          <Separator className="my-2" />
+          {/* <Separator className="my-2" />
           <AboutContent
             badges={prize.skillSets}
             description={prize.description}
-          />
+          /> */}
           <SubmissionVoting
             prizeStage={prize.stage}
             contractAddress={prize.primaryContractAddress}
