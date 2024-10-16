@@ -72,6 +72,7 @@ export default function SubmissionVoting({
             contractAddress={contractAddress}
             submissionHash={submission.submissionHash}
             totalVotingAmount={totalVotingAmount?.total ?? 0}
+            projectLink={submission.projectLink}
             prizeStage={prizeStage}
             isVoter={isVotingOpen}
             id={submission.submissionHash}
@@ -100,6 +101,7 @@ export default function SubmissionVoting({
           avatar={''}
           votes={totalVotingAmount.refundVotes}
           onVoteChange={handleVoteChange}
+          projectLink={null}
         />
       )}
     </div>
