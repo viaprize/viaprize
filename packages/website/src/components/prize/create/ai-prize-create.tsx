@@ -1,6 +1,7 @@
 'use client'
 
 import { getImageUploadUrl } from '@/actions/image-get'
+import { useAuth } from '@/hooks/useAuth'
 import { api } from '@/trpc/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@viaprize/ui/button'
@@ -8,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@viaprize/ui/card'
 import { Form } from '@viaprize/ui/form'
 import { Skeleton } from '@viaprize/ui/skeleton'
 import { differenceInMinutes } from 'date-fns'
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { DescriptionStep } from './description-step'
@@ -21,6 +23,8 @@ import { TitleDescriptionStep } from './title-description-step'
 export default function BountyCreationForm() {
   const [step, setStep] = useState(1)
   const [initialQuestion, setInitialQuestion] = useState<Question | null>(null)
+  const { session } = useAuth()
+  const submitting = useRef(false)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -49,9 +53,12 @@ export default function BountyCreationForm() {
   const { mutateAsync: createPrize, isPending: creatingPrize } =
     api.prizes.createPrize.useMutation()
 
+  const router = useRouter()
+
   console.log({ values: form.getValues() })
 
   const onSubmit = async (values: FormValues) => {
+    submitting.current = true
     const ImageToUpload = await convertBlobUrlToFile(
       values.imageLocalUrl,
       'image',
@@ -106,6 +113,8 @@ export default function BountyCreationForm() {
           values.votingEndDate,
           values.submissionEndDate,
         ),
+      }).then(() => {
+        router.push(`/profile/${session?.user.username}`)
       }),
       {
         loading: 'Creating Bounty...',
@@ -113,6 +122,7 @@ export default function BountyCreationForm() {
         error: 'Failed to create Bounty',
       },
     )
+    submitting.current = false
   }
 
   const handleNextStep = async () => {
@@ -186,19 +196,23 @@ export default function BountyCreationForm() {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">Create New Bounty</CardTitle>
+        <CardTitle className="text-2xl font-bold">Create Prize</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(
               (data) => {
+                submitting.current = true
                 console.log('Form submitted successfully', data)
                 onSubmit(data)
               },
               (errors) => {
+                submitting.current = true
                 console.error('Form validation failed', errors)
-                // toast.error('Please fill in all required fields correctly.')
+                if (submitting && step === 5) {
+                  toast.error('Please fill all the fields')
+                }
               },
             )}
             className="space-y-6"

@@ -182,7 +182,7 @@ function MultipleChoiceQuestion({
             />
           </FormControl>
           <FormMessage />
-          {index !== 3 && length === index + 1 && (
+          {index !== 2 && length === index + 1 && (
             <Button type="button" onClick={() => onAnswerSelected(field.value)}>
               Next Question
             </Button>

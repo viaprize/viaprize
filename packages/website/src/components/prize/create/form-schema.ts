@@ -14,7 +14,7 @@ export type Question = {
 export const formSchema = z.object({
   description: z
     .string()
-    .min(10, 'Description must be at least 10 characters long'),
+    .min(5, 'Description must be at least 10 characters long'),
   aiQuestions: z.array(
     z.object({
       question: z.string(),

@@ -145,12 +145,9 @@ export default function AdminPrizeCard({
 
               <div>
                 <h3 className="text-lg font-semibold mb-2">Description</h3>
-                {/* <p>{prizeProposal.description}</p> */}
-                <textarea
-                  value={prizeProposal.description}
-                  disabled
-                  className="w-full h-[400px]"
-                />
+                <p className="whitespace-pre-wrap">
+                  {prizeProposal.description}
+                </p>
               </div>
 
               <Separator />
