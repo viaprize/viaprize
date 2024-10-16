@@ -164,7 +164,8 @@ export const prizesAiRouter = createTRPCRouter({
         based on the answer he gave to our questions and also he made gave us a short description about what he wants
         few things to remeber before creating
         1. skills should be related to the project
-        2. category should be related to the project
+        2. category should be related to the project,
+        max 4 skills and 1 category
         \n\nDescription: ${input.fullDescription}`,
       })
       return result.object

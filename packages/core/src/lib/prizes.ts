@@ -143,6 +143,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       columns: {
         createdAt: true,
         activity: true,
+        link: true,
       },
       with: {
         user: {

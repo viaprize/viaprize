@@ -14,7 +14,7 @@ export type Question = {
 export const formSchema = z.object({
   description: z
     .string()
-    .min(10, 'Description must be at least 10 characters long'),
+    .min(5, 'Description must be at least 10 characters long'),
   aiQuestions: z.array(
     z.object({
       question: z.string(),
@@ -35,7 +35,7 @@ export const formSchema = z.object({
   submissionStartDate: z.date(),
   submissionEndDate: z.date(),
   votingEndDate: z.date(),
-  imageSrc: FileWithPreviewSchema,
+  imageLocalUrl: z.string(),
 })
 
 export type FormValues = z.infer<typeof formSchema>
