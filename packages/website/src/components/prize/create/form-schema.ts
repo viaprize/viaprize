@@ -35,7 +35,7 @@ export const formSchema = z.object({
   submissionStartDate: z.date(),
   submissionEndDate: z.date(),
   votingEndDate: z.date(),
-  imageSrc: FileWithPreviewSchema,
+  imageLocalUrl: z.string(),
 })
 
 export type FormValues = z.infer<typeof formSchema>

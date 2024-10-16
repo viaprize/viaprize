@@ -11,7 +11,6 @@ import { differenceInMinutes } from 'date-fns'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import * as z from 'zod'
 import { DescriptionStep } from './description-step'
 import { type FormValues, type Question, formSchema } from './form-schema'
 import { QuestionsStep } from './questions-step'
@@ -20,9 +19,8 @@ import { TimingStep } from './times-step'
 import { TitleDescriptionStep } from './title-description-step'
 
 export default function BountyCreationForm() {
-  const [step, setStep] = useState(3)
+  const [step, setStep] = useState(1)
   const [initialQuestion, setInitialQuestion] = useState<Question | null>(null)
-  const [uploadingImage, setUploadingImage] = useState(false)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -54,12 +52,9 @@ export default function BountyCreationForm() {
   console.log({ values: form.getValues() })
 
   const onSubmit = async (values: FormValues) => {
-    console.log(values, 'values')
-
-    setUploadingImage(true)
     const ImageToUpload = await convertBlobUrlToFile(
-      values.imageSrc.preview,
-      values.imageSrc.path ?? 'image',
+      values.imageLocalUrl,
+      'image',
     )
     const imageUploadUrl = await getImageUploadUrl()
     toast.promise(
@@ -77,7 +72,7 @@ export default function BountyCreationForm() {
         })
 
         if (!image.ok) {
-          form.setError('imageSrc', { message: 'Failed to upload image' })
+          form.setError('imageLocalUrl', { message: 'Failed to upload image' })
           throw new Error('Failed to upload image')
         }
         console.log(imageUploadUrl, 'imageUploadUrl')
@@ -224,7 +219,7 @@ export default function BountyCreationForm() {
                     generatingTitleAndDescription ||
                     generatingSkills ||
                     creatingPrize ||
-                    (form.getValues('aiQuestions').length < 5 && step === 2)
+                    (form.getValues('aiQuestions').length < 3 && step === 2)
                   }
                 >
                   Next
