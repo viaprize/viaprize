@@ -188,4 +188,13 @@ export class Wallet extends Blockchain {
     ).json()) as any
     return res.address
   }
+  async fiatCheckoutLink() {
+    const res = await await fetch(`${this.url}/checkout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
+    })
+  }
 }

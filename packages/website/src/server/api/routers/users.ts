@@ -1,21 +1,9 @@
 import { unstable_update } from '@/server/auth'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-  withCache,
-} from '../trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 export const userRouter = createTRPCRouter({
-  hello: protectedProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      }
-    }),
   getUserStatistics: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {

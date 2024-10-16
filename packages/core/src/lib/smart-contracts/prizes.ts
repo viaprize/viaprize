@@ -144,9 +144,7 @@ export class PrizesBlockchain extends Blockchain {
     signature: `0x${string}`,
   ) {
     const rsv = parseSignature(signature)
-    console.log({ submissionHash })
-    console.log({ voteAmount })
-    console.log({ rsv })
+
     const data = encodeFunctionData({
       abi: PRIZE_V2_ABI,
       functionName: 'vote',

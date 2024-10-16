@@ -131,6 +131,22 @@ export default function DonateCard({
       console.log(e)
     }
   }
+  const handleCardDonation = async () => {
+    console.log('Donation with card')
+
+    try {
+      if (!address) {
+        throw new Error('No wallet connected found')
+      }
+      if (!session?.user?.wallet) {
+        throw new Error('No user found')
+      }
+      const isCustodial = !!session.user.wallet.key
+    } catch (e) {
+    } finally {
+      window.location.reload()
+    }
+  }
   const handleCryptoDonation = async () => {
     console.log('Donation with wallet')
 
@@ -142,7 +158,6 @@ export default function DonateCard({
         throw new Error('No user found')
       }
       const isCustodial = !!session.user.wallet.key
-      console.log(isCustodial, 'isCustodial')
       const { amountInUSDC, deadline, hash, rsv } = await generateSignature(
         address,
         contractAddress as `0x${string}`,
@@ -199,12 +214,6 @@ export default function DonateCard({
           <RadioGroupItem value="card" id="card" />
           <Label htmlFor="card">Donate with Card</Label>
         </div>
-        {/* {session.user.wallet?.key && (
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="custodial" id="custodial" />
-            <Label htmlFor="custodial">Donate with Custodial Wallet</Label>
-          </div>
-        )} */}
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="crypto" id="crypto" />
           <Label htmlFor="crypto">Donate with Crypto</Label>
