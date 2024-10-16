@@ -11,8 +11,8 @@ const accept = {
 }
 
 interface ImageCropProps {
-  onImageChange: (file: FileWithPreview | null) => void
-  image: FileWithPath | null
+  onImageChange: (fileUrl: string) => void
+  image: string | null
 }
 
 export default function ImageCrop({ onImageChange, image }: ImageCropProps) {
@@ -44,13 +44,6 @@ export default function ImageCrop({ onImageChange, image }: ImageCropProps) {
     accept,
   })
 
-  useEffect(() => {
-    if (!selectedFile) {
-      return
-    }
-    onImageChange(selectedFile)
-  }, [selectedFile, image])
-
   return (
     <div className="relative ">
       {selectedFile ? (
@@ -59,6 +52,7 @@ export default function ImageCrop({ onImageChange, image }: ImageCropProps) {
           setDialogOpen={setDialogOpen}
           selectedFile={selectedFile}
           setSelectedFile={setSelectedFile}
+          onChangeImageUrl={onImageChange}
         />
       ) : (
         <Avatar

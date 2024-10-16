@@ -5,8 +5,7 @@ import Credentials from 'next-auth/providers/credentials'
 import Github from 'next-auth/providers/github'
 import Google from 'next-auth/providers/google'
 import Resend from 'next-auth/providers/resend'
-import { cookies } from 'next/headers'
-import { SiweMessage } from 'siwe-viem'
+
 import { viaprize } from './viaprize'
 
 import type { DefaultSession } from 'next-auth'

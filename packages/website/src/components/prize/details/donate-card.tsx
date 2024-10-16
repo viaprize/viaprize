@@ -70,6 +70,8 @@ export default function DonateCard({
     api.prizes.addUsdcFundsCryptoForUser.useMutation()
   const addUsdcFundsForUsersAnonymously =
     api.prizes.addUsdcFundsCryptoForAnonymousUser.useMutation()
+  const addUsdcFundsFiatForAnonymousUser =
+    api.prizes.addUsdcFundsFiatForAnonymousUser.useMutation()
   const generateSignature = async (
     address: `0x${string}`,
     spender: `0x${string}`,
@@ -131,6 +133,27 @@ export default function DonateCard({
       console.log(e)
     }
   }
+  const handleCardDonationAnonymously = async () => {
+    console.log('Donation with card anonymously')
+
+    try {
+      if (!address) {
+        throw new Error('No wallet connected found')
+      }
+
+      const amountInUSDC = BigInt(Number.parseFloat(amount) * 1_000_000)
+      const url = await addUsdcFundsFiatForAnonymousUser.mutateAsync({
+        amount: Number.parseInt(amountInUSDC.toString()),
+        cancelUrl: 'https://vprz.com',
+        successUrl: 'https://vprz.com',
+        spender: contractAddress,
+      })
+      console.log({ url })
+      window.open(url, '_blank')
+    } catch (e) {
+      console.error(e)
+    }
+  }
   const handleCryptoDonation = async () => {
     console.log('Donation with wallet')
 
@@ -142,7 +165,6 @@ export default function DonateCard({
         throw new Error('No user found')
       }
       const isCustodial = !!session.user.wallet.key
-      console.log(isCustodial, 'isCustodial')
       const { amountInUSDC, deadline, hash, rsv } = await generateSignature(
         address,
         contractAddress as `0x${string}`,
@@ -174,8 +196,10 @@ export default function DonateCard({
           className="flex flex-col space-y-2"
         >
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="card" id="card" />
-            <Label htmlFor="card">Donate with Card Anonymously</Label>
+            <RadioGroupItem value="card-anonymously" id="card-anonymously" />
+            <Label htmlFor="card-anonymously">
+              Donate with Card Anonymously
+            </Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
@@ -189,7 +213,6 @@ export default function DonateCard({
         </RadioGroup>
       )
     }
-    console.log(session.user.wallet?.key, 'keyyy')
 
     return (
       <RadioGroup
@@ -200,12 +223,6 @@ export default function DonateCard({
           <RadioGroupItem value="card" id="card" />
           <Label htmlFor="card">Donate with Card</Label>
         </div>
-        {/* {session.user.wallet?.key && (
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="custodial" id="custodial" />
-            <Label htmlFor="custodial">Donate with Custodial Wallet</Label>
-          </div>
-        )} */}
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="crypto" id="crypto" />
           <Label htmlFor="crypto">Donate with Crypto</Label>
@@ -218,6 +235,12 @@ export default function DonateCard({
     if (!selectedOption) return null
 
     switch (selectedOption) {
+      case 'card-anonymously':
+        return (
+          <Button onClick={handleCardDonationAnonymously}>
+            Donate ${amount}
+          </Button>
+        )
       case 'card':
         return (
           <Button onClick={() => console.log('Donating with card')}>

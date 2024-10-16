@@ -43,6 +43,7 @@ interface ImageCropperProps {
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>
   selectedFile: FileWithPreview | null
   setSelectedFile: React.Dispatch<React.SetStateAction<FileWithPreview | null>>
+  onChangeImageUrl: (imageUrl: string) => void
 }
 
 const VIDEO_ASPECT_RATIO = 16 / 9
@@ -52,6 +53,7 @@ export function ImageCropper({
   setDialogOpen,
   selectedFile,
   setSelectedFile,
+  onChangeImageUrl,
 }: ImageCropperProps) {
   const imgRef = React.useRef<HTMLImageElement | null>(null)
 
@@ -103,6 +105,7 @@ export function ImageCropper({
   async function onCrop() {
     try {
       setCroppedImage(croppedImageUrl)
+      onChangeImageUrl(croppedImageUrl)
       setDialogOpen(false)
     } catch (error) {
       alert('Something went wrong!')

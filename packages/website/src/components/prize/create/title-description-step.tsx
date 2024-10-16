@@ -49,7 +49,7 @@ export function TitleDescriptionStep({
       />
       <FormField
         control={form.control}
-        name="imageSrc"
+        name="imageLocalUrl"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Upload An Image</FormLabel>
@@ -59,7 +59,7 @@ export function TitleDescriptionStep({
                   if (!file) {
                     return
                   }
-                  form.setValue('imageSrc', file)
+                  form.setValue('imageLocalUrl', file)
                 }}
                 image={field.value}
               />

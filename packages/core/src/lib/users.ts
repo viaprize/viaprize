@@ -60,6 +60,17 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
     })
   }
 
+  async emailExists(email: string) {
+    const result = await this.db
+      .select({
+        email: users.email,
+      })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1)
+    return result.length > 0
+  }
+
   async usernameExists(username: string) {
     const result = await this.db
       .select({
@@ -200,6 +211,27 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
       },
     })
     return user
+  }
+  async preBoardUserByEmail(email: string) {
+    const wallet = await this.wallet.generateWallet()
+
+    await this.db.transaction(async (tx) => {
+      await tx.insert(users).values({
+        email: email,
+        username: wallet.address.toLowerCase(),
+      })
+
+      await tx.insert(wallets).values({
+        address: wallet.address.toLowerCase(),
+        network: 'optimism',
+        key: wallet.key,
+        username: wallet.address.toLowerCase(),
+      })
+    })
+    return {
+      username: wallet.address.toLowerCase(),
+      wallet: wallet,
+    }
   }
 
   async onboardUser(data: {

@@ -41,7 +41,7 @@ export function QuestionsStep({ form, initialQuestion }: QuestionsStepProps) {
 
     if (
       index === questions.length - 1 &&
-      questions.length < 5 &&
+      questions.length < 3 &&
       !generatingQuestions
     ) {
       console.log(form.getValues('aiQuestions'))
@@ -182,7 +182,7 @@ function MultipleChoiceQuestion({
             />
           </FormControl>
           <FormMessage />
-          {index !== 4 && length === index + 1 && (
+          {index !== 2 && length === index + 1 && (
             <Button type="button" onClick={() => onAnswerSelected(field.value)}>
               Next Question
             </Button>

@@ -19,6 +19,7 @@ export const activities = pgTable('activities', {
     })
     .notNull(),
   activity: text('activity').notNull(),
+  link: text('link'),
   tag: text('tag').notNull().default('PRIZE'),
   createdAt: timestamp('createdAt', {
     mode: 'date',

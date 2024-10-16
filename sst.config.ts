@@ -8,6 +8,7 @@ export default $config({
         input?.stage === 'production' || input.stage === 'dev'
           ? 'retain'
           : 'remove',
+
       home: 'aws',
       providers: {
         aws: {
@@ -28,14 +29,16 @@ export default $config({
     const storage = await import('./infra/storage')
 
     const cache = await import('./infra/cache')
+    const router = await import('./infra/router')
 
     return {
       website: website.website.url,
       imageBucket: storage.imageBucket.name,
       eventBus: eventBus.eventBus.name,
-
+      scheduleReceivingFunction: eventBus.scheduleReceivingFunction.arn,
       cacheTable: cache.cacheTable.name,
       cacheTableArn: cache.cacheTable.arn,
+      router: router.router.url,
     }
   },
 })

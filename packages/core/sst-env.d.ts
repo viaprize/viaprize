@@ -73,32 +73,50 @@ declare module 'sst' {
       type: 'sst.sst.Secret'
       value: string
     }
+<<<<<<< HEAD
     OpenAiApiKey: {
       type: 'sst.sst.Secret'
       value: string
-    }
-    RpcUrl: {
+=======
+    "PaymentSecretKey": 
+      "type": "sst.sst.Secret"
+      "value": string
+    "Router": 
+      "type": "sst.aws.ApiGatewayV2"
+      "url": string
+    "RpcUrl": 
+      "type": "sst.sst.Secret"
+      "value": string
+>>>>>>> 98f97a1dc917c3a1a9eb4c7e1bd53a2e32d26365
+    RpcUrl: 
       type: 'sst.sst.Secret'
       value: string
-    }
-    ScheduleReceivingLambda: {
+    
+    {
       arn: string
       type: 'sst.aws.Function'
-    }
-    WalletApiKey: {
+    
+    {
       type: 'sst.sst.Secret'
       value: string
-    }
-    WalletPaymentInfraApi: {
+    
+<<<<<<< HEAD
+    WalletPaymentInfraApi: 
       type: 'sst.sst.Secret'
       value: string
-    }
-    schedulerRole: {
+=======
+    "WebhookSecret": 
+      "type": "sst.sst.Secret"
+      "value": string
+    "schedulerRole": 
+      "arn": string
+      "type": "aws.iam/role.Role"
+>>>>>>> 98f97a1dc917c3a1a9eb4c7e1bd53a2e32d26365
+    schedulerRole: 
       arn: string
       type: 'aws.iam/role.Role'
-    }
     website: {
-      type: 'sst.aws.Nextjs'
+    
       url: string
     }
   }

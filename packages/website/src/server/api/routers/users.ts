@@ -2,22 +2,10 @@ import { unstable_update } from '@/server/auth'
 import { TRPCError } from '@trpc/server'
 import { LoopsClient } from 'loops'
 import { z } from 'zod'
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-  withCache,
-} from '../trpc'
+import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc'
 
 const loops = new LoopsClient((process.env.LOOPS_API_KEY as string) ?? '')
 export const userRouter = createTRPCRouter({
-  hello: protectedProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      }
-    }),
   getUserStatistics: publicProcedure
     .input(z.string())
     .query(async ({ ctx, input }) => {

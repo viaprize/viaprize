@@ -27,16 +27,14 @@ export default function ExploreCard(props: ExploreCardProps) {
   return (
     <Link href={props.href} className="block">
       <Card className="p-3 h-full flex flex-row md:flex-col space-x-3 lg:space-x-0 hover:bg-muted-foreground/10">
-        <div className="">
-          <Image
-            src={props.imageUrl}
-            width={1250}
-            height={1250}
-            alt=""
-            objectFit="cover"
-            className="h-20 md:h-40 w-full rounded-md"
-          />
-        </div>
+        <Image
+          src={props.imageUrl}
+          width={1250}
+          height={1250}
+          alt=""
+          objectFit="cover"
+          className="h-20 md:h-40 w-full rounded-md aspect-video object-cover"
+        />
         <div className="w-[60%] md:w-full">
           <div className="flex items-center justify-between lg:mt-5">
             <div className="text-lg  lg:text-xl text-primary/80 font-medium">

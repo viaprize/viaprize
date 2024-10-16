@@ -7,8 +7,10 @@
     "@aws-sdk/lib-dynamodb": "catalog:",
     "@viaprize/core": "workspace:*",
     "date-fns": "^3.6.0",
-    "sst": "3.1.64",
+    "sst": "3.2.12",
+    "stripe": "^17.2.0",
     "valibot": "^0.42.0",
+    "viem": "^2.21.27",
     "zod": "^3.23.8"
   },
   "devDependencies": {
