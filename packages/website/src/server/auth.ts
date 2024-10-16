@@ -10,6 +10,7 @@ import { SiweMessage } from 'siwe-viem'
 import { viaprize } from './viaprize'
 
 import type { DefaultSession } from 'next-auth'
+import { e } from 'node_modules/nuqs/dist/serializer-BZD8Ur_m'
 import { z } from 'zod'
 
 export const userSessionSchema = z.object({
@@ -20,6 +21,7 @@ export const userSessionSchema = z.object({
     key: z.string().nullable(),
   }),
   isAdmin: z.boolean(),
+  email: z.string(),
 })
 declare module 'next-auth' {
   /**

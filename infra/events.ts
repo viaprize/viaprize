@@ -4,6 +4,7 @@ import { cacheTable } from './cache'
 import {
   CHAIN_ID,
   DATABASE_URL,
+  LOOPS_API_KEY,
   RPC_URL,
   WALLET_API_KEY,
   WALLET_PAYMENT_INFRA_API,
@@ -96,6 +97,7 @@ eventBus.subscribe({
     WALLET_PAYMENT_INFRA_API: WALLET_PAYMENT_INFRA_API.value,
     RPC_URL: RPC_URL.value,
     WALLET_API_KEY: WALLET_API_KEY.value,
+    LOOPS_API_KEY: LOOPS_API_KEY.value,
   },
   link: [
     DATABASE_URL,
@@ -107,5 +109,6 @@ eventBus.subscribe({
     WALLET_API_KEY,
     scheduleReceivingFunction,
     schedulerRole,
+    LOOPS_API_KEY,
   ],
 })

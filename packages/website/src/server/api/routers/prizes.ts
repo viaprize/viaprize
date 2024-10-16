@@ -484,6 +484,13 @@ export const prizeRouter = createTRPCRouter({
           )
         },
       )
+      // await bus.publish(Resource.EventBus.name, Events.Emails.Donated, {
+      //   amount: input.amount,
+      //   // email: ctx.session.user.email ?? 'email',
+      //   email: user.email,
+      //   name: user.username,
+      //   prizeTitle: prize.title,
+      // })
       return txHash
     }),
 
@@ -553,6 +560,12 @@ export const prizeRouter = createTRPCRouter({
           )
         },
       )
+      await bus.publish(Resource.EventBus.name, Events.Emails.Donated, {
+        email: user.email,
+        prizeTitle: prize.title,
+        donationAmount: input.amount,
+        // email: ctx.session.user.email ?? 'email',
+      })
       return txHash
     }),
 
