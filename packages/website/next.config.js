@@ -14,7 +14,7 @@ const config = {
         port: "",
         pathname: "/**",
       },
-        {
+      {
         protocol: "https",
         hostname: "uofqdqrrquswprylyzby.supabase.co",
         port: "",
@@ -50,6 +50,10 @@ const config = {
         port: "",
       },
     ],
+  },
+  webpack: (config) => {
+    config.externals.push("pino-pretty", "lokijs", "encoding");
+    return config;
   },
 };
 

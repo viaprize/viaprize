@@ -1,11 +1,10 @@
 'use client'
 import LoaderCircle from '@/components/common/loader-circle'
-import AboutContent from '@/components/prize/details/about-content'
 import EarlyDisputeButton from '@/components/prize/details/buttons/early-dispute-button'
 import EndSubmissionAndStartVotingButton from '@/components/prize/details/buttons/end-submission-and-start-voting-button'
 import EndVotingButton from '@/components/prize/details/buttons/end-voting-button'
 import StartSubmissionButton from '@/components/prize/details/buttons/start-submission-button'
-import DetailHeader from '@/components/prize/details/details-header'
+import Details from '@/components/prize/details/details'
 import SubmissionVoting from '@/components/prize/details/submissions-voting/submission-voting'
 import ContestantsCard, {
   type ContestantStage,
@@ -41,25 +40,12 @@ export default function FetchPrize({
             <IconArrowLeft className="mr-1" size={20} /> Back
           </div>
 
-          <DetailHeader
-            contractAddress={prize.primaryContractAddress}
-            funds={prize.funds}
-            projectName={prize.title}
-            name={prize.author.name ?? prize.authorUsername}
-            stage={prize.stage}
-            image={prize.imageUrl}
-            avatar={prize.author.image || ''}
-            title={prize.title}
-            prizeId={prize.id}
-            startSubmissionDate={prize.startSubmissionDate}
-            startVotingDate={prize.startVotingDate}
-            submissionDurationInMinutes={prize.submissionDurationInMinutes}
-            votingDurationInMinutes={prize.votingDurationInMinutes}
-          />
-          <Separator className="my-2" />
-          <AboutContent
-            badges={prize.skillSets}
-            description={prize.description}
+          <Details
+            {...prize}
+            authorUsername={prize.authorUsername}
+            imageUrl={prize.imageUrl}
+            authorName={prize.author.name ?? prize.authorUsername}
+            authorImage={prize.author.image ?? ''}
           />
           <SubmissionVoting
             prizeStage={prize.stage}
