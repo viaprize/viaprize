@@ -21,6 +21,7 @@ export const env = createEnv({
     CHAIN_ID: z.string().default('10'),
     WALLET_API_KEY: z.string(),
     RPC_URL: z.string(),
+    PAYMENT_URL: z.string(),
   },
 
   /**
@@ -54,6 +55,7 @@ export const env = createEnv({
     WALLET_API_KEY: process.env.WALLET_API_KEY,
     RPC_URL: process.env.RPC_URL,
     NEXT_PUBLIC_CHAIN_ID: process.env.NEXT_PUBLIC_CHAIN_ID,
+    PAYMENT_URL: process.env.PAYMENT_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

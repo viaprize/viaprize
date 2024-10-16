@@ -34,3 +34,7 @@ export const RPC_URL = new sst.Secret('RpcUrl')
 export const WALLET_API_KEY = new sst.Secret('WalletApiKey')
 
 export const INDEXER_RPC_URL = new sst.Secret('IndexerRpcUrl')
+
+export const PAYMENT_SECRET_KEY = new sst.Secret('PaymentSecretKey')
+
+export const WEBHOOK_SECRET = new sst.Secret('WebhookSecret')

@@ -7,7 +7,7 @@ import {
   stringToHex,
 } from 'viem'
 import type { prizes } from '../../database/schema'
-import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI } from '../abi'
+import { PRIZE_FACTORY_ABI, PRIZE_V2_ABI, RESERVE_FUND_ABI } from '../abi'
 import { CONTRACT_CONSTANTS_PER_CHAIN } from '../constants'
 import { Blockchain } from './blockchain'
 
@@ -23,6 +23,33 @@ export class PrizesBlockchain extends Blockchain {
       address: prizeAddress,
     })
     return refundVotes.usdcVotes
+  }
+
+  getEncodedReserveAddFunds(
+    spender: `0x${string}`,
+    reserveAddress: `0x${string}`,
+    amount: number,
+    deadline: number,
+    v: number,
+    s: `0x${string}`,
+    r: `0x${string}`,
+    ethSignedMessageHash: `0x${string}`,
+  ) {
+    const data = encodeFunctionData({
+      abi: RESERVE_FUND_ABI,
+      functionName: 'fundUsingUsdc',
+      args: [
+        reserveAddress,
+        spender,
+        BigInt(amount),
+        BigInt(deadline),
+        v,
+        r,
+        s,
+        ethSignedMessageHash,
+      ],
+    })
+    return data
   }
 
   async getEncodedStartSubmission(submissionDurationInMinutes: number) {

@@ -70,6 +70,8 @@ export default function DonateCard({
     api.prizes.addUsdcFundsCryptoForUser.useMutation()
   const addUsdcFundsForUsersAnonymously =
     api.prizes.addUsdcFundsCryptoForAnonymousUser.useMutation()
+  const addUsdcFundsFiatForAnonymousUser =
+    api.prizes.addUsdcFundsFiatForAnonymousUser.useMutation()
   const generateSignature = async (
     address: `0x${string}`,
     spender: `0x${string}`,
@@ -131,20 +133,25 @@ export default function DonateCard({
       console.log(e)
     }
   }
-  const handleCardDonation = async () => {
-    console.log('Donation with card')
+  const handleCardDonationAnonymously = async () => {
+    console.log('Donation with card anonymously')
 
     try {
       if (!address) {
         throw new Error('No wallet connected found')
       }
-      if (!session?.user?.wallet) {
-        throw new Error('No user found')
-      }
-      const isCustodial = !!session.user.wallet.key
+
+      const amountInUSDC = BigInt(Number.parseFloat(amount) * 1_000_000)
+      const url = await addUsdcFundsFiatForAnonymousUser.mutateAsync({
+        amount: Number.parseInt(amountInUSDC.toString()),
+        cancelUrl: 'https://vprz.com',
+        successUrl: 'https://vprz.com',
+        spender: contractAddress,
+      })
+      console.log({ url })
+      window.open(url, '_blank')
     } catch (e) {
-    } finally {
-      window.location.reload()
+      console.error(e)
     }
   }
   const handleCryptoDonation = async () => {
@@ -189,8 +196,10 @@ export default function DonateCard({
           className="flex flex-col space-y-2"
         >
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="card" id="card" />
-            <Label htmlFor="card">Donate with Card Anonymously</Label>
+            <RadioGroupItem value="card-anonymously" id="card-anonymously" />
+            <Label htmlFor="card-anonymously">
+              Donate with Card Anonymously
+            </Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
@@ -226,6 +235,12 @@ export default function DonateCard({
     if (!selectedOption) return null
 
     switch (selectedOption) {
+      case 'card-anonymously':
+        return (
+          <Button onClick={handleCardDonationAnonymously}>
+            Donate ${amount}
+          </Button>
+        )
       case 'card':
         return (
           <Button onClick={() => console.log('Donating with card')}>

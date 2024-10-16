@@ -64,6 +64,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     this.chainId = chainId
     this.blockchain = new PrizesBlockchain(rpcUrl, chainId)
   }
+
   async getTotalFunds() {
     const totalFunds = await this.db
       .select({ total: sum(prizes.funds) })

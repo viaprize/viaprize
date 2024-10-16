@@ -1,5 +1,6 @@
 import { cacheTable } from './cache'
 import { eventBus } from './events'
+import { router } from './router'
 import {
   AUTH_GITHUB_ID,
   AUTH_GITHUB_SECRET,
@@ -38,8 +39,10 @@ export const website = new sst.aws.Nextjs('website', {
     imageBucket,
     eventBus,
     cacheTable,
+    router,
   ],
   environment: {
+    PAYMENT_URL: router.url,
     AUTH_SECRET: AUTH_SECRET.value,
     DATABASE_URL: DATABASE_URL.value,
     AUTH_GITHUB_ID: AUTH_GITHUB_ID.value,

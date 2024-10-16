@@ -2391,3 +2391,78 @@ export const ERC20_PERMIT_ABI = [
     type: 'function',
   },
 ] as const
+
+export const RESERVE_FUND_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_usdcAddress',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'constructor',
+  },
+  {
+    inputs: [],
+    name: '_usdc',
+    outputs: [
+      {
+        internalType: 'contract IERC20Permit',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'reserveAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'spender',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_amount',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_deadline',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint8',
+        name: 'v',
+        type: 'uint8',
+      },
+      {
+        internalType: 'bytes32',
+        name: 'r',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: 's',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_ethSignedMessageHash',
+        type: 'bytes32',
+      },
+    ],
+    name: 'fundUsingUsdc',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const

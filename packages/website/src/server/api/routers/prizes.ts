@@ -412,6 +412,42 @@ export const prizeRouter = createTRPCRouter({
       await ViaprizeUtils.publishDeployedPrizeCacheDelete(viaprize, prize.slug)
       return txReceipt
     }),
+  addUsdcFundsFiatForAnonymousUser: publicProcedure
+    .input(
+      z.object({
+        amount: z.number(),
+        successUrl: z.string(),
+        cancelUrl: z.string(),
+        spender: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      console.log('Donation with card anonymously')
+      const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
+        input.spender,
+      )
+      const checkoutUrl = (
+        await (
+          await fetch(`${env.PAYMENT_URL}/payment/checkout`, {
+            method: 'POST',
+            body: JSON.stringify({
+              title: prize.title,
+              imageUrl: prize.imageUrl,
+              successUrl: input.successUrl,
+              cancelUrl: input.cancelUrl,
+              checkoutMetadata: {
+                spender: prize.primaryContractAddress,
+                deadline: (Math.floor(Date.now() / 1000) + 100_000).toString(),
+                backendId: prize.id,
+                chainId: '10',
+                amount: input.amount.toString(),
+              },
+            }),
+          })
+        ).json()
+      ).url as string
+      return checkoutUrl
+    }),
   addUsdcFundsCryptoForAnonymousUser: publicProcedure
     .input(
       z.object({
@@ -476,7 +512,6 @@ export const prizeRouter = createTRPCRouter({
       )
       return txHash
     }),
-
   addUsdcFundsCryptoForUser: protectedProcedure
     .input(
       z.object({

@@ -23,5 +23,7 @@ export const CONTRACT_CONSTANTS_PER_CHAIN = {
     TRANSACTION_BATCH:
       '0x8c79858cAa48B17BfB1dd7B9335BCC4bDde82a3a' as `0x${string}`,
     REFUND_HASH: keccak256(encodePacked(['string'], ['REFUND'])),
+    RESERVE_FUND_PRIZE_ADDRESS:
+      '0x3cBE69793295ca673E89adE141796611db4E4560' as `0x${string}`,
   },
 }
