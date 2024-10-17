@@ -6,8 +6,8 @@ export const viaprize = new Viaprize({
     inMemoryDb: false,
     mode: 'development',
     wallet: {
-      walletPaymentInfraUrl:
-        'https://49yjt1y4yg.execute-api.us-west-1.amazonaws.com',
+      walletPaymentInfraUrl: process.env.WALLET_PAYMENT_INFRA_API ?? '',
+
       walletApiKey: process.env.WALLET_API_KEY ?? '',
       rpcUrl: process.env.RPC_URL ?? '',
     },

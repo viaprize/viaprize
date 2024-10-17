@@ -173,6 +173,13 @@ export const handler: APIGatewayProxyHandlerV2 = async (event, ctx) => {
         const prize = await viaprize.prizes.getPrizeById(
           campaignMetadata.backendId,
         )
+        if (username) {
+          await ViaprizeUtils.publishActivity({
+            activity: `Donated ${Number.parseFloat(campaignMetadata.amount) / 1_000_000} USD`,
+            username: username,
+          })
+        }
+
         await ViaprizeUtils.publishDeployedPrizeCacheDelete(
           viaprize,
           prize.slug,

@@ -209,6 +209,11 @@ export const prizeRouter = createTRPCRouter({
               contractAddress: events[0].args.viaPrizeAddress,
               prizeId: input.prizeId,
             })
+            await ViaprizeUtils.publishActivity({
+              activity: 'Created a prize',
+              username: prize.authorUsername,
+              link: `/prize/${prize.slug}`,
+            })
           }
         },
       )
@@ -234,6 +239,10 @@ export const prizeRouter = createTRPCRouter({
         authorUsername: user.username,
         proposerAddress: user.wallet.address,
       })
+      await ViaprizeUtils.publishActivity({
+        activity: 'Created a prize proposal',
+        username: user.username,
+      })
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
       })
@@ -255,6 +264,7 @@ export const prizeRouter = createTRPCRouter({
       const submitterAddress = ctx.session.user.wallet?.address
       console.log({ submitterAddress })
       const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
+      const user = userSessionSchema.parse(ctx.session.user)
       if (!submitterAddress) {
         throw new TRPCError({
           code: 'UNAUTHORIZED',
@@ -309,6 +319,12 @@ export const prizeRouter = createTRPCRouter({
         },
       )
       if (txHash) {
+        await ViaprizeUtils.publishActivity({
+          activity: 'Created a submission',
+          username: user.username,
+          link: `/prize/${prize.slug}`,
+        })
+
         await ViaprizeUtils.publishDeployedPrizeCacheDelete(
           viaprize,
           prize.slug,
@@ -664,6 +680,11 @@ export const prizeRouter = createTRPCRouter({
           )
         },
       )
+      await ViaprizeUtils.publishActivity({
+        activity: `Donated ${input.amount / 1_000_000} USD`,
+        username: user.username,
+        link: `/prize/${prize.slug}`,
+      })
       await bus.publish(Resource.EventBus.name, Events.Emails.Donated, {
         email: user.email,
         prizeTitle: prize.title,

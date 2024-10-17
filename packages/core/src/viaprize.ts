@@ -12,6 +12,8 @@ import { IndexerEvents } from './lib/indexer-events'
 import { Prizes } from './lib/prizes'
 import { Users } from './lib/users'
 import { Wallet } from './lib/wallet'
+import { Activities } from './lib/activities'
+import { insertActivitySchema } from './database/schema'
 
 export class Viaprize {
   config: ViaprizeConfig
@@ -22,6 +24,7 @@ export class Viaprize {
   database: ViaprizeDatabase
   constants
   wallet: Wallet
+  activities: Activities
 
   constructor({ config }: { config: ViaprizeConfig }) {
     this.config = viaprizeConfigSchema.parse(config)
@@ -42,6 +45,7 @@ export class Viaprize {
       this.config.wallet.rpcUrl,
     )
     this.indexerEvents = new IndexerEvents(this.database)
+    this.activities = new Activities(this.database)
     this.constants =
       CONTRACT_CONSTANTS_PER_CHAIN[this.config.chainId as ValidChainIDs]
   }
@@ -61,6 +65,12 @@ const TransactionData = z.object({
   walletType: z.enum(['reserve', 'gasless']).default('gasless'),
 })
 export const Events = {
+  Activity: {
+    Create: defineEvent(
+      'activity.create',
+      insertActivitySchema,
+    ),
+  },
   Wallet: {
     Transaction: defineEvent('wallet.transaction', TransactionData),
     StartSubmission: defineEvent(
