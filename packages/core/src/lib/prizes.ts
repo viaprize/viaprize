@@ -29,7 +29,11 @@ import {
 import { CacheTag } from './cache-tag'
 import { CONTRACT_CONSTANTS_PER_CHAIN, type ValidChainIDs } from './constants'
 import { PrizesBlockchain } from './smart-contracts/prizes'
-import { getTextFromDonation, stringToSlug } from './utils'
+import {
+  getTextFromDonation,
+  getValueFromDonation,
+  stringToSlug,
+} from './utils'
 
 const CACHE_TAGS = {
   PENDING_PRIZES: { value: 'pending-prizes', requiresSuffix: false },
@@ -78,13 +82,29 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
         user: true,
       },
     })
-    const finalFunders = funders.map((funder) => {
-      return {
-        ...funder,
-        donationText: getTextFromDonation(funder),
+
+    const funderMap: { [key: string]: (typeof funders)[number] } = {}
+    funders.forEach((funder) => {
+      if (funder.username) {
+        const funderKey = `${funder.username}-${funder.token}-${funder.decimals}`
+        if (funderMap[funderKey]) {
+          // Merge donation values if same username, token, and decimals
+          const existingFunder = funderMap[funderKey]
+          existingFunder.valueInToken += funder.valueInToken
+        } else {
+          // Add new funder to the map
+          funderMap[funderKey] = { ...funder }
+        }
+      } else {
+        // If no username, just add the funder as is with a unique key
+        funderMap[`no-username-${funder.id}`] = { ...funder }
       }
     })
-    return finalFunders
+
+    return Object.values(funderMap).map((f) => ({
+      ...f,
+      donationText: getTextFromDonation(f),
+    }))
   }
 
   async getSubmittersByPrizeId(prizeId: string) {

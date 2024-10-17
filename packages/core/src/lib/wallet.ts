@@ -183,9 +183,11 @@ export class Wallet extends Blockchain {
     // Get the wallet address
     const res: { address: string } = (await (
       await fetch(
-        this.url + `/${type}${addressType === 'signer' ? '/signer' : ''}`,
+        this.url +
+          `/${type}${addressType === 'signer' ? '/signer' : '/address'}`,
       )
     ).json()) as any
+
     return res.address
   }
 }

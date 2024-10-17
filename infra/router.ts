@@ -3,6 +3,7 @@ import {
   DATABASE_URL,
   PAYMENT_SECRET_KEY,
   RPC_URL,
+  WALLET_API_KEY,
   WALLET_PAYMENT_INFRA_API,
   WEBHOOK_SECRET,
 } from './secrets'
@@ -25,6 +26,7 @@ router.route('POST /payment/webhook', {
     CHAIN_ID: CHAIN_ID.value,
     WALLET_PAYMENT_INFRA_API: WALLET_PAYMENT_INFRA_API.value,
     RPC_URL: RPC_URL.value,
+    WALLET_API_KEY: WALLET_API_KEY.value,
     WEBHOOK_SECRET: WEBHOOK_SECRET.value,
   },
 })

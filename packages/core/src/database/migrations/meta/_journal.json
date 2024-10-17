@@ -71,6 +71,13 @@
       "when": 1729066120902,
       "tag": "0009_flimsy_hercules",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1729157554757,
+      "tag": "0010_brown_lockjaw",
+      "breakpoints": true
     }
   ]
 }

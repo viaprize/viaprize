@@ -3,6 +3,7 @@ import {
   CONTRACT_CONSTANTS_PER_CHAIN,
   type ValidChainIDs,
 } from '@viaprize/core/lib/constants'
+import { ViaprizeUtils } from '@viaprize/core/viaprize-utils'
 import type { APIGatewayProxyHandlerV2 } from 'aws-lambda'
 import Stripe from 'stripe'
 import { parseEventLogs, parseSignature } from 'viem'
@@ -12,6 +13,9 @@ import { checkoutMetadataSchema } from './checkout'
 
 const isCampaign = (str: string) => str !== 'https://stripe.com'
 export const handler: APIGatewayProxyHandlerV2 = async (event, ctx) => {
+  console.log(
+    '=======================================EVENT=======================================',
+  )
   const signature = event.headers['stripe-signature']
   const body = event.body
   if (!process.env.WEBHOOK_SECRET) {
@@ -68,35 +72,40 @@ export const handler: APIGatewayProxyHandlerV2 = async (event, ctx) => {
         let username: string | undefined
         let signature: string | undefined
         let hash: string | undefined
+        let key: string | undefined
 
-        const doesEmailExist = await viaprize.users.emailExists(
-          email.toLocaleLowerCase(),
-        )
-        if (!campaignMetadata.username && !doesEmailExist) {
+        const user = campaignMetadata.username
+          ? await viaprize.users.getUserByUsername(campaignMetadata.username)
+          : await viaprize.users.getUserByEmail(email.toLocaleLowerCase())
+        if (!campaignMetadata.username && user) {
+          username = user.username ?? undefined
+          key = user.wallets[0].key ?? undefined
+        }
+        if (!campaignMetadata.username && !user) {
           const preBoardedUser = await viaprize.users.preBoardUserByEmail(
             email.toLowerCase(),
           )
           username = preBoardedUser.username
+          key = preBoardedUser.wallet.key
+        }
+        if (!campaignMetadata.username && key) {
           const custodialSign =
             await viaprize.wallet.signUsdcTransactionForCustodial({
               deadline: Number.parseInt(campaignMetadata.deadline),
-              key: preBoardedUser.wallet.key,
+              key: key,
               spender: campaignMetadata.spender as `0x${string}`,
               value: Number.parseInt(campaignMetadata.amount),
             })
           hash = custodialSign.hash
           signature = custodialSign.signature
-        } else if (campaignMetadata.username) {
+        }
+
+        if (campaignMetadata.username) {
           username = campaignMetadata.username
           hash = campaignMetadata.ethSignedMessage
           signature = campaignMetadata.signature
         }
-        if (!username) {
-          return {
-            statusCode: 400,
-            body: 'Invalid request without username',
-          }
-        }
+
         if (!hash || !signature) {
           return {
             statusCode: 400,
@@ -110,6 +119,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (event, ctx) => {
         const chainId = Number.parseInt(campaignMetadata.chainId)
         const constants = CONTRACT_CONSTANTS_PER_CHAIN[chainId as ValidChainIDs]
         const rsv = parseSignature(signature as `0x${string}`)
+
         const data = viaprize.prizes.blockchain.getEncodedReserveAddFunds(
           campaignMetadata.spender as `0x${string}`,
           reserveAddress as `0x${string}`,
@@ -120,6 +130,8 @@ export const handler: APIGatewayProxyHandlerV2 = async (event, ctx) => {
           rsv.r,
           hash as `0x${string}`,
         )
+        console.log({ data })
+
         const txReceipt = await viaprize.wallet.sendTransaction(
           [
             {
@@ -145,15 +157,26 @@ export const handler: APIGatewayProxyHandlerV2 = async (event, ctx) => {
         }
 
         await viaprize.prizes.addUsdcFunds({
-          donor: donationEvents[0].args.donator,
+          donor: campaignMetadata.username
+            ? user?.name ?? 'Anonymous'
+            : eventData.customer_details?.name ?? 'Anonymous',
           isFiat: true,
           recipientAddress: campaignMetadata.spender,
-          valueInToken: donationEvents[0].args.amount.toString(),
+          valueInToken: Number.parseInt(
+            donationEvents[0].args.amount.toString(),
+          ),
           prizeId: campaignMetadata.backendId,
           username: username,
           paymentId: eventData.id,
           transactionId: txReceipt.transactionHash,
         })
+        const prize = await viaprize.prizes.getPrizeById(
+          campaignMetadata.backendId,
+        )
+        await ViaprizeUtils.publishDeployedPrizeCacheDelete(
+          viaprize,
+          prize.slug,
+        )
       }
     }
   }

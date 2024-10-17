@@ -72,6 +72,8 @@ export default function DonateCard({
     api.prizes.addUsdcFundsCryptoForAnonymousUser.useMutation()
   const addUsdcFundsFiatForAnonymousUser =
     api.prizes.addUsdcFundsFiatForAnonymousUser.useMutation()
+  const addUsdcFundsFiatForUser =
+    api.prizes.addUsdcFundsFiatForUser.useMutation()
   const generateSignature = async (
     address: `0x${string}`,
     spender: `0x${string}`,
@@ -104,7 +106,7 @@ export default function DonateCard({
     })
 
     const rsv = parseSignature(signature)
-    return { rsv, hash, deadline, amountInUSDC }
+    return { rsv, hash, deadline, amountInUSDC, signature }
   }
   const utils = api.useUtils()
 
@@ -133,14 +135,44 @@ export default function DonateCard({
       console.log(e)
     }
   }
+  const handleCardDonation = async () => {
+    console.log('Donation with card')
+    try {
+      const amountInUSDC = BigInt(Number.parseFloat(amount) * 1_000_000)
+
+      if (!session?.user?.wallet) {
+        throw new Error('No user found')
+      }
+      const isCustodial = !!session.user.wallet.key
+      let finalSignature: string | undefined
+      let ethHash: string | undefined
+      let finalDeadline = Math.floor(Date.now() / 1000) + 100_000
+      if (!isCustodial) {
+        const { amountInUSDC, deadline, hash, rsv, signature } =
+          await generateSignature(address, contractAddress as `0x${string}`)
+        finalSignature = signature
+        finalDeadline = Number.parseInt(deadline.toString())
+        ethHash = hash
+      }
+
+      const url = await addUsdcFundsFiatForUser.mutateAsync({
+        amount: Number.parseInt(amountInUSDC.toString()),
+        cancelUrl: window.location.href,
+        successUrl: window.location.href,
+        spender: contractAddress,
+        hash: ethHash,
+        signature: finalSignature,
+        deadline: finalDeadline,
+      })
+      window.open(url, '_blank')
+    } catch (e) {
+      console.error(e)
+    }
+  }
   const handleCardDonationAnonymously = async () => {
     console.log('Donation with card anonymously')
 
     try {
-      if (!address) {
-        throw new Error('No wallet connected found')
-      }
-
       const amountInUSDC = BigInt(Number.parseFloat(amount) * 1_000_000)
       const url = await addUsdcFundsFiatForAnonymousUser.mutateAsync({
         amount: Number.parseInt(amountInUSDC.toString()),
@@ -164,7 +196,6 @@ export default function DonateCard({
       if (!session?.user?.wallet) {
         throw new Error('No user found')
       }
-      const isCustodial = !!session.user.wallet.key
       const { amountInUSDC, deadline, hash, rsv } = await generateSignature(
         address,
         contractAddress as `0x${string}`,
@@ -237,15 +268,20 @@ export default function DonateCard({
     switch (selectedOption) {
       case 'card-anonymously':
         return (
-          <Button onClick={handleCardDonationAnonymously}>
+          <Button
+            onClick={handleCardDonationAnonymously}
+            disabled={addUsdcFundsFiatForAnonymousUser.isPending}
+          >
             Donate ${amount}
           </Button>
         )
       case 'card':
-        return (
-          <Button onClick={() => console.log('Donating with card')}>
-            Donate ${amount}
-          </Button>
+        return session?.user.wallet?.key ? (
+          <Button onClick={handleCardDonation}>Donate ${amount}</Button>
+        ) : isConnected ? (
+          <Button onClick={handleCardDonation}>Donate ${amount}</Button>
+        ) : (
+          <Button onClick={openConnectModal}>Connect Wallet</Button>
         )
       case 'custodial':
         return (

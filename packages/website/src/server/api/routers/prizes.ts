@@ -35,7 +35,7 @@ export const prizeRouter = createTRPCRouter({
   getFunders: publicProcedure
     .input(z.object({ prizeId: z.string(), slug: z.string() }))
     .query(async ({ ctx, input }) => {
-      const funders = withCache(
+      const funders = await withCache(
         ctx,
         ctx.viaprize.prizes.getCacheTag('FUNDERS_SLUG_PRIZE', input.slug),
         async () =>
@@ -412,6 +412,71 @@ export const prizeRouter = createTRPCRouter({
       await ViaprizeUtils.publishDeployedPrizeCacheDelete(viaprize, prize.slug)
       return txReceipt
     }),
+  addUsdcFundsFiatForUser: protectedProcedure
+    .input(
+      z.object({
+        amount: z.number(),
+        successUrl: z.string(),
+        cancelUrl: z.string(),
+        spender: z.string(),
+        hash: z.string().optional(),
+        signature: z.string().optional(),
+        deadline: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      console.log('Donation with card')
+      let signature = input.signature
+      let hash = input.hash
+      const user = userSessionSchema.parse(ctx.session.user)
+      console.log({ input })
+      if (user.wallet.key && !input.signature && !input.hash) {
+        const res = await ctx.viaprize.wallet.signUsdcTransactionForCustodial({
+          deadline: input.deadline,
+          key: user.wallet.key,
+          spender: input.spender as `0x${string}`,
+          value: input.amount,
+        })
+        signature = res.signature
+        hash = res.hash
+      }
+
+      if (!signature || !hash) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must sign the transaction to donate',
+          cause: 'User did not  sign the transaction',
+        })
+      }
+      const prize = await ctx.viaprize.prizes.getPrizeByContractAddress(
+        input.spender,
+      )
+
+      const checkoutUrl = (
+        await (
+          await fetch(`${env.PAYMENT_URL}/payment/checkout`, {
+            method: 'POST',
+            body: JSON.stringify({
+              title: prize.title,
+              imageUrl: prize.imageUrl,
+              successUrl: input.successUrl,
+              cancelUrl: input.cancelUrl,
+              checkoutMetadata: {
+                spender: prize.primaryContractAddress,
+                deadline: input.deadline.toString(),
+                backendId: prize.id,
+                chainId: '10',
+                amount: input.amount.toString(),
+                username: user.username,
+                signature: signature,
+                ethSignedMessage: hash,
+              },
+            }),
+          })
+        ).json()
+      ).url as string
+      return checkoutUrl
+    }),
   addUsdcFundsFiatForAnonymousUser: publicProcedure
     .input(
       z.object({
@@ -501,7 +566,9 @@ export const prizeRouter = createTRPCRouter({
           await ctx.viaprize.prizes.addUsdcFunds({
             recipientAddress: prize.primaryContractAddress as `0x${string}`,
             donor: 'Anonymous',
-            valueInToken: fundsAddedEvents[0]?.args.amount.toString(),
+            valueInToken: Number.parseInt(
+              fundsAddedEvents[0]?.args.amount.toString(),
+            ),
             isFiat: false,
           })
           await ViaprizeUtils.publishDeployedPrizeCacheDelete(
@@ -568,7 +635,9 @@ export const prizeRouter = createTRPCRouter({
             recipientAddress: prize.primaryContractAddress as `0x${string}`,
             username: ctx.session.user.username,
             donor: ctx.session.user.name ?? 'Anonymous',
-            valueInToken: fundsAddedEvents[0]?.args.amount.toString(),
+            valueInToken: Number.parseFloat(
+              fundsAddedEvents[0]?.args.amount.toString(),
+            ),
             isFiat: false,
             prizeId: prize.id,
           })

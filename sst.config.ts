@@ -1,5 +1,7 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 
+import { PAYMENT_SECRET_KEY } from './infra/secrets'
+
 export default $config({
   app(input) {
     return {
@@ -8,7 +10,6 @@ export default $config({
         input?.stage === 'production' || input.stage === 'dev'
           ? 'retain'
           : 'remove',
-
       home: 'aws',
       providers: {
         aws: {
@@ -23,11 +24,8 @@ export default $config({
   },
   async run() {
     const website = await import('./infra/website')
-
     const eventBus = await import('./infra/events')
-
     const storage = await import('./infra/storage')
-
     const cache = await import('./infra/cache')
     const router = await import('./infra/router')
 
