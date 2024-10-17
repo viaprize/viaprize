@@ -28,10 +28,10 @@ export const handler = bus.subscriber(
     Events.Prize.ScheduleEndDispute,
     Events.Prize.Approve,
 
-    Events.Emails.Newsletter,
     Events.Emails.Welcome,
     Events.Emails.prizeCreated,
     Events.Emails.Donated,
+    Events.Emails.submissionCreated,
   ],
   async (event) => {
     console.log(
@@ -234,7 +234,6 @@ export const handler = bus.subscriber(
         })
         break
       }
-
       case 'emails.donated': {
         try {
           const response = await email.sendTransactionalEmail({
@@ -250,6 +249,55 @@ export const handler = bus.subscriber(
           console.error('the error while sending donation email....', error)
         }
         break
+      }
+      case 'emails.submissionCreated': {
+        try {
+          const toProposer = await email.sendTransactionalEmail({
+            transactionalId: 'cm2d03ghr045310133l4kncat',
+            email: event.properties.proposer,
+            dataVariables: {
+              proposer: event.properties.proposer,
+              prizeTitle: event.properties.prizeTitle,
+              submissionTitle: event.properties.submissionTitle,
+              dateReceived: event.properties.dateReceived,
+              contestant: event.properties.contestant,
+              tags: event.properties.tags[event.properties.tags.length],
+            },
+          })
+          console.log('toProposer email response:', toProposer)
+
+          const toContestant = await email.sendTransactionalEmail({
+            transactionalId: 'cm2d0ckng00lu4p5yi2wch60p',
+            email: event.properties.contestant,
+            dataVariables: {
+              prizeTitle: event.properties.prizeTitle,
+              submissionTitle: event.properties.submissionTitle,
+              dateReceived: event.properties.dateReceived,
+              contestant: event.properties.contestant,
+              tags: event.properties.tags[event.properties.tags.length],
+            },
+          })
+          console.log('toContestant email response:', toContestant)
+
+          const toFunder = await email.sendTransactionalEmail({
+            transactionalId: 'cm2d07of401reyaib0gdmbs07',
+            email: event.properties.funder,
+            dataVariables: {
+              funder: event.properties.funder,
+              prizeTitle: event.properties.prizeTitle,
+              submissionTitle: event.properties.submissionTitle,
+              dateReceived: event.properties.dateReceived,
+              contestant: event.properties.contestant,
+              tags: event.properties.tags[event.properties.tags.length],
+            },
+          })
+          console.log('toFunder email response:', toFunder)
+        } catch (error) {
+          console.error(
+            'Error while sending submission created emails...',
+            error,
+          )
+        }
       }
     }
   },

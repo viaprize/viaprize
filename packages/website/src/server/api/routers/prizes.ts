@@ -254,6 +254,7 @@ export const prizeRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       const submitterAddress = ctx.session.user.wallet?.address
       console.log({ submitterAddress })
+      const user = userSessionSchema.parse(ctx.session.user)
       const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
       if (!submitterAddress) {
         throw new TRPCError({
@@ -305,6 +306,15 @@ export const prizeRouter = createTRPCRouter({
             description: input.submissionText,
             prizeId: input.prizeId,
             username: ctx.session.user.username as string,
+          })
+          bus.publish(Resource.EventBus.name, Events.Emails.submissionCreated, {
+            prizeTitle: prize.title,
+            proposer: '',
+            contestant: '',
+            funder: '',
+            submissionTitle: '',
+            dateReceived: Date.now().toString(),
+            tags: [],
           })
         },
       )
@@ -520,13 +530,6 @@ export const prizeRouter = createTRPCRouter({
           )
         },
       )
-      // await bus.publish(Resource.EventBus.name, Events.Emails.Donated, {
-      //   amount: input.amount,
-      //   // email: ctx.session.user.email ?? 'email',
-      //   email: user.email,
-      //   name: user.username,
-      //   prizeTitle: prize.title,
-      // })
       return txHash
     }),
   addUsdcFundsCryptoForUser: protectedProcedure
@@ -599,7 +602,6 @@ export const prizeRouter = createTRPCRouter({
         email: user.email,
         prizeTitle: prize.title,
         donationAmount: input.amount,
-        // email: ctx.session.user.email ?? 'email',
       })
       return txHash
     }),

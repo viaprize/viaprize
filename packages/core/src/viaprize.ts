@@ -157,10 +157,6 @@ export const Events = {
     ),
   },
   Emails: {
-    Newsletter: defineEvent(
-      'emails.newsletter',
-      z.object({ email: z.string(), firstName: z.string() }),
-    ),
     Welcome: defineEvent('emails.onboarding', z.object({ email: z.string() })),
     prizeCreated: defineEvent(
       'emails.prizeCreated',
@@ -172,6 +168,18 @@ export const Events = {
         email: z.string(),
         prizeTitle: z.string(),
         donationAmount: z.number(),
+      }),
+    ),
+    submissionCreated: defineEvent(
+      'emails.submissionCreated',
+      z.object({
+        proposer: z.string(),
+        funder: z.string(),
+        prizeTitle: z.string(),
+        submissionTitle: z.string(),
+        dateReceived: z.string(),
+        contestant: z.string(),
+        tags: z.array(z.string()),
       }),
     ),
   },
