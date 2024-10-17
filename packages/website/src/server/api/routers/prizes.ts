@@ -151,7 +151,9 @@ export const prizeRouter = createTRPCRouter({
       ctx,
       ctx.viaprize.prizes.getCacheTag('DEPLOYED_PRIZES'),
       async () => {
-        return await ctx.viaprize.prizes.getDeployedPrizes()
+        const a = await ctx.viaprize.prizes.getDeployedPrizes()
+        console.log(a)
+        return a
       },
     )
     return prizes
@@ -251,6 +253,7 @@ export const prizeRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const submitterAddress = ctx.session.user.wallet?.address
+      console.log({ submitterAddress })
       const prize = await ctx.viaprize.prizes.getPrizeById(input.prizeId)
       if (!submitterAddress) {
         throw new TRPCError({
@@ -357,6 +360,7 @@ export const prizeRouter = createTRPCRouter({
         input.contractAddress,
       )
       const isCustodial = !!user.wallet.key
+      console.log(isCustodial, 'isCustodial')
       let signature = isCustodial ? '' : input.signature
       if (isCustodial) {
         const res = await ctx.viaprize.wallet.signVoteForCustodial({
@@ -399,7 +403,12 @@ export const prizeRouter = createTRPCRouter({
               cause: 'No vote found',
             })
           }
-
+          console.log(
+            Number.parseInt(eventsFiltered[0]?.args.amountVoted.toString()) /
+              1_000_000,
+            'skjdkfjdl',
+          )
+          console.log({ eventsFiltered })
           await ctx.viaprize.prizes.addVote({
             submissionHash: input.submissionHash,
             votes:
@@ -408,6 +417,7 @@ export const prizeRouter = createTRPCRouter({
           })
         },
       )
+      console.log({ slug: prize.slug })
 
       await ViaprizeUtils.publishDeployedPrizeCacheDelete(viaprize, prize.slug)
       return txReceipt
@@ -510,6 +520,13 @@ export const prizeRouter = createTRPCRouter({
           )
         },
       )
+      // await bus.publish(Resource.EventBus.name, Events.Emails.Donated, {
+      //   amount: input.amount,
+      //   // email: ctx.session.user.email ?? 'email',
+      //   email: user.email,
+      //   name: user.username,
+      //   prizeTitle: prize.title,
+      // })
       return txHash
     }),
   addUsdcFundsCryptoForUser: protectedProcedure
@@ -556,7 +573,7 @@ export const prizeRouter = createTRPCRouter({
           const fundsAddedEvents = events.filter(
             (e) => e.eventName === 'Donation',
           )
-
+          console.log({ fundsAddedEvents })
           if (!fundsAddedEvents[0]?.args.amount) {
             throw new TRPCError({
               code: 'INTERNAL_SERVER_ERROR',
@@ -578,6 +595,12 @@ export const prizeRouter = createTRPCRouter({
           )
         },
       )
+      await bus.publish(Resource.EventBus.name, Events.Emails.Donated, {
+        email: user.email,
+        prizeTitle: prize.title,
+        donationAmount: input.amount,
+        // email: ctx.session.user.email ?? 'email',
+      })
       return txHash
     }),
 

@@ -1,4 +1,5 @@
 import { createCallerFactory, createTRPCRouter } from '@/server/api/trpc'
+import { loopsRouter } from './routers/newsletter'
 import { prizeRouter } from './routers/prizes'
 import { userRouter } from './routers/users'
 
@@ -10,6 +11,7 @@ import { userRouter } from './routers/users'
 export const appRouter = createTRPCRouter({
   users: userRouter,
   prizes: prizeRouter,
+  loops: loopsRouter,
 })
 
 // export type definition of API

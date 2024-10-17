@@ -7,7 +7,6 @@ import {
   differenceInHours,
   differenceInMinutes,
   differenceInSeconds,
-  format,
 } from 'date-fns'
 import { encodePacked, hashTypedData, keccak256 } from 'viem'
 
@@ -17,12 +16,6 @@ export function containsUppercase(str: string) {
 
 export function formatUnderscoreString(input: string): string {
   return input.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
-}
-
-export function formatDate(dateStr?: string) {
-  if (!dateStr) return 'N/A'
-  const date = new Date(dateStr)
-  return format(date, 'MMMM dd, yyyy HH:mm') // e.g., January 1, 2024 23:59
 }
 
 export interface SearchParams {

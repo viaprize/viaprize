@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 
+import { api } from '@/trpc/react'
 import { Button } from '@viaprize/ui/button'
 import { Checkbox } from '@viaprize/ui/checkbox'
 import {
@@ -42,8 +43,17 @@ export default function ContactSection() {
     },
   })
 
+  const subscribe = api.loops.subscribe.useMutation()
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Here you would typically send the form data to your backend
+    if (values.newsletter) {
+      subscribe.mutate({
+        email: values.email,
+        subscribeToNewsletter: values.newsletter,
+        firstname: values.name,
+      })
+    }
     console.log(values)
   }
 

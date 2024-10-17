@@ -89,7 +89,11 @@ export default function SideNavbarConfigure() {
   return (
     <Sidebar open={open} setOpen={setOpen}>
       <SidebarBody>
-        <div className={`flex flex-col  ${!open ? 'items-center' : ''}`}>
+        <div
+          className={`flex flex-col overflow-y-auto overflow-x-hidden ${
+            !open ? 'items-center' : ''
+          }`}
+        >
           {session?.user &&
             (open ? (
               <Logo
