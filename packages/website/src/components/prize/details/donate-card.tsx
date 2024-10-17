@@ -149,7 +149,10 @@ export default function DonateCard({
       let finalDeadline = Math.floor(Date.now() / 1000) + 100_000
       if (!isCustodial) {
         const { amountInUSDC, deadline, hash, rsv, signature } =
-          await generateSignature(address, contractAddress as `0x${string}`)
+          await generateSignature(
+            address ?? '0x0000',
+            contractAddress as `0x${string}`,
+          )
         finalSignature = signature
         finalDeadline = Number.parseInt(deadline.toString())
         ethHash = hash

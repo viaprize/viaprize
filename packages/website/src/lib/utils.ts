@@ -19,12 +19,6 @@ export function formatUnderscoreString(input: string): string {
   return input.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
-export function formatDate(dateStr?: string) {
-  if (!dateStr) return 'N/A'
-  const date = new Date(dateStr)
-  return format(date, 'MMMM dd, yyyy HH:mm') // e.g., January 1, 2024 23:59
-}
-
 export interface SearchParams {
   [key: string]: string | string[] | undefined
 }
@@ -123,7 +117,11 @@ export const usdcSignTypeHash = (
     hash: hashTypedData(usdcSign as any),
   }
 }
-
+export function formatDate(dateStr?: string) {
+  if (!dateStr) return 'N/A'
+  const date = new Date(dateStr)
+  return format(date, 'MMMM dd, yyyy HH:mm') // e.g., January 1, 2024 23:59
+}
 export function voteMessageHash(
   submission: string,
   amount: number,

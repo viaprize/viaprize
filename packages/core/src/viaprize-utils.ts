@@ -54,19 +54,26 @@ export async function handleEndDispute(
   if (!txBody.transactions[0]) {
     throw new Error('No transaction data found')
   }
-
+  const funders =
+    await viaprize.prizes.getFundersByContractAddress(prizeContractAddress)
+  const funderAddresses = funders
+    .map((f) => f.user?.wallets?.[0]?.address)
+    .filter((item) => item !== undefined)
+  console.log({ funderAddresses })
   const submissions = await viaprize.prizes.getSubmittersByPrizeId(prize.id)
   const submitterAddress = submissions.map((s) => s.submitterAddress)
   const receipt = await viaprize.wallet.sendTransaction(
     txBody.transactions,
     txBody.walletType ?? 'gasless',
   )
+  console.log({ receipt })
 
   const contractLogs = parseEventLogs({
     logs: receipt.logs,
     abi: PRIZE_V2_ABI,
     eventName: ['FunderRefund', 'DisputeEnded'],
   })
+  console.log({ contractLogs })
 
   const transferLogs = parseEventLogs({
     logs: receipt.logs,
@@ -107,6 +114,8 @@ export async function handleEndDispute(
       ...submission,
     })
   })
+  const platformTransactionLogs = transferEvents.slice(-2)
+  console.log({ platformTransactionLogs })
   if (disputeEndedEvent.length > 0) {
     await viaprize.prizes.endDisputeByContractAddress({
       contractAddress: prizeContractAddress,
@@ -125,12 +134,18 @@ export async function handleEndSubmissionTransaction(
   if (!txBody.transactions[0]) {
     throw new Error('No transaction data found')
   }
-
+  console.log({ prize })
   const finalTxData =
     prize.numberOfSubmissions > 0
       ? txBody.transactions
       : [txBody.transactions[0]]
+  console.log({ finalTxData })
+  // await viaprize.prizes.startVotingPeriodByContractAddress(prizeContractAddress)
 
+  // const receipt = await viaprize.wallet.blockchainClient.getTransactionReceipt({
+  //   hash: '0x9b1aa2464e84fd4ac56f849386da83562e384b0fe5c48eb0f402f6e4b1f2a328',
+  // })
+  // console.log(receipt.logs, 'logs')
   const final = await viaprize.wallet.withTransactionEvents(
     PRIZE_V2_ABI,
     finalTxData,
@@ -147,6 +162,10 @@ export async function handleEndSubmissionTransaction(
       const funderRefundEvents = event.filter(
         (e) => e.eventName === 'FunderRefund',
       )
+
+      console.log({ votingEndedEvents })
+      console.log({ submissionEndedEvents })
+      console.log({ funderRefundEvents })
 
       if (submissionEndedEvents.length && votingEndedEvents.length) {
         await viaprize.prizes.startVotingPeriodByContractAddress(
@@ -171,5 +190,6 @@ export async function handleEndSubmissionTransaction(
       }
     },
   )
+  console.log({ final })
   await publishDeployedPrizeCacheDelete(viaprize, prize.slug)
 }

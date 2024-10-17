@@ -30,6 +30,7 @@ export default function SubmissionVoting({
     const updatedUsers = userVotes.map(
       (user) => (user.id === id ? { ...user, votes: Number(newVotes) } : user), // Ensure votes is a number
     )
+    console.log({ updatedUsers })
     if (
       totalVotingAmount &&
       updatedUsers.reduce((acc, user) => acc + user.votes, 0) >
@@ -50,6 +51,7 @@ export default function SubmissionVoting({
     prizeStage === 'VOTING_OPEN' &&
     totalVotingAmount &&
     totalVotingAmount?.isVoter
+  console.log({ totalVotingAmount })
 
   return (
     <div className="p-3">

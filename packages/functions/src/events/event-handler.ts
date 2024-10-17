@@ -1,8 +1,10 @@
 import { Events } from '@viaprize/core/viaprize'
 import { ViaprizeUtils } from '@viaprize/core/viaprize-utils'
 import { addDays, addMinutes, addSeconds, isBefore, subMinutes } from 'date-fns'
+import { LoopsClient } from 'loops'
 import { Resource } from 'sst'
 import { bus } from 'sst/aws/bus'
+import { email } from '../email'
 import { Cache } from '../utils/cache'
 import { schedule } from '../utils/schedule'
 import { viaprize } from '../utils/viaprize'
@@ -25,6 +27,11 @@ export const handler = bus.subscriber(
     Events.Prize.ScheduleEndVoting,
     Events.Prize.ScheduleEndDispute,
     Events.Prize.Approve,
+
+    Events.Emails.Newsletter,
+    Events.Emails.Welcome,
+    Events.Emails.prizeCreated,
+    Events.Emails.Donated,
   ],
   async (event) => {
     console.log(
@@ -32,10 +39,12 @@ export const handler = bus.subscriber(
     )
     switch (event.type) {
       case 'wallet.transaction': {
+        console.log(event.properties.transactions)
         const hash = await viaprize.wallet.sendTransaction(
           event.properties.transactions,
           event.properties.walletType,
         )
+        console.log('Transaction hash', hash)
         break
       }
       case 'prize.approve': {
@@ -223,6 +232,23 @@ export const handler = bus.subscriber(
           },
           triggerDate: addDays(new Date(), 2),
         })
+        break
+      }
+
+      case 'emails.donated': {
+        try {
+          const response = await email.sendTransactionalEmail({
+            transactionalId: 'cm28t5iav00ueo4s7f9dltleh',
+            email: event.properties.email,
+            dataVariables: {
+              prizeTitle: event.properties.prizeTitle,
+              donationAmount: event.properties.donationAmount,
+            },
+          })
+          console.log('donation email response', { response })
+        } catch (error) {
+          console.error('the error while sending donation email....', error)
+        }
         break
       }
     }

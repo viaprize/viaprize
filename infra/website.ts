@@ -11,6 +11,7 @@ import {
   AUTH_TRUST_HOST,
   CHAIN_ID,
   DATABASE_URL,
+  LOOPS_API_KEY,
   NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID,
   OPENAI_API_KEY,
   RPC_URL,
@@ -40,6 +41,7 @@ export const website = new sst.aws.Nextjs('website', {
     eventBus,
     cacheTable,
     router,
+    LOOPS_API_KEY,
   ],
   environment: {
     PAYMENT_URL: router.url,
@@ -58,5 +60,6 @@ export const website = new sst.aws.Nextjs('website', {
     RPC_URL: RPC_URL.value,
     WALLET_API_KEY: WALLET_API_KEY.value,
     OPENAI_API_KEY: OPENAI_API_KEY.value,
+    LOOPS_API_KEY: LOOPS_API_KEY.value,
   },
 })

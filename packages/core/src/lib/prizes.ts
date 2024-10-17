@@ -73,6 +73,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
     const totalFunds = await this.db
       .select({ total: sum(prizes.funds) })
       .from(prizes)
+    console.log(totalFunds[0]?.total, 'total')
     return totalFunds[0]?.total || 0
   }
   async getFundersByPrizeId(prizeId: string) {
@@ -284,6 +285,8 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       'submissionHash' | 'submitterAddress' | 'won' | 'username'
     >[]
   }) {
+    console.log('Ending dispute')
+    console.log({ contractAddress, totalRefunded, updatedSubmissions })
     await this.db.transaction(async (trx) => {
       const prize = await trx.query.prizes.findFirst({
         where: eq(prizes.primaryContractAddress, contractAddress.toLowerCase()),
@@ -362,9 +365,11 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   }
 
   async getPrizeByContractAddress(contractAddress: string) {
+    console.log(contractAddress)
     const prize = await this.db.query.prizes.findFirst({
       where: eq(prizes.primaryContractAddress, contractAddress),
     })
+    console.log(prize)
     if (!prize) {
       throw new Error(
         `Prize not found with contract address ${contractAddress}`,
@@ -568,6 +573,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
 
         decimals: 6,
       })
+      console.log('Donation added')
       const prize = await trx.query.prizes.findFirst({
         where: eq(prizes.primaryContractAddress, data.recipientAddress),
         columns: {
@@ -580,6 +586,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
           `Prize not found with contract address ${data.recipientAddress}`,
         )
       }
+      console.log('Prize found')
 
       await trx.update(prizes).set({
         funds:
@@ -587,6 +594,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
           prize.funds,
         numberOfFunders: sql`${prizes.numberOfFunders} + 1`,
       })
+      console.log('Prize updated')
     })
   }
 }
