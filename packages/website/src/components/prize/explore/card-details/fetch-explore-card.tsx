@@ -68,7 +68,10 @@ export default async function FetchExplorePrize({
         </div>
       </div>
 
-      <section className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3 pb-3 px-7">
+      <section
+        className="grid gap-3 pb-3 px-7"
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}
+      >
         {deployedPrizes?.map((prize) => (
           <ExploreCard
             badges={prize.skillSets}
