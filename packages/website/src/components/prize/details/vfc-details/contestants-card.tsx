@@ -7,6 +7,7 @@ import type { Submissions } from '@/types/submissions'
 import type { PrizeStages } from '@viaprize/core/lib/prizes'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Card } from '@viaprize/ui/card'
+import { Badge } from 'lucide-react'
 import { Suspense } from 'react'
 import JoinContestantButton from './join-contestant-button'
 export type ContestantStage = 'NOT_JOINED' | 'JOINED' | 'SUBMITTED' | 'LOGIN'
@@ -27,7 +28,13 @@ function ContestantCardButton({
   return (
     <>
       {(() => {
+        if (prizeStage !== 'SUBMISSIONS_OPEN') {
+          return <Badge>Submissions are closed</Badge>
+        }
         switch (stage) {
+          case 'LOGIN':
+            return <Badge>Log in to join</Badge>
+
           case 'NOT_JOINED':
             return <JoinContestantButton prizeId={prizeId} slug={slug} />
           case 'JOINED':
