@@ -12,7 +12,7 @@ export default async function ExplorePage({
       <div className="w-full  h-full  overflow-auto border-r-2">
         <FetchExploreCard searchParams={searchParams} />
       </div>
-      <div className="w-[30%] mt-5 mx-3 md:block hidden">
+      <div className="w-[30%] mt-5 mx-3 lg:block hidden">
         <FetchActivities />
       </div>
     </div>

@@ -1,5 +1,5 @@
-import { ViaprizeDatabase } from "../database";
-import { activities } from "../database/schema";
+import type { ViaprizeDatabase } from '../database'
+import { activities } from '../database/schema'
 export class Activities {
   db
   constructor(viaprizeDb: ViaprizeDatabase) {

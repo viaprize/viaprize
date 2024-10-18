@@ -7,9 +7,9 @@ import {
   timestamp,
   varchar,
 } from 'drizzle-orm/pg-core'
+import { createInsertSchema } from 'drizzle-zod'
 import { nanoid } from 'nanoid'
 import { insertUserSchema, users } from './users'
-import { createInsertSchema } from 'drizzle-zod'
 export const activities = pgTable('activities', {
   id: varchar('id')
     .$default(() => nanoid(10))

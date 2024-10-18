@@ -3,6 +3,8 @@ import { ZodValidator } from 'sst/event/validator'
 import { z } from 'zod'
 import { type ViaprizeConfig, viaprizeConfigSchema } from './config'
 import { ViaprizeDatabase } from './database'
+import { insertActivitySchema } from './database/schema'
+import { Activities } from './lib/activities'
 import {
   CONTRACT_CONSTANTS_PER_CHAIN,
   type ValidChainIDs,
@@ -12,8 +14,6 @@ import { IndexerEvents } from './lib/indexer-events'
 import { Prizes } from './lib/prizes'
 import { Users } from './lib/users'
 import { Wallet } from './lib/wallet'
-import { Activities } from './lib/activities'
-import { insertActivitySchema } from './database/schema'
 
 export class Viaprize {
   config: ViaprizeConfig
@@ -66,10 +66,7 @@ const TransactionData = z.object({
 })
 export const Events = {
   Activity: {
-    Create: defineEvent(
-      'activity.create',
-      insertActivitySchema,
-    ),
+    Create: defineEvent('activity.create', insertActivitySchema),
   },
   Wallet: {
     Transaction: defineEvent('wallet.transaction', TransactionData),
