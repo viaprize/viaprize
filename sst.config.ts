@@ -27,7 +27,7 @@ export default $config({
     const eventBus = await import('./infra/events')
     const storage = await import('./infra/storage')
     const cache = await import('./infra/cache')
-    const router = await import('./infra/router')
+    // const router = await import('./infra/router')
 
     return {
       website: website.website.url,
@@ -36,7 +36,7 @@ export default $config({
       scheduleReceivingFunction: eventBus.scheduleReceivingFunction.arn,
       cacheTable: cache.cacheTable.name,
       cacheTableArn: cache.cacheTable.arn,
-      router: router.router.url,
+      // router: router.router.url,
     }
   },
 })
