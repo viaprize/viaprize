@@ -173,6 +173,10 @@ export class Wallet extends Blockchain {
         console.log(`Transaction hash: ${(res as any).hash}`)
         return (res as any).hash as string
       })
+      .catch((e) => {
+        console.error(e)
+        throw e
+      })
     const receipt = await this.blockchainClient.waitForTransactionReceipt({
       hash: transactionHash as `0x${string}`,
     })

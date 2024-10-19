@@ -127,12 +127,16 @@ export default function Details({
         </div>
 
         <div className="w-full">
-          <DonateCard
-            contractAddress={primaryContractAddress ?? ''}
-            projectImage={imageUrl ?? ''}
-            funds={funds}
-            projectName={title}
-          />
+          {stage === 'NOT_STARTED' ||
+          stage === 'VOTING_OPEN' ||
+          stage === 'SUBMISSIONS_OPEN' ? (
+            <DonateCard
+              contractAddress={primaryContractAddress ?? ''}
+              projectImage={imageUrl ?? ''}
+              funds={funds}
+              projectName={title}
+            />
+          ) : null}
         </div>
       </div>
       <Separator className="my-2" />
