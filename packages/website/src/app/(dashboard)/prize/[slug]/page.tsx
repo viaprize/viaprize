@@ -7,6 +7,8 @@ export default async function PrizeDetails({
 }: { params: { slug: string } }) {
   const session = await auth()
 
+  console.log(params.slug, 'params.slug')
+
   if (session && !session.user.username) {
     return redirect('/onboard')
   }

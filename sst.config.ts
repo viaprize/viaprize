@@ -1,7 +1,5 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-
 import { PAYMENT_SECRET_KEY } from './infra/secrets'
-
 export default $config({
   app(input) {
     return {
@@ -19,6 +17,7 @@ export default $config({
               : 'viaprize-dev',
           region: 'us-east-2',
         },
+        'pulumi-stripe': '0.0.24',
       },
     }
   },
@@ -27,8 +26,8 @@ export default $config({
     const eventBus = await import('./infra/events')
     const storage = await import('./infra/storage')
     const cache = await import('./infra/cache')
-    // const router = await import('./infra/router')
-
+    // const webhook = await import('./infra/payment')
+    const router = await import('./infra/router')
     return {
       website: website.website.url,
       imageBucket: storage.imageBucket.name,
@@ -37,6 +36,7 @@ export default $config({
       cacheTable: cache.cacheTable.name,
       cacheTableArn: cache.cacheTable.arn,
       // router: router.router.url,
+      webhook: router.webhook.url,
     }
   },
 })

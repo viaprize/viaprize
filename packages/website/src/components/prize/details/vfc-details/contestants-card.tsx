@@ -6,8 +6,8 @@ import { api } from '@/trpc/react'
 import type { Submissions } from '@/types/submissions'
 import type { PrizeStages } from '@viaprize/core/lib/prizes'
 import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
+import { Badge } from '@viaprize/ui/badge'
 import { Card } from '@viaprize/ui/card'
-import { Badge } from 'lucide-react'
 import { Suspense } from 'react'
 import JoinContestantButton from './join-contestant-button'
 export type ContestantStage = 'NOT_JOINED' | 'JOINED' | 'SUBMITTED' | 'LOGIN'
@@ -25,10 +25,12 @@ function ContestantCardButton({
   prizeStage: PrizeStages
   totalFunds: number
 }) {
+  console.log({ stage })
   return (
     <>
       {(() => {
         if (prizeStage !== 'SUBMISSIONS_OPEN') {
+          console.log("`prizeStage` is not 'SUBMISSIONS_OPEN'")
           return <Badge>Submissions are closed</Badge>
         }
         switch (stage) {

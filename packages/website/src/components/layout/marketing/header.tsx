@@ -25,7 +25,7 @@ export default function Header({ session }: { session: any }) {
         <h1 className="text-2xl font-bold">viaPrize</h1>
       </div>
 
-      <div className="hidden sm:flex sm:items-center sm:space-x-4">
+      <div className="hidden sm:flex sm:items-center sm:space-x-4 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <Link href="/prize">Prizes</Link>
         <Link href="/about">About</Link>
         <Link href="/contact">Contact</Link>

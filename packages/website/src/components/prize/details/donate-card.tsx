@@ -180,8 +180,8 @@ export default function DonateCard({
       const amountInUSDC = BigInt(Number.parseFloat(amount) * 1_000_000)
       const url = await addUsdcFundsFiatForAnonymousUser.mutateAsync({
         amount: Number.parseInt(amountInUSDC.toString()),
-        cancelUrl: 'https://vprz.com',
-        successUrl: 'https://vprz.com',
+        cancelUrl: window.location.href,
+        successUrl: window.location.href,
         spender: contractAddress,
       })
       console.log({ url })
