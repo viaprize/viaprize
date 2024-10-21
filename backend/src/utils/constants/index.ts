@@ -2311,7 +2311,7 @@ export const SEND_USDC_ABI = [
   {
     inputs: [
       {
-        internalType: 'address payable',
+        internalType: 'address',
         name: 'to',
         type: 'address',
       },
@@ -2359,7 +2359,7 @@ export const SEND_USDC_ABI = [
   },
 ] as const;
 
-export const SEND_USDC = '0xC0842e4f312bd2Ea9E052Faf74b8C8A5002D7912';
+export const SEND_USDC = '0xAce4C1d8Ed5E592A30F07Bfe08e6F8CedCE18959';
 export const CHAIN_ID = 10;
 export const USDC = '0x0b2c639c533813f4aa9d7837caf62653d097ff85';
 export const EXTRA_PRIZES = [

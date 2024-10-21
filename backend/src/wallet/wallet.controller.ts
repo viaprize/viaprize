@@ -942,6 +942,7 @@ export class WalletController {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
+    console.log({ body }, 'body');
     console.log('consoooellejlrjeljk');
     try {
       const hash =
