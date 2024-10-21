@@ -942,6 +942,7 @@ export class WalletController {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
     }
+    console.log('consoooellejlrjeljk');
     try {
       const hash =
         await this.walletService.simulateAndWriteSmartContractSendUsdc(
@@ -958,6 +959,7 @@ export class WalletController {
           SEND_USDC,
           'gasless',
           '0',
+          false,
         );
 
       return { hash };
