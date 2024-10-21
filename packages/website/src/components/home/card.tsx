@@ -8,7 +8,8 @@ export default function StatsCard() {
       number: '$3K+',
       description: 'Worth of Medical Supplies to Ukraine',
       subtext: 'A Life Saved',
-      image: '/hero/cards/1.jpeg',
+      image:
+        'https://images.unsplash.com/photo-1624638760852-8ede1666ab07?q=80&w=3540',
       grid: 'col-span-1 md:col-span-2 lg:col-span-1 row-span-1 lg:col-start-1 lg:row-start-1 lg:row-span-2',
     },
     {
@@ -36,9 +37,9 @@ export default function StatsCard() {
       grid: 'col-span-1 md:col-span-2 md:row-span-1  lg:col-start-4 lg:row-start-1 lg:row-span-2',
     },
     {
-      number: '$300',
+      number: '$2320',
       description: 'WON',
-      subtext: 'ZK DID System integrated into the jets Network Society Forum',
+      subtext: 'Build an AI Voice for a River',
       image: '/hero/cards/5.jpeg',
       grid: 'col-span-1 md:col-span-1 md:row-span-1 lg:col-start-4 lg:row-start-3',
     },

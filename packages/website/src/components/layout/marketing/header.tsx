@@ -41,7 +41,7 @@ export default function Header({ session }: { session: Session | null }) {
         </Button>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline">
+            <Button variant="outline" className="sm:hidden">
               <Menu />
             </Button>
           </SheetTrigger>
