@@ -215,7 +215,12 @@ export const prizeRouter = createTRPCRouter({
       await bus.publish(Resource.EventBus.name, Events.Cache.Delete, {
         key: ctx.viaprize.prizes.getCacheTag('PENDING_PRIZES'),
       })
-
+      if (prize.author.email) {
+        await bus.publish(Resource.EventBus.name, Events.Emails.prizeCreated, {
+          email: prize.author.email,
+          prizeTitle: prize.title,
+        })
+      }
       return txHash
     }),
 

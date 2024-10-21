@@ -369,6 +369,13 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
   async getPrizeById(prizeId: string) {
     const prize = await this.db.query.prizes.findFirst({
       where: eq(prizes.id, prizeId),
+      with: {
+        author: {
+          columns: {
+            email: true,
+          },
+        },
+      },
     })
     if (!prize) {
       throw new Error('Prize not found')

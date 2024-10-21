@@ -298,6 +298,22 @@ export const handler = bus.subscriber(
             error,
           )
         }
+        break
+      }
+      case 'emails.prizeCreated': {
+        try {
+          const response = await email.sendTransactionalEmail({
+            transactionalId: 'cm2d1d0sr00ir6d50bj1i3cbw',
+            email: event.properties.email,
+            dataVariables: {
+              prizeTitle: event.properties.prizeTitle,
+            },
+          })
+          console.log('prize created email response:', response)
+        } catch (error) {
+          console.error('Error while sending prize created email...', error)
+        }
+        break
       }
     }
   },

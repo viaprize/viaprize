@@ -160,7 +160,10 @@ export const Events = {
     Welcome: defineEvent('emails.onboarding', z.object({ email: z.string() })),
     prizeCreated: defineEvent(
       'emails.prizeCreated',
-      z.object({ email: z.string() }),
+      z.object({
+        email: z.string(),
+        prizeTitle: z.string(),
+      }),
     ),
     Donated: defineEvent(
       'emails.donated',
