@@ -264,18 +264,15 @@ export class WalletService {
   ) {
     console.log('HIIIIII');
     const transactionHash = await (
-      await fetch(
-        `https://49yjt1y4yg.execute-api.us-west-1.amazonaws.com/${type}`,
-        {
-          body: JSON.stringify(transaction),
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': this.apiKey,
-            'x-chain-id': CHAIN_ID.toString(),
-          },
-          method: 'POST',
+      await fetch(`${this.walletApiUrl}/${type}`, {
+        body: JSON.stringify(transaction),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': this.apiKey,
+          'x-chain-id': CHAIN_ID.toString(),
         },
-      )
+        method: 'POST',
+      })
     )
       .json()
       .then((res) => {
