@@ -29,6 +29,7 @@ import { Input } from '@viaprize/ui/input'
 import { Label } from '@viaprize/ui/label'
 import { RadioGroup, RadioGroupItem } from '@viaprize/ui/radio-group'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useAccount, useSignTypedData } from 'wagmi'
@@ -235,6 +236,7 @@ export default function DonateCard({
               Donate with Card Anonymously
             </Label>
           </div>
+
           <div className="flex items-center space-x-2">
             <RadioGroupItem
               value="crypto-anonymously"
@@ -243,6 +245,15 @@ export default function DonateCard({
             <Label htmlFor="crypto-anonymously">
               Donate with Wallet Anonymously
             </Label>
+          </div>
+          <div className="mt-4 p-4 bg-muted rounded-lg">
+            <p className="text-sm text-muted-foreground mb-2">
+              If you don't want to do anonymous donations and want to have
+              voting rights, please log in.
+            </p>
+            <Link href="/login">
+              <Button variant="outline">Log In</Button>
+            </Link>
           </div>
         </RadioGroup>
       )
@@ -364,9 +375,9 @@ export default function DonateCard({
               </div>
               <div className="grid gap-4 py-4">
                 {!session?.user && (
-                  <Badge className="text-sm">
-                    Anonymous Donation without voting rights
-                  </Badge>
+                  <div className="font-semibold">
+                    *Anonymous Donation without voting rights
+                  </div>
                 )}
                 {renderDonationOptions()}
                 {renderDonateButton()}

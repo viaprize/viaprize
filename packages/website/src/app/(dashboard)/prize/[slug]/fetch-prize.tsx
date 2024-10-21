@@ -36,10 +36,6 @@ export default function FetchPrize({
     <Suspense fallback={<LoaderCircle />}>
       <div className="lg:flex h-full">
         <div className="w-full space-y-3 md:w-[75%] h-full lg:max-h-screen overflow-auto border-r-2">
-          <div className="flex items-center text-sm font-semibold ml-3 mt-3">
-            <IconArrowLeft className="mr-1" size={20} /> Back
-          </div>
-
           <Details
             {...prize}
             authorUsername={prize.authorUsername}
