@@ -17,8 +17,10 @@ import { api } from '@/trpc/react'
 import type { Submissions } from '@/types/submissions'
 
 import { IconArrowLeft } from '@tabler/icons-react'
+import { Button } from '@viaprize/ui/button'
 import { Separator } from '@viaprize/ui/separator'
-import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import { notFound, redirect } from 'next/navigation'
 import { Suspense } from 'react'
 
 export default function FetchPrize({
@@ -29,16 +31,18 @@ export default function FetchPrize({
   const [prize] = api.prizes.getPrizeBySlug.useSuspenseQuery(slug)
   const { session } = useAuth()
   if (!prize || !prize.primaryContractAddress) {
-    return null
+    return notFound()
   }
 
   return (
     <Suspense fallback={<LoaderCircle />}>
       <div className="lg:flex h-full">
         <div className="w-full space-y-3 md:w-[75%] h-full lg:max-h-screen overflow-auto border-r-2">
-          <div className="flex items-center text-sm font-semibold ml-3 mt-3">
-            <IconArrowLeft className="mr-1" size={20} /> Back
-          </div>
+          <Button className="mt-3 ml-3" asChild>
+            <Link href="/prizes">
+              <IconArrowLeft className="mr-1" size={20} /> Back
+            </Link>
+          </Button>
 
           <Details
             {...prize}

@@ -139,12 +139,17 @@ export const prizeRouter = createTRPCRouter({
   getPrizeBySlug: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
-      const prize = await withCache(
-        ctx,
-        ctx.viaprize.prizes.getCacheTag('SLUG_PRIZE', input),
-        async () => await ctx.viaprize.prizes.getPrizeBySlug(input),
-      )
-      return prize
+      try {
+        const prize = await withCache(
+          ctx,
+          ctx.viaprize.prizes.getCacheTag('SLUG_PRIZE', input),
+          async () => await ctx.viaprize.prizes.getPrizeBySlug(input),
+        )
+        return prize
+      } catch (e) {
+        console.log(e)
+        return null
+      }
     }),
   getDeployedPrizes: publicProcedure.query(async ({ ctx }) => {
     const prizes = await withCache(
