@@ -38,11 +38,6 @@ export default function FetchPrize({
     <Suspense fallback={<LoaderCircle />}>
       <div className="lg:flex h-full">
         <div className="w-full space-y-3 md:w-[75%] h-full lg:max-h-screen overflow-auto border-r-2">
-          <Button className="mt-3 ml-3" asChild>
-            <Link href="/prizes">
-              <IconArrowLeft className="mr-1" size={20} /> Back
-            </Link>
-          </Button>
 
           <Details
             {...prize}
