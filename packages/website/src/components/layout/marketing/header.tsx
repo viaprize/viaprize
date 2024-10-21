@@ -1,24 +1,25 @@
-import { auth } from '@/server/auth'
+'use client'
+
 import { Button } from '@viaprize/ui/button'
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@viaprize/ui/sheet'
+import { Sheet, SheetContent, SheetTrigger } from '@viaprize/ui/sheet'
 import { Menu } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
-export default async function Header() {
-  const session = await auth()
+export default function Header({ session }: { session: any }) {
+  const [open, setOpen] = useState(false)
+  const pathName = usePathname()
+
+  useEffect(() => {
+    if (open) {
+      setOpen(false)
+    }
+  }, [pathName])
 
   return (
-    <nav className="fixed top-0 right-0 left-0 overflow-x-hidden z-[999] flex justify-between  bg-background/40 backdrop-blur-lg items-center py-4 px-8">
+    <nav className="fixed top-0 right-0 left-0 overflow-x-hidden z-[999] flex justify-between bg-background/40 backdrop-blur-lg items-center py-4 px-8">
       <div className="flex items-center space-x-4">
         <Image src="/viaprizeBg.png" alt="Logo" width={32} height={32} />
         <h1 className="text-2xl font-bold">viaPrize</h1>
@@ -38,20 +39,14 @@ export default async function Header() {
           )}
         </Button>
         <div className="flex items-center space-x-4 sm:hidden">
-          <Sheet>
+          <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="outline">
                 <Menu />
               </Button>
             </SheetTrigger>
             <SheetContent className="z-[1000]">
-              <SheetHeader>
-                <SheetTitle>Menu</SheetTitle>
-              </SheetHeader>
-              <div className="grid gap-4 py-4">
-                <Link href="/prize">Prizes</Link>
-                <Link href="/about">About</Link>
-                <Link href="/contact">Contact</Link>
+              <div className="grid gap-4 py-4 text-primary font-semibold ">
                 {session?.user ? (
                   <Link href={`/profile/${session.user.username}`}>
                     Profile
@@ -59,12 +54,12 @@ export default async function Header() {
                 ) : (
                   <Link href="/login">Login</Link>
                 )}
+                <Link href="/prize">Prizes</Link>
+                <Link href="/about">About</Link>
+                <Link href="/contact">Contact</Link>
+                <Link href="/privacy-policy">Privacy Policy</Link>
+                <Link href="/terms-of-service">Terms of Service</Link>
               </div>
-              <SheetFooter>
-                <SheetClose asChild>
-                  <Button type="button">Close</Button>
-                </SheetClose>
-              </SheetFooter>
             </SheetContent>
           </Sheet>
         </div>
