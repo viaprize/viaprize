@@ -44,7 +44,7 @@ export default function ExploreGitcoin({ params }: { params: { roundslug: string
               color: 'white',
             }}
           >
-            {round?.matchingPool} USDC <br /> Matching Pool
+            {round?.matchingPool} USD <br /> Matching Pool
           </Card>
         </div>
         <div className="sm:flex justify-between items-center my-2">
