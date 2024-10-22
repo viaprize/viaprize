@@ -14,7 +14,7 @@ export default function CartPage({ params }: { params: { roundslug: string } }) 
     <div className="max-w-screen-xl w-screen">
       <div className="flex items-center space-x-5">
         <h2>Cart</h2>
-        <Button component="a" href={`/qf/${round?.roundSlug}/explore`}>
+        <Button component="a" href={`/${round?.roundSlug}`}>
           Go to explore page
         </Button>
       </div>

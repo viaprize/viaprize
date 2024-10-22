@@ -2,13 +2,14 @@
 import { renderToPlainText } from '@/lib/utils';
 import { ActionIcon, Avatar, Button, Card, Divider, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
+import { CartItem, useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { useState } from 'react';
-import { CartItem, useCartStore } from '../../../(_utils)/store/datastore';
+
 
 export default function AddedProjects({ roundId }: { roundId: string }) {
   const { items, removeItem, clearCart, changeAmount } = useCartStore();
   const [error, setError] = useState('');
-  const filteredItems = items.filter((item) => item.roundId == roundId);
+  const filteredItems = items.filter((item) => item.roundId === roundId);
   const handleAmountChange = (item: CartItem, value: number) => {
     const amount = isNaN(value) ? 0 : value;
     changeAmount(item.id, amount);

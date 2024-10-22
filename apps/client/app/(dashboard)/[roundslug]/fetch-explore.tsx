@@ -50,7 +50,7 @@ export default async function FetchGitcoins({
           description={application.project.metadata.description}
           raised={application.totalAmountDonatedInUsd}
           contributors={application.uniqueDonorsCount}
-          link={`/qf/${params.roundslug}/${application.id}`}
+          link={`/${params.roundslug}/${application.id}`}
           application={application}
           logoURL={`https://gitcoin.mypinata.cloud/ipfs/${application.project.metadata.logoImg}`}
         />

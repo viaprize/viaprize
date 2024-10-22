@@ -72,7 +72,7 @@ export default function GitcoinCard({
         action: {
           label: 'View Cart',
           onClick: () => {
-            router.push(`/qf/${roundSlug}/cart`);
+            router.push(`/${roundSlug}/cart`);
           },
         },
       });
