@@ -80,9 +80,7 @@ export default function Home() {
         {/* Hero Section */}
         <section className="md:flex justify-betweem items-center min-h-screen">
           <div className="relative z-50 md:w-1/2 px-4 py-2">
-            <h1 className="font-bold text-4xl sm:text-5xl my-6">
-             The Home for Prizes 
-            </h1>
+            <h1 className="font-bold text-4xl sm:text-5xl my-6">The Home for Prizes</h1>
             <Flex gap="md" wrap="wrap" className="sm:w-[60%] lg:w-[70%]">
               <Link href="/prize/explore">
                 <Button
@@ -92,7 +90,6 @@ export default function Home() {
                   Explore Prizes
                 </Button>
               </Link>
-             
             </Flex>
             <Flex
               className="backdrop-blur-md rounded-lg py-6 px-5 my-4 sm:w-[60%] lg:w-[70%]"

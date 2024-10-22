@@ -41,6 +41,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
     state.items.filter((item) => item.roundId == roundId),
   );
   const tokenTT = getTokenByChainIdAndAddress(round.chainId, round.token);
+  console.log('token......', tokenTT);
   const {
     data: matchingEstimates,
     error: matchingEstimateError,
@@ -54,7 +55,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
         roundId: item.roundId,
         projectId: item.projectId,
         amount:
-          !!item.amount && !Number.isNaN(parseInt(item.amount))
+          !!item.amount && !Number.isNaN(Number.parseInt(item.amount))
             ? parseUnits(item.amount ?? '0', tokenTT.decimals ?? 18)
             : BigInt(0),
         grantAddress: item.metadata.application.recipient,
@@ -104,7 +105,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
       )
         .then((res) => res.json())
         .then((data) => data);
-
+      console.log({ checkoutUrl });
       return checkoutUrl.id as string;
     } catch (e: unknown) {
       toast.error((e as any)?.message);
