@@ -69,22 +69,11 @@ export default async function FetchExplorePrize({
       </div>
 
       <section
-        className="grid gap-3 pb-3 px-7"
-        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}
+        className="grid gap-4 pb-3 px-7"
+        style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}
       >
         {deployedPrizes?.map((prize) => (
-          <ExploreCard
-            badges={prize.skillSets}
-            key={prize.id}
-            funds={prize.funds ?? 0}
-            imageUrl={prize.imageUrl ?? ''}
-            title={prize.title}
-            prizeStage={prize.stage ?? 'NOT_STARTED'}
-            numberOfContestants={prize.numberOfContestants ?? 0}
-            numberOfFunders={prize.numberOfFunders ?? 0}
-            numberOfComments={prize.numberOfComments ?? 0}
-            href={`/prize/${prize.slug}`}
-          />
+          <ExploreCard key={prize.id} {...prize} />
         ))}
 
         {data.reverse().map((prize) => {

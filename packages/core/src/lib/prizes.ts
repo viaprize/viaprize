@@ -541,7 +541,7 @@ export class Prizes extends CacheTag<typeof CACHE_TAGS> {
       await trx
         .update(prizes)
         .set({
-          numberOfComments: sql`${prizes.numberOfComments} + 1`,
+          numberOfContestants: sql`${prizes.numberOfContestants} + 1`,
         })
         .where(eq(prizes.id, prizeId))
     })
