@@ -337,7 +337,7 @@ export const gitcoinRounds = [
     tokenName: 'Glo Dollar',
     tokenVersion: '1',
     gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
-    explorer: 'https://explorer.celo.org/mainnet/',
+    explorer: 'https://celoscan.io/',
   },
   {
     roundSlug: 'regencitizen',
@@ -353,7 +353,7 @@ export const gitcoinRounds = [
     tokenName: 'Glo Dollar',
     tokenVersion: '1',
     gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
-    explorer: 'https://explorer.celo.org/mainnet/',
+    explorer: 'https://celoscan.io/',
   },
   {
     roundSlug: 'testcelo',
@@ -368,7 +368,7 @@ export const gitcoinRounds = [
     tokenName: 'Glo Dollar',
     tokenVersion: '1',
     gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
-    explorer: 'https://explorer.celo.org/mainnet/',
+    explorer: 'https://celoscan.io/',
   },
 
   {
@@ -391,7 +391,23 @@ export const gitcoinRounds = [
     roundSlug: 'youthinneed',
     roundId: '646',
     chainId: 42161,
-    tokenName: 'USC Coin',
+    tokenName: 'USD Coin',
+    tokenVersion: '2',
+    token: usdcAddress[42161],
+    description:
+      'This round welcomes projects that support youth in need through kids’ shelters and related services, such as education, safe housing, counseling, and crisis intervention programs.',
+    title: 'Youth In Need',
+    startDate: new Date('2024-10-23T17:30:00+05:30'),
+    endDate: new Date('2024-11-07T06:29:00+05:30'),
+    matchingPool: 17_500,
+    gitCoinCheckoutAddress: '0x8e1bD5Da87C14dd8e08F7ecc2aBf9D1d558ea174' as `0x${string}`,
+    explorer: 'https://arbiscan.io/',
+  },
+  {
+    roundSlug: 'testarb',
+    roundId: '651',
+    chainId: 42161,
+    tokenName: 'USD Coin',
     tokenVersion: '2',
     token: usdcAddress[42161],
     description:

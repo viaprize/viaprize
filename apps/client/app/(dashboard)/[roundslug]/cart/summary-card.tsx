@@ -8,9 +8,8 @@ import { MULTI_ROUND_CHECKOUT, gitcoinRounds } from '@/lib/constants';
 import { encodedQFAllocation, usdcSignType } from '@/lib/utils';
 import { config } from '@/lib/wagmi';
 import { getTokenByChainIdAndAddress } from '@gitcoin/gitcoin-chain-data';
-import { Badge, Button, Card, Divider, Text } from '@mantine/core';
+import { Button, Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { groupBy } from 'lodash';
 import { nanoid } from 'nanoid';
@@ -367,7 +366,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
                     <TransactionToast
                       title="Transaction Successful"
                       hash={orderData.hash}
-                      scanner="https://arbiscan.io/tx/"
+                      scanner={`${round.explorer}tx/`}
                     />
                     <div className="items-center p-3 text-lg font-bold ">
                       <div>
@@ -389,7 +388,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
           disabled={!meetsMinimumDonation || items.length === 0}
         />
       </PayPalScriptProvider>
-      <Text  c="red" fw={400} >
+      <Text c="red" fw={400}>
         For your donation to receive matching funds please make sure a bank account is
         linked to your PayPal
       </Text>
@@ -397,7 +396,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
       {address ? (
         <Button onClick={payWithCrypto}>Pay with crypto</Button>
       ) : (
-        <ConnectButton />
+        <Text c="red">Please connect your wallet to pay with crypto</Text>
       )}
     </Card>
   );
