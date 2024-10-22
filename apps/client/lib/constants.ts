@@ -829,7 +829,7 @@ export const gitcoinRounds = [
     matchingPool: 30_000,
   },
   {
-    roundSlug: 'biofi',
+    roundSlug: 'biofipathfinders',
     roundId: '18',
     chainId: 42220,
     token: usdcAddress[42220],
@@ -841,7 +841,7 @@ export const gitcoinRounds = [
     matchingPool: 55_000,
   },
   {
-    roundSlug: 'regen',
+    roundSlug: 'regencitizen',
     roundId: '16',
     chainId: 42220,
     token: usdcAddress[42220],
