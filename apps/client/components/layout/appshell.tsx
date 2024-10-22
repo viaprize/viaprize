@@ -8,6 +8,7 @@ import {
   useComputedColorScheme,
   useMantineColorScheme,
   useMantineTheme,
+  Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
@@ -54,12 +55,15 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         <Flex justify="space-between" h="100%" px="md" className="w-full" align="center">
           <div className="flex justify-between items-center">
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="md" mr="md" />
-            <Link href="/">
+            {/* <Link href="/"> */}
+            <div className="flex items-center space-x-3">
               <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
-            </Link>
+              <Text fw='bold' size='lg'>viaPrize</Text>
+            </div>
+            {/* </Link> */}
           </div>
           <div className="flex gap-2 items-center">
-            <ActionIcon
+            {/* <ActionIcon
               variant="outline"
               color={colorScheme === 'dark' ? 'yellow.7' : 'blue.8'}
               onClick={() => {
@@ -72,7 +76,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
               ) : (
                 <IconMoonStars size="1.1rem" />
               )}
-            </ActionIcon>
+            </ActionIcon> */}
           </div>
           <ConnectButton />
         </Flex>
