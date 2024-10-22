@@ -48,7 +48,7 @@ export default async function FetchExplorePrize({
     <section>
       <div className="flex w-full justify-between items-center p-6">
         <h2 className="font-semibold">{activePrizes} Active Prizes</h2>
-        <div className="flex space-x-3">
+        {/* <div className="flex space-x-3">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="secondary">
@@ -65,7 +65,7 @@ export default async function FetchExplorePrize({
           <Button variant="secondary">
             <IconArrowsSort className="mr-2" /> Sort by
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <section

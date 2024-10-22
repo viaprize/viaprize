@@ -1,8 +1,10 @@
+import { api } from '@/trpc/server'
 import { cn } from '@viaprize/ui'
 import { Card, CardContent } from '@viaprize/ui/card'
 import { ArrowRight } from 'lucide-react'
 
-export default function StatsCard() {
+export default async function StatsCard() {
+  const totalFunds = await api.prizes.getTotalFunds()
   const stats = [
     {
       number: '$3K+',
@@ -26,7 +28,10 @@ export default function StatsCard() {
       grid: 'col-span-1 md:col-span-2 md:row-span-2 lg:col-span-1 lg:col-start-3 lg:row-start-2 lg:row-span-2',
     },
     {
-      number: '$50K+',
+      number:
+        totalFunds !== null
+          ? '$' + (Number.parseFloat(totalFunds) + 65000).toString()
+          : '$50K+',
       description: 'Total contribution',
       grid: 'col-span-1 md:col-span-1 md:row-span-2  lg:col-start-2 lg:row-start-2 lg:row-span-2',
     },
