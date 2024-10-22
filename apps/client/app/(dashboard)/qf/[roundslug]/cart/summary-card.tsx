@@ -82,6 +82,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
           amount: item.amount,
           anchorAddress: item.anchorAddress,
           roundId: item.roundId,
+          chainId: item.chainId,
         }));
       const finalTotalAmount = finalItems.reduce(
         (acc, item) => acc + parseFloat(item.amount),
