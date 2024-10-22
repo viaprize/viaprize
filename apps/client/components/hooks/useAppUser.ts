@@ -1,6 +1,6 @@
 import type { CreateUser, UpdateUser } from '@/lib/api';
 import { backendApi } from '@/lib/backend';
-import { getAccessToken, useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
+import { useLogin, usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePrivyWagmi } from '@privy-io/wagmi-connector';
 import { usePathname, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -44,43 +44,6 @@ export default function useAppUser() {
   // }, [appUser, wallet, loading]);
 
   const { login } = useLogin({
-    async onComplete(loginUser, isNewUser, wasAlreadyAuthenticated) {
-      const token = await getAccessToken();
-
-      await refreshUser().catch((error) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        console.log({ error }, 'errror');
-        if (error?.status) {
-          if (error.status === 404) {
-            setLastVisitedPage(pathname);
-            router.push('/onboarding', {
-              query: { redirect: pathname },
-            });
-          }
-        }
-      });
-      console.log({ token });
-      if (wasAlreadyAuthenticated || isNewUser) {
-        const walletAddress = loginUser.wallet?.address;
-        if (!walletAddress) {
-          await logoutUser();
-          toast('Wallet address not found, please try again');
-          return;
-        }
-        wallets.forEach((wa) => () => {
-          setActiveWallet(wa);
-        });
-        console.log({ user });
-      }
-
-      if (isNewUser && !wasAlreadyAuthenticated) {
-        setLastVisitedPage(pathname);
-        router.push('/onboarding', {
-          query: { redirect: pathname },
-        });
-        toast('Welcome to Viaprize! Please complete your profile to continue');
-      }
-    },
     async onError(error) {
       await logoutUser();
       toast.error(`Error: ${error} While Logging In `);

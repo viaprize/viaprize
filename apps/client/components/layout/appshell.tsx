@@ -1,70 +1,33 @@
 'use client';
-import { CHAIN_ID } from '@/lib/constants';
 import {
   ActionIcon,
   AppShell,
   Burger,
-  Button,
   Center,
   Flex,
-  Modal,
   useComputedColorScheme,
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
-import { useDidUpdate, useDisclosure, useMounted } from '@mantine/hooks';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { usePrivyWagmi } from '@privy-io/wagmi-connector';
+import { useDisclosure } from '@mantine/hooks';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
-import { switchNetwork } from '@wagmi/core';
 import Image from 'next/image';
 import Link from 'next/link';
-import { type ReactNode, useEffect } from 'react';
-import { useNetwork, useWalletClient } from 'wagmi';
-import useAppUser from '../hooks/useAppUser';
+import type { ReactNode } from 'react';
+import { useNetwork } from 'wagmi';
 import useIsMounted from '../hooks/useIsMounted';
 import Footer from './footer';
-import HeaderLayout from './headerLayout';
-import MobileNavbar from './mobileNavbar';
-import ProfileMenu from './profilemenu';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
   const { chain: currentChain } = useNetwork();
   const [opened, { toggle }] = useDisclosure();
-  const { data: walletClient } = useWalletClient();
-  const { wallets } = useWallets();
+
   const [openedChainModal, { open: openChainModal, close: closeChainModal }] =
     useDisclosure(false);
   const computedColorScheme = useComputedColorScheme('light');
   const isMounted = useIsMounted();
-  const { ready } = usePrivy();
-  const { appUser, logoutUser, loginUser } = useAppUser();
-  useEffect(() => {
-    if (currentChain && currentChain?.id !== CHAIN_ID && ready && appUser) {
-      openChainModal();
-    }
-  }, [currentChain, isMounted, ready, appUser]);
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-
-  const switchToBase = async () => {
-    console.log('hsjlflsjflsdklfjsdlkfjlsdj');
-    await switchNetwork({
-      chainId: CHAIN_ID,
-    }).then(() => {
-      closeChainModal();
-    });
-  };
-
-  const { wallet, ready: walletReady } = usePrivyWagmi();
-  const mounted = useMounted();
-  useDidUpdate(() => {
-    if (!wallet && appUser && ready && walletReady && mounted) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      logoutUser();
-    }
-    console.log('walletjjjjjdksfjdskfslfj', wallet);
-  }, [walletReady, appUser, wallet, mounted]);
 
   return (
     <AppShell
@@ -82,17 +45,6 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
         },
       }}
     >
-      <Modal
-        opened={openedChainModal}
-        onClose={closeChainModal}
-        withCloseButton={false}
-        size="sm"
-        centered
-        closeOnClickOutside={false}
-        title="Wrong Network"
-      >
-        <Button onClick={() => switchToBase()}> Switch To Optimism</Button>
-      </Modal>
       <AppShell.Header
         p="md"
         py="lg"
@@ -105,7 +57,6 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
               <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
             </Link>
           </div>
-          <HeaderLayout />
           <div className="flex gap-2 items-center">
             <ActionIcon
               variant="outline"
@@ -121,13 +72,10 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
                 <IconMoonStars size="1.1rem" />
               )}
             </ActionIcon>
-            <ProfileMenu />
           </div>
         </Flex>
       </AppShell.Header>
-      <AppShell.Navbar>
-        <MobileNavbar close={toggle} open={opened} />
-      </AppShell.Navbar>
+
       <AppShell.Main>
         <div className="w-full flex justify-center min-w-0">
           <Center className="max-w-screen-xl w-full">{children}</Center>

@@ -2,7 +2,7 @@
 import { renderToPlainText } from '@/lib/utils';
 import { ActionIcon, Avatar, Button, Card, Divider, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
-import { CartItem, useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
+import { type CartItem, useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { useState } from 'react';
 
 export default function AddedProjects({ roundId }: { roundId: string }) {

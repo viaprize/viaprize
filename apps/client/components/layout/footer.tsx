@@ -1,10 +1,9 @@
 'use client';
+import Image from 'next/image';
 import Link from 'next/link';
 import { BiLogoLinkedin } from 'react-icons/bi';
 import { BsTwitter } from 'react-icons/bs';
 import { ImTelegram } from 'react-icons/im';
-import Image from 'next/image';
-import SubscriptionForm from '../newsletter/subscriptionForm';
 
 export default function Footer() {
   return (
@@ -24,9 +23,6 @@ export default function Footer() {
             </span>
           </Link>
           <div className="lg:w-1/3 ">
-            <div className="flex justify-center w-full text-black my-2">
-              <SubscriptionForm />
-            </div>
             {/* <ul className="flex flex-wrap items-center mb-6 text-md font-bold text-gray-500  sm:mb-0 dark:text-gray-400">
               <li>
                 <Link href="#" className="mr-4 hover:underline md:mr-6 ">

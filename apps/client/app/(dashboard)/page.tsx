@@ -1,13 +1,7 @@
 'use client';
-
-import useAppUser from '@/components/hooks/useAppUser';
-import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 import { Button, Card, Flex } from '@mantine/core';
-import { usePrivy } from '@privy-io/react-auth';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { BiSolidRightArrowCircle } from 'react-icons/bi';
 import { FaTelegramPlane } from 'react-icons/fa';
 import type { RenderPhotoProps } from 'react-photo-album';
@@ -53,25 +47,6 @@ const photos: {
 }));
 
 export default function Home() {
-  const router = useRouter();
-
-  const { ready } = usePrivy();
-
-  const { refreshUser } = useAppUser();
-
-  useEffect(() => {
-    if (ready) {
-      void refreshUser()
-        .catch((error: FetchError) => {
-          console.log({ error }, 'errror');
-          if (error.status === 404) {
-            router.push('/onboarding');
-          }
-        })
-        .then(console.log);
-    }
-  }, [ready]);
-
   return (
     <div className="w-full min-h-screen flex flex-col items-center relative overflow-clip">
       {/*Nav bar*/}
@@ -108,9 +83,6 @@ export default function Home() {
                 <h3 className="my-0">Total prizes</h3>
               </div>
             </Flex>
-            <div className="flex justify-center w-full lg:w-[70%] my-2">
-              <SubscriptionForm />
-            </div>
           </div>
 
           <div className="md:w-1/2">
@@ -134,10 +106,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* <div className="flex justify-center w-full">
-          <SubscriptionForm />
-        </div> */}
-        {/* How it works */}
         <div className="flex flex-col items-center my-4">
           <h1>Why viaPrize?</h1>
           <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">

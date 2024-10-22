@@ -15,6 +15,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Toaster } from 'sonner';
 import { theme } from 'utils/theme';
+import { arbitrum, celo } from 'viem/chains';
 import '../styles/globals.css';
 import '../styles/index.css';
 
@@ -34,9 +35,8 @@ export default function WrapperLayout({
       <PrivyProvider
         appId={env.NEXT_PUBLIC_PRIVY_APP_ID || ' '}
         config={{
-          loginMethods: ['email', 'wallet'],
-          additionalChains: [],
-
+          loginMethods: ['wallet'],
+          additionalChains: [arbitrum, celo],
           defaultChain: configureChainsConfig.chains[0],
           appearance: {
             theme: 'dark',

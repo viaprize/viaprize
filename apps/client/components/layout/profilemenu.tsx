@@ -1,6 +1,6 @@
 import useAppUser from '@/components/hooks/useAppUser';
 import { Avatar, Button, Menu, Modal } from '@mantine/core';
-import { IconArrowsLeftRight, IconUser } from '@tabler/icons-react';
+import { IconArrowsLeftRight } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { IoExit } from 'react-icons/io5';
@@ -34,18 +34,6 @@ function ProfileMenu() {
               </Avatar>
             </Menu.Target>
             <Menu.Dropdown p="md" mr="sm">
-              <Menu.Label>Profile</Menu.Label>
-              <Menu.Item
-                leftSection={<IconUser size={14} />}
-                // onClick={() => {
-                //   router
-                //     .push(`/profile/${appUser?.username}`)
-                //     .then(console.log)
-                //     .catch(console.error);
-                // }}
-              >
-                <Link href={`/profile/${appUser.username}`}>View Profile</Link>
-              </Menu.Item>
               <Menu.Item leftSection={<TbTopologyStarRing2 />} className="sm:hidden">
                 <Link href="/prize/create" className="block">
                   Create Prize
