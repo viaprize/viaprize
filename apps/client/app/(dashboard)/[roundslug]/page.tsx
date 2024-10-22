@@ -7,8 +7,8 @@ import {
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
-import FetchGitcoins from './fetch-explore';
 import StepperInfo from './stepper-info';
+import FetchGitcoins from './fetch-explore';
 
 export const dynamic = 'force-dynamic';
 export default function ExploreGitcoin({ params }: { params: { roundslug: string } }) {
@@ -25,7 +25,7 @@ export default function ExploreGitcoin({ params }: { params: { roundslug: string
               Credit Card Donation Available
             </Badge>
 
-            <Link href={`/qf/${round?.roundSlug}/cart`}>
+            <Link href={`/${round?.roundSlug}/cart`}>
               <Button
                 className="ml-4 mt-2 lg:mt-0 "
                 leftSection={<IconShoppingCart />}
