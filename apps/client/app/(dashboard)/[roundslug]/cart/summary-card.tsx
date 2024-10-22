@@ -4,22 +4,34 @@ import {
   matchingEstimatesToText,
   useMatchingEstimates,
 } from '@/components/hooks/useMatchingEstimate';
-import { gitcoinRounds } from '@/lib/constants';
-import { usdcSignType } from '@/lib/utils';
+import { MULTI_ROUND_CHECKOUT, gitcoinRounds } from '@/lib/constants';
+import { encodedQFAllocation, usdcSignType } from '@/lib/utils';
+import { config } from '@/lib/wagmi';
 import { getTokenByChainIdAndAddress } from '@gitcoin/gitcoin-chain-data';
-import { Card, Divider, Text } from '@mantine/core';
+import { Button, Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
+import { groupBy } from 'lodash';
 import { nanoid } from 'nanoid';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { Hex, parseSignature } from 'viem';
 import { parseUnits } from 'viem/utils';
-import { useAccount } from 'wagmi';
+import {
+  useAccount,
+  useChainId,
+  useSignTypedData,
+  useSwitchChain,
+  useWriteContract,
+} from 'wagmi';
+import { readContract } from 'wagmi/actions';
 
 export default function SummaryCard({ roundId }: { roundId: string }) {
   const [customerId, setCustomerId] = useState<string>(nanoid());
   const round = gitcoinRounds.find((round) => round.roundId === roundId);
+  const chainId = useChainId();
   if (!round) {
     throw new Error('Round not found');
   }
@@ -75,12 +87,155 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
     refetchMatchingEstimates();
   }, [totalAmount]);
   const { address } = useAccount();
+  const { signTypedDataAsync } = useSignTypedData();
+  const { writeContractAsync } = useWriteContract();
+  const { switchChainAsync } = useSwitchChain();
   const payWithCrypto = async () => {
     if (!address) {
       toast.error('Please connect your wallet to pay with crypto');
       return;
     }
-    const usdcSign = usdcSignType({});
+    if (chainId !== round.chainId) {
+      toast.info('Please switch to the correct network to pay with crypto');
+      await switchChainAsync({
+        chainId: round.chainId,
+      });
+      return;
+    }
+    const finalItems = useCartStore
+      .getState()
+      .items.filter((item) => item.roundId == roundId)
+      .map((item) => ({
+        amount: item.amount,
+        anchorAddress: item.anchorAddress,
+        roundId: item.roundId,
+        chainId: item.chainId,
+      }));
+    const finalTotalAmount = finalItems.reduce(
+      (acc, item) => acc + Number.parseFloat(item.amount),
+      0,
+    );
+    const nonce = await readContract(config, {
+      abi: [
+        {
+          constant: true,
+          inputs: [
+            {
+              name: 'owner',
+              type: 'address',
+            },
+          ],
+          name: 'nonces',
+          outputs: [
+            {
+              name: '',
+              type: 'uint256',
+            },
+          ],
+          payable: false,
+          stateMutability: 'view',
+          type: 'function',
+        },
+      ] as const,
+      address: round.token,
+      functionName: 'nonces',
+      args: [address],
+    });
+    const finalAmountInCrypto = parseUnits(finalTotalAmount.toString(), tokenTT.decimals);
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 60);
+    console.log(round.chainId, 'chaindi');
+    const usdcSign = usdcSignType({
+      chainId: round.chainId,
+      deadline: deadline,
+      name: round.tokenName,
+      nonce,
+      owner: address,
+      spender: round.gitCoinCheckoutAddress,
+      usdc: round.token,
+      value: finalAmountInCrypto,
+      version: round.tokenVersion,
+    });
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    const signature = await signTypedDataAsync(usdcSign as any);
+
+    const rsv = parseSignature(signature);
+    const groupedDonationsByRoundId = groupBy(
+      finalItems.map((d) => ({
+        amount: d.amount,
+        anchorAddress: d.anchorAddress,
+        roundId: d.roundId,
+      })),
+      'roundId',
+    );
+    const groupedEncodedVotes: Record<string, Hex[]> = {};
+    if (!groupedDonationsByRoundId) {
+      throw new Error('groupedDonationsByRoundId is null');
+    }
+    for (const roundId in groupedDonationsByRoundId) {
+      if (!groupedDonationsByRoundId[roundId]) {
+        throw new Error('groupedDonationsByRoundId[roundId] is null');
+      }
+      groupedEncodedVotes[roundId] = encodedQFAllocation(
+        tokenTT,
+        // @ts-ignore: Object is possibly 'null'.
+        // biome-ignore lint/style/noNonNullAssertion: <explanation>
+        groupedDonationsByRoundId![roundId].map((d) => ({
+          anchorAddress: d.anchorAddress ?? '',
+          amount: d.amount,
+        })),
+      );
+    }
+    const amountArray: bigint[] = [];
+    for (const roundId in groupedDonationsByRoundId) {
+      if (!groupedDonationsByRoundId[roundId]) {
+        continue;
+      }
+      // @ts-ignore: Object is possibly 'null'.
+      groupedDonationsByRoundId[roundId].map((donation) => {
+        amountArray.push(parseUnits(donation.amount, tokenTT.decimals));
+      });
+    }
+    const poolIds = Object.keys(groupedEncodedVotes).flatMap((key) => {
+      const count = groupedEncodedVotes[key].length;
+      return new Array(count).fill(key);
+    });
+    const data = Object.values(groupedEncodedVotes).flat();
+    const tx = await writeContractAsync({
+      abi: MULTI_ROUND_CHECKOUT,
+      chainId: round.chainId,
+      address: round.gitCoinCheckoutAddress,
+      functionName: 'allocateERC20Permit',
+      args: [
+        data,
+        poolIds,
+        Object.values(amountArray),
+        Object.values(amountArray).reduce((acc, b) => acc + b),
+        tokenTT.address as Hex,
+        BigInt(deadline),
+        Number.parseInt(rsv.v?.toString() ?? '1'),
+        rsv.r as Hex,
+        rsv.s as Hex,
+      ],
+    });
+    if (tx) {
+      toast.success(
+        <div className="w-96">
+          <TransactionToast
+            title="Transaction Successful"
+            hash={tx}
+            scanner={`${round.explorer}tx/`}
+          />
+          <div className="items-center p-3 text-lg font-bold ">
+            <p>
+              It may take 15-20 seconds for your donation to show in the project totals.
+            </p>
+          </div>
+        </div>,
+        {
+          duration: 20000,
+        },
+      );
+    }
   };
   const sumbit = async () => {
     try {
@@ -226,6 +381,12 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
           disabled={!meetsMinimumDonation || items.length === 0}
         />
       </PayPalScriptProvider>
+
+      {address ? (
+        <Button onClick={payWithCrypto}>Pay with crypto</Button>
+      ) : (
+        <ConnectButton />
+      )}
     </Card>
   );
 }

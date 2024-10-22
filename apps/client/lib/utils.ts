@@ -22,7 +22,6 @@ import {
   parseAbiParameters,
   parseUnits,
 } from 'viem';
-import { CHAIN_ID, USDC } from './constants';
 
 /* eslint-disable  -- needed */
 export const sleep = (ms: number): Promise<void> => {
@@ -275,6 +274,7 @@ export const storeFiles = async (files: File[]) => {
   console.log(data.path, 'image path');
   return `https://uofqdqrrquswprylyzby.supabase.co/storage/v1/object/public/campaigns/${data.path}`;
 };
+
 export const parseUsdc = (value: bigint) => Number.parseFloat(value.toString()) / 10 ** 6;
 export const formatUsdc = (value: number) => BigInt(value * 10 ** 6);
 export const usdcSignType = ({
@@ -283,12 +283,20 @@ export const usdcSignType = ({
   value,
   nonce,
   deadline,
+  usdc,
+  chainId,
+  name,
+  version,
 }: {
   owner: string;
   spender: string;
   value: BigInt;
   nonce: BigInt;
   deadline: BigInt;
+  usdc: string;
+  chainId: number;
+  name: string;
+  version: string;
 }) => {
   return {
     message: {
@@ -324,10 +332,10 @@ export const usdcSignType = ({
     },
     primaryType: 'Permit',
     domain: {
-      chainId: CHAIN_ID,
-      verifyingContract: USDC,
-      name: 'USD Coin',
-      version: '2',
+      chainId: chainId,
+      verifyingContract: usdc,
+      name: name,
+      version: version,
     },
   };
 };

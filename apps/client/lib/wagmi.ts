@@ -1,5 +1,12 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { arbitrum, base, optimism, optimismGoerli, polygonMumbai } from 'wagmi/chains';
+import {
+  arbitrum,
+  base,
+  celo,
+  optimism,
+  optimismGoerli,
+  polygonMumbai,
+} from 'wagmi/chains';
 const getChain = (chainName: string): Chain => {
   switch (chainName) {
     case 'op': {
@@ -22,6 +29,6 @@ const getChain = (chainName: string): Chain => {
 export const config = getDefaultConfig({
   appName: 'Viaprize',
   projectId: 'af44ac93e8878d0961629186986b6a4e',
-  chains: [optimism, arbitrum, base],
+  chains: [celo, arbitrum],
   // If your dApp uses server side rendering (SSR)
 });

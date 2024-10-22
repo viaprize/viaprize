@@ -792,7 +792,6 @@ export const MULTI_ROUND_CHECKOUT = [
     type: 'function',
   },
 ] as const;
-
 export const usdcAddress = {
   10: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
   8453: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
@@ -804,31 +803,6 @@ export const CHAIN_ID = 10;
 
 export const gitcoinRounds = [
   {
-    roundSlug: 'opencivics',
-    roundId: '386',
-    chainId: 42161,
-    token: usdcAddress[42161],
-    description:
-      'The OpenCivics Collaborative Research Round is designed to foster collaboration among researchers, civic innovators, and community organizers through open source research and knowledge production. Projects in this round are committed to contributing critical research into the commons and collaborating with others to share that knowledge in forms that directly empower community organizers',
-    title: 'OpenCivics Collaborative Research Round',
-    startDate: new Date('2024-08-07T17:30:00+05:30'),
-    endDate: new Date('2024-08-21T17:29:00+05:30'),
-    matchingPool: 42_000,
-  },
-
-  {
-    roundSlug: 'collabtech',
-    roundId: '384',
-    chainId: 42161,
-    token: usdcAddress[42161],
-    description:
-      'Let’s grow CollabTech: organisations on-chain, evolution of B2B SaaS, and future of work; projects advancing identity & reputation, governance & decision making, operations (accounting, sales automation, inventory management, talent, etc), community, and contributor tooling!',
-    title: 'CollabTech Round and Thresholds Experiment',
-    startDate: new Date('2024-08-07T03:30:00+05:30'),
-    endDate: new Date('2024-08-21T03:30:00+05:30'),
-    matchingPool: 30_000,
-  },
-  {
     roundSlug: 'biofipathfinders',
     roundId: '18',
     chainId: 42220,
@@ -839,6 +813,10 @@ export const gitcoinRounds = [
     startDate: new Date('2024-10-23T17:30:00+05:30'),
     endDate: new Date('2024-11-07T06:29:00+05:30'),
     matchingPool: 55_000,
+    tokenName: 'Glo Dollar',
+    tokenVersion: '1',
+    gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
+    explorer: 'https://explorer.celo.org/mainnet/',
   },
   {
     roundSlug: 'regencitizen',
@@ -851,6 +829,10 @@ export const gitcoinRounds = [
     startDate: new Date('2024-10-23T09:30:00+05:30'),
     endDate: new Date('2024-11-06T18:29:00+05:30'),
     matchingPool: 21_000,
+    tokenName: 'Glo Dollar',
+    tokenVersion: '1',
+    gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
+    explorer: 'https://explorer.celo.org/mainnet/',
   },
   {
     roundSlug: 'testcelo',
@@ -862,5 +844,9 @@ export const gitcoinRounds = [
     startDate: new Date('2024-10-23T09:30:00+05:30'),
     endDate: new Date('2024-11-06T18:29:00+05:30'),
     matchingPool: 21_000,
+    tokenName: 'Glo Dollar',
+    tokenVersion: '1',
+    gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
+    explorer: 'https://explorer.celo.org/mainnet/',
   },
 ];
