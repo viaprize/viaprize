@@ -93,7 +93,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
       >
         <Button onClick={() => switchToBase()}> Switch To Optimism</Button>
       </Modal>
-      <AppShell.Header
+      {/* <AppShell.Header
         p="md"
         py="lg"
         bg={computedColorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]}
@@ -127,7 +127,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
       </AppShell.Header>
       <AppShell.Navbar>
         <MobileNavbar close={toggle} open={opened} />
-      </AppShell.Navbar>
+      </AppShell.Navbar> */}
       <AppShell.Main>
         <div className="w-full flex justify-center min-w-0">
           <Center className="max-w-screen-xl w-full">{children}</Center>

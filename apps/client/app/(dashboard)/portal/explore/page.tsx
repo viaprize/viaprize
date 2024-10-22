@@ -16,21 +16,21 @@ export default function ExplorePortal({ searchParams }: { searchParams: SearchPa
           <Text size="25px" fw="bolder" mt="md" ml="md">
             Explore Fundraiser Campaigns
           </Text>
-          <Text size="md" fw="initial" mt="xs" ml="md">
+          {/* <Text size="md" fw="initial" mt="xs" ml="md">
             you can explore fundraisers and work on them
-          </Text>
-          <Group m="md" className="max-sm:ml-7">
+          </Text> */}
+          {/* <Group m="md" className="max-sm:ml-7">
             <Link href="/portal/about">
               <Button component="a">About Fundraisers</Button>
             </Link>
             <Link href="/portal/create">
               <Button component="a">Create Fundraisers</Button>
             </Link>
-          </Group>
+          </Group> */}
         </div>
-        <div className=" w-full lg:w-1/3 my-2">
+        {/* <div className=" w-full lg:w-1/3 my-2">
           <SubscriptionForm />
-        </div>
+        </div> */}
       </div>
       <SearchFiltersPortals />
 
