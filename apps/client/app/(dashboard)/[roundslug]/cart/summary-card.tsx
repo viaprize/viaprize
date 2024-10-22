@@ -8,7 +8,7 @@ import { MULTI_ROUND_CHECKOUT, gitcoinRounds } from '@/lib/constants';
 import { encodedQFAllocation, usdcSignType } from '@/lib/utils';
 import { config } from '@/lib/wagmi';
 import { getTokenByChainIdAndAddress } from '@gitcoin/gitcoin-chain-data';
-import { Button, Card, Divider, Text } from '@mantine/core';
+import { Badge, Button, Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
@@ -328,7 +328,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
           </Link>
         </span>
       </Text>
-      <Divider />
+      {/* <Divider /> */}
       {!meetsMinimumDonation && (
         <Text c="red">Each project must have a minimum donation amount of 2 USD.</Text>
       )}
@@ -389,7 +389,11 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
           disabled={!meetsMinimumDonation || items.length === 0}
         />
       </PayPalScriptProvider>
-
+      <Text  c="red" fw={400} >
+        For your donation to receive matching funds please make sure a bank account is
+        linked to your PayPal
+      </Text>
+      <Divider my="md" />
       {address ? (
         <Button onClick={payWithCrypto}>Pay with crypto</Button>
       ) : (
