@@ -35,7 +35,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
   const meetsMinimumDonation = useCartStore((state) =>
     state.items
       .filter((item) => item.roundId == roundId)
-      .every((item) => parseFloat(item.amount) >= 2),
+      .every((item) => parseFloat(item.amount) >= 0.5),
   );
   const items = useCartStore((state) =>
     state.items.filter((item) => item.roundId == roundId),
