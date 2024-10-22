@@ -242,6 +242,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
           duration: 20000,
         },
       );
+      clearCart();
     }
   };
   const sumbit = async () => {
