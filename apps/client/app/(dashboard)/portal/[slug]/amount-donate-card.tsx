@@ -510,12 +510,11 @@ export default function AmountDonateCard({
                 <>
                   {id === '40257733-e1bb-4f52-b7d6-e393b086b44b' ? (
                     <>
-                      
                       {(
                         parseFloat(amountRaised) * cryptoToUsd.ethereum.usd +
                         parseInt(extraData?.data.funds.toString() ?? '0')
                       ).toFixed(2)}{' '}
-                     USD / 50,000 USD 
+                      USD / 50,000 USD
                     </>
                   ) : (
                     <>

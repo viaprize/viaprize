@@ -797,7 +797,7 @@ export const usdcAddress = {
   10: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
   8453: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
   42161: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-  42220: '0xcebA9300f2b948710d2653dD7B07f33A8B32118C',
+  42220: '0x4f604735c1cf31399c6e711d5962b2b3e0225ad3',
 } as const;
 
 export const CHAIN_ID = 10;
@@ -848,6 +848,17 @@ export const gitcoinRounds = [
     description:
       'The GG22 Regen Citizens Genesis Round is a joint initiative between GreenPill Network, ReFi DAO, Let’s Grow DAO, and Celo Public Goods. Focusing primarily on these organisation as a starting point, the aim of this round is to empower and recognize builders making meaningful contributions to the regenerative movement on Ethereum.',
     title: 'GG22 Regen Citizens Genesis',
+    startDate: new Date('2024-10-23T09:30:00+05:30'),
+    endDate: new Date('2024-11-06T18:29:00+05:30'),
+    matchingPool: 21_000,
+  },
+  {
+    roundSlug: 'testcelo',
+    roundId: '19',
+    chainId: 42220,
+    token: usdcAddress[42220],
+    description: 'testing the celo one ',
+    title: 'gotcoin celo',
     startDate: new Date('2024-10-23T09:30:00+05:30'),
     endDate: new Date('2024-11-06T18:29:00+05:30'),
     matchingPool: 21_000,
