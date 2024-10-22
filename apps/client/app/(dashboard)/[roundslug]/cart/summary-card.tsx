@@ -17,11 +17,12 @@ import { nanoid } from 'nanoid';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Hex, parseSignature } from 'viem';
+import { Hex, encodeFunctionData, parseSignature } from 'viem';
 import { parseUnits } from 'viem/utils';
 import {
   useAccount,
   useChainId,
+  useSendTransaction,
   useSignTypedData,
   useSwitchChain,
   useWriteContract,
@@ -87,6 +88,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
     refetchMatchingEstimates();
   }, [totalAmount]);
   const { address } = useAccount();
+  const { sendTransactionAsync } = useSendTransaction();
   const { signTypedDataAsync } = useSignTypedData();
   const { writeContractAsync } = useWriteContract();
   const { switchChainAsync } = useSwitchChain();
@@ -200,10 +202,9 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
       return new Array(count).fill(key);
     });
     const data = Object.values(groupedEncodedVotes).flat();
-    const tx = await writeContractAsync({
+    const txData = encodeFunctionData({
       abi: MULTI_ROUND_CHECKOUT,
-      chainId: round.chainId,
-      address: round.gitCoinCheckoutAddress,
+
       functionName: 'allocateERC20Permit',
       args: [
         data,
@@ -216,6 +217,12 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
         rsv.r as Hex,
         rsv.s as Hex,
       ],
+    });
+    const tx = await sendTransactionAsync({
+      to: round.gitCoinCheckoutAddress,
+      data: txData,
+      value: BigInt(0),
+      chainId: round.chainId,
     });
     if (tx) {
       toast.success(

@@ -34,7 +34,7 @@ export default async function GitcoinApplication({
     <div className="my-10 px-3 sm:px-6 md:px-14 lg:px-20">
       <ImageTitleCard
         exploreUrl={`/${params.roundslug}`}
-        title={applicationsInRound.project.metadata.title}
+        title={applicationsInRound?.project?.metadata?.title}
         img={`https://gitcoin.mypinata.cloud/ipfs/${applicationsInRound.project.metadata.bannerImg}`}
         logoURL={`https://gitcoin.mypinata.cloud/ipfs/${applicationsInRound.project.metadata.logoImg}`}
         application={applicationsInRound}
