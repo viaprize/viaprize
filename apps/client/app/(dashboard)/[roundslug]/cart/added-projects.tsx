@@ -5,7 +5,6 @@ import { IconTrash } from '@tabler/icons-react';
 import { CartItem, useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { useState } from 'react';
 
-
 export default function AddedProjects({ roundId }: { roundId: string }) {
   const { items, removeItem, clearCart, changeAmount } = useCartStore();
   const [error, setError] = useState('');
