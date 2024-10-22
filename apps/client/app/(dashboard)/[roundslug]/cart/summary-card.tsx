@@ -5,6 +5,7 @@ import {
   useMatchingEstimates,
 } from '@/components/hooks/useMatchingEstimate';
 import { gitcoinRounds } from '@/lib/constants';
+import { usdcSignType } from '@/lib/utils';
 import { getTokenByChainIdAndAddress } from '@gitcoin/gitcoin-chain-data';
 import { Card, Divider, Text } from '@mantine/core';
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js';
@@ -14,6 +15,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { parseUnits } from 'viem/utils';
+import { useAccount } from 'wagmi';
 
 export default function SummaryCard({ roundId }: { roundId: string }) {
   const [customerId, setCustomerId] = useState<string>(nanoid());
@@ -72,7 +74,14 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
     setCustomerId(nanoid());
     refetchMatchingEstimates();
   }, [totalAmount]);
-
+  const { address } = useAccount();
+  const payWithCrypto = async () => {
+    if (!address) {
+      toast.error('Please connect your wallet to pay with crypto');
+      return;
+    }
+    const usdcSign = usdcSignType({});
+  };
   const sumbit = async () => {
     try {
       const finalItems = useCartStore

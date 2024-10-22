@@ -14,13 +14,14 @@ import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { useNetwork } from 'wagmi';
+
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 import useIsMounted from '../hooks/useIsMounted';
 import Footer from './footer';
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   const theme = useMantineTheme();
-  const { chain: currentChain } = useNetwork();
+
   const [opened, { toggle }] = useDisclosure();
 
   const [openedChainModal, { open: openChainModal, close: closeChainModal }] =
@@ -73,6 +74,7 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
               )}
             </ActionIcon>
           </div>
+          <ConnectButton />
         </Flex>
       </AppShell.Header>
 

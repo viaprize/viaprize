@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { zeroAddress } from 'viem';
 
 /* TODO: Rename some of the types to hungarian-style notation once we have shared types between indexer and frontends */
@@ -71,11 +71,12 @@ export function useMatchingEstimates(params: UseMatchingEstimatesParams[]) {
   const shouldFetch = params.every((param) => param.roundId !== zeroAddress);
 
   console.log({ params });
-  return useQuery(
-    ['matches'],
-    () => Promise.all(params.map((params) => getMatchingEstimates(params))),
-    { enabled: shouldFetch },
-  );
+
+  return useQuery({
+    queryKey: ['matches'],
+    queryFn: () => Promise.all(params.map((params) => getMatchingEstimates(params))),
+    enabled: shouldFetch,
+  });
 }
 
 export function matchingEstimatesToText(matchingEstimates?: MatchingEstimateResult[][]) {
