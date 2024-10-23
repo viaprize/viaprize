@@ -54,9 +54,11 @@ export default function Navbar({
               {/* <Button variant="ghost" className="text-foreground">
                 Activities
               </Button> */}
-              <Button>
-                <Plus className="size-5 mr-1" />
-                Create Prize
+              <Button asChild>
+                <Link href="/prize/create">
+                  <Plus className="size-5 mr-1" />
+                  Create Prize
+                </Link>
               </Button>
               {session ? (
                 <DropdownMenu>
@@ -72,9 +74,11 @@ export default function Navbar({
                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
+                    <DropdownMenuItem asChild>
+                      <Link href={`/profile/${session.user.username}`}>
+                        <User className="mr-2 h-4 w-4" />
+                        <span>Profile</span>
+                      </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                       <LogOut className="mr-2 h-4 w-4" />

@@ -97,7 +97,9 @@ function getStageInfo(prizeStage: PrizeStages) {
         tooltip: 'Voting has not started',
         text: 'due in',
       }
-    case 'REFUNDED' || 'ENDED':
+    case 'REFUNDED':
+      return { tooltip: 'Event has ended', text: 'Ended' }
+    case 'WON':
       return { tooltip: 'Event has ended', text: 'Ended' }
     default:
       return { tooltip: 'Stage unknown', text: 'Check later' }
