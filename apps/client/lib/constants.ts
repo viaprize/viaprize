@@ -537,7 +537,7 @@ export const MULTI_ROUND_CHECKOUT = [
     name: 'allo',
     outputs: [
       {
-        internalType: 'contract IAllo',
+        internaype: 'contract IAllo',
         name: '',
         type: 'address',
       },
