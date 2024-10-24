@@ -46,7 +46,7 @@ export default function AddedProjects({
                   />
                   <div className="mt-3">
                     <Text fw="bold" size="lg" className="lg:block">
-                      {item.project.metadata.title}
+                      {item.project.metadata.title.substring(0, 120)}...
                     </Text>
                     <p className="text-md hidden lg:visible lg:block">
                       {renderToPlainText(item.project.metadata.description).substring(
