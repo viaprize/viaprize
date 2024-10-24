@@ -463,8 +463,17 @@ markdownIt.renderer.rules.link_open = function linkOpen(tokens, idx, options, en
 };
 
 export function renderToHTML(markdownSourceText: string) {
+  // Optionally set custom renderers before rendering
+  markdownIt.renderer.rules.image = (tokens, idx, options, env, self) => {
+    const token = tokens[idx];
+    const src = token.attrGet('src');
+    const alt = token.content ? token.content : '';
+
+    return `<img src="${src}" alt="${alt}" style="max-width: 90%; height: auto; padding: 20px 0px" />`;
+  };
+
   return sanitize(markdownIt.render(markdownSourceText), {
-    ADD_ATTR: ['target'],
+    ADD_ATTR: ['target', 'alt', 'title'],
   });
 }
 

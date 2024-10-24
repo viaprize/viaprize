@@ -3,35 +3,32 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "inter";
+  font-family: 'inter';
   font-weight: 200;
-  src        : url("/fonts/Inter/Inter-Thin.ttf");
+  src: url('/fonts/Inter/Inter-Thin.ttf');
 }
 
-
 @font-face {
-  font-family: "inter";
+  font-family: 'inter';
   font-weight: 400;
-  src        : url("/fonts/Inter/Inter-Regular.ttf");
+  src: url('/fonts/Inter/Inter-Regular.ttf');
 }
 
 @font-face {
-  font-family: "inter";
+  font-family: 'inter';
   font-weight: 600;
-  src        : url("/fonts/Inter/Inter-SemiBold.ttf");
+  src: url('/fonts/Inter/Inter-SemiBold.ttf');
 }
 
 @font-face {
-  font-family: "inter";
+  font-family: 'inter';
   font-weight: 900;
-  src        : url("/fonts/Inter/Inter-ExtraBold.ttf");
+  src: url('/fonts/Inter/Inter-ExtraBold.ttf');
 }
 
-
-.ProseMirror{
+.ProseMirror {
   max-width: 90vw;
 }
-
 
 .dont-break-out {
   /* These are technically the same, but use both */
@@ -50,9 +47,9 @@
 }
 
 a {
-  color          : inherit;
+  color: inherit;
   text-decoration: none;
-  text-transform : none;
+  text-transform: none;
 }
 
 .font-inter {
@@ -63,7 +60,6 @@ a {
   box-sizing: border-box;
 }
 
-
 .hover-up {
   transition: transform 0.3s;
 }
@@ -73,8 +69,8 @@ a {
 }
 
 .btn-blue {
-  background: #BE7DFF;
-  border    : none;
+  background: #be7dff;
+  border: none;
 }
 
 .container {
@@ -82,37 +78,58 @@ a {
 }
 
 .sign-card {
-  background     : rgba(255, 255, 255, 0.02);
-  box-shadow     : 12.8px 57.6px 83.2px rgba(184, 158, 253, 0.3);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 12.8px 57.6px 83.2px rgba(184, 158, 253, 0.3);
   backdrop-filter: blur(20px);
-  border-radius  : 24px;
+  border-radius: 24px;
 }
 
 
+.dont-break-out {
+
+  /* These are technically the same, but use both */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  -ms-word-break: break-all;
+  /* This is the dangerous one in WebKit, as it breaks things wherever */
+  word-break: break-all;
+  /* Instead use this non-standard one: */
+  word-break: break-word;
+
+  /* Adds a hyphen where the word breaks, if supported (No Blink) */
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+
+}
+
 .gitcoindescriptionparent {
   img {
-    max-width: 400px;
-    
+    display: block;
+    align-self: self-start;
+    max-width: 300px;
   }
 }
 
 @layer utilities {
-  .btn_white { 
-    @apply  border-white bg-white px-8 py-3 text-green-50
+  .btn_white {
+    @apply border-white bg-white px-8 py-3 text-green-50;
   }
-  .btn_white_text  { 
-    @apply  border-white bg-white px-8 py-3 text-gray-50
+  .btn_white_text {
+    @apply border-white bg-white px-8 py-3 text-gray-50;
   }
-  .btn_green  { 
-    @apply  border-green-50 bg-green-50 px-8 py-5 text-white
+  .btn_green {
+    @apply border-green-50 bg-green-50 px-8 py-5 text-white;
   }
-  .btn_dark_green { 
-    @apply  bg-green-90 px-8 py-4 text-white transition-all hover:bg-black
+  .btn_dark_green {
+    @apply bg-green-90 px-8 py-4 text-white transition-all hover:bg-black;
   }
-  .btn_dark_green_outline  { 
-    @apply border-gray-20 bg-green-90 px-8 py-5 text-white
+  .btn_dark_green_outline {
+    @apply border-gray-20 bg-green-90 px-8 py-5 text-white;
   }
-  
+
   .max-container {
     @apply mx-auto max-w-[1440px];
   }

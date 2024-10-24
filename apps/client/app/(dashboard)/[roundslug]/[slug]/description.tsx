@@ -8,7 +8,7 @@ const DescriptionHtml = dynamic(() => import('@/components/gitcoin/description-h
 
 export default function Description({ description }: { description: string }) {
   return (
-    <div className="overflow-hidden gitcoindescriptionparent">
+    <div className="overflow-hidden gitcoindescriptionparent dont-break-out">
       <DescriptionHtml description={description} />
     </div>
   );
