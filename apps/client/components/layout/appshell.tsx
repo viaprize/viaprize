@@ -58,7 +58,9 @@ export default function AppShellLayout({ children }: { children: ReactNode }) {
             {/* <Link href="/"> */}
             <div className="flex items-center space-x-3">
               <Image src="/viaprizeBg.png" width={30} height={30} alt="home" />
-              <Text fw='bold' size='lg'>viaPrize</Text>
+              <Text fw="bold" size="lg">
+                viaPrize
+              </Text>
             </div>
             {/* </Link> */}
           </div>

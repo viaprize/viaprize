@@ -313,6 +313,114 @@ export const FUND_MCR_ADDRESS = [
   },
 ] as const;
 
+export const usdcAddress = {
+  10: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
+  8453: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+  42161: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+  42220: '0x4f604735c1cf31399c6e711d5962b2b3e0225ad3',
+} as const;
+
+export const CHAIN_ID = 10;
+
+export const gitcoinRounds = [
+  {
+    roundSlug: 'biofipathfinders',
+    roundId: '18',
+    chainId: 42220,
+    token: usdcAddress[42220],
+    description:
+      'The Bioregional Finance (BioFi) Pathfinders Round is a partnership between The BioFi Project, Open Civics, The Design School for Regenerating Earth, and Regen Coordination to support the most sophisticated Bioregional Organizing Teams around the world in developing, clarifying, and enhancing their BioFi vision, strategy, and capabilities. This invite-only round is aimed at advanced teams that are already practicing or actively developing their approach to Bioregional Finance (BioFi), with a focus on building Bioregional Financing Facilities (BFFs) or bioregional funding ecosystems more broadly. For detailed suggested questions to help shape your project description, visit https://nifty-humidity-dcf.notion.site/Pathfinders-Grantee-Questions-Template-fa60a0314b174422bd1f2735e3541cdc?pvs=4',
+    title: 'BioFi Pathfinders',
+    startDate: new Date('2024-10-23T17:30:00+05:30'),
+    endDate: new Date('2024-11-07T06:29:00+05:30'),
+    matchingPool: 55_000,
+    tokenName: 'Glo Dollar',
+    tokenVersion: '1',
+    gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
+    explorer: 'https://celoscan.io/',
+  },
+  {
+    roundSlug: 'regencitizen',
+    roundId: '16',
+    chainId: 42220,
+    token: usdcAddress[42220],
+    description:
+      'The GG22 Regen Citizens Genesis Round is a joint initiative between GreenPill Network, ReFi DAO, Let’s Grow DAO, and Celo Public Goods. Focusing primarily on these organisation as a starting point, the aim of this round is to empower and recognize builders making meaningful contributions to the regenerative movement on Ethereum.',
+    title: 'GG22 Regen Citizens Genesis',
+    startDate: new Date('2024-10-23T09:30:00+05:30'),
+    endDate: new Date('2024-11-06T18:29:00+05:30'),
+    matchingPool: 21_000,
+    tokenName: 'Glo Dollar',
+    tokenVersion: '1',
+    gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
+    explorer: 'https://celoscan.io/',
+  },
+  {
+    roundSlug: 'testcelo',
+    roundId: '20',
+    chainId: 42220,
+    token: usdcAddress[42220],
+    description: 'testing the celo one ',
+    title: 'gotcoin celo',
+    startDate: new Date('2024-10-23T09:30:00+05:30'),
+    endDate: new Date('2024-11-06T18:29:00+05:30'),
+    matchingPool: 21_000,
+    tokenName: 'Glo Dollar',
+    tokenVersion: '1',
+    gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
+    explorer: 'https://celoscan.io/',
+  },
+
+  {
+    roundSlug: 'maearth',
+    roundId: '643',
+    chainId: 42161,
+    token: usdcAddress[42161],
+    tokenName: 'USD Coin',
+    tokenVersion: '2',
+    description:
+      'Ma Earth Grants Round 2 provides funding for regenerative land projects. The aim is to support place-based, environmental activities for community impact.',
+    title: 'Land Regenerators',
+    startDate: new Date('2024-10-23T17:30:00+05:30'),
+    endDate: new Date('2024-11-07T06:30:00+05:30'),
+    matchingPool: 1_70_000,
+    gitCoinCheckoutAddress: '0x8e1bD5Da87C14dd8e08F7ecc2aBf9D1d558ea174' as `0x${string}`,
+    explorer: 'https://arbiscan.io/',
+  },
+  {
+    roundSlug: 'youthinneed',
+    roundId: '646',
+    chainId: 42161,
+    tokenName: 'USD Coin',
+    tokenVersion: '2',
+    token: usdcAddress[42161],
+    description:
+      'This round welcomes projects that support youth in need through kids’ shelters and related services, such as education, safe housing, counseling, and crisis intervention programs.',
+    title: 'Youth In Need',
+    startDate: new Date('2024-10-23T17:30:00+05:30'),
+    endDate: new Date('2024-11-07T06:29:00+05:30'),
+    matchingPool: 17_500,
+    gitCoinCheckoutAddress: '0x8e1bD5Da87C14dd8e08F7ecc2aBf9D1d558ea174' as `0x${string}`,
+    explorer: 'https://arbiscan.io/',
+  },
+  {
+    roundSlug: 'testarb',
+    roundId: '651',
+    chainId: 42161,
+    tokenName: 'USD Coin',
+    tokenVersion: '2',
+    token: usdcAddress[42161],
+    description:
+      'This round welcomes projects that support youth in need through kids’ shelters and related services, such as education, safe housing, counseling, and crisis intervention programs.',
+    title: 'Youth In Need',
+    startDate: new Date('2024-10-23T17:30:00+05:30'),
+    endDate: new Date('2024-11-07T06:29:00+05:30'),
+    matchingPool: 17_500,
+    gitCoinCheckoutAddress: '0x8e1bD5Da87C14dd8e08F7ecc2aBf9D1d558ea174' as `0x${string}`,
+    explorer: 'https://arbiscan.io/',
+  },
+];
+
 export const MULTI_ROUND_CHECKOUT = [
   {
     inputs: [],
@@ -429,7 +537,7 @@ export const MULTI_ROUND_CHECKOUT = [
     name: 'allo',
     outputs: [
       {
-        internalType: 'contract IAllo',
+        internaype: 'contract IAllo',
         name: '',
         type: 'address',
       },
@@ -792,91 +900,3 @@ export const MULTI_ROUND_CHECKOUT = [
     type: 'function',
   },
 ] as const;
-export const usdcAddress = {
-  10: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
-  8453: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
-  42161: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-  42220: '0x4f604735c1cf31399c6e711d5962b2b3e0225ad3',
-} as const;
-
-export const CHAIN_ID = 10;
-
-export const gitcoinRounds = [
-  {
-    roundSlug: 'biofipathfinders',
-    roundId: '18',
-    chainId: 42220,
-    token: usdcAddress[42220],
-    description:
-      'The Bioregional Finance (BioFi) Pathfinders Round is a partnership between The BioFi Project, Open Civics, The Design School for Regenerating Earth, and Regen Coordination to support the most sophisticated Bioregional Organizing Teams around the world in developing, clarifying, and enhancing their BioFi vision, strategy, and capabilities. This invite-only round is aimed at advanced teams that are already practicing or actively developing their approach to Bioregional Finance (BioFi), with a focus on building Bioregional Financing Facilities (BFFs) or bioregional funding ecosystems more broadly. For detailed suggested questions to help shape your project description, visit https://nifty-humidity-dcf.notion.site/Pathfinders-Grantee-Questions-Template-fa60a0314b174422bd1f2735e3541cdc?pvs=4',
-    title: 'BioFi Pathfinders',
-    startDate: new Date('2024-10-23T17:30:00+05:30'),
-    endDate: new Date('2024-11-07T06:29:00+05:30'),
-    matchingPool: 55_000,
-    tokenName: 'Glo Dollar',
-    tokenVersion: '1',
-    gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
-    explorer: 'https://explorer.celo.org/mainnet/',
-    minDonationPerProject: 2,
-  },
-  {
-    roundSlug: 'regencitizen',
-    roundId: '16',
-    chainId: 42220,
-    token: usdcAddress[42220],
-    description:
-      'The GG22 Regen Citizens Genesis Round is a joint initiative between GreenPill Network, ReFi DAO, Let’s Grow DAO, and Celo Public Goods. Focusing primarily on these organisation as a starting point, the aim of this round is to empower and recognize builders making meaningful contributions to the regenerative movement on Ethereum.',
-    title: 'GG22 Regen Citizens Genesis',
-    startDate: new Date('2024-10-23T09:30:00+05:30'),
-    endDate: new Date('2024-11-06T18:29:00+05:30'),
-    matchingPool: 21_000,
-    tokenName: 'Glo Dollar',
-    tokenVersion: '1',
-    gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
-    explorer: 'https://explorer.celo.org/mainnet/',
-    minDonationPerProject: 2,
-  },
-  {
-    roundSlug: 'testcelo',
-    roundId: '19',
-    chainId: 42220,
-    token: usdcAddress[42220],
-    description: 'testing the celo one ',
-    title: 'gotcoin celo',
-    startDate: new Date('2024-10-23T09:30:00+05:30'),
-    endDate: new Date('2024-11-06T18:29:00+05:30'),
-    matchingPool: 21_000,
-    tokenName: 'Glo Dollar',
-    tokenVersion: '1',
-    gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
-    explorer: 'https://explorer.celo.org/mainnet/',
-    minDonationPerProject: 2,
-  },
-
-  {
-    roundSlug: 'maearth',
-    roundId: '643',
-    chainId: 42161,
-    token: usdcAddress[42161],
-    description:
-      'Ma Earth Grants Round 2 provides funding for regenerative land projects. The aim is to support place-based, environmental activities for community impact.',
-    title: 'Land Regenerators',
-    startDate: new Date('2024-10-23T17:30:00+05:30'),
-    endDate: new Date('2024-11-07T06:30:00+05:30'),
-    matchingPool: 2_00_000,
-    minDonationPerProject: 5,
-  },
-  {
-    roundSlug: 'youthinneed',
-    roundId: '646',
-    chainId: 42161,
-    token: usdcAddress[42161],
-    description:
-      'This round welcomes projects that support youth in need through kids’ shelters and related services, such as education, safe housing, counseling, and crisis intervention programs.',
-    title: 'Youth In Need',
-    startDate: new Date('2024-10-23T17:30:00+05:30'),
-    endDate: new Date('2024-11-07T06:29:00+05:30'),
-    matchingPool: 17_500,
-    minDonationPerProject: 2,
-  },
-];
