@@ -30,7 +30,10 @@ export default function CartPage({ params }: { params: { roundslug: string } }) 
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           minDonationPerProject={round?.minDonationPerProject ?? 0}
         />
-        <SummaryCard roundId={round?.roundId ?? ''} minDonationPerProject={round?.minDonationPerProject ?? 0} />
+        <SummaryCard
+          roundId={round?.roundId ?? ''}
+          minDonationPerProject={round?.minDonationPerProject ?? 0}
+        />
       </div>
     </div>
   );

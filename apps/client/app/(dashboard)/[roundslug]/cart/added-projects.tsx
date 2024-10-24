@@ -10,7 +10,7 @@ export default function AddedProjects({
   minDonationPerProject,
 }: {
   roundId: string;
-  minDonationPerProject:number
+  minDonationPerProject: number;
 }) {
   const { items, removeItem, clearCart, changeAmount } = useCartStore();
   const [error, setError] = useState('');

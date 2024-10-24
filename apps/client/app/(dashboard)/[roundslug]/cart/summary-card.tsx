@@ -31,7 +31,13 @@ import {
 } from 'wagmi';
 import { pinata } from '../../../../config/pinata';
 
-export default function SummaryCard({ roundId ,minDonationPerProject}: { roundId: string , minDonationPerProject:number}) {
+export default function SummaryCard({
+  roundId,
+  minDonationPerProject,
+}: {
+  roundId: string;
+  minDonationPerProject: number;
+}) {
   const [customerId, setCustomerId] = useState<string>(nanoid());
 
   const round = gitcoinRounds.find((round) => round.roundId === roundId);
@@ -401,7 +407,9 @@ export default function SummaryCard({ roundId ,minDonationPerProject}: { roundId
       </Text>
       {/* <Divider /> */}
       {!meetsMinimumDonation && (
-        <Text c="red">Each project must have a minimum donation amount of {minDonationPerProject} USD.</Text>
+        <Text c="red">
+          Each project must have a minimum donation amount of {minDonationPerProject} USD.
+        </Text>
       )}
 
       <PayPalScriptProvider
