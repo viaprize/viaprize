@@ -28,7 +28,7 @@ import {
 } from 'wagmi';
 import { readContract } from 'wagmi/actions';
 
-export default function SummaryCard({ roundId }: { roundId: string }) {
+export default function SummaryCard({ roundId ,minDonationPerProject}: { roundId: string , minDonationPerProject:number}) {
   const [customerId, setCustomerId] = useState<string>(nanoid());
   const round = gitcoinRounds.find((round) => round.roundId === roundId);
   const chainId = useChainId();
@@ -49,7 +49,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
   const meetsMinimumDonation = useCartStore((state) =>
     state.items
       .filter((item) => item.roundId == roundId)
-      .every((item) => parseFloat(item.amount) >= 0.5),
+      .every((item) => parseFloat(item.amount) >= minDonationPerProject),
   );
   const items = useCartStore((state) =>
     state.items.filter((item) => item.roundId == roundId),
@@ -322,7 +322,7 @@ export default function SummaryCard({ roundId }: { roundId: string }) {
       </Text>
       {/* <Divider /> */}
       {!meetsMinimumDonation && (
-        <Text c="red">Each project must have a minimum donation amount of 2 USD.</Text>
+        <Text c="red">Each project must have a minimum donation amount of {minDonationPerProject} USD.</Text>
       )}
 
       <PayPalScriptProvider

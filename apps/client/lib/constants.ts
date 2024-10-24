@@ -817,6 +817,7 @@ export const gitcoinRounds = [
     tokenVersion: '1',
     gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
     explorer: 'https://explorer.celo.org/mainnet/',
+    minDonationPerProject: 2,
   },
   {
     roundSlug: 'regencitizen',
@@ -833,6 +834,7 @@ export const gitcoinRounds = [
     tokenVersion: '1',
     gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
     explorer: 'https://explorer.celo.org/mainnet/',
+    minDonationPerProject: 2,
   },
   {
     roundSlug: 'testcelo',
@@ -848,29 +850,33 @@ export const gitcoinRounds = [
     tokenVersion: '1',
     gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
     explorer: 'https://explorer.celo.org/mainnet/',
+    minDonationPerProject: 2,
   },
-  
-    {
-     roundSlug:'maearth',
-      roundId:'643',
-      chainId:42161,
-      token:usdcAddress[42161],
-      description:'Ma Earth Grants Round 2 provides funding for regenerative land projects. The aim is to support place-based, environmental activities for community impact.',
-      title:'Land Regenerators',
-      startDate:new Date('2024-10-23T17:30:00+05:30'),
-      endDate:new Date('2024-11-07T06:30:00+05:30'),
-      matchingPool:1_70_000,
+
+  {
+    roundSlug: 'maearth',
+    roundId: '643',
+    chainId: 42161,
+    token: usdcAddress[42161],
+    description:
+      'Ma Earth Grants Round 2 provides funding for regenerative land projects. The aim is to support place-based, environmental activities for community impact.',
+    title: 'Land Regenerators',
+    startDate: new Date('2024-10-23T17:30:00+05:30'),
+    endDate: new Date('2024-11-07T06:30:00+05:30'),
+    matchingPool: 2_00_000,
+    minDonationPerProject: 5,
   },
   {
-    roundSlug:'youthinneed',
-    roundId:'646',
-    chainId:42161,
-    tokem:usdcAddress[42161],
-    description:'This round welcomes projects that support youth in need through kids’ shelters and related services, such as education, safe housing, counseling, and crisis intervention programs.',
-    title:'Youth In Need',
-    startDate:new Date('2024-10-23T17:30:00+05:30'),
-    endDate:new Date('2024-11-07T06:29:00+05:30'),
-    matchingPool:17_500,
-  }
-  
+    roundSlug: 'youthinneed',
+    roundId: '646',
+    chainId: 42161,
+    token: usdcAddress[42161],
+    description:
+      'This round welcomes projects that support youth in need through kids’ shelters and related services, such as education, safe housing, counseling, and crisis intervention programs.',
+    title: 'Youth In Need',
+    startDate: new Date('2024-10-23T17:30:00+05:30'),
+    endDate: new Date('2024-11-07T06:29:00+05:30'),
+    matchingPool: 17_500,
+    minDonationPerProject: 2,
+  },
 ];

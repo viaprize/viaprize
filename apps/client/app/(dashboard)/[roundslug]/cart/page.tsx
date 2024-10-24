@@ -9,7 +9,7 @@ export type CartAmountItem = {
 export type CartItemToAcount = { [key: string]: number };
 
 export default function CartPage({ params }: { params: { roundslug: string } }) {
-  const round = gitcoinRounds.find((round) => round.roundSlug === params.roundslug);
+  const round = gitcoinRounds.find((roundd) => roundd.roundSlug === params.roundslug);
   return (
     <div className="max-w-screen-xl w-screen">
       <div className="flex items-center space-x-5">
@@ -21,12 +21,16 @@ export default function CartPage({ params }: { params: { roundslug: string } }) 
       <Divider my="md" />
       <h3>{round?.title}</h3>
       <div className="text-md mb-3">
-        Your donation to each project must be valued at 2 USD or more to be eligible for
-        matching.
+        Your donation to each project must be valued at {round?.minDonationPerProject} USD
+        or more to be eligible for matching.
       </div>
       <div className="w-full lg:flex space-y-3 mb-4 lg:gap-4 justify-between">
-        <AddedProjects roundId={round?.roundId ?? ''} />
-        <SummaryCard roundId={round?.roundId ?? ''} />
+        <AddedProjects
+          roundId={round?.roundId ?? ''}
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          minDonationPerProject={round?.minDonationPerProject ?? 0}
+        />
+        <SummaryCard roundId={round?.roundId ?? ''} minDonationPerProject={round?.minDonationPerProject ?? 0} />
       </div>
     </div>
   );

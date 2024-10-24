@@ -5,7 +5,13 @@ import { IconTrash } from '@tabler/icons-react';
 import { type CartItem, useCartStore } from 'app/(dashboard)/(_utils)/store/datastore';
 import { useState } from 'react';
 
-export default function AddedProjects({ roundId }: { roundId: string }) {
+export default function AddedProjects({
+  roundId,
+  minDonationPerProject,
+}: {
+  roundId: string;
+  minDonationPerProject:number
+}) {
   const { items, removeItem, clearCart, changeAmount } = useCartStore();
   const [error, setError] = useState('');
   const filteredItems = items.filter((item) => item.roundId === roundId);
@@ -13,9 +19,9 @@ export default function AddedProjects({ roundId }: { roundId: string }) {
     const amount = isNaN(value) ? 0 : value;
     changeAmount(item.id, amount);
 
-    if (amount < 2) {
+    if (amount < minDonationPerProject) {
       setError(
-        `Donation amount for ${item.project.metadata.title} must be at least 2 USD.`,
+        `Donation amount for ${item.project.metadata.title} must be at least ${minDonationPerProject} USD.`,
       );
     } else {
       setError('');
