@@ -1,3 +1,5 @@
+import { min } from "lodash";
+
 export const campaignsTags = [
   'Climate Change',
   'Network Civilizations',
@@ -338,6 +340,7 @@ export const gitcoinRounds = [
     tokenVersion: '1',
     gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
     explorer: 'https://celoscan.io/',
+    minDonationPerProject: 2,
   },
   {
     roundSlug: 'regencitizen',
@@ -354,6 +357,7 @@ export const gitcoinRounds = [
     tokenVersion: '1',
     gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
     explorer: 'https://celoscan.io/',
+    minDonationPerProject: 2,
   },
   {
     roundSlug: 'testcelo',
@@ -369,6 +373,7 @@ export const gitcoinRounds = [
     tokenVersion: '1',
     gitCoinCheckoutAddress: '0xb1481E4Bb2a018670aAbF68952F73BE45bdAD62D' as `0x${string}`,
     explorer: 'https://celoscan.io/',
+    minDonationPerProject: 2,
   },
 
   {
@@ -383,9 +388,10 @@ export const gitcoinRounds = [
     title: 'Land Regenerators',
     startDate: new Date('2024-10-23T17:30:00+05:30'),
     endDate: new Date('2024-11-07T06:30:00+05:30'),
-    matchingPool: 1_70_000,
+    matchingPool: 2_00_000,
     gitCoinCheckoutAddress: '0x8e1bD5Da87C14dd8e08F7ecc2aBf9D1d558ea174' as `0x${string}`,
     explorer: 'https://arbiscan.io/',
+    minDonationPerProject: 5,
   },
   {
     roundSlug: 'youthinneed',
@@ -402,6 +408,7 @@ export const gitcoinRounds = [
     matchingPool: 17_500,
     gitCoinCheckoutAddress: '0x8e1bD5Da87C14dd8e08F7ecc2aBf9D1d558ea174' as `0x${string}`,
     explorer: 'https://arbiscan.io/',
+    minDonationPerProject: 2,
   },
   {
     roundSlug: 'testarb',
@@ -418,6 +425,7 @@ export const gitcoinRounds = [
     matchingPool: 17_500,
     gitCoinCheckoutAddress: '0x8e1bD5Da87C14dd8e08F7ecc2aBf9D1d558ea174' as `0x${string}`,
     explorer: 'https://arbiscan.io/',
+    minDonationPerProject: 2,
   },
 ];
 
