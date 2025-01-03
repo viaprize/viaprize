@@ -11,7 +11,7 @@ export async function getImageUploadUrl() {
   })
   return await getSignedUrl(
     new S3Client({
-      region: 'us-east-2',
+      region: 'us-east-1',
     }),
     command,
   )
