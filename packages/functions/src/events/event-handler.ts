@@ -722,6 +722,7 @@ export const handler = bus.subscriber(
               fiatPayment.valueInToken
           }
         }
+        break
       }
     }
   },
