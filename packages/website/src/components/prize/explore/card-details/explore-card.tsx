@@ -52,10 +52,10 @@ export default function ExploreCard(props: selectPrizeType) {
               </Badge>
             ))}
           </div>
-          <div className="flex h-5 items-center  justify-between text-sm text-[#2a2a2a] mt-5 ">
+          <div className="flex h-5  items-center  justify-between text-sm text-[#2a2a2a] mt-5 ">
             <ToolTipSimple content="Number of contestants">
-              <div className="flex items-center">
-                <IconUsersGroup size={20} className="mr-1" />
+              <div className="flex items-center mr-4">
+                <IconUsersGroup size={20} className="mr-2" />
                 {props.numberOfContestants}
               </div>
             </ToolTipSimple>
@@ -66,11 +66,11 @@ export default function ExploreCard(props: selectPrizeType) {
                 {props.numberOfFunders}
               </div>
             </ToolTipSimple>
-            <Separator orientation="vertical" className="w-[2px]" />
+            {/* <Separator orientation="vertical" className="w-[2px]" />
             <ToolTipSimple content={tooltip}>
               <div className="">{text} 1w 2d 8h</div>
-            </ToolTipSimple>
-            <Separator orientation="vertical" className="w-[2px]" />
+            </ToolTipSimple> */}
+            <Separator orientation="vertical" className="w-[2px] " />
             <ToolTipSimple content="Number of comments">
               <div className="flex items-center">
                 <IconMessageCircle size={20} className="mr-1" />
