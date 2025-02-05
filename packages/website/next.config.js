@@ -20,6 +20,12 @@ const config = {
         port: "",
         pathname: "/**",
       },
+       {
+        protocol: "https",
+        hostname: "viaprize-image-uploads-production.s3.us-east-1.amazonaws.com",
+        port: "",
+        pathname: "/**",
+      },
       {
         protocol: "https",
         hostname: "picsum.photos",

@@ -16,6 +16,9 @@ import { DateTimePicker } from './ai-date-time-picker/date-picker/date-time-pick
 import type { FormValues } from './form-schema'
 
 export function TimingStep({ form }: { form: UseFormReturn<FormValues> }) {
+  // Watch the dates so that we can set dynamic minDates for subsequent pickers.
+  const submissionStart = form.watch('submissionStartDate')
+  const submissionEnd = form.watch('submissionEndDate')
   return (
     <div className="flex flex-col justify-between gap-5">
       <FormField

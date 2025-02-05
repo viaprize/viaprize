@@ -35,8 +35,14 @@ export default function BountyCreationForm() {
       fullDescription: '',
       skills: [],
       category: '',
+      imageLocalUrl: '',
+      
     },
   })
+  const watchedImageLocalUrl = form.watch('imageLocalUrl')
+  const watchedTitle = form.watch('title')
+  const watchedFullDescription = form.watch('fullDescription')
+
 
   const { mutateAsync: generateQuestion, isPending: generatingQuestions } =
     api.prizes.ai.generateInitialQuestion.useMutation()
@@ -116,9 +122,9 @@ export default function BountyCreationForm() {
         router.push(`/profile/${session?.user.username}`)
       }),
       {
-        loading: 'Creating Bounty...',
-        success: 'Bounty Created',
-        error: 'Failed to create Bounty',
+        loading: 'Creating Prize...',
+        success: 'Prize Created',
+        error: 'Failed to create Prize',
       },
     )
     submitting.current = false
@@ -133,14 +139,21 @@ export default function BountyCreationForm() {
     } else if (step === 2) {
       const answers = form.getValues('aiQuestions')
       console.log(answers, 'answers')
-      setStep(3)
       const suggestions = await generateTitleAndDescription({
         userChoices: answers,
         description: form.getValues('description'),
       })
       form.setValue('title', suggestions.title)
       form.setValue('fullDescription', suggestions.description)
+      // Clear title/description errors after updating these fields.
+      form.clearErrors(['title', 'fullDescription'])
+      setStep(3)
     } else if (step === 3) {
+      if (!form.getValues('imageLocalUrl')) {
+        toast.error('Please upload an image before proceeding.')
+        return
+      }
+      // Generate skills and category, then move to step 4.
       setStep(4)
       const skillsAndCatagories = await generateSkillsAndCatagories({
         title: form.getValues('title'),
@@ -148,18 +161,24 @@ export default function BountyCreationForm() {
       })
       form.setValue(
         'skills',
-        skillsAndCatagories.skills.map((s) => {
-          return {
-            label: s.skill,
-            value: s.skill.toLowerCase().replace(' ', '_'),
-          }
-        }),
+        skillsAndCatagories.skills.map((s) => ({
+          label: s.skill,
+          value: s.skill.toLowerCase().replace(' ', '_'),
+        }))
       )
       form.setValue('category', skillsAndCatagories.category)
+    } else if (step === 4) {
+      // Before transitioning to the timing step (step 5), clear date errors.
+      form.clearErrors(['submissionStartDate', 'submissionEndDate', 'votingEndDate'])
+      setStep(5)
     } else {
       setStep(step + 1)
     }
   }
+
+
+
+
 
   const renderStep = () => {
     switch (step) {
@@ -217,33 +236,43 @@ export default function BountyCreationForm() {
             className="space-y-6"
           >
             {renderStep()}
-            <div className="flex justify-between">
-              {step > 1 && (
+            <div className="w-full ">
+              {/* {step > 1 && (
                 <Button type="button" onClick={() => setStep(step - 1)}>
                   Back
                 </Button>
-              )}
+              )} */}
               {step < 5 ? (
                 <Button
                   type="button"
                   onClick={handleNextStep}
+                  className='w-full'
                   disabled={
                     generatingQuestions ||
                     generatingTitleAndDescription ||
                     generatingSkills ||
                     creatingPrize ||
-                    (form.getValues('aiQuestions').length < 3 && step === 2)
+                    // Step 2: Ensure enough answers have been provided
+                    (step === 2 && form.getValues('aiQuestions').length < 3) ||
+                    // Step 3: Check that the image has been uploaded, and that title and full description are set.
+                    (step === 3 &&
+                      (!watchedImageLocalUrl ||
+                        !watchedTitle.trim().length ||
+                        !watchedFullDescription.trim().length))
                   }
                 >
-                  Next
+                  Proceed to next step
                 </Button>
+
+
               ) : (
                 <Button
+                className='w-full'
                   type="submit"
                   disabled={creatingPrize}
                   loading={creatingPrize}
                 >
-                  Create Bounty
+                  Create Prize
                 </Button>
               )}
             </div>

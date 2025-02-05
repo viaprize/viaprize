@@ -27,12 +27,12 @@ export default function LoginCard() {
             Login or sign up to continue
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="grid grid-cols-1 gap-1">
-            {/* <GithubAuthButton redirectTo={REDIRECT_TO_AFTER_AUTH} /> */}
+        <CardContent className="grid ">
+          {/* <div className="grid grid-cols-1 gap-1">
+            <GithubAuthButton redirectTo={REDIRECT_TO_AFTER_AUTH} />
             <GoogleAuthButton redirectTo={REDIRECT_TO_AFTER_AUTH} />
-          </div>
-          <div className="relative">
+          </div> */}
+          {/* <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
             </div>
@@ -41,7 +41,7 @@ export default function LoginCard() {
                 Or continue with
               </span>
             </div>
-          </div>
+          </div> */}
           <EmailAuthButton redirectTo={REDIRECT_TO_AFTER_AUTH} />
           <Separator />
         </CardContent>

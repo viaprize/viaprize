@@ -56,8 +56,8 @@ export default function ProfileActivityCard({
               <IconCoins className="mr-1" />
               {prize.numberOfFunders}
             </div>
-            <Separator orientation="vertical" className="w-[2px]" />
-            <div className="">Due in 1w 2d 8h</div>
+            {/* <Separator orientation="vertical" className="w-[2px]" />
+            <div className="">Due in 1w 2d 8h</div> */}
             <Separator orientation="vertical" className="w-[2px]" />
             <div className="flex items-center">
               <IconMessageCircle size={20} className="mr-1" />0
