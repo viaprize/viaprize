@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@viaprize/ui/dropdown-menu'
 import { Sheet, SheetContent, SheetTrigger } from '@viaprize/ui/sheet'
-import { LogOut, Menu, User } from 'lucide-react'
+import { LogOut, Menu, User, Wallet } from 'lucide-react'
 import type { Session } from 'next-auth'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -87,6 +87,12 @@ export default function Component({ session }: { session: Session | null }) {
             <LogOut className="mr-2 h-4 w-4" />
             <span>Sign out</span>
           </DropdownMenuItem>
+          {session?.user?.wallet?.key ? <DropdownMenuItem asChild>
+            <Link href={'/profile/wallet'}>
+              <Wallet className="mr-2 h-4 w-4" />
+              <span>Wallet</span>
+            </Link>
+          </DropdownMenuItem> : null}
         </DropdownMenuContent>
       </DropdownMenu>
     )

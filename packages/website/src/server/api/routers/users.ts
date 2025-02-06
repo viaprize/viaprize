@@ -1,5 +1,10 @@
-import { unstable_update } from '@/server/auth'
+import { env } from '@/env'
+import { unstable_update, userSessionSchema } from '@/server/auth'
 import { TRPCError } from '@trpc/server'
+import {
+  CONTRACT_CONSTANTS_PER_CHAIN,
+  type ValidChainIDs,
+} from '@viaprize/core/lib/constants'
 import csv from 'csv-parser'
 import { LoopsClient } from 'loops'
 import { z } from 'zod'
@@ -25,6 +30,81 @@ export const userRouter = createTRPCRouter({
         })
       }
       return user
+    }),
+  usdcBalance: protectedProcedure.query(async ({ ctx }) => {
+    const user = userSessionSchema.parse(ctx.session.user)
+    const balance = await ctx.viaprize.wallet.getUsdcBalance(
+      user.wallet.address as `0x${string}`,
+    )
+    console.log('user wallet address', user.wallet.address)
+    return balance.toString()
+  }),
+  sendToken: protectedProcedure
+    .input(
+      z.object({
+        to: z.string(),
+        amount: z.number(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = userSessionSchema.parse(ctx.session.user)
+      if (!user.wallet.key) {
+        throw new TRPCError({
+          code: 'UNPROCESSABLE_CONTENT',
+          message: 'This is only available for users with custodial wallet',
+        })
+      }
+      const constants =
+        CONTRACT_CONSTANTS_PER_CHAIN[
+          Number.parseInt(env.CHAIN_ID) as ValidChainIDs
+        ]
+      const gaslessVault = ctx.viaprize.wallet.getAddress('gasless', 'vault')
+      if (!gaslessVault) {
+        throw new TRPCError({
+          code: 'UNPROCESSABLE_CONTENT',
+          message: 'Gasless vault not found',
+        })
+      }
+      const deadline = Date.now() + 10000 * 60 * 10
+      const res = await ctx.viaprize.wallet.signUsdcTransactionForCustodial({
+        deadline: deadline,
+        key: user.wallet.key,
+        spender: gaslessVault as `0x${string}`,
+        value: input.amount,
+      })
+      const permitTransaction =
+        ctx.viaprize.wallet.getEncodedERC20PermitFunction(
+          user.wallet.address as `0x${string}`,
+          gaslessVault as `0x${string}`,
+          BigInt(input.amount),
+          BigInt(deadline),
+          Number.parseInt(res.v?.toString() ?? '0'),
+          res.r,
+          res.s,
+        )
+      const transferFromTransaction =
+        ctx.viaprize.wallet.getEncodedERC20TransferFromFunction(
+          user.wallet.address as `0x${string}`,
+          input.to as `0x${string}`,
+          BigInt(input.amount),
+        )
+      const txHash = await ctx.viaprize.wallet.sendTransaction(
+        [
+          {
+            data: permitTransaction,
+            to: constants.USDC,
+            value: '0',
+          },
+          {
+            data: transferFromTransaction,
+            to: constants.USDC,
+            value: '0',
+          },
+        ],
+        'gasless',
+      )
+
+      return txHash
     }),
 
   onboardUser: protectedProcedure

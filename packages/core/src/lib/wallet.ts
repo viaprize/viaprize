@@ -13,6 +13,7 @@ import {
   hashTypedData,
   parseEventLogs,
 } from 'viem'
+import { parseSignature } from 'viem'
 import {
   generatePrivateKey,
   privateKeyToAccount,
@@ -198,9 +199,13 @@ export class Wallet extends Blockchain {
     })
     const hash = hashTypedData(signType as any)
     const signature = await wallet.signTypedData(signType as any)
+    const rsv = parseSignature(signature)
     return {
       hash,
       signature,
+      r: rsv.r,
+      s: rsv.s,
+      v: rsv.v,
     }
   }
 

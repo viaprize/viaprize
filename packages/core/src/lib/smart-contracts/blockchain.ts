@@ -1,6 +1,6 @@
-import { http, createPublicClient, encodeFunctionData } from 'viem'
+import { http, createPublicClient, encodeFunctionData, erc20Abi } from 'viem'
 import { ERC20_PERMIT_ABI } from '../abi'
-import type { ValidChainIDs } from '../constants'
+import { CONTRACT_CONSTANTS_PER_CHAIN, type ValidChainIDs } from '../constants'
 import { getChain } from '../utils'
 
 export class Blockchain {
@@ -14,6 +14,16 @@ export class Blockchain {
       chain: getChain(this.chainId),
       transport: http(this.rpcUrl),
     })
+  }
+  getUsdcBalance(address: `0x${string}`) {
+    const constants = CONTRACT_CONSTANTS_PER_CHAIN[this.chainId]
+    const balance = this.blockchainClient.readContract({
+      abi: erc20Abi,
+      address: constants.USDC,
+      functionName: 'balanceOf',
+      args: [address],
+    })
+    return balance
   }
 
   getEncodedERC20PermitFunction(

@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@viaprize/ui/dropdown-menu'
-import { Activity, Home, LogOut, Plus, PlusCircle, User } from 'lucide-react'
+import { Activity, Home, LogOut, Plus, PlusCircle, User, Wallet } from 'lucide-react'
 import type { Session } from 'next-auth'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -107,6 +107,12 @@ export default function Navbar({
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Sign out</span>
                     </DropdownMenuItem>
+                    {session?.user?.wallet?.key ? <DropdownMenuItem asChild>
+                      <Link href={'/profile/wallet'}>
+                        <Wallet className="mr-2 h-4 w-4" />
+                        <span>Wallet</span>
+                      </Link>
+                    </DropdownMenuItem> : null}
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
@@ -137,7 +143,7 @@ export default function Navbar({
             className="rounded-full h-12 w-12 flex items-center justify-center -mt-16"
           >
             <Link href='/prize/create'>
-            <Plus className="h-6 w-6" />
+              <Plus className="h-6 w-6" />
             </Link>
           </Button>
           <Button
