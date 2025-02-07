@@ -10,6 +10,8 @@ import { Badge } from '@viaprize/ui/badge'
 import { Card } from '@viaprize/ui/card'
 import { Suspense } from 'react'
 import JoinContestantButton from './join-contestant-button'
+import { Button } from '@viaprize/ui/button'
+import Link from 'next/link'
 export type ContestantStage = 'NOT_JOINED' | 'JOINED' | 'SUBMITTED' | 'LOGIN'
 export type Contestants = typeof api.prizes.getContestants.useQuery
 function ContestantCardButton({
@@ -29,6 +31,15 @@ function ContestantCardButton({
   return (
     <>
       {(() => {
+
+        if (prizeStage === 'DISPUTE_AVAILABLE') {
+          return (
+            <Link href="mailto:support@viaprize.org">
+              <Button className="w-full">Dispute</Button>
+            </Link>
+          )
+        }
+
         if (prizeStage !== 'SUBMISSIONS_OPEN') {
           console.log("`prizeStage` is not 'SUBMISSIONS_OPEN'")
           return <Badge>Submissions are closed</Badge>
@@ -38,14 +49,19 @@ function ContestantCardButton({
             return <Badge>Log in to join</Badge>
 
           case 'NOT_JOINED':
-            return <JoinContestantButton prizeId={prizeId} slug={slug} />
+            return ( <JoinContestantButton prizeId={prizeId} slug={slug} />
+            
+            )
           case 'JOINED':
             return (
+             
               <SubmitWorkButton
                 totalFunds={totalFunds}
                 prizeStage={prizeStage}
                 prizeId={prizeId}
               />
+               
+          
             )
           case 'SUBMITTED':
             return null

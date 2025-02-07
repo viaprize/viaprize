@@ -290,7 +290,7 @@ export default function DonateCard({
         </div>
         <div className="flex items-center space-x-2">
           <RadioGroupItem value="crypto" id="crypto" />
-          <Label htmlFor="crypto">Donate with Crypto</Label>
+          <Label htmlFor="crypto" className='flex items-center space-x-2'><div className="">Donate with Crypto (USDC on Optimism only)</div><img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8nhCmw7cu6jVQI01JFtMAV5tkTNLJXMSAOg&s' alt='' className='h-5 w-5 rounded-lg'/></Label>
         </div>
       </RadioGroup>
     )

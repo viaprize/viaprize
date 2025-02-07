@@ -15,6 +15,8 @@ import OldPrizeCard from '../../oldprizes/oldprize-card'
 import ExploreCard from './explore-card'
 import PrizeFilterComponent from './prize-filter-component'
 
+
+
 export default async function FetchExplorePrize({
   searchParams,
 }: {
@@ -44,6 +46,27 @@ export default async function FetchExplorePrize({
   const activePrizes = await api.prizes.getActivePrizes()
   const deployedPrizes = await api.prizes.getDeployedPrizes()
   const data = await FetchPrizesCsv()
+  // Define the order for each prize stage.
+  const stageOrder: Record<string, number> = {
+    NOT_STARTED: 1,
+    SUBMISSIONS_OPEN: 2,
+    VOTING_OPEN: 3,
+    DISPUTE_AVAILABLE: 4,
+    DISPUTE_ACTIVE: 5,
+    WON: 6,
+    REFUNDED: 7,
+  }
+
+  // Sort deployedPrizes by stage order.
+  const sortedDeployedPrizes = deployedPrizes
+    ? deployedPrizes.slice().sort((a, b) => {
+      const orderA = a.stage ? stageOrder[a.stage] || Number.POSITIVE_INFINITY : Number.POSITIVE_INFINITY
+      const orderB = b.stage ? stageOrder[b.stage] || Number.POSITIVE_INFINITY : Number.POSITIVE_INFINITY
+      return orderA - orderB
+    })
+    : []
+
+  
   return (
     <section>
       <div className="flex w-full justify-between items-center p-6">
@@ -72,7 +95,7 @@ export default async function FetchExplorePrize({
         className="grid gap-4 pb-3 px-7"
         style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}
       >
-        {deployedPrizes?.map((prize) => (
+        {sortedDeployedPrizes?.map((prize) => (
           <ExploreCard key={prize.id} {...prize} />
         ))}
 
