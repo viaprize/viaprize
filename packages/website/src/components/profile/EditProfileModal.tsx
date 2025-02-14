@@ -19,6 +19,7 @@ interface EditProfileModalProps {
     initialData: {
         name: string
         skillSets: string[]
+        bio?: string
         image: string
     }
     onSuccess: () => void
@@ -29,6 +30,7 @@ export function EditProfileModal({ initialData, onSuccess }: EditProfileModalPro
     const [name, setName] = useState(initialData.name)
     const [skillInput, setSkillInput] = useState('')
     const [skills, setSkills] = useState<string[]>(initialData.skillSets)
+    const [bio, setBio] = useState(initialData.bio || '')
     const [imageUrl, setImageUrl] = useState(initialData.image)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -77,6 +79,7 @@ export function EditProfileModal({ initialData, onSuccess }: EditProfileModalPro
             name,
             skillSets: skills,
             image: imageUrl,
+            bio,
         })
     }
 
@@ -116,14 +119,23 @@ export function EditProfileModal({ initialData, onSuccess }: EditProfileModalPro
                     </div> */}
 
 <div className="space-y-2">
-                        <Label htmlFor="bio">Bio</Label>
+                        <Label htmlFor="name">Name</Label>
                         <Input
-                            id="image"
-                            value={imageUrl}
-                            onChange={(e) => setImageUrl(e.target.value)}
-                            placeholder="Image URL"
+                            id="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Your name"
                         />
 </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="bio">Bio</Label>
+                        <Input
+                            id="bio"
+                            value={bio}
+                            onChange={(e) => setBio(e.target.value)}
+                            placeholder="Write a short bio..."
+                        />
+                    </div>
                     <div className="space-y-2">
                         <Label>Skills</Label>
                         <div className="flex space-x-2">

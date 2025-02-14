@@ -310,6 +310,7 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
       name: string
       skillSets: string[]
       image?: string
+      bio?: string
     },
   ) {
     await this.db
@@ -318,6 +319,7 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
         name: data.name,
         skillSets: data.skillSets,
         image: data.image,
+        bio: data.bio,
       })
       .where(eq(users.id, userId))
 

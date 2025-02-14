@@ -161,6 +161,7 @@ export const userRouter = createTRPCRouter({
         name: z.string(),
         skillSets: z.array(z.string()),
         image: z.string().optional(),
+        bio: z.string().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -169,6 +170,7 @@ export const userRouter = createTRPCRouter({
         name: input.name,
         skillSets: input.skillSets,
         image: input.image,
+        bio: input.bio,
       })
       return updatedUser
     }),

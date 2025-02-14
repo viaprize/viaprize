@@ -59,7 +59,10 @@ export default async function FetchProfile({
                   <div className="text-sm text-muted-foreground">
                     @{user.username}
                   </div>
-                  <div className="mt-1 text-sm md:text-base">{user.bio}</div>
+                  <div className="mt-1 text-sm md:text-base">
+                    {user.bio || "No bio added yet."}
+                  </div>
+
                   <div className="text-accent-foreground/80 flex space-x-2 mt-3">
                     <div>Skillset:</div>
                     <div>
