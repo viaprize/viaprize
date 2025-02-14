@@ -154,4 +154,24 @@ export const userRouter = createTRPCRouter({
         console.log('error', error)
       }
     }),
+
+  updateProfile: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        skillSets: z.array(z.string()),
+        image: z.string().optional(),
+        bio: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const user = userSessionSchema.parse(ctx.session.user)
+      const updatedUser = await ctx.viaprize.users.updateProfile(user.id, {
+        name: input.name,
+        skillSets: input.skillSets,
+        image: input.image,
+        bio: input.bio,
+      })
+      return updatedUser
+    }),
 })

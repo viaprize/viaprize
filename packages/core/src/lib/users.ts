@@ -303,4 +303,26 @@ export class Users extends CacheTag<typeof CACHE_TAGS> {
 
     return userId
   }
+
+  async updateProfile(
+    userId: string,
+    data: {
+      name: string
+      skillSets: string[]
+      image?: string
+      bio?: string
+    },
+  ) {
+    await this.db
+      .update(users)
+      .set({
+        name: data.name,
+        skillSets: data.skillSets,
+        image: data.image,
+        bio: data.bio,
+      })
+      .where(eq(users.id, userId))
+
+    return await this.getUserById(userId)
+  }
 }

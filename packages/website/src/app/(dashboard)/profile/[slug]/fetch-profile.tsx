@@ -1,3 +1,4 @@
+import { EditProfileButton } from '@/components/profile/EditProfileButton'
 import PrizeProfileTabs from '@/components/profile/prize-profile-tabs'
 import UserPrizeStatus from '@/components/stats-cards/user-prize-status'
 import { api } from '@/trpc/server'
@@ -6,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@viaprize/ui/avatar'
 import { Badge } from '@viaprize/ui/badge'
 import { Button } from '@viaprize/ui/button'
 import { Separator } from '@viaprize/ui/separator'
+import { auth } from '@/server/auth'
 
 export default async function FetchProfile({
   params: { slug },
@@ -13,11 +15,11 @@ export default async function FetchProfile({
   params: { slug: string }
 }) {
   const user = await api.users.getUserByUsername(slug)
-
+  const session = await auth()
   if (!user) {
     return <div>User not found</div>
   }
-
+  const isCurrentUser = session?.user?.username === user.username
   return (
     <>
       <div className="relative">
@@ -39,15 +41,28 @@ export default async function FetchProfile({
                   />
                   <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
                 </Avatar>
+              
 
                 <div className="mt-2 lg:mt-0 lg:ml-7">
-                  <div className="text-lg flex items-center text-card-foreground/90 font-medium">
+                  <div className="text-lg flex items-center space-x-2 text-card-foreground/90 font-medium">
                     <div>{user.name}</div>
+                    <EditProfileButton
+                      user={{
+                        name: user.name || '',
+                        skillSets: user.skillSets || [],
+                        image: user.image || '',
+                        bio: user.bio || ''
+                      }}
+                      isCurrentUser={isCurrentUser}
+                    />
                   </div>
                   <div className="text-sm text-muted-foreground">
                     @{user.username}
                   </div>
-                  <div className="mt-1 text-sm md:text-base">{user.bio}</div>
+                  <div className="mt-1 text-sm md:text-base">
+                    {user.bio || "No bio added yet."}
+                  </div>
+
                   <div className="text-accent-foreground/80 flex space-x-2 mt-3">
                     <div>Skillset:</div>
                     <div>
