@@ -25,9 +25,10 @@ interface EditProfileModalProps {
         image: string
     }
     onSuccess: () => void
+    trigger?: React.ReactNode
 }
 
-export function EditProfileModal({ initialData, onSuccess }: EditProfileModalProps) {
+export function EditProfileModal({ initialData, onSuccess, trigger }: EditProfileModalProps) {
     const [open, setOpen] = useState(false)
     const [name, setName] = useState(initialData.name)
     const [skillInput, setSkillInput] = useState('')
@@ -114,10 +115,12 @@ export function EditProfileModal({ initialData, onSuccess }: EditProfileModalPro
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                    <IconEdit className="mr-2 h-4 w-4" />
-                    Edit Profile
-                </Button>
+                {trigger || (
+                    <Button variant="outline" size="sm">
+                        <IconEdit className="mr-2 h-4 w-4" />
+                        Edit Profile
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>

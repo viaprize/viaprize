@@ -37,7 +37,7 @@ export function EditProfileButton({ user, isCurrentUser }: EditProfileButtonProp
         <Button 
           variant="outline" 
           size="sm" 
-          className="absolute top-2 right-2"
+          className=""
         >
           <IconEdit className="mr-2 h-4 w-4" />
           Edit Profile

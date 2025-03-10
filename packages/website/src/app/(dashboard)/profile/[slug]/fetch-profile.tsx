@@ -44,8 +44,9 @@ export default async function FetchProfile({
               
 
                 <div className="mt-2 lg:mt-0 lg:ml-7">
-                  <div className="text-lg flex items-center space-x-2 text-card-foreground/90 font-medium">
+                  <div className="text-lg flex items-center space-x-4 text-card-foreground/90 font-medium">
                     <div>{user.name}</div>
+                    <div>
                     <EditProfileButton
                       user={{
                         name: user.name || '',
@@ -55,6 +56,7 @@ export default async function FetchProfile({
                       }}
                       isCurrentUser={isCurrentUser}
                     />
+                    </div>
                   </div>
                   <div className="text-sm text-muted-foreground">
                     @{user.username}

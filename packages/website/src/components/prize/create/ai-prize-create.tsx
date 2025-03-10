@@ -270,7 +270,7 @@ export default function BountyCreationForm() {
                 className='w-full'
                   type="submit"
                   disabled={creatingPrize}
-                  loading={creatingPrize}
+                 
                 >
                   Create Prize
                 </Button>
