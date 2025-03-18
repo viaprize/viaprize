@@ -8,6 +8,7 @@ import {
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar'
 
 import { env } from '@/env'
+import { PrivyProvider } from '@privy-io/react-auth'
 import {
   SessionProvider,
   getCsrfToken,
@@ -32,19 +33,39 @@ export function Providers({
   children: React.ReactNode
   initialState: State | undefined
 }) {
+
   return (
-    <WagmiProvider config={wagmiConfig} initialState={initialState}>
-      <ProgressBar
-        height="4px"
-        color="#17824d"
-        options={{ showSpinner: false }}
-        shallowRouting
-      />
-      <TRPCReactProvider>
-        <SessionProvider>
-          <WalletProvider>{children}</WalletProvider>
-        </SessionProvider>
-      </TRPCReactProvider>
-    </WagmiProvider>
+    <PrivyProvider
+      appId={env.NEXT_PUBLIC_PRIVY_APP_ID}
+      config={{
+        // Customize Privy's appearance in your app
+        appearance: {
+          theme: 'light',
+          accentColor: '#676FFF',
+
+        },
+        // Create embedded wallets for users who don't have a wallet
+        embeddedWallets: {
+          createOnLogin: 'users-without-wallets',
+        },
+      }}
+    >
+
+
+      <WagmiProvider config={wagmiConfig} initialState={initialState}>
+
+        <ProgressBar
+          height="4px"
+          color="#17824d"
+          options={{ showSpinner: false }}
+          shallowRouting
+        />
+        <TRPCReactProvider>
+          <SessionProvider>
+            <WalletProvider>{children}</WalletProvider>
+          </SessionProvider>
+        </TRPCReactProvider>
+      </WagmiProvider>
+    </PrivyProvider>
   )
 }

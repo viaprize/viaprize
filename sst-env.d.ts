@@ -70,6 +70,10 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "PRIVY_APP_ID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "RPC_URL": {
       "type": "sst.sst.Secret"
       "value": string

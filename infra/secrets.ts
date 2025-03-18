@@ -24,3 +24,4 @@ export const NORMIE_TECH_URL = new sst.Secret(
 export const NORMIE_TECH_API_KEY = new sst.Secret('NORMIE_TECH_API_KEY')
 export const NORMIE_TECH_SECRET_KEY = new sst.Secret('NORMIE_TECH_SECRET_KEY')
 export const LOOPS_API_KEY = new sst.Secret('LOOPS_API_KEY')
+export const PRIVY_APP_ID = new sst.Secret('PRIVY_APP_ID')

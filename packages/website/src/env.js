@@ -38,6 +38,7 @@ export const env = createEnv({
     NEXT_PUBLIC_NORMIE_TECH_API_KEY: z.string(),
     NEXT_PUBLIC_NORMIE_TECH_URL: z.string(),
     NEXT_PUBLIC_RPC_URL: z.string(),
+    NEXT_PUBLIC_PRIVY_APP_ID: z.string(),
   },
 
   /**
@@ -65,6 +66,7 @@ export const env = createEnv({
     NORMIE_TECH_API_KEY: process.env.NORMIE_TECH_API_KEY,
     NEXT_PUBLIC_NORMIE_TECH_API_KEY:
       process.env.NEXT_PUBLIC_NORMIE_TECH_API_KEY,
+    NEXT_PUBLIC_PRIVY_APP_ID: process.env.NEXT_PUBLIC_PRIVY_APP_ID,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

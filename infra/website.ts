@@ -14,6 +14,7 @@ import {
   NORMIE_TECH_API_KEY,
   NORMIE_TECH_SECRET_KEY,
   OPENAI_API_KEY,
+  PRIVY_APP_ID,
   RPC_URL,
   SECRET_KEY,
 } from './secrets'
@@ -49,6 +50,7 @@ export const website = new sst.aws.Nextjs('website', {
     LOOPS_API_KEY,
     GASLESS_KEY,
     SECRET_KEY,
+    PRIVY_APP_ID,
   ],
   environment: {
     AUTH_SECRET: AUTH_SECRET.value,
@@ -60,6 +62,7 @@ export const website = new sst.aws.Nextjs('website', {
     AUTH_TRUST_HOST: AUTH_TRUST_HOST.value,
     NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
       NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID.value,
+    NEXT_PUBLIC_PRIVY_APP_ID: PRIVY_APP_ID.value,
     NEXT_PUBLIC_RPC_URL: RPC_URL.value,
     CHAIN_ID: $app.stage === 'production' ? '10' : '11155111',
     NEXT_PUBLIC_CHAIN_ID: $app.stage === 'production' ? '10' : '11155111',
