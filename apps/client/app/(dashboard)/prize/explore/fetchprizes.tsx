@@ -3,28 +3,47 @@ import ExploreCard from '@/components/Prize/ExplorePrize/explorePrize';
 import { FetchPrizesCsv } from '@/components/history/fetch-csv';
 import HistoryCard from '@/components/history/history-card';
 import { Api } from '@/lib/api';
+import { Text } from '@mantine/core';
 
-export default async function FetchPrizes() {
-  const prizes = (
-    await new Api().prizes.prizesList(
+export default async function FetchPrizes({ searchParams }: { searchParams?: { search?: string } }) {
+  // Get search query from URL params if available
+  const searchQuery = searchParams?.search;
+
+  let prizes: any[] = [];
+  let error: string | null = null;
+
+  try {
+    const response = await new Api().prizes.prizesList(
       {
         limit: 20,
         page: 1,
+        ...(searchQuery ? { search: searchQuery } : {}),
       },
       {
         next: {
           revalidate: 0,
         },
       },
-    )
-  ).data.data;
-
-  console.log(prizes[0], 'prizes');
+    );
+    prizes = response.data.data;
+  } catch (e) {
+    error = 'Failed to load prizes. Please try again later.';
+  }
 
   const data = await FetchPrizesCsv();
 
   return (
     <>
+      {error && (
+        <Text c="red" size="md" ta="center" mt="md">
+          {error}
+        </Text>
+      )}
+      {!error && prizes.length === 0 && (
+        <Text size="md" ta="center" mt="md" c="dimmed">
+          {searchQuery ? 'No prizes found matching your search.' : 'No prizes available.'}
+        </Text>
+      )}
       {prizes.map((prize) => {
         return (
           <ExploreCard
@@ -54,22 +73,20 @@ export default async function FetchPrizes() {
       })}
 
       {data.reverse().map((prize) => {
-        // Reverse the data array
         if (
           (prize.Awarded &&
-            // prize.WonRefunded &&
             prize.PrizeName) ||
           prize.DatePosted ||
           prize.AwardedUSDe ||
-          prize.WinnersAmount // Changed this line
+          prize.WinnersAmount
         ) {
-          const status = prize.WinnersAmount ? 'Won' : 'Refunded'; // Adjusted status based on WinnersAmount existence
+          const status = prize.WinnersAmount ? 'Won' : 'Refunded';
           return (
             <HistoryCard
               key={prize.Id}
               imageUrl={prize.CardImage}
               id={prize.Id}
-              status={status} // Passed the adjusted status here
+              status={status}
               datePosted={prize.DatePosted}
               title={prize.PrizeName}
               description={prize.SimpleDescription}
