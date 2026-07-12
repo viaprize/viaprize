@@ -4,12 +4,11 @@
 'use client';
 
 import { Button, Drawer, Group, Menu, TextInput } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconSearch } from '@tabler/icons-react';
+import { useDisclosure, useDebouncedCallback } from '@mantine/hooks';
+import { IconSearch, IconX } from '@tabler/icons-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Filter from './filterComponent';
 import Link from 'next/link';
-// import Filter from "./filterComponent";
 
 type Sorts = Record<string, string>;
 
@@ -34,6 +33,21 @@ export default function SearchFilters() {
   const searchParams = useSearchParams();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- its needed
   const params = new URLSearchParams(searchParams as any as string);
+  const currentSearch = searchParams?.get('search') || '';
+
+  const handleSearch = useDebouncedCallback((value: string) => {
+    if (value.length >= 3) {
+      params.set('search', value);
+    } else {
+      params.delete('search');
+    }
+    router.replace({ query: params.toString() });
+  }, 500);
+
+  const handleClear = () => {
+    params.delete('search');
+    router.replace({ query: params.toString() });
+  };
 
   const handleSort = (value: string) => {
     params.set('sort', value);
@@ -44,9 +58,17 @@ export default function SearchFilters() {
     <div className="p-5">
       <Group mb="xs" mt="md" justify="space-between">
         <TextInput
-          rightSection={<IconSearch size="1rem" />}
-          placeholder="Search"
+          rightSection={
+            currentSearch ? (
+              <IconX size="1rem" onClick={handleClear} style={{ cursor: 'pointer' }} />
+            ) : (
+              <IconSearch size="1rem" />
+            )
+          }
+          placeholder="Search by title..."
           className="sm:w-[500px]"
+          defaultValue={currentSearch}
+          onChange={(e) => handleSearch(e.currentTarget.value)}
         />
         <Group justify="space-between">
           <Link href="/prize/about">
@@ -55,35 +77,6 @@ export default function SearchFilters() {
           <Link href="/prize/create">
             <Button>Create Prize </Button>
           </Link>
-
-          {/* <Button onClick={open}>Filter</Button> */}
-          {/* <Menu shadow="md" width={200}>
-            <Menu.Target>
-              <Button>Sort</Button>
-            </Menu.Target>
-
-            <Menu.Dropdown>
-              <Menu.Label>Sort By</Menu.Label>
-              <Menu.Divider />
-              {sortKeys.map((key) => {
-                return (
-                  <Menu.Item
-                    key={key.value}
-                    onClick={() => {
-                      handleSort(key.value);
-                    }}
-                    className={`${
-                      key.value === searchParams?.get('sort')
-                        ? 'font-bold'
-                        : 'font-normal'
-                    }`}
-                  >
-                    {key.label}
-                  </Menu.Item>
-                );
-              })}
-            </Menu.Dropdown>
-          </Menu> */}
         </Group>
       </Group>
       <Drawer opened={opened} onClose={close} title="Filters" position="right">

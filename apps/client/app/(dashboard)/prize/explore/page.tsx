@@ -1,11 +1,12 @@
 import SkeletonLoad from '@/components/custom/skeleton-load-explore';
+import SearchFilters from '@/components/Prize/ExplorePrize/searchFilters';
 import { Button, Group, Text } from '@mantine/core';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import FetchPrizes from './fetchprizes';
 import SubscriptionForm from '@/components/newsletter/subscriptionForm';
 
-function ExplorePage() {
+function ExplorePage({ searchParams }: { searchParams?: { search?: string } }) {
   return (
     <div className="max-w-screen-xl">
       <div className="sm:flex justify-between">
@@ -31,16 +32,15 @@ function ExplorePage() {
         </div>
       </div>
 
-      {/* <SearchFilters /> */}
+      {/* Search filters with title-based search */}
+      <SearchFilters />
+
       <div className="p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3  gap-4">
         <Suspense fallback={<SkeletonLoad />}>
           {/* @ts-expect-error Server Component */}
-          <FetchPrizes />
+          <FetchPrizes searchParams={searchParams} />
         </Suspense>
-        {/* Add as many ExploreCard components as you need */}
       </div>
-
-      {/* <HistoryPage /> */}
     </div>
   );
 }
